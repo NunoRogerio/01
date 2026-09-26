@@ -24,8 +24,7 @@ PT_NAMES = {'Azores': 'Açores'}
 SOURCES = ['VIIRS_NOAA20_NRT', 'VIIRS_SNPP_NRT', 'VIIRS_NOAA21_NRT']
 BOXES = ['-170,-60,-25,84', '-32,34,60,82']          # Americas, Europe (+ Turkey, European Russia)
 CELL = 0.03                                          # ~3 km: one candidate per cluster of detections
-PER_COUNTRY = 300                                    # strongest per country, so one burning season can't crowd out the rest
-MAX_POINTS = 6000
+MAX_POINTS = 20000                                   # safety ceiling only: every detection is kept
 
 
 def get(url, timeout=120):
@@ -53,7 +52,7 @@ def prop(p, *keys):
 def main():
     os.makedirs('data', exist_ok=True)
     # --- regions (admin-1) for the listed countries
-    regions, geoms, tags = {}, [], []
+    regions, geoms, tags, rbox = {}, [], [], {}
     for f in ne('ne_10m_admin_1_states_provinces.geojson'):
         p = f['properties']
         a3 = prop(p, 'adm0_a3', 'ADM0_A3')
@@ -72,6 +71,8 @@ def main():
         else:
             regions.setdefault(sid, [sname, country, set()])[2].add(name)
         geoms.append(g); tags.append((sid, name, a3))
+        if a3 != 'USA':
+            rbox[(sid, name)] = g
     tree = STRtree(geoms)
 
     # --- US counties: assign each to its state by centroid
@@ -85,10 +86,25 @@ def main():
         if not st:
             continue
         name = prop(p, 'NAME', 'name', 'NAME_EN')
-        regions[st][2].add(name); cgeoms.append(g); ctags.append((st, name))
+        regions[st][2].add(name); cgeoms.append(g); ctags.append((st, name)); rbox[(st, name)] = g
     ctree = STRtree(cgeoms) if cgeoms else None
 
-    states = sorted(([sid, v[0], v[1], sorted(v[2])] for sid, v in regions.items() if v[2]), key=lambda r: (r[2], r[1]))
+    # Bounding boxes [west, south, east, north] so the map can frame any country/state and region.
+    # A country's box leaves out far-away territories (overseas departments, remote islands).
+    B = lambda g: [round(v, 3) for v in (g.bounds[0], g.bounds[1], g.bounds[2], g.bounds[3])]
+    def main_box(gs):
+        big = max(gs, key=lambda g: g.area); c0 = big.centroid
+        near = [g for g in gs if abs(g.centroid.x - c0.x) < 25 and abs(g.centroid.y - c0.y) < 18] or [big]
+        return [round(min(g.bounds[0] for g in near), 3), round(min(g.bounds[1] for g in near), 3),
+                round(max(g.bounds[2] for g in near), 3), round(max(g.bounds[3] for g in near), 3)]
+    states = []
+    for sid, v in regions.items():
+        if not v[2]:
+            continue
+        names = sorted(v[2])
+        gs = {n: rbox[(sid, n)] for n in names if (sid, n) in rbox}
+        states.append([sid, v[0], v[1], names, main_box(list(gs.values())) if gs else None, {n: B(g) for n, g in gs.items()}])
+    states.sort(key=lambda r: (r[2], r[1]))
     json.dump({'states': states}, open('data/regions.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     print(len(states), 'regions written', flush=True)
 
@@ -144,13 +160,7 @@ def main():
         points.append([sid, region, round(c['lat'], 4), round(c['lon'], 4), score,
                        sat_name.get(str(c['sat']), 'VIIRS'), c['t'].strftime('%Y-%m-%dT%H:%MZ'), round(c['frp'], 1), c['n']])
     points.sort(key=lambda p: (-p[4], -p[7]))
-    country = lambda sid: 'USA' if len(sid) == 2 and sid != 'PT' else sid
-    kept, per = [], {}
-    for p in points:
-        k = country(p[0]); per[k] = per.get(k, 0) + 1
-        if per[k] <= PER_COUNTRY:
-            kept.append(p)
-    points = kept[:MAX_POINTS]
+    points = points[:MAX_POINTS]
     json.dump({'updated': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%MZ'), 'source': 'NASA FIRMS VIIRS NRT, last 24 h',
                'points': points}, open('data/hotspots.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     print(len(points), 'hotspots written', flush=True)

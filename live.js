@@ -10,7 +10,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v6', TTL=5*60*1000;
+  var KEY='wf-live-fires-v7', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -48,7 +48,10 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     return out;
   }
   // regions.json: {states:[[id,name,country,[region,...]],...]}  ->  [id,name,n,[[region,0],...],country]
+  // Also fills window.__wfGeoBoxes: {'ESP': [w,s,e,n], 'ESP|Galicia': [w,s,e,n], 'NV': ..., 'NV|Washoe': ...} for the map.
   function buildGeo(js){
+    var bx={};(js&&js.states||[]).forEach(function(g){if(g[4])bx[g[0]]=g[4];var rb=g[5]||{};Object.keys(rb).forEach(function(n){bx[g[0]+'|'+n]=rb[n];});});
+    window.__wfGeoBoxes=bx;
     return (js&&js.states||[]).map(function(g){return [g[0],g[1],g[3].length,g[3].map(function(n){return [n,0];}),g[2]];});
   }
   // hotspots.json: {points:[[st,co,lat,lon,conf,sat,isoTime,frp,n],...]}  ->  candidate rows
@@ -65,21 +68,21 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   function readCache(){try{return JSON.parse(localStorage.getItem(KEY)||'null')||{};}catch(e){return {};}}
   function save(stamp){
     var c=readCache();c[stamp]=Date.now();
-    c.rows=window.__wfLiveFires||null;c.cands=window.__wfLiveCands||null;c.geo=window.__wfGeoStates||null;
+    c.rows=window.__wfLiveFires||null;c.cands=window.__wfLiveCands||null;c.geo=window.__wfGeoStates||null;c.boxes=window.__wfGeoBoxes||null;
     try{localStorage.setItem(KEY,JSON.stringify(c));}catch(e){}
-    window.__wfWorld=null;
+    window.__wfWorld=null;window.__wfGeo=null;
     try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
   }
   // Replace one source's fires (Portugal or US) and keep the other's.
   function publishPart(isPT,rows){
     var other=(window.__wfLiveFires||[]).filter(function(r){return (r[0]==='PT')!==isPT;});
     var mine=rows.sort(function(a,b){return b.w-a.w;}).map(function(x){return x.r;});
-    window.__wfLiveFires=isPT?other.concat(mine):mine.concat(other);
+    window.__wfLiveFires=isPT?other.concat(mine):mine.concat(other);window.__wfLiveAt=Date.now();
     save(isPT?'tPT':'tUS');
   }
 
   var c=readCache(),now=Date.now();
-  if(c.rows)window.__wfLiveFires=c.rows;if(c.cands)window.__wfLiveCands=c.cands;if(c.geo)window.__wfGeoStates=c.geo;
+  if(c.rows)window.__wfLiveFires=c.rows;if(c.cands)window.__wfLiveCands=c.cands;if(c.geo)window.__wfGeoStates=c.geo;if(c.boxes)window.__wfGeoBoxes=c.boxes;if(c.tPT||c.tUS)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0);
   var fresh=function(k){return c[k]&&now-c[k]<TTL;};
   var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};

@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=6"></script>
+<script src="live.js?v=7"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -184,7 +184,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="font-size: 13px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
     </button>
     <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
-      <span class="dot" style="width: 5.6px; height: 5.6px"></span>Live data · 2:31 PM
+      <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
     </span>
   </header>
   </div>
@@ -245,7 +245,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="font-size: 13px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
       </button>
       <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
-        <span class="dot" style="width: 5.6px; height: 5.6px"></span>Live data · 2:31 PM
+        <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
       </span>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; padding: 4px 16px 24px; opacity: {{scInOp}}; transform: translateY({{scInY}}); transition: opacity .3s ease {{scInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{scInDelay}}">
@@ -443,14 +443,14 @@ class Component extends DCLogic {
     ];
     const seen = {};
     const SRCN = { tower: 'Tower', photo: 'Photo', dash: 'Dashcam', sat: 'Satellite', sensor: 'Sensor', call: '911 call' };
-    const C = (window.__wfLiveCands || cands).map(([st, co, id, place, conf, spec, ago, x, y]) => {
+    const C = (window.__wfLiveCands || (window.__wfLiveMap ? [] : cands)).map(([st, co, id, place, conf, spec, ago, x, y]) => {
       const k = st + '|' + co; const i = seen[k] = (seen[k] || 0) + 1;
       const a = anchor(st, co);
       const srcs = spec.split('|').map((p) => { const [kind, ref] = p.split(':'); return { kind, ref: ref || '', label: SRCN[kind] + (ref ? ' ' + ref : '') }; });
       const nSrc = srcs.length;
       return { st, co, id, place, conf, srcs, nSrc, src: nSrc > 1 ? nSrc + ' sources' : srcs[0].label, srcList: srcs.map((q) => q.label).join(' · '), agree: nSrc > 1 ? nSrc + ' sources agree' : '1 source', ago, x: x ?? a[0] + (i - 1) * 520, y: y ?? a[1] + (i - 1) * 380 };
     });
-    const fires = (window.__wfLiveFires || [
+    const fires = (window.__wfLiveFires || (window.__wfLiveMap ? [] : [
       ['CA', 'Los Angeles', 'F-0924-01', 'Sierra Madre Cyn', 'ST-7 crews on scene', 735, 455],
       ['CA', 'Los Angeles', 'F-0924-02', 'Tujunga Cyn', 'Contained 40%', 330, 420],
       ['CA', 'San Bernardino', 'F-CA-11', 'Cajon Summit', 'Contained 65%'], ['CA', 'Riverside', 'F-CA-12', 'Lake Mathews', 'Crews on scene'],
@@ -461,7 +461,7 @@ class Component extends DCLogic {
       ['NV', 'Washoe', 'F-NV-02', 'Pyramid Hwy', 'Contained 70%'],
       ['WA', 'Chelan', 'F-WA-05', 'Wenatchee Hts', 'Crews on scene'], ['WA', 'Okanogan', 'F-WA-06', 'Twisp', 'Contained 25%'],
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
-    ].slice()).map(([st, co, id, place, note, x, y]) => { const a = anchor(st, co); return { st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
+    ]).slice()).map(([st, co, id, place, note, x, y]) => { const a = anchor(st, co); return { st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
@@ -609,7 +609,7 @@ class Component extends DCLogic {
       fireCount: NF, fireChips: FIRES.map((f) => ({ ...f, aria: 'Active fire ' + f.id + ', ' + f.place + '. ' + f.note })), fireMarks: FIRES, flN: (() => { const f = s.flip; const mv = !!f && f.n0 !== f.n1; return { still: !mv, moving: mv, from: mv ? f.n0 : N, to: N, w: mv && String(f.n0).length > String(N).length ? f.n0 : N }; })(),
       flF: (() => { const f = s.flip; const mv = !!f && f.f0 !== f.f1; return { still: !mv, moving: mv, from: mv ? f.f0 : NF, to: NF, w: mv && String(f.f0).length > String(NF).length ? f.f0 : NF }; })(),
       plN: N === 1 ? '' : 's', plF: NF === 1 ? '' : 's',
-      mapSt: SC.sc.st, mapCo: SC.sc.co || '', alertCount: N, hasAlerts: N > 0, hasCard: M > 0, listMaxH: FIT * ROW, listOverflow: M > FIT ? 'auto' : 'visible',
+      liveTxt: window.__wfLiveMap ? (window.__wfLiveAt ? 'Live data · ' + new Date(window.__wfLiveAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Loading live data') : 'Live data · 2:31 PM', mapSt: SC.sc.st, mapCo: SC.sc.co || '', alertCount: N, hasAlerts: N > 0, hasCard: M > 0, listMaxH: FIT * ROW, listOverflow: M > FIT ? 'auto' : 'visible',
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
       cardTitle: (N === 1 && NF === 0) ? 'Ignition candidate' : N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'),
       cardSub: N === 0 ? 'Nothing to review' : (N > 1 || NF > 0 ? 'Top: ' + top.place + ' · ' + top.conf + '%' : top.place + ' · ' + top.ago),

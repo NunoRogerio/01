@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=6"></script>
+<script src="live.js?v=7"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -505,14 +505,14 @@ class Component extends DCLogic {
     ];
     const seen = {};
     const SRCN = { tower: 'Tower', photo: 'Photo', dash: 'Dashcam', sat: 'Satellite', sensor: 'Sensor', call: '911 call' };
-    const C = (window.__wfLiveCands || cands).map(([st, co, id, place, conf, spec, ago, x, y]) => {
+    const C = (window.__wfLiveCands || (window.__wfLiveMap ? [] : cands)).map(([st, co, id, place, conf, spec, ago, x, y]) => {
       const k = st + '|' + co; const i = seen[k] = (seen[k] || 0) + 1;
       const a = anchor(st, co);
       const srcs = spec.split('|').map((p) => { const [kind, ref] = p.split(':'); return { kind, ref: ref || '', label: SRCN[kind] + (ref ? ' ' + ref : '') }; });
       const nSrc = srcs.length;
       return { st, co, id, place, conf, srcs, nSrc, src: nSrc > 1 ? nSrc + ' sources' : srcs[0].label, srcList: srcs.map((q) => q.label).join(' · '), agree: nSrc > 1 ? nSrc + ' sources agree' : '1 source', ago, x: x ?? a[0] + (i - 1) * 520, y: y ?? a[1] + (i - 1) * 380 };
     });
-    const fires = (window.__wfLiveFires || [
+    const fires = (window.__wfLiveFires || (window.__wfLiveMap ? [] : [
       ['CA', 'Los Angeles', 'F-0924-01', 'Sierra Madre Cyn', 'ST-7 crews on scene', 735, 455],
       ['CA', 'Los Angeles', 'F-0924-02', 'Tujunga Cyn', 'Contained 40%', 330, 420],
       ['CA', 'San Bernardino', 'F-CA-11', 'Cajon Summit', 'Contained 65%'], ['CA', 'Riverside', 'F-CA-12', 'Lake Mathews', 'Crews on scene'],
@@ -523,7 +523,7 @@ class Component extends DCLogic {
       ['NV', 'Washoe', 'F-NV-02', 'Pyramid Hwy', 'Contained 70%'],
       ['WA', 'Chelan', 'F-WA-05', 'Wenatchee Hts', 'Crews on scene'], ['WA', 'Okanogan', 'F-WA-06', 'Twisp', 'Contained 25%'],
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
-    ].slice()).map(([st, co, id, place, note, x, y]) => { const a = anchor(st, co); return { st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
+    ]).slice()).map(([st, co, id, place, note, x, y]) => { const a = anchor(st, co); return { st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
