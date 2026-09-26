@@ -10,7 +10,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v9', TTL=5*60*1000;
+  var KEY='wf-live-fires-v10', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -77,16 +77,35 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     window.__wfWorld=null;window.__wfGeo=null;
     try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
   }
-  // Replace one source's fires (Portugal or US) and keep the other's.
-  function publishPart(isPT,rows){
-    var other=(window.__wfLiveFires||[]).filter(function(r){return (r[0]==='PT')!==isPT;});
+  // Replace one source's fires (US, Portugal or British Columbia) and keep the others'.
+  var srcOf=function(r){return r[0]==='PT'?'PT':r[0]==='CAN'?'CAN':'US';};
+  function publishPart(src,rows){
+    var other=(window.__wfLiveFires||[]).filter(function(r){return srcOf(r)!==src;});
     var mine=rows.sort(function(a,b){return b.w-a.w;}).map(function(x){return x.r;});
-    window.__wfLiveFires=isPT?other.concat(mine):mine.concat(other);window.__wfLiveAt=Date.now();
-    save(isPT?'tPT':'tUS');
+    window.__wfLiveFires=mine.concat(other);window.__wfLiveAt=Date.now();
+    save('t'+src);
+  }
+  // British Columbia Wildfire Service: active fires with crews / aviation / heavy equipment counts.
+  var BC_STAGE={OUT_CNTRL:'Out of control',HOLDING:'Being held',UNDR_CNTRL:'Under control'};
+  function buildBC(js){
+    var out=[];
+    (js&&js.data||[]).forEach(function(i){
+      var lat=parseFloat(i.latitude),lng=parseFloat(i.longitude);if(!isFinite(lat)||!isFinite(lng))return;
+      var ha=i.incidentSizeMappedHa||i.incidentSizeEstimatedHa, st=BC_STAGE[i.stageOfControlCode]||'Active';
+      var note=st+(ha?' · '+Math.round(ha).toLocaleString('en-US')+' ha':'');
+      var n=function(v){return v==null?null:(parseInt(v,10)||0);};
+      var cnt={crews:n(i.crewResourceCount),aerial:n(i.aviationResourceCount),heavy:n(i.heavyEquipmentResourceCount),imt:n(i.incidentManagementResourceCount),structure:n(i.structureProtectionResourceCount)};
+      var has=Object.keys(cnt).some(function(k){return cnt[k]!=null;});
+      var upd=i.lastUpdatedTimestamp?new Date(i.lastUpdatedTimestamp).toLocaleString([], {day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'';
+      var res=has?{crews:cnt.crews,aerial:cnt.aerial,heavy:cnt.heavy,imt:cnt.imt,structure:cnt.structure,status:st,start:i.discoveryDate?new Date(i.discoveryDate).toLocaleDateString([], {day:'numeric',month:'short'}):'',updated:upd,src:'BC Wildfire Service'}:null;
+      var xy=toXY(lat,lng);
+      out.push({r:['CAN','British Columbia','BC-'+(i.incidentNumberLabel||out.length),title(i.incidentName||i.incidentNumberLabel||'Wildfire'),note,xy[0],xy[1],res],w:ha||0});
+    });
+    return out;
   }
 
   var c=readCache(),now=Date.now();
-  if(c.rows)window.__wfLiveFires=c.rows;if(c.cands)window.__wfLiveCands=c.cands;if(c.geo)window.__wfGeoStates=c.geo;if(c.boxes)window.__wfGeoBoxes=c.boxes;if(c.tPT||c.tUS)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0);
+  if(c.rows)window.__wfLiveFires=c.rows;if(c.cands)window.__wfLiveCands=c.cands;if(c.geo)window.__wfGeoStates=c.geo;if(c.boxes)window.__wfGeoBoxes=c.boxes;if(c.tPT||c.tUS||c.tCAN)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0);
   var fresh=function(k){return c[k]&&now-c[k]<TTL;};
   var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
@@ -104,7 +123,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
     // ask for the personnel count too; if the service doesn't know that field, ask again without it
     var q2=q.replace('UniqueFireIdentifier','UniqueFireIdentifier,TotalIncidentPersonnel');
-    fetch(US_URL+'?'+q2).then(jsonOk).then(function(js){return js&&js.error?fetch(US_URL+'?'+q).then(jsonOk):js;}).then(buildUS).then(function(rows){publishPart(false,rows);})
+    fetch(US_URL+'?'+q2).then(jsonOk).then(function(js){return js&&js.error?fetch(US_URL+'?'+q).then(jsonOk):js;}).then(buildUS).then(function(rows){publishPart('US',rows);})
       .catch(function(e){console.warn('[live fires] US feed failed',e);});
   }
   // Portugal: the site's own snapshot (refreshed by a GitHub Action every ~10 min), falling back to the live feed.
@@ -112,7 +131,11 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   if(!fresh('tPT')){
     fetch('data/pt-fires.json?t='+tick).then(jsonOk).then(function(js){if(!js||!(js.data||[]).length)throw new Error('empty');return js;})
       .catch(function(){return fetch(PT_URL).then(jsonOk);})
-      .then(buildPT).then(function(rows){publishPart(true,rows);})
+      .then(buildPT).then(function(rows){publishPart('PT',rows);})
       .catch(function(e){console.warn('[live fires] Portugal feed failed',e);});
+  }
+  if(!fresh('tCAN')){
+    fetch('data/bc-fires.json?t='+tick).then(jsonOk).then(buildBC).then(function(rows){publishPart('CAN',rows);})
+      .catch(function(e){console.warn('[live fires] British Columbia feed failed',e);});
   }
 })();

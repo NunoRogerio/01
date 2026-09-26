@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=9"></script>
+<script src="live.js?v=10"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -574,8 +574,10 @@ class Component extends DCLogic {
     const fireId = fv ? fv.id : 'F-0924-03';
     const fres = fv ? ((this.wfWorld().fires.find((f) => f.id === fv.id) || {}).res || null) : null;
     const resView = fres ? (() => {
-      const items = [['Personnel', fres.man], ['Ground vehicles', fres.terrain], ['Aircraft', fres.aerial], ['Boats', fres.water]].filter(([k, v]) => v != null && (k !== 'Boats' || v > 0)).map(([k, v]) => ({ k, v: Number(v).toLocaleString() }));
-      return { src: fres.src || '', cols: Math.max(1, items.length), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
+      const OPT = { Boats: 1, 'Management teams': 1, 'Structure protection': 1 };
+      const items = [['Personnel', fres.man], ['Crews', fres.crews], ['Ground vehicles', fres.terrain], ['Heavy equipment', fres.heavy], ['Aircraft', fres.aerial], ['Boats', fres.water], ['Management teams', fres.imt], ['Structure protection', fres.structure]]
+        .filter(([k, v]) => v != null && (!OPT[k] || v > 0)).map(([k, v]) => ({ k, v: Number(v).toLocaleString() }));
+      return { src: fres.src || '', cols: Math.max(1, Math.min(4, items.length)), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
     })() : { src: '', cols: 1, items: [], foot: '' };
     const actMin = (() => {
       const T0 = window.__wfT0 || (window.__wfT0 = Date.now());
