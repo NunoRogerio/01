@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=7"></script>
+<script src="live.js?v=8"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -505,12 +505,12 @@ class Component extends DCLogic {
     ];
     const seen = {};
     const SRCN = { tower: 'Tower', photo: 'Photo', dash: 'Dashcam', sat: 'Satellite', sensor: 'Sensor', call: '911 call' };
-    const C = (window.__wfLiveCands || (window.__wfLiveMap ? [] : cands)).map(([st, co, id, place, conf, spec, ago, x, y]) => {
+    const C = (window.__wfLiveCands || (window.__wfLiveMap ? [] : cands)).map(([st, co, id, place, conf, spec, ago, x, y, live]) => {
       const k = st + '|' + co; const i = seen[k] = (seen[k] || 0) + 1;
       const a = anchor(st, co);
       const srcs = spec.split('|').map((p) => { const [kind, ref] = p.split(':'); return { kind, ref: ref || '', label: SRCN[kind] + (ref ? ' ' + ref : '') }; });
       const nSrc = srcs.length;
-      return { st, co, id, place, conf, srcs, nSrc, src: nSrc > 1 ? nSrc + ' sources' : srcs[0].label, srcList: srcs.map((q) => q.label).join(' · '), agree: nSrc > 1 ? nSrc + ' sources agree' : '1 source', ago, x: x ?? a[0] + (i - 1) * 520, y: y ?? a[1] + (i - 1) * 380 };
+      return { live: live || null, st, co, id, place, conf, srcs, nSrc, src: nSrc > 1 ? nSrc + ' sources' : srcs[0].label, srcList: srcs.map((q) => q.label).join(' · '), agree: nSrc > 1 ? nSrc + ' sources agree' : '1 source', ago, x: x ?? a[0] + (i - 1) * 520, y: y ?? a[1] + (i - 1) * 380 };
     });
     const fires = (window.__wfLiveFires || (window.__wfLiveMap ? [] : [
       ['CA', 'Los Angeles', 'F-0924-01', 'Sierra Madre Cyn', 'ST-7 crews on scene', 735, 455],
@@ -609,7 +609,22 @@ class Component extends DCLogic {
     const minus = (time, d) => { const m = /(\d+):(\d+)/.exec(time); let t = (+m[1] % 12 + 12) * 60 + +m[2] - d; return (Math.floor(t / 60) % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + ' PM'; };
     const series = (seed, n, base, rise) => Array.from({ length: n }, (_, i) => { const k = i / (n - 1); const w = Math.sin(seed * 7.1 + i * 1.9) * 0.08 + Math.sin(seed * 3.3 + i * 0.7) * 0.05; return Math.max(0, base + rise * Math.pow(Math.max(0, k - 0.45) / 0.55, 1.6) + w * base); });
     const pathOf = (a, W, H, x0, y0, lo, hi, area) => { const pts = a.map((v, i) => [x0 + i * W / (a.length - 1), y0 + H - (v - lo) / (hi - lo || 1) * H]); const d = pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' '); return area ? d + ' L' + (x0 + W) + ' ' + (y0 + H) + ' L' + x0 + ' ' + (y0 + H) + ' Z' : d; };
+    // Real satellite candidates (NASA FIRMS): show only what the satellite measured.
+    const buildLive = (c) => {
+      const L = c.live, d = L.t ? new Date(L.t) : null;
+      const time = d && !isNaN(d) ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
+      const day = d && !isNaN(d) ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) : '';
+      const ll = Math.abs(L.lat).toFixed(4) + '° ' + (L.lat >= 0 ? 'N' : 'S') + ' · ' + Math.abs(L.lon).toFixed(4) + '° ' + (L.lon >= 0 ? 'E' : 'W');
+      const reasons = [['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
+        [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
+        ['Not yet confirmed on the ground', false]];
+      return { id: c.id, place: c.place, time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
+        agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y, zoom: 0.7, fsZoom: 0.9,
+        coords: ll + ' · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
+    };
+    const STUB = { id: '', place: 'No ignition candidates', conf: 0, agree: '', srcList: '', src: '', x: 610, y: 290, live: { lat: 0, lon: 0, frp: 0, sat: '', t: '', n: 0 } };
     const build = (c) => {
+      if (c.live) return buildLive(c);
       const m = META[c.id] || {};
       const time = m.time || clockAgo(c.ago);
       const seed = parseInt(c.id.slice(-2), 10) || 1;
@@ -662,7 +677,7 @@ class Component extends DCLogic {
     const dismissed = this.wfDismissed();
     const SC = this.wfScoped();
     const active = SC.cands.map(build);
-    const CANDS = [build(SC.W.cands[0])];
+    const CANDS = [build(SC.W.cands[0] || STUB)];
     const byId = {}; active.forEach((c) => { byId[c.id] = c; });
     const scopeName = SC.sc.co ? SC.sc.co : ((SC.W.states.find((x) => x.id === SC.sc.st) || {}).name || SC.sc.st);
     const n = active.length;

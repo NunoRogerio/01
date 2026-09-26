@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=7"></script>
+<script src="live.js?v=8"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -792,7 +792,7 @@ class Component extends DCLogic {
             return { countyLabels: counties, cityLabels: (window.__wfLiveMap && this.mapStyle() === 'standard') ? [] : cities };
           })(),
           showSea: !(window.__wfLiveMap && this.mapStyle() === 'standard'), sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: (near && laScope) ? stations : [], strikes: (near && laScope) ? strikes : [], sensors: (near && laScope) ? sensors : [], winds: (near && laScope) ? winds : []
+          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: (near && laScope && !window.__wfLiveMap) ? stations : [], strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
         };
       })(),
       fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),

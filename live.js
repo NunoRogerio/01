@@ -10,7 +10,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v7', TTL=5*60*1000;
+  var KEY='wf-live-fires-v8', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -60,7 +60,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var lat=p[2],lon=p[3],xy=toXY(lat,lon);
       var place='Hotspot '+Math.abs(lat).toFixed(2)+'°'+(lat>=0?'N':'S')+' '+Math.abs(lon).toFixed(2)+'°'+(lon>=0?'E':'W');
       var id='HS-'+Math.round((lat+90)*100)+'-'+Math.round((lon+180)*100);
-      return [p[0],p[1],id,place,p[4],'sat:'+p[5],ago(Date.parse(p[6])),xy[0],xy[1]];
+      return [p[0],p[1],id,place,p[4],'sat:'+p[5],ago(Date.parse(p[6])),xy[0],xy[1],{lat:lat,lon:lon,frp:p[7],sat:p[5],t:p[6],n:p[8]}];
     });
   }
   // One cache, with its own timestamp per source (US fires, Portugal fires, satellite), so a source that
