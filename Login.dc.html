@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fire Watch">
+<meta name="theme-color" content="#F2F2F7">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<script src="fit.js"></script>
+
+<title>Sign in</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
+a{color:#007AFF}a:hover{color:#0062CC}
+:focus-visible{outline:2px solid #007AFF;outline-offset:2px}
+.acct{transition:background-color .15s ease}
+.acct:active{background-color:#E5E5EA}
+@media (hover:hover){.acct:hover{background-color:#F7F7FA}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 112px 16px 40px; background: #F2F2F7; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 16px">
+    <div style="display: flex; align-items: center; justify-content: center; width: 88px; height: 88px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 0 0 1px rgba(60,60,67,0.12)">
+      <svg width="43" height="52" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; margin-top: 2px"><path fill="#000000" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#000000" stroke-width="1.1" stroke-linecap="round"></path></svg>
+    </div>
+    <h1 style="margin: 8px 0 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 34px; text-align: center">Forest Fire Watch</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #6C6C70; text-align: center">Choose an account to sign in</p>
+  </div>
+
+  <h2 style="margin: 40px 16px 8px; font-size: 13px; font-weight: 400; line-height: 18px; color: #6C6C70">ACCOUNTS</h2>
+  <nav aria-label="Accounts" style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
+    <sc-for list="{{accounts}}" as="a" hint-placeholder-count="4">
+      <a href="Main.dc.html" class="acct" onClick="{{a.pick}}" aria-label="{{a.aria}}" style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 0 16px; border-top: {{a.sep}}; color: #000000; text-decoration: none">
+        <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: {{a.badgeBg}}; color: {{a.badgeFg}}; font-size: 13px; font-weight: 600; letter-spacing: 0.02em">{{a.code}}</span>
+        <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
+          <span style="font-size: 17px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{a.name}}</span>
+          <span style="font-size: 13px; line-height: 18px; color: #6C6C70">{{a.area}}</span>
+        </span>
+        <span style="display: {{a.onD}}; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 12px; white-space: nowrap; flex-shrink: 0">Signed in</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C4C4C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg>
+      </a>
+    </sc-for>
+  </nav>
+
+  <p style="margin: auto 16px 0; font-size: 13px; line-height: 18px; color: #6C6C70; text-align: center">Prototype sign-in: each role only changes which areas this phone shows. No password yet.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
+  renderVals() {
+    const cur = this.wfRole();
+    const A = [
+      ['admin', 'AD', 'Administrator', 'All countries and regions'],
+      ['pt', 'PT', 'Portugal fire coordinator', 'Portugal · 20 districts'],
+      ['ca', 'CA', 'California fire coordinator', 'California · 58 counties'],
+      ['nv', 'NV', 'Nevada fire coordinator', 'Nevada · 17 counties']
+    ];
+    return {
+      accounts: A.map(([id, code, name, area], i) => ({
+        id, code, name, area,
+        sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+        badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
+        onD: cur === id ? 'flex' : 'none',
+        aria: 'Sign in as ' + name + '. Access: ' + area + (cur === id ? '. Currently signed in' : ''),
+        pick: () => {
+          try { window.localStorage.setItem('wf-role', id); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
+          window.__wfMem = Object.assign(window.__wfMem || {}, { role: id, scope: null });
+        }
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

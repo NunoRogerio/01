@@ -266,7 +266,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; gap: 2px; margin: 0 -16px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; transform: translateX({{slX}}%); opacity: {{slO}}; transition: {{slT}}">
       <sc-if value="{{inCounties}}" hint-placeholder-val="{{ false }}">
         <div class="sqwrap" data-sel="{{allState.selA}}" style="display: flex; align-items: center; gap: 0; padding: 4px 0; border-radius: 0; border-bottom: 1px solid rgba(60,60,67,0.14); background-color: {{allState.selBg}}; transition: background-color .15s ease">
-          <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: 0 2px; flex-shrink: 0; transform: translateY(-9px); border: 0; border-radius: 999px; background: transparent; color: {{allState.arrowC}}; cursor: pointer">
+          <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: {{backD}}; align-items: center; justify-content: center; width: 36px; height: 36px; margin: 0 2px; flex-shrink: 0; transform: translateY(-9px); border: 0; border-radius: 999px; background: transparent; color: {{allState.arrowC}}; cursor: pointer">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
           </button>
           <button type="button" class="sqrow nosep" disabled="{{allState.dis}}" onClick="{{allState.pick}}" aria-label="{{allState.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 84px 64px 40px; align-items: center; align-content: center; gap: 2px 4px; min-height: 52px; padding: 0; flex-grow: 1; min-width: 0; border-radius: 999px; border: 0; background-color: transparent; color: {{allState.fg}}; text-align: left; font: inherit; cursor: pointer">
@@ -288,6 +288,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </button>
       </sc-for>
       <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span style="padding: 20px 40px; font-size: 15px; color: #6C6C70">{{noMatchTxt}}</span></sc-if>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin: 8px 0 0; padding: 12px 4px 0; border-top: 1px solid rgba(60,60,67,0.14)">
+      <span style="flex-grow: 1; min-width: 0; font-size: 13px; line-height: 18px; color: #6C6C70"><span style="display: block; font-size: 15px; line-height: 20px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{acct.name}}</span>{{acct.area}}</span>
+      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; height: 44px; padding: 0 4px; font-size: 15px; color: #007AFF; text-decoration: none; white-space: nowrap">Sign out</a>
     </div>
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 4px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
@@ -374,7 +378,7 @@ class Component extends DCLogic {
     this._flipT = setTimeout(() => this.setState({ flip: null }), 3000);
     this.setState({ flip: { n0: rec.n0, n1, f0: rec.f0, f1, t: rec.t } });
   }
-  componentDidMount() { this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentDidMount() { if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -461,7 +465,9 @@ class Component extends DCLogic {
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
-  wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; }
+  wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; }
+  wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
+  wfLock() { return ({ pt: 'PT', ca: 'CA', nv: 'NV' })[this.wfRole()] || null; }
   wfSetScope(v) { window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); try { window.sessionStorage.setItem('wf-scope', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   wfScoped(scopeIn) {
     const W = this.wfWorld(), sc = scopeIn || this.wfScope(), dz = this.wfDismissed(), cf = this.wfConfirmed();
@@ -521,7 +527,8 @@ class Component extends DCLogic {
       ? { title: coObj.name, parent: stObj.name, fires: coObj.fires, cands: coObj.cands }
       : { title: stObj.name, parent: stObj.n + unitOf(stObj), fires: stObj.fires, cands: stObj.cands };
     const scOpen = !!s.scOpen;
-    const browse = s.scBrowse === undefined ? selState : s.scBrowse;
+    const lock = this.wfLock();
+    const browse = lock || (s.scBrowse === undefined ? selState : s.scBrowse);
     const brObj = DATA.find((d) => d.id === browse);
     const atCountries = browse === '@', atUS = !brObj && !atCountries;
     const selCountry = stObj.country === 'US' ? 'US' : stObj.id;
@@ -593,7 +600,9 @@ class Component extends DCLogic {
       hScope: this.wfHandle('sc', 'up', () => this.setState({ scOpen: false })), scDy: this.wfDrag('sc').y, scDyT: this.wfDrag('sc').t,
       hList: this.wfHandle('li', 'down', () => { this.wfListFlag(false); this.setState({ list: false }); }), liDy: this.wfDrag('li').y, liDyT: this.wfDrag('li').t,
       openScope: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.setState({ scOpen: true, scBrowse: undefined }); }, pScope: this.wfPull('sc', 'down', () => this.setState({ scOpen: true, scBrowse: undefined })), pList: this.wfPull('li', 'up', () => { this.wfListFlag(false); this.setState({ list: true }); }), closeScope: () => this.setState({ scOpen: false }),
-      toStates: () => this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : '@', q: '' })), backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
+      backD: lock ? 'none' : 'flex', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : '@', q: '' })), acct: ({ admin: { name: 'Administrator', area: 'Access: all countries and regions' }, pt: { name: 'Portugal fire coordinator', area: 'Access: Portugal only' }, ca: { name: 'California fire coordinator', area: 'Access: California only' }, nv: { name: 'Nevada fire coordinator', area: 'Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
+      signOut: () => { try { window.localStorage.removeItem('wf-role'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
+      backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
       scOp: 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? '0px' : 'calc(100% - 68px)', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
       scopeStr: scOpen ? 'true' : 'false', scopeRot: scOpen ? '180deg' : '0deg',
       scopeAria: 'Area: ' + scope.title + ', ' + scope.parent + '. Change area',
