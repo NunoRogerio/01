@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=10"></script>
+<script src="live.js?v=11"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -79,11 +79,19 @@ body{margin:0}
       <sc-if value="{{isSpread}}" hint-placeholder-val="{{ false }}">
         <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3 6" vector-effect="non-scaling-stroke"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.2s" repeatCount="indefinite"></animate></path>
         <path d="{{route}}" fill="none" stroke="#0079A6" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 7" vector-effect="non-scaling-stroke" style="opacity: {{routeOp}}"><animate attributeName="stroke-dashoffset" values="18;0" dur="0.9s" repeatCount="indefinite"></animate></path>
+        <sc-if value="{{fakeSpread}}" hint-placeholder-val="{{ true }}">
         <g transform="translate({{fdx}} {{fdy}})">
         <ellipse cx="540" cy="340" rx="112" ry="52" transform="rotate(-35 540 340)" fill="#E86A00" fill-opacity="{{r3.fill}}" stroke="#E86A00" stroke-opacity="{{r3.stroke}}" stroke-width="{{r3.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
         <ellipse cx="576" cy="314" rx="62" ry="30" transform="rotate(-35 576 314)" fill="#E86A00" fill-opacity="{{r2.fill}}" stroke="#E86A00" stroke-opacity="{{r2.stroke}}" stroke-width="{{r2.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
         <ellipse cx="598" cy="298" rx="26" ry="14" transform="rotate(-35 598 298)" fill="#E86A00" fill-opacity="{{r1.fill}}" stroke="#E86A00" stroke-opacity="{{r1.stroke}}" stroke-width="{{r1.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
         </g>
+        </sc-if>
+        <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
+          <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.55" stroke-width="1.2" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"></path>
+          <path d="{{mNow}}" fill="#FF3B30" fill-opacity="0.24" stroke="#8E0A12" stroke-opacity="0.7" stroke-width="1.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+          <path d="{{mHeld}}" fill="none" stroke="#1E7A34" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+          <path d="{{mActive}}" fill="none" stroke="#FF6A00" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+        </sc-if>
       </sc-if>
       <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
         <sc-for list="{{camLines}}" as="ln" hint-placeholder-count="3">
@@ -661,7 +669,7 @@ class Component extends DCLogic {
   }
   // Map legend: which layers are shown (shared by every map while the app is open).
   layers() {
-    const d = { fires: true, cands: true, stations: true };
+    const d = { fires: true, cands: true, stations: true, burn: true, active: true, held: true };
     let v = window.__wfLayers;
     if (!v) { try { v = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
     return Object.assign(d, v || {});
@@ -674,6 +682,9 @@ class Component extends DCLogic {
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
+      ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(255,59,48,0.45)', '#8E0A12'],
+      ['active', 'Active edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#FF6A00'],
+      ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
       ['cands', 'Ignition candidates', 'M7 3a4 4 0 1 1 0 8a4 4 0 1 1 0-8Z', '#E86A00', '#FFFFFF'],
       ['stations', 'Fire stations', 'M7 1.6 12.9 12.2H1.1Z', '#248A3D', '#FFFFFF']
@@ -757,7 +768,17 @@ class Component extends DCLogic {
       ? [[652, 336, '8%'], [556, 250, '9%'], [226, 884, '14%'], [452, 452, '21%'], [820, 520, '24%']].map(([x, y, label]) => withTip(at(x, y, { label }), 'Fuel moisture ' + label, 'Ground sensor reading of dead brush moisture. Below 10% ignites easily.')).filter(onScreen) : [];
     const winds = on(p.wind) && isRisk
       ? [[150, 150], [400, 120], [850, 120], [300, 420], [760, 440], [120, 680], [620, 820], [880, 860], [520, 560], [900, 470]].map(([x, y], i) => withTip(at(x, y, { delay: '-' + ((i * 0.83) % 2.6).toFixed(2) + 's' }), 'Wind · NE 21 mph', 'Santa Ana gusts to 38 mph. Arrows show where the wind pushes a fire: south-west, downhill.')).filter(onScreen) : [];
-    const hz = Number(p.horizon) || 2;
+    const hz = (p.horizon === 0 || p.horizon === '0') ? 0 : (Number(p.horizon) || 2);
+    // Fire model output (live fires, fire screen): real "now" perimeter, predicted perimeter, active and held edges.
+    const MD = (window.__wfLiveMap && mode === 'spread' && p.fireId) ? (window.__wfModels || {})[p.fireId] : null;
+    const mdl = MD && MD.done && !MD.failed && MD.snaps && MD.snaps[0] ? MD : null;
+    const Pf = (la, lo) => ((lo + 118.13) * 2345 + 518).toFixed(2) + ' ' + ((34.19 - la) * 2829 + 662).toFixed(2);
+    const snapH = mdl ? (mdl.snaps[hz] || mdl.snaps[0]) : null;
+    const ringPath = (r) => 'M' + r.map((q) => Pf(q[0], q[1])).join('L') + 'Z';
+    const edges = (sn, held) => { let d = ''; const r = sn.ring, n = r.length; for (let i = 0; i < n; i++) { const j = (i + 1) % n; if (!!sn.done[i] === held && !!sn.done[j] === held) d += 'M' + Pf(r[i][0], r[i][1]) + 'L' + Pf(r[j][0], r[j][1]); } return d; };
+    const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 ? ringPath(snapH.ring) : '',
+      mActive: LY.active ? edges(snapH, false) : '', mHeld: LY.held ? edges(snapH, true) : '' } : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '' };
+
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     return {
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
@@ -860,7 +881,9 @@ class Component extends DCLogic {
       fire2: withTip(at(842, 252), 'Possible holdover fire IC-0924-08', '54% likelihood. Lightning struck here at 11:40 AM.\nTap to review.'),
       zones: [],
       fdx: (Number(p.fireX) || 610) - 610, fdy: (Number(p.fireY) || 290) - 290,
-      rings: mode === 'spread' ? [[577, 313, 1, '7 acres by 3:40 PM'], [525, 350, 2, '30 acres by 4:40 PM'], [448, 404, 3, '77 acres by 5:40 PM']].map(([x, y, h, d]) => withTip(at(x + (Number(p.fireX) || 610) - 610, y + (Number(p.fireY) || 290) - 290, { label: '+' + h + 'h', bd: h === hz ? 'rgba(232,106,0,0.8)' : 'rgba(60,60,67,0.154)', fg: h === hz ? '#C25700' : '#3C3C43' }), 'Projected fire edge in ' + h + ' h', d + ' if unattended, pushed south-west by the Santa Ana wind.')).filter(onScreen) : [], showFire: true, route, routeOp: (isRisk || (Array.isArray(p.units) && p.units.length)) ? 0 : 1, radius: Number(p.radius ?? 20), attrBottom: Number(p.attrBottom ?? 10),
+      rings: (mdl && LY.burn) ? [(() => { const r = snapH.ring; let top = r[0]; r.forEach((q) => { if (q[0] > top[0]) top = q; }); const xy = this.geo().P(top[0], top[1]);
+        return withTip(at(xy[0], xy[1], { label: (hz ? '+' + hz + 'h · ~' : 'Now · ') + snapH.ha.toLocaleString() + ' ha', bd: 'rgba(232,106,0,0.8)', fg: '#C25700' }), hz ? 'Model estimate in ' + hz + ' h' : 'Burned area now',
+          (hz ? snapH.active + '% of the edge still active. ' : '') + mdl.src + '.'); })()].filter(onScreen) : mode === 'spread' && !window.__wfLiveMap ? [[577, 313, 1, '7 acres by 3:40 PM'], [525, 350, 2, '30 acres by 4:40 PM'], [448, 404, 3, '77 acres by 5:40 PM']].map(([x, y, h, d]) => withTip(at(x + (Number(p.fireX) || 610) - 610, y + (Number(p.fireY) || 290) - 290, { label: '+' + h + 'h', bd: h === hz ? 'rgba(232,106,0,0.8)' : 'rgba(60,60,67,0.154)', fg: h === hz ? '#C25700' : '#3C3C43' }), 'Projected fire edge in ' + h + ' h', d + ' if unattended, pushed south-west by the Santa Ana wind.')).filter(onScreen) : [], showFire: true, route, routeOp: (isRisk || (Array.isArray(p.units) && p.units.length)) ? 0 : 1, radius: Number(p.radius ?? 20), attrBottom: Number(p.attrBottom ?? 10),
       ...(() => {
         const U = Array.isArray(p.units) ? p.units : [];
         if (!U.length) return { unitMarks: [], unitRoutes: '' };
@@ -891,11 +914,12 @@ class Component extends DCLogic {
         return withTip({ ...anc, ...zone, aria: 'Active fire ' + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, 'Active fire · ' + g.id, g.place + '. ' + (g.note || '') + '.\nTap to see forces dispatched.');
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
+      ...modelVals,
       burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => this.fireBurn(g)) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
-        const has = { fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(stKey && ((window.__wfStations || {})[stKey] || []).length) };
+        const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(stKey && ((window.__wfStations || {})[stKey] || []).length) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
-        return { legend, legOn: legend.length > 0, legTop: Math.round(this.win().t + 8), legTopC: Math.round(this.win().t + 14),
+        return { legend, legOn: legend.length > 0, legTop: Math.round(this.win().t + 8 + (Number(p.legendOffset) || 0)), legTopC: Math.round(this.win().t + 14 + (Number(p.legendOffset) || 0)),
           optOpen, optStr: optOpen ? 'true' : 'false', optIcon: optOpen ? 'm6 15 6-6 6 6' : 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', optLabel: optOpen ? 'Collapse map controls' : 'Map controls',
           optToggle: () => { window.__wfCtrlOpen = !window.__wfCtrlOpen; this.forceUpdate(); } }; })(),
       linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)),
