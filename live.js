@@ -2,6 +2,7 @@
 //  - US: NIFC WFIGS current wildland fire incidents (10 western states in the app)
 //  - Portugal: Fogos.pt (relays ANEPC / Proteção Civil occurrences); districts act as "counties"
 // Replaces the design's sample fires; ignition candidates stay as sample data.
+window.__wfLiveMap = true;   // tells the map to use live web-map tiles
 (function(){
   var US_URL='https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Incident_Locations_Current/FeatureServer/0/query';
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
