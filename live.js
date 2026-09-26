@@ -8,7 +8,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v2', TTL=5*60*1000;
+  var KEY='wf-live-fires-v3', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -33,7 +33,9 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   function buildPT(js){
     var out=[];
     (js&&js.data||[]).forEach(function(i){
-      var nat=plain(i.natureza);if(nat.indexOf('incendio')<0)return;   // fires only (rural, mato, florestal, agrícola…)
+      var nat=plain(i.natureza),code=String(i.naturezaCode||'');
+      var isFire=i.isFire===true||(i.icnf&&i.icnf.incendio===true)||code.indexOf('31')===0||nat.indexOf('incendio')>=0;
+      if(!isFire)return;   // fires only: Fogos.pt labels them Mato / Povoamento Florestal / Agrícola (codes 31xx)
       var lat=parseFloat(i.lat),lng=parseFloat(i.lng);if(!isFinite(lat)||!isFinite(lng))return;
       var d=DIST[plain(i.district)]||title(i.district);
       var man=parseInt(i.man,10)||0,air=parseInt(i.aerial,10)||0;
