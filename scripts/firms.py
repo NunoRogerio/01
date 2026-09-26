@@ -93,8 +93,12 @@ def main():
     # A country's box leaves out far-away territories (overseas departments, remote islands).
     B = lambda g: [round(v, 3) for v in (g.bounds[0], g.bounds[1], g.bounds[2], g.bounds[3])]
     def main_box(gs):
-        big = max(gs, key=lambda g: g.area); c0 = big.centroid
-        near = [g for g in gs if abs(g.centroid.x - c0.x) < 25 and abs(g.centroid.y - c0.y) < 18] or [big]
+        # frame where most of the country's regions are: the region with the most neighbours
+        # (centroids within 25° lon / 18° lat) and those neighbours; skip shapes crossing the date line
+        ok = [g for g in gs if g.bounds[2] - g.bounds[0] < 180] or gs
+        cs = [(g.centroid.x, g.centroid.y) for g in ok]
+        near_of = lambda c: [g for g, (x, y) in zip(ok, cs) if abs(x - c[0]) < 25 and abs(y - c[1]) < 18]
+        near = max((near_of(c) for c in cs), key=lambda n: (len(n), sum(g.area for g in n)))
         return [round(min(g.bounds[0] for g in near), 3), round(min(g.bounds[1] for g in near), 3),
                 round(max(g.bounds[2] for g in near), 3), round(max(g.bounds[3] for g in near), 3)]
     states = []
