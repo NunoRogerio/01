@@ -107,14 +107,14 @@ class Component extends DCLogic {
     // Demo personas: senior operational deciders, with each country's real command title.
     // [id, initials, username, name, title, organisation, area, summary]
     const P = [
-      ['admin', 'AM', 'alex.morgan', 'Alex Morgan', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
-        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.'],
       ['pt', 'RC', 'rita.cardoso', 'Rita Cardoso', 'Comandante Nacional de Emergência e Proteção Civil', 'ANEPC · Comando Nacional', '20 districts',
         'Leads the national wildfire command. Sets the national alert level, moves reinforcement groups and aerial means between districts, and decides when a fire goes to national command.'],
       ['ca', 'MR', 'marcus.reyes', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', '58 counties',
         'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.'],
       ['nv', 'DW', 'dana.whitfield', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', '17 counties',
-        'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.']
+        'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.'],
+      ['admin', 'AM', 'alex.morgan', 'Alex Morgan', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
+        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.']
     ];
     const sel = P.find((p) => p[0] === s.sel) || null;
     const open = !!s.open;
