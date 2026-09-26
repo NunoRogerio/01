@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
+<script src="live.js"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -499,7 +500,7 @@ class Component extends DCLogic {
       const nSrc = srcs.length;
       return { st, co, id, place, conf, srcs, nSrc, src: nSrc > 1 ? nSrc + ' sources' : srcs[0].label, srcList: srcs.map((q) => q.label).join(' · '), agree: nSrc > 1 ? nSrc + ' sources agree' : '1 source', ago, x: x ?? a[0] + (i - 1) * 520, y: y ?? a[1] + (i - 1) * 380 };
     });
-    const fires = [
+    const fires = (window.__wfLiveFires || [
       ['CA', 'Los Angeles', 'F-0924-01', 'Sierra Madre Cyn', 'ST-7 crews on scene', 735, 455],
       ['CA', 'Los Angeles', 'F-0924-02', 'Tujunga Cyn', 'Contained 40%', 330, 420],
       ['CA', 'San Bernardino', 'F-CA-11', 'Cajon Summit', 'Contained 65%'], ['CA', 'Riverside', 'F-CA-12', 'Lake Mathews', 'Crews on scene'],
@@ -510,7 +511,7 @@ class Component extends DCLogic {
       ['NV', 'Washoe', 'F-NV-02', 'Pyramid Hwy', 'Contained 70%'],
       ['WA', 'Chelan', 'F-WA-05', 'Wenatchee Hts', 'Crews on scene'], ['WA', 'Okanogan', 'F-WA-06', 'Twisp', 'Contained 25%'],
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
-    ].map(([st, co, id, place, note, x, y]) => { const a = anchor(st, co); return { st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
+    ].slice()).map(([st, co, id, place, note, x, y]) => { const a = anchor(st, co); return { st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.map(([id, name, n, cs]) => ({ id, name, n, counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
