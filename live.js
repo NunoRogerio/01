@@ -10,7 +10,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v5', TTL=5*60*1000;
+  var KEY='wf-live-fires-v6', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -60,39 +60,50 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       return [p[0],p[1],id,place,p[4],'sat:'+p[5],ago(Date.parse(p[6])),xy[0],xy[1]];
     });
   }
-  function save(){
-    try{localStorage.setItem(KEY,JSON.stringify({t:Date.now(),rows:window.__wfLiveFires||null,cands:window.__wfLiveCands||null,geo:window.__wfGeoStates||null}));}catch(e){}
+  // One cache, with its own timestamp per source (US fires, Portugal fires, satellite), so a source that
+  // loads fast can never mark a slower one as fresh.
+  function readCache(){try{return JSON.parse(localStorage.getItem(KEY)||'null')||{};}catch(e){return {};}}
+  function save(stamp){
+    var c=readCache();c[stamp]=Date.now();
+    c.rows=window.__wfLiveFires||null;c.cands=window.__wfLiveCands||null;c.geo=window.__wfGeoStates||null;
+    try{localStorage.setItem(KEY,JSON.stringify(c));}catch(e){}
     window.__wfWorld=null;
     try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
   }
-  function publish(rows){window.__wfLiveFires=rows;save();}
+  // Replace one source's fires (Portugal or US) and keep the other's.
+  function publishPart(isPT,rows){
+    var other=(window.__wfLiveFires||[]).filter(function(r){return (r[0]==='PT')!==isPT;});
+    var mine=rows.sort(function(a,b){return b.w-a.w;}).map(function(x){return x.r;});
+    window.__wfLiveFires=isPT?other.concat(mine):mine.concat(other);
+    save(isPT?'tPT':'tUS');
+  }
 
-  try{var c=JSON.parse(localStorage.getItem(KEY)||'null');
-    if(c&&c.rows)window.__wfLiveFires=c.rows;if(c&&c.cands)window.__wfLiveCands=c.cands;if(c&&c.geo)window.__wfGeoStates=c.geo;
-    if(c&&Date.now()-c.t<TTL)return;}catch(e){}
+  var c=readCache(),now=Date.now();
+  if(c.rows)window.__wfLiveFires=c.rows;if(c.cands)window.__wfLiveCands=c.cands;if(c.geo)window.__wfGeoStates=c.geo;
+  var fresh=function(k){return c[k]&&now-c[k]<TTL;};
+  var tick=Math.floor(now/60000);
+  var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
 
   // Satellite hotspots + regions (same site, written by the FIRMS GitHub Action). Missing files: keep sample candidates.
-  var tick=Math.floor(Date.now()/60000);
-  var jsonOk0=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
-  Promise.all([fetch('data/regions.json?t='+Math.floor(tick/1440)).then(jsonOk0).catch(function(){return null;}),
-               fetch('data/hotspots.json?t='+tick).then(jsonOk0).catch(function(){return null;})]).then(function(r){
+  if(!fresh('tSat'))Promise.all([fetch('data/regions.json?t='+Math.floor(tick/1440)).then(jsonOk).catch(function(){return null;}),
+               fetch('data/hotspots.json?t='+tick).then(jsonOk).catch(function(){return null;})]).then(function(r){
     if(r[0]){var g=buildGeo(r[0]);if(g.length)window.__wfGeoStates=g;}
     if(r[1]&&r[0]){window.__wfLiveCands=buildCands(r[1]);}
-    if(r[0]||r[1])save();
+    if(r[0]&&r[1])save('tSat');
   });
 
-  var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
-  var us=fetch(US_URL+'?'+q).then(function(r){return r.json();}).then(buildUS).catch(function(e){console.warn('[live fires] US feed failed',e);return null;});
-  var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
+  // US: NIFC. Failure keeps the previous US fires.
+  if(!fresh('tUS')){
+    var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
+    fetch(US_URL+'?'+q).then(jsonOk).then(buildUS).then(function(rows){publishPart(false,rows);})
+      .catch(function(e){console.warn('[live fires] US feed failed',e);});
+  }
   // Portugal: the site's own snapshot (refreshed by a GitHub Action every ~10 min), falling back to the live feed.
-  var pt=fetch('data/pt-fires.json?t='+Math.floor(Date.now()/60000)).then(jsonOk).then(function(js){if(!js||!(js.data||[]).length)throw new Error('empty');return js;})
-    .catch(function(){return fetch(PT_URL).then(jsonOk);})
-    .then(buildPT).catch(function(e){console.warn('[live fires] Portugal feed failed',e);return null;});
-  Promise.all([us,pt]).then(function(res){
-    if(!res[0]&&!res[1])return;   // both failed: keep cache / sample data
-    var prev=window.__wfLiveFires||[];
-    var keep=function(ok,isPT){return ok?[]:prev.filter(function(r){return (r[0]==='PT')===isPT;});};
-    var all=(res[0]||[]).concat(res[1]||[]).sort(function(a,b){return b.w-a.w;}).map(function(x){return x.r;});
-    publish(all.concat(keep(res[0],false),keep(res[1],true)));
-  });
+  // Failure keeps the previous Portugal fires.
+  if(!fresh('tPT')){
+    fetch('data/pt-fires.json?t='+tick).then(jsonOk).then(function(js){if(!js||!(js.data||[]).length)throw new Error('empty');return js;})
+      .catch(function(){return fetch(PT_URL).then(jsonOk);})
+      .then(buildPT).then(function(rows){publishPart(true,rows);})
+      .catch(function(e){console.warn('[live fires] Portugal feed failed',e);});
+  }
 })();
