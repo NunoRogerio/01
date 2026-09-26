@@ -547,7 +547,7 @@ class Component extends DCLogic {
     const s = Math.max(0.3, Math.min(z, (this.W() - 150) / Math.max(1, x1 - x0), (w.h - 110) / Math.max(1, y1 - y0)));
     return { x: Math.round((x0 + x1) / 2), y: Math.round((y0 + y1) / 2), s: +s.toFixed(4) };
   }
-  mapStyle() { let v = null; try { v = window.sessionStorage.getItem('wf-mapstyle'); } catch (e) {} v = v || (window.__wfMem || {}).mapStyle; return ['standard', 'topo'].indexOf(v) >= 0 ? v : 'standard'; }
+  mapStyle() { let v = null; try { v = window.sessionStorage.getItem('wf-mapstyle'); } catch (e) {} v = v || (window.__wfMem || {}).mapStyle; return ['standard', 'vector'].indexOf(v) >= 0 ? v : 'standard'; }
   setMapStyle(k) { window.__wfMem = Object.assign(window.__wfMem || {}, { mapStyle: k }); try { window.sessionStorage.setItem('wf-mapstyle', k); } catch (e) {} this.setState({ msv: Date.now(), msOpen: false }); try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   W() { return Number(this.props.w) || 366; }
   H() { return Number(this.props.h) || 380; }
@@ -709,20 +709,19 @@ class Component extends DCLogic {
       hasFull: typeof p.onFull === 'function',
       ...(() => {
         const st = this.mapStyle(), open = !!(this.state || {}).msOpen;
+        // 'standard' = live OpenStreetMap street map (default); 'vector' = the design's own drawn map.
+        const VEC = { bg: '#E3EEDF', sel: '#E3EEDF', img: false, reg: '', loc: '', forestOp: 0.6, ocean: '#A3D6F3', lakes: '#A3D6F3', county: 'rgba(120,130,120,0.55)', state: '#7D8490', coast: '#8CC7EA', roads: '#A9B9DA', roadCase: '#FFFFFF', mask: '#FFFFFF', maskOp: 0.4 };
         const PAL = {
-          standard: { name: 'Standard map', bg: '#E3EEDF', sel: '#E3EEDF', img: !!window.__wfLiveMap, reg: '', loc: '', forestOp: 0.6, ocean: '#A3D6F3', lakes: '#A3D6F3', county: 'rgba(120,130,120,0.55)', state: '#7D8490', coast: '#8CC7EA', roads: '#A9B9DA', roadCase: '#FFFFFF', mask: '#FFFFFF', maskOp: 0.4 },
-          topo: { name: 'Topographic', bg: '#F4F1E6', sel: '#F4F1E6', img: !!window.__wfLiveMap, reg: '', loc: '', forestOp: 0.6, ocean: '#C2DEF1', lakes: '#B6D7EE', county: 'rgba(120,100,70,0.5)', state: '#7E6A55', coast: '#6FA6CF', roads: '#E3A15B', roadCase: 'transparent', mask: '#FFFFFF', maskOp: 0.45 },
+          standard: window.__wfLiveMap
+            ? { ...VEC, name: 'Map © OpenStreetMap', img: true, bg: '#F2EFE9', sel: 'none', forestOp: 0, ocean: 'none', lakes: 'none', coast: 'none', roads: 'none', roadCase: 'none', maskOp: 0.35 }
+            : { ...VEC, name: 'Vector map · street map unavailable here' },
+          vector: { ...VEC, name: 'Vector map' },
         };
-        if (window.__wfLiveMap) {
-          // Standalone app: real web-map tiles underneath, so no painted sea, coast or roads on top.
-          Object.assign(PAL.standard, { name: 'Map © OpenStreetMap', bg: '#F2EFE9', sel: 'none', reg: '', loc: '', forestOp: 0, ocean: 'none', lakes: 'none', coast: 'none', roads: 'none', roadCase: 'none', maskOp: 0.35 });
-          Object.assign(PAL.topo, { name: 'Topo © OpenTopoMap (CC-BY-SA)', sel: 'none', reg: '', loc: '', forestOp: 0, ocean: 'none', lakes: 'none', coast: 'none', roads: 'none', roadCase: 'none', maskOp: 0.35 });
-        }
-        const opts = [['standard', 'Standard'], ['topo', 'Topo']];
+        const opts = [['standard', 'Street'], ['vector', 'Vector']];
         const pl = PAL[st] || PAL.standard;
         const vx0 = -tx / s, vy0 = -ty / s, vx1 = (W - tx) / s, vy1 = (H - ty) / s;
         const tiles = [];
-        if (window.__wfLiveMap) {
+        if (window.__wfLiveMap && st === 'standard') {
           const lonOf = (x) => (x - 518) / 2345 - 118.13, latOf = (y) => 34.19 - (y - 662) / 2829;
           const X = (lon) => (lon + 118.13) * 2345 + 518, Y = (lat) => (34.19 - lat) * 2829 + 662;
           const lat0 = Math.max(-85, Math.min(85, latOf(vy1))), lat1 = Math.max(-85, Math.min(85, latOf(vy0)));
@@ -734,9 +733,7 @@ class Component extends DCLogic {
           const lonT = (x) => x / n * 360 - 180;
           const latT = (y) => { const m = Math.PI - 2 * Math.PI * y / n; return 180 / Math.PI * Math.atan(0.5 * (Math.exp(m) - Math.exp(-m))); };
           const x0 = tX(lonOf(vx0)), x1 = tX(lonOf(vx1)), y0 = tY(lat1), y1 = tY(lat0);
-          const url = st === 'topo'
-            ? (x, y) => 'https://' + 'abc'[(x + y) % 3] + '.tile.opentopomap.org/' + z + '/' + x + '/' + y + '.png'
-            : (x, y) => 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
+          const url = (x, y) => 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
           if ((x1 - x0 + 1) * (y1 - y0 + 1) <= 120) {
             for (let ty2 = Math.max(0, y0); ty2 <= Math.min(n - 1, y1); ty2++) {
               for (let tx2 = x0; tx2 <= x1; tx2++) {
@@ -750,10 +747,10 @@ class Component extends DCLogic {
         return {
           tiles,
           pal: pl,
-          ms: { pressed: st === 'topo' ? 'true' : 'false', name: (PAL[st] || PAL.standard).name,
-            icon: st === 'topo' ? 'M3 18c3-2.5 6-2.5 9 0s6 2.5 9 0M5 13c2-2.8 4.4-4 7-4s5 1.2 7 4M8.5 8c1-1.3 2.2-2 3.5-2s2.5.7 3.5 2' : 'M12 3 2 8l10 5 10-5-10-5ZM2 12.5l10 5 10-5M2 17l10 5 10-5',
-            aria: st === 'topo' ? 'Topographic map on. Switch to the standard map' : 'Standard map. Switch to the topographic map',
-            toggle: () => this.setMapStyle(st === 'topo' ? 'standard' : 'topo') }
+          ms: { pressed: st === 'vector' ? 'true' : 'false', name: (PAL[st] || PAL.standard).name,
+            icon: st === 'vector' ? 'M12 3 2 8l10 5 10-5-10-5ZM2 12.5l10 5 10-5M2 17l10 5 10-5' : 'M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20ZM9 4v13.5M15 6.5V20',
+            aria: st === 'vector' ? 'Vector map on. Switch to the street map' : 'Street map. Switch to the vector map',
+            toggle: () => this.setMapStyle(st === 'vector' ? 'standard' : 'vector') }
         };
       })(),
       fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
@@ -789,10 +786,10 @@ class Component extends DCLogic {
             const cityOn = s >= (p.scopeCo ? 0.02 : 0.05) && !(near && laScope);
             const cities = cityOn ? G.cities.filter((c) => inScope(c) && (p.scopeCo || !c.lm || s >= 0.08)).sort((a, b) => (a.lm ? 1 : 0) - (b.lm ? 1 : 0)).map((c) => at(c.xy[0], c.xy[1], { label: c.name, size: c.lm ? 11 : 12, weight: c.lm ? 500 : 600, style: c.lm ? 'italic' : 'normal', fg: c.lm ? '#2E7D32' : '#1C1C1E', dot: c.lm ? 0 : 5 })).filter((o) => keep(o, o.label.length * (o.size * 0.58) + 12, 16, -3)) : [];
             const counties = (s >= 0.012 && s < 0.3 && p.scopeSt && !p.scopeCo) ? Object.values(G.counties).filter((c) => c.st === p.scopeSt).map((c) => at(c.c[0], c.c[1], { label: c.name, fg: '#6C6C70', size: 11, weight: 600 })).filter((o) => { const w = o.label.length * 6.4; return keep({ left: o.left - w / 2, top: o.top }, w, 14, 0); }) : [];
-            return { countyLabels: counties, cityLabels: window.__wfLiveMap ? [] : cities };
+            return { countyLabels: counties, cityLabels: (window.__wfLiveMap && this.mapStyle() === 'standard') ? [] : cities };
           })(),
-          showSea: !window.__wfLiveMap, sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope && !window.__wfLiveMap) ? villages : [], stations: (near && laScope) ? stations : [], strikes: (near && laScope) ? strikes : [], sensors: (near && laScope) ? sensors : [], winds: (near && laScope) ? winds : []
+          showSea: !(window.__wfLiveMap && this.mapStyle() === 'standard'), sea: at(seaPt[0], seaPt[1]),
+          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: (near && laScope) ? stations : [], strikes: (near && laScope) ? strikes : [], sensors: (near && laScope) ? sensors : [], winds: (near && laScope) ? winds : []
         };
       })(),
       fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
