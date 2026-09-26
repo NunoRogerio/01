@@ -88,10 +88,10 @@ body{margin:0}
         </g>
         </sc-if>
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
-          <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.55" stroke-width="1.2" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"></path>
-          <path d="{{mNow}}" fill="#FF3B30" fill-opacity="0.24" stroke="#8E0A12" stroke-opacity="0.7" stroke-width="1.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-          <path d="{{mHeld}}" fill="none" stroke="#1E7A34" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-          <path d="{{mActive}}" fill="none" stroke="#FF6A00" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+          <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.7" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}"></path>
+          <path d="{{mNow}}" fill="#FF3B30" fill-opacity="0.28" stroke="#8E0A12" stroke-opacity="0.8" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
+          <path d="{{mHeld}}" fill="none" stroke="#1E7A34" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="{{mActive}}" fill="none" stroke="#FF6A00" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
         </sc-if>
       </sc-if>
       <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
@@ -709,7 +709,7 @@ class Component extends DCLogic {
     });
   }
   zMin() { return window.__wfLiveMap ? 0.0005 : Math.max(0.008, (this.base().s || 0.05) * 0.46); }
-  zMax() { return Math.max(1, this.base().s || 1); }
+  zMax() { return Math.max(window.__wfLiveMap ? 24 : 1, this.base().s || 1); }
   setView(cx, cy, s) {
     this.setState(this.clampView(cx, cy, s));
   }
@@ -790,7 +790,9 @@ class Component extends DCLogic {
     const ringPath = (r) => 'M' + r.map((q) => Pf(q[0], q[1])).join('L') + 'Z';
     const edges = (sn, held) => { let d = ''; const r = sn.ring, n = r.length; for (let i = 0; i < n; i++) { const j = (i + 1) % n; if (!!sn.done[i] === held && !!sn.done[j] === held) d += 'M' + Pf(r[i][0], r[i][1]) + 'L' + Pf(r[j][0], r[j][1]); } return d; };
     const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 ? ringPath(snapH.ring) : '',
-      mActive: LY.active ? edges(snapH, false) : '', mHeld: LY.held ? edges(snapH, true) : '' } : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '' };
+      mActive: LY.active ? edges(snapH, false) : '', mHeld: LY.held ? edges(snapH, true) : '',
+      // strokes sit inside the CSS-scaled map layer, so size them in screen pixels by dividing by the zoom
+      mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } } : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '', mSw: { thin: 1, edge: 1, dash: '6 5' } };
 
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     const OUT = {
@@ -895,7 +897,8 @@ class Component extends DCLogic {
       zones: [],
       fdx: (Number(p.fireX) || 610) - 610, fdy: (Number(p.fireY) || 290) - 290,
       rings: (mdl && LY.burn) ? [(() => { const r = snapH.ring; let top = r[0]; r.forEach((q) => { if (q[0] > top[0]) top = q; }); const xy = this.geo().P(top[0], top[1]);
-        return withTip(at(xy[0], xy[1], { label: (hz ? '+' + hz + 'h · ~' : 'Now · ') + snapH.ha.toLocaleString() + ' ha', bd: 'rgba(232,106,0,0.8)', fg: '#C25700' }), hz ? 'Model estimate in ' + hz + ' h' : 'Burned area now',
+        const lo = at(xy[0], xy[1], { label: (hz ? '+' + hz + 'h · ~' : 'Now · ') + snapH.ha.toLocaleString() + ' ha', bd: 'rgba(232,106,0,0.8)', fg: '#C25700' }); lo.top = +(lo.top - 18).toFixed(1);
+        return withTip(lo, hz ? 'Model estimate in ' + hz + ' h' : 'Burned area now',
           (hz ? snapH.active + '% of the edge still active. ' : '') + mdl.src + '.'); })()].filter(onScreen) : mode === 'spread' && !window.__wfLiveMap ? [[577, 313, 1, '7 acres by 3:40 PM'], [525, 350, 2, '30 acres by 4:40 PM'], [448, 404, 3, '77 acres by 5:40 PM']].map(([x, y, h, d]) => withTip(at(x + (Number(p.fireX) || 610) - 610, y + (Number(p.fireY) || 290) - 290, { label: '+' + h + 'h', bd: h === hz ? 'rgba(232,106,0,0.8)' : 'rgba(60,60,67,0.154)', fg: h === hz ? '#C25700' : '#3C3C43' }), 'Projected fire edge in ' + h + ' h', d + ' if unattended, pushed south-west by the Santa Ana wind.')).filter(onScreen) : [], showFire: true, route, routeOp: (isRisk || (Array.isArray(p.units) && p.units.length)) ? 0 : 1, radius: Number(p.radius ?? 20), attrBottom: Number(p.attrBottom ?? 10),
       ...(() => {
         const U = Array.isArray(p.units) ? p.units : [];
