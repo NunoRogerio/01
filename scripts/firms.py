@@ -24,7 +24,8 @@ PT_NAMES = {'Azores': 'Açores'}
 SOURCES = ['VIIRS_NOAA20_NRT', 'VIIRS_SNPP_NRT', 'VIIRS_NOAA21_NRT']
 BOXES = ['-170,-60,-25,84', '-32,34,60,82']          # Americas, Europe (+ Turkey, European Russia)
 CELL = 0.03                                          # ~3 km: one candidate per cluster of detections
-MAX_POINTS = 4000
+PER_COUNTRY = 300                                    # strongest per country, so one burning season can't crowd out the rest
+MAX_POINTS = 6000
 
 
 def get(url, timeout=120):
@@ -143,7 +144,13 @@ def main():
         points.append([sid, region, round(c['lat'], 4), round(c['lon'], 4), score,
                        sat_name.get(str(c['sat']), 'VIIRS'), c['t'].strftime('%Y-%m-%dT%H:%MZ'), round(c['frp'], 1), c['n']])
     points.sort(key=lambda p: (-p[4], -p[7]))
-    points = points[:MAX_POINTS]
+    country = lambda sid: 'USA' if len(sid) == 2 and sid != 'PT' else sid
+    kept, per = [], {}
+    for p in points:
+        k = country(p[0]); per[k] = per.get(k, 0) + 1
+        if per[k] <= PER_COUNTRY:
+            kept.append(p)
+    points = kept[:MAX_POINTS]
     json.dump({'updated': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%MZ'), 'source': 'NASA FIRMS VIIRS NRT, last 24 h',
                'points': points}, open('data/hotspots.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     print(len(points), 'hotspots written', flush=True)
