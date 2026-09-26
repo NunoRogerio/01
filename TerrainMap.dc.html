@@ -155,7 +155,7 @@ body{margin:0}
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
     <span class="tipwrap" tabindex="0" style="position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvSt}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 11px; font-weight: 600; white-space: nowrap">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="{{t.fill}}" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
   </sc-for>
@@ -225,29 +225,43 @@ body{margin:0}
     </span>
   </sc-for>
 
-  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 50; right: 10px; top: {{ctrl.top}}; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
-    <div role="group" aria-label="Map type" style="display: flex; align-items: center; height: 40px; padding: 2px; box-sizing: border-box; border-radius: 12px; background: #F2F2F7; border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
-      <button type="button" class="mbtn" aria-label="{{ms.aria}}" aria-pressed="{{ms.pressed}}" onClick="{{ms.toggle}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 34px; border: 0; border-radius: 9px; background-color: transparent; color: #000000; cursor: pointer; flex-shrink: 0">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ms.icon}}"></path></svg>
+  <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
+  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{stop}}" style="position: absolute; z-index: 50; left: 10px; right: 62px; top: {{legTopC}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none">
+    <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
+      <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border: 0; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: {{lg.fg}}; font: inherit; font-size: 13px; line-height: 32px; white-space: nowrap; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0"><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="1.3" stroke-linejoin="round"></path></svg>{{lg.label}}
+      </button>
+    </sc-for>
+  </div>
+  </sc-if>
+  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: 10px; top: {{legTop}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
+    <button type="button" class="mbtn" aria-label="{{optLabel}}" aria-expanded="{{optStr}}" onClick="{{optToggle}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 14px; background: rgba(242,242,247,0.96); color: #000000; box-shadow: 0 4px 16px rgba(0,0,0,0.12); cursor: pointer">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{optIcon}}"></path></svg>
+    </button>
+    <sc-if value="{{optOpen}}" hint-placeholder-val="{{ false }}">
+    <div role="group" aria-label="Map type" style="display: flex; align-items: center; height: 48px; padding: 2px; box-sizing: border-box; border-radius: 14px; background: rgba(242,242,247,0.96); border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
+      <button type="button" class="mbtn" aria-label="{{ms.aria}}" aria-pressed="{{ms.pressed}}" onClick="{{ms.toggle}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 9px; background-color: transparent; color: #000000; cursor: pointer; flex-shrink: 0">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ms.icon}}"></path></svg>
       </button>
     </div>
-    <div role="group" aria-label="Map controls" style="display: flex; flex-direction: column; padding: 2px; gap: 0; border-radius: 12px; background: #F2F2F7; border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
-      <button type="button" class="mbtn" aria-label="Zoom in" onClick="{{zoomIn}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+    <div role="group" aria-label="Map controls" style="display: flex; flex-direction: column; padding: 2px; gap: 0; border-radius: 14px; background: rgba(242,242,247,0.96); border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
+      <button type="button" class="mbtn" aria-label="Zoom in" onClick="{{zoomIn}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
       </button>
-      <button type="button" class="mbtn" aria-label="Zoom out" onClick="{{zoomOut}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+      <button type="button" class="mbtn" aria-label="Zoom out" onClick="{{zoomOut}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
       </button>
-      <span style="height: 1px; margin: 2px 7px; background: rgba(60,60,67,0.14)"></span>
-      <button type="button" class="mbtn" aria-label="{{recenterLabel}}" onClick="{{recenter}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #007AFF; cursor: pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="2"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>
+      <span style="height: 1px; margin: 2px 9px; background: rgba(60,60,67,0.14)"></span>
+      <button type="button" class="mbtn" aria-label="{{recenterLabel}}" onClick="{{recenter}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background-color: transparent; color: #007AFF; cursor: pointer">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="2"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>
       </button>
       <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
-        <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
+        <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
         </button>
       </sc-if>
     </div>
+      </sc-if>
   </div>
 
   <span style="position: absolute; left: 12px; bottom: {{attrB}}px; font-size: 11px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
@@ -645,6 +659,31 @@ class Component extends DCLogic {
     }
     return key;
   }
+  // Map legend: which layers are shown (shared by every map while the app is open).
+  layers() {
+    const d = { fires: true, cands: true, stations: true };
+    let v = window.__wfLayers;
+    if (!v) { try { v = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
+    return Object.assign(d, v || {});
+  }
+  toggleLayer(k) {
+    const v = this.layers(); v[k] = !v[k]; window.__wfLayers = v;
+    try { window.sessionStorage.setItem('wf-layers', JSON.stringify(v)); } catch (e) {}
+    this.forceUpdate();
+  }
+  legendItems(has) {
+    const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
+    const all = [
+      ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
+      ['cands', 'Ignition candidates', 'M7 3a4 4 0 1 1 0 8a4 4 0 1 1 0-8Z', '#E86A00', '#FFFFFF'],
+      ['stations', 'Fire stations', 'M7 1.6 12.9 12.2H1.1Z', '#248A3D', '#FFFFFF']
+    ];
+    return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
+      const on = LY[k];
+      return { label, d, fill: on ? fill : 'none', stroke: on ? stroke : '#8E8E93', fg: on ? '#000000' : '#8E8E93', pressed: on ? 'true' : 'false',
+        aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
+    });
+  }
   zMin() { return window.__wfLiveMap ? 0.0005 : Math.max(0.008, (this.base().s || 0.05) * 0.46); }
   zMax() { return Math.max(1, this.base().s || 1); }
   setView(cx, cy, s) {
@@ -659,6 +698,7 @@ class Component extends DCLogic {
     this.setView(mx - (lx - W / 2) / s2, my - (ly - H / 2) / s2, s2);
   }
   renderVals() {
+    const LY = this.layers();
     { const sk = (this.props.scopeSt || '') + '|' + (this.props.scopeCo || ''); if (this._sk !== undefined && this._sk !== sk) this.state = Object.assign({}, this.state || {}, { selId: '__none', fireHover: false }); this._sk = sk; }
     if (this.props.hideTips !== this._ht) { const first = this._ht === undefined; this._ht = this.props.hideTips; if (this.props.hideTips && (!first || true)) { this.state = Object.assign({}, this.state || {}, { selId: '__none', fireHover: false, msOpen: false }); } }
     this.init();
@@ -697,16 +737,16 @@ class Component extends DCLogic {
     const stations = ST.map(([id, code, x, y, busy, nm, avail]) => {
       const on = !isRisk && id === selId;
       const o = at(x, y - 10, {
-        label: on && p.stationLabel ? p.stationLabel : code, icon: house,
+        label: on && p.stationLabel ? p.stationLabel : code, icon: 'M12 3.2 21.6 20H2.4Z', fill: on ? '#FFFFFF' : '#248A3D',
         bg: on ? 'rgba(0,113,227,0.95)' : 'rgba(255,255,255,0.78)',
         bd: on ? 'rgba(120,180,255,0.9)' : 'rgba(60,60,67,0.132)',
-        fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#0079A6',
+        fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#248A3D',
         op: (!isRisk && busy) ? 0.5 : 1
       });
       return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch; dotted line shows the route.' : '.'));
     }).filter((o) => !isPin).filter(onScreen);
     const osmKey = window.__wfLiveMap ? this.osmStations() : null;
-    const osmStations = osmKey ? ((window.__wfStations || {})[osmKey] || []).map(([id, nm, la, lo]) => { const xy = this.geo().P(la, lo); return withTip(at(xy[0], xy[1] - 10, { label: '', icon: house, bg: 'rgba(255,255,255,0.86)', bd: 'rgba(60,60,67,0.16)', fg: '#F2F2F7', ic: '#C2372E', op: 1 }), 'Fire station' + (nm ? ' · ' + nm : ''), 'Location from OpenStreetMap. Crew availability is not published.'); }).filter(onScreen) : [];
+    const osmStations = osmKey ? ((window.__wfStations || {})[osmKey] || []).map(([id, nm, la, lo]) => { const xy = this.geo().P(la, lo); return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M12 3.2 21.6 20H2.4Z', fill: '#248A3D', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1 }), 'Fire station' + (nm ? ' · ' + nm : ''), 'Location from OpenStreetMap. Crew availability is not published.'); }).filter(onScreen) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
     const FX = Number(p.fireX) || 610, FY = Number(p.fireY) || 290;
     const qx = (selSt[2] + FX) / 2 + (selSt[3] - FY) * 0.18, qy = (selSt[3] + FY) / 2 - (selSt[2] - FX) * 0.18;
@@ -813,7 +853,7 @@ class Component extends DCLogic {
             return { countyLabels: counties, cityLabels: (window.__wfLiveMap && this.mapStyle() === 'standard') ? [] : cities };
           })(),
           showSea: !(window.__wfLiveMap && this.mapStyle() === 'standard'), sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: window.__wfLiveMap ? (s >= 0.012 ? osmStations : []) : ((near && laScope) ? stations : []), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
+          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: !LY.stations ? [] : window.__wfLiveMap ? (s >= 0.012 ? osmStations : []) : ((near && laScope) ? stations : []), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
         };
       })(),
       fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
@@ -839,8 +879,8 @@ class Component extends DCLogic {
           })
         };
       })(),
-      otherMarks: (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId).map((g) => withTip(at(g.x, g.y, { c: g.conf >= 70 ? '#E86A00' : (g.conf >= 50 ? '#B37A00' : '#6C6C70'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
-      fireMarks: ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => {
+      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId).map((g) => withTip(at(g.x, g.y, { c: g.conf >= 70 ? '#E86A00' : (g.conf >= 50 ? '#B37A00' : '#6C6C70'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
+      fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
         const small = x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
@@ -851,10 +891,16 @@ class Component extends DCLogic {
         return withTip({ ...anc, ...zone, aria: 'Active fire ' + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, 'Active fire · ' + g.id, g.place + '. ' + (g.note || '') + '.\nTap to see forces dispatched.');
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
-      burns: ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => this.fireBurn(g)) : [],
+      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => this.fireBurn(g)) : [],
+      ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
+        const has = { fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(stKey && ((window.__wfStations || {})[stKey] || []).length) };
+        const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
+        return { legend, legOn: legend.length > 0, legTop: Math.round(this.win().t + 8), legTopC: Math.round(this.win().t + 14),
+          optOpen, optStr: optOpen ? 'true' : 'false', optIcon: optOpen ? 'm6 15 6-6 6 6' : 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', optLabel: optOpen ? 'Collapse map controls' : 'Map controls',
+          optToggle: () => { window.__wfCtrlOpen = !window.__wfCtrlOpen; this.forceUpdate(); } }; })(),
       linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)),
       recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
-      ignMarks: (isRisk && on(p.linkCandidate)) ? ((list) => list.map((g, gi) => {
+      ignMarks: LY.cands && (isRisk && on(p.linkCandidate)) ? ((list) => list.map((g, gi) => {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
         const sel = g.id === selId;
         const hi = g.conf >= 70, mid = g.conf >= 50;

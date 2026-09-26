@@ -563,6 +563,34 @@ class Component extends DCLogic {
   wfUnits() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ temp: 'F', area: 'ac' }, v || {}); }
   wfToggleUnit(k) { const u = this.wfUnits(); if (k === 'temp') u.temp = u.temp === 'F' ? 'C' : 'F'; else u.area = u.area === 'ac' ? 'ha' : 'ac'; window.__wfMem = Object.assign(window.__wfMem || {}, { units: u }); try { window.sessionStorage.setItem('wf-units', JSON.stringify(u)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} this.forceUpdate(); }
   wfSetFocus(id) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: id }); try { window.sessionStorage.setItem('wf-focus', id); } catch (e) {} }
+  // Real fire stations nearest to a live fire (OpenStreetMap via Overpass), with real distances and estimated drive times.
+  wfNearRows(fv, FIRE, US) {
+    const none = { rows: [], du: ' mi' };
+    if (!window.__wfLiveMap || !fv) return none;
+    const lat = 34.19 - (FIRE[1] - 662) / 2829, lon = (FIRE[0] - 518) / 2345 - 118.13;
+    const key = lat.toFixed(2) + ',' + lon.toFixed(2);
+    const S = window.__wfNear || (window.__wfNear = {}), F = window.__wfNearF || (window.__wfNearF = {});
+    if (!S[key] && !F[key]) {
+      F[key] = true;
+      const c = lat.toFixed(4) + ',' + lon.toFixed(4);
+      const q = '[out:json][timeout:25];(node["amenity"="fire_station"](around:40000,' + c + ');way["amenity"="fire_station"](around:40000,' + c + '););out center 200;';
+      fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(q)).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((js) => {
+        const rad = Math.PI / 180;
+        S[key] = (js.elements || []).map((e) => {
+          const la = e.lat ?? (e.center || {}).lat, lo = e.lon ?? (e.center || {}).lon; if (la == null) return null;
+          const a = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((lo - lon) * rad / 2) ** 2;
+          return { osm: e.id, name: (e.tags || {}).name || 'Fire station', la, lo, km: 12742 * Math.asin(Math.sqrt(a)) };
+        }).filter(Boolean).sort((a, b) => a.km - b.km).slice(0, 8);
+        try { this.forceUpdate(); } catch (e) {}
+      }).catch(() => { setTimeout(() => { F[key] = false; }, 60000); });
+    }
+    const L = S[key] || [];
+    const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
+    return { du: US ? ' mi' : ' km', rows: L.map((q, i) => {
+      const xy = P(q.la, q.lo), drive = Math.max(1, Math.round(q.km * 1.35 / 50 * 60));   // road ≈ 1.35 × straight line, 50 km/h average
+      return { id: 'osm' + q.osm, code: 'S' + (i + 1), name: q.name, x: xy[0], y: xy[1], km: +(US ? q.km * 0.621 : q.km).toFixed(1), free: null, total: null, t: [2, drive, 5], real: true };
+    }) };
+  }
   renderVals() {
     const s = this.state || {};
     const hz = s.hz || 2;
@@ -572,7 +600,8 @@ class Component extends DCLogic {
     const fv = s.fv || null;
     const FIRE = fv ? [fv.x, fv.y] : [610, 290];
     const fireId = fv ? fv.id : 'F-0924-03';
-    const fres = fv ? ((this.wfWorld().fires.find((f) => f.id === fv.id) || {}).res || null) : null;
+    const frow = fv ? (this.wfWorld().fires.find((f) => f.id === fv.id) || null) : null;
+    const fres = frow ? (frow.res || null) : null;
     const resView = fres ? (() => {
       const OPT = { Boats: 1, 'Management teams': 1, 'Structure protection': 1 };
       const items = [['Personnel', fres.man], ['Crews', fres.crews], ['Ground vehicles', fres.terrain], ['Heavy equipment', fres.heavy], ['Aircraft', fres.aerial], ['Boats', fres.water], ['Management teams', fres.imt], ['Structure protection', fres.structure]]
@@ -595,32 +624,34 @@ class Component extends DCLogic {
     const activeAria = 'Active for ' + actD + ' day' + (actD === 1 ? '' : 's') + ', ' + actH + ' hour' + (actH === 1 ? '' : 's') + ' and ' + actMm + ' minute' + (actMm === 1 ? '' : 's');
     const SH = [FIRE[0] - 610, FIRE[1] - 290];
     const far = Math.hypot(SH[0], SH[1]) > 1500;
-    const data = [
+    const NEAR = this.wfNearRows(fv, FIRE, !!(frow && /^[A-Z]{2}$/.test(frow.st) && frow.st !== 'PT'));
+    const DU = NEAR.du;
+    const data = (NEAR.rows.length ? NEAR.rows : [
       { id: 'st7', code: 'ST-7', name: 'Sierra Madre', x: 674, y: 566, km: 2.5, free: 0, total: 3, t: null, busy: 'All crews on F-0924-01' },
       { id: 'st5', code: 'ST-5', name: 'Altadena', x: 518, y: 662, km: 3.7, free: 3, total: 4, t: [2, 9, 5] },
       { id: 'st2', code: 'ST-2', name: 'La Crescenta', x: 326, y: 590, km: 4.2, free: 2, total: 3, t: [2, 11, 5] },
       { id: 'st9', code: 'ST-9', name: 'Monrovia', x: 926, y: 638, km: 4.7, free: 1, total: 2, t: [2, 12, 7] },
       { id: 'st1', code: 'ST-1', name: 'Tujunga', x: 110, y: 542, km: 5.5, free: 4, total: 4, t: [3, 14, 6] }
-    ].map((d) => ({ ...d, eta: d.t ? d.t[0] + d.t[1] + d.t[2] : null }));
-    const avail = data.filter((d) => d.eta !== null && d.free >= need).sort((a, b) => a.eta - b.eta);
+    ]).map((d) => ({ ...d, eta: d.t ? d.t[0] + d.t[1] + d.t[2] : null }));
+    const avail = data.filter((d) => d.eta !== null && (d.free == null || d.free >= need)).sort((a, b) => a.eta - b.eta);
     const rec = avail[0] || data.filter((d) => d.eta !== null).sort((a, b) => a.eta - b.eta)[0];
     const selIds = (Array.isArray(s.stations) && s.stations.length ? s.stations : (s.station ? [s.station] : [rec.id])).filter((id) => data.some((d) => d.id === id && d.eta !== null));
     const chosenList = data.filter((d) => selIds.indexOf(d.id) >= 0 && d.eta !== null).sort((a, b) => a.eta - b.eta);
     if (!chosenList.length) chosenList.push(rec);
     const chosen = chosenList[0];
     const multi = chosenList.length > 1;
-    const freeSel = chosenList.reduce((a, d) => a + d.free, 0);
+    const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
-    const subOf = (d) => d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
-    const colorOf = (d) => d.eta === null ? '#6C6C70' : (d.free < need ? '#B37A00' : '#6C6C70');
+    const subOf = (d) => d.real ? d.km + DU + ' · est. ' + d.eta + ' min · crew availability not published' : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
+    const colorOf = (d) => d.real ? '#6C6C70' : d.eta === null ? '#6C6C70' : (d.free < need ? '#B37A00' : '#6C6C70');
     const sum = chosen.eta;
     const sel = {
       ...chosen,
       isRec: chosen.id === rec.id,
       showBest: !multi && chosen.id === rec.id,
       codes: chosenList.map((d) => d.code).join(' + '),
-      title: multi ? 'Stations: ' + chosenList.map((d) => d.code).join(', ') : 'Station: ' + chosen.code + ' · ' + chosen.name,
-      sub: multi ? freeSel + ' free crews · first on the line in ' + chosen.eta + ' min' : (chosen.id === rec.id ? 'Closest with ' + need + ' free crews · ' + chosen.km + ' mi' : subOf(chosen)),
+      title: multi ? 'Stations: ' + chosenList.map((d) => d.code).join(', ') : (chosen.real ? chosen.name : 'Station: ' + chosen.code + ' · ' + chosen.name),
+      sub: multi ? (chosen.real ? chosenList.length + ' stations' : freeSel + ' free crews') + ' · first on the line in ' + (chosen.real ? 'est. ' : '') + chosen.eta + ' min' : (chosen.real ? (chosen.id === rec.id ? 'Closest station · ' : '') + subOf(chosen) : chosen.id === rec.id ? 'Closest with ' + need + ' free crews · ' + chosen.km + ' mi' : subOf(chosen)),
       subColor: multi ? (freeSel < need ? '#B37A00' : '#6C6C70') : (chosen.id === rec.id ? '#6C6C70' : colorOf(chosen)),
       at: clock(sum),
       t1: chosen.t[0], t2: chosen.t[1], t3: chosen.t[2],
@@ -647,12 +678,14 @@ class Component extends DCLogic {
       { name: 'Jet tanker', from: 'San Bernardino · 26 min', icon: 'M12 2c1 0 1.5 1.5 1.5 3v4.5L21 14v2l-7.5-2.5V18l2.5 2v1.5L12 20.5l-4 1V20l2.5-2v-4.5L3 16v-2l7.5-4.5V5c0-1.5.5-3 1.5-3Z', eta: 26 },
       { name: 'Drone swarms', from: 'ST-5 swarm unit · 6 min', icon: 'M4.4 6a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M10.4 4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M16.4 6a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M2.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M10.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M18.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M5.4 18a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M10.4 20a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M15.4 18a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0', eta: 6 }
     ];
+    const RU = fres ? [['Personnel', fres.man, meta[0].icon], ['Crews', fres.crews, meta[0].icon], ['Ground vehicles', fres.terrain, meta[1].icon], ['Heavy equipment', fres.heavy, meta[1].icon], ['Aircraft', fres.aerial, meta[2].icon], ['Boats', fres.water, meta[1].icon]].filter((r) => r[1] != null && (r[0] !== 'Boats' || Number(r[1]) > 0)) : null;
     const setCount = (i, d) => {
       const next = counts.slice();
       next[i] = Math.max(0, Math.min(avail3[i], next[i] + d));
       this.setState({ counts: next });
     };
-    const units = meta.map((m, i) => {
+    const units = RU ? RU.map(([name, n, icon]) => ({ name, icon, n: Number(n).toLocaleString(), from: 'On scene · ' + fres.src, availText: 'Real data', availColor: '#1E7A34', nColor: '#000000',
+      bg: 'rgba(60,60,67,0.044)', bd: 'rgba(60,60,67,0.11)', less: () => {}, more: () => {}, lessDis: 'true', moreDis: 'true', lessOp: 0, moreOp: 0, lessLabel: name, moreLabel: name })) : meta.map((m, i) => {
       const n = counts[i], a = avail3[i];
       const lessDis = n <= 0, moreDis = n >= a;
       return {
@@ -681,10 +714,10 @@ class Component extends DCLogic {
       { o: [1480, 760], d: [626, 248], air: true, from: 'From San Bernardino air base' },
       { o: [stX - 10, stY - 14], d: [652, 302], air: true, from: 'From the ' + chosen.code + ' swarm unit' }
     ];
-    const deployedRaw = meta.map((m, i) => ({ m, i, n: counts[i] })).filter((r) => r.n > 0 && !(r.i === 0 && multi)).map(({ m, i, n }) => ({
+    const deployedRaw = RU ? RU.filter((r) => Number(r[1]) > 0).map(([name, n, icon]) => ({ label: Number(n).toLocaleString() + ' × ' + name, eta: 0, icon, from: 'On scene · ' + fres.src, air: name === 'Aircraft', n: Number(n), o: mv([610, 290], true), d: mv([610, 290], true) })) : meta.map((m, i) => ({ m, i, n: counts[i] })).filter((r) => r.n > 0 && !(r.i === 0 && multi)).map(({ m, i, n }) => ({
       label: n + ' × ' + m.name, eta: m.eta, icon: m.icon, from: GEO[i].from, air: GEO[i].air, n, o: (i === 0 || i === 1 || i === 5) ? GEO[i].o : mv(GEO[i].o, false), d: mv(GEO[i].d, true)
     }));
-    if (multi && counts[0] > 0) {
+    if (!RU && multi && counts[0] > 0) {
       // Ground crews come from each selected station, fastest first, up to what each has free.
       let left = counts[0];
       chosenList.forEach((d, k) => {
@@ -693,11 +726,11 @@ class Component extends DCLogic {
         deployedRaw.push({ label: n + ' × Ground crew' + (n === 1 ? '' : 's'), eta: d.eta, icon: meta[0].icon, from: 'From ' + d.code + ' ' + d.name, air: false, n, o: [ox, oy], d: mv([586 + k * 10, 314 + k * 8], true) });
       });
     }
-    if (!s.droneOff) deployedRaw.push({ label: 'Drone D-3', eta: 3, icon: DRONE_ICON, from: 'Already airborne · live video on arrival', air: true, n: 1, o: mv([575, 470], false), d: mv([620, 300], true) });
+    if (!RU && !s.droneOff) deployedRaw.push({ label: 'Drone D-3', eta: 3, icon: DRONE_ICON, from: 'Already airborne · live video on arrival', air: true, n: 1, o: mv([575, 470], false), d: mv([620, 300], true) });
     deployedRaw.sort((a, b) => a.eta - b.eta);
     const maxEta = deployedRaw.length ? Math.max(...deployedRaw.map((d) => d.eta)) : 0;
     const deployed = deployedRaw.map((d) => ({
-      ...d, at: clock(d.eta), w: Math.max(8, Math.round((1 - d.eta / (maxEta + 4)) * 100)),
+      ...d, at: RU ? 'On scene' : clock(d.eta), w: Math.max(8, Math.round((1 - d.eta / (maxEta + 4)) * 100)),
       c: d.air ? '#0079A6' : '#000000', bg: d.air ? 'rgba(0,121,166,0.1)' : 'rgba(60,60,67,0.066)'
     }));
     const mapUnits = sent ? deployedRaw.map((d) => ({
@@ -754,7 +787,7 @@ class Component extends DCLogic {
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       sendAll: () => this.setState({ sent: true, adjust: false, open: false, cfg: false, full: false }), undoSend: () => this.setState(fv ? { adjust: true, cfg: true, open: false, full: false } : { sent: false, cfg: true, open: false, full: false }),
       activeFor, activeAria,
-      fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentSub: fv ? 'Forces on the way to ' + fv.place : 'sent 2:42 PM', undoLabel: 'Adjust',
+      fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentSub: fv ? (RU ? 'Resources on scene at ' + fv.place : 'Forces on the way to ' + fv.place) : 'sent 2:42 PM', undoLabel: 'Adjust',
       sentY: sent ? '0%' : '105%', sentHidden: sent ? 'false' : 'true',
       hSt: this.wfHandle('st', 'up', () => this.setState({ open: false })), stDy: this.wfDrag('st').y, stDyT: this.wfDrag('st').t,
       hCf: this.wfHandle('cf', 'up', () => this.setState({ cfg: false })), cfDy: this.wfDrag('cf').y, cfDyT: this.wfDrag('cf').t,
@@ -762,7 +795,7 @@ class Component extends DCLogic {
       closeSheet: () => this.setState({ open: false, cfg: false }),
       ...panelVals('st', open, s.ogS || { t: 468, b: 528 }), ...panelVals('cf', cfg, s.ogC || { t: 602, b: 662 }), scrimOp: 0, scrimPE: (open || cfg) ? 'auto' : 'none', sheetHidden: open ? 'false' : 'true',
       units, unitTotal, firstEta: etas.length ? Math.min(...etas) : '–', recSummary: fmt(REC.map((n, i) => Math.min(n, avail3[i]))),
-      cfgSummary: fmt(counts), cfgTag: isRecCfg ? 'Suggested' : 'Custom', cfgTagBg: isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(204,153,0,0.14)', cfgTagFg: isRecCfg ? '#248A3D' : '#B37A00',
+      cfgSummary: RU ? RU.map((r) => Number(r[1]).toLocaleString() + ' ' + r[0].toLowerCase()).join(' · ') : fmt(counts), cfgTag: RU ? 'Real data' : isRecCfg ? 'Suggested' : 'Custom', cfgTagBg: RU || isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(204,153,0,0.14)', cfgTagFg: RU || isRecCfg ? '#248A3D' : '#B37A00',
       drone: s.droneOff
         ? { flying: false, idle: true, status: 'At base', sub: 'Altadena pad · 4 min away', fg: '#6C6C70', bg: 'rgba(60,60,67,0.017)', bd: 'rgba(60,60,67,0.055)' }
         : { flying: true, idle: false, status: 'On route · 3 min to scene', sub: 'Live video and thermal on arrival', fg: '#0079A6', bg: 'rgba(0,121,166,0.05)', bd: 'rgba(0,121,166,0.22)' },
