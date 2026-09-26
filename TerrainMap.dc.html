@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fire Watch">
+<meta name="theme-color" content="#F2F2F7">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<script src="fit.js"></script>
+
+<title>Terrain map</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 13px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
+.igpill::after{content:"";position:absolute;left:50%;bottom:-5px;width:8px;height:8px;margin-left:-4px;background:rgba(255,255,255,0.9);border-right:1px solid rgba(60,60,67,0.154);border-bottom:1px solid rgba(60,60,67,0.154);transform:rotate(45deg)}
+.igmore{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease}
+.igmore>span{overflow:hidden;min-height:0}
+.igsel:hover .igmore,.igsel:focus-visible .igmore{grid-template-rows:1fr;opacity:1;transition:grid-template-rows .3s cubic-bezier(.2,.8,.2,1) .22s,opacity .2s ease .22s}
+.igsel{z-index:6}
+.tipwrap:hover,.tipwrap:focus-visible{z-index:40}
+.igname{display:inline-flex;align-items:center;gap:8px;max-width:240px;overflow:hidden;white-space:nowrap;transition:max-width .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease,margin-left .25s cubic-bezier(.2,.8,.2,1)}
+.igsel:hover .igname,.igsel:focus-visible .igname{max-width:0;opacity:0;margin-left:-8px;transition:max-width .25s cubic-bezier(.2,.8,.2,1) .22s,opacity .12s ease .22s,margin-left .25s cubic-bezier(.2,.8,.2,1) .22s}
+@keyframes igin{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* iOS layer */
+.mbtn:hover{background-color:rgba(118,118,128,.12)}
+.mbtn:active{opacity:.5}
+
+.fzone{display:block;background:transparent;transition:background-color .15s ease;-webkit-tap-highlight-color:transparent}.fzone:hover,.fzone:focus-visible{background-color:rgba(255,59,48,0.14)}.fzone:hover+.fanchor>.tip,.fzone:focus-visible+.fanchor>.tip{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .18s ease .1s,transform .18s ease .1s,visibility 0s linear .1s}.fzone:hover+.fanchor>.tip.l,.fzone:hover+.fanchor>.tip.r,.fzone:focus-visible+.fanchor>.tip.l,.fzone:focus-visible+.fanchor>.tip.r{transform:translate(0,0)}
+.tip,.igmore>span{white-space:pre-line}
+.ighide .igpill{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease}
+</style>
+</helmet>
+<div ref="{{setEl}}" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: none; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+
+  <div style="position: absolute; left: 0; top: 0; width: 1000px; height: 1000px; transform-origin: 0 0; transform: translate({{tx}}px, {{ty}}px) scale({{s}}); transition: {{mapTr}}">
+    <svg width="1" height="1" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
+      <rect x="-40000" y="-60000" width="100000" height="90000" fill="{{pal.bg}}"></rect>
+      <path d="{{geo.selState}}" fill="{{pal.sel}}"></path>
+      <sc-if value="{{pal.img}}" hint-placeholder-val="{{ false }}">
+        <image href="{{pal.reg}}" x="-22627" y="-45479" width="65660" height="57995" preserveAspectRatio="none"></image>
+        <defs>
+          <linearGradient id="wfTileFadeX" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000000"></stop><stop offset="0.07" stop-color="#FFFFFF"></stop><stop offset="0.93" stop-color="#FFFFFF"></stop><stop offset="1" stop-color="#000000"></stop></linearGradient>
+          <linearGradient id="wfTileFadeY" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000"></stop><stop offset="0.07" stop-color="#FFFFFF"></stop><stop offset="0.93" stop-color="#FFFFFF"></stop><stop offset="1" stop-color="#000000"></stop></linearGradient>
+          <mask id="wfTileMaskY" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#wfTileFadeY)"></rect></mask>
+          <mask id="wfTileMask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#wfTileFadeX)" mask="url(#wfTileMaskY)"></rect></mask>
+        </defs>
+        <sc-for list="{{tiles}}" as="tl" hint-placeholder-count="0">
+          <image href="{{tl.href}}" x="{{tl.x}}" y="{{tl.y}}" width="{{tl.w}}" height="{{tl.h}}" preserveAspectRatio="none" mask="{{tl.mask}}"></image>
+        </sc-for>
+      </sc-if>
+      <path d="{{geo.forest}}" fill="#CFE3C4" fill-opacity="{{pal.forestOp}}"></path>
+      <path d="{{geo.ocean}}" fill="{{pal.ocean}}"></path>
+      <path d="{{geo.lakes}}" fill="{{pal.lakes}}"></path>
+      <path d="{{geo.countyLines}}" fill="none" stroke="{{pal.county}}" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"></path>
+      <path d="{{geo.stateLines}}" fill="none" stroke="{{pal.state}}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      <path d="{{geo.coast}}" fill="none" stroke="{{pal.coast}}" stroke-width="1.3" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      <path d="{{geo.roads}}" fill="none" stroke="{{pal.roadCase}}" stroke-width="{{geo.roadCaseW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      <path d="{{geo.roads}}" fill="none" stroke="{{pal.roads}}" stroke-width="{{geo.roadW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      <path d="{{geo.mask}}" fill="{{pal.mask}}" fill-opacity="{{pal.maskOp}}" fill-rule="evenodd"></path>
+      <path d="{{geo.selCounty}}" fill="#E86A00" fill-opacity="0.06" stroke="#E86A00" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="7 5" vector-effect="non-scaling-stroke"></path>
+    </svg>
+    <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
+      <sc-for list="{{burns}}" as="bn" hint-placeholder-count="0">
+        <path d="{{bn.area}}" fill="#FF3B30" fill-opacity="0.22" stroke="#8E0A12" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+        <path d="{{bn.front}}" fill="none" stroke="#FF3B30" stroke-opacity="0.85" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#E0301E;#FF7A1A;#E0301E" dur="2.4s" repeatCount="indefinite"></animate></path>
+      </sc-for>
+      <sc-if value="{{isSpread}}" hint-placeholder-val="{{ false }}">
+        <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3 6" vector-effect="non-scaling-stroke"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.2s" repeatCount="indefinite"></animate></path>
+        <path d="{{route}}" fill="none" stroke="#0079A6" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 7" vector-effect="non-scaling-stroke" style="opacity: {{routeOp}}"><animate attributeName="stroke-dashoffset" values="18;0" dur="0.9s" repeatCount="indefinite"></animate></path>
+        <g transform="translate({{fdx}} {{fdy}})">
+        <ellipse cx="540" cy="340" rx="112" ry="52" transform="rotate(-35 540 340)" fill="#E86A00" fill-opacity="{{r3.fill}}" stroke="#E86A00" stroke-opacity="{{r3.stroke}}" stroke-width="{{r3.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
+        <ellipse cx="576" cy="314" rx="62" ry="30" transform="rotate(-35 576 314)" fill="#E86A00" fill-opacity="{{r2.fill}}" stroke="#E86A00" stroke-opacity="{{r2.stroke}}" stroke-width="{{r2.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
+        <ellipse cx="598" cy="298" rx="26" ry="14" transform="rotate(-35 598 298)" fill="#E86A00" fill-opacity="{{r1.fill}}" stroke="#E86A00" stroke-opacity="{{r1.stroke}}" stroke-width="{{r1.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
+        </g>
+      </sc-if>
+      <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
+        <sc-for list="{{camLines}}" as="ln" hint-placeholder-count="3">
+          <path d="{{ln.d}}" fill="none" stroke="#0079A6" stroke-width="1.3" stroke-dasharray="3 6" stroke-linecap="round" vector-effect="non-scaling-stroke" style="opacity: 0.85"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.2s" repeatCount="indefinite"></animate></path>
+        </sc-for>
+        <circle cx="{{pin.x}}" cy="{{pin.y}}" r="9" fill="#E86A00" fill-opacity="0.1" stroke="#E86A00" stroke-width="1.2" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></circle>
+      </sc-if>
+    </svg>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0.0) 70%, rgba(0,0,0,0.055) 100%)"></div>
+
+  <sc-for list="{{stateLabels}}" as="sl" hint-placeholder-count="0">
+    <span style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
+  </sc-for>
+  <sc-for list="{{countyLabels}}" as="cl" hint-placeholder-count="0">
+    <span style="position: absolute; left: {{cl.left}}px; top: {{cl.top}}px; transform: translate(-50%, -50%); font-size: {{cl.size}}px; font-weight: {{cl.weight}}; letter-spacing: 0.01em; color: {{cl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{cl.label}}</span>
+  </sc-for>
+  <sc-for list="{{cityLabels}}" as="ct" hint-placeholder-count="0">
+    <span style="position: absolute; left: {{ct.left}}px; top: {{ct.top}}px; display: flex; align-items: center; transform: translate(-50%, -50%); font-size: {{ct.size}}px; font-weight: {{ct.weight}}; font-style: {{ct.style}}; color: {{ct.fg}}; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{ct.label}}</span>
+  </sc-for>
+  <sc-if value="{{showSea}}" hint-placeholder-val="{{ false }}">
+    <span style="position: absolute; left: {{sea.left}}px; top: {{sea.top}}px; transform: translate(-50%, -50%); font-size: 13px; font-style: italic; letter-spacing: 0.04em; color: #3E7CB1; white-space: nowrap; pointer-events: none; transition: {{mv}}">Pacific Ocean</span>
+  </sc-if>
+  <sc-for list="{{villages}}" as="v" hint-placeholder-count="7">
+    <span style="position: absolute; left: {{v.left}}px; top: {{v.top}}px; transform: translate(-50%, 8px); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: #000000; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{v.label}}</span>
+  </sc-for>
+
+  <sc-for list="{{zones}}" as="z" hint-placeholder-count="2">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{z.left}}px; top: {{z.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: {{z.bg}}; border: 1px solid {{z.bd}}; color: {{z.fg}}; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; transition: {{mv}}">{{z.label}}
+      <span class="{{z.tip}}" role="tooltip"><b>{{z.tt}}</b>{{z.td}}</span>
+    </span>
+  </sc-for>
+
+  <sc-for list="{{winds}}" as="a" hint-placeholder-count="6">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{a.left}}px; top: {{a.top}}px; width: 30px; height: 46px; transform: translate(-50%, -50%); transition: {{mv}}">
+      <svg width="26" height="46" viewBox="0 -10 26 46" aria-hidden="true" style="display: block; margin: 0 auto; transform: rotate(225deg); overflow: visible">
+        <g opacity="0">
+          <animateTransform attributeName="transform" type="translate" values="0 10;0 -10" dur="2.6s" begin="{{a.delay}}" repeatCount="indefinite"></animateTransform>
+          <animate attributeName="opacity" values="0;0.75;0.75;0" keyTimes="0;0.25;0.7;1" dur="2.6s" begin="{{a.delay}}" repeatCount="indefinite"></animate>
+          <path d="M13 22V5M8 10l5-5 5 5" fill="none" stroke="#3C3C43" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+        </g>
+      </svg>
+      <span class="{{a.tip}}" role="tooltip"><b>{{a.tt}}</b>{{a.td}}</span>
+    </span>
+  </sc-for>
+
+  <sc-for list="{{strikes}}" as="k" hint-placeholder-count="5">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{k.left}}px; top: {{k.top}}px; width: 24px; height: 24px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: {{mv}}">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="filter: drop-shadow(0 0 4px rgba(204,153,0,0.8))">
+        <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="#B37A00"></path>
+      </svg>
+      <span class="{{k.tip}}" role="tooltip"><b>{{k.tt}}</b>{{k.td}}</span>
+    </span>
+  </sc-for>
+
+  <sc-for list="{{sensors}}" as="m" hint-placeholder-count="5">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; transform: translate(-4px, -50%); display: flex; align-items: center; gap: 5px; height: 22px; font-size: 11px; font-weight: 600; color: #006A91; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; transition: {{mv}}">
+      <span style="width: 8px; height: 8px; border-radius: 50%; background: #0079A6; box-shadow: 0 0 0 3px rgba(0,121,166,0.18), 0 0 10px rgba(0,121,166,0.8)"></span>{{m.label}}
+      <span class="{{m.tip}}" role="tooltip"><b>{{m.tt}}</b>{{m.td}}</span>
+    </span>
+  </sc-for>
+
+  <sc-for list="{{rings}}" as="rg" hint-placeholder-count="3">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{rg.left}}px; top: {{rg.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,0.8); border: 1px solid {{rg.bd}}; color: {{rg.fg}}; font-size: 11px; font-weight: 700; white-space: nowrap; transition: {{mv}}">{{rg.label}}
+      <span class="{{rg.tip}}" role="tooltip"><b>{{rg.tt}}</b>{{rg.td}}</span>
+    </span>
+  </sc-for>
+
+  <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvSt}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 11px; font-weight: 600; white-space: nowrap">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
+      <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
+    </span>
+  </sc-for>
+
+  <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
+    <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
+      <span class="tipwrap" tabindex="0" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 11px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>{{cm.label}}
+        <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
+      </span>
+    </sc-for>
+    <span style="position: absolute; left: {{fire.left}}px; top: {{fire.top}}px; transform: translate(-50%, 22px); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 12px; border-radius: 16px; background: rgba(255,255,255,0.82); border: 1px solid rgba(232,106,0,0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap; pointer-events: none; transition: {{mv}}">
+      <span style="font-size: 13px; font-weight: 600">{{pinLabel}}</span>
+      <span style="font-size: 11px; color: #6C6C70; font-variant-numeric: tabular-nums">{{pinCoords}}</span>
+    </span>
+  </sc-if>
+
+  <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
+    <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
+      <a href="Dispatch.dc.html" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onPointerDown="{{fm.pick}}" onClick="{{fm.pick}}" style="position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 5px; top: 5px; overflow: visible"><path fill="#E86A00" stroke="#FFFFFF" stroke-width="2.4" stroke-linejoin="round" paint-order="stroke" d="M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z"></path></svg></a>
+      <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
+    </sc-for>
+    <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
+      <span class="tipwrap" tabindex="0" aria-label="{{om.aria}}" style="position: absolute; left: {{om.left}}px; top: {{om.top}}px; width: 28px; height: 28px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: {{mv}}">
+        <span style="width: 11px; height: 11px; border-radius: 50%; background: {{om.c}}; border: 1.5px solid #FFFFFF; box-shadow: 0 0 0 4px rgba(255,255,255,0.78)"></span>
+        <span class="{{om.tip}}" role="tooltip"><b>{{om.tt}}</b>{{om.td}}</span>
+      </span>
+    </sc-for>
+    <sc-for list="{{ignMarks}}" as="ig" hint-placeholder-count="2">
+      <a href="Alert.dc.html" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onPointerDown="{{ig.pick}}" onClick="{{ig.pick}}" style="position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mv}}">
+        <sc-if value="{{ig.sel}}" hint-placeholder-val="{{ false }}">
+          <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none">
+            <circle cx="48" cy="48" r="8" fill="none" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="8;20" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
+            <circle cx="48" cy="48" r="7" fill="{{ig.c}}" stroke="#FFFFFF" stroke-width="1.5"></circle>
+          </svg>
+          <span class="igpill" role="tooltip">
+            <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 10px; white-space: nowrap">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ig.c}}; flex-shrink: 0"></span><span style="font-weight: 600; color: #000000">{{ig.pos}}</span><span class="igname"><span style="font-weight: 600; color: #000000">· {{ig.place}}</span><span style="color: #6C6C70; font-variant-numeric: tabular-nums">{{ig.conf}}%</span></span>
+            </span>
+            <span class="igmore"><span style="display: block; padding: 0 12px 10px; width: 206px; box-sizing: border-box; white-space: normal; font-size: 13px; line-height: 1.45; color: #3C3C43"><b style="display: block; margin-bottom: 2px; font-weight: 600; color: #000000">{{ig.tt}}</b>{{ig.td}}</span></span>
+          </span>
+        </sc-if>
+        <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
+          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none">
+            <circle cx="32" cy="32" r="{{ig.r}}" fill="none" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="{{ig.anim}}" dur="{{ig.dur}}" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="{{ig.dur}}" repeatCount="indefinite"></animate></circle>
+            <circle cx="32" cy="32" r="{{ig.r}}" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5"></circle>
+          </svg>
+          <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
+        </sc-if>
+      </a>
+    </sc-for>
+    <sc-if value="{{noLink}}" hint-placeholder-val="{{ false }}">
+      <span class="tipwrap" tabindex="0" style="position: absolute; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
+        <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block">
+          <circle cx="20" cy="20" r="6" fill="none" stroke="#E86A00" stroke-width="1.5"><animate attributeName="r" values="6;18" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
+          <circle cx="20" cy="20" r="6" fill="#E86A00" stroke="#FFFFFF" stroke-width="1.6"></circle>
+        </svg>
+        <span class="{{fire.tip}}" role="tooltip"><b>{{fire.tt}}</b>{{fire.td}}</span>
+      </span>
+    </sc-if>
+  </sc-if>
+
+  <sc-for list="{{unitMarks}}" as="um" hint-placeholder-count="0">
+    <span class="tipwrap" tabindex="0" aria-label="{{um.aria}}" style="position: absolute; left: {{um.left}}px; top: {{um.top}}px; z-index: 5; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; transform: translate(-50%, -50%); opacity: {{um.op}}; transition: {{um.tr}}">
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; transform: rotate({{um.rot}}deg); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><polygon points="11,6 1.5,1.5 1.5,10.5" fill="{{um.c}}" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round"></polygon></svg>
+      <span class="{{um.tip}}" role="tooltip"><b>{{um.tt}}</b>{{um.td}}</span>
+    </span>
+  </sc-for>
+
+  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 50; right: 10px; top: {{ctrl.top}}; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
+    <div role="group" aria-label="Map type" style="display: flex; align-items: center; height: 40px; padding: 2px; box-sizing: border-box; border-radius: 12px; background: #F2F2F7; border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
+      <button type="button" class="mbtn" aria-label="{{ms.aria}}" aria-pressed="{{ms.pressed}}" onClick="{{ms.toggle}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 34px; border: 0; border-radius: 9px; background-color: transparent; color: #000000; cursor: pointer; flex-shrink: 0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ms.icon}}"></path></svg>
+      </button>
+    </div>
+    <div role="group" aria-label="Map controls" style="display: flex; flex-direction: column; padding: 2px; gap: 0; border-radius: 12px; background: #F2F2F7; border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
+      <button type="button" class="mbtn" aria-label="Zoom in" onClick="{{zoomIn}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
+      <button type="button" class="mbtn" aria-label="Zoom out" onClick="{{zoomOut}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+      </button>
+      <span style="height: 1px; margin: 2px 7px; background: rgba(60,60,67,0.14)"></span>
+      <button type="button" class="mbtn" aria-label="{{recenterLabel}}" onClick="{{recenter}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #007AFF; cursor: pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="2"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>
+      </button>
+      <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
+        <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
+        </button>
+      </sc-if>
+    </div>
+  </div>
+
+  <span style="position: absolute; left: 12px; bottom: {{attrB}}px; font-size: 11px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"$preview":{"width":366,"height":380}}'>
+class Component extends DCLogic {
+  init() {
+    if (this._ok) return;
+    this._ok = true;
+    this.pts = {};
+    this.setEl = (el) => {
+      if (el && el !== this.el) {
+        if (this.el) this.el.removeEventListener('wheel', this.onWheel);
+        this.el = el;
+        el.addEventListener('wheel', this.onWheel, { passive: false });
+      }
+    };
+    this.onWheel = (e) => {
+      e.preventDefault();
+      const p = this.local(e.clientX, e.clientY);
+      this.zoomAt(p.x, p.y, Math.exp(-e.deltaY * 0.0018));
+    };
+    this.onDown = (e) => {
+      if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
+      try { this.el.setPointerCapture(e.pointerId); } catch (err) {}
+      this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      this.setState({ dragging: true });
+    };
+    this.onMove = (e) => {
+      const prev = this.pts[e.pointerId];
+      if (!prev) return;
+      const ids = Object.keys(this.pts);
+      const k = this.scaleK();
+      if (ids.length === 1) {
+        const v = this.view();
+        this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        this.setView(v.cx - (e.clientX - prev.x) / k / v.s, v.cy - (e.clientY - prev.y) / k / v.s, v.s);
+      } else if (ids.length === 2) {
+        const other = this.pts[ids.find((i) => String(i) !== String(e.pointerId))];
+        const d0 = Math.hypot(prev.x - other.x, prev.y - other.y);
+        const d1 = Math.hypot(e.clientX - other.x, e.clientY - other.y);
+        this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        const mid = this.local((e.clientX + other.x) / 2, (e.clientY + other.y) / 2);
+        if (d0 > 0) this.zoomAt(mid.x, mid.y, d1 / d0);
+      }
+    };
+    this.onUp = (e) => {
+      delete this.pts[e.pointerId];
+      if (!Object.keys(this.pts).length) this.setState({ dragging: false });
+    };
+    this.stop = (e) => e.stopPropagation();
+    this.zoomIn = () => { this._animUntil = Date.now() + 600; this.zoomAt(this.W() / 2, this.win().c, 1.6); };
+    this.zoomOut = () => { this._animUntil = Date.now() + 600; this.zoomAt(this.W() / 2, this.win().c, 1 / 1.6); };
+    this.cycList = () => {
+      const p = this.props;
+      const risk = (p.mode || 'risk') === 'risk' && p.linkCandidate !== false && p.linkCandidate !== 'false';
+      return risk && Array.isArray(p.ignitions) ? p.ignitions : [];
+    };
+    this.recenter = () => {
+      const p = this.props, w = this.win(), B0 = this.base();
+      const s0 = B0.s;
+      const sC = Math.max(s0, 0.45);
+      const target = (x, y, sc) => this.clampView(x, y + (this.H() / 2 - w.c) / sc, sc);
+      const atT = (t) => { const v = this.view(); const cur = this.clampView(v.cx, v.cy, v.s); return Math.abs(cur.cx - t.cx) < 3 && Math.abs(cur.cy - t.cy) < 3 && Math.abs(cur.s - t.s) < 0.01; };
+      this._animUntil = Date.now() + 700;
+      if ((p.mode || 'risk') === 'pin' && typeof p.onCycle === 'function' && Array.isArray(p.ignitions) && p.ignitions.length > 1) {
+        const home = this.clampView(B0.cx, B0.cy, B0.s);
+        if (!atT(home)) { this.setState(home); return; }
+        const i = p.ignitions.findIndex((g) => g.id === p.pinId);
+        p.onCycle(p.ignitions[(i + 1) % p.ignitions.length].id);
+        return;
+      }
+      const ig = this.cycList();
+      if (ig.length > 1) {
+        // Cycle: each ignition in turn, then one step that frames them all.
+        const xs = ig.map((g) => g.x), ys = ig.map((g) => g.y), fw = this.fitWin();
+        const bw = Math.max(60, Math.max(...xs) - Math.min(...xs)), bh = Math.max(60, Math.max(...ys) - Math.min(...ys));
+        const sA = Math.min(sC, (this.W() - 120) / bw, (fw.h - 80) / bh);
+        const ox = (Math.min(...xs) + Math.max(...xs)) / 2, oy = (Math.min(...ys) + Math.max(...ys)) / 2;
+        const all = this.clampView(ox, oy + (this.H() / 2 - fw.c) / Math.max(this.zMin(), sA), sA);
+        const st = this.state || {};
+        if (st.selId === '__all') { if (atT(all)) { const g = ig[0]; this.setState({ ...target(g.x, g.y, sC), selId: g.id }); } else this.setState({ ...all }); return; }
+        let i = Math.max(0, ig.findIndex((g) => g.id === st.selId));
+        if (atT(target(ig[i].x, ig[i].y, sC))) {
+          if (i === ig.length - 1) { this.setState({ ...all, selId: '__all' }); return; }
+          i += 1;
+        }
+        const g = ig[i];
+        this.setState({ ...target(g.x, g.y, sC), selId: g.id });
+        return;
+      }
+      this.setState(this.clampView(B0.cx, B0.cy, B0.s));
+    };
+  }
+  unitTick() {
+    const has = Array.isArray(this.props.units) && this.props.units.length > 0;
+    if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
+    if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
+  }
+  componentDidMount() { this.unitTick(); }
+  componentDidUpdate(prev) {
+    if (prev && prev.hideTips !== this.props.hideTips && this.props.hideTips) {
+      try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (e) {}
+      this.setState({ selId: '__none', fireHover: false, msOpen: false });
+    }
+    this.unitTick();
+    const p = this.props;
+    const sig = (q) => [q.focusX, q.focusY, q.zoom, q.scopeSt, q.scopeCo, q.pinId, (Array.isArray(q.ignitions) ? q.ignitions.map((g) => g.id).join(',') : '')].join('|');
+    if (sig(prev) !== sig(p)) {
+      this._animUntil = Date.now() + 700;
+      this.setState({ cx: undefined, cy: undefined, s: undefined });
+    }
+  }
+  componentWillUnmount() {
+    if (this._uT) clearInterval(this._uT);
+    if (this.el) this.el.removeEventListener('wheel', this.onWheel);
+  }
+  geo() {
+    if (window.__wfGeo) return window.__wfGeo;
+    const P = (lat, lon) => [Math.round((lon + 118.13) * 2345 + 518), Math.round((34.19 - lat) * 2829 + 662)];
+    const path = (pts, close) => pts.map(([la, lo], i) => { const [x, y] = P(la, lo); return (i ? 'L' : 'M') + x + ' ' + y; }).join('') + (close ? 'Z' : '');
+    const C_NORTH = [[49.0, -122.75], [48.0, -122.2], [47.3, -122.4], [48.1, -122.8], [48.2, -123.5], [48.38, -124.72], [47.9, -124.6], [46.9, -124.1], [46.19, -123.83], [44.63, -124.06], [43.37, -124.3], [42.0, -124.21], [41.75, -124.2], [40.8, -124.16], [40.44, -124.41], [38.95, -123.74], [38.3, -123.05], [38.0, -123.02], [37.78, -122.51], [37.46, -122.43], [36.96, -122.02], [36.6, -121.89], [36.27, -121.81], [35.66, -121.28], [35.37, -120.86], [35.14, -120.64], [34.97, -120.64]];
+    const C_SB = [[34.97, -120.64], [34.58, -120.65], [34.45, -120.47], [34.47, -120.22], [34.4, -119.7], [34.39, -119.52], [34.37, -119.47]];
+    const C_VEN = [[34.37, -119.47], [34.27, -119.29], [34.15, -119.2], [34.09, -119.06], [34.04, -118.94]];
+    const C_LA = [[34.04, -118.94], [34.03, -118.8], [34.03, -118.68], [34.01, -118.5], [33.97, -118.46], [33.92, -118.43], [33.84, -118.39], [33.77, -118.42], [33.71, -118.29], [33.75, -118.2], [33.745, -118.1]];
+    const C_OC = [[33.745, -118.1], [33.65, -118.0], [33.6, -117.88], [33.54, -117.78], [33.46, -117.7], [33.39, -117.6]];
+    const C_SD = [[33.39, -117.6], [33.19, -117.38], [32.96, -117.27], [32.85, -117.27], [32.72, -117.17], [32.67, -117.24], [32.53, -117.12]];
+    const COAST = C_NORTH.concat(C_SB.slice(1), C_VEN.slice(1), C_LA.slice(1), C_OC.slice(1), C_SD.slice(1));
+    const OCEAN = [[52, -140], [52, -122.75]].concat(COAST, [[31.8, -116.7], [30.4, -116.0], [28.5, -114.3], [26, -111.5], [24, -110], [24, -140]]);
+    const GULF = [[31.7, -114.8], [31.3, -113.6], [29.8, -112.6], [28.0, -111.2], [26, -109.8], [24, -109], [24, -110], [26, -111.5], [28.5, -114.3], [30.2, -114.6]];
+    const ISLANDS = [
+      [[33.48, -118.6], [33.45, -118.49], [33.36, -118.33], [33.3, -118.31], [33.33, -118.45], [33.42, -118.58]],
+      [[34.06, -119.92], [34.07, -119.72], [34.02, -119.53], [33.97, -119.62], [33.98, -119.88]],
+      [[34.02, -120.2], [34.03, -119.98], [33.93, -119.96], [33.9, -120.15]],
+      [[34.05, -120.43], [34.06, -120.33], [34.0, -120.3], [34.0, -120.42]],
+      [[33.03, -118.6], [32.9, -118.48], [32.8, -118.35], [32.84, -118.42]],
+      [[48.8, -123.0], [48.5, -122.9], [48.4, -123.3], [48.9, -123.9], [49.2, -124.8], [49.5, -125.5], [50.2, -125.9], [50.9, -128], [52, -128.5], [52, -126], [49.8, -124.5], [49.3, -123.9]]
+    ];
+    const LAKES = [
+      [[33.52, -116.1], [33.4, -115.85], [33.15, -115.6], [33.1, -115.7], [33.3, -115.95]],
+      [[41.6, -112.6], [41.2, -112.3], [40.7, -112.2], [40.9, -112.7], [41.4, -113.0]],
+      [[39.25, -120.0], [39.1, -119.93], [38.93, -119.97], [39.05, -120.15]],
+      [[36.4, -114.4], [36.1, -114.7], [36.05, -114.5], [36.2, -114.1]]
+    ];
+    const ST = {
+      CA: [[42, -124.21], [42, -120.0], [39.0, -120.0], [35.0, -114.63], [34.3, -114.14], [33.0, -114.5], [32.72, -114.72], [32.53, -117.12]].concat(C_SD.slice().reverse().slice(1), C_OC.slice().reverse().slice(1), C_LA.slice().reverse().slice(1), C_VEN.slice().reverse().slice(1), C_SB.slice().reverse().slice(1), C_NORTH.slice(C_NORTH.findIndex((p) => p[0] === 42.0)).reverse().slice(1)),
+      NV: [[42, -120.0], [42, -114.04], [36.2, -114.04], [35.0, -114.63], [39.0, -120.0]],
+      AZ: [[37, -114.05], [37, -109.05], [31.33, -109.05], [31.33, -111.07], [32.49, -114.81], [32.72, -114.72], [33.0, -114.5], [34.3, -114.14], [35.0, -114.63], [36.2, -114.04]],
+      UT: [[42, -114.04], [42, -111.05], [41, -111.05], [41, -109.05], [37, -109.05], [37, -114.05]],
+      CO: [[41, -109.05], [41, -102.05], [37, -102.05], [37, -109.05]],
+      NM: [[37, -109.05], [37, -103.0], [32.0, -103.06], [32.0, -106.62], [31.78, -106.53], [31.78, -108.21], [31.33, -108.21], [31.33, -109.05]],
+      OR: [[42, -124.21], [43.37, -124.3], [44.63, -124.06], [46.19, -123.83], [46.2, -123.2], [45.6, -122.7], [45.7, -121.5], [45.9, -119.3], [46.0, -118.98], [46.0, -116.92], [45.6, -116.47], [44.8, -117.2], [44.3, -117.2], [43.8, -117.03], [42, -117.03], [42, -120.0]],
+      WA: [[46.19, -123.83], [46.9, -124.1], [47.9, -124.6], [48.38, -124.72], [48.2, -123.5], [48.1, -122.8], [47.3, -122.4], [48.0, -122.2], [49.0, -122.75], [49.0, -117.03], [46.43, -117.04], [46.0, -116.92], [46.0, -118.98], [45.9, -119.3], [45.7, -121.5], [45.6, -122.7], [46.2, -123.2]],
+      ID: [[49, -117.03], [49, -116.05], [47.98, -116.05], [47.0, -114.6], [46.6, -114.3], [45.6, -114.5], [45.0, -113.5], [44.4, -112.4], [44.5, -111.05], [42, -111.05], [42, -117.03], [43.8, -117.03], [44.3, -117.2], [44.8, -117.2], [45.6, -116.47], [46.0, -116.92], [46.43, -117.04]],
+      MT: [[49, -116.05], [49, -104.05], [45, -104.05], [45, -111.05], [44.5, -111.05], [44.4, -112.4], [45.0, -113.5], [45.6, -114.5], [46.6, -114.3], [47.0, -114.6], [47.98, -116.05]],
+      WY: [[45, -111.05], [45, -104.05], [41, -104.05], [41, -111.05]]
+    };
+    const STN = { CA: ['California', 37.3, -119.6], NV: ['Nevada', 39.3, -116.8], AZ: ['Arizona', 34.3, -111.7], UT: ['Utah', 39.4, -111.6], CO: ['Colorado', 39.0, -105.6], NM: ['New Mexico', 34.4, -106.1], OR: ['Oregon', 43.9, -120.6], WA: ['Washington', 47.4, -120.5], ID: ['Idaho', 44.4, -114.6], MT: ['Montana', 47.0, -109.6], WY: ['Wyoming', 43.0, -107.5] };
+    const T = {
+      laOc: [[33.745, -118.1], [33.86, -118.03], [33.95, -117.84], [33.95, -117.78]],
+      laSbd: [[33.95, -117.78], [34.03, -117.73], [34.82, -117.65]],
+      laKern: [[34.82, -117.65], [34.82, -118.88]],
+      laVen: [[34.82, -118.88], [34.57, -118.76], [34.4, -118.63], [34.2, -118.66], [34.04, -118.94]],
+      venKern: [[34.82, -118.88], [34.9, -118.97], [34.9, -119.44]],
+      venSb: [[34.9, -119.44], [34.46, -119.44], [34.37, -119.47]],
+      sbSlo: [[34.9, -119.44], [35.11, -119.47], [35.1, -120.3], [34.97, -120.64]],
+      kern: [[35.1, -120.19], [35.79, -120.19], [35.79, -117.63], [34.82, -117.65]],
+      sbd: [[35.79, -117.63], [35.81, -115.72]],
+      sbdRiv: [[34.3, -114.14], [34.08, -114.43], [34.08, -116.2], [33.97, -116.9], [34.03, -117.3], [33.95, -117.67], [33.95, -117.78]],
+      ocRiv: [[33.95, -117.67], [33.7, -117.41], [33.51, -117.41], [33.43, -117.51], [33.39, -117.6]],
+      rivSd: [[33.43, -117.51], [33.43, -116.08], [33.43, -114.52]],
+      sdImp: [[33.43, -116.08], [32.62, -116.1]]
+    };
+    const CNT = {
+      'CA|Los Angeles': { c: [34.32, -118.22], poly: C_LA.concat(T.laOc.slice(1), T.laSbd.slice(1), T.laKern.slice(1), T.laVen.slice(1)) },
+      'CA|Ventura': { c: [34.46, -119.08], poly: C_VEN.concat(T.laVen.slice().reverse().slice(1), T.venKern.slice(1), T.venSb.slice(1)) },
+      'CA|Santa Barbara': { c: [34.67, -120.02], poly: C_SB.concat(T.venSb.slice().reverse().slice(1), T.sbSlo.slice(1)) },
+      'CA|Kern': { c: [35.34, -118.73], poly: [[35.1, -120.19], [35.79, -120.19], [35.79, -117.63], [34.82, -117.65], [34.82, -118.88], [34.9, -118.97], [34.9, -119.44], [35.11, -119.47]] },
+      'CA|San Bernardino': { c: [34.84, -116.18], poly: [[35.79, -117.63], [35.81, -115.72], [35.0, -114.63], [34.3, -114.14]].concat(T.sbdRiv.slice(1), T.laSbd.slice(1)) },
+      'CA|Orange': { c: [33.7, -117.76], poly: C_OC.concat(T.ocRiv.slice().reverse().slice(1), [[33.95, -117.78], [33.95, -117.84], [33.86, -118.03]]) },
+      'CA|Riverside': { c: [33.74, -116.0], poly: [[33.95, -117.67], [34.03, -117.3], [33.97, -116.9], [34.08, -116.2], [34.08, -114.43], [33.43, -114.52], [33.43, -116.08], [33.43, -117.51], [33.51, -117.41], [33.7, -117.41]] },
+      'CA|San Diego': { c: [33.03, -116.74], poly: C_SD.concat([[32.62, -116.1], [33.43, -116.08], [33.43, -117.51]]) },
+      'CA|Butte': { c: [39.67, -121.6] }, 'CA|Shasta': { c: [40.76, -122.04] }, 'CA|Sonoma': { c: [38.53, -122.89] },
+      'AZ|Maricopa': { c: [33.35, -112.49] }, 'AZ|Yavapai': { c: [34.6, -112.55] }, 'AZ|Coconino': { c: [35.84, -111.77] }, 'AZ|Gila': { c: [33.8, -110.81] },
+      'OR|Jackson': { c: [42.43, -122.73] }, 'OR|Deschutes': { c: [43.91, -121.23] }, 'OR|Josephine': { c: [42.37, -123.56] }, 'OR|Klamath': { c: [42.69, -121.65] },
+      'NV|Washoe': { c: [40.67, -119.66] }, 'NV|Douglas': { c: [38.91, -119.62] }, 'NV|Clark': { c: [36.21, -115.01] },
+      'NM|Lincoln': { c: [33.75, -105.46] }, 'NM|Sandoval': { c: [35.69, -106.88] }, 'NM|Grant': { c: [32.74, -108.38] },
+      'WA|Chelan': { c: [47.86, -120.62] }, 'WA|Okanogan': { c: [48.55, -119.74] }, 'WA|Kittitas': { c: [47.12, -120.68] },
+      'ID|Ada': { c: [43.45, -116.24] }, 'ID|Boise': { c: [43.99, -115.73] }, 'ID|Valley': { c: [44.77, -115.57] },
+      'CO|Larimer': { c: [40.66, -105.46] }, 'CO|Boulder': { c: [40.09, -105.36] }, 'CO|El Paso': { c: [38.83, -104.53] },
+      'UT|Washington': { c: [37.28, -113.51] }, 'UT|Iron': { c: [37.86, -113.29] },
+      'MT|Missoula': { c: [47.04, -113.92] }, 'MT|Flathead': { c: [48.3, -114.05] }
+    };
+    const ROADS = [
+      [[34.27, -118.47], [34.25, -118.3], [34.2, -118.23], [34.15, -118.14], [34.13, -117.9], [34.1, -117.7], [34.1, -117.3]],
+      [[32.72, -117.16], [33.2, -117.37], [33.6, -117.7], [33.85, -117.95], [34.05, -118.24], [34.27, -118.43], [34.4, -118.56], [34.8, -118.87], [35.05, -119.0], [36.0, -119.95], [37.7, -121.3], [38.6, -121.5], [40.6, -122.4], [42.0, -122.6], [44.9, -123.0], [45.6, -122.7], [47.6, -122.3], [49.0, -122.75]],
+      [[34.02, -118.49], [34.04, -118.25], [34.07, -118.0], [34.06, -117.6], [34.05, -117.2], [33.93, -116.8], [33.72, -116.35], [33.7, -115.5], [33.6, -114.6], [33.45, -112.07], [32.2, -110.9], [32.3, -106.8]],
+      [[32.72, -117.13], [33.2, -117.12], [33.9, -117.48], [34.1, -117.47], [34.4, -117.4], [34.9, -117.02], [35.27, -116.07], [35.65, -115.4], [36.17, -115.14], [37.0, -113.6], [38.6, -112.6], [40.76, -111.89], [42.5, -112.4]],
+      [[34.4, -119.7], [34.27, -119.23], [34.2, -118.88], [34.16, -118.5], [34.05, -118.24]],
+      [[34.06, -118.45], [33.93, -118.38], [33.8, -118.2], [33.68, -117.87]],
+      [[37.8, -122.3], [38.6, -121.5], [39.3, -120.3], [39.5, -119.8], [40.8, -115.8], [40.8, -111.9], [41.3, -105.6]],
+      [[34.9, -117.0], [34.84, -114.6], [35.2, -111.6], [35.1, -106.6], [35.2, -103]],
+      [[32.3, -106.8], [35.1, -106.6], [38.8, -104.8], [39.7, -105.0], [41.1, -104.8]],
+      [[45.6, -122.7], [45.7, -121], [45.6, -118.8], [43.6, -116.2], [42.5, -113.3]],
+      [[47.6, -122.3], [47.2, -120.9], [47.1, -118.4], [47.7, -117.4], [46.9, -114.0], [45.8, -111.0], [45.8, -108.5]],
+      [[32.75, -117.2], [32.7, -114.6], [32.9, -111.7]],
+      [[33.45, -112.07], [35.2, -111.65]],
+      [[34.43, -118.53], [34.58, -118.14], [34.7, -118.14], [35.0, -117.9]]
+    ];
+    const CITIES = [
+      ['Los Angeles', 34.05, -118.24, 'CA', 'Los Angeles'], ['Long Beach', 33.77, -118.19, 'CA', 'Los Angeles'], ['Santa Monica', 34.02, -118.49, 'CA', 'Los Angeles'], ['Santa Clarita', 34.39, -118.54, 'CA', 'Los Angeles'], ['Lancaster', 34.7, -118.14, 'CA', 'Los Angeles'], ['Pasadena', 34.15, -118.14, 'CA', 'Los Angeles'], ['Malibu', 34.03, -118.78, 'CA', 'Los Angeles'],
+      ['Angeles NF', 34.38, -117.95, 'CA', 'Los Angeles', 1],
+      ['San Bernardino', 34.11, -117.29, 'CA', 'San Bernardino'], ['Victorville', 34.54, -117.29, 'CA', 'San Bernardino'], ['Big Bear Lake', 34.24, -116.91, 'CA', 'San Bernardino'], ['Barstow', 34.9, -117.02, 'CA', 'San Bernardino'], ['Mojave Desert', 35.0, -116.0, 'CA', 'San Bernardino', 1],
+      ['Riverside', 33.95, -117.4, 'CA', 'Riverside'], ['Palm Springs', 33.83, -116.55, 'CA', 'Riverside'], ['Temecula', 33.49, -117.15, 'CA', 'Riverside'], ['Joshua Tree NP', 33.87, -115.9, 'CA', 'Riverside', 1],
+      ['Anaheim', 33.84, -117.91, 'CA', 'Orange'], ['Irvine', 33.68, -117.83, 'CA', 'Orange'], ['Cleveland NF', 33.6, -117.45, 'CA', 'Orange', 1],
+      ['Ventura', 34.28, -119.29, 'CA', 'Ventura'], ['Oxnard', 34.2, -119.18, 'CA', 'Ventura'], ['Thousand Oaks', 34.17, -118.84, 'CA', 'Ventura'], ['Ojai', 34.45, -119.24, 'CA', 'Ventura'],
+      ['Santa Barbara', 34.42, -119.7, 'CA', 'Santa Barbara'], ['Santa Maria', 34.95, -120.43, 'CA', 'Santa Barbara'], ['Lompoc', 34.64, -120.46, 'CA', 'Santa Barbara'], ['Los Padres NF', 34.7, -119.7, 'CA', 'Santa Barbara', 1],
+      ['Bakersfield', 35.37, -119.02, 'CA', 'Kern'], ['Tehachapi', 35.13, -118.45, 'CA', 'Kern'], ['Ridgecrest', 35.62, -117.67, 'CA', 'Kern'], ['Sequoia NF', 35.7, -118.5, 'CA', 'Kern', 1],
+      ['San Diego', 32.72, -117.16, 'CA', 'San Diego'], ['Escondido', 33.12, -117.09, 'CA', 'San Diego'], ['Julian', 33.08, -116.6, 'CA', 'San Diego'], ['Anza-Borrego', 33.1, -116.3, 'CA', 'San Diego', 1],
+      ['Chico', 39.73, -121.84, 'CA', 'Butte'], ['Paradise', 39.76, -121.62, 'CA', 'Butte'], ['Redding', 40.59, -122.39, 'CA', 'Shasta'], ['Mt Shasta', 41.41, -122.19, 'CA', 'Shasta', 1], ['Santa Rosa', 38.44, -122.71, 'CA', 'Sonoma'], ['Healdsburg', 38.61, -122.87, 'CA', 'Sonoma'],
+      ['San Francisco', 37.77, -122.42, 'CA', ''], ['Sacramento', 38.58, -121.49, 'CA', ''], ['Fresno', 36.74, -119.79, 'CA', ''],
+      ['Phoenix', 33.45, -112.07, 'AZ', 'Maricopa'], ['Scottsdale', 33.49, -111.93, 'AZ', 'Maricopa'], ['Prescott', 34.54, -112.47, 'AZ', 'Yavapai'], ['Sedona', 34.87, -111.76, 'AZ', 'Yavapai'], ['Flagstaff', 35.2, -111.65, 'AZ', 'Coconino'], ['Grand Canyon', 36.1, -112.1, 'AZ', 'Coconino', 1], ['Payson', 34.23, -111.33, 'AZ', 'Gila'], ['Globe', 33.39, -110.79, 'AZ', 'Gila'], ['Tonto NF', 33.9, -111.3, 'AZ', 'Gila', 1], ['Tucson', 32.22, -110.97, 'AZ', ''],
+      ['Medford', 42.33, -122.87, 'OR', 'Jackson'], ['Ashland', 42.19, -122.71, 'OR', 'Jackson'], ['Bend', 44.06, -121.31, 'OR', 'Deschutes'], ['Sisters', 44.29, -121.55, 'OR', 'Deschutes'], ['Grants Pass', 42.44, -123.33, 'OR', 'Josephine'], ['Klamath Falls', 42.22, -121.78, 'OR', 'Klamath'], ['Crater Lake', 42.94, -122.1, 'OR', 'Klamath', 1], ['Portland', 45.52, -122.68, 'OR', ''], ['Eugene', 44.05, -123.09, 'OR', ''],
+      ['Reno', 39.53, -119.81, 'NV', 'Washoe'], ['Minden', 38.95, -119.77, 'NV', 'Douglas'], ['Lake Tahoe', 39.05, -120.0, 'NV', 'Douglas', 1], ['Las Vegas', 36.17, -115.14, 'NV', 'Clark'], ['Carson City', 39.16, -119.77, 'NV', ''],
+      ['Ruidoso', 33.33, -105.67, 'NM', 'Lincoln'], ['Lincoln NF', 33.1, -105.8, 'NM', 'Lincoln', 1], ['Rio Rancho', 35.23, -106.66, 'NM', 'Sandoval'], ['Jemez Springs', 35.77, -106.69, 'NM', 'Sandoval'], ['Silver City', 32.77, -108.28, 'NM', 'Grant'], ['Gila NF', 33.2, -108.3, 'NM', 'Grant', 1], ['Albuquerque', 35.08, -106.65, 'NM', ''], ['Santa Fe', 35.69, -105.94, 'NM', ''],
+      ['Wenatchee', 47.42, -120.31, 'WA', 'Chelan'], ['Leavenworth', 47.6, -120.66, 'WA', 'Chelan'], ['Omak', 48.41, -119.53, 'WA', 'Okanogan'], ['Twisp', 48.36, -120.12, 'WA', 'Okanogan'], ['Ellensburg', 46.99, -120.55, 'WA', 'Kittitas'], ['Cle Elum', 47.2, -120.94, 'WA', 'Kittitas'], ['Seattle', 47.61, -122.33, 'WA', ''], ['Spokane', 47.66, -117.43, 'WA', ''],
+      ['Boise', 43.62, -116.2, 'ID', 'Ada'], ['Idaho City', 43.83, -115.83, 'ID', 'Boise'], ['McCall', 44.91, -116.1, 'ID', 'Valley'], ['Boise NF', 44.2, -115.6, 'ID', 'Boise', 1], ['Idaho Falls', 43.49, -112.04, 'ID', ''],
+      ['Fort Collins', 40.59, -105.08, 'CO', 'Larimer'], ['Estes Park', 40.38, -105.52, 'CO', 'Larimer'], ['Rocky Mtn NP', 40.34, -105.68, 'CO', 'Larimer', 1], ['Boulder', 40.01, -105.27, 'CO', 'Boulder'], ['Colorado Springs', 38.83, -104.82, 'CO', 'El Paso'], ['Denver', 39.74, -104.99, 'CO', ''],
+      ['St. George', 37.1, -113.58, 'UT', 'Washington'], ['Zion NP', 37.3, -113.03, 'UT', 'Washington', 1], ['Cedar City', 37.68, -113.06, 'UT', 'Iron'], ['Salt Lake City', 40.76, -111.89, 'UT', ''],
+      ['Missoula', 46.87, -113.99, 'MT', 'Missoula'], ['Kalispell', 48.2, -114.31, 'MT', 'Flathead'], ['Glacier NP', 48.7, -113.8, 'MT', 'Flathead', 1], ['Helena', 46.59, -112.04, 'MT', '']
+    ].map(([n, la, lo, st, co, lm]) => ({ name: n, xy: P(la, lo), st, co, lm: !!lm }));
+    const FOREST = [[34.2, -118.4], [34.42, -118.52], [34.55, -118.3], [34.45, -117.72], [34.3, -117.62], [34.17, -117.85], [34.17, -118.15]];
+    const circle = ([x, y], r) => 'M' + (x - r) + ' ' + y + 'a' + r + ' ' + r + ' 0 1 0 ' + 2 * r + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0Z';
+    const bbox = (pts) => { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; pts.forEach(([x, y]) => { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); }); return [a, b, c, d]; };
+    const counties = {};
+    Object.keys(CNT).forEach((k) => {
+      const o = CNT[k]; const c = P(o.c[0], o.c[1]);
+      const pts = o.poly ? o.poly.map(([la, lo]) => P(la, lo)) : null;
+      counties[k] = { st: k.split('|')[0], name: k.split('|')[1], c, d: o.poly ? path(o.poly, true) : circle(c, 900), box: pts ? bbox(pts) : [c[0] - 900, c[1] - 900, c[0] + 900, c[1] + 900] };
+    });
+    const states = {};
+    Object.keys(ST).forEach((k) => { const pts = ST[k].map(([la, lo]) => P(la, lo)); states[k] = { d: path(ST[k], true), box: bbox(pts), label: STN[k][0], c: P(STN[k][1], STN[k][2]) }; });
+    return (window.__wfGeo = {
+      P, counties, states, cities: CITIES,
+      ocean: path(OCEAN, true) + path(GULF, true),
+      lakes: LAKES.map((l) => path(l, true)).join(''),
+      islands: ISLANDS.map((l) => path(l, true)).join(''),
+      coast: path(COAST, false) + ISLANDS.map((l) => path(l, true)).join(''),
+      stateLines: Object.keys(ST).map((k) => path(ST[k], true)).join(''),
+      countyLines: Object.values(T).map((l) => path(l, false)).join(''),
+      roads: ROADS.map((r) => path(r, false)).join(''),
+      forest: path(FOREST, true),
+      world: 'M-40000 -60000H60000V30000H-40000Z',
+      bounds: [P(50.5, -128)[0], P(50.5, -128)[1], P(30, -100)[0], P(30, -100)[1]]
+    });
+  }
+  fitWin() {
+    const w = this.win();
+    const t = w.t + 24, b = Math.max(t + 120, w.b - Math.max(0, Number(this.props.padBottom) || 0));
+    return { t, b, c: (t + b) / 2, h: b - t };
+  }
+  fit() {
+    const p = this.props;
+    if (!p.scopeSt) return null;
+    const G = this.geo();
+    const pts = [].concat(Array.isArray(p.ignitions) ? p.ignitions : [], Array.isArray(p.fires) ? p.fires : []).map((g) => [g.x, g.y]);
+    const bb = (a) => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; a.forEach(([x, y]) => { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }); return [x0, y0, x1, y1]; };
+    // Frame the incidents themselves (ignitions + fires) in every state and county; fall back to the area outline when there are none.
+    let box = pts.length ? bb(pts) : null, minSpan = 220;
+    if (!box) { const c = (p.scopeCo && G.counties[p.scopeSt + '|' + p.scopeCo]) || G.states[p.scopeSt]; box = c ? c.box : null; minSpan = 1; }
+    if (!box) return null;
+    const W = this.W(), fw = this.fitWin();
+    const bw = Math.max(minSpan, box[2] - box[0]), bh = Math.max(minSpan, box[3] - box[1]);
+    const s = Math.max(0.008, Math.min(0.85, Math.min((W - 112) / bw, (fw.h - 60) / bh)));
+    return { x: Math.round((box[0] + box[2]) / 2), y: Math.round((box[1] + box[3]) / 2), s: +s.toFixed(4), fw: true };
+  }
+  pinFit() {
+    const p = this.props;
+    if (p.mode !== 'pin') return null;
+    const cams = Array.isArray(p.cams) ? p.cams : [];
+    if (!cams.length) return null;
+    const PX = Number(p.pinX) || 610, PY = Number(p.pinY) || 290;
+    const xs = cams.map((c) => c.x).concat(PX), ys = cams.map((c) => c.y).concat(PY);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const w = this.win(), z = Number(p.zoom) || 0.7;
+    const s = Math.max(0.3, Math.min(z, (this.W() - 150) / Math.max(1, x1 - x0), (w.h - 110) / Math.max(1, y1 - y0)));
+    return { x: Math.round((x0 + x1) / 2), y: Math.round((y0 + y1) / 2), s: +s.toFixed(4) };
+  }
+  mapStyle() { let v = null; try { v = window.sessionStorage.getItem('wf-mapstyle'); } catch (e) {} v = v || (window.__wfMem || {}).mapStyle; return ['standard', 'topo'].indexOf(v) >= 0 ? v : 'standard'; }
+  setMapStyle(k) { window.__wfMem = Object.assign(window.__wfMem || {}, { mapStyle: k }); try { window.sessionStorage.setItem('wf-mapstyle', k); } catch (e) {} this.setState({ msv: Date.now(), msOpen: false }); try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
+  W() { return Number(this.props.w) || 366; }
+  H() { return Number(this.props.h) || 380; }
+  scaleK() {
+    if (!this.el) return 1;
+    const r = this.el.getBoundingClientRect();
+    return r.width / this.W() || 1;
+  }
+  local(clientX, clientY) {
+    const r = this.el.getBoundingClientRect();
+    const k = this.scaleK();
+    return { x: (clientX - r.left) / k, y: (clientY - r.top) / k };
+  }
+  win() {
+    const H = this.H();
+    const t = Math.max(0, Number(this.props.clipTop) || 0), bt = Math.max(0, Number(this.props.clipBottom) || 0);
+    return { t, b: H - bt, c: (t + H - bt) / 2, h: Math.max(1, H - bt - t) };
+  }
+  base() {
+    const p = this.props, F = this.fit() || this.pinFit();
+    const s0 = F ? F.s : (Number(p.zoom) || 1.1), fx = F ? F.x : (Number(p.focusX) || 600), fy = F ? F.y : (Number(p.focusY) || 330);
+    const key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c;
+    if (this._bk !== key) {
+      const w = this.win();
+      this._bk = key;
+      const wc = F && F.fw ? this.fitWin().c : w.c;
+      this._b = { cx: fx, cy: fy + (this.H() / 2 - wc) / s0, s: s0 };
+    }
+    return this._b;
+  }
+  view() {
+    const st = this.state || {};
+    const b = this.base();
+    return { s: st.s ?? b.s, cx: st.cx ?? b.cx, cy: st.cy ?? b.cy };
+  }
+  clampView(cx, cy, s) {
+    const W = this.W(), H = this.H(), w = this.win();
+    const B = this.geo().bounds;
+    s = Math.min(this.zMax(), Math.max(this.zMin(), s));
+    cx = Math.min(B[2], Math.max(B[0], cx));
+    const off = (H / 2 - w.c) / s;
+    cy = Math.min(B[3] + off, Math.max(B[1] + off, cy));
+    return { cx, cy, s };
+  }
+  fireBurn(g) {
+    // Burned area in map units: a wind-driven teardrop that grows downwind from the ignition point,
+    // with canyon "fingers" at the head and an uneven perimeter. Fronts = the still-active edges.
+    g = g || {}; const id = String(g.id || 'f');
+    let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+    const rnd = (k) => { let x = (h ^ (k * 2654435761)) >>> 0; x ^= x << 13; x >>>= 0; x ^= x >> 17; x ^= x << 5; x >>>= 0; return (x % 10000) / 10000; };
+    const phi = ((135 + (h % 120) - 60) * Math.PI) / 180;
+    const m = /(\d+)%/.exec(String(g.note || '')), cont = m ? Number(m[1]) / 100 : 0.3;
+    const R = 38 + (h % 60), N = 96, P = [], act = [];
+    const f1 = phi + (rnd(1) - 0.5) * 0.9, f2 = phi + (rnd(2) - 0.5) * 1.3;
+    for (let i = 0; i < N; i++) {
+      const a = (i / N) * Math.PI * 2, c = Math.cos(a - phi);
+      let r = R * (0.22 + 1.55 * Math.pow(Math.max(0, (c + 0.2) / 1.2), 2.2));
+      r *= 1 + 0.4 * Math.exp(-Math.pow(Math.atan2(Math.sin(a - f1), Math.cos(a - f1)) / 0.16, 2)) + 0.28 * Math.exp(-Math.pow(Math.atan2(Math.sin(a - f2), Math.cos(a - f2)) / 0.13, 2));
+      r *= 1 + 0.07 * Math.sin(a * 5 + rnd(3) * 6) + 0.05 * Math.sin(a * 9 + rnd(4) * 6) + 0.03 * Math.sin(a * 17 + rnd(5) * 6);
+      P.push([+(g.x + r * Math.cos(a)).toFixed(1), +(g.y + r * Math.sin(a)).toFixed(1)]);
+      // Head front: the downwind arc, shortened as containment grows. Some fires also run up one flank.
+      const head = c > -1 + 2 * Math.min(0.92, 0.55 + cont * 0.45);
+      const side = h % 2 === 0 ? 1 : -1, fl = Math.cos(a - (phi + side * 1.35));
+      act.push(head || (cont < 0.6 && fl > 0.93));
+    }
+    const area = 'M' + P.map((q) => q[0] + ' ' + q[1]).join(' L') + ' Z';
+    let front = '', open = false;
+    const start = act.findIndex((v, i) => v && !act[(i - 1 + N) % N]);
+    if (start < 0) return { area, pts: P, front: act[0] ? area : '' };
+    for (let k = 0; k <= N; k++) {
+      const i = (start + k) % N;
+      if (act[i]) { front += (open ? ' L' : ' M') + P[i][0] + ' ' + P[i][1]; open = true; } else open = false;
+    }
+    return { area, pts: P, front: front.trim() };
+  }
+  zMin() { return Math.max(0.008, (this.base().s || 0.05) * 0.46); }
+  zMax() { return Math.max(1, this.base().s || 1); }
+  setView(cx, cy, s) {
+    this.setState(this.clampView(cx, cy, s));
+  }
+  zoomAt(lx, ly, f) {
+    const v = this.view();
+    const W = this.W(), H = this.H();
+    const mx = v.cx + (lx - W / 2) / v.s;
+    const my = v.cy + (ly - H / 2) / v.s;
+    const s2 = Math.min(this.zMax(), Math.max(this.zMin(), v.s * f));
+    this.setView(mx - (lx - W / 2) / s2, my - (ly - H / 2) / s2, s2);
+  }
+  renderVals() {
+    { const sk = (this.props.scopeSt || '') + '|' + (this.props.scopeCo || ''); if (this._sk !== undefined && this._sk !== sk) this.state = Object.assign({}, this.state || {}, { selId: '__none', fireHover: false }); this._sk = sk; }
+    if (this.props.hideTips !== this._ht) { const first = this._ht === undefined; this._ht = this.props.hideTips; if (this.props.hideTips && (!first || true)) { this.state = Object.assign({}, this.state || {}, { selId: '__none', fireHover: false, msOpen: false }); } }
+    this.init();
+    const p = this.props;
+    const W = this.W(), H = this.H();
+    const c = this.clampView(this.view().cx, this.view().cy, this.view().s);
+    const s = c.s;
+    const tx = W / 2 - c.cx * s, ty = H / 2 - c.cy * s;
+    const at = (x, y, extra) => ({ left: +(tx + x * s).toFixed(1), top: +(ty + y * s).toFixed(1), ...extra });
+    const WN = this.win();
+    const ck = WN.t + ',' + WN.b;
+    if (this._ck !== undefined && this._ck !== ck) this._animUntil = Date.now() + 700;
+    this._ck = ck;
+    const anim = Date.now() < (this._animUntil || 0) && !(this.state || {}).dragging;
+    const EZ = ' .5s cubic-bezier(.2,.8,.2,1)';
+    const safeTop = Math.max(WN.t, Number(p.tipSafeTop) || 0);
+    const tip = (o) => { const up = o.top - safeTop, down = WN.b - o.top; return 'tip' + (up < 104 && down > up ? ' dn' : '') + (o.left < 110 ? ' l' : (o.left > W - 110 ? ' r' : '')); };
+    const withTip = (o, tt, td) => ({ ...o, tip: tip(o), tt, td });
+    const onScreen = () => true;
+    const mode = p.mode || 'risk';
+    const isRisk = mode === 'risk';
+    const isPin = mode === 'pin';
+    const PX = Number(p.pinX) || 610, PY = Number(p.pinY) || 290;
+    const on = (v) => v !== false && v !== 'false';
+    const villages = [
+      ['La Crescenta', 326, 590], ['Monrovia', 926, 638], ['Sierra Madre', 674, 566], ['Tujunga', 110, 542],
+      ['Altadena', 518, 662], ['Sunland', 230, 722], ['La Cañada', 386, 770],
+      ['Pasadena', 470, 805], ['Glendale', 237, 806], ['Arcadia', 745, 806], ['Angeles National Forest', 640, 70], ['Foothill Fwy · I-210', 960, 842]
+    ].map(([label, x, y]) => at(x, y, { label })).filter(onScreen);
+    const truck = 'M3 7h11v9H3zM14 10h4l3 3v3h-7';
+    const heli = 'M3 6h18M12 6v4M6 10h10a3 3 0 0 1 0 6H9l-3-3zM9 19h9';
+    const drone = 'M5 5l14 14M19 5 5 19M7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M7 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0';
+    const house = 'M3 21h18M5 21V10l7-5 7 5v11M9 21v-5h6v5';
+    const ST = [['st7', 'ST-7', 674, 566, true, 'Sierra Madre', 'Busy: all 3 crews on another incident'], ['st5', 'ST-5', 518, 662, false, 'Altadena', '3 of 4 crews free'], ['st2', 'ST-2', 326, 590, false, 'La Crescenta', '2 of 3 crews free'], ['st9', 'ST-9', 926, 638, false, 'Monrovia', '1 of 2 crews free'], ['st1', 'ST-1', 110, 542, false, 'Tujunga', '4 of 4 crews free']];
+    const selId = p.station || 'st5';
+    const stations = ST.map(([id, code, x, y, busy, nm, avail]) => {
+      const on = !isRisk && id === selId;
+      const o = at(x, y - 10, {
+        label: on && p.stationLabel ? p.stationLabel : code, icon: house,
+        bg: on ? 'rgba(0,113,227,0.95)' : 'rgba(255,255,255,0.78)',
+        bd: on ? 'rgba(120,180,255,0.9)' : 'rgba(60,60,67,0.132)',
+        fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#0079A6',
+        op: (!isRisk && busy) ? 0.5 : 1
+      });
+      return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch; dotted line shows the route.' : '.'));
+    }).filter((o) => !isPin).filter(onScreen);
+    const selSt = ST.find((q) => q[0] === selId) || ST[1];
+    const FX = Number(p.fireX) || 610, FY = Number(p.fireY) || 290;
+    const qx = (selSt[2] + FX) / 2 + (selSt[3] - FY) * 0.18, qy = (selSt[3] + FY) / 2 - (selSt[2] - FX) * 0.18;
+    const route = Math.hypot(FX - 610, FY - 290) > 1500 ? '' : 'M' + selSt[2] + ' ' + (selSt[3] - 10) + ' Q' + qx.toFixed(0) + ' ' + qy.toFixed(0) + ' ' + FX + ' ' + FY;
+    const strikes = isRisk && on(p.lightning)
+      ? [[640, 236], [704, 300], [578, 334], [732, 262], [182, 862], [668, 190], [858, 236], [826, 268]].map(([x, y], i) => withTip(at(x, y), 'Lightning strike', 'Detected at ' + ['11:40 AM', '12:05 PM', '12:18 PM', '12:31 PM', '1:02 PM', '1:15 PM', '11:40 AM', '11:52 AM'][i] + ' by the lightning network. Strikes can smoulder for hours.')).filter(onScreen) : [];
+    const sensors = isRisk && on(p.moisture)
+      ? [[652, 336, '8%'], [556, 250, '9%'], [226, 884, '14%'], [452, 452, '21%'], [820, 520, '24%']].map(([x, y, label]) => withTip(at(x, y, { label }), 'Fuel moisture ' + label, 'Ground sensor reading of dead brush moisture. Below 10% ignites easily.')).filter(onScreen) : [];
+    const winds = on(p.wind) && isRisk
+      ? [[150, 150], [400, 120], [850, 120], [300, 420], [760, 440], [120, 680], [620, 820], [880, 860], [520, 560], [900, 470]].map(([x, y], i) => withTip(at(x, y, { delay: '-' + ((i * 0.83) % 2.6).toFixed(2) + 's' }), 'Wind · NE 21 mph', 'Santa Ana gusts to 38 mph. Arrows show where the wind pushes a fire: south-west, downhill.')).filter(onScreen) : [];
+    const hz = Number(p.horizon) || 2;
+    const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
+    return {
+      setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
+      zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
+      cursor: (this.state || {}).dragging ? 'grabbing' : 'grab',
+      w: W, h: H, s: +s.toFixed(4), tx: +tx.toFixed(1), ty: +ty.toFixed(1),
+      pct: Math.round(s / (this.base().s || 1) * 100) + '%',
+      kmPx: Math.round(100 * s),
+      isRisk, isSpread: mode === 'spread', isPin,
+      pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '',
+      camLines: isPin ? (Array.isArray(p.cams) ? p.cams : []).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
+      camMarks: isPin ? (Array.isArray(p.cams) ? p.cams : []).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Evidence source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
+      hasFull: typeof p.onFull === 'function',
+      ...(() => {
+        const st = this.mapStyle(), open = !!(this.state || {}).msOpen;
+        const PAL = {
+          standard: { name: 'Standard map', bg: '#E3EEDF', sel: '#E3EEDF', img: true, reg: 'assets/56a7915e7bf8f9e52f5f808a6173c69f.webp', loc: 'assets/85ceacc6568be465496be6435ddfcb7e.webp', forestOp: 0, ocean: '#A3D6F3', lakes: '#A3D6F3', county: 'rgba(120,130,120,0.55)', state: '#7D8490', coast: '#8CC7EA', roads: '#A9B9DA', roadCase: '#FFFFFF', mask: '#FFFFFF', maskOp: 0.4 },
+          topo: { name: 'Topographic', bg: '#F4F1E6', sel: '#F4F1E6', img: true, reg: 'assets/e2d0b996766b619d15a2f44ac959aeab.webp', loc: 'assets/95a43520b601b120b6fce6fc36dd406a.webp', forestOp: 0, ocean: '#C2DEF1', lakes: '#B6D7EE', county: 'rgba(120,100,70,0.5)', state: '#7E6A55', coast: '#6FA6CF', roads: '#E3A15B', roadCase: 'transparent', mask: '#FFFFFF', maskOp: 0.45 },
+        };
+        const opts = [['standard', 'Standard'], ['topo', 'Topo']];
+        const pl = PAL[st] || PAL.standard;
+        const TILES = {"ID_Ada":[3130,-27355,3640,0,{"topo":"assets/34d01f1576fc026c232d4538a236d8e0.webp","standard":"assets/2589e628af2fb910435327bd84e76895.webp"}],"AZ_Coconino":[13612,-5826,3640,0,{"topo":"assets/e01edd5fc355f742add6c7c69dccc4e7.webp","standard":"assets/0bca751625230e932d506a5f14700821.webp"}],"WA_Chelan":[-7141,-39830,3640,0,{"topo":"assets/b555710c1a6efa76e3d224b288824aa2.webp","standard":"assets/965199398256448684514c4974f9bca0.webp"}],"CA_Sonoma":[-12464,-13436,3640,0,{"topo":"assets/a708e495d6510bf070f98ddb126c2caf.webp","standard":"assets/7e8a02b114fc85525ee8dc2b44eda01b.webp"}],"CA_San_Diego":[135,677,6815,0,{"topo":"assets/90ff7072e85cb3da97b2d70202c47b59.webp","standard":"assets/a8ee908feddac64766a9c3ebf0a040b3.webp"}],"AZ_Gila":[15863,-55,3640,0,{"topo":"assets/a827ab39888da39c8f29a837fd790953.webp","standard":"assets/1ce334cc0f3c302d35b6f1407d3e788f.webp"}],"NM_Lincoln":[28409,87,3640,0,{"topo":"assets/fa60bcc5153fddef00d3349a4993d8f0.webp","standard":"assets/2e078534e46609e8c8ea9dc258e3c6ce.webp"}],"NV_Washoe":[-4890,-19490,3640,0,{"topo":"assets/32e71daa005b2836f83869df67c59058.webp","standard":"assets/8914bfb2f504f50c77c07d05e62747c0.webp"}],"AZ_Yavapai":[11783,-2318,3640,0,{"topo":"assets/02468925dd655236e26baa84cc6a66c6.webp","standard":"assets/8a7c75f9df8f1cbf3131b91efc3c1827.webp"}],"AZ_Maricopa":[11924,1218,3640,0,{"topo":"assets/60fcb4759496fef13f766117a517d7a7.webp","standard":"assets/10a111af9c372d438033b25622c2ed73.webp"}],"CA_Santa_Barbara":[-6726,-3647,5507,0,{"topo":"assets/0aab3a4f1f336427988bd3dc3c68cf48.webp","standard":"assets/f9f229163ca605175d167e80309f17c8.webp"}],"ID_Boise":[4326,-28882,3640,0,{"topo":"assets/9837bd0ddc0e3fe6538bdf79e632a28f.webp","standard":"assets/16cce0668629def5d53b73ec23926f61.webp"}],"CA_Shasta":[-10471,-19745,3640,0,{"topo":"assets/b9c8993d8852886b9df47169314a08cd.webp","standard":"assets/7da1f1959dac53285646121fc0a1e569.webp"}],"NM_Sandoval":[25079,-5401,3640,0,{"topo":"assets/d17b89193ce923e8233c6d89d58e4f16.webp","standard":"assets/634735ec493414309c4d6cb82a700648.webp"}],"MT_Flathead":[8266,-41075,3640,0,{"topo":"assets/1d078b6e9a29bf11fc7ac592bbf0ab79.webp","standard":"assets/16602e3cf50c3a205e0be632952ef6a9.webp"}],"NV_Clark":[6014,-6873,3640,0,{"topo":"assets/e13b23a4a02a147e57cfd2f006e813f6.webp","standard":"assets/d21d20075fe2f42537945d259fb9ad6c.webp"}],"NV_Douglas":[-4796,-14511,3640,0,{"topo":"assets/d8183647ad4ab29ac0829bcd5fe479de.webp","standard":"assets/f7ad2650b434f0af51a3e15cdec208ef.webp"}],"CA_Kern":[-6915,-8096,11207,0,{"topo":"assets/a64f6a0354cb4eb68065ef612cadc7df.webp","standard":"assets/078db16b71989745936e86f0b11ae860.webp"}],"CA_Butte":[-9439,-16661,3640,0,{"topo":"assets/63dee2b70f4facf49005c4baf283d0b6.webp","standard":"assets/fc8a58b9f06b4c820123de60824b9a3e.webp"}],"UT_Washington":[9532,-9900,3640,0,{"topo":"assets/5d4a6ad1673bef42a4ee2165530edb53.webp","standard":"assets/5521fff24610a916ae7c5869642bc5d7.webp"}],"CA_Ventura":[-4029,-2520,4779,0,{"topo":"assets/011a4dd9e53e9a35de01284e46bf44ce.webp","standard":"assets/0ed4185178a32203cfc797b967799d2c.webp"}],"OR_Klamath":[-9556,-25204,3640,0,{"topo":"assets/0b576821257a827695bc159fbca2f381.webp","standard":"assets/83ec58895228ff8b6071e7a204dda7c6.webp"}],"NM_Grant":[21562,2944,3640,0,{"topo":"assets/f544ef70d9c1b1b55880ae3fa3078029.webp","standard":"assets/4517fb34314048f79ed0f788c2097447.webp"}],"CO_El_Paso":[30590,-14285,3640,0,{"topo":"assets/5b0b4151bbd26781b9c3db37d08fdaff.webp","standard":"assets/6c1e545cc3dcc54b5befd182175290e0.webp"}],"CO_Larimer":[28409,-19462,3640,0,{"topo":"assets/bd300f3e3959bd0c8e3bdaa47db9b73a.webp","standard":"assets/374bda640ff55aac8cfc4812c56fbb77.webp"}],"CA_Riverside":[-1642,-5145,14075,0,{"topo":"assets/0e62796f225f06b6ea33868b261958e7.webp","standard":"assets/8b8a80d4464d3bb1e579ed7384efa05b.webp"}],"ID_Valley":[4701,-31089,3640,0,{"topo":"assets/ddef455859bafc5bc05f5dc9ab89ac23.webp","standard":"assets/98d22e70b9ec4111e2b7ee4e137816df.webp"}],"CA_San_Bernardino":[-2275,-9172,15765,0,{"topo":"assets/09905820b2f0773f0d479ad7532f310c.webp","standard":"assets/934fc4dd34bb5766a75ccd13812b3f4c.webp"}],"OR_Josephine":[-14035,-24299,3640,0,{"topo":"assets/6af97f7dc5e2d28b480276fa67178112.webp","standard":"assets/22728d6c5c8d70cd847bea45afaf1f4f.webp"}],"CO_Boulder":[28644,-17849,3640,0,{"topo":"assets/c59b57425f84a67f6e06473d903921f1.webp","standard":"assets/9ba5078fdcf627ca991e29a6f8fb1fb9.webp"}],"MT_Missoula":[8570,-37511,3640,0,{"topo":"assets/cf230a644210ce933ee981abbf391600.webp","standard":"assets/992015c6d53140aaa43f07f827659c3a.webp"}],"WA_Kittitas":[-7282,-37737,3640,0,{"topo":"assets/c84b7964817a1d37c0d06aea40dba428.webp","standard":"assets/a72fd35ba178b3d2bee867dc5958bde1.webp"}],"OR_Deschutes":[-8572,-28656,3640,0,{"topo":"assets/ecdbbdc6dfccd3cd82bccbc460166bbe.webp","standard":"assets/b67246aba986cb3efea977beae385eca.webp"}],"WA_Okanogan":[-5077,-41782,3640,0,{"topo":"assets/7108594305b24695772d842c7cd4bc04.webp","standard":"assets/393a521be6cdd3d8c308607cb58d795b.webp"}],"OR_Jackson":[-12089,-24469,3640,0,{"topo":"assets/f03f97ff70f6a92adf9939112db6ed25.webp","standard":"assets/a9855f3b93054b69c0fe3282a73b3555.webp"}],"CA_Orange":[-259,477,3312,0,{"topo":"assets/236962d6c7064cc43e5318f8b8300a99.webp","standard":"assets/53fce967e51bed325504b8c4522f2ed3.webp"}],"UT_Iron":[10048,-11540,3640,0,{"topo":"assets/3e883936dad94ff5ba221f5a572a890e.webp","standard":"assets/2e6a3a4e71a323384020dd3bdd27e3b2.webp"}]};
+        const vx0 = -tx / s, vy0 = -ty / s, vx1 = (W - tx) / s, vy1 = (H - ty) / s;
+        const tiles = [];
+        if (pl.img && s >= 0.028) {
+          const MIDB = {"standard":["assets/f83a41c427085bd32bceb52f5802c6ba.webp","assets/1f262671bca8efef487db46d5f1b5b62.webp","assets/9245be74160291deff5d07cd7f7c813f.webp","assets/7db0586a396dd9da4584efaf9a1adaa1.webp","assets/4d023bb420257d0004301d7ed16ee48b.webp","assets/107cb787dd33c1e08892171731553400.webp","assets/1cd90da736e308df93c60fb8341bb9e0.webp","assets/bf84a465385ad109c6c54283ecffea53.webp","assets/1b2f5738861af2fc9059112ba1d97918.webp","assets/0cc3cd995a7df99c04e1c712e7e657df.webp","assets/d711806c5ab38fc2a37389109ad35efe.webp","assets/245fdf07c297bca17082d5a302d67c46.webp","assets/2377b312225a7815ccf8979fdfff0887.webp","assets/b63c881982827ca80603aa51b1688900.webp","assets/51fd2bbfb3ed0a60732f8b10daac9646.webp","assets/cf812447ea8445a44187558eae9e44a6.webp"],"topo":["assets/f8b5feb29b1a66c89a898f359f08c8e3.webp","assets/9438d8fead7a59b5a3b2c1ad07d3e80a.webp","assets/42bf882b9c8192d916a55eba92adf7a7.webp","assets/3dbebaa35ad5a0cfb91cacac92254661.webp","assets/ae9fda3101849b464c4cbdf5176045ee.webp","assets/9eb24645089189962dc175bd2cd1b15b.webp","assets/9f8efe8255c2f38ab56c9dc49034540d.webp","assets/575b6232031833c6994b5b7427b0278d.webp","assets/7116eef0c73eea5fc06e3f4845f301be.webp","assets/5161f9315459edc8e33d902dc1084a06.webp","assets/ccb9f538edefd6c452d85c6489cf74d3.webp","assets/9aac5cfb425158d56693e5b951676d2c.webp","assets/a60a46bd9531a48da0e3c7dfa92f1c60.webp","assets/911d39499445b774a024018c9c4afefd.webp","assets/41afb7ff590cf285f70f74049d1f932b.webp","assets/3f5d5b3c4404d3a9dea19cc32c75e88d.webp"]}, MID = [];
+          for (let k = 0; k < 16; k++) MID.push([-22627 + (k % 4) * 16415, -45479 + Math.floor(k / 4) * 14498.75, 16415, 14498.75, { standard: MIDB.standard[k], topo: MIDB.topo[k] }, 1]);
+          if (!window.__wfPre) {
+            // Warm the cache: current map style first, then the other one, a few images at a time.
+            window.__wfPre = 1;
+            const other = st === 'topo' ? 'standard' : 'topo';
+            const urls = [];
+            [st, other].forEach((k) => { urls.push(PAL[k].reg, PAL[k].loc); MID.forEach((m) => urls.push(m[4][k])); Object.values(TILES).forEach((t) => urls.push(t[4][k])); });
+            const q = urls.filter((u, i) => u && urls.indexOf(u) === i);
+            const next = () => { const u = q.shift(); if (!u) return; const im = new Image(); try { im.fetchPriority = 'low'; im.decoding = 'async'; } catch (e) {} im.onload = im.onerror = next; im.src = u; };
+            setTimeout(() => { for (let i = 0; i < 4; i++) next(); }, 400);
+          }
+          const cand = Object.values(TILES).concat([[-2000, -1400, 4600, 3700, { standard: PAL.standard.loc, topo: PAL.topo.loc }]], s >= 0.028 ? MID : [])
+            .map((t) => ({ t, w: t[2], h: t[3] || t[2] }))
+            .filter((o) => o.t[4][st] && o.t[0] < vx1 && o.t[0] + o.w > vx0 && o.t[1] < vy1 && o.t[1] + o.h > vy0)
+            .sort((a, b) => a.w * a.h - b.w * b.h);
+          for (const o of cand) {
+            tiles.unshift({ href: o.t[4][st], x: o.t[0], y: o.t[1], w: o.w, h: o.h, mask: o.t[5] ? 'none' : 'url(#wfTileMask)' });
+            const ix = o.t[5] ? 0 : o.w * 0.08, iy = o.t[5] ? 0 : o.h * 0.08;
+            if (vx0 >= o.t[0] + ix && vx1 <= o.t[0] + o.w - ix && vy0 >= o.t[1] + iy && vy1 <= o.t[1] + o.h - iy) break;
+          }
+        }
+        return {
+          tiles,
+          pal: pl,
+          ms: { pressed: st === 'topo' ? 'true' : 'false', name: (PAL[st] || PAL.standard).name,
+            icon: st === 'topo' ? 'M3 18c3-2.5 6-2.5 9 0s6 2.5 9 0M5 13c2-2.8 4.4-4 7-4s5 1.2 7 4M8.5 8c1-1.3 2.2-2 3.5-2s2.5.7 3.5 2' : 'M12 3 2 8l10 5 10-5-10-5ZM2 12.5l10 5 10-5M2 17l10 5 10-5',
+            aria: st === 'topo' ? 'Topographic map on. Switch to the standard map' : 'Standard map. Switch to the topographic map',
+            toggle: () => this.setMapStyle(st === 'topo' ? 'standard' : 'topo') }
+        };
+      })(),
+      fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
+      fullLabel: (p.isFull === true || p.isFull === 'true') ? 'Exit full screen' : 'Full screen',
+      fullIcon: (p.isFull === true || p.isFull === 'true') ? 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5' : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
+      clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (Number(p.attrBottom ?? 10)) + (H - WN.b),
+      mapTr: anim ? 'transform' + EZ : 'none', mv: anim ? 'left' + EZ + ', top' + EZ : 'none', mvSt: anim ? 'left' + EZ + ', top' + EZ + ', background-color .3s, border-color .3s' : 'background-color .3s, border-color .3s',
+      ctrl: p.controls === 'top'
+        ? { right: '12px', top: '12px', tf: 'none', dir: 'row', sepW: '1px', sepH: '24px', sepM: 'auto 2px' }
+        : { right: '10px', top: (Number(p.ctrlTop) || WN.c) + 'px', tf: 'translateY(-50%)', dir: 'column', sepW: 'auto', sepH: '1px', sepM: '2px 8px' },
+      r1: ring(1), r2: ring(2), r3: ring(3),
+      ...(() => {
+        const G = this.geo();
+        const near = s >= 0.22;
+        const selC = p.scopeSt && p.scopeCo ? G.counties[p.scopeSt + '|' + p.scopeCo] : null;
+        const selS = p.scopeSt ? G.states[p.scopeSt] : null;
+        const sea = G.P(33.35, -119.1), seaFar = G.P(36.2, -125.2);
+        const seaPt = s < 0.06 ? seaFar : sea;
+        const laScope = !p.scopeSt || (p.scopeSt === 'CA' && (!p.scopeCo || p.scopeCo === 'Los Angeles'));
+        const inScope = (c) => p.scopeSt ? (c.st === p.scopeSt && (!p.scopeCo || c.co === p.scopeCo)) : c.co === 'Los Angeles';
+        const selShape = selC ? selC.d : (selS ? selS.d : '');
+        return {
+          geo: { ocean: G.ocean, lakes: G.lakes, coast: G.coast, stateLines: G.stateLines, countyLines: G.countyLines, roads: G.roads, forest: G.forest,
+            roadW: near ? 3 : 1.8, roadCaseW: near ? 5 : 3.4, selState: selS ? selS.d : '', selCounty: selC ? selC.d : '', mask: selShape ? G.world + selShape : '' },
+          stateLabels: (s < 0.07 && selS) ? [at(selS.c[0], selS.c[1], { label: selS.label, fg: '#000000' })] : [],
+          ...(() => {
+            // Declutter: markers first, then state, county and city labels; anything that would overlap is dropped.
+            const boxes = [];
+            const hit = (b) => boxes.some((q) => b[0] < q[2] && b[2] > q[0] && b[1] < q[3] && b[3] > q[1]);
+            [].concat(Array.isArray(p.ignitions) ? p.ignitions : [], Array.isArray(p.fires) ? p.fires : []).forEach((g) => { const o = at(g.x, g.y); boxes.push([o.left - 24, o.top - 24, o.left + 24, o.top + 24]); });
+            if (s < 0.07 && selS) { const o = at(selS.c[0], selS.c[1]); const w = selS.label.length * 9.5; boxes.push([o.left - w / 2, o.top - 10, o.left + w / 2, o.top + 10]); }
+            const keep = (o, w, h, dx) => { const b = [o.left + dx - 2, o.top - h / 2 - 2, o.left + dx + w + 2, o.top + h / 2 + 2]; if (hit(b) || b[0] < 4 || b[2] > W - 4) return false; boxes.push(b); return true; };
+            const cityOn = s >= (p.scopeCo ? 0.02 : 0.05) && !(near && laScope);
+            const cities = cityOn ? G.cities.filter((c) => inScope(c) && (p.scopeCo || !c.lm || s >= 0.08)).sort((a, b) => (a.lm ? 1 : 0) - (b.lm ? 1 : 0)).map((c) => at(c.xy[0], c.xy[1], { label: c.name, size: c.lm ? 11 : 12, weight: c.lm ? 500 : 600, style: c.lm ? 'italic' : 'normal', fg: c.lm ? '#2E7D32' : '#1C1C1E', dot: c.lm ? 0 : 5 })).filter((o) => keep(o, o.label.length * (o.size * 0.58) + 12, 16, -3)) : [];
+            const counties = (s >= 0.012 && s < 0.3 && p.scopeSt && !p.scopeCo) ? Object.values(G.counties).filter((c) => c.st === p.scopeSt).map((c) => at(c.c[0], c.c[1], { label: c.name, fg: '#6C6C70', size: 11, weight: 600 })).filter((o) => { const w = o.label.length * 6.4; return keep({ left: o.left - w / 2, top: o.top }, w, 14, 0); }) : [];
+            return { countyLabels: counties, cityLabels: cities };
+          })(),
+          showSea: true, sea: at(seaPt[0], seaPt[1]),
+          villages: (near && laScope) ? villages : [], stations: (near && laScope) ? stations : [], strikes: (near && laScope) ? strikes : [], sensors: (near && laScope) ? sensors : [], winds: (near && laScope) ? winds : []
+        };
+      })(),
+      fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
+      fire2: withTip(at(842, 252), 'Possible holdover fire IC-0924-08', '54% likelihood. Lightning struck here at 11:40 AM.\nTap to review.'),
+      zones: [],
+      fdx: (Number(p.fireX) || 610) - 610, fdy: (Number(p.fireY) || 290) - 290,
+      rings: mode === 'spread' ? [[577, 313, 1, '7 acres by 3:40 PM'], [525, 350, 2, '30 acres by 4:40 PM'], [448, 404, 3, '77 acres by 5:40 PM']].map(([x, y, h, d]) => withTip(at(x + (Number(p.fireX) || 610) - 610, y + (Number(p.fireY) || 290) - 290, { label: '+' + h + 'h', bd: h === hz ? 'rgba(232,106,0,0.8)' : 'rgba(60,60,67,0.154)', fg: h === hz ? '#C25700' : '#3C3C43' }), 'Projected fire edge in ' + h + ' h', d + ' if unattended, pushed south-west by the Santa Ana wind.')).filter(onScreen) : [], showFire: true, route, routeOp: (isRisk || (Array.isArray(p.units) && p.units.length)) ? 0 : 1, radius: Number(p.radius ?? 20), attrBottom: Number(p.attrBottom ?? 10),
+      ...(() => {
+        const U = Array.isArray(p.units) ? p.units : [];
+        if (!U.length) return { unitMarks: [], unitRoutes: '' };
+        const T = (u) => { const d = Math.hypot(u.x1 - u.x0, u.y1 - u.y0); return u.air ? Math.max(7, d / 34) : Math.max(16, d / 11); };
+        const P = Math.max(...U.map(T)) + 3;
+        const el = ((Date.now() - (this._u0 || Date.now())) / 1000) % P;
+        const dragging = !!(this.state || {}).dragging;
+        return {
+          unitRoutes: U.map((u) => 'M' + u.x0 + ' ' + u.y0 + ' L' + u.x1 + ' ' + u.y1).join(' '),
+          unitMarks: U.map((u) => {
+            const k = Math.min(1, el / T(u)), e = 1 - Math.pow(1 - k, 1.6);
+            const hidden = el < 0.35 || el > P - 0.5;
+            const o = at(u.x0 + (u.x1 - u.x0) * e, u.y0 + (u.y1 - u.y0) * e);
+            return withTip({ ...o, icon: u.icon, c: u.c, glow: u.glow, rot: Math.round(Math.atan2(u.y1 - u.y0, u.x1 - u.x0) * 180 / Math.PI), aria: u.tt + '. ' + u.td, op: hidden ? 0 : 1,
+              tr: dragging ? 'opacity .25s ease' : (anim ? 'left' + EZ + ', top' + EZ + ', opacity .25s ease' : 'left .3s linear, top .3s linear, opacity .25s ease') }, u.tt, u.td);
+          })
+        };
+      })(),
+      otherMarks: (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId).map((g) => withTip(at(g.x, g.y, { c: g.conf >= 70 ? '#E86A00' : (g.conf >= 50 ? '#B37A00' : '#6C6C70'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
+      fireMarks: ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => {
+        const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
+        let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
+        const small = x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
+        const zone = small
+          ? { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' }
+          : { zl: +x0.toFixed(1), zt: +y0.toFixed(1), zw: +(x1 - x0).toFixed(1), zh: +(y1 - y0).toFixed(1), rad: '0', flameD: 'none', clip: "path('M" + sp.map((q) => (q[0] - x0).toFixed(1) + ' ' + (q[1] - y0).toFixed(1)).join(' L') + " Z')" };
+        const anc = small ? { left: +ox.toFixed(1), top: +(oy - 14).toFixed(1) } : { left: +((x0 + x1) / 2).toFixed(1), top: +y0.toFixed(1) };
+        return withTip({ ...anc, ...zone, aria: 'Active fire ' + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, 'Active fire · ' + g.id, g.place + '. ' + (g.note || '') + '.\nTap to see forces dispatched.');
+      }) : [],
+      fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
+      burns: ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => this.fireBurn(g)) : [],
+      linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)),
+      recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
+      ignMarks: (isRisk && on(p.linkCandidate)) ? ((list) => list.map((g, gi) => {
+        const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
+        const sel = g.id === selId;
+        const hi = g.conf >= 70, mid = g.conf >= 50;
+        const c = hi ? '#E86A00' : (mid ? '#B37A00' : '#3C3C43');
+        return withTip(at(g.x, g.y, {
+          c, rim: hi ? '#FFFFFF' : (mid ? '#FFFFFF' : '#FFFFFF'), r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
+          sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
+          aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent',
+          pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
+        }), g.place + ' · ' + g.id, g.conf + '% likelihood · ' + g.src + '.\nTap to review.');
+      }))(Array.isArray(p.ignitions) ? p.ignitions : [{ id: 'IC-0924-07', x: 610, y: 290, conf: 87, place: 'North ridge', src: '3 sources' }, { id: 'IC-0924-08', x: 842, y: 252, conf: 54, place: 'East canyon', src: 'Tower T-11' }]) : []
+    };
+  }
+}
+</script>
+</body>
+</html>
