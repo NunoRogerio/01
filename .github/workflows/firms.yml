@@ -1,7 +1,7 @@
 name: Satellite hotspots (NASA FIRMS)
 # Writes data/regions.json (countries -> regions, US states -> counties) and data/hotspots.json
 # (VIIRS hotspots, last 24 h, Europe + the Americas) for the app's ignition candidates.
-# Needs the repository secret FIRMS_MAP_KEY (free key: https://firms.modaps.eosdis.nasa.gov/api/map_key/).
+# Needs the repository secret FIRMS_MAP_KEY (free key: https://firms.modaps.eosdis.nasa.gov/api/map_key/) — set 2026-09-26.
 on:
   schedule:
     - cron: '7,37 * * * *'
