@@ -10,13 +10,18 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v11', TTL=5*60*1000;
+  var KEY='wf-live-fires-v12', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
   function title(s){return String(s||'').toLowerCase().replace(/(^|[\s\-\/(])(\S)/g,function(_,a,c){return a+c.toUpperCase();}).replace(/\b(Do|Da|Dos|Das|De|E)\b/g,function(w){return w.toLowerCase();});}
   function plain(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();}
   var DIST={};PT_DISTRICTS.forEach(function(d){DIST[plain(d)]=d;});
+  // ANEPC occurrence states (Fogos.pt statusCode) -> English + tone for the state tag
+  var PT_STATE={3:['Despacho','Dispatched','warn'],4:['Despacho de 1º Alerta','First alert dispatched','warn'],5:['Em Curso','Ongoing','hot'],6:['Chegada ao TO','Crews arriving','warn'],
+    7:['Em Resolução','Being resolved','amber'],8:['Conclusão','Concluding','ok'],9:['Vigilância','Under surveillance','watch'],10:['Encerrada','Closed','off'],11:['Falso Alarme','False alarm','off'],12:['Falso Alerta','False alert','off']};
+  // Fogos.pt / ANEPC fire types ("natureza")
+  var PT_TYPE={'mato':'Scrubland','povoamento florestal':'Forest stand','agricola':'Agricultural','queimada':'Controlled burn','queima':'Debris burning','consolidacao de rescaldo':'Mop-up','incendio urbano':'Urban'};
   DIST['acores']='Açores';DIST['regiao autonoma dos acores']='Açores';DIST['madeira']='Madeira';DIST['regiao autonoma da madeira']='Madeira';
 
   function buildUS(fc){
@@ -29,7 +34,12 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var note=(pc!=null?'Contained '+Math.round(pc)+'%':(p.FireDiscoveryDateTime?'Reported '+ago(p.FireDiscoveryDateTime):'Active'))+(ac?' · '+ac:'');
       var xy=toXY(g.coordinates[1],g.coordinates[0]);
       var res=p.TotalIncidentPersonnel!=null?{man:p.TotalIncidentPersonnel,status:pc!=null?'Contained '+Math.round(pc)+'%':'',start:p.FireDiscoveryDateTime?new Date(p.FireDiscoveryDateTime).toLocaleDateString([], {day:'numeric',month:'short'}):'',src:'NIFC · WFIGS'}:null;
-      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1],res,p.IncidentSize?+(p.IncidentSize*0.4047).toFixed(1):null],w:p.IncidentSize||0});
+      // NIFC / CAL FIRE-style stages: Active (with % contained) -> Contained -> Controlled -> Out
+      var S=p.FireOutDateTime?['Out','Fire out','off']:p.ControlDateTime?['Controlled','Controlled','watch']:(p.ContainmentDateTime||(pc!=null&&pc>=100))?['Contained','Contained','ok']:['Active',pc?Math.round(pc)+'% contained':'Not contained',pc>=50?'amber':'hot'];
+      var info={src:'NIFC · WFIGS',st:S[0],stEn:S[1],tone:S[2],pc:pc!=null?Math.round(pc):null,beh:p.FireBehaviorGeneral||'',cause:p.FireCause||'',
+        startMs:p.FireDiscoveryDateTime||null,updMs:p.ModifiedOnDateTime_dt||null,ac:p.IncidentSize!=null?Math.round(p.IncidentSize):null,ha:p.IncidentSize?+(p.IncidentSize*0.4047).toFixed(1):null,
+        resolved:S[0]!=='Active',heldMs:p.ContainmentDateTime||p.ControlDateTime||p.FireOutDateTime||null,heldSrc:'containment report',place:[p.POOCounty?p.POOCounty+' County':'',st].filter(Boolean).join(' · ')};
+      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1],res,info.ha,info],w:p.IncidentSize||0});
     });
     return out;
   }
@@ -47,7 +57,12 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var hm=function(t){var x=new Date(t);return isNaN(x)?'':x.toLocaleString([], {day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});};
       var res={man:man,terrain:parseInt(i.terrain,10)||0,aerial:air,water:parseInt(i.meios_aquaticos,10)||0,status:i.status||'',
         start:i.dateTime&&i.dateTime.sec?hm(i.dateTime.sec*1000):((i.date||'')+' '+(i.hour||'')).trim(),updated:i.updated&&i.updated.sec?hm(i.updated.sec*1000):'',src:'Fogos.pt · ANEPC'};
-      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1],res],w:man+air*20});
+      var sc=parseInt(i.statusCode,10),S=PT_STATE[sc]||[i.status||'Ativo','Active','hot'],BA=(i.icnf&&i.icnf.burnArea)||null;
+      var info={src:'Fogos.pt · ANEPC',st:S[0],stEn:S[1],tone:S[2],type:i.natureza||'',typeEn:PT_TYPE[nat]||'',typeCode:code,
+        startMs:i.dateTime&&i.dateTime.sec?i.dateTime.sec*1000:(i.created&&i.created.sec?i.created.sec*1000:null),updMs:i.updated&&i.updated.sec?i.updated.sec*1000:null,
+        ha:BA&&BA.total?Math.round(BA.total*10)/10:null,burn:BA&&BA.total?{forest:BA.povoamento||0,scrub:BA.mato||0,farm:BA.agricola||0}:null,
+        resolved:sc>=8,heldMs:sc>=8&&i.updated&&i.updated.sec?i.updated.sec*1000:null,heldSrc:'last status update',place:[i.concelho?title(i.concelho):'',d].filter(Boolean).join(' · ')};
+      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1],res,info.ha,info],w:man+air*20});
     });
     return out;
   }
@@ -263,6 +278,14 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     }
     return {src:src,snaps:snaps,etrMin:etr,etrAt:etr!==null?new Date(t0.getTime()+etr*60000):null,noRes:!f.res,info:info,startPct:Math.round(startContained(f)*100)};
   }
+  // Shared by the map card and the fire screen: durations, and whether a fire is held (resolved) rather than alive.
+  window.__wfDur=function(ms){if(ms==null||!isFinite(ms)||ms<0)return '';var m=Math.round(ms/60000),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+'d '+h+'h':h?h+'h '+mm+'m':mm+' min';};
+  window.__wfHeld=function(info,model){
+    if(info&&info.resolved)return {official:true,st:info.st,label:info.stEn,took:(info.heldMs&&info.startMs&&info.heldMs>info.startMs)?info.heldMs-info.startMs:null,at:info.heldMs||null,src:info.heldSrc||''};
+    var s0=model&&model.snaps&&model.snaps[0];
+    if(s0&&s0.active===0)return {official:false,st:info?info.st:'',label:'Edge fully held',took:null,at:null,src:'fire model'};
+    return null;
+  };
   window.__wfModels=window.__wfModels||{};
   window.__wfFireModel=function(f){        // f: {id, st, lat, lon, ha, res, note}
     var M=window.__wfModels;if(M[f.id])return M[f.id].done?M[f.id]:null;
@@ -294,7 +317,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   if(!fresh('tUS')){
     var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
     // ask for the personnel count too; if the service doesn't know that field, ask again without it
-    var q2=q.replace('UniqueFireIdentifier','UniqueFireIdentifier,TotalIncidentPersonnel');
+    var q2=q.replace('UniqueFireIdentifier','UniqueFireIdentifier,TotalIncidentPersonnel,FireBehaviorGeneral,FireCause,ContainmentDateTime,ControlDateTime,FireOutDateTime,ModifiedOnDateTime_dt');
     fetch(US_URL+'?'+q2).then(jsonOk).then(function(js){return js&&js.error?fetch(US_URL+'?'+q).then(jsonOk):js;}).then(buildUS).then(function(rows){publishPart('US',rows);})
       .catch(function(e){console.warn('[live fires] US feed failed',e);});
   }

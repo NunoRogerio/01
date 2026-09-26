@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=11"></script>
+<script src="live.js?v=12"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -180,14 +180,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h1 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireTitle}}</h1>
       <span title="{{fireSub}}" style="font-size: 13px; font-weight: 400; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireSub}}</span>
     </span>
-    <span role="status" aria-label="{{activeAria}}" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(232,106,0,0.14); color: #C25700; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
-      <span class="dot" style="width: 5.6px; height: 5.6px"></span>Active {{activeFor}}
+    <span role="status" aria-label="{{activeAria}}" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
+      <span class="dot" style="width: 5.6px; height: 5.6px; display: {{pillDot}}"></span>{{pillTxt}}
     </span>
   </header>
   </div>
 
   <div style="position: relative; z-index: 2; width: 390px; height: 230px; margin-top: 4px; flex-shrink: 0; pointer-events: none">
-    <div role="group" aria-label="Projection horizon" style="position: absolute; left: 16px; top: {{hzTop}}px; pointer-events: auto; transition: top .5s cubic-bezier(.2,.8,.2,1); display: grid; grid-template-columns: {{hzCols}}; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: #F2F2F7; border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
+    <div role="group" aria-label="Projection horizon" style="position: absolute; left: 16px; top: {{hzTop}}px; pointer-events: auto; transition: top .5s cubic-bezier(.2,.8,.2,1); display: {{hzShow}}; grid-template-columns: {{hzCols}}; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: #F2F2F7; border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
       
       <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 54px; height: 36px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.026), 0 3px 1px rgba(0,0,0,0.009); box-sizing: border-box"></span>
       <sc-for list="{{horizons}}" as="hz" hint-placeholder-count="3">
@@ -537,7 +537,7 @@ class Component extends DCLogic {
       ['NV', 'Washoe', 'F-NV-02', 'Pyramid Hwy', 'Contained 70%'],
       ['WA', 'Chelan', 'F-WA-05', 'Wenatchee Hts', 'Crews on scene'], ['WA', 'Okanogan', 'F-WA-06', 'Twisp', 'Contained 25%'],
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
-    ]).slice()).map(([st, co, id, place, note, x, y, res, ha]) => { const a = anchor(st, co); return { res: res || null, ha: ha || null, st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
+    ]).slice()).map(([st, co, id, place, note, x, y, res, ha, info]) => { const a = anchor(st, co); return { info: info || null, res: res || null, ha: ha || null, st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
@@ -599,7 +599,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     const s = this.state || {};
-    const hz = s.hz != null ? s.hz : ((window.__wfLiveMap && s.fv) ? 0 : 2);   // live fires open on 'Now'
+    let hz = s.hz != null ? s.hz : ((window.__wfLiveMap && s.fv) ? 0 : 2);   // live fires open on 'Now'
     const hzK = Math.max(1, hz);
     const need = { 1: 1, 2: 2, 3: 4 }[hzK];
     const areas = { 1: '7', 2: '30', 3: '77' };
@@ -615,6 +615,11 @@ class Component extends DCLogic {
       const lat = 34.19 - (frow.y - 662) / 2829, lon = (frow.x - 518) / 2345 - 118.13;
       return { model: window.__wfFireModel({ id: frow.id, st: frow.st, lat, lon, ha: frow.ha, res: frow.res, note: frow.note }) };
     })() : null;
+    // Held (resolved) fires: no prediction, say so plainly and show how long it took.
+    const INFO = (frow && frow.info) || null;
+    const HELD = RO && window.__wfHeld ? window.__wfHeld(INFO, FMOD && FMOD.model) : null;
+    if (HELD) hz = 0;
+    const DUR = window.__wfDur || ((ms) => Math.round(ms / 60000) + ' min');
     const resView = fres ? (() => {
       const OPT = { Boats: 1, 'Management teams': 1, 'Structure protection': 1 };
       const items = [['Personnel', fres.man], ['Crews', fres.crews], ['Ground vehicles', fres.terrain], ['Heavy equipment', fres.heavy], ['Aircraft', fres.aerial], ['Boats', fres.water], ['Management teams', fres.imt], ['Structure protection', fres.structure]]
@@ -628,12 +633,13 @@ class Component extends DCLogic {
       const m = /Confirmed from (IC-[\d-]+)/.exec((fv && fv.note) || '');
       if (m) { const t = this.wfConfirmed()[m[1]]; if (t) return (Date.now() - t) / 60000 + 2; }
       if (!fv) return 2 + live;
+      if (INFO && INFO.startMs) return ((HELD && HELD.at) ? HELD.at : Date.now()) - INFO.startMs > 0 ? (((HELD && HELD.at) ? HELD.at : Date.now()) - INFO.startMs) / 60000 : 0;
       if (KNOWN[fireId] != null) return KNOWN[fireId] + live;
       let h = 0; for (const ch of fireId) h = (h * 31 + ch.charCodeAt(0)) % 100003;
       return 95 + (h * 137) % (4 * 1440) + live;
     })();
     const actM = Math.max(0, Math.floor(actMin)), actD = Math.floor(actM / 1440), actH = Math.floor((actM % 1440) / 60), actMm = actM % 60;
-    const activeFor = actD + 'd ' + actH + 'h ' + actMm + 'm';
+    const activeFor = (actD ? actD + 'd ' : '') + actH + 'h ' + actMm + 'm';
     const activeAria = 'Active for ' + actD + ' day' + (actD === 1 ? '' : 's') + ', ' + actH + ' hour' + (actH === 1 ? '' : 's') + ' and ' + actMm + ' minute' + (actMm === 1 ? '' : 's');
     const SH = [FIRE[0] - 610, FIRE[1] - 290];
     const far = Math.hypot(SH[0], SH[1]) > 1500;
@@ -755,14 +761,18 @@ class Component extends DCLogic {
     if (FMOD) {
       const icon = 'M3 17l6-6 4 4 8-8M15 7h6v6', tri = 'M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z', row = (label, val, from, c) => ({ label, val, from, icon, c: c || '#E86A00', bg: 'rgba(232,106,0,0.1)', w: 0, pre: '', post: '' });
       const M = FMOD.model, rows = [];
-      if (!M) rows.push(row('Fire model', 'Calculating…', 'Perimeter, weather, terrain and fuel are loading', '#6C6C70'));
+      const heldRow = () => ({ ...row(HELD.official ? 'Held · ' + HELD.label.toLowerCase() : 'Held · edge fully contained', HELD.took != null ? DUR(HELD.took) : '—', HELD.took != null ? 'Time it took to resolve' + (INFO && INFO.heldSrc === 'last status update' ? ', to the last status update' : '') + (HELD.at ? ' · ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : '') : (HELD.official ? 'Resolution time not published' : 'Per the fire model · official state ' + (INFO ? INFO.st : '—')), '#1E7A34'), icon: 'M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6ZM8.5 12l2.5 2.5 4.5-5', bg: 'rgba(52,199,89,0.12)' });
+      if (HELD && HELD.official) rows.push(heldRow());
+      if (HELD && (!M || M.failed)) { /* held: no model needed */ }
+      else if (!M) rows.push(row('Fire model', 'Calculating…', 'Perimeter, weather, terrain and fuel are loading', '#6C6C70'));
       else if (M.failed) rows.push(row('Fire model', 'Unavailable', 'Weather or map services did not answer; try again later', '#6C6C70'));
       else {
         const S0 = M.snaps[0] || {}, Sh = M.snaps[hz] || S0, I = M.info || {};
-        rows.push(row('Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
-        if (hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
+        if (HELD && !HELD.official) rows.push(heldRow());
+        rows.push(row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
+        if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
-        rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#248A3D'));
+        if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#248A3D'));
         rows.push(row('Conditions', 'Wind ' + I.wind + ' km/h ' + I.from, I.temp + ' °C · humidity ' + I.rh + '% · fuel moisture ' + I.md + '% · slope ' + I.slope + '° · ' + I.fuel + ' · head ' + I.head + ' m/min', '#0079A6'));
       }
       deployed.unshift(...rows);
@@ -829,11 +839,13 @@ class Component extends DCLogic {
       mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       sendAll: () => this.setState({ sent: true, adjust: false, open: false, cfg: false, full: false }), undoSend: () => this.setState(fv ? { adjust: true, cfg: true, open: false, full: false } : { sent: false, cfg: true, open: false, full: false }),
-      activeFor, activeAria,
+      activeFor, activeAria: HELD ? 'Held. ' + (HELD.took != null ? 'Took ' + DUR(HELD.took) + ' to resolve' : HELD.label) : activeAria,
+      pillTxt: HELD ? (HELD.took != null ? 'Held · ' + DUR(HELD.took) : 'Held') : 'Active ' + activeFor, pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#C25700', pillDot: HELD ? 'none' : 'inline-block',
+      hzShow: HELD ? 'none' : 'grid',
       fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       stApply: () => this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
-      sentTitle: RO ? 'Fighting this fire' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      sentTitle: HELD ? 'Fire held' : RO ? 'Fighting this fire' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),
       sentSub: fv ? (RU ? 'Resources on scene at ' + fv.place : 'Forces on the way to ' + fv.place) : 'sent 2:42 PM', undoLabel: 'Adjust',

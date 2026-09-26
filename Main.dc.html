@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=11"></script>
+<script src="live.js?v=12"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -466,7 +466,7 @@ class Component extends DCLogic {
       ['NV', 'Washoe', 'F-NV-02', 'Pyramid Hwy', 'Contained 70%'],
       ['WA', 'Chelan', 'F-WA-05', 'Wenatchee Hts', 'Crews on scene'], ['WA', 'Okanogan', 'F-WA-06', 'Twisp', 'Contained 25%'],
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
-    ]).slice()).map(([st, co, id, place, note, x, y, res, ha]) => { const a = anchor(st, co); return { res: res || null, ha: ha || null, st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
+    ]).slice()).map(([st, co, id, place, note, x, y, res, ha, info]) => { const a = anchor(st, co); return { res: res || null, ha: ha || null, info: info || null, st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
@@ -605,7 +605,7 @@ class Component extends DCLogic {
       hScope: this.wfHandle('sc', 'up', () => this.setState({ scOpen: false })), scDy: this.wfDrag('sc').y, scDyT: this.wfDrag('sc').t,
       hList: this.wfHandle('li', 'down', () => { this.wfListFlag(false); this.setState({ list: false }); }), liDy: this.wfDrag('li').y, liDyT: this.wfDrag('li').t,
       openScope: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.setState({ scOpen: true, scBrowse: undefined }); }, pScope: this.wfPull('sc', 'down', () => this.setState({ scOpen: true, scBrowse: undefined })), pList: this.wfPull('li', 'up', () => { this.wfListFlag(false); this.setState({ list: true }); }), closeScope: () => this.setState({ scOpen: false }),
-      backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : '@', q: '' })), acct: ({ admin: { name: 'Administrator', area: 'Access: all countries and regions' }, pt: { name: 'Portugal fire coordinator', area: 'Access: Portugal only' }, ca: { name: 'California fire coordinator', area: 'Access: California only' }, nv: { name: 'Nevada fire coordinator', area: 'Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
+      backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : '@', q: '' })), acct: ({ admin: { name: 'Alex Morgan · Platform administrator', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
       signOut: () => { try { window.localStorage.removeItem('wf-role'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
       backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
       scOp: 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? '0px' : 'calc(100% - 68px)', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
