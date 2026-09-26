@@ -258,6 +258,14 @@ class Component extends DCLogic {
   init() {
     if (this._ok) return;
     this._ok = true;
+    // Use live OpenStreetMap tiles wherever they can load (the app always; the canvas if its sandbox allows).
+    if (!window.__wfLiveMap && !window.__wfProbe) {
+      window.__wfProbe = 1;
+      const im = new Image();
+      im.onload = () => { window.__wfLiveMap = true; window.__wfGeo = null; try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} this.forceUpdate(); };
+      im.src = 'https://tile.openstreetmap.org/0/0/0.png';
+    }
+    if (!window.__wfLiveMap) { this._onSync = () => { if (window.__wfLiveMap) this.forceUpdate(); }; try { window.addEventListener('wf-sync', this._onSync); } catch (e) {} }
     this.pts = {};
     this.setEl = (el) => {
       if (el && el !== this.el) {
