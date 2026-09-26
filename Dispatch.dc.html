@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=8"></script>
+<script src="live.js?v=9"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -177,7 +177,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding: 4px 8px">
-      <h1 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireTitle}}<span style="display: inline-block; margin-left: 8px; padding: 0 8px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3C3C43; font-size: 12px; font-weight: 400; line-height: 20px; letter-spacing: 0; vertical-align: 2px">Simulated</span></h1>
+      <h1 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireTitle}}</h1>
       <span title="{{fireSub}}" style="font-size: 13px; font-weight: 400; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireSub}}</span>
     </span>
     <span role="status" aria-label="{{activeAria}}" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(232,106,0,0.14); color: #C25700; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
@@ -197,7 +197,26 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div style="position: relative; z-index: 2; display: flex; flex-direction: column; flex-grow: 1; background: #F2F2F7; border-radius: 28px 28px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <section class="rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 28px 40px 0; animation-delay: 160ms">
+  <sc-if value="{{hasRes}}" hint-placeholder-val="{{ false }}">
+  <section class="rise" aria-label="Resources on scene" style="margin: 20px 16px 0; padding: 14px 16px 12px; border-radius: 12px; background: #FFFFFF; animation-delay: 120ms">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px">On scene now</h2>
+      <span style="padding: 0 8px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 12px; line-height: 20px; white-space: nowrap">Real data</span>
+      <span style="margin-left: auto; font-size: 12px; color: #6C6C70; white-space: nowrap">{{res.src}}</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat({{res.cols}}, minmax(0, 1fr)); gap: 8px; margin-top: 12px">
+      <sc-for list="{{res.items}}" as="it" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+          <span class="kpi" style="font-size: 22px; line-height: 26px">{{it.v}}</span>
+          <span style="font-size: 12px; line-height: 15px; color: #6C6C70">{{it.k}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin: 10px 0 0; font-size: 12px; line-height: 16px; color: #6C6C70">{{res.foot}}</p>
+  </section>
+  </sc-if>
+  <p style="margin: 18px 40px 0; font-size: 12px; line-height: 16px; color: #6C6C70"><span style="display: inline-block; margin-left: 0; margin-right: 6px; padding: 0 8px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3C3C43; font-size: 12px; font-weight: 400; line-height: 20px; letter-spacing: 0; vertical-align: 2px">Simulated</span>Spread projection and dispatch plan</p>
+  <section class="rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 12px 40px 0; animation-delay: 160ms">
     <div style="display: flex; flex-direction: column; gap: 10px">
       <span class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"></path></svg>Spread +{{hzNum}}h</span>
       <button type="button" class="unitbtn" onClick="{{toggleArea}}" aria-label="{{areaAria}}"><span class="kpi" style="display: block; white-space: nowrap">{{areaV}}<small> {{areaU}}</small></span></button>
@@ -512,7 +531,7 @@ class Component extends DCLogic {
       ['NV', 'Washoe', 'F-NV-02', 'Pyramid Hwy', 'Contained 70%'],
       ['WA', 'Chelan', 'F-WA-05', 'Wenatchee Hts', 'Crews on scene'], ['WA', 'Okanogan', 'F-WA-06', 'Twisp', 'Contained 25%'],
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
-    ]).slice()).map(([st, co, id, place, note, x, y]) => { const a = anchor(st, co); return { st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
+    ]).slice()).map(([st, co, id, place, note, x, y, res]) => { const a = anchor(st, co); return { res: res || null, st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
@@ -553,6 +572,11 @@ class Component extends DCLogic {
     const fv = s.fv || null;
     const FIRE = fv ? [fv.x, fv.y] : [610, 290];
     const fireId = fv ? fv.id : 'F-0924-03';
+    const fres = fv ? ((this.wfWorld().fires.find((f) => f.id === fv.id) || {}).res || null) : null;
+    const resView = fres ? (() => {
+      const items = [['Personnel', fres.man], ['Ground vehicles', fres.terrain], ['Aircraft', fres.aerial], ['Boats', fres.water]].filter(([k, v]) => v != null && (k !== 'Boats' || v > 0)).map(([k, v]) => ({ k, v: Number(v).toLocaleString() }));
+      return { src: fres.src || '', cols: Math.max(1, items.length), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
+    })() : { src: '', cols: 1, items: [], foot: '' };
     const actMin = (() => {
       const T0 = window.__wfT0 || (window.__wfT0 = Date.now());
       const live = (Date.now() - T0) / 60000;
@@ -728,7 +752,7 @@ class Component extends DCLogic {
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       sendAll: () => this.setState({ sent: true, adjust: false, open: false, cfg: false, full: false }), undoSend: () => this.setState(fv ? { adjust: true, cfg: true, open: false, full: false } : { sent: false, cfg: true, open: false, full: false }),
       activeFor, activeAria,
-      fireId, fireX: FIRE[0], fireY: FIRE[1], fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentSub: fv ? 'Forces on the way to ' + fv.place : 'sent 2:42 PM', undoLabel: 'Adjust',
+      fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentSub: fv ? 'Forces on the way to ' + fv.place : 'sent 2:42 PM', undoLabel: 'Adjust',
       sentY: sent ? '0%' : '105%', sentHidden: sent ? 'false' : 'true',
       hSt: this.wfHandle('st', 'up', () => this.setState({ open: false })), stDy: this.wfDrag('st').y, stDyT: this.wfDrag('st').t,
       hCf: this.wfHandle('cf', 'up', () => this.setState({ cfg: false })), cfDy: this.wfDrag('cf').y, cfDyT: this.wfDrag('cf').t,

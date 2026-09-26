@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js"></script>
-<script src="live.js?v=8"></script>
+<script src="live.js?v=9"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -626,6 +626,25 @@ class Component extends DCLogic {
     }
     return { area, pts: P, front: front.trim() };
   }
+  // Fetch real fire stations (OpenStreetMap, via Overpass) for the selected area once; returns its cache key.
+  osmStations() {
+    const p = this.props, GB = window.__wfGeoBoxes || {};
+    if (!p.scopeSt) return null;
+    const key = p.scopeSt + '|' + (p.scopeCo || '');
+    const b = GB[key.replace(/\|$/, '')] || GB[p.scopeSt];
+    if (!b || b[2] - b[0] > 4 || b[3] - b[1] > 4) return null;   // too big an area: pick a county/district first
+    const S = window.__wfStations || (window.__wfStations = {}), F = window.__wfStFetch || (window.__wfStFetch = {});
+    if (!S[key] && !F[key]) {
+      F[key] = true;
+      const bb = [b[1], b[0], b[3], b[2]].map((v) => v.toFixed(3)).join(',');
+      const q = '[out:json][timeout:25];(node["amenity"="fire_station"](' + bb + ');way["amenity"="fire_station"](' + bb + '););out center 400;';
+      fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(q)).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((js) => {
+        S[key] = (js.elements || []).map((e) => [e.id, (e.tags || {}).name || '', e.lat ?? (e.center || {}).lat, e.lon ?? (e.center || {}).lon]).filter((x) => x[2] != null);
+        try { this.forceUpdate(); } catch (e) {}
+      }).catch(() => { setTimeout(() => { F[key] = false; }, 60000); });
+    }
+    return key;
+  }
   zMin() { return window.__wfLiveMap ? 0.0005 : Math.max(0.008, (this.base().s || 0.05) * 0.46); }
   zMax() { return Math.max(1, this.base().s || 1); }
   setView(cx, cy, s) {
@@ -686,6 +705,8 @@ class Component extends DCLogic {
       });
       return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch; dotted line shows the route.' : '.'));
     }).filter((o) => !isPin).filter(onScreen);
+    const osmKey = window.__wfLiveMap ? this.osmStations() : null;
+    const osmStations = osmKey ? ((window.__wfStations || {})[osmKey] || []).map(([id, nm, la, lo]) => { const xy = this.geo().P(la, lo); return withTip(at(xy[0], xy[1] - 10, { label: '', icon: house, bg: 'rgba(255,255,255,0.86)', bd: 'rgba(60,60,67,0.16)', fg: '#F2F2F7', ic: '#C2372E', op: 1 }), 'Fire station' + (nm ? ' · ' + nm : ''), 'Location from OpenStreetMap. Crew availability is not published.'); }).filter(onScreen) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
     const FX = Number(p.fireX) || 610, FY = Number(p.fireY) || 290;
     const qx = (selSt[2] + FX) / 2 + (selSt[3] - FY) * 0.18, qy = (selSt[3] + FY) / 2 - (selSt[2] - FX) * 0.18;
@@ -792,7 +813,7 @@ class Component extends DCLogic {
             return { countyLabels: counties, cityLabels: (window.__wfLiveMap && this.mapStyle() === 'standard') ? [] : cities };
           })(),
           showSea: !(window.__wfLiveMap && this.mapStyle() === 'standard'), sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: (near && laScope && !window.__wfLiveMap) ? stations : [], strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
+          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: window.__wfLiveMap ? (s >= 0.012 ? osmStations : []) : ((near && laScope) ? stations : []), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
         };
       })(),
       fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),

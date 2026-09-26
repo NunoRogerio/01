@@ -10,7 +10,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v8', TTL=5*60*1000;
+  var KEY='wf-live-fires-v9', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -28,7 +28,8 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var ac=p.IncidentSize!=null?Math.round(p.IncidentSize).toLocaleString('en-US')+' ac':'';
       var note=(pc!=null?'Contained '+Math.round(pc)+'%':(p.FireDiscoveryDateTime?'Reported '+ago(p.FireDiscoveryDateTime):'Active'))+(ac?' · '+ac:'');
       var xy=toXY(g.coordinates[1],g.coordinates[0]);
-      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1]],w:p.IncidentSize||0});
+      var res=p.TotalIncidentPersonnel!=null?{man:p.TotalIncidentPersonnel,status:pc!=null?'Contained '+Math.round(pc)+'%':'',start:p.FireDiscoveryDateTime?new Date(p.FireDiscoveryDateTime).toLocaleDateString([], {day:'numeric',month:'short'}):'',src:'NIFC · WFIGS'}:null;
+      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1],res],w:p.IncidentSize||0});
     });
     return out;
   }
@@ -43,7 +44,10 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var man=parseInt(i.man,10)||0,air=parseInt(i.aerial,10)||0;
       var note=(i.status||'Active')+(man?' · '+man+' operacionais':'')+(air?' · '+air+' meios aéreos':'');
       var xy=toXY(lat,lng);
-      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1]],w:man+air*20});
+      var hm=function(t){var x=new Date(t);return isNaN(x)?'':x.toLocaleString([], {day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});};
+      var res={man:man,terrain:parseInt(i.terrain,10)||0,aerial:air,water:parseInt(i.meios_aquaticos,10)||0,status:i.status||'',
+        start:i.dateTime&&i.dateTime.sec?hm(i.dateTime.sec*1000):((i.date||'')+' '+(i.hour||'')).trim(),updated:i.updated&&i.updated.sec?hm(i.updated.sec*1000):'',src:'Fogos.pt · ANEPC'};
+      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1],res],w:man+air*20});
     });
     return out;
   }
@@ -98,7 +102,9 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   // US: NIFC. Failure keeps the previous US fires.
   if(!fresh('tUS')){
     var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
-    fetch(US_URL+'?'+q).then(jsonOk).then(buildUS).then(function(rows){publishPart(false,rows);})
+    // ask for the personnel count too; if the service doesn't know that field, ask again without it
+    var q2=q.replace('UniqueFireIdentifier','UniqueFireIdentifier,TotalIncidentPersonnel');
+    fetch(US_URL+'?'+q2).then(jsonOk).then(function(js){return js&&js.error?fetch(US_URL+'?'+q).then(jsonOk):js;}).then(buildUS).then(function(rows){publishPart(false,rows);})
       .catch(function(e){console.warn('[live fires] US feed failed',e);});
   }
   // Portugal: the site's own snapshot (refreshed by a GitHub Action every ~10 min), falling back to the live feed.
