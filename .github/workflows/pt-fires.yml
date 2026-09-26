@@ -21,16 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Fetch feed
+        continue-on-error: true    # a slow Fogos.pt must never block the other feeds
         run: |
           mkdir -p data
-          curl -fsS --retry 3 --retry-all-errors --connect-timeout 10 -m 30 \
+          timeout 100 curl -fsS --retry 3 --retry-all-errors --connect-timeout 10 -m 30 \
             -A "ForestFireWatch/1.0 (+https://github.com/NunoRogerio/01)" \
             https://api.fogos.pt/v2/incidents/active -o /tmp/pt.json
           python3 -c "import json;d=json.load(open('/tmp/pt.json'));assert isinstance(d.get('data'),list);json.dump(d,open('data/pt-fires.json','w'),ensure_ascii=False);print(len(d['data']),'incidents')"
       - name: Fetch British Columbia feed
         continue-on-error: true    # BC being unreachable must never stop the Portugal snapshot
         run: |
-          curl -fsS --retry 3 --retry-all-errors --connect-timeout 10 -m 40 \
+          timeout 100 curl -fsS --retry 3 --retry-all-errors --connect-timeout 10 -m 40 \
             -A "ForestFireWatch/1.0 (+https://github.com/NunoRogerio/01)" \
             "https://wildfiresituation-api.nrs.gov.bc.ca/publicPublishedIncident?pageNumber=1&pageRowCount=500&stageOfControlList=OUT_CNTRL&stageOfControlList=HOLDING&stageOfControlList=UNDR_CNTRL" -o /tmp/bc.json
           python3 -c "import json;d=json.load(open('/tmp/bc.json'));c=d.get('collection');assert isinstance(c,list);keep=['incidentNumberLabel','incidentName','incidentLocation','stageOfControlCode','fireOfNoteInd','discoveryDate','lastUpdatedTimestamp','latitude','longitude','incidentSizeEstimatedHa','incidentSizeMappedHa','crewResourceCount','aviationResourceCount','heavyEquipmentResourceCount','incidentManagementResourceCount','structureProtectionResourceCount','fireCentreName'];json.dump({'data':[{k:i.get(k) for k in keep} for i in c]},open('data/bc-fires.json','w'),ensure_ascii=False);print(len(c),'BC incidents')"
@@ -39,4 +40,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/pt-fires.json data/bc-fires.json 2>/dev/null || git add data/pt-fires.json
-          git diff --cached --quiet || (git commit -m "Update Portugal fires snapshot" && git pull --rebase -q && git push)
+          git diff --cached --quiet || (git commit -m "Update fire incident snapshots" && git pull --rebase -q && git push)
