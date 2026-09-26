@@ -731,7 +731,7 @@ class Component extends DCLogic {
         bd: i === ci ? 'rgba(232,106,0,0.55)' : 'rgba(60,60,67,0.088)',
         bg: i === ci ? 'rgba(232,106,0,0.12)' : 'rgba(60,60,67,0.033)',
         fg: i === ci ? '#000000' : '#3C3C43',
-        dot: c.conf >= 70 ? '#E86A00' : '#B37A00',
+        dot: window.__wfConfC ? window.__wfConfC(c.conf) : '#E8590C',
         pick: () => this.setState({ ci: i, focusId: null, tab: null })
       })),
       cur, tab, box: boxFor(tab, 390, 248, true, 0),

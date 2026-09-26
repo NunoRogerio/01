@@ -279,6 +279,8 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     return {src:src,snaps:snaps,etrMin:etr,etrAt:etr!==null?new Date(t0.getTime()+etr*60000):null,noRes:!f.res,info:info,startPct:Math.round(startContained(f)*100)};
   }
   // Shared by the map card and the fire screen: durations, and whether a fire is held (resolved) rather than alive.
+  // Ignition-candidate confidence scale: high (≥70%) deep orange, medium (50–69%) amber, low yellow.
+  window.__wfConfC=function(c){return c>=70?'#E8590C':c>=50?'#F59F00':'#FCC419';};
   window.__wfDur=function(ms){if(ms==null||!isFinite(ms)||ms<0)return '';var m=Math.round(ms/60000),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+'d '+h+'h':h?h+'h '+mm+'m':mm+' min';};
   window.__wfHeld=function(info,model){
     if(info&&info.resolved)return {official:true,st:info.st,label:info.stEn,took:(info.heldMs&&info.startMs&&info.heldMs>info.startMs)?info.heldMs-info.startMs:null,at:info.heldMs||null,src:info.heldSrc||''};
