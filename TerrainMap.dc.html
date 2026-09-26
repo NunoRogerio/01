@@ -11,8 +11,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js"></script>
-<script src="live.js?v=12"></script>
+<script src="fit.js?v=2"></script>
+<script src="live.js?v=13"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -22,7 +22,7 @@
 <helmet>
 <style>
 body{margin:0}
-.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 13px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
+.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 14px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
 .igpill::after{content:"";position:absolute;left:50%;bottom:-5px;width:8px;height:8px;margin-left:-4px;background:rgba(255,255,255,0.9);border-right:1px solid rgba(60,60,67,0.154);border-bottom:1px solid rgba(60,60,67,0.154);transform:rotate(45deg)}
 .igmore{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease}
 .igmore>span{overflow:hidden;min-height:0}
@@ -106,7 +106,7 @@ body{margin:0}
   <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0.0) 70%, rgba(0,0,0,0.055) 100%)"></div>
 
   <sc-for list="{{stateLabels}}" as="sl" hint-placeholder-count="0">
-    <span style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
+    <span style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
   </sc-for>
   <sc-for list="{{countyLabels}}" as="cl" hint-placeholder-count="0">
     <span style="position: absolute; left: {{cl.left}}px; top: {{cl.top}}px; transform: translate(-50%, -50%); font-size: {{cl.size}}px; font-weight: {{cl.weight}}; letter-spacing: 0.01em; color: {{cl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{cl.label}}</span>
@@ -115,14 +115,14 @@ body{margin:0}
     <span style="position: absolute; left: {{ct.left}}px; top: {{ct.top}}px; display: flex; align-items: center; transform: translate(-50%, -50%); font-size: {{ct.size}}px; font-weight: {{ct.weight}}; font-style: {{ct.style}}; color: {{ct.fg}}; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{ct.label}}</span>
   </sc-for>
   <sc-if value="{{showSea}}" hint-placeholder-val="{{ false }}">
-    <span style="position: absolute; left: {{sea.left}}px; top: {{sea.top}}px; transform: translate(-50%, -50%); font-size: 13px; font-style: italic; letter-spacing: 0.04em; color: #3E7CB1; white-space: nowrap; pointer-events: none; transition: {{mv}}">Pacific Ocean</span>
+    <span style="position: absolute; left: {{sea.left}}px; top: {{sea.top}}px; transform: translate(-50%, -50%); font-size: 14px; font-style: italic; letter-spacing: 0.04em; color: #3E7CB1; white-space: nowrap; pointer-events: none; transition: {{mv}}">Pacific Ocean</span>
   </sc-if>
   <sc-for list="{{villages}}" as="v" hint-placeholder-count="7">
-    <span style="position: absolute; left: {{v.left}}px; top: {{v.top}}px; transform: translate(-50%, 8px); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: #000000; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{v.label}}</span>
+    <span style="position: absolute; left: {{v.left}}px; top: {{v.top}}px; transform: translate(-50%, 8px); font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #000000; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{v.label}}</span>
   </sc-for>
 
   <sc-for list="{{zones}}" as="z" hint-placeholder-count="2">
-    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{z.left}}px; top: {{z.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: {{z.bg}}; border: 1px solid {{z.bd}}; color: {{z.fg}}; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; transition: {{mv}}">{{z.label}}
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{z.left}}px; top: {{z.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: {{z.bg}}; border: 1px solid {{z.bd}}; color: {{z.fg}}; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; transition: {{mv}}">{{z.label}}
       <span class="{{z.tip}}" role="tooltip"><b>{{z.tt}}</b>{{z.td}}</span>
     </span>
   </sc-for>
@@ -150,20 +150,20 @@ body{margin:0}
   </sc-for>
 
   <sc-for list="{{sensors}}" as="m" hint-placeholder-count="5">
-    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; transform: translate(-4px, -50%); display: flex; align-items: center; gap: 5px; height: 22px; font-size: 11px; font-weight: 600; color: #006A91; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; transition: {{mv}}">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; transform: translate(-4px, -50%); display: flex; align-items: center; gap: 5px; height: 22px; font-size: 12px; font-weight: 600; color: #006A91; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; transition: {{mv}}">
       <span style="width: 8px; height: 8px; border-radius: 50%; background: #0079A6; box-shadow: 0 0 0 3px rgba(0,121,166,0.18), 0 0 10px rgba(0,121,166,0.8)"></span>{{m.label}}
       <span class="{{m.tip}}" role="tooltip"><b>{{m.tt}}</b>{{m.td}}</span>
     </span>
   </sc-for>
 
   <sc-for list="{{rings}}" as="rg" hint-placeholder-count="3">
-    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{rg.left}}px; top: {{rg.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,0.8); border: 1px solid {{rg.bd}}; color: {{rg.fg}}; font-size: 11px; font-weight: 700; white-space: nowrap; transition: {{mv}}">{{rg.label}}
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{rg.left}}px; top: {{rg.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,0.8); border: 1px solid {{rg.bd}}; color: {{rg.fg}}; font-size: 12px; font-weight: 700; white-space: nowrap; transition: {{mv}}">{{rg.label}}
       <span class="{{rg.tip}}" role="tooltip"><b>{{rg.tt}}</b>{{rg.td}}</span>
     </span>
   </sc-for>
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
-    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvSt}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 11px; font-weight: 600; white-space: nowrap">
+    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvSt}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 12px; font-weight: 600; white-space: nowrap">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="{{t.fill}}" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
@@ -171,14 +171,14 @@ body{margin:0}
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
-      <span class="tipwrap" tabindex="0" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 11px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
+      <span class="tipwrap" tabindex="0" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 12px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>{{cm.label}}
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
     <span style="position: absolute; left: {{fire.left}}px; top: {{fire.top}}px; transform: translate(-50%, 22px); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 12px; border-radius: 16px; background: rgba(255,255,255,0.82); border: 1px solid rgba(232,106,0,0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap; pointer-events: none; transition: {{mv}}">
-      <span style="font-size: 13px; font-weight: 600">{{pinLabel}}</span>
-      <span style="font-size: 11px; color: #6C6C70; font-variant-numeric: tabular-nums">{{pinCoords}}</span>
+      <span style="font-size: 14px; font-weight: 600">{{pinLabel}}</span>
+      <span style="font-size: 12px; color: #6C6C70; font-variant-numeric: tabular-nums">{{pinCoords}}</span>
     </span>
   </sc-if>
 
@@ -204,7 +204,7 @@ body{margin:0}
             <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 10px; white-space: nowrap">
               <svg width="10" height="9" viewBox="0 0 10 9" aria-hidden="true" style="flex-shrink: 0"><polygon points="0.5,0.8 9.5,0.8 5,8.4" fill="{{ig.c}}" stroke-linejoin="round"></polygon></svg><span style="font-weight: 600; color: #000000">{{ig.pos}}</span><span class="igname"><span style="font-weight: 600; color: #000000">· {{ig.place}}</span><span style="color: #6C6C70; font-variant-numeric: tabular-nums">{{ig.conf}}%</span></span>
             </span>
-            <span class="igmore"><span style="display: block; padding: 0 12px 10px; width: 206px; box-sizing: border-box; white-space: normal; font-size: 13px; line-height: 1.45; color: #3C3C43"><b style="display: block; margin-bottom: 2px; font-weight: 600; color: #000000">{{ig.tt}}</b>{{ig.td}}</span></span>
+            <span class="igmore"><span style="display: block; padding: 0 12px 10px; width: 206px; box-sizing: border-box; white-space: normal; font-size: 14px; line-height: 1.45; color: #3C3C43"><b style="display: block; margin-bottom: 2px; font-weight: 600; color: #000000">{{ig.tt}}</b>{{ig.td}}</span></span>
           </span>
         </sc-if>
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
@@ -237,7 +237,7 @@ body{margin:0}
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
   <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{stop}}" style="position: absolute; z-index: 50; left: 10px; right: 62px; top: {{legTopC}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
-      <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border: 0; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: {{lg.fg}}; font: inherit; font-size: 13px; line-height: 32px; white-space: nowrap; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
+      <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border: 0; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: {{lg.fg}}; font: inherit; font-size: 14px; line-height: 32px; white-space: nowrap; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
         <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0"><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="1.3" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
       </button>
     </sc-for>
@@ -245,12 +245,12 @@ body{margin:0}
   </sc-if>
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <div role="dialog" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; transform: translateY({{pop.ty}}); width: 240px; box-sizing: border-box; padding: 12px 12px 10px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
-    <b style="display: block; font-size: 14px; font-weight: 600; line-height: 18px; color: #000000">{{pop.tt}}</b>
-    <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 17px; color: #3C3C43; white-space: pre-line">{{pop.td}}</span>
+    <b style="display: block; font-size: 15px; font-weight: 600; line-height: 18px; color: #000000">{{pop.tt}}</b>
+    <span style="display: block; margin-top: 2px; font-size: 14px; line-height: 17px; color: #3C3C43; white-space: pre-line">{{pop.td}}</span>
     <div style="display: flex; gap: 8px; margin-top: 10px">
-      <button type="button" onClick="{{popClose}}" style="flex: 1 1 0; height: 44px; border: 0; border-radius: 10px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer">Close</button>
+      <button type="button" onClick="{{popClose}}" style="flex: 1 1 0; height: 44px; border: 0; border-radius: 10px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">Close</button>
       <sc-if value="{{pop.hasView}}" hint-placeholder-val="{{ true }}">
-        <a href="{{pop.href}}" onClick="{{pop.go}}" style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 10px; background: #0071E3; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none">View</a>
+        <a href="{{pop.href}}" onClick="{{pop.go}}" style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 10px; background: #0071E3; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none">View</a>
       </sc-if>
     </div>
   </div>
@@ -258,12 +258,12 @@ body{margin:0}
   <sc-if value="{{hasFc}}" hint-placeholder-val="{{ false }}">
   <div role="dialog" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY({{fc.ty}}); width: 304px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
     <div style="flex-shrink: 0; padding: 14px 16px 12px">
-      <b style="display: block; font-size: 17px; font-weight: 600; line-height: 22px; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fc.name}}</b>
-      <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 17px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fc.sub}}</span>
+      <b style="display: block; font-size: 18px; font-weight: 600; line-height: 22px; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fc.name}}</b>
+      <span style="display: block; margin-top: 2px; font-size: 14px; line-height: 17px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fc.sub}}</span>
       <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px">
-        <span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 999px; background: {{fc.stBg}}; color: {{fc.stFg}}; font-size: 12px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: currentColor"></span>{{fc.stTxt}}<span style="font-weight: 400; opacity: 0.85">{{fc.stEn}}</span></span>
+        <span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 999px; background: {{fc.stBg}}; color: {{fc.stFg}}; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: currentColor"></span>{{fc.stTxt}}<span style="font-weight: 400; opacity: 0.85">{{fc.stEn}}</span></span>
         <sc-if value="{{fc.hasType}}" hint-placeholder-val="{{ true }}">
-          <span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 999px; background: rgba(120,120,128,0.12); color: #3C3C43; font-size: 12px; font-weight: 600; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fc.typeIcon}}"></path></svg>{{fc.typeTxt}}<span style="font-weight: 400; opacity: 0.8">{{fc.typeEn}}</span></span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 999px; background: rgba(120,120,128,0.12); color: #3C3C43; font-size: 13px; font-weight: 600; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fc.typeIcon}}"></path></svg>{{fc.typeTxt}}<span style="font-weight: 400; opacity: 0.8">{{fc.typeEn}}</span></span>
         </sc-if>
       </div>
     </div>
@@ -271,47 +271,47 @@ body{margin:0}
     <sc-if value="{{fc.held}}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; align-items: center; gap: 10px; margin: 0 16px 12px; padding: 10px 12px; border-radius: 12px; background: rgba(52,199,89,0.12); color: #1E7A34">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
-        <span style="display: flex; flex-direction: column; min-width: 0"><b style="font-size: 15px; font-weight: 600; line-height: 20px">{{fc.heldTitle}}</b><span style="font-size: 12px; line-height: 16px; color: #2E6B3D">{{fc.heldSub}}</span></span>
+        <span style="display: flex; flex-direction: column; min-width: 0"><b style="font-size: 16px; font-weight: 600; line-height: 20px">{{fc.heldTitle}}</b><span style="font-size: 13px; line-height: 16px; color: #2E6B3D">{{fc.heldSub}}</span></span>
       </div>
     </sc-if>
     <div style="margin: 0 16px; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="display: block; padding: 10px 0 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">Time</span>
+      <span style="display: block; padding: 10px 0 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">Time</span>
       <sc-for list="{{fc.time}}" as="tr" hint-placeholder-count="3">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 13px; line-height: 18px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 14px; line-height: 18px">
           <span style="color: #6C6C70; white-space: nowrap">{{tr.k}}</span>
-          <span style="text-align: right; min-width: 0"><b style="font-weight: 600; font-variant-numeric: tabular-nums">{{tr.v}}</b><span style="display: {{tr.subD}}; font-size: 12px; color: #8E8E93">{{tr.sub}}</span></span>
+          <span style="text-align: right; min-width: 0"><b style="font-weight: 600; font-variant-numeric: tabular-nums">{{tr.v}}</b><span style="display: {{tr.subD}}; font-size: 13px; color: #8E8E93">{{tr.sub}}</span></span>
         </div>
       </sc-for>
     </div>
     <div style="margin: 8px 16px 0; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="display: block; padding: 10px 0 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">Forces on scene</span>
+      <span style="display: block; padding: 10px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">Forces on scene</span>
       <sc-if value="{{fc.hasForces}}" hint-placeholder-val="{{ true }}">
         <div style="display: grid; grid-template-columns: repeat({{fc.fCols}}, minmax(0, 1fr)); gap: 6px">
           <sc-for list="{{fc.forces}}" as="fo" hint-placeholder-count="3">
-            <span style="display: flex; flex-direction: column; gap: 1px; padding: 8px 10px; border-radius: 10px; background: rgba(120,120,128,0.08)"><b style="font-size: 17px; font-weight: 600; line-height: 22px; font-variant-numeric: tabular-nums">{{fo.v}}</b><span style="font-size: 11px; line-height: 14px; color: #6C6C70">{{fo.k}}</span></span>
+            <span style="display: flex; flex-direction: column; gap: 1px; padding: 8px 10px; border-radius: 10px; background: rgba(120,120,128,0.08)"><b style="font-size: 18px; font-weight: 600; line-height: 22px; font-variant-numeric: tabular-nums">{{fo.v}}</b><span style="font-size: 12px; line-height: 14px; color: #6C6C70">{{fo.k}}</span></span>
           </sc-for>
         </div>
       </sc-if>
-      <sc-if value="{{fc.noForces}}" hint-placeholder-val="{{ false }}"><span style="display: block; font-size: 13px; line-height: 18px; color: #6C6C70">{{fc.forcesNote}}</span></sc-if>
+      <sc-if value="{{fc.noForces}}" hint-placeholder-val="{{ false }}"><span style="display: block; font-size: 14px; line-height: 18px; color: #6C6C70">{{fc.forcesNote}}</span></sc-if>
       <sc-if value="{{fc.hasArea}}" hint-placeholder-val="{{ false }}">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0 0; font-size: 13px; line-height: 18px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0 0; font-size: 14px; line-height: 18px">
           <span style="color: #6C6C70; white-space: nowrap">Burned area</span>
-          <span style="text-align: right; min-width: 0"><b style="font-weight: 600; font-variant-numeric: tabular-nums">{{fc.areaTxt}}</b><span style="display: {{fc.areaSubD}}; font-size: 12px; color: #8E8E93">{{fc.areaSub}}</span></span>
+          <span style="text-align: right; min-width: 0"><b style="font-weight: 600; font-variant-numeric: tabular-nums">{{fc.areaTxt}}</b><span style="display: {{fc.areaSubD}}; font-size: 13px; color: #8E8E93">{{fc.areaSub}}</span></span>
         </div>
       </sc-if>
     </div>
     </div>
-    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 8px; margin: 10px 16px 0; padding: 8px 10px; border-radius: 10px; background: rgba(120,120,128,0.08); font-size: 12px; line-height: 16px; color: #6C6C70">
+    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 8px; margin: 10px 16px 0; padding: 8px 10px; border-radius: 10px; background: rgba(120,120,128,0.08); font-size: 13px; line-height: 16px; color: #6C6C70">
       <span aria-hidden="true" style="width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: {{fc.freshC}}"></span>
       <span style="min-width: 0"><b style="font-weight: 600; color: #3C3C43">{{fc.freshTxt}}</b> · {{fc.srcTxt}}</span>
     </div>
     <div style="flex-shrink: 0; display: flex; gap: 8px; padding: 10px 16px 14px">
-      <button type="button" onClick="{{popClose}}" style="flex: 1 1 0; height: 44px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer">Close</button>
-      <a href="Dispatch.dc.html" onClick="{{fc.go}}" style="flex: 1.4 1 0; display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 12px; background: #0071E3; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none">{{fc.goLabel}}</a>
+      <button type="button" onClick="{{popClose}}" style="flex: 1 1 0; height: 44px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">Close</button>
+      <a href="Dispatch.dc.html" onClick="{{fc.go}}" style="flex: 1.4 1 0; display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 12px; background: #0071E3; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none">{{fc.goLabel}}</a>
     </div>
   </div>
   </sc-if>
-  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: 10px; top: {{legTop}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
+  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: 10px; top: {{ctrlBoxTop}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
     <button type="button" class="mbtn" aria-label="{{optLabel}}" aria-expanded="{{optStr}}" onClick="{{optToggle}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 14px; background: rgba(242,242,247,0.96); color: #000000; box-shadow: 0 4px 16px rgba(0,0,0,0.12); cursor: pointer">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{optIcon}}"></path></svg>
     </button>
@@ -336,7 +336,7 @@ body{margin:0}
       </sc-if>
   </div>
 
-  <span style="position: absolute; left: 12px; bottom: {{attrB}}px; font-size: 11px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+  <span style="position: absolute; left: 12px; bottom: {{attrB}}px; font-size: 12px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"$preview":{"width":366,"height":380}}'>
@@ -753,7 +753,7 @@ class Component extends DCLogic {
       ['active', 'Active edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#FF6A00'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
-      ['cands', 'Ignition candidates', 'M17.6 3.2H25.4L21.5 10.4Z', '#E8590C', 'rgba(0,0,0,0.25)'],
+      ['cands', 'Ignition candidates', 'M17.6 3.2H25.4L21.5 10.4Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
       ['stations', 'Fire stations', 'M7 1.6 12.9 12.2H1.1Z', '#248A3D', '#FFFFFF']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
@@ -761,7 +761,7 @@ class Component extends DCLogic {
       // Candidates: three triangles, low to high confidence
       const C = k === 'cands', off = (c) => (on ? c : 'none');
       return { label, d, fill: on ? fill : 'none', stroke: on ? stroke : '#8E8E93', fg: on ? '#000000' : '#8E8E93', pressed: on ? 'true' : 'false',
-        w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#FCC419') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#F59F00') : 'none',
+        w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
         aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
     });
   }
@@ -846,8 +846,10 @@ class Component extends DCLogic {
     const snapH = mdl ? (mdl.snaps[hz] || mdl.snaps[0]) : null;
     const ringPath = (r) => 'M' + r.map((q) => Pf(q[0], q[1])).join('L') + 'Z';
     const edges = (sn, held) => { let d = ''; const r = sn.ring, n = r.length; for (let i = 0; i < n; i++) { const j = (i + 1) % n; if (!!sn.done[i] === held && !!sn.done[j] === held) d += 'M' + Pf(r[i][0], r[i][1]) + 'L' + Pf(r[j][0], r[j][1]); } return d; };
-    const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 ? ringPath(snapH.ring) : '',
-      mActive: LY.active ? edges(snapH, false) : '', mHeld: LY.held ? edges(snapH, true) : '',
+    // No mapped perimeter (e.g. most Portuguese fires): never draw an invented 'now' shape; only the model's labelled estimates.
+    const REAL = mdl && !mdl.assumed, showEdge = mdl && (REAL || hz > 0);
+    const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn && REAL ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 ? ringPath(snapH.ring) : '',
+      mActive: LY.active && showEdge ? edges(snapH, false) : '', mHeld: LY.held && showEdge ? edges(snapH, true) : '',
       // strokes sit inside the CSS-scaled map layer, so size them in screen pixels by dividing by the zoom
       mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } } : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '', mSw: { thin: 1, edge: 1, dash: '6 5' } };
 
@@ -955,6 +957,7 @@ class Component extends DCLogic {
       fdx: (Number(p.fireX) || 610) - 610, fdy: (Number(p.fireY) || 290) - 290,
       rings: (mdl && LY.burn) ? [(() => { const r = snapH.ring; let top = r[0]; r.forEach((q) => { if (q[0] > top[0]) top = q; }); const xy = this.geo().P(top[0], top[1]);
         const lo = at(xy[0], xy[1], { label: (hz ? '+' + hz + 'h · ~' : 'Now · ') + snapH.ha.toLocaleString() + ' ha', bd: 'rgba(232,106,0,0.8)', fg: '#C25700' }); lo.top = +(lo.top - 18).toFixed(1);
+        if (!hz && mdl.assumed) { lo.label = 'Perimeter not mapped'; lo.bd = 'rgba(60,60,67,0.3)'; lo.fg = '#3C3C43'; }
         return withTip(lo, hz ? 'Model estimate in ' + hz + ' h' : 'Burned area now',
           (hz ? snapH.active + '% of the edge still active. ' : '') + mdl.src + '.'); })()].filter(onScreen) : mode === 'spread' && !window.__wfLiveMap ? [[577, 313, 1, '7 acres by 3:40 PM'], [525, 350, 2, '30 acres by 4:40 PM'], [448, 404, 3, '77 acres by 5:40 PM']].map(([x, y, h, d]) => withTip(at(x + (Number(p.fireX) || 610) - 610, y + (Number(p.fireY) || 290) - 290, { label: '+' + h + 'h', bd: h === hz ? 'rgba(232,106,0,0.8)' : 'rgba(60,60,67,0.154)', fg: h === hz ? '#C25700' : '#3C3C43' }), 'Projected fire edge in ' + h + ' h', d + ' if unattended, pushed south-west by the Santa Ana wind.')).filter(onScreen) : [], showFire: true, route, routeOp: (isRisk || (Array.isArray(p.units) && p.units.length)) ? 0 : 1, radius: Number(p.radius ?? 20), attrBottom: Number(p.attrBottom ?? 10),
       ...(() => {
@@ -975,7 +978,7 @@ class Component extends DCLogic {
           })
         };
       })(),
-      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : '#E8590C', aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
+      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
       fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
@@ -992,7 +995,7 @@ class Component extends DCLogic {
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(stKey && ((window.__wfStations || {})[stKey] || []).length) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
-        return { legend, legOn: legend.length > 0, legTop: Math.round(this.win().t + 8 + (Number(p.legendOffset) || 0)), legTopC: Math.round(this.win().t + 14 + (Number(p.legendOffset) || 0)),
+        return { legend, legOn: legend.length > 0, legTop: Math.round(this.win().t + 8 + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(this.win().t + 14 + (Number(p.legendOffset) || 0)),
           optOpen, optStr: optOpen ? 'true' : 'false', optIcon: optOpen ? 'm6 15 6-6 6 6' : 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', optLabel: optOpen ? 'Collapse map controls' : 'Map controls',
           optToggle: () => { window.__wfCtrlOpen = !window.__wfCtrlOpen; this.forceUpdate(); } }; })(),
       linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)),
@@ -1001,7 +1004,7 @@ class Component extends DCLogic {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
         const sel = g.id === selId;
         const hi = g.conf >= 70, mid = g.conf >= 50;
-        const c = window.__wfConfC ? window.__wfConfC(g.conf) : (hi ? '#E8590C' : (mid ? '#F59F00' : '#FCC419'));
+        const c = window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : (mid ? '#0A6FDB' : '#48484A'));
         return withTip(at(g.x, g.y, {
           c, rim: hi ? '#FFFFFF' : (mid ? '#FFFFFF' : '#FFFFFF'), r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
           sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,

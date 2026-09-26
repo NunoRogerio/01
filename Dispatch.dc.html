@@ -11,8 +11,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js"></script>
-<script src="live.js?v=12"></script>
+<script src="fit.js?v=2"></script>
+<script src="live.js?v=13"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -72,8 +72,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:13px;font-weight:500;letter-spacing:0;color:#6C6C70}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
+.kpi small{font-size:14px;font-weight:500;letter-spacing:0;color:#6C6C70}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -92,7 +92,7 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .tipwrap{pointer-events:auto;cursor:help}
 a.tipwrap{cursor:pointer}
 .tipwrap:hover,.tipwrap:focus-visible{z-index:15}
-.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 13px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
+.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 14px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
 .tip b{display:block;margin-bottom:2px;font-weight:600;color:#000000}
 .tip.dn{bottom:auto;top:calc(100% + 10px)}
 .tip.l{left:-6px;transform:translate(0,4px)}
@@ -106,7 +106,7 @@ a.card:hover .go{transform:translateX(4px)}
 @keyframes ringdraw{from{stroke-dashoffset:214}}
 .check{stroke-dasharray:40;animation:checkdraw .7s cubic-bezier(.2,.8,.2,1) .35s both}
 @keyframes checkdraw{from{stroke-dashoffset:40}to{stroke-dashoffset:0}}
-.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 13px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
+.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 14px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
 .igpill::after{content:"";position:absolute;left:50%;bottom:-5px;width:8px;height:8px;margin-left:-4px;background:rgba(255,255,255,0.9);border-right:1px solid rgba(60,60,67,0.154);border-bottom:1px solid rgba(60,60,67,0.154);transform:rotate(45deg)}
 .igmore{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease}
 .igmore>span{overflow:hidden;min-height:0}
@@ -141,7 +141,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .opt,.card,.ddopt{border-radius:20px!important}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
-.lbl{font-size:13px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
+.lbl{font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
 .kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#6C6C70}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
@@ -167,7 +167,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
   <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-  <dc-import name="TerrainMap" mode="spread" legend-offset="{{legOff}}" fire-x="{{fireX}}" fire-y="{{fireY}}" fire-id="{{fireId}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" horizon="{{hzNum}}" station="{{sel.id}}" station-label="{{sel.mapLabel}}" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" link-candidate="{{no}}" tip-safe-top="{{tipSafe}}" units="{{mapUnits}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
+  <dc-import name="TerrainMap" mode="spread" legend-offset="{{legOff}}" ctrl-offset="{{ctrlOff}}" fire-x="{{fireX}}" fire-y="{{fireY}}" fire-id="{{fireId}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" horizon="{{hzNum}}" station="{{sel.id}}" station-label="{{sel.mapLabel}}" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" link-candidate="{{no}}" tip-safe-top="{{tipSafe}}" units="{{mapUnits}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
   </div>
 
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
@@ -177,10 +177,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding: 4px 8px">
-      <h1 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireTitle}}</h1>
-      <span title="{{fireSub}}" style="font-size: 13px; font-weight: 400; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireSub}}</span>
+      <h1 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireTitle}}</h1>
+      <span title="{{fireSub}}" style="font-size: 14px; font-weight: 400; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireSub}}</span>
     </span>
-    <span role="status" aria-label="{{activeAria}}" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
+    <span role="status" aria-label="{{activeAria}}" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 14px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
       <span class="dot" style="width: 5.6px; height: 5.6px; display: {{pillDot}}"></span>{{pillTxt}}
     </span>
   </header>
@@ -191,7 +191,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       
       <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 54px; height: 36px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.026), 0 3px 1px rgba(0,0,0,0.009); box-sizing: border-box"></span>
       <sc-for list="{{horizons}}" as="hz" hint-placeholder-count="3">
-        <button type="button" class="chip" aria-pressed="{{hz.pressed}}" onClick="{{hz.pick}}" style="position: relative; border: 0; border-radius: 999px; background: transparent; color: {{hz.fg}}; font: 600 13px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">{{hz.label}}</button>
+        <button type="button" class="chip" aria-pressed="{{hz.pressed}}" onClick="{{hz.pick}}" style="position: relative; border: 0; border-radius: 999px; background: transparent; color: {{hz.fg}}; font: 600 14px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">{{hz.label}}</button>
       </sc-for>
     </div>
   </div>
@@ -200,68 +200,70 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <sc-if value="{{hasRes}}" hint-placeholder-val="{{ false }}">
   <section class="rise" aria-label="Resources on scene" style="margin: 20px 16px 0; padding: 14px 16px 12px; border-radius: 12px; background: #FFFFFF; animation-delay: 120ms">
     <div style="display: flex; align-items: center; gap: 8px">
-      <h2 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px">On scene now</h2>
-      <span style="padding: 0 8px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 12px; line-height: 20px; white-space: nowrap">Real data</span>
-      <span style="margin-left: auto; font-size: 12px; color: #6C6C70; white-space: nowrap">{{res.src}}</span>
+      <h2 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px">On scene now</h2>
+      <span style="padding: 0 8px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; line-height: 20px; white-space: nowrap">Real data</span>
+      <span style="margin-left: auto; font-size: 13px; color: #6C6C70; white-space: nowrap">{{res.src}}</span>
     </div>
     <div style="display: grid; grid-template-columns: repeat({{res.cols}}, minmax(0, 1fr)); gap: 8px; margin-top: 12px">
       <sc-for list="{{res.items}}" as="it" hint-placeholder-count="3">
         <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
           <span class="kpi" style="font-size: 22px; line-height: 26px">{{it.v}}</span>
-          <span style="font-size: 12px; line-height: 15px; color: #6C6C70">{{it.k}}</span>
+          <span style="font-size: 13px; line-height: 15px; color: #6C6C70">{{it.k}}</span>
         </div>
       </sc-for>
     </div>
-    <p style="margin: 10px 0 0; font-size: 12px; line-height: 16px; color: #6C6C70">{{res.foot}}</p>
+    <p style="margin: 10px 0 0; font-size: 13px; line-height: 16px; color: #6C6C70">{{res.foot}}</p>
   </section>
   </sc-if>
-  <p style="margin: 18px 40px 0; font-size: 12px; line-height: 16px; color: #6C6C70"><span style="display: inline-block; margin-left: 0; margin-right: 6px; padding: 0 8px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3C3C43; font-size: 12px; font-weight: 400; line-height: 20px; letter-spacing: 0; vertical-align: 2px">Simulated</span>Spread projection and dispatch plan</p>
-  <section class="rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 12px 40px 0; animation-delay: 160ms">
+  <p style="margin: 14px 20px 0; font-size: 13px; line-height: 16px; color: #6C6C70"><span style="display: inline-block; margin-left: 0; margin-right: 6px; padding: 0 8px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3C3C43; font-size: 13px; font-weight: 400; line-height: 20px; letter-spacing: 0; vertical-align: 2px">Simulated</span>Spread projection and dispatch plan</p>
+  <section class="rise" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: 10px 20px 0; animation-delay: 160ms">
     <div style="display: flex; flex-direction: column; gap: 10px">
       <span class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"></path></svg>Spread +{{hzNum}}h</span>
       <button type="button" class="unitbtn" onClick="{{toggleArea}}" aria-label="{{areaAria}}"><span class="kpi" style="display: block; white-space: nowrap">{{areaV}}<small> {{areaU}}</small></span></button>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px; padding-left: 16px; border-left: 1px solid rgba(60,60,67,0.14)">
       <span class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>On fire line</span>
-      <span class="kpi" style="color: #E86A00">{{sel.eta}}<small> min · {{sel.at}}</small></span>
+      <span class="kpi" style="color: #E86A00; white-space: nowrap">{{sel.eta}}<small> min · {{sel.at}}</small></span>
     </div>
   </section>
 
-  <div class="rise" style="padding: 26px 0 0; animation-delay: 240ms">
-    <button type="button" class="sqrow sqtop" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{stationAria}}" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
-        <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 11px; font-weight: 600; line-height: 18px">Best</span></sc-if>
+  <div class="rise" style="padding: 14px 16px 0; animation-delay: 240ms">
+    <span style="display: block; margin: 0 4px 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6C6C70">1 · Select station</span>
+    <button type="button" class="prep" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{stationAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 1.5px solid rgba(0,113,227,0.28); border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
+        <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 12px; font-weight: 600; line-height: 18px">Best</span></sc-if>
       </span>
-      <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 13px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
+      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,113,227,0.1); color: #0071E3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
+      <span style="grid-column: 1; min-width: 0; font-size: 14px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
     </button>
   </div>
 
-  <div class="rise" style="padding: 22px 40px 0; animation-delay: 300ms">
+  <div class="rise" style="padding: 12px 24px 0; animation-delay: 300ms">
     <div role="img" aria-label="{{sel.barLabel}}" style="display: flex; gap: 3px; height: 6px">
       <span class="bar" style="width: {{sel.p1}}%; border-radius: 999px; background: #0079A6"></span>
       <span class="bar" style="width: {{sel.p2}}%; border-radius: 999px; background: #E86A00; animation-delay: 150ms"></span>
       <span class="bar" style="width: {{sel.p3}}%; border-radius: 999px; background: #B37A00; animation-delay: 300ms"></span>
     </div>
-    <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; color: #6C6C70">
+    <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px; color: #6C6C70">
       <span style="display: flex; align-items: center; gap: 5px"><span style="width: 6px; height: 6px; border-radius: 50%; background: #0079A6"></span>Turnout {{sel.t1}} min</span>
       <span style="display: flex; align-items: center; gap: 5px"><span style="width: 6px; height: 6px; border-radius: 50%; background: #E86A00"></span>Drive {{sel.t2}} min</span>
       <span style="display: flex; align-items: center; gap: 5px"><span style="width: 6px; height: 6px; border-radius: 50%; background: #B37A00"></span>Deploy {{sel.t3}} min</span>
     </div>
   </div>
 
-  <div class="rise" style="padding: 18px 0 0; animation-delay: 330ms">
-    <button type="button" class="sqrow sqtop" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{cfgAria}}" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Configure dispatch</span>
-        <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 11px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
+  <div class="rise" style="padding: 12px 16px 0; animation-delay: 330ms">
+    <span style="display: block; margin: 0 4px 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6C6C70">2 · Configure dispatch</span>
+    <button type="button" class="prep" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{cfgAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 1.5px solid rgba(0,113,227,0.28); border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Forces · {{unitTotal}} units</span>
+        <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 12px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
       </span>
-      <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 13px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
+      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,113,227,0.1); color: #0071E3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
+      <span style="grid-column: 1; min-width: 0; font-size: 14px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
     </button>
   </div>
 
-  <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding: 0 16px 88px; animation-delay: 360ms">
-    <button type="button" class="btn primary green" onClick="{{sendAll}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 17px; font-weight: 600">
+  <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding: 12px 16px 86px; animation-delay: 360ms">
+    <button type="button" class="btn primary green" onClick="{{sendAll}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 18px; font-weight: 600">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"></path><circle cx="7" cy="17.5" r="1.5"></circle><circle cx="17" cy="17.5" r="1.5"></circle></svg>
       <span style="flex-grow: 1; text-align: left">Dispatch {{unitTotal}} units · {{sel.codes}}</span>
       <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
@@ -276,34 +278,34 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h2 id="sheetTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Choose a station</h2>
     <div style="flex-shrink: 0; padding-top: 8px; transform: translateY({{stRepY}}); transition: transform .55s cubic-bezier(.2,.8,.2,1)">
         <button type="button" class="sqrow sqtop" onClick="{{closeSheet}}" aria-label="Close station list" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
-            <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 11px; font-weight: 600; line-height: 18px">Best</span></sc-if>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
+            <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 12px; font-weight: 600; line-height: 18px">Best</span></sc-if>
           </span>
           <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; font-size: 13px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
+          <span style="grid-column: 1; min-width: 0; font-size: 14px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
         </button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{stInOp}}; transform: translateY({{stInY}}); transition: opacity .3s ease {{stInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{stInDelay}}">
-    <p style="margin: 0 16px 14px 40px; font-size: 13px; line-height: 16px; color: #6C6C70">Ranked by time to the fire line. Select one or more stations. {{need}} crews needed for +{{hzNum}}h · {{crewsSel}} selected.</p>
-    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 12px; font-weight: 400; line-height: 15px; color: #6C6C70">
+    <p style="margin: 0 16px 14px 40px; font-size: 14px; line-height: 16px; color: #6C6C70">Ranked by time to the fire line. Select one or more stations. {{need}} crews needed for +{{hzNum}}h · {{crewsSel}} selected.</p>
+    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 13px; font-weight: 400; line-height: 15px; color: #6C6C70">
       <span></span><span style="text-align: center">Time to<br>fire line</span><span></span>
     </div>
     <div role="group" aria-label="Stations, select one or more" style="display: flex; flex-direction: column; gap: 2px; padding-top: 2px">
       <sc-for list="{{stations}}" as="st" hint-placeholder-count="5">
         <button type="button" role="checkbox" class="sqrow" data-sel="{{st.checked}}" aria-checked="{{st.checked}}" aria-disabled="{{st.disabled}}" onClick="{{st.pick}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: center; align-content: center; gap: 2px 8px; height: 60px; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: {{st.selBg}}; color: #000000; text-align: left; font: inherit; opacity: {{st.op}}; cursor: {{st.cursor}}">
-          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.code}} · {{st.name}}</span>
-            <sc-if value="{{st.isRec}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 11px; font-weight: 600; line-height: 18px">Best</span></sc-if>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.code}} · {{st.name}}</span>
+            <sc-if value="{{st.isRec}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 12px; font-weight: 600; line-height: 18px">Best</span></sc-if>
           </span>
-          <span style="text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap">{{st.etaText}}</span>
+          <span style="text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap">{{st.etaText}}</span>
           <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #007AFF; opacity: {{st.tickOp}}; transition: opacity .2s ease"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; font-size: 13px; line-height: 16px; color: {{st.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.sub}}</span>
+          <span style="grid-column: 1; min-width: 0; font-size: 14px; line-height: 16px; color: {{st.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.sub}}</span>
         </button>
       </sc-for>
     </div>
     </div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; flex-shrink: 0; padding: 12px 16px 4px">
-      <button type="button" class="btn ghost" onClick="{{stCancel}}" style="height: 48px; font-size: 15px; font-weight: 500">Cancel</button>
-      <button type="button" class="btn" onClick="{{stApply}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 15px; font-weight: 600">Apply</button>
+      <button type="button" class="btn ghost" onClick="{{stCancel}}" style="height: 48px; font-size: 16px; font-weight: 500">Cancel</button>
+      <button type="button" class="btn" onClick="{{stApply}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 16px; font-weight: 600">Apply</button>
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hSt.down}}" onPointerMove="{{hSt.move}}" onPointerUp="{{hSt.up}}" onPointerCancel="{{hSt.cancel}}" onKeyDown="{{hSt.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 8px 0 -16px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
@@ -318,8 +320,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
       </span>
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-        <h2 id="sentTitle" style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{sentTitle}}</h2>
-        <span style="font-size: 13px; line-height: 16px; color: #6C6C70">{{fireId}} · {{sentSub}} · {{deployCount}} units</span>
+        <h2 id="sentTitle" style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{sentTitle}}</h2>
+        <span style="font-size: 14px; line-height: 16px; color: #6C6C70">{{fireId}} · {{sentSub}} · {{deployCount}} units</span>
       </span>
     </div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 40px 0">
@@ -338,9 +340,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span aria-hidden="true" style="position: absolute; left: 11px; top: 11px; display: flex; width: 18px; height: 18px; color: {{d.c}}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{d.icon}}"></path></svg>
           </span>
-          <span style="min-width: 0; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.label}}</span>
-          <span style="font-size: 13px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap"><span style="font-weight: 400; color: #6C6C70">{{d.pre}}</span>{{d.val}}<span style="font-weight: 400; color: #6C6C70">{{d.post}}</span></span>
-          <span style="grid-column: 1 / -1; min-width: 0; font-size: 13px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
+          <span style="min-width: 0; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.label}}</span>
+          <span style="font-size: 14px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap"><span style="font-weight: 400; color: #6C6C70">{{d.pre}}</span>{{d.val}}<span style="font-weight: 400; color: #6C6C70">{{d.post}}</span></span>
+          <span style="grid-column: 1 / -1; min-width: 0; font-size: 14px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
           <span style="grid-column: 1 / -1; position: relative; display: block; height: 3px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.077); overflow: hidden">
             <span class="bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{d.w}}%; border-radius: 999px; background: {{d.c}}"></span>
           </span>
@@ -348,10 +350,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </ul>
     <div style="display: grid; grid-template-columns: {{sentCols}}; gap: 10px; margin-top: 14px; padding: 0 16px">
-      <button type="button" class="btn ghost" onClick="{{undoSend}}" aria-haspopup="dialog" style="display: {{adjD}}; height: 48px; font-size: 15px; font-weight: 500">
+      <button type="button" class="btn ghost" onClick="{{undoSend}}" aria-haspopup="dialog" style="display: {{adjD}}; height: 48px; font-size: 16px; font-weight: 500">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>{{undoLabel}}
       </button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{navMap}}" onClick="{{navMap}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 15px; font-weight: 600">
+      <a href="Main.dc.html" class="btn" onPointerDown="{{navMap}}" onClick="{{navMap}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 16px; font-weight: 600">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Done
       </a>
     </div>
@@ -360,15 +362,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h2 id="cfgTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Configure dispatch</h2>
     <div style="flex-shrink: 0; padding-top: 8px; transform: translateY({{cfRepY}}); transition: transform .55s cubic-bezier(.2,.8,.2,1)">
         <button type="button" class="sqrow sqtop" onClick="{{closeSheet}}" aria-label="Close configuration" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Configure dispatch</span>
-            <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 11px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Configure dispatch</span>
+            <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 12px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
           </span>
           <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; font-size: 13px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
+          <span style="grid-column: 1; min-width: 0; font-size: 14px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
         </button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{cfInOp}}; transform: translateY({{cfInY}}); transition: opacity .3s ease {{cfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{cfInDelay}}">
-    <p style="margin: 0 16px 14px 40px; font-size: 13px; line-height: 16px; color: #6C6C70">
+    <p style="margin: 0 16px 14px 40px; font-size: 14px; line-height: 16px; color: #6C6C70">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="#248A3D" aria-hidden="true" style="vertical-align: -1px; margin-right: 6px"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg><span style="color: #248A3D">Suggested</span> for +{{hzNum}}h: {{recSummary}}
     </p>
     <div role="group" aria-label="Available forces" style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(60,60,67,0.14)">
@@ -378,17 +380,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.icon}}"></path></svg>
           </span>
           <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-            <span style="font-size: 15px; font-weight: 600; line-height: 20px">{{u.name}}</span>
-            <span style="display: flex; align-items: center; gap: 5px; font-size: 13px; line-height: 16px; color: #6C6C70; white-space: nowrap">
+            <span style="font-size: 16px; font-weight: 600; line-height: 20px">{{u.name}}</span>
+            <span style="display: flex; align-items: center; gap: 5px; font-size: 14px; line-height: 16px; color: #6C6C70; white-space: nowrap">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>{{u.from}}
             </span>
-            <span style="font-size: 13px; line-height: 16px; color: {{u.availColor}}">{{u.availText}}</span>
+            <span style="font-size: 14px; line-height: 16px; color: {{u.availColor}}">{{u.availText}}</span>
           </span>
           <span style="display: flex; align-items: center; gap: 4px">
             <button type="button" class="stepb" aria-label="{{u.lessLabel}}" aria-disabled="{{u.lessDis}}" onClick="{{u.less}}" style="opacity: {{u.lessOp}}">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>
             </button>
-            <span aria-live="polite" style="min-width: 28px; text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{u.nColor}}; transition: color .25s ease">{{u.n}}</span>
+            <span aria-live="polite" style="min-width: 28px; text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{u.nColor}}; transition: color .25s ease">{{u.n}}</span>
             <button type="button" class="stepb" aria-label="{{u.moreLabel}}" aria-disabled="{{u.moreDis}}" onClick="{{u.more}}" style="opacity: {{u.moreOp}}">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12M12 6v12"></path></svg>
             </button>
@@ -401,33 +403,33 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19M7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M7 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0"></path></svg>
       </span>
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-        <span style="font-size: 15px; font-weight: 600; line-height: 20px">Drone D-3</span>
-        <span aria-live="polite" style="display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 16px; color: {{drone.fg}}; white-space: nowrap">
+        <span style="font-size: 16px; font-weight: 600; line-height: 20px">Drone D-3</span>
+        <span aria-live="polite" style="display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 16px; color: {{drone.fg}}; white-space: nowrap">
           <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}"><span class="dot" style="width: 5.6px; height: 5.6px"></span></sc-if>
           <sc-if value="{{drone.idle}}" hint-placeholder-val="{{ false }}"><span style="width: 5.6px; height: 5.6px; border-radius: 50%; background: currentColor; opacity: 0.6"></span></sc-if>{{drone.status}}
         </span>
-        <span style="font-size: 13px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
+        <span style="font-size: 14px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
       </span>
       <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}">
-        <button type="button" class="btn ghost" onClick="{{recallDrone}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; font-size: 15px; font-weight: 500">
+        <button type="button" class="btn ghost" onClick="{{recallDrone}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; font-size: 16px; font-weight: 500">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>Recall
         </button>
       </sc-if>
       <sc-if value="{{drone.idle}}" hint-placeholder-val="{{ false }}">
-        <button type="button" class="btn" onClick="{{launchDrone}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; background-color: rgba(0,121,166,0.14); border-color: transparent; color: #006A91; font-size: 15px; font-weight: 600">
+        <button type="button" class="btn" onClick="{{launchDrone}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; background-color: rgba(0,121,166,0.14); border-color: transparent; color: #006A91; font-size: 16px; font-weight: 600">
           <svg class="go" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>Launch drone
         </button>
       </sc-if>
     </div>
-    <p style="display: flex; align-items: center; justify-content: space-between; margin: 16px 16px 0 40px; font-size: 13px; color: #6C6C70">
+    <p style="display: flex; align-items: center; justify-content: space-between; margin: 16px 16px 0 40px; font-size: 14px; color: #6C6C70">
       <span>Total</span><span style="color: #000000; font-weight: 600; font-variant-numeric: tabular-nums">{{unitTotal}} units · first on scene {{firstEta}} min</span>
     </p>
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; padding: 0 16px; flex-shrink: 0">
-      <button type="button" class="btn" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 15px; font-weight: 600; background-color: {{sugBg}}; border-color: {{sugBd}}; color: #248A3D; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
+      <button type="button" class="btn" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 16px; font-weight: 600; background-color: {{sugBg}}; border-color: {{sugBd}}; color: #248A3D; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5M4 4v4.5h4.5"></path></svg>Suggested
       </button>
-      <button type="button" class="btn" onClick="{{closeSheet}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 15px; font-weight: 600">
+      <button type="button" class="btn" onClick="{{closeSheet}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 16px; font-weight: 600">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Done
       </button>
     </div>
@@ -435,7 +437,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </section>
 
   <a href="Main.dc.html" class="ffwfoot" onPointerDown="{{goHome}}" onClick="{{goHome}}" aria-label="Forest Fire Watch, back to the incidents map" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; height: 74px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.14); background: #EEEEF2; text-decoration: none; color: inherit">
-      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 11px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
+      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 12px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
         <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#6C6C70" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#6C6C70" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; margin-right: -0.32em">FOREST FIRE WATCH</span>
       </span>
   </a>
@@ -711,7 +713,7 @@ class Component extends DCLogic {
         ...m, n,
         availText: a === 0 ? 'None available' : (n >= a ? 'All ' + a + ' assigned' : (a - n) + ' of ' + a + ' still free'),
         availColor: n >= a ? '#B37A00' : '#248A3D',
-        nColor: n === Math.min(REC[i], a) ? '#248A3D' : '#000000',
+        nColor: n === Math.min(REC[i], a) ? '#248A3D' : '#0071E3',
         bg: n > 0 ? 'rgba(60,60,67,0.044)' : 'rgba(60,60,67,0.017)',
         bd: n > 0 ? 'rgba(60,60,67,0.11)' : 'rgba(60,60,67,0.055)',
         less: () => { if (!lessDis) setCount(i, -1); }, more: () => { if (!moreDis) setCount(i, 1); },
@@ -749,7 +751,7 @@ class Component extends DCLogic {
     deployedRaw.sort((a, b) => a.eta - b.eta);
     const maxEta = deployedRaw.length ? Math.max(...deployedRaw.map((d) => d.eta)) : 0;
     const deployed = deployedRaw.map((d) => ({
-      ...d, at: RU ? 'On scene' : clock(d.eta), w: Math.max(8, Math.round((1 - d.eta / (maxEta + 4)) * 100)),
+      ...d, at: RU ? 'On scene' : clock(d.eta), w: RU ? 0 : Math.max(8, Math.round((1 - d.eta / (maxEta + 4)) * 100)),
       c: d.air ? '#0079A6' : '#000000', bg: d.air ? 'rgba(0,121,166,0.1)' : 'rgba(60,60,67,0.066)'
     }));
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
@@ -769,7 +771,7 @@ class Component extends DCLogic {
       else {
         const S0 = M.snaps[0] || {}, Sh = M.snaps[hz] || S0, I = M.info || {};
         if (HELD && !HELD.official) rows.push(heldRow());
-        rows.push(row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
+        rows.push(M.assumed ? row('Perimeter', 'Not mapped', M.src.replace('No mapped perimeter · ', '').replace(/^./, (c) => c.toUpperCase()) + ' · no public polygon for this fire yet', '#6C6C70') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
         if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#248A3D'));
@@ -828,14 +830,17 @@ class Component extends DCLogic {
       navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
       horizons, hzNum: hz, need, area: areas[hzK],
       ...(() => { const u = this.wfUnits(); const ac = Number(areas[hzK]); const v = u.area === 'ha' ? (ac * 0.4047 < 10 ? (ac * 0.4047).toFixed(1) : String(Math.round(ac * 0.4047))) : String(ac); const un = u.area === 'ha' ? 'ha' : 'acres'; return { areaV: v, areaU: un, areaAria: 'Spread area ' + v + ' ' + un + '. Switch to ' + (u.area === 'ha' ? 'acres' : 'hectares'), toggleArea: () => this.wfToggleUnit('area') }; })(), pkg: pkgs[hzK],
-      segLeft: 3 + Math.max(0, HZS.indexOf(hz)) * 54, hzCols: 'repeat(' + HZS.length + ', 54px)', legOff: s.full ? 106 : 54,
+      segLeft: 3 + Math.max(0, HZS.indexOf(hz)) * 54, hzCols: 'repeat(' + HZS.length + ', 54px)', legOff: s.full ? 106 : 54, ctrlOff: s.full ? 52 : 0,
       sel, stations,
-      view: (FMOD && FMOD.model && FMOD.model.snaps && FMOD.model.snaps[3]) ? (() => {
-        const P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662], pts = FMOD.model.snaps[3].ring.map((q) => P(q[0], q[1]));
-        const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(28, Math.max(...xs) - Math.min(...xs)), bh = Math.max(28, Math.max(...ys) - Math.min(...ys));
-        const z = Math.max(0.0015, Math.min(24, Math.min(300 / bw, 190 / bh) * 0.8));
+      view: (FMOD && FMOD.model && FMOD.model.snaps && FMOD.model.snaps[0]) ? (() => {
+        // Open centred on the fire, as close as the map goes (zoom 24 ≈ street level), framing the real perimeter when one is mapped.
+        const M = FMOD.model, P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
+        if (M.assumed) return { zoom: 24, fx: FIRE[0], fy: FIRE[1] };
+        const pts = M.snaps[0].ring.map((q) => P(q[0], q[1]));
+        const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
+        const z = Math.max(0.0015, Math.min(24, Math.min(330 / bw, 230 / bh) * 0.85));
         return { zoom: +z.toFixed(4), fx: Math.round((Math.max(...xs) + Math.min(...xs)) / 2), fy: Math.round((Math.max(...ys) + Math.min(...ys)) / 2) };
-      })() : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
+      })() : (window.__wfLiveMap && fv && RO) ? { zoom: 12, fx: FIRE[0], fy: FIRE[1] } : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
       mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       sendAll: () => this.setState({ sent: true, adjust: false, open: false, cfg: false, full: false }), undoSend: () => this.setState(fv ? { adjust: true, cfg: true, open: false, full: false } : { sent: false, cfg: true, open: false, full: false }),
@@ -856,7 +861,7 @@ class Component extends DCLogic {
       closeSheet: () => this.setState({ open: false, cfg: false }),
       ...panelVals('st', open, s.ogS || { t: 468, b: 528 }), ...panelVals('cf', cfg, s.ogC || { t: 602, b: 662 }), scrimOp: 0, scrimPE: (open || cfg) ? 'auto' : 'none', sheetHidden: open ? 'false' : 'true',
       units, unitTotal, firstEta: etas.length ? Math.min(...etas) : '–', recSummary: fmt(REC.map((n, i) => Math.min(n, avail3[i]))),
-      cfgSummary: RU ? RU.map((r) => Number(r[1]).toLocaleString() + ' ' + r[0].toLowerCase()).join(' · ') : fmt(counts), cfgTag: RU ? 'Real data' : isRecCfg ? 'Suggested' : 'Custom', cfgTagBg: RU || isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(204,153,0,0.14)', cfgTagFg: RU || isRecCfg ? '#248A3D' : '#B37A00',
+      cfgSummary: RU ? RU.map((r) => Number(r[1]).toLocaleString() + ' ' + r[0].toLowerCase()).join(' · ') : fmt(counts), cfgTag: RU ? 'Real data' : isRecCfg ? 'Suggested' : 'Your choice', cfgTagBg: RU || isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(0,113,227,0.12)', cfgTagFg: RU || isRecCfg ? '#248A3D' : '#0060C7',
       drone: s.droneOff
         ? { flying: false, idle: true, status: 'At base', sub: 'Altadena pad · 4 min away', fg: '#6C6C70', bg: 'rgba(60,60,67,0.017)', bd: 'rgba(60,60,67,0.055)' }
         : { flying: true, idle: false, status: 'On route · 3 min to scene', sub: 'Live video and thermal on arrival', fg: '#0079A6', bg: 'rgba(0,121,166,0.05)', bd: 'rgba(0,121,166,0.22)' },

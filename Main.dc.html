@@ -11,8 +11,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js"></script>
-<script src="live.js?v=12"></script>
+<script src="fit.js?v=2"></script>
+<script src="live.js?v=13"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -69,8 +69,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:13px;font-weight:500;letter-spacing:0;color:#6C6C70}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
+.kpi small{font-size:14px;font-weight:500;letter-spacing:0;color:#6C6C70}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -89,7 +89,7 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .tipwrap{pointer-events:auto;cursor:help}
 a.tipwrap{cursor:pointer}
 .tipwrap:hover,.tipwrap:focus-visible{z-index:15}
-.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 13px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
+.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 14px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
 .tip b{display:block;margin-bottom:2px;font-weight:600;color:#000000}
 .tip.dn{bottom:auto;top:calc(100% + 10px)}
 .tip.l{left:-6px;transform:translate(0,4px)}
@@ -106,7 +106,7 @@ a.card:hover .go{transform:translateX(4px)}
 .stackbtn:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-shadow:0 18px 40px -18px rgba(232,106,0,0.55)}
 .stackbtn .go{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 .stackbtn:hover .go{transform:translateY(-2px)}
-.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 13px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
+.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 14px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
 .igpill::after{content:"";position:absolute;left:50%;bottom:-5px;width:8px;height:8px;margin-left:-4px;background:rgba(255,255,255,0.9);border-right:1px solid rgba(60,60,67,0.154);border-bottom:1px solid rgba(60,60,67,0.154);transform:rotate(45deg)}
 .igmore{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease}
 .igmore>span{overflow:hidden;min-height:0}
@@ -151,7 +151,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .opt,.card,.ddopt{border-radius:20px!important}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
-.lbl{font-size:13px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
+.lbl{font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
 .kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#6C6C70}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
@@ -178,12 +178,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-        <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
+        <span style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
       </span>
-      <span style="font-size: 13px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
+      <span style="font-size: 14px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
     </button>
-    <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
+    <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 14px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
       <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
     </span>
   </header>
@@ -199,32 +199,32 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div aria-hidden="{{listHidden}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; visibility: {{listVis}}; opacity: {{liInOp}}; transform: translateY({{liInY}}); transition: opacity .3s ease {{liInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{liInDelay}}, visibility 0s linear {{listVisDelay}}">
       <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hList.down}}" onPointerMove="{{hList.move}}" onPointerUp="{{hList.up}}" onPointerCancel="{{hList.cancel}}" onKeyDown="{{hList.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
       <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
-        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 12px; font-weight: 400; line-height: 15px; color: #6C6C70">
+        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 13px; font-weight: 400; line-height: 15px; color: #6C6C70">
           <span></span>
           <span style="text-align: center">Ignition<br>validation level</span>
           <span></span>
         </div>
         <sc-for list="{{ignList}}" as="it" hint-placeholder-count="6">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; height: 60px; padding: 0 0 0 40px; box-sizing: border-box; color: #000000; text-decoration: none">
-            <span style="min-width: 0; line-height: 20px; font-size: 15px; font-weight: {{it.nameW}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
-            <span style="text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
+            <span style="min-width: 0; line-height: 20px; font-size: 16px; font-weight: {{it.nameW}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
+            <span style="text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
             <span style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
-            <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 13px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+            <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 14px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
       </div>
     </div>
     <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: 158px; padding: 12px 12px 0 12px; flex-shrink: 0">
       <button type="button" onClick="{{homeReset}}" aria-label="Forest Fire Watch, back to the incidents map" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; padding: 0; border: 0; border-top: 1px solid rgba(60,60,67,0.14); border-radius: 0; background: #EEEEF2; cursor: pointer; font: inherit"></button>
-      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 11px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
+      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 12px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
         <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#6C6C70" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#6C6C70" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; margin-right: -0.32em">FOREST FIRE WATCH</span>
       </span>
       <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-          <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px; color: {{barC}}">{{barTitle}}</span>
+          <span style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px; color: {{barC}}">{{barTitle}}</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{barRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
-        <span style="font-size: 13px; color: #6C6C70; white-space: nowrap">{{barSub}}</span>
+        <span style="font-size: 14px; color: #6C6C70; white-space: nowrap">{{barSub}}</span>
       </button>
     </div>
   </section>
@@ -239,12 +239,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px; flex-shrink: 0">
       <button type="button" class="opt" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-          <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
+          <span style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
-        <span style="font-size: 13px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
+        <span style="font-size: 14px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
       </button>
-      <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 13px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
+      <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 14px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
         <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
       </span>
     </div>
@@ -253,11 +253,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <sc-if value="{{showSearch}}" hint-placeholder-val="{{ false }}">
       <label style="display: flex; align-items: center; gap: 6px; height: 36px; margin: 10px 0 0; padding: 0 10px; border-radius: 10px; background: rgba(118,118,128,0.12); color: #8E8E93">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
-        <input class="sqsearch" type="search" aria-label="{{searchPh}}" placeholder="{{searchPh}}" value="{{q}}" onInput="{{onQ}}" style="flex-grow: 1; min-width: 0; height: 36px; border: 0; background: transparent; font: inherit; font-size: 15px; color: #000000">
+        <input class="sqsearch" type="search" aria-label="{{searchPh}}" placeholder="{{searchPh}}" value="{{q}}" onInput="{{onQ}}" style="flex-grow: 1; min-width: 0; height: 36px; border: 0; background: transparent; font: inherit; font-size: 16px; color: #000000">
         <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: #8E8E93; color: #FFFFFF; cursor: pointer"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
       </label>
     </sc-if>
-    <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 84px 64px 40px; align-items: center; gap: 4px; margin: 12px -16px 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 12px; font-weight: 400; color: #6C6C70">
+    <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 84px 64px 40px; align-items: center; gap: 4px; margin: 12px -16px 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 13px; font-weight: 400; color: #6C6C70">
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.name.aria}}" onClick="{{sort.name.pick}}">{{colName}}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{sort.name.op}}; transform: rotate({{sort.name.rot}})"><path d="m6 9 6 6 6-6"></path></svg></button></span>
       <span style="display: flex; justify-content: center"><button type="button" class="sorth" aria-sort="{{sort.cands.aria}}" onClick="{{sort.cands.pick}}" style="text-align: center">Ignition<br>candidates<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; opacity: {{sort.cands.op}}; transform: rotate({{sort.cands.rot}})"><path d="m6 9 6 6 6-6"></path></svg></button></span>
       <span style="display: flex; justify-content: center"><button type="button" class="sorth" aria-sort="{{sort.fires.aria}}" onClick="{{sort.fires.pick}}" style="text-align: center">Active<br>fires<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; opacity: {{sort.fires.op}}; transform: rotate({{sort.fires.rot}})"><path d="m6 9 6 6 6-6"></path></svg></button></span>
@@ -270,33 +270,33 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
           </button>
           <button type="button" class="sqrow nosep" disabled="{{allState.dis}}" onClick="{{allState.pick}}" aria-label="{{allState.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 84px 64px 40px; align-items: center; align-content: center; gap: 2px 4px; min-height: 52px; padding: 0; flex-grow: 1; min-width: 0; border-radius: 999px; border: 0; background-color: transparent; color: {{allState.fg}}; text-align: left; font: inherit; cursor: pointer">
-            <span style="min-width: 0; line-height: 20px; font-size: 15px; font-weight: 600">{{allState.name}}</span>
-            <span style="text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{allState.candsC}}">{{allState.cands}}</span>
-            <span style="text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{allState.firesC}}">{{allState.fires}}</span>
+            <span style="min-width: 0; line-height: 20px; font-size: 16px; font-weight: 600">{{allState.name}}</span>
+            <span style="text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{allState.candsC}}">{{allState.cands}}</span>
+            <span style="text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{allState.firesC}}">{{allState.fires}}</span>
             <span></span>
-            <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 13px; color: {{allState.subC}}">{{allState.nLbl}}</span>
+            <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 14px; color: {{allState.subC}}">{{allState.nLbl}}</span>
           </button>
         </div>
       </sc-if>
       <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
         <button type="button" class="sqrow" data-sel="{{r.selA}}" disabled="{{r.dis}}" aria-disabled="{{r.disA}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 84px 64px 40px; align-items: center; align-content: center; gap: 2px 4px; height: 60px; min-height: 60px; padding: 0 0 0 {{rowPadL}}; box-sizing: border-box; border-radius: 0; border: 0; background-color: {{r.selBg}}; color: {{r.fg}}; text-align: left; font: inherit; cursor: pointer">
-          <span style="min-width: 0; line-height: 20px; font-size: 15px; font-weight: {{r.nameW}}">{{r.name}}</span>
-          <span style="text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.candsC}}">{{r.cands}}</span>
-          <span style="text-align: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.firesC}}">{{r.fires}}</span>
+          <span style="min-width: 0; line-height: 20px; font-size: 16px; font-weight: {{r.nameW}}">{{r.name}}</span>
+          <span style="text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.candsC}}">{{r.cands}}</span>
+          <span style="text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.firesC}}">{{r.fires}}</span>
           <span style="display: flex; justify-content: center; margin-left: -4px; color: {{r.subC}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{r.endW}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.end}}"></path></svg></span>
-          <span style="display: {{r.subD}}; grid-column: 1; min-width: 0; line-height: 16px; font-size: 13px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
+          <span style="display: {{r.subD}}; grid-column: 1; min-width: 0; line-height: 16px; font-size: 14px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
           </button>
       </sc-for>
-      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span style="padding: 20px 40px; font-size: 15px; color: #6C6C70">{{noMatchTxt}}</span></sc-if>
+      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span style="padding: 20px 40px; font-size: 16px; color: #6C6C70">{{noMatchTxt}}</span></sc-if>
     </div>
     <a href="SimSetup.dc.html" style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; min-height: 52px; margin: 8px 0 0; padding: 4px 4px; border-top: 1px solid rgba(60,60,67,0.14); color: #000000; text-decoration: none">
       <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; background: #E86A00; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5Z"></path></svg></span>
-      <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 15px; line-height: 20px">Fire simulator</span><span style="font-size: 12px; line-height: 16px; color: #6C6C70">Play a fire scenario and command the forces</span></span>
+      <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 16px; line-height: 20px">Fire simulator</span><span style="font-size: 13px; line-height: 16px; color: #6C6C70">Play a fire scenario and command the forces</span></span>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C4C4C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
     </a>
     <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin: 0; padding: 8px 4px 0; border-top: 1px solid rgba(60,60,67,0.14)">
-      <span style="flex-grow: 1; min-width: 0; font-size: 13px; line-height: 18px; color: #6C6C70"><span style="display: block; font-size: 15px; line-height: 20px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{acct.name}}</span>{{acct.area}}</span>
-      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; height: 44px; padding: 0 4px; font-size: 15px; color: #007AFF; text-decoration: none; white-space: nowrap">Sign out</a>
+      <span style="flex-grow: 1; min-width: 0; font-size: 14px; line-height: 18px; color: #6C6C70"><span style="display: block; font-size: 16px; line-height: 20px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{acct.name}}</span>{{acct.area}}</span>
+      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; height: 44px; padding: 0 4px; font-size: 16px; color: #007AFF; text-decoration: none; white-space: nowrap">Sign out</a>
     </div>
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 4px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
@@ -569,7 +569,7 @@ class Component extends DCLogic {
     const listOpen = !!s.list && M > 0;
     const focus = (id) => () => this.wfSetFocus(id);
     const listFocus = (id) => () => { this.wfSetFocus(id); this.wfListFlag(true); };
-    const colorOf = (c) => c >= 70 ? '#E86A00' : (c >= 50 ? '#B37A00' : '#3C3C43');
+    const colorOf = (c) => c > 75 ? '#7A3FE0' : (c >= 50 ? '#0A6FDB' : '#48484A');
     const layers = [];
     const STACK = CANDS.concat(FIRES.map((f) => ({ conf: 100, fire: true })));
     for (let k = Math.min(M - 1, 2); k >= 1; k--) {
@@ -588,7 +588,7 @@ class Component extends DCLogic {
       const col = colorOf(c.conf);
       return {
         ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Alert.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + '%', valC: '#000000', nameW: 600,
-        bg: c.conf >= 70 ? 'rgba(232,106,0,0.14)' : (c.conf >= 50 ? 'rgba(204,153,0,0.12)' : 'rgba(60,60,67,0.066)'),
+        bg: c.conf > 75 ? 'rgba(122,63,224,0.12)' : (c.conf >= 50 ? 'rgba(10,111,219,0.1)' : 'rgba(60,60,67,0.066)'),
         bd: i === 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
         ...anim(i),
         aria: c.place + ', ignition validation level ' + c.conf + ' percent, ' + c.srcList + ', ' + c.ago,

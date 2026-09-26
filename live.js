@@ -204,7 +204,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     var near=(window.__wfLiveCands||[]).map(function(c){return c[9];}).filter(function(m){return m&&Math.abs(m.lat-f.lat)<0.08&&Math.abs(m.lon-f.lon)<0.1;})
       .map(function(m){return toLocal([[m.lat,m.lon]],o)[0];}).filter(function(p){return Math.hypot(p[0],p[1])<6000;});
     if(!near.length)return null;
-    var pts=[];near.forEach(function(p){circle(375,8).forEach(function(c){pts.push([p[0]+c[0],p[1]+c[1]]);});});  // each VIIRS pixel ≈ 375 m
+    var pts=[];var h=187.5;near.forEach(function(p){[[-h,-h],[h,-h],[h,h],[-h,h]].forEach(function(c){pts.push([p[0]+c[0],p[1]+c[1]]);});});  // each VIIRS pixel ≈ 375 m square  // each VIIRS pixel ≈ 375 m
     return {xy:hull(pts),src:'Satellite detections · NASA FIRMS ('+near.length+')'};
   }
   function fuelAt(f){
@@ -279,8 +279,8 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     return {src:src,snaps:snaps,etrMin:etr,etrAt:etr!==null?new Date(t0.getTime()+etr*60000):null,noRes:!f.res,info:info,startPct:Math.round(startContained(f)*100)};
   }
   // Shared by the map card and the fire screen: durations, and whether a fire is held (resolved) rather than alive.
-  // Ignition-candidate confidence scale: high (≥70%) deep orange, medium (50–69%) amber, low yellow.
-  window.__wfConfC=function(c){return c>=70?'#E8590C':c>=50?'#F59F00':'#FCC419';};
+  // Ignition-candidate confidence scale: above 75% purple, 50–75% blue, below 50% dark gray.
+  window.__wfConfC=function(c){return c>75?'#7A3FE0':c>=50?'#0A6FDB':'#48484A';};
   window.__wfDur=function(ms){if(ms==null||!isFinite(ms)||ms<0)return '';var m=Math.round(ms/60000),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+'d '+h+'h':h?h+'h '+mm+'m':mm+' min';};
   window.__wfHeld=function(info,model){
     if(info&&info.resolved)return {official:true,st:info.st,label:info.stEn,took:(info.heldMs&&info.startMs&&info.heldMs>info.startMs)?info.heldMs-info.startMs:null,at:info.heldMs||null,src:info.heldSrc||''};
@@ -294,8 +294,8 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     M[f.id]={done:false};
     var o=[f.lat,f.lon];
     Promise.all([officialPerimeter(f),weatherAt(f),terrainAt(f),fuelAt(f)]).then(function(r){
-      var ring=r[0]||satellitePerimeter(f,o)||{xy:circle(Math.sqrt((f.ha||5)*1e4/Math.PI),48),src:f.ha?'Circle of the reported size ('+f.ha+' ha)':'Assumed 5 ha (size not published)'};
-      var out=simulate(f,ring,ring.src,r[1],r[2],r[3]);out.done=true;M[f.id]=out;
+      var ring=r[0]||satellitePerimeter(f,o)||{xy:circle(Math.sqrt((f.ha||5)*1e4/Math.PI),48),assumed:true,src:f.ha?'No mapped perimeter · '+f.ha+' ha reported':'No mapped perimeter · size not published'};
+      var out=simulate(f,ring,ring.src,r[1],r[2],r[3]);out.done=true;out.assumed=!!ring.assumed;M[f.id]=out;
       try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
     }).catch(function(e){console.warn('[fire model] failed',e);M[f.id]={done:true,failed:true};try{window.dispatchEvent(new Event('wf-sync'));}catch(x){}});
     return null;

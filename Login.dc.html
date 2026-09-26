@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js"></script>
+<script src="fit.js?v=2"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -38,54 +38,65 @@ a{color:#007AFF}a:hover{color:#0062CC}
       <svg width="43" height="52" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; margin-top: 2px"><path fill="#000000" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#000000" stroke-width="1.1" stroke-linecap="round"></path></svg>
     </div>
     <h1 style="margin: 8px 0 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 34px; text-align: center">Forest Fire Watch</h1>
-    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #6C6C70; text-align: center">Log in to your account</p>
+    <p style="margin: 0; font-size: 16px; line-height: 20px; color: #6C6C70; text-align: center">Log in to your account</p>
   </div>
 
   <form onSubmit="{{noSubmit}}" style="position: relative; display: flex; flex-direction: column; margin: 40px 0 0">
     <div style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF">
       <div style="display: flex; flex-direction: column; padding: 8px 16px 0">
-        <span id="userLbl" style="font-size: 13px; line-height: 18px; color: #6C6C70">Username</span>
-        <button type="button" onClick="{{toggle}}" aria-haspopup="listbox" aria-expanded="{{openStr}}" aria-labelledby="userLbl userVal" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer">
-          <span id="userVal" style="flex-grow: 1; min-width: 0; font-size: 17px; color: {{userC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{userTxt}}</span>
+        <span id="userLbl" style="font-size: 14px; line-height: 18px; color: #6C6C70">Username</span>
+        <button type="button" onClick="{{toggle}}" aria-haspopup="dialog" aria-expanded="{{openStr}}" aria-labelledby="userLbl userVal" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer">
+          <span id="userVal" style="flex-grow: 1; min-width: 0; font-size: 18px; color: {{userC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{userTxt}}</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{rot}}); transition: transform .3s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </button>
       </div>
       <div style="height: 1px; margin-left: 16px; background: rgba(60,60,67,0.14)"></div>
       <label style="display: flex; flex-direction: column; padding: 8px 16px 0">
-        <span style="font-size: 13px; line-height: 18px; color: #6C6C70">Password</span>
-        <input class="pw" type="password" readonly value="{{pw}}" placeholder="Filled in when you choose a profile" autocomplete="off" style="height: 44px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 17px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
+        <span style="font-size: 14px; line-height: 18px; color: #6C6C70">Password</span>
+        <input class="pw" type="password" readonly value="{{pw}}" placeholder="Filled in when you choose a profile" autocomplete="off" style="height: 44px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 18px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
       </label>
     </div>
 
-    <div role="listbox" aria-label="Profiles" style="display: {{listD}}; position: absolute; left: 0; right: 0; top: 76px; z-index: 5; flex-direction: column; max-height: min(520px, calc(100dvh - 420px)); min-height: 240px; overflow-y: auto; overscroll-behavior: contain; border-radius: 12px; background: #FFFFFF; box-shadow: 0 12px 40px rgba(0,0,0,0.18), 0 0 0 1px rgba(60,60,67,0.08)">
+
+    <p style="display: {{offD}}; margin: 8px 16px 0; min-height: 36px; font-size: 14px; line-height: 18px; color: #6C6C70">{{hint}}</p>
+    <div style="display: {{goD}}; flex-direction: column; gap: 2px; margin: 12px 0 0; padding: 12px 16px; border-radius: 12px; background: #FFFFFF">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">{{selOrg}}</span>
+      <span style="font-size: 16px; font-weight: 600; line-height: 20px">{{selName}}</span>
+      <span style="font-size: 14px; line-height: 18px; color: #3C3C43">{{selRole}}</span>
+      <span style="margin-top: 6px; font-size: 14px; line-height: 18px; color: #3C3C43">{{selSum}}</span>
+      <span style="margin-top: 6px; font-size: 13px; line-height: 16px; color: #6C6C70">{{selAccess}}</span>
+    </div>
+
+    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 50px; margin: 16px 0 0; border-radius: 12px; background: #0071E3; color: #FFFFFF; font-size: 18px; font-weight: 600; text-decoration: none">Log in</a>
+    <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 50px; margin: 16px 0 0; border: 0; border-radius: 12px; background: #E5E5EA; color: #6C6C70; font: inherit; font-size: 18px; font-weight: 600">Log in</button>
+  </form>
+
+  <p style="margin: auto 16px 0; font-size: 14px; line-height: 18px; color: #6C6C70; text-align: center">Demo login: each profile shows how roles limit which areas a user can see.</p>
+  <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: #F2F2F7; padding: 64px 0 0">
+    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px 8px">
+      <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
+        <h2 id="pickTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 34px">Choose a profile</h2>
+        <span style="font-size: 16px; line-height: 20px; color: #6C6C70">Demo users · each sees only their own area</span>
+      </span>
+      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 16px 32px">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
-        <button type="button" class="opt" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="display: flex; flex-shrink: 0; align-items: center; gap: 12px; min-height: 64px; padding: 12px 16px; border: 0; border-top: {{p.sep}}; background: transparent; font: inherit; color: #000000; text-align: left; cursor: pointer">
-          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; align-self: flex-start; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 12px; font-weight: 600; letter-spacing: 0.02em">{{p.code}}</span>
-          <span style="display: flex; flex-direction: column; gap: 1px; flex-grow: 1; min-width: 0">
-            <span style="font-size: 16px; font-weight: 600; line-height: 21px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
-            <span style="font-size: 13px; line-height: 17px; color: #000000">{{p.role}}</span>
-            <span style="font-size: 12px; line-height: 16px; color: #6C6C70">{{p.org}} · {{p.area}}</span>
-            <span style="margin-top: 4px; font-size: 12px; line-height: 16px; color: #3C3C43">{{p.sum}}</span>
+        <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="display: flex; align-items: flex-start; gap: 14px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 16px; font-weight: 600; letter-spacing: 0.02em">{{p.code}}</span>
+          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+            <span style="font-size: 19px; font-weight: 600; line-height: 24px">{{p.name}}</span>
+            <span style="font-size: 17px; line-height: 21px; color: #000000">{{p.role}}</span>
+            <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{p.org}} · {{p.area}}</span>
+            <span style="margin-top: 8px; font-size: 17px; line-height: 22px; color: #3C3C43">{{p.sum}}</span>
           </span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; align-self: flex-start; margin-top: 9px; opacity: {{p.tick}}"><path d="m5 12 5 5 9-10"></path></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 11px; opacity: {{p.tick}}"><path d="m5 12 5 5 9-10"></path></svg>
         </button>
       </sc-for>
     </div>
-
-    <p style="display: {{offD}}; margin: 8px 16px 0; min-height: 36px; font-size: 13px; line-height: 18px; color: #6C6C70">{{hint}}</p>
-    <div style="display: {{goD}}; flex-direction: column; gap: 2px; margin: 12px 0 0; padding: 12px 16px; border-radius: 12px; background: #FFFFFF">
-      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">{{selOrg}}</span>
-      <span style="font-size: 15px; font-weight: 600; line-height: 20px">{{selName}}</span>
-      <span style="font-size: 13px; line-height: 18px; color: #3C3C43">{{selRole}}</span>
-      <span style="margin-top: 6px; font-size: 13px; line-height: 18px; color: #3C3C43">{{selSum}}</span>
-      <span style="margin-top: 6px; font-size: 12px; line-height: 16px; color: #6C6C70">{{selAccess}}</span>
-    </div>
-
-    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 50px; margin: 16px 0 0; border-radius: 12px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600; text-decoration: none">Log in</a>
-    <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 50px; margin: 16px 0 0; border: 0; border-radius: 12px; background: #E5E5EA; color: #6C6C70; font: inherit; font-size: 17px; font-weight: 600">Log in</button>
-  </form>
-
-  <p style="margin: auto 16px 0; font-size: 13px; line-height: 18px; color: #6C6C70; text-align: center">Demo login: each profile shows how roles limit which areas a user can see.</p>
+  </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
@@ -121,7 +132,7 @@ class Component extends DCLogic {
         code, user, name, role, org, area, sum,
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
-        tick: s.sel === id ? 1 : 0,
+        tick: s.sel === id ? 1 : 0, selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
         aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (s.sel === id ? ' Selected' : ''),
         pick: () => this.setState({ sel: id, open: false })
       })),
