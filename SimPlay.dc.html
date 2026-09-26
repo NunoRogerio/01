@@ -81,16 +81,38 @@ a{color:#007AFF}a:hover{color:#0062CC}
     </svg>
     <span aria-hidden="true" style="position: absolute; left: {{lake.x}}px; top: {{lake.y}}px; transform: translate(-50%, -50%); padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,0.85); font-size: 10px; font-weight: 600; color: #0079A6; pointer-events: none">Lake</span>
     <span aria-hidden="true" style="position: absolute; left: {{vil.x}}px; top: {{vil.y}}px; transform: translate(-50%, -140%); padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,0.85); font-size: 10px; font-weight: 600; color: #3C3C43; pointer-events: none">{{vil.label}}</span>
-    <span aria-hidden="true" style="position: absolute; left: {{stage.x}}px; top: {{stage.y}}px; transform: translate(-50%, -50%); padding: 1px 6px; border-radius: 999px; background: #0071E3; font-size: 10px; font-weight: 600; color: #FFFFFF; pointer-events: none">Staging</span>
     <span aria-hidden="true" style="position: absolute; right: 8px; top: 8px; display: flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,0.9); font-size: 11px; font-weight: 600; color: #0079A6; pointer-events: none">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{windRot}}deg)"><path d="M12 20V5M6 11l6-6 6 6"></path></svg>{{windTxt}}
     </span>
+    <sc-for list="{{stations}}" as="s" hint-placeholder-count="5">
+      <button type="button" onClick="{{s.open}}" aria-label="{{s.aria}}" aria-haspopup="dialog" style="position: absolute; z-index: 2; left: {{s.x}}px; top: {{s.y}}px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 0; background: transparent; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 21.6 20H2.4Z" fill="{{s.fill}}" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+        <span aria-hidden="true" style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%); padding: 0 4px; border-radius: 4px; background: rgba(255,255,255,0.88); font-size: 9px; font-weight: 600; line-height: 12px; color: {{s.fill}}; white-space: nowrap">{{s.short}}</span>
+      </button>
+    </sc-for>
     <sc-for list="{{units}}" as="u" hint-placeholder-count="3">
       <button type="button" class="unit {{u.cls}}" onClick="{{u.pick}}" aria-label="{{u.aria}}" aria-pressed="{{u.selStr}}" style="position: absolute; left: {{u.left}}px; top: {{u.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; padding: 0; border: 2px solid {{u.ring}}; border-radius: {{u.rad}}; background: {{u.bg}}; color: #FFFFFF; cursor: pointer; opacity: {{u.op}}">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.icon}}"></path></svg>
         <span aria-hidden="true" style="position: absolute; left: 50%; top: -9px; transform: translateX(-50%); padding: 0 4px; border-radius: 4px; background: rgba(0,0,0,0.7); font-size: 9px; font-weight: 600; line-height: 12px; color: #FFFFFF; white-space: nowrap">{{u.tag}}</span>
       </button>
     </sc-for>
+    <sc-if value="{{hasCard}}" hint-placeholder-val="{{ false }}">
+      <div role="dialog" aria-label="{{card.name}}" style="position: absolute; z-index: 30; left: {{card.left}}px; top: {{card.top}}px; transform: translateY({{card.ty}}); width: 256px; box-sizing: border-box; padding: 10px 10px 8px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); box-shadow: 0 10px 30px rgba(0,0,0,0.22)">
+        <div style="display: flex; align-items: center; gap: 6px">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="M12 3.2 21.6 20H2.4Z" fill="{{card.fill}}"></path></svg>
+          <b style="flex-grow: 1; min-width: 0; font-size: 14px; font-weight: 600; line-height: 18px">{{card.name}}</b>
+          <button type="button" onClick="{{cardClose}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+        </div>
+        <span style="display: block; margin-top: 2px; font-size: 12px; line-height: 16px; color: #6C6C70">{{card.sub}}</span>
+        <sc-for list="{{card.rows}}" as="cr" hint-placeholder-count="3">
+          <div style="display: flex; align-items: center; gap: 8px; min-height: 50px; margin-top: 6px; border-top: 1px solid rgba(60,60,67,0.12)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{cr.icon}}"></path></svg>
+            <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 14px; font-weight: 600; line-height: 18px">{{cr.name}}</span><span style="font-size: 11px; line-height: 15px; color: #6C6C70">{{cr.sub}}</span></span>
+            <button type="button" onClick="{{cr.deploy}}" disabled="{{cr.dis}}" aria-label="{{cr.aria}}" style="height: 40px; padding: 0 14px; flex-shrink: 0; border: 0; border-radius: 10px; background: {{cr.bg}}; color: {{cr.fg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Deploy</button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
     <sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
       <span role="status" style="position: absolute; left: 10px; right: 10px; bottom: 10px; padding: 8px 12px; border-radius: 10px; background: {{toastBg}}; color: #FFFFFF; font-size: 13px; line-height: 17px; pointer-events: none">{{toast}}</span>
     </sc-if>
@@ -111,12 +133,12 @@ a{color:#007AFF}a:hover{color:#0062CC}
       </span>
     </div>
 
-    <h2 style="margin: 12px 4px 6px; font-size: 13px; font-weight: 400; color: #6C6C70">SUMMON FORCES · they arrive at the staging point</h2>
-    <div class="scroll" role="group" aria-label="Summon forces" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px">
-      <sc-for list="{{roster}}" as="r" hint-placeholder-count="5">
-        <button type="button" class="chipb" onClick="{{r.summon}}" aria-label="{{r.aria}}" disabled="{{r.dis}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex-shrink: 0; min-width: 92px; min-height: 58px; padding: 8px 10px; border: 0; border-radius: 12px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer; opacity: {{r.op}}">
-          <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.icon}}"></path></svg>{{r.name}}</span>
-          <span style="font-size: 11px; color: #6C6C70">{{r.sub}}</span>
+    <h2 style="margin: 12px 4px 6px; font-size: 13px; font-weight: 400; color: #6C6C70">STATIONS · tap one here or on the map to deploy its forces</h2>
+    <div class="scroll" role="group" aria-label="Stations" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px">
+      <sc-for list="{{stations}}" as="r" hint-placeholder-count="5">
+        <button type="button" class="chipb" onClick="{{r.open}}" aria-label="{{r.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex-shrink: 0; min-width: 104px; min-height: 58px; padding: 8px 10px; border: 0; border-radius: 12px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+          <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 21.6 20H2.4Z" fill="{{r.fill}}"></path></svg>{{r.name}}</span>
+          <span style="font-size: 11px; color: #6C6C70; white-space: nowrap">{{r.sub}}</span>
         </button>
       </sc-for>
     </div>
@@ -217,6 +239,17 @@ class Component extends DCLogic {
     let stg = null, best = -1;
     for (let i = 0; i < n; i++) if (road[i]) { const x = i % N, y = (i / N) | 0; if (x > 1 && y > 1 && x < N - 2 && y < N - 2) continue; const d = Math.hypot(x - ign[0], y - ign[1]); if (d > best) { best = d; stg = [x, y]; } }
     stg = stg || [vil[0], vil[1]];
+    // fire stations on the road network, a helibase by the lake and an air base in the safest corner
+    const roadCells = []; for (let i = 0; i < n; i++) if (road[i]) roadCells.push(i);
+    const pickRoad = (tx, ty) => { let b = roadCells[0], bd = 1e9; for (const i of roadCells) { const d = Math.hypot(i % N - tx, ((i / N) | 0) - ty); if (d < bd) { bd = d; b = i; } } return [b % N, (b / N) | 0]; };
+    const corners = [[3, 3], [N - 4, 3], [3, N - 4], [N - 4, N - 4]].sort((a, b) => Math.hypot(b[0] - ign[0], b[1] - ign[1]) - Math.hypot(a[0] - ign[0], a[1] - ign[1]));
+    const stations = [
+      { id: 'S1', name: 'Village fire station', short: 'Village', at: pickRoad(vil[0] + px * 5, vil[1] + py * 5), kinds: ['crew', 'engine', 'dozer'], fill: '#248A3D' },
+      { id: 'S2', name: 'Road fire station', short: 'Road', at: pickRoad(stg[0] + (cx - stg[0]) * 0.14, stg[1] + (cy - stg[1]) * 0.14), kinds: ['crew', 'engine', 'dozer'], fill: '#248A3D' },
+      { id: 'S3', name: 'Valley fire station', short: 'Valley', at: pickRoad(vil[0] - px * 22, vil[1] - py * 22), kinds: ['crew', 'engine', 'dozer'], fill: '#248A3D' },
+      { id: 'H', name: 'Helibase', short: 'Helibase', at: [Math.max(1, Math.min(N - 2, lk[0] + 7)), Math.max(1, Math.min(N - 2, lk[1]))], kinds: ['heli'], fill: '#0079A6' },
+      { id: 'A', name: 'Air base', short: 'Air base', at: corners[0], kinds: ['tanker'], fill: '#6E3AD0' }
+    ];
     // per-cell fire behaviour: head rate (m/min), head bearing, length:breadth
     const Md = (() => { const t = c.temp * 9 / 5 + 32, h = Math.max(1, Math.min(100, c.rh)); const m = h < 10 ? 0.03229 + 0.281073 * h - 0.000578 * h * t : h < 50 ? 2.22749 + 0.160107 * h - 0.01478 * t : 21.0606 + 0.005565 * h * h - 0.00035 * h * t - 0.483199 * h; return Math.max(0.02, m / 100); })();
     const WAF = { 1: 0.4, 2: 0.4, 4: 0.4, 6: 0.4, 9: 0.1, 10: 0.15 };
@@ -235,7 +268,7 @@ class Component extends DCLogic {
       // a cell burns until the front has crossed it in every direction (backing is the slowest), plus flame residence
       Dur[i] = Math.min(150, RES[fuel[i]] + CELL / Math.max(0.35, Rm[i] * (1 - Ecc[i]) / (1 + Ecc[i])));
     }
-    return { N, CELL, n, elev, fuel, road, house, water, Rm, Hd, Ecc, Dur, RES, ign, vil, lk, stg, Md };
+    return { N, CELL, n, elev, fuel, road, house, water, Rm, Hd, Ecc, Dur, RES, ign, vil, lk, stg, Md, stations };
   }
   // fresh game state
   newGame() {
@@ -245,10 +278,15 @@ class Component extends DCLogic {
     // starting fire: a disc of the chosen size around the ignition point
     const ha = [0.5, 5, 30][c.stage] || 5, cells = Math.max(1, Math.round(ha / 0.25)), rC = Math.sqrt(cells / Math.PI);
     for (let y = 0; y < W.N; y++) for (let x = 0; x < W.N; x++) { const i = y * W.N + x; if (Math.hypot(x - W.ign[0], (y - W.ign[1]) * 1.25) <= rC && !W.water[i] && !W.road[i]) { const inner = Math.hypot(x - W.ign[0], y - W.ign[1]) < rC - 1.5; G.st[i] = inner && c.stage > 0 ? 2 : 1; G.burnAt[i] = -Math.random() * 3; } }
+    G.stations = W.stations.map((st) => ({ ...st, pool: { crew: 0, engine: 0, dozer: 0, heli: 0, tanker: 0 } }));
+    const fireSt = G.stations.filter((st) => st.kinds.indexOf('engine') >= 0);
+    ['crew', 'engine', 'dozer'].forEach((k) => { for (let i = 0; i < (c[k] || 0); i++) fireSt[i % fireSt.length].pool[k]++; });
+    G.stations.forEach((st) => { if (st.kinds.indexOf('heli') >= 0) st.pool.heli = c.heli || 0; if (st.kinds.indexOf('tanker') >= 0) st.pool.tanker = c.tanker || 0; });
+    G.card = null;
     // baseline: the same fire with no intervention, for the debrief
     G.base = this.baseline(W, G.st, c.goal * 2);
     this.G = G;
-    this.say('Fire reported. Summon forces; they arrive at the staging point.', '#0071E3');
+    this.say('Fire reported. Tap a station (green triangle) to deploy its forces.', '#0071E3');
   }
   baseline(W, st0, mins) {
     const st = Uint8Array.from(st0), prog = new Float32Array(W.n), burnAt = new Float32Array(W.n), out = [];
@@ -279,21 +317,20 @@ class Component extends DCLogic {
   // ---- units ------------------------------------------------------------------------------------
   types() {
     return {
-      crew: { name: 'Hand crew', tag: 'C', people: 20, speed: 35, arrive: 20, stamina: true, icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.5 21a7.5 7.5 0 0 1 15 0', color: '#B34F00', rad: '50%' },
-      engine: { name: 'Engine', tag: 'E', people: 4, speed: 140, roadSpeed: 600, arrive: 12, water: 3000, stamina: true, icon: 'M3 7h11v9H3zM14 10h4l3 3v3h-7', color: '#C2372E', rad: '8px' },
-      dozer: { name: 'Dozer', tag: 'D', people: 1, speed: 70, arrive: 35, icon: 'M3 15h11l2-5h3v5M3 15v3h17v-3M6 10V7h5v3', color: '#8B5A2B', rad: '8px' },
-      heli: { name: 'Helicopter', tag: 'H', people: 2, speed: 2500, arrive: 20, water: 1000, air: true, icon: 'M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7', color: '#0079A6', rad: '50%' },
-      tanker: { name: 'Air tanker', tag: 'T', people: 2, speed: 5000, arrive: 35, water: 8000, air: true, icon: 'M2 13h20M12 13V8l-2-3h4l-2 3M5 13l-2 4M19 13l2 4M9 13l-1 5h8l-1-5', color: '#6E3AD0', rad: '50%' }
+      crew: { name: 'Hand crew', tag: 'C', people: 20, speed: 35, arrive: 20, turnout: 4, stamina: true, icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.5 21a7.5 7.5 0 0 1 15 0', color: '#B34F00', rad: '50%' },
+      engine: { name: 'Engine', tag: 'E', people: 4, speed: 140, roadSpeed: 600, arrive: 12, turnout: 2, water: 3000, stamina: true, icon: 'M3 7h11v9H3zM14 10h4l3 3v3h-7', color: '#C2372E', rad: '8px' },
+      dozer: { name: 'Dozer', tag: 'D', people: 1, speed: 70, arrive: 35, turnout: 12, icon: 'M3 15h11l2-5h3v5M3 15v3h17v-3M6 10V7h5v3', color: '#8B5A2B', rad: '8px' },
+      heli: { name: 'Helicopter', tag: 'H', people: 2, speed: 2500, arrive: 20, turnout: 6, water: 1000, air: true, icon: 'M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7', color: '#0079A6', rad: '50%' },
+      tanker: { name: 'Air tanker', tag: 'T', people: 2, speed: 5000, arrive: 35, turnout: 15, water: 8000, air: true, icon: 'M2 13h20M12 13V8l-2-3h4l-2 3M5 13l-2 4M19 13l2 4M9 13l-1 5h8l-1-5', color: '#6E3AD0', rad: '50%' }
     };
   }
   say(msg, bg) { const G = this.G; if (!G) return; G.toast = msg; G.toastBg = bg || 'rgba(0,0,0,0.78)'; G.toastAt = G.t; G.log.push(this.clock(G.t) + ' ' + msg); }
   clock(m) { m = Math.max(0, Math.round(m)); return Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0'); }
-  summon(type) {
-    const G = this.G, T = this.types()[type]; if (!G || G.over) return;
-    const used = G.units.filter((u) => u.type === type).length + G.queue.filter((q) => q.type === type).length;
-    if (used >= G.c[type]) return;
-    G.queue.push({ type, at: G.t + T.arrive });
-    this.say(T.name + ' dispatched · arrives in ' + T.arrive + ' min', '#0071E3');
+  deploy(si, type) {
+    const G = this.G, T = this.types()[type], st = G && G.stations[si]; if (!G || G.over || !st || !(st.pool[type] > 0)) return;
+    st.pool[type]--;
+    G.queue.push({ type, at: G.t + T.turnout, st: si });
+    this.say(T.name + ' from ' + st.name.toLowerCase() + ' · ready in ' + T.turnout + ' min', '#0071E3');
     this.forceUpdate();
   }
   cellOf(u) { const W = this.G.W; return Math.max(0, Math.min(W.N - 1, Math.floor(u.y / W.CELL))) * W.N + Math.max(0, Math.min(W.N - 1, Math.floor(u.x / W.CELL))); }
@@ -301,10 +338,10 @@ class Component extends DCLogic {
     const G = this.G; if (!G || G.over) return;
     const W = G.W, N = W.N, T = this.types(), t = G.t;
     // arrivals
-    G.queue = G.queue.filter((q) => { if (q.at > t) return true; const TT = T[q.type], sx = (W.stg[0] + 0.5) * W.CELL, sy = (W.stg[1] + 0.5) * W.CELL;
+    G.queue = G.queue.filter((q) => { if (q.at > t) return true; const TT = T[q.type], ST = G.stations[q.st] || { at: W.stg, name: 'Staging' }, k = G.units.length, ang = k * 2.4, sx = (ST.at[0] + 0.5) * W.CELL + Math.cos(ang) * 70, sy = (ST.at[1] + 0.5) * W.CELL + Math.sin(ang) * 70;
       const id = TT.tag + (G.units.filter((u) => u.type === q.type).length + 1);
       G.units.push({ id, type: q.type, x: sx, y: sy, tx: null, ty: null, crew: TT.people, stamina: 100, water: TT.water || 0, state: 'ready', alive: true, scene: 0, work: 0, danger: 0, lineBuilt: 0, ext: 0, drops: 0, busyUntil: 0 });
-      this.say(id + ' ' + TT.name.toLowerCase() + ' on scene. Select it, then tap the map.', '#248A3D'); return false; });
+      if (!G.sel) G.sel = id; this.say(id + ' ' + TT.name.toLowerCase() + ' ready at ' + ST.name.toLowerCase() + '. Select it, then tap where to go.', '#248A3D'); return false; });
     // units
     for (const u of G.units) {
       if (!u.alive) continue;
@@ -333,6 +370,7 @@ class Component extends DCLogic {
       if (u.inDanger) u.danger++;
       if (!black && !light && (expo > 9 || G.st[ci] === 1)) { this.entrap(u, expo); continue; }   // burnover
       if (u.state === 'moving') continue;
+      if (!u.ordered) { u.state = 'ready'; if (TT.stamina) u.stamina = Math.min(100, u.stamina + 1); continue; }
       // work: engines knock down fire whose local spread toward them is manageable; crews only slow edges
       let worked = false;
       if (u.type === 'engine' && u.water <= 0) { this.refill(u); continue; }
@@ -375,7 +413,7 @@ class Component extends DCLogic {
       else if (!G.st[j]) { G.prot[j] = t + (u.type === 'heli' ? 20 : 90); G.protKind[j] = u.type === 'heli' ? 1 : 2; } }
     u.drops++; u.ext += hit; u.work += 3; u.water = 0;
     if (u.type === 'heli') { u.state = 'reload'; u.busyUntil = t + 3 + Math.round(Math.hypot(u.x - (W.lk[0] + 0.5) * W.CELL, u.y - (W.lk[1] + 0.5) * W.CELL) / 2500 * 2); u.x = (W.lk[0] + 0.5) * W.CELL; u.y = (W.lk[1] + 0.5) * W.CELL; this.say(u.id + ' dropped · refilling at the lake', '#0079A6'); }
-    else { u.state = 'reload'; u.busyUntil = t + 30; u.x = (W.stg[0] + 0.5) * W.CELL; u.y = (W.stg[1] + 0.5) * W.CELL; this.say(u.id + ' retardant line laid · back in 30 min', '#6E3AD0'); }
+    else { const AB = (G.stations.find((q) => q.id === 'A') || { at: W.stg }).at; u.state = 'reload'; u.busyUntil = t + 30; u.x = (AB[0] + 0.5) * W.CELL; u.y = (AB[1] + 0.5) * W.CELL; this.say(u.id + ' retardant line laid · back in 30 min', '#6E3AD0'); }
   }
   refill(u) {
     const G = this.G, W = G.W, N = W.N;
@@ -408,10 +446,11 @@ class Component extends DCLogic {
     const G = this.G; if (!G || G.over) return;
     const el = e && e.currentTarget, r = el && el.getBoundingClientRect ? el.getBoundingClientRect() : null; if (!r) return;
     const W = G.W, mx = (e.clientX - r.left) / r.width * W.N * W.CELL, my = (e.clientY - r.top) / r.height * W.N * W.CELL;
+    if (G.card != null) { G.card = null; this.forceUpdate(); return; }
     const u = G.units.find((q) => q.id === G.sel && q.alive);
-    if (!u) { this.say('Select a unit first: tap its icon on the map.'); this.forceUpdate(); return; }
+    if (!u) { this.say('Select a unit first, or tap a station to deploy one.'); this.forceUpdate(); return; }
     if (u.busyUntil > G.t) { this.say(u.id + ' is ' + (u.type === 'engine' ? 'refilling' : 'reloading') + ' · ready at ' + this.clock(u.busyUntil)); this.forceUpdate(); return; }
-    u.tx = Math.max(0, Math.min(W.N * W.CELL - 1, mx)); u.ty = Math.max(0, Math.min(W.N * W.CELL - 1, my)); u.state = 'moving';
+    u.tx = Math.max(0, Math.min(W.N * W.CELL - 1, mx)); u.ty = Math.max(0, Math.min(W.N * W.CELL - 1, my)); u.state = 'moving'; u.ordered = true;
     if (u.type === 'engine' && u.water <= 0) u.state = 'refilling';
     this.forceUpdate();
   }
@@ -438,7 +477,7 @@ class Component extends DCLogic {
     }
     const S = this._static, c = G.c, t = G.t;
     const sel = G.units.find((u) => u.id === G.sel && u.alive) || null;
-    const STATE = { withdrawn: 'Withdrawn to staging with casualties', ready: 'Ready', moving: 'Moving', working: 'Working', idle: 'Idle: nothing to work on here', exhausted: 'Exhausted, resting', refilling: 'Going to refill', reload: 'Refilling / reloading', drop: 'Dropping' };
+    const STATE = { withdrawn: 'Withdrawn to staging with casualties', ready: 'Ready at the station: tap the map to send it', moving: 'Moving', working: 'Working', idle: 'Idle: nothing to work on here', exhausted: 'Exhausted, resting', refilling: 'Going to refill', reload: 'Refilling / reloading', drop: 'Dropping' };
     const units = G.units.filter((u) => u.alive && !(u.type === 'tanker' && u.busyUntil > t)).map((u) => { const TT = T[u.type], on = u.id === G.sel;
       return { left: +(u.x * px).toFixed(1), top: +(u.y * px).toFixed(1), icon: TT.icon, tag: u.id, bg: TT.color, rad: TT.rad, ring: on ? '#FFFFFF' : 'rgba(255,255,255,0.6)', op: u.busyUntil > t ? 0.55 : 1,
         cls: u.inDanger ? 'danger' : '', selStr: on ? 'true' : 'false', aria: u.id + ' ' + TT.name + ', ' + (STATE[u.state] || u.state) + (u.inDanger ? ', in danger' : ''),
@@ -446,9 +485,19 @@ class Component extends DCLogic {
     const order = sel && sel.tx != null ? 'M' + (sel.x * 360 / (N * W.CELL)).toFixed(1) + ' ' + (sel.y * 360 / (N * W.CELL)).toFixed(1) + 'L' + (sel.tx * 360 / (N * W.CELL)).toFixed(1) + ' ' + (sel.ty * 360 / (N * W.CELL)).toFixed(1) : '';
     const hot = (i) => G.st[i] === 1 && W.Rm[i] > 15;
     const goalLeft = c.goal - t;
-    const roster = Object.keys(T).map((k) => { const TT = T[k], used = G.units.filter((u) => u.type === k).length + G.queue.filter((q) => q.type === k).length, left = c[k] - used, q = G.queue.filter((x) => x.type === k).sort((a, b) => a.at - b.at)[0];
-      return { name: TT.name, icon: TT.icon, sub: left > 0 ? left + ' available · ' + TT.arrive + ' min' : (q ? 'Arriving ' + this.clock(q.at) : 'All summoned'), dis: !(left > 0 && !G.over), op: left > 0 ? 1 : 0.5,
-        aria: 'Summon ' + TT.name.toLowerCase() + ', ' + left + ' available, arrives in ' + TT.arrive + ' minutes', summon: () => this.summon(k) }; });
+    const stations = G.stations.map((st, si) => { const avail = Object.keys(st.pool).reduce((a, k) => a + st.pool[k], 0), coming = G.queue.filter((q) => q.st === si).length;
+      return { name: st.name.replace(' fire station', ''), short: st.short, fill: st.fill, x: +((st.at[0] + 0.5) * W.CELL * px).toFixed(1), y: +((st.at[1] + 0.5) * W.CELL * px).toFixed(1),
+        sub: avail ? avail + ' available' + (coming ? ' · ' + coming + ' getting ready' : '') : coming ? coming + ' getting ready' : 'All deployed',
+        aria: st.name + ', ' + avail + ' units available. Open to deploy', open: (e) => { if (e && e.stopPropagation) e.stopPropagation(); G.card = si; this.forceUpdate(); } }; });
+    const cardSt = G.card != null ? G.stations[G.card] : null;
+    const card = cardSt ? (() => { const sx = (cardSt.at[0] + 0.5) * W.CELL * px, sy = (cardSt.at[1] + 0.5) * W.CELL * px, above = sy > 190;
+      const coming = G.queue.filter((q) => q.st === G.card).map((q) => T[q.type].tag + ' ' + T[q.type].name.toLowerCase() + ' ready ' + this.clock(q.at));
+      return { name: cardSt.name, fill: cardSt.fill, left: Math.round(Math.max(6, Math.min(366 - 262, sx - 128))), top: Math.round(above ? sy - 22 : sy + 24), ty: above ? '-100%' : '0',
+        sub: coming.length ? 'Getting ready: ' + coming.join(', ') : 'Deploy a unit; it appears here when ready. Then select it and tap where to go.',
+        rows: cardSt.kinds.map((k) => { const TT = T[k], left = cardSt.pool[k];
+          return { name: TT.name, icon: TT.icon, sub: left ? left + ' available · ready in ' + TT.turnout + ' min' : 'None left here', dis: !left || G.over, bg: left ? '#0071E3' : 'rgba(118,118,128,0.12)', fg: left ? '#FFFFFF' : '#8E8E93',
+            aria: 'Deploy ' + TT.name.toLowerCase() + ' from ' + cardSt.name + ', ' + left + ' available', deploy: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.deploy(G.card, k); } }; }) }; })()
+      : { name: '', fill: '', left: 0, top: 0, ty: '0', sub: '', rows: [] };
     const selV = sel ? (() => { const TT = T[sel.type];
       return { name: sel.id + ' · ' + TT.name + (TT.people > 2 ? ' · ' + sel.crew + ' people' : ''), sub: (sel.inDanger ? 'DANGER: fire front close, move to burned ground or a road. ' : '') + (STATE[sel.state] || sel.state) + (sel.busyUntil > t ? ' until ' + this.clock(sel.busyUntil) : '') + ' · ' + (TT.air ? 'tap the map to drop' : 'tap the map to move'),
         subC: sel.inDanger ? '#D70015' : '#6C6C70', icon: TT.icon, bg: TT.color, rad: TT.rad, barsD: TT.stamina || TT.water ? 'flex' : 'none', st: Math.round(TT.stamina ? sel.stamina : 100), stC: sel.stamina < 25 ? '#D70015' : '#248A3D', wD: TT.water ? 'flex' : 'none', w: Math.round(100 * sel.water / (TT.water || 1)) }; })()
@@ -475,8 +524,8 @@ class Component extends DCLogic {
       stage: { x: +((W.stg[0] + 0.5) * W.CELL * px).toFixed(0), y: +((W.stg[1] + 0.5) * W.CELL * px).toFixed(0) },
       windRot: (c.dir + 180) % 360, windTxt: c.wind + ' km/h',
       mapAria: 'Fire map, 3.6 by 3.6 km. ' + (G.active || 0) + ' burning cells. Tap to move the selected unit.',
-      mapTap: (e) => this.tap(e), units, sel: selV, roster,
-      hint: G.over ? '' : 'Crews and dozers build line; engines put out burning ground; aircraft drop where you tap. Burned ground, roads and your lines are safe zones.',
+      mapTap: (e) => this.tap(e), units, sel: selV, stations, hasCard: !!cardSt, card, cardClose: (e) => { if (e && e.stopPropagation) e.stopPropagation(); G.card = null; this.forceUpdate(); },
+      hint: G.over ? '' : 'Crews build line where they stand, dozers cut line as they drive, engines knock down fire, aircraft drop where you tap. Burned ground is the only sure safety zone.',
       hasToast: !!toastOn, toast: G.toast || '', toastBg: G.toastBg || '',
       over: !!G.over, deb, base,
       quit: () => { clearInterval(this._tick); },

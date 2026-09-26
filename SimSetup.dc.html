@@ -110,7 +110,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
       </sc-for>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 13px; font-weight: 400; line-height: 18px; color: #6C6C70">FORCES YOU CAN SUMMON</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 13px; font-weight: 400; line-height: 18px; color: #6C6C70">FORCES IN THE AREA</h2>
     <div style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
       <sc-for list="{{forces}}" as="f" hint-placeholder-count="5">
         <div style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 6px 12px 6px 16px; border-top: {{f.sep}}">
@@ -125,7 +125,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
         </div>
       </sc-for>
     </div>
-    <p style="margin: 10px 16px 0; font-size: 12px; line-height: 16px; color: #6C6C70">Fire behaviour uses the Rothermel spread model with standard fuel models. Unit rates are training values, not an operational tool.</p>
+    <p style="margin: 10px 16px 0; font-size: 12px; line-height: 16px; color: #6C6C70">Crews, engines and dozers are split across the village, road and valley fire stations; helicopters wait at the helibase and air tankers at the air base. Tap a station during the game to deploy them. Fire behaviour uses the Rothermel spread model; unit rates are training values, not an operational tool.</p>
   </div>
 
   <div style="flex-shrink: 0; padding: 10px 16px 30px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.1)">
@@ -181,11 +181,11 @@ class Component extends DCLogic {
       less: () => this.set(key, Math.max(min, val - st)), more: () => this.set(key, Math.min(max, val + st)), lessLabel: 'Less ' + label.toLowerCase(), moreLabel: 'More ' + label.toLowerCase() });
     const Md = S.emc(c.temp, c.rh), r = S.ros(cur[4], Md, c.wind);
     const FORCES = [
-      ['crew', 'Hand crews', '20 firefighters · build line · arrive in 20 min', 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.5 21a7.5 7.5 0 0 1 15 0', 12],
-      ['engine', 'Engines', '4 firefighters · 3,000 L water · arrive in 12 min', 'M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM17 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z', 12],
-      ['dozer', 'Dozers', 'Cuts line as it drives · arrives in 35 min', 'M3 15h11l2-5h3v5M3 15v3h17v-3M6 10V7h5v3', 4],
-      ['heli', 'Helicopters', '1,000 L bucket · refills at the lake · 20 min', 'M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7', 4],
-      ['tanker', 'Air tankers', 'Retardant line · 30 min reload · 35 min', 'M2 13h20M12 13V8l-2-3h4l-2 3M5 13l-2 4M19 13l2 4M9 13l-1 5h8l-1-5', 3]
+      ['crew', 'Hand crews', '20 firefighters · build line · 4 min turnout', 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.5 21a7.5 7.5 0 0 1 15 0', 12],
+      ['engine', 'Engines', '4 firefighters · 3,000 L water · 2 min turnout', 'M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM17 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z', 12],
+      ['dozer', 'Dozers', 'Cuts line as it drives · 12 min to unload', 'M3 15h11l2-5h3v5M3 15v3h17v-3M6 10V7h5v3', 4],
+      ['heli', 'Helicopters', '1,000 L bucket · helibase by the lake · 6 min', 'M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7', 4],
+      ['tanker', 'Air tankers', 'Retardant line · air base · 15 min, 30 min reload', 'M2 13h20M12 13V8l-2-3h4l-2 3M5 13l-2 4M19 13l2 4M9 13l-1 5h8l-1-5', 3]
     ];
     return {
       lands: LANDS.map(([id, name, sub, swatch], i) => ({ name, sub, swatch, on: c.land === id ? 'true' : 'false', tick: c.land === id ? 1 : 0, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0', pick: () => this.set('land', id) })),
