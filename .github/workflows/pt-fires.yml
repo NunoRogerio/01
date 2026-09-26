@@ -1,0 +1,28 @@
+name: Portugal fires snapshot
+# Copies the Fogos.pt active-incidents feed into data/pt-fires.json so the app can read it
+# from its own site (the feed doesn't allow browsers on other sites to read it directly).
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/pt-fires.yml']
+permissions:
+  contents: write
+concurrency: pt-fires
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch feed
+        run: |
+          curl -fsS --retry 3 -m 30 https://api.fogos.pt/v2/incidents/active -o /tmp/pt.json
+          python3 -c "import json;d=json.load(open('/tmp/pt.json'));assert isinstance(d.get('data'),list);json.dump(d,open('data/pt-fires.json','w'),ensure_ascii=False)"
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/pt-fires.json
+          git diff --cached --quiet || (git commit -m "Update Portugal fires snapshot" && git pull --rebase -q && git push)

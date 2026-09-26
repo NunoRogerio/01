@@ -8,7 +8,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v3', TTL=5*60*1000;
+  var KEY='wf-live-fires-v4', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -55,7 +55,11 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
 
   var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
   var us=fetch(US_URL+'?'+q).then(function(r){return r.json();}).then(buildUS).catch(function(e){console.warn('[live fires] US feed failed',e);return null;});
-  var pt=fetch(PT_URL).then(function(r){return r.json();}).then(buildPT).catch(function(e){console.warn('[live fires] Portugal feed failed',e);return null;});
+  var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
+  // Portugal: the site's own snapshot (refreshed by a GitHub Action every ~10 min), falling back to the live feed.
+  var pt=fetch('data/pt-fires.json?t='+Math.floor(Date.now()/60000)).then(jsonOk).then(function(js){if(!js||!(js.data||[]).length)throw new Error('empty');return js;})
+    .catch(function(){return fetch(PT_URL).then(jsonOk);})
+    .then(buildPT).catch(function(e){console.warn('[live fires] Portugal feed failed',e);return null;});
   Promise.all([us,pt]).then(function(res){
     if(!res[0]&&!res[1])return;   // both failed: keep cache / sample data
     var prev=window.__wfLiveFires||[];
