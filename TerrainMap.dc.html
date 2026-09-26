@@ -45,10 +45,9 @@ body{margin:0}
 
   <div style="position: absolute; left: 0; top: 0; width: 1000px; height: 1000px; transform-origin: 0 0; transform: translate({{tx}}px, {{ty}}px) scale({{s}}); transition: {{mapTr}}">
     <svg width="1" height="1" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
-      <rect x="-40000" y="-60000" width="100000" height="90000" fill="{{pal.bg}}"></rect>
+      <rect x="-400000" y="-200000" width="1000000" height="400000" fill="{{pal.bg}}"></rect>
       <path d="{{geo.selState}}" fill="{{pal.sel}}"></path>
       <sc-if value="{{pal.img}}" hint-placeholder-val="{{ false }}">
-        <image href="{{pal.reg}}" x="-22627" y="-45479" width="65660" height="57995" preserveAspectRatio="none"></image>
         <defs>
           <linearGradient id="wfTileFadeX" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000000"></stop><stop offset="0.07" stop-color="#FFFFFF"></stop><stop offset="0.93" stop-color="#FFFFFF"></stop><stop offset="1" stop-color="#000000"></stop></linearGradient>
           <linearGradient id="wfTileFadeY" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000"></stop><stop offset="0.07" stop-color="#FFFFFF"></stop><stop offset="0.93" stop-color="#FFFFFF"></stop><stop offset="1" stop-color="#000000"></stop></linearGradient>
@@ -490,6 +489,8 @@ class Component extends DCLogic {
     });
     const states = {};
     Object.keys(ST).forEach((k) => { const pts = ST[k].map(([la, lo]) => P(la, lo)); states[k] = { d: path(ST[k], true), box: bbox(pts), label: STN[k][0], c: P(STN[k][1], STN[k][2]) }; });
+    Object.entries({"Aveiro": [40.64, -8.65], "Beja": [37.93, -7.87], "Braga": [41.55, -8.42], "Bragança": [41.6, -6.8], "Castelo Branco": [39.82, -7.49], "Coimbra": [40.2, -8.41], "Évora": [38.57, -7.9], "Faro": [37.2, -8.1], "Guarda": [40.54, -7.27], "Leiria": [39.74, -8.8], "Lisboa": [38.9, -9.15], "Portalegre": [39.2, -7.6], "Porto": [41.2, -8.5], "Santarém": [39.24, -8.5], "Setúbal": [38.3, -8.7], "Viana do Castelo": [41.85, -8.5], "Vila Real": [41.5, -7.6], "Viseu": [40.75, -7.9], "Açores": [38.4, -28.0], "Madeira": [32.75, -16.95]}).forEach(([n, c]) => { const r = n === 'Açores' ? [2, 3.5] : n === 'Madeira' ? [0.4, 0.6] : [0.45, 0.5]; const a = P(c[0] + r[0], c[1] - r[1]), b = P(c[0] - r[0], c[1] + r[1]); counties['PT|' + n] = { st: 'PT', name: n, c: P(c[0], c[1]), d: '', box: [a[0], a[1], b[0], b[1]] }; });
+    states.PT = { d: '', box: [P(42.2, -9.6)[0], P(42.2, -9.6)[1], P(36.9, -6.2)[0], P(36.9, -6.2)[1]], label: 'Portugal', c: P(39.6, -8.0) };
     return (window.__wfGeo = {
       P, counties, states, cities: CITIES,
       ocean: path(OCEAN, true) + path(GULF, true),
@@ -500,8 +501,8 @@ class Component extends DCLogic {
       countyLines: Object.values(T).map((l) => path(l, false)).join(''),
       roads: ROADS.map((r) => path(r, false)).join(''),
       forest: path(FOREST, true),
-      world: 'M-40000 -60000H60000V30000H-40000Z',
-      bounds: [P(50.5, -128)[0], P(50.5, -128)[1], P(30, -100)[0], P(30, -100)[1]]
+      world: 'M-400000 -200000H600000V200000H-400000Z',
+      bounds: [P(50.5, -128)[0], P(50.5, -128)[1], P(24, -5.5)[0], P(24, -5.5)[1]]
     });
   }
   fitWin() {
@@ -612,7 +613,7 @@ class Component extends DCLogic {
     }
     return { area, pts: P, front: front.trim() };
   }
-  zMin() { return Math.max(0.008, (this.base().s || 0.05) * 0.46); }
+  zMin() { return 0.0012; }  // far enough out to see the whole US and Portugal
   zMax() { return Math.max(1, this.base().s || 1); }
   setView(cx, cy, s) {
     this.setState(this.clampView(cx, cy, s));
@@ -699,35 +700,40 @@ class Component extends DCLogic {
       ...(() => {
         const st = this.mapStyle(), open = !!(this.state || {}).msOpen;
         const PAL = {
-          standard: { name: 'Standard map', bg: '#E3EEDF', sel: '#E3EEDF', img: true, reg: 'assets/56a7915e7bf8f9e52f5f808a6173c69f.webp', loc: 'assets/85ceacc6568be465496be6435ddfcb7e.webp', forestOp: 0, ocean: '#A3D6F3', lakes: '#A3D6F3', county: 'rgba(120,130,120,0.55)', state: '#7D8490', coast: '#8CC7EA', roads: '#A9B9DA', roadCase: '#FFFFFF', mask: '#FFFFFF', maskOp: 0.4 },
-          topo: { name: 'Topographic', bg: '#F4F1E6', sel: '#F4F1E6', img: true, reg: 'assets/e2d0b996766b619d15a2f44ac959aeab.webp', loc: 'assets/95a43520b601b120b6fce6fc36dd406a.webp', forestOp: 0, ocean: '#C2DEF1', lakes: '#B6D7EE', county: 'rgba(120,100,70,0.5)', state: '#7E6A55', coast: '#6FA6CF', roads: '#E3A15B', roadCase: 'transparent', mask: '#FFFFFF', maskOp: 0.45 },
+          standard: { name: 'Map © OpenStreetMap', bg: '#F2EFE9', sel: 'none', img: true, reg: '', loc: '', forestOp: 0, ocean: 'none', lakes: 'none', county: 'rgba(90,100,90,0.55)', state: '#5E6570', coast: 'none', roads: 'none', roadCase: 'none', mask: '#FFFFFF', maskOp: 0.35 },
+          topo: { name: 'Topo © OpenTopoMap (CC-BY-SA)', bg: '#F4F1E6', sel: 'none', img: true, reg: '', loc: '', forestOp: 0, ocean: 'none', lakes: 'none', county: 'rgba(110,90,60,0.55)', state: '#6E5A45', coast: 'none', roads: 'none', roadCase: 'none', mask: '#FFFFFF', maskOp: 0.35 },
         };
         const opts = [['standard', 'Standard'], ['topo', 'Topo']];
         const pl = PAL[st] || PAL.standard;
-        const TILES = {"ID_Ada":[3130,-27355,3640,0,{"topo":"assets/34d01f1576fc026c232d4538a236d8e0.webp","standard":"assets/2589e628af2fb910435327bd84e76895.webp"}],"AZ_Coconino":[13612,-5826,3640,0,{"topo":"assets/e01edd5fc355f742add6c7c69dccc4e7.webp","standard":"assets/0bca751625230e932d506a5f14700821.webp"}],"WA_Chelan":[-7141,-39830,3640,0,{"topo":"assets/b555710c1a6efa76e3d224b288824aa2.webp","standard":"assets/965199398256448684514c4974f9bca0.webp"}],"CA_Sonoma":[-12464,-13436,3640,0,{"topo":"assets/a708e495d6510bf070f98ddb126c2caf.webp","standard":"assets/7e8a02b114fc85525ee8dc2b44eda01b.webp"}],"CA_San_Diego":[135,677,6815,0,{"topo":"assets/90ff7072e85cb3da97b2d70202c47b59.webp","standard":"assets/a8ee908feddac64766a9c3ebf0a040b3.webp"}],"AZ_Gila":[15863,-55,3640,0,{"topo":"assets/a827ab39888da39c8f29a837fd790953.webp","standard":"assets/1ce334cc0f3c302d35b6f1407d3e788f.webp"}],"NM_Lincoln":[28409,87,3640,0,{"topo":"assets/fa60bcc5153fddef00d3349a4993d8f0.webp","standard":"assets/2e078534e46609e8c8ea9dc258e3c6ce.webp"}],"NV_Washoe":[-4890,-19490,3640,0,{"topo":"assets/32e71daa005b2836f83869df67c59058.webp","standard":"assets/8914bfb2f504f50c77c07d05e62747c0.webp"}],"AZ_Yavapai":[11783,-2318,3640,0,{"topo":"assets/02468925dd655236e26baa84cc6a66c6.webp","standard":"assets/8a7c75f9df8f1cbf3131b91efc3c1827.webp"}],"AZ_Maricopa":[11924,1218,3640,0,{"topo":"assets/60fcb4759496fef13f766117a517d7a7.webp","standard":"assets/10a111af9c372d438033b25622c2ed73.webp"}],"CA_Santa_Barbara":[-6726,-3647,5507,0,{"topo":"assets/0aab3a4f1f336427988bd3dc3c68cf48.webp","standard":"assets/f9f229163ca605175d167e80309f17c8.webp"}],"ID_Boise":[4326,-28882,3640,0,{"topo":"assets/9837bd0ddc0e3fe6538bdf79e632a28f.webp","standard":"assets/16cce0668629def5d53b73ec23926f61.webp"}],"CA_Shasta":[-10471,-19745,3640,0,{"topo":"assets/b9c8993d8852886b9df47169314a08cd.webp","standard":"assets/7da1f1959dac53285646121fc0a1e569.webp"}],"NM_Sandoval":[25079,-5401,3640,0,{"topo":"assets/d17b89193ce923e8233c6d89d58e4f16.webp","standard":"assets/634735ec493414309c4d6cb82a700648.webp"}],"MT_Flathead":[8266,-41075,3640,0,{"topo":"assets/1d078b6e9a29bf11fc7ac592bbf0ab79.webp","standard":"assets/16602e3cf50c3a205e0be632952ef6a9.webp"}],"NV_Clark":[6014,-6873,3640,0,{"topo":"assets/e13b23a4a02a147e57cfd2f006e813f6.webp","standard":"assets/d21d20075fe2f42537945d259fb9ad6c.webp"}],"NV_Douglas":[-4796,-14511,3640,0,{"topo":"assets/d8183647ad4ab29ac0829bcd5fe479de.webp","standard":"assets/f7ad2650b434f0af51a3e15cdec208ef.webp"}],"CA_Kern":[-6915,-8096,11207,0,{"topo":"assets/a64f6a0354cb4eb68065ef612cadc7df.webp","standard":"assets/078db16b71989745936e86f0b11ae860.webp"}],"CA_Butte":[-9439,-16661,3640,0,{"topo":"assets/63dee2b70f4facf49005c4baf283d0b6.webp","standard":"assets/fc8a58b9f06b4c820123de60824b9a3e.webp"}],"UT_Washington":[9532,-9900,3640,0,{"topo":"assets/5d4a6ad1673bef42a4ee2165530edb53.webp","standard":"assets/5521fff24610a916ae7c5869642bc5d7.webp"}],"CA_Ventura":[-4029,-2520,4779,0,{"topo":"assets/011a4dd9e53e9a35de01284e46bf44ce.webp","standard":"assets/0ed4185178a32203cfc797b967799d2c.webp"}],"OR_Klamath":[-9556,-25204,3640,0,{"topo":"assets/0b576821257a827695bc159fbca2f381.webp","standard":"assets/83ec58895228ff8b6071e7a204dda7c6.webp"}],"NM_Grant":[21562,2944,3640,0,{"topo":"assets/f544ef70d9c1b1b55880ae3fa3078029.webp","standard":"assets/4517fb34314048f79ed0f788c2097447.webp"}],"CO_El_Paso":[30590,-14285,3640,0,{"topo":"assets/5b0b4151bbd26781b9c3db37d08fdaff.webp","standard":"assets/6c1e545cc3dcc54b5befd182175290e0.webp"}],"CO_Larimer":[28409,-19462,3640,0,{"topo":"assets/bd300f3e3959bd0c8e3bdaa47db9b73a.webp","standard":"assets/374bda640ff55aac8cfc4812c56fbb77.webp"}],"CA_Riverside":[-1642,-5145,14075,0,{"topo":"assets/0e62796f225f06b6ea33868b261958e7.webp","standard":"assets/8b8a80d4464d3bb1e579ed7384efa05b.webp"}],"ID_Valley":[4701,-31089,3640,0,{"topo":"assets/ddef455859bafc5bc05f5dc9ab89ac23.webp","standard":"assets/98d22e70b9ec4111e2b7ee4e137816df.webp"}],"CA_San_Bernardino":[-2275,-9172,15765,0,{"topo":"assets/09905820b2f0773f0d479ad7532f310c.webp","standard":"assets/934fc4dd34bb5766a75ccd13812b3f4c.webp"}],"OR_Josephine":[-14035,-24299,3640,0,{"topo":"assets/6af97f7dc5e2d28b480276fa67178112.webp","standard":"assets/22728d6c5c8d70cd847bea45afaf1f4f.webp"}],"CO_Boulder":[28644,-17849,3640,0,{"topo":"assets/c59b57425f84a67f6e06473d903921f1.webp","standard":"assets/9ba5078fdcf627ca991e29a6f8fb1fb9.webp"}],"MT_Missoula":[8570,-37511,3640,0,{"topo":"assets/cf230a644210ce933ee981abbf391600.webp","standard":"assets/992015c6d53140aaa43f07f827659c3a.webp"}],"WA_Kittitas":[-7282,-37737,3640,0,{"topo":"assets/c84b7964817a1d37c0d06aea40dba428.webp","standard":"assets/a72fd35ba178b3d2bee867dc5958bde1.webp"}],"OR_Deschutes":[-8572,-28656,3640,0,{"topo":"assets/ecdbbdc6dfccd3cd82bccbc460166bbe.webp","standard":"assets/b67246aba986cb3efea977beae385eca.webp"}],"WA_Okanogan":[-5077,-41782,3640,0,{"topo":"assets/7108594305b24695772d842c7cd4bc04.webp","standard":"assets/393a521be6cdd3d8c308607cb58d795b.webp"}],"OR_Jackson":[-12089,-24469,3640,0,{"topo":"assets/f03f97ff70f6a92adf9939112db6ed25.webp","standard":"assets/a9855f3b93054b69c0fe3282a73b3555.webp"}],"CA_Orange":[-259,477,3312,0,{"topo":"assets/236962d6c7064cc43e5318f8b8300a99.webp","standard":"assets/53fce967e51bed325504b8c4522f2ed3.webp"}],"UT_Iron":[10048,-11540,3640,0,{"topo":"assets/3e883936dad94ff5ba221f5a572a890e.webp","standard":"assets/2e6a3a4e71a323384020dd3bdd27e3b2.webp"}]};
         const vx0 = -tx / s, vy0 = -ty / s, vx1 = (W - tx) / s, vy1 = (H - ty) / s;
         const tiles = [];
-        if (pl.img && s >= 0.028) {
-          const MIDB = {"standard":["assets/f83a41c427085bd32bceb52f5802c6ba.webp","assets/1f262671bca8efef487db46d5f1b5b62.webp","assets/9245be74160291deff5d07cd7f7c813f.webp","assets/7db0586a396dd9da4584efaf9a1adaa1.webp","assets/4d023bb420257d0004301d7ed16ee48b.webp","assets/107cb787dd33c1e08892171731553400.webp","assets/1cd90da736e308df93c60fb8341bb9e0.webp","assets/bf84a465385ad109c6c54283ecffea53.webp","assets/1b2f5738861af2fc9059112ba1d97918.webp","assets/0cc3cd995a7df99c04e1c712e7e657df.webp","assets/d711806c5ab38fc2a37389109ad35efe.webp","assets/245fdf07c297bca17082d5a302d67c46.webp","assets/2377b312225a7815ccf8979fdfff0887.webp","assets/b63c881982827ca80603aa51b1688900.webp","assets/51fd2bbfb3ed0a60732f8b10daac9646.webp","assets/cf812447ea8445a44187558eae9e44a6.webp"],"topo":["assets/f8b5feb29b1a66c89a898f359f08c8e3.webp","assets/9438d8fead7a59b5a3b2c1ad07d3e80a.webp","assets/42bf882b9c8192d916a55eba92adf7a7.webp","assets/3dbebaa35ad5a0cfb91cacac92254661.webp","assets/ae9fda3101849b464c4cbdf5176045ee.webp","assets/9eb24645089189962dc175bd2cd1b15b.webp","assets/9f8efe8255c2f38ab56c9dc49034540d.webp","assets/575b6232031833c6994b5b7427b0278d.webp","assets/7116eef0c73eea5fc06e3f4845f301be.webp","assets/5161f9315459edc8e33d902dc1084a06.webp","assets/ccb9f538edefd6c452d85c6489cf74d3.webp","assets/9aac5cfb425158d56693e5b951676d2c.webp","assets/a60a46bd9531a48da0e3c7dfa92f1c60.webp","assets/911d39499445b774a024018c9c4afefd.webp","assets/41afb7ff590cf285f70f74049d1f932b.webp","assets/3f5d5b3c4404d3a9dea19cc32c75e88d.webp"]}, MID = [];
-          for (let k = 0; k < 16; k++) MID.push([-22627 + (k % 4) * 16415, -45479 + Math.floor(k / 4) * 14498.75, 16415, 14498.75, { standard: MIDB.standard[k], topo: MIDB.topo[k] }, 1]);
-          if (!window.__wfPre) {
-            // Warm the cache: current map style first, then the other one, a few images at a time.
-            window.__wfPre = 1;
-            const other = st === 'topo' ? 'standard' : 'topo';
-            const urls = [];
-            [st, other].forEach((k) => { urls.push(PAL[k].reg, PAL[k].loc); MID.forEach((m) => urls.push(m[4][k])); Object.values(TILES).forEach((t) => urls.push(t[4][k])); });
-            const q = urls.filter((u, i) => u && urls.indexOf(u) === i);
-            const next = () => { const u = q.shift(); if (!u) return; const im = new Image(); try { im.fetchPriority = 'low'; im.decoding = 'async'; } catch (e) {} im.onload = im.onerror = next; im.src = u; };
-            setTimeout(() => { for (let i = 0; i < 4; i++) next(); }, 400);
-          }
-          const cand = Object.values(TILES).concat([[-2000, -1400, 4600, 3700, { standard: PAL.standard.loc, topo: PAL.topo.loc }]], s >= 0.028 ? MID : [])
-            .map((t) => ({ t, w: t[2], h: t[3] || t[2] }))
-            .filter((o) => o.t[4][st] && o.t[0] < vx1 && o.t[0] + o.w > vx0 && o.t[1] < vy1 && o.t[1] + o.h > vy0)
-            .sort((a, b) => a.w * a.h - b.w * b.h);
-          for (const o of cand) {
-            tiles.unshift({ href: o.t[4][st], x: o.t[0], y: o.t[1], w: o.w, h: o.h, mask: o.t[5] ? 'none' : 'url(#wfTileMask)' });
-            const ix = o.t[5] ? 0 : o.w * 0.08, iy = o.t[5] ? 0 : o.h * 0.08;
-            if (vx0 >= o.t[0] + ix && vx1 <= o.t[0] + o.w - ix && vy0 >= o.t[1] + iy && vy1 <= o.t[1] + o.h - iy) break;
+        {
+          const lonOf = (x) => (x - 518) / 2345 - 118.13, latOf = (y) => 34.19 - (y - 662) / 2829;
+          const X = (lon) => (lon + 118.13) * 2345 + 518, Y = (lat) => (34.19 - lat) * 2829 + 662;
+          const lat0 = Math.max(-85, Math.min(85, latOf(vy1))), lat1 = Math.max(-85, Math.min(85, latOf(vy0)));
+          const lon0 = lonOf(vx0), lon1 = lonOf(vx1);
+          // Pick the zoom where one 256px tile is about 256 screen px wide, using the view's middle latitude.
+          const midLat = (lat0 + lat1) / 2, kLat = Math.cos(midLat * Math.PI / 180);
+          let z = Math.round(Math.log2(2345 * s * 360 * kLat / 256 / Math.max(0.2, kLat)));
+          z = Math.max(2, Math.min(17, z));
+          const n = Math.pow(2, z);
+          const tX = (lon) => Math.floor((lon + 180) / 360 * n);
+          const tY = (lat) => { const r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n); };
+          const lonT = (x) => x / n * 360 - 180;
+          const latT = (y) => { const m = Math.PI - 2 * Math.PI * y / n; return 180 / Math.PI * Math.atan(0.5 * (Math.exp(m) - Math.exp(-m))); };
+          const x0 = tX(lon0), x1 = tX(lon1), y0 = tY(lat1), y1 = tY(lat0);
+          const url = st === 'topo'
+            ? (x, y) => 'https://' + 'abc'[(x + y) % 3] + '.tile.opentopomap.org/' + z + '/' + x + '/' + y + '.png'
+            : (x, y) => 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
+          if ((x1 - x0 + 1) * (y1 - y0 + 1) <= 120) {
+            for (let ty2 = Math.max(0, y0); ty2 <= Math.min(n - 1, y1); ty2++) {
+              for (let tx2 = x0; tx2 <= x1; tx2++) {
+                const wx = ((tx2 % n) + n) % n;
+                const X0 = X(lonT(tx2)), X1 = X(lonT(tx2 + 1)), Y0 = Y(latT(ty2)), Y1 = Y(latT(ty2 + 1));
+                // +0.6 map px overlap hides hairline seams between tiles
+                tiles.push({ href: url(wx, ty2), x: +X0.toFixed(1), y: +Y0.toFixed(1), w: +(X1 - X0 + 0.6 / s).toFixed(1), h: +(Y1 - Y0 + 0.6 / s).toFixed(1), mask: 'none' });
+              }
+            }
           }
         }
         return {
@@ -772,10 +778,10 @@ class Component extends DCLogic {
             const cityOn = s >= (p.scopeCo ? 0.02 : 0.05) && !(near && laScope);
             const cities = cityOn ? G.cities.filter((c) => inScope(c) && (p.scopeCo || !c.lm || s >= 0.08)).sort((a, b) => (a.lm ? 1 : 0) - (b.lm ? 1 : 0)).map((c) => at(c.xy[0], c.xy[1], { label: c.name, size: c.lm ? 11 : 12, weight: c.lm ? 500 : 600, style: c.lm ? 'italic' : 'normal', fg: c.lm ? '#2E7D32' : '#1C1C1E', dot: c.lm ? 0 : 5 })).filter((o) => keep(o, o.label.length * (o.size * 0.58) + 12, 16, -3)) : [];
             const counties = (s >= 0.012 && s < 0.3 && p.scopeSt && !p.scopeCo) ? Object.values(G.counties).filter((c) => c.st === p.scopeSt).map((c) => at(c.c[0], c.c[1], { label: c.name, fg: '#6C6C70', size: 11, weight: 600 })).filter((o) => { const w = o.label.length * 6.4; return keep({ left: o.left - w / 2, top: o.top }, w, 14, 0); }) : [];
-            return { countyLabels: counties, cityLabels: cities };
+            return { countyLabels: counties, cityLabels: [] };
           })(),
-          showSea: true, sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope) ? villages : [], stations: (near && laScope) ? stations : [], strikes: (near && laScope) ? strikes : [], sensors: (near && laScope) ? sensors : [], winds: (near && laScope) ? winds : []
+          showSea: false, sea: at(seaPt[0], seaPt[1]),
+          villages: [], stations: (near && laScope) ? stations : [], strikes: (near && laScope) ? strikes : [], sensors: (near && laScope) ? sensors : [], winds: (near && laScope) ? winds : []
         };
       })(),
       fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
