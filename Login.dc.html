@@ -87,7 +87,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
       </span>
       <span style="font-size: 15px; line-height: 19px; color: #6C6C70">Demo users · each sees only their own area</span>
     </div>
-    <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px {{padB}}px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12px); mask-image: linear-gradient(180deg, transparent 0, #000 12px); opacity: {{pOp}}; transform: translateY({{pY2}}); transition: opacity .35s ease {{pDelay2}}, transform .55s cubic-bezier(.2,.8,.2,1) {{pDelay2}}">
+    <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px {{padB}}px; clip-path: inset(6px 0 0 0); opacity: {{pOp}}; transform: translateY({{pY2}}); transition: opacity .35s ease {{pDelay2}}, transform .55s cubic-bezier(.2,.8,.2,1) {{pDelay2}}">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
         <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
           <span style="display: flex; align-items: flex-start; gap: 16px; width: 100%">
