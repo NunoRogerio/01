@@ -52,7 +52,6 @@ a{color:#007AFF}a:hover{color:#0062CC}
         <span id="userLbl" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Username</span>
         <button type="button" onClick="{{toggle}}" aria-haspopup="dialog" aria-expanded="{{openStr}}" aria-labelledby="userLbl userVal" style="display: flex; align-items: center; gap: 8px; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer">
           <span id="userVal" style="flex-grow: 1; min-width: 0; font-size: 19px; color: {{userC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{userTxt}}</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{rot}}); transition: transform .3s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </button>
       </div>
       <div style="height: 0.5px; margin-left: 16px; background: rgba(60,60,67,0.29)"></div>
@@ -227,6 +226,9 @@ class Component extends DCLogic {
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
   renderVals() {
     const s = this.state || {};
+    // The last profile used on this device is filled in, with its card, so returning is one tap on Log in.
+    if (this._last === undefined) { try { this._last = window.localStorage.getItem('wf-last-user') || null; } catch (e) { this._last = null; } }
+    const selId = s.sel !== undefined ? s.sel : this._last;
     // Demo personas: senior operational deciders, with each country's real command title.
     // [id, initials, username, name, title, organisation, area, summary, photo]
     // Photos: Unsplash (free licence), stock models standing in for fictional personas; initials show if a photo can't load.
@@ -245,7 +247,7 @@ class Component extends DCLogic {
     const PH = [['forest-1.webp', 'Mari Potter'], ['forest-2.webp', 'Ivan Dimitrov'], ['forest-3.webp', 'Olena Bohovyk']];   // dark canopies only, so white text stays readable
     if (this._bg0 === undefined) this._bg0 = Math.floor(Math.random() * PH.length);
     const cur = s.bg === undefined ? this._bg0 : s.bg, prev = s.bgPrev === undefined ? -1 : s.bgPrev;
-    const sel = P.find((p) => p[0] === s.sel) || null;
+    const sel = P.find((p) => p[0] === selId) || null;
     const open = !!s.open;
     return {
       bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.3 : 1, keep: i === prev })),
@@ -269,8 +271,8 @@ class Component extends DCLogic {
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
-        tick: s.sel === id ? 1 : 0, selD: s.sel === id ? 'block' : 'none', orgCc: org + (({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] ? ' · ' + ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] : ''), selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
-        aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (s.sel === id ? ' Selected' : ''),
+        tick: selId === id ? 1 : 0, selD: selId === id ? 'block' : 'none', orgCc: org + (({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] ? ' · ' + ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] : ''), selStr: selId === id ? 'true' : 'false', ring: selId === id ? '#007AFF' : 'transparent',
+        aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (selId === id ? ' Selected' : ''),
         pick: () => { this.setState({ sel: id }); this.closePanel(); }
       })),
       lvOp: s.leaving ? 0 : 1, lvY: s.leaving ? '-10px' : '0px',
@@ -282,7 +284,7 @@ class Component extends DCLogic {
         try { window.sessionStorage.setItem('wf-soft', '1'); } catch (x) {}
         this.setState({ leaving: true });
         setTimeout(() => { window.location.href = 'Main.dc.html'; }, 900);
-        try { window.localStorage.setItem('wf-role', sel[0]); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
+        try { window.localStorage.setItem('wf-role', sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
         window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[0], scope: null });
       }
     };
