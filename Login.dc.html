@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=6"></script>
+<script src="fit.js?v=7"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -93,9 +93,12 @@ a{color:#007AFF}a:hover{color:#0062CC}
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
         <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
           <span style="display: flex; align-items: flex-start; gap: 16px; width: 100%">
-            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; flex-shrink: 0; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 19px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
+            <span style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 60px; flex-shrink: 0">
+              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 8px; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 19px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
+              <span style="display: {{p.selD}}; font-size: 13px; font-weight: 600; line-height: 16px; color: #007AFF">Selected</span>
+            </span>
             <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-              <span style="padding-right: 28px; font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}}</span>
+              <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}} <span style="font-weight: 400; color: #8E8E93">{{p.cc}}</span></span>
               <span style="display: flex; flex-direction: column; gap: 2px; margin-top: 14px">
                 <span style="font-size: 17px; line-height: 21px; color: #000000">{{p.role}}</span>
                 <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{p.org}}</span>
@@ -104,7 +107,6 @@ a{color:#007AFF}a:hover{color:#0062CC}
             </span>
           </span>
           <span style="display: block; padding-left: 76px; font-size: 17px; line-height: 22px; color: #3C3C43">{{p.sum}}</span>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; top: 16px; right: 16px; opacity: {{p.tick}}"><path d="m5 12 5 5 9-10"></path></svg>
         </button>
       </sc-for>
     </div>
@@ -233,7 +235,7 @@ class Component extends DCLogic {
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
-        tick: s.sel === id ? 1 : 0, selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
+        tick: s.sel === id ? 1 : 0, selD: s.sel === id ? 'block' : 'none', cc: ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR' })[id] || '', selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
         aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (s.sel === id ? ' Selected' : ''),
         pick: () => this.setState({ sel: id, open: false })
       })),

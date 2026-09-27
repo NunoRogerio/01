@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=6"></script>
+<script src="fit.js?v=7"></script>
 <script src="live.js?v=19"></script>
 
 <title>Dispatch sizing</title>
@@ -22,7 +22,8 @@
 <body>
 <x-dc>
 <helmet>
-<style>
+<style>.wf-snap{scroll-snap-type:y mandatory}.wf-snap>*{scroll-snap-align:start}.wf-snap>*:last-child{scroll-snap-align:start end}
+
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 a{color:#0079A6}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -323,7 +324,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span class="kpi">{{k2V}}<small>{{k2S}}</small></span>
       </div>
     </div>
-    <ul aria-label="{{listAria}}" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; margin: 16px 0 0; padding: 0; list-style: none; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
+    <ul class="wf-snap" aria-label="{{listAria}}" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; margin: 16px 0 0; padding: 0; list-style: none; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
       <sc-for list="{{deployed}}" as="d" hint-placeholder-count="4">
         <li class="sqrow" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: start; gap: 2px 12px; flex-shrink: 0; min-height: 60px; padding: 10px 16px 10px 40px; box-sizing: border-box">
           <span aria-hidden="true" style="position: absolute; left: 11px; top: 11px; display: flex; width: 18px; height: 18px; color: {{d.c}}">
