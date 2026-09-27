@@ -306,7 +306,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 24px; animation-delay: 300ms">
       <!-- Confirm fire goes straight to configuring the dispatch for this fire -->
-      <a href="Dispatch.dc.html" class="btn primary" onPointerDown="{{confirmCur}}" onClick="{{confirmCur}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600; text-decoration: none">
+      <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmCur}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600; text-decoration: none">
         <span style="flex-grow: 1; text-align: left">Confirm fire</span>
         <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
@@ -786,7 +786,9 @@ class Component extends DCLogic {
       confirmDz: () => { if (this._dzDone) return; this._dzDone = true; const d = this.wfDismissed(); if (!d[cur.id]) { d[cur.id] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._dzDone = false; this.setState({ dz: false, ci: 0, focusId: null, tab: null, full: false }); }, 800); },
       dzY: dz ? '0%' : '105%', dzOp: dz ? 1 : 0, dzPE: dz ? 'auto' : 'none', dzHidden: dz ? 'false' : 'true',
       dismiss, undo, restore, hasToast: !!s.toast && !!dismissed[s.toast], toastText: (s.toast || '') + ' dismissed',
-      confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); }, verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
+      // Confirm on the tap itself (not on touch-down: that re-drew the next candidate under the finger and swallowed the tap),
+      // then make sure the dispatch screen opens.
+      confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
     };
   }
 }

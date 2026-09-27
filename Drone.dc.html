@@ -282,7 +282,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </dl>
 
   <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; padding: 0 16px 40px; animation-delay: 340ms">
-    <a href="Dispatch.dc.html" class="btn primary" onPointerDown="{{confirmHere}}" onClick="{{confirmHere}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
+    <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmHere}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
       <span style="flex-grow: 1">Confirm fire</span>
       <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
@@ -555,7 +555,7 @@ class Component extends DCLogic {
       openFa: () => this.setState({ fa: true }), closeFa: () => this.setState({ fa: false }),
       confirmFa: () => { if (this._faDone) return; this._faDone = true; this.setState({ ret: true }); const d = this.wfDismissed(); if (!d[vId]) { d[vId] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._faDone = false; this.setState({ fa: false }); }, 800); },
       faY: fa ? '0%' : '105%', faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
-      vId, vPlace, confirmHere: () => { this.setState({ ret: true }); this.wfConfirm(vId); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
+      vId, vPlace, confirmHere: () => { this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
       setVid: this.setVid, full: !!s.full, openFull: () => this.setState({ full: true }), closeFull: () => this.setState({ full: false }),
       thermalOp: isThermal ? 1 : 0,
       visualOp: isThermal ? 0 : 1,
