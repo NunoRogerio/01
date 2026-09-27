@@ -36,7 +36,7 @@
     'Their conclusion: voluntary pledges have not stopped the finance, so banks should be legally liable for deforestation they fund.':'A conclusão: os compromissos voluntários não travaram o financiamento, por isso os bancos devem ser legalmente responsáveis pelo desmatamento que financiam.',
     'Restore demo alerts':'Repor alertas de demonstração','No active alerts':'Sem alertas ativos','Nothing to review':'Nada para rever','No ignition candidates':'Sem candidatos a ignição',
     // candidate screen
-    'AI validation':'Validação por IA','Evidence':'Evidências','Unverified':'Por verificar','Being checked':'Em verificação','Verifying':'Em verificação',
+    'AI validation':'Validação por IA','(AI validation)':'(Validação por IA)','Likelihood':'Probabilidade','Evidence':'Evidências','Unverified':'Por verificar','Being checked':'Em verificação','Verifying':'Em verificação',
     'Strong heat signal':'Sinal térmico forte','Heat anomaly':'Anomalia térmica','Weak heat signal':'Sinal térmico fraco','Smoke plume likely':'Coluna de fumo provável','Possible smoke':'Possível fumo','Possible fire start':'Possível início de incêndio',
     'Not yet confirmed on the ground':'Ainda não confirmado no terreno','One detection':'Uma deteção','Estimated ignition point':'Ponto de ignição estimado','Heat is inside the dashed circle · ±375 m':'O calor está dentro do círculo tracejado · ±375 m',
     'Confirm fire':'Confirmar incêndio','Verify by drone':'Enviar drone','Dismiss':'Descartar','Dismiss ignition':'Descartar ignição','Go back':'Voltar','Confirm this fire?':'Confirmar este incêndio?','Dismiss this candidate?':'Descartar este candidato?',
