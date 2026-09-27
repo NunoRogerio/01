@@ -129,11 +129,11 @@ class Component extends DCLogic {
       L.style.overflowY = 'hidden';                                   // cancels the phone's coasting so the magnet takes over
       const from = L.scrollTop, d = to - from, dir = Math.sign(d) || 1;
       if (Math.abs(d) < 0.5) { L.scrollTop = to; L.style.overflowY = 'auto'; return; }
-      const dur = 110 + 2.4 * Math.abs(d), kick = 1.6, t0 = performance.now();   // ~300 ms from the edge of the field
+      const dur = 90 + 1.8 * Math.abs(d), kick = 2.4, t0 = performance.now();    // ~235 ms from the edge of the field
       const step = (now) => {
         const t = (now - t0) / dur;
-        if (t < 1) { const e = 0.3 * t + 0.7 * t * t * t; L.scrollTop = from + (d + dir * kick) * e; raf = requestAnimationFrame(step); return; }
-        const u = Math.min(1, (now - t0 - dur) / 70);                 // the clack: a hair past, then locked in place
+        if (t < 1) { const e = 0.2 * t + 0.8 * t * t * t; L.scrollTop = from + (d + dir * kick) * e; raf = requestAnimationFrame(step); return; }
+        const u = Math.min(1, (now - t0 - dur) / 60);                 // the clack: a hair past, then locked in place
         L.scrollTop = to + dir * kick * (1 - u);
         if (u < 1) { raf = requestAnimationFrame(step); return; }
         L.scrollTop = to; raf = 0; L.style.overflowY = 'auto';
