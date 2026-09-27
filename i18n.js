@@ -97,7 +97,7 @@
     [/^Fire radiative power ([\d.,]+) MW(?: · ([\d.,]+) detections within 3 km)?$/,function(m,a,b){return 'Potência radiativa do fogo '+a+' MW'+(b?' · '+b+' deteções num raio de 3 km':'');}],
     [/^([\d.,]+) detections within 3 km$/,'$1 deteções num raio de 3 km'],
     [/^Heat detected by (.+?)(?: at (.+))?$/,function(m,s,t){return 'Calor detetado pelo '+s+(t?' às '+t:'');}],
-    [/^([\d.,]+) km to scene$/,'A $1 km do local'],[/^On route · ([\d.,]+) min to scene$/,'A caminho · a $1 min do local'],[/^En route · arriving in (.+)$/,'A caminho · chega em $1'],
+    [/^min · at (.+)$/,'min · às $1'],    [/^([\d.,]+) km to scene$/,'A $1 km do local'],[/^On route · ([\d.,]+) min to scene$/,'A caminho · a $1 min do local'],[/^En route · arriving in (.+)$/,'A caminho · chega em $1'],
     [/^([\d.,]+) of ([\d.,]+) still free$/,'$1 de $2 ainda livres'],[/^([\d.,]+) free crews$/,'$1 equipas livres'],
     [/^Active ([\dhm ]+)$/,'Ativo há $1'],
     [/^Reported by (.+)$/,'Reportado por $1'],[/^On this fire: (.+)$/,'Neste incêndio: $1'],[/^(.+) · order sent (.+)$/,'$1 · ordem enviada $2'],[/^order sent (.+)$/,'ordem enviada $1'],[/^To station coordinators · (.+)$/,'Para os comandantes dos quartéis · $1'],[/^((?:\d+d )?\d+h \d+m) active$/,'$1 ativo'],[/^Started (.+)$/,'Início $1'],[/^Expected containment ~(.+)$/,'Contenção prevista ~$1'],[/^Held since (.+)$/,'Dominado desde $1'],[/^Held for (.+)$/,'Dominado há $1'],[/^Active for (.+)$/,'Ativo durante $1'],[/^Edge fully contained$/,'Perímetro totalmente contido'],
