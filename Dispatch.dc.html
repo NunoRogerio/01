@@ -1159,7 +1159,7 @@ class Component extends DCLogic {
       cfgY: cfg ? '0%' : '105%', cfgHidden: cfg ? 'false' : 'true', cfgOpenStr: cfg ? 'true' : 'false', cfgChevRot: cfg ? '180deg' : '0deg',
       cfgAria: 'Configure dispatch: ' + fmt(counts),
       mapW: 390, mapH: 844, no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : (sent ? 450 : 38),
-      full: !!s.full, toggleFull: () => this.setState({ full: !s.full, open: false, cfg: false }),
+      full: !!s.full, toggleFull: () => { const st = this.state || {}; this.setState({ full: !st.full, open: false, cfg: false }); },
       tipSafe: s.full ? 70 : (sent ? 186 : 192), clipT: s.full ? 0 : 128, clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? 412 : 458), ctrlTop: sent ? 266 : 243, hzTop: s.full ? -68 : (sent ? 12 : 16),
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: (s.full || sent) ? '560px' : '0px', navY: (s.full || sent) ? '140px' : '0px', downOp: (s.full || sent) ? 0 : 1,
       chevRot: open ? '180deg' : '0deg', sheetOpenStr: open ? 'true' : 'false', stationAria: sel.title + ', first on the fire line in ' + sum + ' minutes. Choose stations', crewsSel: freeSel + ' free crew' + (freeSel === 1 ? '' : 's'),

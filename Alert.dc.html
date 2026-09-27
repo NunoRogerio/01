@@ -773,7 +773,7 @@ class Component extends DCLogic {
       mapW: 390, mapH: 844, fsW: 390, fsH: 844, zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
       full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && onMap, figD: hasFig ? 'block' : 'none', panelMt: hasFig ? '-28px' : '8px',
       openMap: () => this.setState({ tab: 'map', full: true, dd: false }),
-      toggleFull: () => this.setState(onMap ? { full: false, tab: null } : { full: !s.full }),
+      toggleFull: () => { const st = this.state || {}; this.setState(st.full && st.tab === 'map' ? { full: false, tab: null } : { full: !st.full }); },   // reads the live state: the map may hold an older copy of this handler
       figBg: tab.isMap ? 'transparent' : '#1C1C1E', figPE: tab.isMap ? 'none' : 'auto',
       clipT: s.full && tab.isMap ? 0 : 133, clipBleed: s.full && tab.isMap ? 0 : 40, clipB: s.full && tab.isMap ? 0 : 468, ctrlTop: 238,
       topY: s.full && tab.isMap ? '-200px' : '0px', topOp: s.full && tab.isMap ? 0 : 1, topPE: s.full && tab.isMap ? 'none' : 'auto',
