@@ -108,7 +108,7 @@
 })();
 
 // Lists marked wf-snap scroll and coast exactly like normal, untouched. Only once the motion has come to rest,
-// if the top item is left half shown, the list eases back so that same item shows whole.
+// if the top item is left half shown, the list eases to a whole item (80% rule, below).
 // The last position of the list always stays reachable.
 (function(){
   function stops(L){
@@ -121,8 +121,11 @@
   function settle(L){
     var S=state(L);if(S.raf||S.touch)return;
     var y=L.scrollTop,T=stops(L);if(!T.length)return;
-    // the item cut off at the top comes back fully into view (the list's very end stays where it is)
-    var above=T.filter(function(t){return t<=y+0.5;}),to=above.length?Math.max.apply(null,above):T[0];
+    // 80% rule: if less than 80% of the top item has scrolled away, bring that item back fully;
+    // if more has gone (only its last 20% still shows), move on to the next item. The very end stays reachable.
+    T=T.slice().sort(function(a,b){return a-b;});
+    var i=0;while(i<T.length-1&&T[i+1]<=y+0.5)i++;
+    var a=T[i],b=i<T.length-1?T[i+1]:a,to=(b>a&&(y-a)/(b-a)>0.8)?b:a;
     if(Math.abs(to-y)<1)return;
     var from=y,d=to-from,dur=Math.max(200,Math.min(340,160+2*Math.abs(d))),t0=null;S.own=true;
     function step(now){
