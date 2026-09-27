@@ -266,7 +266,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.fires.aria}}" onClick="{{sort.fires.pick}}" style="position: relative; color: {{sort.fires.c}}; text-align: left"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -13px; top: 50%; margin-top: -5px; opacity: {{sort.fires.op}}; transform: rotate({{sort.fires.rot}})"><path d="m6 9 6 6 6-6"></path></svg>Active<br>fires</button></span>
       <span></span>
     </div>
-    <div class="wf-snap" style="display: flex; flex-direction: column; gap: 2px; margin: 0 -16px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; transform: translateX({{slX}}%); opacity: {{slO}}; transition: {{slT}}">
+    <div class="wf-snap" data-sort-list="1" style="display: flex; flex-direction: column; gap: 2px; margin: 0 -16px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; transform: translateX({{slX}}%); opacity: {{slO}}; transition: {{slT}}">
       <sc-if value="{{inCounties}}" hint-placeholder-val="{{ false }}">
         <div class="sqwrap" data-sel="{{allState.selA}}" style="display: flex; align-items: center; gap: 0; padding: 4px 0 4px {{lockPadL}}; border-radius: 0; border-bottom: 1px solid rgba(60,60,67,0.14); background-color: {{allState.selBg}}; transition: background-color .15s ease">
           <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: {{backD}}; align-items: center; justify-content: center; width: 36px; height: 36px; margin: 0 2px; flex-shrink: 0; transform: translateY(-9px); border: 0; border-radius: 999px; background: transparent; color: {{allState.arrowC}}; cursor: pointer">
@@ -576,7 +576,7 @@ class Component extends DCLogic {
     const cmp = (a, b) => (act(b) - act(a)) || (SK === 'name' ? a.name.localeCompare(b.name) * SD : ((a[SK] - b[SK]) * SD || (SK === 'cands' ? (a.fires - b.fires) * SD : (a.cands - b.cands) * SD) || a.name.localeCompare(b.name)));
     const q = (s.q || '').trim().toLowerCase();
     const coList = brObj ? brObj.counties.filter((c) => !q || c.name.toLowerCase().indexOf(q) >= 0) : [];
-    const sortCol = (k, label) => { const on = SK === k; return { aria: on ? (SD > 0 ? 'ascending' : 'descending') : 'none', op: on ? 1 : 0, d: on ? 'block' : 'none', c: on ? '#007AFF' : 'inherit', rot: on && SD > 0 ? '180deg' : '0deg', pick: () => this.setState({ sortK: k, sortD: on ? -SD : (k === 'name' ? 1 : -1) }) }; };
+    const sortCol = (k, label) => { const on = SK === k; return { aria: on ? (SD > 0 ? 'ascending' : 'descending') : 'none', op: on ? 1 : 0, d: on ? 'block' : 'none', c: on ? '#007AFF' : 'inherit', rot: on && SD > 0 ? '180deg' : '0deg', pick: () => { this.setState({ sortK: k, sortD: on ? -SD : (k === 'name' ? 1 : -1) }); const L = document.querySelector('[data-sort-list]'); if (L && L.scrollTop > 0) { try { L.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { L.scrollTop = 0; } } } }; };
     const rows = brObj
       ? coList.sort(cmp).map((c) => rowOf(c, selState === brObj.id && selCounty === c.name, () => { this.wfSetScope({ st: brObj.id, co: c.name }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, '', false))
       : atCountries
