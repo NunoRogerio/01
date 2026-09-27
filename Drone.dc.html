@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=19"></script>
-<script src="i18n.js?v=9"></script>
+<script src="i18n.js?v=10"></script>
 <script src="live.js?v=23"></script>
 
 <title>Drone verification</title>
@@ -287,9 +287,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </span>
     </a>
-    <button type="button" class="btn ghost" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">
-        Dismiss
-      </button>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <a href="Alert.dc.html" class="btn ghost" style="height: 48px; font-size: 17px; font-weight: 500">Go back</a>
+      <button type="button" class="btn ghost" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">Dismiss ignition</button>
+    </div>
   </div>
   </div>
 
