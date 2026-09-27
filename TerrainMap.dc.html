@@ -352,28 +352,11 @@ body{margin:0}
   </div>
   </sc-if>
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: 10px; top: {{ctrlBoxTop}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
-    <button type="button" class="mbtn" aria-label="{{optLabel}}" aria-expanded="{{optStr}}" onClick="{{optToggle}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 14px; background: rgba(242,242,247,0.96); color: #000000; box-shadow: 0 4px 16px rgba(0,0,0,0.12); cursor: pointer">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{optIcon}}"></path></svg>
-    </button>
-    <sc-if value="{{optOpen}}" hint-placeholder-val="{{ false }}">
-    <div role="group" aria-label="Map controls" style="display: flex; flex-direction: column; padding: 2px; gap: 0; border-radius: 14px; background: rgba(242,242,247,0.96); border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
-      <button type="button" class="mbtn" aria-label="Zoom in" onClick="{{zoomIn}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.size}}px; height: {{cb.size}}px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+    <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
+      <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 14px; background: rgba(242,242,247,0.96); box-shadow: 0 4px 16px rgba(0,0,0,0.08); color: #3C3C43; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
       </button>
-      <button type="button" class="mbtn" aria-label="Zoom out" onClick="{{zoomOut}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.size}}px; height: {{cb.size}}px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
-      </button>
-      <span style="height: 1px; margin: 2px 9px; background: rgba(60,60,67,0.14)"></span>
-      <button type="button" class="mbtn" aria-label="{{recenterLabel}}" onClick="{{recenter}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.size}}px; height: {{cb.size}}px; border: 0; border-radius: 10px; background-color: transparent; color: #007AFF; cursor: pointer">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="2"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>
-      </button>
-      <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
-        <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.size}}px; height: {{cb.size}}px; border: 0; border-radius: 10px; background-color: transparent; color: #000000; cursor: pointer">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
-        </button>
-      </sc-if>
-    </div>
-      </sc-if>
+    </sc-if>
   </div>
 
   <span style="position: absolute; left: 12px; bottom: {{attrB}}px; font-size: 13px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
@@ -1134,7 +1117,7 @@ class Component extends DCLogic {
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
-        return { legend, legOn: legend.length > 0, legTop: Math.round(this.win().t + 8 + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(this.win().t + 14 + (Number(p.legendOffset) || 0)),
+        return { legend, legOn: legend.length > 0, legTop: Math.round(Math.max(52, this.win().t) + 8 + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 14 + (Number(p.legendOffset) || 0)),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;
