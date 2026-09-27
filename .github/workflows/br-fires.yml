@@ -1,0 +1,36 @@
+name: Brazil fire events (INPE)
+# INPE Programa Queimadas "eventos de fogo": satellite detections grouped into individual fires,
+# refreshed hourly. Converted into a small data/br-fires.json the app can read.
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/br-fires.yml', 'scripts/inpe_*.py']
+permissions:
+  contents: write
+concurrency:
+  group: br-fires
+  cancel-in-progress: true
+jobs:
+  events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download INPE fire events
+        continue-on-error: true
+        run: |
+          B=https://dataserver-coids.inpe.br/queimadas/queimadas/eventos
+          curl -fsS --retry 3 --retry-all-errors --connect-timeout 20 -m 300 -A "ForestFireWatch/1.0 (+https://github.com/NunoRogerio/01)" $B/ativos/eventos_ativos.gpkg -o /tmp/ativos.gpkg
+          curl -fsS --retry 3 --retry-all-errors --connect-timeout 20 -m 300 -A "ForestFireWatch/1.0 (+https://github.com/NunoRogerio/01)" $B/observacao/eventos_observacao.gpkg -o /tmp/observacao.gpkg
+          ls -la /tmp/*.gpkg
+      - name: Describe files
+        run: python3 scripts/inpe_schema.py /tmp/ativos.gpkg /tmp/observacao.gpkg
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/inpe-schema.txt data/br-fires.json 2>/dev/null || git add data/inpe-schema.txt
+          git diff --cached --quiet || (git commit -m "Update Brazil fire events" && git pull --rebase -q && git push)
