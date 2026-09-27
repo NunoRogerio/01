@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=4"></script>
-<script src="live.js?v=17"></script>
+<script src="live.js?v=18"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -204,7 +204,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="text-align: center">Ignition<br>validation level</span>
           <span></span>
         </div>
-        <sc-for list="{{ignList}}" as="it" hint-placeholder-count="6">
+        <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="6">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; height: 60px; padding: 0 0 0 40px; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 20px; font-size: 17px; font-weight: {{it.nameW}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
             <span style="text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
@@ -212,6 +212,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
+        <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
       </div>
     </div>
     <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: 158px; padding: 12px 12px 0 12px; flex-shrink: 0">
@@ -620,6 +621,7 @@ class Component extends DCLogic {
       flF: (() => { const f = s.flip; const mv = !!f && f.f0 !== f.f1; return { still: !mv, moving: mv, from: mv ? f.f0 : NF, to: NF, w: mv && String(f.f0).length > String(NF).length ? f.f0 : NF }; })(),
       plN: N === 1 ? '' : 's', plF: NF === 1 ? '' : 's',
       liveTxt: window.__wfLiveMap ? (window.__wfLiveAt ? 'Live · ' + new Date(window.__wfLiveAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Loading live data') : 'Live data · 2:31 PM', mapSt: SC.sc.st, mapCo: SC.sc.co || '', alertCount: N, hasAlerts: N > 0, hasCard: M > 0, listMaxH: FIT * ROW, listOverflow: M > FIT ? 'auto' : 'visible',
+      ...(() => { const lim = (this.state || {}).listLim || 60, more = ignList.length - lim; return { ignShown: ignList.slice(0, lim), moreD: more > 0 ? 'flex' : 'none', moreTxt: 'Show ' + Math.min(60, Math.max(0, more)) + ' more · ' + Math.max(0, more) + ' left', showMore: () => this.setState({ listLim: lim + 60 }) }; })(),
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
       cardTitle: (N === 1 && NF === 0) ? 'Ignition candidate' : N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'),
       cardSub: N === 0 ? 'Nothing to review' : (N > 1 || NF > 0 ? 'Top: ' + top.place + ' · ' + top.conf + '%' : top.place + ' · ' + top.ago),

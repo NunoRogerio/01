@@ -120,21 +120,23 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   }
   // Brazil: INPE Programa Queimadas fire events (satellite detections grouped into individual fires, hourly).
   // Outlines and fronts live in window.__wfBRGeo (saved in IndexedDB), the rows stay small.
-  var BR_TYPE={'Incêndio':'Wildfire','Queimada':'Burning','Queima':'Burning','Fogo':'Fire'};
+  var BR_TYPE={'Incêndio':'Wildfire','Possível início de incêndio':'Possible fire start','Queimada':'Burning','Queima':'Burning','Fogo':'Fire'};
+  var BR_ST={'Ativo':['Active','hot'],'Observação':['Under observation','watch'],'Nova frente isolada':['New isolated front','warn']};
   function buildBR(js){
     var geo={},out=[];
     (js&&js.events||[]).forEach(function(e){
       var obs=/observ/i.test(e.status||''),xy=toXY(e.lat,e.lon);
       geo[e.id]={ring:e.ring||null,front:e.front||null};
       var pct=function(v){return v==null?null:Math.round(v);};
-      var info={src:'INPE · Programa Queimadas',st:obs?'Em observação':'Ativo',stEn:obs?'Under observation':'Active',tone:obs?'watch':'hot',
+      var S=BR_ST[e.status]||[e.status||'Active','hot'];
+      var info={src:'INPE · Programa Queimadas',st:e.status==='Observação'?'Em observação':(e.status||'Ativo'),stEn:S[0],tone:S[1],
         type:e.type||'',typeEn:BR_TYPE[e.type]||'',startMs:e.start||null,updMs:e.last||null,ha:e.ha||null,
         resolved:obs,heldMs:obs?(e.last||null):null,heldSrc:'last satellite detection',
         place:[e.nMuns>1?e.muns.slice(0,2).join(', ')+(e.nMuns>2?' +'+(e.nMuns-2):''):'',e.state].filter(Boolean).join(' · '),
         facts:[['Active fronts',e.fronts==null?'—':String(e.fronts)],['Days with fire',e.fireDays!=null&&e.days!=null?e.fireDays+' of '+Math.round(e.days):'—'],
           ['Days without rain',e.dry==null?'—':String(Math.round(e.dry))],['Fire risk',e.risk==null?'—':Math.round(e.risk*100)+'%']],
         areas:e.areas||[],nAreas:e.nAreas||0,cover:{defor:pct(e.defor),veg:pct(e.veg),trans:pct(e.trans)}};
-      var note=(obs?'Em observação':'Ativo')+' · '+Math.round(e.ha).toLocaleString('pt-PT')+' ha';
+      var note=(e.status==='Observação'?'Em observação':(e.status||'Ativo'))+' · '+Math.round(e.ha).toLocaleString('pt-PT')+' ha';
       out.push({r:['BRA',e.state,e.id,e.place,note,xy[0],xy[1],null,e.ha,info],w:(obs?0:1e7)+(e.ha||0)});
     });
     window.__wfBRGeo=geo;idbPut(KEY+'|br',geo);

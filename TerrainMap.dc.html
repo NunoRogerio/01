@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=4"></script>
-<script src="live.js?v=17"></script>
+<script src="live.js?v=18"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -210,7 +210,7 @@ body{margin:0}
         </sc-if>
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
           <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none">
-            <circle cx="32" cy="32" r="{{ig.r}}" fill="none" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="{{ig.anim}}" dur="{{ig.dur}}" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="{{ig.dur}}" repeatCount="indefinite"></animate></circle>
+            <circle cx="32" cy="32" r="{{ig.r}}" fill="none" style="display: {{ig.pulseD}}" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="{{ig.anim}}" dur="{{ig.dur}}" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="{{ig.dur}}" repeatCount="indefinite"></animate></circle>
             <polygon points="24,27 40,27 32,41" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
           </svg>
           <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
@@ -811,6 +811,13 @@ class Component extends DCLogic {
     const tip = (o) => { const up = o.top - safeTop, down = WN.b - o.top; return 'tip' + (up < 104 && down > up ? ' dn' : '') + (o.left < 110 ? ' l' : (o.left > W - 110 ? ' r' : '')); };
     const withTip = (o, tt, td) => ({ ...o, tip: tip(o), tt, td });
     const onScreen = () => true;
+    // Draw only what is on screen, and at most the most important markers, so thousands of incidents stay fast.
+    const WN0 = this.win(), vis = (x, y) => { const L = tx + x * s, T = ty + y * s; return L > -40 && L < W + 40 && T > WN0.t - 40 && T < WN0.b + 40; };
+    const CAP = 140, selNow = (this.state || {}).selId;
+    const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g) => vis(g.x, g.y)).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAP) : [];
+    const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
+    const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => vis(q.g.x, q.g.y) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, CAP) : null;
+    const MANY = (IGN_V ? IGN_V.length : 0) + FIRES_V.length > 40;
     const mode = p.mode || 'risk';
     const isRisk = mode === 'risk';
     const isPin = mode === 'pin';
@@ -993,7 +1000,7 @@ class Component extends DCLogic {
         };
       })(),
       otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
-      fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => {
+      fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
         const small = x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
@@ -1001,11 +1008,11 @@ class Component extends DCLogic {
           ? { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' }
           : { zl: +x0.toFixed(1), zt: +y0.toFixed(1), zw: +(x1 - x0).toFixed(1), zh: +(y1 - y0).toFixed(1), rad: '0', flameD: 'none', clip: "path('M" + sp.map((q) => (q[0] - x0).toFixed(1) + ' ' + (q[1] - y0).toFixed(1)).join(' L') + " Z')" };
         const anc = small ? { left: +ox.toFixed(1), top: +(oy - 14).toFixed(1) } : { left: +((x0 + x1) / 2).toFixed(1), top: +y0.toFixed(1) };
-        return withTip({ ...anc, ...zone, aria: 'Active fire ' + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, 'Active fire · ' + g.id, g.place + '. ' + (g.note || '') + '.\nTap to see forces dispatched.');
+        return withTip({ ...anc, ...zone, _g: g, aria: 'Active fire ' + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, 'Active fire · ' + g.id, g.place + '. ' + (g.note || '') + '.\nTap to see forces dispatched.');
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
-      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? p.fires.map((g) => this.fireBurn(g)) : [],
+      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(stKey && ((window.__wfStations || {})[stKey] || []).length) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
@@ -1018,24 +1025,24 @@ class Component extends DCLogic {
           optToggle: () => { window.__wfCtrlOpen = !window.__wfCtrlOpen; this.forceUpdate(); } }; })(),
       linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)),
       recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
-      ignMarks: LY.cands && (isRisk && on(p.linkCandidate)) ? ((list) => list.map((g, gi) => {
+      ignMarks: LY.cands && (isRisk && on(p.linkCandidate)) ? ((list) => (IGN_V ? IGN_V.map((q) => [q.g, q.i]) : list.map((g, i) => [g, i])).map(([g, gi]) => {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
         const sel = g.id === selId;
         const hi = g.conf >= 70, mid = g.conf >= 50;
         const c = window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : (mid ? '#0A6FDB' : '#48484A'));
         return withTip(at(g.x, g.y, {
           c, rim: hi ? '#FFFFFF' : (mid ? '#FFFFFF' : '#FFFFFF'), r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
-          sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
+          pulseD: MANY ? 'none' : 'inline', _id: g.id, sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
           aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent',
           pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
         }), g.place + ' · ' + g.id, g.conf + '% likelihood · ' + g.src + '.\nTap to review.');
-      }))(Array.isArray(p.ignitions) ? p.ignitions : [{ id: 'IC-0924-07', x: 610, y: 290, conf: 87, place: 'North ridge', src: '3 sources' }, { id: 'IC-0924-08', x: 842, y: 252, conf: 54, place: 'East canyon', src: 'Tower T-11' }]) : []
+      }))(IGN_ALL || [{ id: 'IC-0924-07', x: 610, y: 290, conf: 87, place: 'North ridge', src: '3 sources' }, { id: 'IC-0924-08', x: 842, y: 252, conf: 54, place: 'East canyon', src: 'Tower T-11' }]) : []
     };
     return this.withPop(OUT);
   }
   // Glide the tapped fire toward the top of the map so its card opens below it with room to breathe.
   liftFire(key) {
-    const g = Array.isArray(this.props.fires) ? this.props.fires[key] : null, m = (this._fireMarks || [])[key];
+    const m = (this._fireMarks || [])[key], g = m ? m._g : null;
     if (!g || !g.info || !m) return;
     const target = this.win().t + 64 + (Number(this.props.legendOffset) || 0), y = Number(m.top) || 0;
     if (Math.abs(y - target) <= 24) return;
@@ -1103,17 +1110,17 @@ class Component extends DCLogic {
     const P = (this.state || {}).pop, strip = (t) => String(t || '').replace(/\n?Tap to [^\n]*\.?$/, '').trim();
     const sel = (kind, key) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault(); this.setState({ pop: { kind, key } }); };
     this._fireMarks = OUT.fireMarks || [];
-    (OUT.fireMarks || []).forEach((m, i) => { m.sel = sel('fire', i); });
-    (OUT.ignMarks || []).forEach((m, i) => { m.sel = sel('ign', i); });
+    (OUT.fireMarks || []).forEach((m, i) => { m.sel = sel('fire', m._g ? m._g.id : i); });
+    (OUT.ignMarks || []).forEach((m, i) => { m.sel = sel('ign', m._id || i); });
     (OUT.stations || []).forEach((m, i) => { m.sel = sel('st', i); });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ pop: null }); };
     OUT.hasPop = false; OUT.pop = { tt: '', td: '', left: 0, top: 0, ty: '0', hasView: false, href: '', go: null };
     OUT.hasFc = false; OUT.fc = { time: [], forces: [] };
     if (!P) return OUT;
-    const L = { fire: OUT.fireMarks, ign: OUT.ignMarks, st: OUT.stations }[P.kind] || [], m = L[P.key];
+    const L = { fire: OUT.fireMarks, ign: OUT.ignMarks, st: OUT.stations }[P.kind] || [], m = L.find((q) => (q._g && q._g.id === P.key) || q._id === P.key) || (typeof P.key === 'number' ? L[P.key] : null);
     if (!m) return OUT;
     const W = this.W(), H = this.H(), x = Number(m.left) || 0, y = Number(m.top) || 0, above = y > 230;
-    const g = P.kind === 'fire' && Array.isArray(this.props.fires) ? this.props.fires[P.key] : null;
+    const g = P.kind === 'fire' ? (m._g || null) : null;
     if (g && g.info) { OUT.hasFc = true; OUT.fc = this.fireCard(g, m, x, y); return OUT; }
     OUT.hasPop = true;
     OUT.pop = { tt: m.tt || '', td: strip(m.td), left: Math.round(Math.max(8, Math.min(W - 248, x - 120))), top: Math.round(above ? y - 22 : y + 26), ty: above ? '-100%' : '0',
