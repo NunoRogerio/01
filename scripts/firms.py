@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 """Satellite hotspots for Forest Fire Watch.
 
 Writes two files the app reads from its own site:

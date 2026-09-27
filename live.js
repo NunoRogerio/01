@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 // Live fires for the prototype.
 //  - US: NIFC WFIGS current wildland fire incidents (10 western states in the app)
 //  - Portugal: Fogos.pt (relays ANEPC / Proteção Civil occurrences); districts act as "counties"

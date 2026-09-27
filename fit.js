@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 // Scale the 390×844 phone screen to fill whatever phone opens it.
 // The designs keep a blank strip at the top for the status bar. The phone already reserves its own
 // status bar (Safari and the home-screen app), so that strip is cropped here: the app then fills the

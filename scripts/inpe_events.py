@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 """Brazil fire events for Forest Fire Watch.
 
 Reads INPE Programa Queimadas "eventos de fogo" GeoPackages (active + under observation) and writes
