@@ -14,8 +14,9 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=19"></script>
-<script src="i18n.js?v=12"></script>
+<script src="fit.js?v=20"></script>
+<script src="prefs.js?v=1"></script>
+<script src="i18n.js?v=13"></script>
 <script src="live.js?v=23"></script>
 
 <title>Incidents</title>
@@ -181,19 +182,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 133px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
-  <!-- Top blade: a grabber at its bottom edge says it expands -->
-  <header class="fade" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px">
+  <!-- Top blade: the area on the left, when the data was updated in the middle, the profile photo on the right (opens preferences);
+       a grabber at its bottom edge says it expands -->
+  <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
-    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
         <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
       </span>
       <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
-      <span aria-hidden="true" style="position: absolute; left: 50%; bottom: 0; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span>
     </button>
-    <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.08); color: #1E7A34; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
-      <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
-    </span>
+    <span style="flex: 1 1 auto; min-width: 0; margin-top: 17px; font-size: 15px; line-height: 20px; color: #545458; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{liveTxt}}</span>
+    <button type="button" class="opt" onClick="{{openPrefs}}" aria-haspopup="dialog" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
+    <span aria-hidden="true" style="position: absolute; left: 50%; bottom: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3); pointer-events: none"></span>
   </header>
   </div>
 
@@ -243,15 +244,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="scrim" onClick="{{closeScope}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{scOp}}; pointer-events: {{scPE}}"></div>
   <section role="dialog" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 56px; bottom: 0; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; padding-left: {{padL}}px; background: #F2F2F7; box-shadow: 0 24px 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px; flex-shrink: 0">
-      <button type="button" class="opt" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <button type="button" class="opt" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
           <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
         </span>
         <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
       </button>
-      <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.08); color: #1E7A34; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
-        <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
-      </span>
+      <span style="flex: 1 1 auto; min-width: 0; margin-top: 17px; font-size: 15px; line-height: 20px; color: #545458; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{liveTxt}}</span>
+      <button type="button" class="opt" onClick="{{openPrefs}}" aria-haspopup="dialog" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; padding: 4px 16px 24px; opacity: {{scInOp}}; transform: translateY({{scInY}}); transition: opacity .3s ease {{scInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{scInDelay}}">
     <h2 id="scopeTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">{{panelTitle}}</h2>
@@ -317,15 +317,50 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; line-height: 20px">Fire simulator</span><span style="font-size: 14px; line-height: 16px; color: #545458">Play a fire scenario and command the forces</span></span>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C4C4C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
     </a>
-    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin: 0; padding: 8px 4px 0; border-top: 1px solid rgba(60,60,67,0.14)">
-      <span style="flex-grow: 1; min-width: 0; font-size: 15px; line-height: 18px; color: #545458"><span style="display: block; font-size: 17px; line-height: 20px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{acct.name}}</span>{{acct.area}}</span>
-      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; height: 44px; padding: 0 4px; font-size: 17px; color: #0062CC; text-decoration: none; white-space: nowrap">Sign out</a>
     </div>
-    <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 16px 0 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #545458; white-space: nowrap">
+    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 28px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
+  </section>
+  <!-- (The region selector's bottom grabber sits 28px above the screen edge, clear of the iOS home indicator.) -->
+  <!-- Preferences: grows out of the profile photo and folds back into it; the close button turns a quarter circle first -->
+  <section role="dialog" aria-modal="true" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 0; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; clip-path: {{pfClip}}; -webkit-clip-path: {{pfClip}}; opacity: {{pfOp}}; visibility: {{pfVis}}; pointer-events: {{pfPE}}; transition: clip-path {{pfDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{pfDur}} cubic-bezier(.3,.9,.25,1), opacity {{pfOpT}}, visibility 0s linear {{pfVisDelay}}">
+    <h2 id="pfTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Preferences</h2>
+    <div style="position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; height: 62px; padding: 0 64px; opacity: {{pfInOp}}; transition: opacity .3s ease {{pfInDelay}}">
+    <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #545458; white-space: nowrap">
         <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#545458" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#545458" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; font-size: 16px">Forest Fire Watch</span>
       </span>
+      <button type="button" class="opt" onClick="{{closePrefs}}" aria-label="Close preferences" style="position: absolute; right: 16px; top: 11px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{pfXRot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
     </div>
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 4px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
+    <div class="wf-snap" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 8px 16px 40px; opacity: {{pfInOp}}; transform: translateY({{pfInY}}); transition: opacity .3s ease {{pfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pfInDelay}}">
+      <!-- The profile's mini card, as on the login screen -->
+      <div style="display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; padding: 12px 16px; border-radius: 14px; background: #FFFFFF">
+        <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 8px; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden">{{me.code}}<span style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></span>
+        <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+          <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{me.name}}</span>
+          <span style="font-size: 15px; line-height: 19px; color: #3C3C43">{{me.title}}</span>
+          <span style="font-size: 15px; line-height: 19px; color: #545458">{{me.org}} · {{me.access}}</span>
+        </span>
+      </div>
+      <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
+        <div role="radiogroup" aria-label="{{g.label}}" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
+          <span aria-hidden="true" style="margin-left: 4px; font-size: 15px; font-weight: 600; line-height: 19px; color: #545458">{{g.label}}</span>
+          <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 36px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
+            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 2px; bottom: 2px; left: 2px; width: {{g.thumbW}}; border-radius: 8px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); transform: translateX({{g.thumbX}}); transition: transform .4s cubic-bezier(.3,.9,.25,1)"></span>
+            <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
+              <button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 8px; background: transparent; color: #000000; font: inherit; font-size: 14px; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <!-- Not linked yet -->
+      <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
+        <button type="button" class="opt" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1">Connect data sources</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
+        <span aria-hidden="true" style="height: 1px; margin-left: 16px; background: rgba(60,60,67,0.14)"></span>
+        <button type="button" class="opt" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1">Invite team members</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
+      </div>
+      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; height: 50px; border-radius: 12px; color: #0062CC; font-size: 17px; text-decoration: none">Sign out</a>
+    </div>
   </section>
   </div>
 </div>
@@ -511,6 +546,31 @@ class Component extends DCLogic {
     return (window.__wfWorld = { states, cands: C, fires });
   }
   wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; }
+  // Preferences panel: the signed-in person, theme and text size (applied app-wide by prefs.js) and language.
+  wfPrefVals() {
+    const s = this.state || {}, P = window.__wfPrefs, pf = !!s.pf;
+    const me = (P && P.person) || { code: 'NR', name: 'Nuno Rogerio', title: 'Platform administrator', org: 'Forest Fire Watch', access: 'All countries', photo: '', lang: 'en' };
+    const theme = P ? P.get('theme') : (s.theme || 'light'), text = P ? P.get('text') : (s.text || 'normal'), lang = window.__wfLang || 'en';
+    const setPref = (k, v) => { if (P) P.set(k, v); this.setState({ [k]: v }); };
+    const group = (label, cur, opts, pick) => { const i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
+      label, cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 4px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
+      opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, pick: () => { if (o[0] !== cur) pick(o[0]); } })) }; };
+    const at = 'calc(100% - 36px) 87px';
+    return {
+      me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
+      pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none',
+      pfClip: pf ? 'circle(150% at ' + at + ')' : 'circle(20px at ' + at + ')', pfDur: pf ? '.55s' : '.6s',
+      pfOp: pf ? 1 : 0, pfOpT: pf ? '.15s ease' : '.3s ease .35s', pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.7s',
+      pfInOp: pf ? 1 : 0, pfInY: pf ? '0px' : '-12px', pfInDelay: pf ? '.15s' : '0s', pfXRot: s.pfSpin ? '90deg' : '0deg',
+      openPrefs: () => this.setState({ pf: true, pfSpin: false }),
+      closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); }, 280); },
+      pfGroups: [
+        group('Language', lang, me.lang === 'pt' ? [['pt', 'Português'], ['en', 'English']] : [['en', 'English']], (l) => { if (window.__wfSetLang) window.__wfSetLang(l); }),
+        group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
+        group('Text size', text, [['condensed', 'Condensed'], ['normal', 'Normal'], ['comfortable', 'Comfortable']], (v) => setPref('text', v))
+      ]
+    };
+  }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
   wfLock() { return ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[this.wfRole()] || null; }
   wfSetScope(v) { window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); try { window.sessionStorage.setItem('wf-scope', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -683,13 +743,14 @@ class Component extends DCLogic {
       simD: 'none', /* fire simulator hidden for now; set to 'flex' to bring it back */ backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : brObj && brObj.id === 'AMZ' ? 'BRA' : '@', q: '' })), acct: ({ amz: { name: 'Rafael Nogueira · Prevfogo Amazônia', area: 'Ibama · Access: Amazônia Legal only' }, admin: { name: 'Nuno Rogerio · Platform administrator', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
       signOut: () => { try { window.localStorage.removeItem('wf-role'); window.localStorage.removeItem('wf-last-user'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
       backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : brObj && brObj.id === 'AMZ' ? 'Back to Brazil' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
-      scOp: 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? '0px' : 'calc(100% - 68px)', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
+      scOp: 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? '0px' : 'calc(100% - 77px)', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
       scopeStr: scOpen ? 'true' : 'false', scopeRot: scOpen ? '180deg' : '0deg',
       scopeAria: 'Area: ' + scope.title + ', ' + scope.parent + '. Change area',
       fireCount: NF, fireChips: FIRES.map((f) => ({ ...f, aria: 'Active fire ' + f.id + ', ' + f.place + '. ' + f.note })), fireMarks: FIRES, flN: (() => { const f = s.flip; const mv = !!f && f.n0 !== f.n1; return { still: !mv, moving: mv, from: mv ? f.n0 : N, to: N, w: mv && String(f.n0).length > String(N).length ? f.n0 : N }; })(),
       flF: (() => { const f = s.flip; const mv = !!f && f.f0 !== f.f1; return { still: !mv, moving: mv, from: mv ? f.f0 : NF, to: NF, w: mv && String(f.f0).length > String(NF).length ? f.f0 : NF }; })(),
       plN: N === 1 ? '' : 's', plF: NF === 1 ? '' : 's',
-      liveTxt: window.__wfLiveMap ? (window.__wfLiveAt ? 'Live · ' + new Date(window.__wfLiveAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Loading live data') : 'Live data · 2:31 PM', mapSt: SC.sc.st, mapCo: SC.sc.co || '', alertCount: N, hasAlerts: N > 0, hasCard: M > 0, listMaxH: FIT * ROW, listOverflow: M > FIT ? 'auto' : 'visible',
+      liveTxt: window.__wfLiveMap ? (window.__wfLiveAt ? 'Updated ' + new Date(window.__wfLiveAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Loading…') : 'Updated 2:31 PM',
+      ...this.wfPrefVals(), mapSt: SC.sc.st, mapCo: SC.sc.co || '', alertCount: N, hasAlerts: N > 0, hasCard: M > 0, listMaxH: FIT * ROW, listOverflow: M > FIT ? 'auto' : 'visible',
       ...(() => { const lim = (this.state || {}).listLim || 60, more = ignList.length - lim; return { ignShown: ignList.slice(0, lim), moreD: more > 0 ? 'flex' : 'none', moreTxt: 'Show ' + Math.min(60, Math.max(0, more)) + ' more · ' + Math.max(0, more) + ' left', showMore: () => this.setState({ listLim: lim + 60 }) }; })(),
       ff,
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,

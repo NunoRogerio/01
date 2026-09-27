@@ -4,9 +4,10 @@
 (function(){
   // For now the language follows the profile: Rita Cardoso (Portugal) sees the app in Portuguese; everyone else in English.
   var lang='en';
-  try{if(localStorage.getItem('wf-role')==='pt')lang='pt';}catch(e){}
+  // The profile sets the default; the preferences panel can switch a Portuguese profile to English (kept per profile).
+  try{var role=localStorage.getItem('wf-role')||'';if(role==='pt'&&localStorage.getItem('wf-lang-'+role)!=='en')lang='pt';}catch(e){}
   window.__wfLang=lang;
-  window.__wfSetLang=function(l){try{localStorage.setItem('wf-lang',l);}catch(e){}location.reload();};
+  window.__wfSetLang=function(l){try{localStorage.setItem('wf-lang-'+(localStorage.getItem('wf-role')||''),l);}catch(e){}location.reload();};
   if(lang!=='pt')return;
   try{document.documentElement.lang='pt-PT';}catch(e){}
 
@@ -16,7 +17,7 @@
     'Choose a profile':'Escolha um perfil','Choose a demo profile':'Escolha um perfil de demonstração','All features enabled':'Todas as funcionalidades ativas','contained':'contido','No containment estimate yet':'Ainda sem previsão de contenção','ANEPC gives only the time of the latest change: the counter runs from that update':'A ANEPC só indica a hora da última mudança: o contador conta a partir dessa atualização','since the latest update · ':'desde a última atualização · ','Filled in when you choose a profile':'Preenchida quando escolher um perfil','Tap Username to choose a demo profile.':'Toque em Utilizador para escolher um perfil de demonstração.',
     'Demo login to show user roles: each profile limits which areas a user can see and which features they can use.':'Acesso de demonstração para mostrar funções de utilizador: cada perfil limita as áreas que cada utilizador vê e as funcionalidades que pode usar.',
     'Demo users · each role sets the areas and features':'Utilizadores de demonstração · cada função define as áreas e as funcionalidades',
-    'Sign out':'Terminar sessão','Close':'Fechar','View':'Ver','Cancel':'Cancelar','Apply':'Aplicar','Done':'Concluído','Undo':'Desfazer','Adjust':'Ajustar','Now':'Agora','Not yet':'Ainda não',
+    'Sign out':'Terminar sessão','Preferences':'Preferências','Close preferences':'Fechar preferências','Language':'Idioma','Theme':'Tema','Light':'Claro','Dark':'Escuro','Text size':'Tamanho do texto','Condensed':'Compacto','Normal':'Normal','Comfortable':'Confortável','Connect data sources':'Ligar fontes de dados','Invite team members':'Convidar membros da equipa','Portugal only':'Apenas Portugal','Loading…':'A carregar…','Close':'Fechar','View':'Ver','Cancel':'Cancelar','Apply':'Aplicar','Done':'Concluído','Undo':'Desfazer','Adjust':'Ajustar','Now':'Agora','Not yet':'Ainda não',
     'Loading live data':'A carregar dados em direto','Loading live fires…':'A carregar incêndios em direto…','Calculating…':'A calcular…','Estimating…':'A estimar…',
     'Platform administrator':'Administrador da plataforma','Deputy Director, Fire Protection':'Diretor-adjunto, Proteção contra Incêndios','State Forester Firewarden':'Engenheira Florestal do Estado',
     'Leads the national wildfire command. Sets the national alert level, moves reinforcement groups and aerial means between districts, and decides when a fire goes to national command.':'Lidera o comando nacional de incêndios rurais. Define o nível de alerta nacional, movimenta grupos de reforço e meios aéreos entre distritos e decide quando um incêndio passa para o comando nacional.',
@@ -101,7 +102,7 @@
     [/^Active ([\dhm ]+)$/,'Ativo há $1'],
     [/^Reported by (.+)$/,'Reportado por $1'],[/^Started (.+)$/,'Início $1'],[/^Expected containment ~(.+)$/,'Contenção prevista ~$1'],[/^Held since (.+)$/,'Dominado desde $1'],[/^Held for (.+)$/,'Dominado há $1'],[/^Active for (.+)$/,'Ativo durante $1'],[/^Edge fully contained$/,'Perímetro totalmente contido'],
     [/^Started (.+?) · held (by )?(.+?)( · now (.+))?$/,function(m,a,by,b,x,st){return 'Início '+a+' · dominado '+(by?'até às ':'às ')+b+(st?' · agora '+(X[st.charAt(0).toUpperCase()+st.slice(1)]||st).toLowerCase():'');}],
-    [/^(PT-\S+|BR-\S+|\S+-\S+) · (.+) · (\d+) units$/,'$1 · $2 · $3 meios'],[/^Live · (.+)$/,'Em direto · $1'],[/^Contained (\d+)%$/,'Contido a $1%'],[/^Reported (.+)$/,'Reportado $1'],
+    [/^(PT-\S+|BR-\S+|\S+-\S+) · (.+) · (\d+) units$/,'$1 · $2 · $3 meios'],[/^Live · (.+)$/,'Em direto · $1'],[/^Updated (.+)$/,'Atualizado $1'],[/^Contained (\d+)%$/,'Contido a $1%'],[/^Reported (.+)$/,'Reportado $1'],
     [/^© (\d+) Nuno Rogerio\. All rights reserved\.$/,'© $1 Nuno Rogerio. Todos os direitos reservados.'],[/^Photo: (.+) \/ Unsplash$/,'Fotografia: $1 / Unsplash'],
     [/^(\d) · Select station$/,'$1 · Escolher quartel'],[/^(\d) · Configure dispatch$/,'$1 · Configurar despacho'],
     [/^(\d+) of (\d+) active fires in the Legal Amazon burn mostly on land cleared in recent years, the clearing-then-burning pattern that turns forest into pasture and cropland\.$/,'$1 de $2 incêndios ativos na Amazônia Legal ardem sobretudo em terra desmatada nos últimos anos, o padrão de desmatar e queimar que transforma floresta em pasto e cultivo.'],
