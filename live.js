@@ -11,7 +11,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v14', TTL=5*60*1000;
+  var KEY='wf-live-fires-v15', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -41,7 +41,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var S=p.FireOutDateTime?['Out','Fire out','off']:p.ControlDateTime?['Controlled','Controlled','watch']:(p.ContainmentDateTime||(pc!=null&&pc>=100))?['Contained','Contained','ok']:['Active',pc?Math.round(pc)+'% contained':'Not contained',pc>=50?'amber':'hot'];
       var info={src:'NIFC · WFIGS',st:S[0],stEn:S[1],tone:S[2],pc:pc!=null?Math.round(pc):null,beh:p.FireBehaviorGeneral||'',cause:p.FireCause||'',
         startMs:p.FireDiscoveryDateTime||null,updMs:p.ModifiedOnDateTime_dt||null,ac:p.IncidentSize!=null?Math.round(p.IncidentSize):null,ha:p.IncidentSize?+(p.IncidentSize*0.4047).toFixed(1):null,
-        resolved:S[0]!=='Active',heldMs:p.ContainmentDateTime||p.ControlDateTime||p.FireOutDateTime||null,heldSrc:'containment report',place:[p.POOCounty?p.POOCounty+' County':'',st].filter(Boolean).join(' · ')};
+        resolved:S[0]!=='Active',heldMs:p.ContainmentDateTime||p.ControlDateTime||p.FireOutDateTime||null,heldSrc:'containment report',tCont:p.ContainmentDateTime||null,tCtrl:p.ControlDateTime||null,tOut:p.FireOutDateTime||null,place:[p.POOCounty?p.POOCounty+' County':'',st].filter(Boolean).join(' · ')};
       out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1],res,info.ha,info,p.POOCity?title(p.POOCity):''],w:p.IncidentSize||0});
     });
     return out;
@@ -64,7 +64,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var info={src:'Fogos.pt · ANEPC',st:S[0],stEn:S[1],tone:S[2],type:i.natureza||'',typeEn:PT_TYPE[nat]||'',typeCode:code,
         startMs:i.dateTime&&i.dateTime.sec?i.dateTime.sec*1000:(i.created&&i.created.sec?i.created.sec*1000:null),updMs:i.updated&&i.updated.sec?i.updated.sec*1000:null,
         ha:BA&&BA.total?Math.round(BA.total*10)/10:null,burn:BA&&BA.total?{forest:BA.povoamento||0,scrub:BA.mato||0,farm:BA.agricola||0}:null,
-        resolved:sc>=8,heldMs:sc>=8&&i.updated&&i.updated.sec?i.updated.sec*1000:null,heldSrc:'last status update',place:[i.concelho?title(i.concelho):'',d].filter(Boolean).join(' · ')};
+        resolved:sc>=8,heldMs:sc>=8&&i.updated&&i.updated.sec?i.updated.sec*1000:null,heldSrc:'last status update',sc:sc,place:[i.concelho?title(i.concelho):'',d].filter(Boolean).join(' · ')};
       out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1],res,info.ha,info,i.freguesia&&i.concelho?title(i.concelho):''],w:man+air*20});
     });
     return out;

@@ -13,7 +13,7 @@
   // ---- exact phrases -----------------------------------------------------------------------------------------
   var X={
     'Forest Fire Watch':'Forest Fire Watch','Log in':'Entrar','Log in to your account':'Entre na sua conta','Username':'Utilizador','Password':'Palavra-passe',
-    'Choose a profile':'Escolha um perfil','Choose a demo profile':'Escolha um perfil de demonstração','All features enabled':'Todas as funcionalidades ativas','Filled in when you choose a profile':'Preenchida quando escolher um perfil','Tap Username to choose a demo profile.':'Toque em Utilizador para escolher um perfil de demonstração.',
+    'Choose a profile':'Escolha um perfil','Choose a demo profile':'Escolha um perfil de demonstração','All features enabled':'Todas as funcionalidades ativas','contained':'contido','No containment estimate yet':'Ainda sem previsão de contenção','ANEPC gives only the time of the latest change: the counter runs from that update':'A ANEPC só indica a hora da última mudança: o contador conta a partir dessa atualização','since the latest update · ':'desde a última atualização · ','Filled in when you choose a profile':'Preenchida quando escolher um perfil','Tap Username to choose a demo profile.':'Toque em Utilizador para escolher um perfil de demonstração.',
     'Demo login to show user roles: each profile limits which areas a user can see and which features they can use.':'Acesso de demonstração para mostrar funções de utilizador: cada perfil limita as áreas que cada utilizador vê e as funcionalidades que pode usar.',
     'Demo users · each role sets the areas and features':'Utilizadores de demonstração · cada função define as áreas e as funcionalidades',
     'Sign out':'Terminar sessão','Close':'Fechar','View':'Ver','Cancel':'Cancelar','Apply':'Aplicar','Done':'Concluído','Undo':'Desfazer','Adjust':'Ajustar','Now':'Agora','Not yet':'Ainda não',
@@ -99,7 +99,7 @@
     [/^([\d.,]+) km to scene$/,'A $1 km do local'],[/^On route · ([\d.,]+) min to scene$/,'A caminho · a $1 min do local'],[/^En route · arriving in (.+)$/,'A caminho · chega em $1'],
     [/^([\d.,]+) of ([\d.,]+) still free$/,'$1 de $2 ainda livres'],[/^([\d.,]+) free crews$/,'$1 equipas livres'],
     [/^Active ([\dhm ]+)$/,'Ativo há $1'],
-    [/^Reported by (.+)$/,'Reportado por $1'],[/^Held since (.+)$/,'Dominado desde $1'],[/^Held for (.+)$/,'Dominado há $1'],[/^Active for (.+)$/,'Ativo durante $1'],[/^Edge fully contained$/,'Perímetro totalmente contido'],
+    [/^Reported by (.+)$/,'Reportado por $1'],[/^Started (.+)$/,'Início $1'],[/^Expected containment ~(.+)$/,'Contenção prevista ~$1'],[/^Held since (.+)$/,'Dominado desde $1'],[/^Held for (.+)$/,'Dominado há $1'],[/^Active for (.+)$/,'Ativo durante $1'],[/^Edge fully contained$/,'Perímetro totalmente contido'],
     [/^Started (.+?) · held (by )?(.+?)( · now (.+))?$/,function(m,a,by,b,x,st){return 'Início '+a+' · dominado '+(by?'até às ':'às ')+b+(st?' · agora '+(X[st.charAt(0).toUpperCase()+st.slice(1)]||st).toLowerCase():'');}],
     [/^(PT-\S+|BR-\S+|\S+-\S+) · (.+) · (\d+) units$/,'$1 · $2 · $3 meios'],[/^Live · (.+)$/,'Em direto · $1'],[/^Contained (\d+)%$/,'Contido a $1%'],[/^Reported (.+)$/,'Reportado $1'],
     [/^© (\d+) Nuno Rogerio\. All rights reserved\.$/,'© $1 Nuno Rogerio. Todos os direitos reservados.'],[/^Photo: (.+) \/ Unsplash$/,'Fotografia: $1 / Unsplash'],
