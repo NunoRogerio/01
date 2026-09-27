@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=23"></script>
+<script src="fit.js?v=24"></script>
 <script src="prefs.js?v=3"></script>
 <script src="i18n.js?v=25"></script>
 <script src="live.js?v=23"></script>
@@ -333,7 +333,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  componentDidMount() { this._wfSync = () => this.forceUpdate(); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentDidMount() { this._wfSync = () => this.forceUpdate(); window.addEventListener('pageshow', (ev) => { if (ev && ev.persisted) { this._leaving = false; this._gone = false; this.forceUpdate(); } }); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { if (this._tick) clearInterval(this._tick); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -544,6 +544,7 @@ class Component extends DCLogic {
     const fa = !!s.fa;
     const SCv = this.wfScoped();
     const want = this.wfVerifyId();
+    if (want && !SCv.cands.some((c) => c.id === want) && this.wfWorld().cands.some((c) => c.id === want) && !this._gone && !this._leaving) { this._gone = true; setTimeout(() => { if (window.__wfBackOrHome) window.__wfBackOrHome(); }, 0); }
     const vc = SCv.cands.find((c) => c.id === want) || SCv.cands[0] || SCv.W.cands.find((c) => c.id === (want || 'IC-0924-07')) || SCv.W.cands[0] || { id: '', place: '' };
     const vId = vc.id, vPlace = vc.place;
     return { ...this.droneStatus(), goHome: () => { const t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { home: t, fromList: false }); try { window.sessionStorage.setItem('wf-home', String(t)); window.sessionStorage.setItem('wf-list', '0'); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} },
@@ -553,9 +554,9 @@ class Component extends DCLogic {
       tempAria: 'Peak temperature ' + fmt1(tempVals[0]) + ' ' + tempUnit + '. Switch to ' + (U.temp === 'C' ? 'Fahrenheit' : 'Celsius'),
       toggleArea: () => this.wfToggleUnit('area'), toggleTemp: () => this.wfToggleUnit('temp'),
       openFa: () => this.setState({ fa: true }), closeFa: () => this.setState({ fa: false }),
-      confirmFa: () => { if (this._faDone) return; this._faDone = true; this.setState({ ret: true }); const d = this.wfDismissed(); if (!d[vId]) { d[vId] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._faDone = false; this.setState({ fa: false }); }, 800); },
+      confirmFa: () => { if (this._faDone) return; this._leaving = true; this._faDone = true; this.setState({ ret: true }); const d = this.wfDismissed(); if (!d[vId]) { d[vId] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._faDone = false; this.setState({ fa: false }); }, 800); },
       faY: fa ? '0%' : '105%', faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
-      vId, vPlace, confirmHere: () => { this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
+      vId, vPlace, confirmHere: () => { this._leaving = true; this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
       setVid: this.setVid, full: !!s.full, openFull: () => this.setState({ full: true }), closeFull: () => this.setState({ full: false }),
       thermalOp: isThermal ? 1 : 0,
       visualOp: isThermal ? 0 : 1,

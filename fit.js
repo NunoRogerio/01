@@ -256,6 +256,8 @@
     var ref='';try{ref=document.referrer?new URL(document.referrer).origin:'';}catch(x){}
     if(history.length>1&&ref===location.origin){e.preventDefault();setTimeout(function(){history.back();},0);}
   },false);
+  // A screen returned to that no longer applies (its candidate was confirmed or dismissed) steps back once more.
+  window.__wfBackOrHome=function(){var ref='';try{ref=document.referrer?new URL(document.referrer).origin:'';}catch(x){}if(history.length>1&&ref===location.origin){history.back();return;}try{location.replace('Main.dc.html');}catch(x){location.href='Main.dc.html';}};
   // coming back (from the phone's cache): screens refresh their live state
   addEventListener('pageshow',function(ev){if(ev.persisted){try{dispatchEvent(new Event('wf-sync'));}catch(x){}}});
 })();

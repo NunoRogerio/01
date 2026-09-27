@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=23"></script>
+<script src="fit.js?v=24"></script>
 <script src="prefs.js?v=3"></script>
 <script src="i18n.js?v=25"></script>
 <script src="live.js?v=23"></script>
@@ -404,9 +404,9 @@ class Component extends DCLogic {
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   wfFocus() { let f = null; try { f = window.sessionStorage.getItem('wf-focus'); window.sessionStorage.removeItem('wf-focus'); } catch (e) {} const m = window.__wfMem || {}; f = f || m.focus; m.focus = null; if (f) { this.setState({ focusId: f, tab: null, confirm: false, full: false }); return true; } return false; }
-  componentDidMount() { this.wfFocus(); this._wfSync = () => { if (!this.wfFocus()) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentDidMount() { this.wfFocus(); this._wfSync = () => { if (!this.wfFocus()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted) { this._toFire = false; this._redir = false; this.forceUpdate(); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentDidUpdate() { this.wfClearBg(!!this._showClear); }
-  componentWillUnmount() { this.wfClearBg(false, true); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentWillUnmount() { this.wfClearBg(false, true); try { window.removeEventListener('pageshow', this._wfShow); } catch (e) {} try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   // The all-clear screen sits on the same forest photos as the login: each slowly zooms in, and they dissolve into one another.
@@ -720,7 +720,7 @@ class Component extends DCLogic {
     const showClear = n === 0 && !!this._cleared;
     this._showClear = showClear;
     // Not when the last candidate was just confirmed: the fire screen opens instead.
-    if (n === 0 && !this._cleared && ready && !this._redir && !this._toFire) { this._redir = true; setTimeout(() => { this.wfNav('back'); try { window.location.replace('Main.dc.html'); } catch (e) { window.location.href = 'Main.dc.html'; } }, 0); }
+    if (n === 0 && !this._cleared && ready && !this._redir && !this._toFire) { this._redir = true; setTimeout(() => { this.wfNav('back'); if (window.__wfBackOrHome) window.__wfBackOrHome(); else try { window.location.replace('Main.dc.html'); } catch (e) { window.location.href = 'Main.dc.html'; } }, 0); }
     if (n > 0) this._redir = false;
     const dismiss = () => { this._cleared = true; this.wfSave({ ...dismissed, [cur.id]: true }); this.setState({ toast: cur.id, ci: 0, focusId: null, tab: null, confirm: false, full: false }); };
     const undo = () => { const d = { ...dismissed }; delete d[s.toast]; this.wfSave(d); this.setState({ toast: null }); };
