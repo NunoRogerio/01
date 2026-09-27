@@ -725,7 +725,10 @@ class Component extends DCLogic {
   }
   base() {
     const p = this.props, F = this.fit() || this.pinFit();
-    const s0 = F ? F.s : (Number(p.zoom) || 1.1), fx = F ? F.x : (Number(p.focusX) || 600), fy = F ? F.y : (Number(p.focusY) || 330);
+    let s0 = F ? F.s : (Number(p.zoom) || 1.1); const fx = F ? F.x : (Number(p.focusX) || 600), fy = F ? F.y : (Number(p.focusY) || 330);
+    const NS = this.nearSt()[0];
+    if (NS) { const w1 = this.win(), dx = Math.abs(NS.x - fx), dy = Math.abs(NS.y - fy);   // the closest station stays in view
+      s0 = Math.min(s0, dx > 0 ? (w1.cw / 2 - 56) / dx : s0, dy > 0 ? (w1.h / 2 - (NS.y < fy ? 100 : 56)) / dy : s0); }   // more room at the top: the legend row sits there
     const w0 = this.win(), key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c + ',' + w0.l + ',' + w0.r + ',' + this.W() + ',' + this.H();
     if (this._bk !== key) {
       const w = w0;
@@ -797,7 +800,7 @@ class Component extends DCLogic {
   }
   // Every fire station of the country (weekly OpenStreetMap snapshot in data/), so they show even fully zoomed out.
   stationFile() {
-    const st = this.props.scopeSt || '';
+    const st = this.props.stationsSt || this.props.scopeSt || '';   // stationsSt: detail maps show the stations of the fire's country
     const cc = st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : (st === 'US' || /^[A-Z]{2}$/.test(st)) ? 'us' : null;
     if (!cc || !window.__wfLiveMap) return null;
     const D = window.__wfStFile || (window.__wfStFile = {}), F = window.__wfStFileGet || (window.__wfStFileGet = {});
@@ -811,6 +814,16 @@ class Component extends DCLogic {
     const G = this.geo();
     if (d.geo !== G) { d.geo = G; d.pts = d.rows.map((r) => { const xy = G.P(r[2], r[3]); return [xy[0], xy[1]]; }); }
     return d;
+  }
+  // On a fire or candidate: the nearest stations (straight line, within 40 km) - the ones that could respond or support.
+  nearSt() {
+    const p = this.props, SF = this.stationFile(); if (!SF || !p.stationsSt) return [];
+    const FOC = p.mode === 'pin' ? [Number(p.pinX), Number(p.pinY)] : (p.fireX != null && p.fireX !== '' ? [Number(p.fireX), Number(p.fireY)] : null);
+    if (!FOC || !isFinite(FOC[0]) || !isFinite(FOC[1])) return [];
+    const key = FOC.join(',') + '|' + SF.rows.length; if (this._nsK === key) return this._ns;
+    const la0 = 34.19 - (FOC[1] - 662) / 2829, lo0 = (FOC[0] - 518) / 2345 - 118.13, kx = 111.32 * Math.cos(la0 * Math.PI / 180), d = [];
+    for (let i = 0; i < SF.rows.length; i++) { const r = SF.rows[i]; if (Math.abs(r[2] - la0) > 0.4 || Math.abs(r[3] - lo0) > 0.6) continue; const km = Math.hypot((r[2] - la0) * 111.32, (r[3] - lo0) * kx); if (km <= 40) d.push({ i, km, x: SF.pts[i][0], y: SF.pts[i][1], fx: FOC[0], fy: FOC[1] }); }
+    this._nsK = key; this._ns = d.sort((a, b) => a.km - b.km).slice(0, 3); return this._ns;
   }
   // Fetch real fire stations (OpenStreetMap, via Overpass) for the selected area once; returns its cache key.
   osmStations() {
@@ -945,14 +958,18 @@ class Component extends DCLogic {
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
       const SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], 34, s);   // fixed per zoom step: no popping while panning
-      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if (SK.has(i) && vis(q[0], q[1])) V.push(i); }
+      // On a fire or candidate: the nearest stations (straight line, within 40 km) are the ones that could respond or
+      // support. They always show, labelled with their distance; who is actually committed is not published.
+      const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km]));
+      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((SK.has(i) || NEAR.has(i)) && vis(q[0], q[1])) V.push(i); }
       const k = Math.max(1, Math.ceil(V.length / 300));
       const out = [];
-      for (let j = 0; j < V.length; j += k) {
+      for (let j = 0; j < V.length; j++) { if (j % k && !NEAR.has(V[j])) continue;
         const r = SF.rows[V[j]], xy = SF.pts[V[j]], la = r[2], lo = r[3], ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
         const kmX = 1.113 * Math.cos(la * Math.PI / 180) / Math.max(1e-9, Math.abs(ex[0] - xy[0])), kmY = 1.113 / Math.max(1e-9, Math.abs(ey[1] - xy[1]));
         const st = { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4] || '', lat: la, lon: lo, tags: r[5] ? { operator: r[5] } : {}, x: xy[0], y: xy[1], kmX, kmY, partial: true };
-        out.push(withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M5 5H19V19H5Z', fill: '#1E7A34', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+        const nk = NEAR.get(V[j]), near = nk != null;
+        out.push(withTip(at(xy[0], xy[1] + 4, { label: near ? (nk < 10 ? nk.toFixed(1) : Math.round(nk)) + ' km' : '', icon: 'M5 5H19V19H5Z', fill: '#1E7A34', bg: near ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near ? 'rgba(30,122,52,0.55)' : 'transparent', fg: near ? '#1E7A34' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
           pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), r[4] || 'Fire station', r[5] || 'Location from OpenStreetMap'));
       }
       return out;
@@ -1111,7 +1128,7 @@ class Component extends DCLogic {
       // The pin's label stays whole on screen: it slides sideways (never past the 16px margins) while the pin stays put.
       // The pin's label always sits whole on screen: at most the map width less the 16px margins (and the corner
       // buttons when it is beside them), wrapping onto two lines if needed, sliding sideways while the pin stays put.
-      pinLab: (() => { if (!isPin) return { l: 0, ty: '22px', w: 0 }; const o = at(PX, PY), h = 72;
+      pinLab: (() => { if (!isPin) return { l: 0, ty: '22px', w: 0 }; const o = at(PX, PY), h = 64;
         const below = o.top + 22 + h <= WN.b - 26, top = below ? o.top + 22 : o.top - 22 - h;   // 26: the map credit line along the bottom
         const nearCtrl = top + h > WN.b - 64;
         const w = Math.min(340, W - WN.l - WN.r - 32 - (nearCtrl ? 60 : 0)), lo = WN.l + 16 + w / 2, hi = W - WN.r - 16 - (nearCtrl ? 60 : 0) - w / 2;

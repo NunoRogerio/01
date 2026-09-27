@@ -61,8 +61,10 @@ a{color:#0062CC}a:hover{color:#004FA3}
         </button>
       </div>
       <div style="height: 0.5px; margin-left: 16px; background: rgba(60,60,67,0.29)"></div>
-      <label style="display: flex; flex-direction: column; padding: 0 16px">
-        <input class="pw" type="password" readonly value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
+      <!-- With a profile chosen: 'Pass' sits in the photo's column, so the dots line up with the name above -->
+      <label style="display: flex; align-items: center; gap: 16px; padding: 0 16px">
+        <span aria-hidden="true" style="display: {{goB}}; width: 44px; flex-shrink: 0; font-size: 15px; line-height: 19px; color: #545458">Pass</span>
+        <input class="pw" type="password" readonly value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="flex-grow: 1; min-width: 0; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
       </label>
     </div>
   </form>
