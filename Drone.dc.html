@@ -340,7 +340,18 @@ class Component extends DCLogic {
   wfNav(mode) { const v = { mode, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { nav: v }); try { window.sessionStorage.setItem('wf-nav', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   wfConfirmed() { let d = null; try { const v = window.sessionStorage.getItem('wf-confirmed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).confirmed; return Object.assign({}, d || {}); }
   wfSaveConfirmed(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { confirmed: d }); try { window.sessionStorage.setItem('wf-confirmed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
-  wfConfirm(id) { const d = this.wfConfirmed(); if (!d[id]) { d[id] = Date.now(); this.wfSaveConfirmed(d); } }
+  // Confirming a candidate opens its fire: the fire screen gets the candidate's own place and location (same fire id
+  // the lists give it), so it never falls back to the design fire.
+  wfConfirm(id) {
+    const d = this.wfConfirmed(); if (!d[id]) { d[id] = Date.now(); this.wfSaveConfirmed(d); }
+    try {
+      const W = this.wfWorld(), c = W.cands.find((q) => q.id === id); if (!c) return;
+      const i = W.cands.filter((q) => d[q.id]).sort((a, b) => d[a.id] - d[b.id]).findIndex((q) => q.id === id);
+      const v = { id: 'F-0924-' + String(3 + Math.max(0, i)).padStart(2, '0'), place: c.place, note: 'Confirmed from ' + id, x: c.x, y: c.y, t: Date.now() };
+      window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v, focus: v.id });
+      window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); window.sessionStorage.setItem('wf-focus', v.id);
+    } catch (e) {}
+  }
   wfGoneCount() { const dz = this.wfDismissed(), cf = this.wfConfirmed(); return new Set(Object.keys(dz).filter((k) => dz[k]).concat(Object.keys(cf))).size; }
   wfWorld() {
     if (window.__wfWorld) return window.__wfWorld;
