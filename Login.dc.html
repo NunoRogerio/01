@@ -77,17 +77,17 @@ a{color:#007AFF}a:hover{color:#0062CC}
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">© 2026 Nuno Rogerio. All rights reserved.</p>
   </div>
-  <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: #F2F2F7; padding: 64px 0 0">
-    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px 8px">
-      <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
-        <h2 id="pickTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 34px">Choose a profile</h2>
-        <span style="font-size: 17px; line-height: 20px; color: #6C6C70">Demo users · each sees only their own area</span>
-      </span>
-      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+  <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: #F2F2F7; padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; transition: clip-path .5s cubic-bezier(.3,.9,.25,1), -webkit-clip-path .5s cubic-bezier(.3,.9,.25,1)">
+    <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px 8px; opacity: {{pOp}}; transform: translateY({{pY}}); transition: opacity .35s ease {{pDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pDelay}}">
+      <span style="display: flex; align-items: center; gap: 12px">
+        <h2 id="pickTitle" style="flex-grow: 1; min-width: 0; margin: 0; font-size: 20px; font-weight: 600; line-height: 24px">Choose a profile</h2>
+      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; transform: rotate({{xRot}}); transition: transform .55s cubic-bezier(.4,0,.2,1)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
+      </span>
+      <span style="font-size: 15px; line-height: 19px; color: #6C6C70">Demo users · each sees only their own area</span>
     </div>
-    <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px 32px">
+    <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px 32px; opacity: {{pOp}}; transform: translateY({{pY2}}); transition: opacity .35s ease {{pDelay2}}, transform .55s cubic-bezier(.2,.8,.2,1) {{pDelay2}}">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
         <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
           <span style="display: flex; align-items: flex-start; gap: 16px; width: 100%">
@@ -176,7 +176,21 @@ class Component extends DCLogic {
     }, { passive: true });
   }
   componentDidMount() { this.snapList(); this.paintBg(); for (let i = 1; i <= 3; i++) (new Image()).src = 'assets/splash/forest-' + i + '.webp'; this._bgT = setInterval(() => { const n = 3, st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; let k = Math.floor(Math.random() * (n - 1)); if (k >= c) k++; this.setState({ bg: k, bgPrev: c }); }, 8000); }
-  componentWillUnmount() { clearInterval(this._bgT); const h = document.getElementById('wf-login-bg'); if (h) h.remove(); }
+  fieldClip() {
+    try { const f = document.querySelector('#dc-root form'), r = document.querySelector('#dc-root [role=dialog]'); if (!f || !r) return null;
+      const H = r.offsetHeight, W = r.offsetWidth, t = f.offsetTop, fb = f.firstElementChild ? f.firstElementChild.offsetHeight : 120;
+      return 'inset(' + t + 'px ' + 16 + 'px ' + Math.max(0, H - t - fb) + 'px ' + 16 + 'px round 14px)'; } catch (e) { return null; }
+  }
+  openPanel() {
+    clearTimeout(this._pt); const fc = this.fieldClip();
+    this.setState({ open: true, phase: 'from', fromClip: fc });
+    requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ phase: 'in' })));
+  }
+  closePanel() {
+    clearTimeout(this._pt); this.setState({ phase: 'out', fromClip: this.fieldClip() });
+    this._pt = setTimeout(() => this.setState({ open: false, phase: null }), 560);
+  }
+  componentWillUnmount() { clearTimeout(this._pt); clearInterval(this._bgT); const h = document.getElementById('wf-login-bg'); if (h) h.remove(); }
   componentDidUpdate() { this.paintBg(); }
   // The photos sit behind the whole window (not inside the scaled phone frame), so they reach every edge.
   paintBg() {
@@ -190,7 +204,7 @@ class Component extends DCLogic {
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
-    h.style.opacity = (this.state || {}).open ? '0' : '1'; h.style.transition = 'opacity .25s ease';
+    const ph = (this.state || {}).phase; h.style.transition = ph === 'in' ? 'opacity .2s ease .5s' : 'opacity .1s ease'; h.style.opacity = ph === 'in' ? '0' : '1';
     // Each photo slowly zooms in while it is shown; photos out of view reset instantly, ready for their next turn.
     const apply = () => B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img;
       d.style.transition = b.sc === 1 && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 10s linear';
@@ -224,8 +238,13 @@ class Component extends DCLogic {
       bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.08 : 1, keep: i === prev })),
       credit: 'Photo: ' + PH[cur][1] + ' / Unsplash',
       noSubmit: (e) => { try { e.preventDefault(); } catch (x) {} },
-      toggle: () => this.setState({ open: !open }),
+      toggle: () => (open ? this.closePanel() : this.openPanel()),
       openStr: open ? 'true' : 'false', rot: open ? '180deg' : '0deg', listD: open ? 'flex' : 'none',
+      // The panel grows out of the username field and folds back into it; the close button turns a full circle.
+      pClip: s.phase === 'in' ? 'inset(0px 0px 0px 0px round 0px)' : (s.fromClip || 'inset(40% 16px 45% 16px round 14px)'),
+      pOp: s.phase === 'in' ? 1 : 0, pY: s.phase === 'in' ? '0px' : '-8px', pY2: s.phase === 'in' ? '0px' : '24px',
+      pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
+      xRot: s.phase === 'out' ? '360deg' : '0deg',
       userTxt: sel ? sel[2] : 'Choose a profile', userC: sel ? '#000000' : '#6C6C70',
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
@@ -238,7 +257,7 @@ class Component extends DCLogic {
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
         tick: s.sel === id ? 1 : 0, selD: s.sel === id ? 'block' : 'none', cc: ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] || '', selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
         aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (s.sel === id ? ' Selected' : ''),
-        pick: () => this.setState({ sel: id, open: false })
+        pick: () => { this.setState({ sel: id }); this.closePanel(); }
       })),
       login: () => {
         if (!sel) return;
