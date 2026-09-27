@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=22"></script>
+<script src="fit.js?v=23"></script>
 <script src="prefs.js?v=3"></script>
 <script src="i18n.js?v=24"></script>
 <script src="live.js?v=23"></script>
@@ -179,7 +179,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: relative; z-index: 23; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <header class="fade" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px">
-    <a href="Drone.dc.html" class="mbtn sqback" aria-label="Back to drone verification" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #545458; text-decoration: none">
+    <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #545458; text-decoration: none">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding: 4px 8px">
@@ -1037,7 +1037,7 @@ class Component extends DCLogic {
             state: sentO ? 'Order received by the coordinator' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
-          done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU); try { const a = document.querySelector('[data-wf-back]'); if (a) { a.click(); return; } } catch (e) {} this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
+          done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU); this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
       })(), undoSend: () => this.setState({ reinforce: true, stations: null, station: null, counts: null, adjust: false, open: false, cfg: false, full: false, sentUp: false }),
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
       pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',

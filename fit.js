@@ -247,3 +247,15 @@
   document.addEventListener('pointercancel',function(){live=false;fade(true);},{capture:true,passive:true});
   document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;haptic();},{capture:true});
 })();
+
+// Back, everywhere: every back control (data-wf-back) returns to the screen visited just before, as the phone's own
+// back would; its link is only used when the app was opened straight on that screen.
+(function(){
+  document.addEventListener('click',function(e){
+    var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(!a||e.defaultPrevented)return;   // a screen that handled its own back already
+    var ref='';try{ref=document.referrer?new URL(document.referrer).origin:'';}catch(x){}
+    if(history.length>1&&ref===location.origin){e.preventDefault();setTimeout(function(){history.back();},0);}
+  },false);
+  // coming back (from the phone's cache): screens refresh their live state
+  addEventListener('pageshow',function(ev){if(ev.persisted){try{dispatchEvent(new Event('wf-sync'));}catch(x){}}});
+})();

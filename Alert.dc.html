@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=22"></script>
+<script src="fit.js?v=23"></script>
 <script src="prefs.js?v=3"></script>
 <script src="i18n.js?v=24"></script>
 <script src="live.js?v=23"></script>
@@ -174,7 +174,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 8px 12px">
     <span aria-hidden="true" style="display: {{grabD}}; position: absolute; left: 50%; bottom: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3); opacity: {{grabOp}}; transition: opacity .3s ease; pointer-events: none"></span>
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Ignition candidates</h1>
-      <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onPointerDown="{{navBack}}" onClick="{{navBack}}" aria-label="Back to incidents" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: {{backC}}; text-decoration: none">
+      <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onClick="{{navBack}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: {{backC}}; text-decoration: none">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
       </a>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
@@ -320,7 +320,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           Dismiss ignition
         </button>
       </div>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="height: 44px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Go back</a>
+      <a href="Main.dc.html" data-wf-back="1" class="btn" onClick="{{navBack}}" style="height: 44px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Go back</a>
     </div>
     </div>
   </sc-if>
