@@ -1110,8 +1110,8 @@ class Component extends DCLogic {
         };
       })(),
       fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
-      fullLabel: (p.isFull === true || p.isFull === 'true') ? 'Exit full screen' : 'Full screen',
-      fullIcon: (p.isFull === true || p.isFull === 'true') ? 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5' : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
+      fullLabel: (p.isFull === true || p.isFull === 'true') ? (String(p.closeX) === 'true' ? 'Close map' : 'Exit full screen') : 'Full screen',
+      fullIcon: (p.isFull === true || p.isFull === 'true') ? (String(p.closeX) === 'true' ? 'M6 6l12 12M18 6 6 18' : 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5') : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
       // The maximize button sits 16px above whatever panel covers the map's bottom edge (panels overlap the map by attrBottom - 6).
       // Full screen: the minimize button sits 24px from the bottom and 16px from the right; the map credit lines up with its middle.
       legL: 10 + WN.l, legR: 10 + WN.r,
