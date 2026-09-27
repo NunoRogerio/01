@@ -206,7 +206,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
   </div>
 
-  <div style="position: relative; z-index: 2; display: flex; flex-direction: column; flex-grow: 1; background: #F2F2F7; border-radius: {{panelRad}}; box-shadow: {{panelSh}}; transform: translateY({{downY}}); opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+  <div style="position: relative; z-index: 2; display: flex; flex-direction: column; flex-grow: 1; background: #F2F2F7; border-radius: {{panelRad}}; box-shadow: {{panelSh}}; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <sc-if value="{{hasRes}}" hint-placeholder-val="{{ false }}">
   <section class="rise" aria-label="Resources on scene" style="margin: 20px 16px 0; padding: 14px 16px 12px; border-radius: 12px; background: #FFFFFF; animation-delay: 120ms">
     <div style="display: flex; align-items: center; gap: 8px">
@@ -1161,6 +1161,7 @@ class Component extends DCLogic {
       mapW: 390, mapH: 844, no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : (sent ? 450 : 38),
       full: !!s.full, toggleFull: () => { const st = this.state || {}; this.setState({ full: !st.full, open: false, cfg: false }); },
       tipSafe: s.full ? 70 : (sent ? 186 : 192), clipT: s.full ? 0 : 128, clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? 412 : 458), ctrlTop: sent ? 266 : 243, hzTop: s.full ? -68 : (sent ? 12 : 16),
+      downPE: (s.full || sent) ? 'none' : 'auto',
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: (s.full || sent) ? '560px' : '0px', navY: (s.full || sent) ? '140px' : '0px', downOp: (s.full || sent) ? 0 : 1,
       chevRot: open ? '180deg' : '0deg', sheetOpenStr: open ? 'true' : 'false', stationAria: sel.title + ', first on the fire line in ' + sum + ' minutes. Choose stations', crewsSel: freeSel + ' free crew' + (freeSel === 1 ? '' : 's'),
     };
