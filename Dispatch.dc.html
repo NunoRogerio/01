@@ -234,29 +234,29 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <h2 class="rise" style="margin: 24px 20px 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 24px; animation-delay: 220ms">Prepare station dispatches</h2>
   <div class="rise" style="padding: 12px 16px 0; animation-delay: 240ms">
-    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43">Select station</span>
-    <button type="button" class="prep" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{stationAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
-        <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
+    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43; opacity: {{pk.stLblOp}}; transform: translateY({{pk.stLblY}}); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1)">Select station</span>
+    <button type="button" class="prep" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{pk.stAria}}" style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span aria-hidden="true" style="position: absolute; left: 14px; right: 50px; top: 50%; font-size: 17px; font-weight: 600; line-height: 20px; color: #3C3C43; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; opacity: {{pk.stPhOp}}; transform: translateY(calc(-50% + {{pk.stPhY}})); transition: opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1)">1 · Select stations</span><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.stFillOp}}; transition: opacity .4s ease .1s">{{sel.title}}</span>
+        <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="opacity: {{pk.stFillOp}}; transition: opacity .4s ease .1s; flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
       </span>
       <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
+      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.stFillOp}}; transition: opacity .4s ease .1s">{{sel.sub}}</span>
     </button>
   </div>
 
   <div class="rise" style="padding: 18px 16px 0; animation-delay: 330ms">
-    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43">Configure dispatch</span>
-    <button type="button" class="prep" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{cfgAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Forces · {{unitTotal}} units</span>
-        <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
+    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43; opacity: {{pk.cfLblOp}}; transform: translateY({{pk.cfLblY}}); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1)">Configure dispatch</span>
+    <button type="button" class="prep" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{pk.cfAria}}" style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span aria-hidden="true" style="position: absolute; left: 14px; right: 50px; top: 50%; font-size: 17px; font-weight: 600; line-height: 20px; color: #3C3C43; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; opacity: {{pk.cfPhOp}}; transform: translateY(calc(-50% + {{pk.cfPhY}})); transition: opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1)">2 · Configure dispatch</span><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">Forces · {{unitTotal}} units</span>
+        <span style="opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s; flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
       </span>
       <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
+      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">{{cfgSummary}}</span>
     </button>
   </div>
 
   <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding: 12px 16px 40px; animation-delay: 360ms">
-    <button type="button" class="btn primary green" onClick="{{sendAll}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
+    <button type="button" class="btn primary green" onClick="{{sendAll}}" aria-disabled="{{pk.sendDis}}" style="opacity: {{pk.sendOp}}; transition: opacity .3s ease; height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
       <span style="flex-grow: 1; text-align: left">{{sendLbl}}</span>
       <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
@@ -477,7 +477,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="btn" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; background-color: {{sugBg}}; border-color: {{sugBd}}; color: #1E7A34; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
         Suggested
       </button>
-      <button type="button" class="btn" onClick="{{closeSheet}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600">
+      <button type="button" class="btn" onClick="{{cfgDone}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600">
         Done
       </button>
     </div>
@@ -502,7 +502,7 @@ class Component extends DCLogic {
   componentDidMount() { this._actT = setInterval(() => this.forceUpdate(), 20000);
     // The current stage's elapsed time counts every second (only its text is updated).
     const tick = () => { try { document.querySelectorAll('[data-tl-since]').forEach((el) => { const t = +el.getAttribute('data-tl-since'); if (!t) { el.textContent = ''; return; } let x = Math.max(0, Math.floor((Date.now() - t) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60; const txt = (d ? d + 'd ' : '') + (d || h ? h + 'h ' : '') + String(m).padStart(d || h ? 2 : 1, '0') + 'm ' + String(sec).padStart(2, '0') + 's'; if (el.textContent !== txt) el.textContent = txt; }); } catch (e) {} };
-    this._tlT = setInterval(tick, 1000); setTimeout(tick, 50); this.wfTakeFireView(); this._wfSync = () => { if (!this.wfTakeFireView()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted) { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0, reinforce: false, open: false, cfg: false }); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+    this._tlT = setInterval(tick, 1000); setTimeout(tick, 50); if (!this.wfTakeFireView()) this.wfRestoreFire(); this._wfSync = () => { if (!this.wfTakeFireView()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted) { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0, reinforce: false, open: false, cfg: false, stPick: false, cfPick: false, stations: null, counts: null }); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { if (this._sndT) clearTimeout(this._sndT); try { window.removeEventListener('pageshow', this._wfShow); } catch (e) {} if (this._actT) clearInterval(this._actT); if (this._tlT) clearInterval(this._tlT); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -628,7 +628,8 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   wfSetFireView(f) { const v = { id: f.id, place: f.place, note: f.note, x: f.x, y: f.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} }
-  wfTakeFireView() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fireview') || 'null'); window.sessionStorage.removeItem('wf-fireview'); } catch (e) {} const m = window.__wfMem || {}; v = v || m.fireView; m.fireView = null; if (v && Date.now() - v.t < 20000) { this.setState({ fv: v, adjust: false, open: false, cfg: false }); return true; } return false; }
+  wfTakeFireView() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fireview') || 'null'); window.sessionStorage.removeItem('wf-fireview'); } catch (e) {} const m = window.__wfMem || {}; v = v || m.fireView; m.fireView = null; if (v && Date.now() - v.t < 20000) { try { window.sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v, adjust: false, open: false, cfg: false, stPick: false, cfPick: false, stations: null, counts: null }); return true; } return false; }
+  wfRestoreFire() { if (this.state.fv) return; let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fire-cur') || 'null'); } catch (e) {} if (v && v.id) { this.setState({ fv: v }); return; } if (window.__wfBackOrHome) { try { window.location.replace('Main.dc.html'); } catch (e) {} } }
   wfUnits() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ temp: 'F', area: 'ac' }, v || {}); }
   wfToggleUnit(k) { const u = this.wfUnits(); if (k === 'temp') u.temp = u.temp === 'F' ? 'C' : 'F'; else u.area = u.area === 'ac' ? 'ha' : 'ac'; window.__wfMem = Object.assign(window.__wfMem || {}, { units: u }); try { window.sessionStorage.setItem('wf-units', JSON.stringify(u)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} this.forceUpdate(); }
   wfSetFocus(id) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: id }); try { window.sessionStorage.setItem('wf-focus', id); } catch (e) {} }
@@ -803,7 +804,7 @@ class Component extends DCLogic {
     const setCount = (i, d) => {
       const next = counts.slice();
       next[i] = Math.max(0, Math.min(avail3[i], next[i] + d));
-      this.setState({ counts: next });
+      this.setState({ counts: next, cfPick: true });
     };
     const units = RU ? RU.map(([name, n, icon]) => ({ name, icon, n: Number(n).toLocaleString(), from: 'On scene · ' + fres.src, availText: 'Real data', availColor: '#1E7A34', nColor: '#000000',
       bg: 'rgba(60,60,67,0.044)', bd: 'rgba(60,60,67,0.11)', less: () => {}, more: () => {}, lessDis: 'true', moreDis: 'true', lessOp: 0, moreOp: 0, lessLabel: name, moreLabel: name })) : meta.map((m, i) => {
@@ -1021,10 +1022,13 @@ class Component extends DCLogic {
       })() : (window.__wfLiveMap && fv && RO) ? { zoom: 12, fx: FIRE[0], fy: FIRE[1] } : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
       mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
+      pk: (() => { const a = !!s.stPick, b = !!s.cfPick; return { stLblOp: a ? 1 : 0, stLblY: a ? '0px' : '30px', stPhOp: a ? 0 : 1, stPhY: a ? '-14px' : '0px', stFillOp: a ? 1 : 0, stAria: a ? sel.title + '. Change stations' : 'Step 1, select stations',
+        cfLblOp: b ? 1 : 0, cfLblY: b ? '0px' : '30px', cfPhOp: b ? 0 : 1, cfPhY: b ? '-14px' : '0px', cfFillOp: b ? 1 : 0, cfAria: b ? 'Forces, ' + unitTotal + ' units. Change' : 'Step 2, configure dispatch',
+        sendDis: a && b ? 'false' : 'true', sendOp: a && b ? 1 : 0.4 }; })(),
       sendLbl: chosenList.length > 1 ? 'Send dispatch orders' : 'Send dispatch order',
       // Sending: one order per chosen station, each to that station's coordinator, confirmed in turn; Done shows the dispatch.
       sendAll: () => {
-        if (this._sndT) return;
+        if (this._sndT || !(s.stPick && s.cfPick)) return;
         const n = Math.max(1, this.wfSplit(chosenList, counts).length);
         this.setState({ sending: 1, sndN: 0, open: false, cfg: false, full: false });
         let k = 0; const step = () => { k++; this.setState({ sndN: k }); if (k < n) this._sndT = setTimeout(step, 900); else this._sndT = null; };
@@ -1042,14 +1046,14 @@ class Component extends DCLogic {
           notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
           done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU); this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
-      })(), undoSend: () => this.setState({ reinforce: true, stations: null, station: null, counts: null, adjust: false, open: false, cfg: false, full: false, sentUp: false }),
+      })(), undoSend: () => this.setState({ reinforce: true, stPick: false, cfPick: false, stations: null, station: null, counts: null, adjust: false, open: false, cfg: false, full: false, sentUp: false }),
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
       pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
       hzShow: HELD ? 'none' : 'grid',
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       crewNote: chosenList.some((d) => d.real) ? 'Crew availability not published' : '',   // real stations: said once, above the list
       stNone: !!(stDraft && !stDraft.length), stApplyOp: stDraft && !stDraft.length ? 0.4 : 1,   // Apply waits for at least one station
-      stApply: () => (stDraft && !stDraft.length) ? null : this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null }),
+      stApply: () => (stDraft && !stDraft.length) ? null : this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null, stPick: true }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
       kpiD: K && String(K.k1V) === '—' && String(K.k2V) === '—' ? 'none' : 'grid',
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: 'flex', sentCols: 'repeat(2, minmax(0, 1fr))',
@@ -1073,7 +1077,7 @@ class Component extends DCLogic {
         ? { flying: false, idle: true, status: 'At base', sub: 'Altadena pad · 4 min away', fg: '#545458', bg: 'rgba(60,60,67,0.017)', bd: 'rgba(60,60,67,0.055)' }
         : { flying: true, idle: false, status: 'On route · 3 min to scene', sub: 'Live video and thermal on arrival', fg: '#0079A6', bg: 'rgba(0,121,166,0.05)', bd: 'rgba(0,121,166,0.22)' },
       launchDrone: () => this.setState({ droneOff: false }), recallDrone: () => this.setState({ droneOff: true }),
-      openCfg: (e) => this.setState({ cfg: true, ogC: measure(e, s.ogC || { t: 602, b: 662 }) }), resetCfg: () => { if (!isRecCfg) this.setState({ counts: null }); },
+      openCfg: (e) => this.setState({ cfg: true, ogC: measure(e, s.ogC || { t: 602, b: 662 }) }), resetCfg: () => { if (!isRecCfg) this.setState({ counts: null, cfPick: true }); }, cfgDone: () => this.setState({ open: false, cfg: false, cfPick: true }),
       sugDis: isRecCfg ? 'true' : 'false', sugOp: isRecCfg ? 0.4 : 1, sugCur: isRecCfg ? 'default' : 'pointer', sugPE: isRecCfg ? 'none' : 'auto',
       sugBg: isRecCfg ? 'rgba(60,60,67,0.033)' : 'rgba(52,199,89,0.12)', sugBd: isRecCfg ? 'rgba(60,60,67,0.088)' : 'rgba(52,199,89,0.45)',
       sugAria: isRecCfg ? 'Suggested forces already selected' : 'Reset to the suggested forces',
