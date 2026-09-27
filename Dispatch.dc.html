@@ -274,9 +274,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 6px; margin: 24px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
       <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{snd.pct}}%; border-radius: 999px; background: {{snd.barC}}; transition: width .6s cubic-bezier(.3,.9,.25,1), background-color .3s ease"></span>
     </span>
-    <ul class="wf-snap" style="display: flex; flex-direction: column; flex-shrink: 1; min-height: 0; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF; overflow-y: auto; scrollbar-width: none">
+    <!-- One card per station (and air support), 16px apart -->
+    <ul class="wf-snap" style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 1; min-height: 0; margin: 24px 0 0; padding: 0; list-style: none; overflow-y: auto; scrollbar-width: none">
       <sc-for list="{{snd.rows}}" as="o" hint-placeholder-count="2">
-        <li style="display: flex; flex-direction: column; border-top: {{o.sep}}">
+        <li style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
           <div style="display: flex; align-items: center; gap: 16px; min-height: 60px; padding: 10px 16px; box-sizing: border-box">
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 17px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
