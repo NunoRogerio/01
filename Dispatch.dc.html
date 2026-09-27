@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=23"></script>
 <script src="prefs.js?v=3"></script>
-<script src="i18n.js?v=24"></script>
+<script src="i18n.js?v=25"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -303,6 +303,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </ul>
     <span style="margin: 8px 4px 0; font-size: 13px; line-height: 18px; color: #545458">Demo: no real order is sent</span>
     <button type="button" class="btn primary" onClick="{{snd.done}}" disabled="{{snd.notDone}}" style="margin-top: auto; height: 56px; font-size: 19px; font-weight: 600; opacity: {{snd.btnOp}}; transition: opacity .3s ease">Done</button>
+    <!-- Last-minute change: back to the configuration with the same stations and forces (nothing is kept until Done) -->
+    <button type="button" class="btn" onClick="{{snd.redo}}" style="height: 44px; margin-top: 8px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Reconfigure dispatch</button>
   </section>
 
   <div class="scrim" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{scrimOp}}; pointer-events: {{scrimPE}}"></div>
@@ -1036,6 +1038,7 @@ class Component extends DCLogic {
           rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all; return { name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
             units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
             state: sentO ? 'Order received by the coordinator' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
+          redo: () => { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
           done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU); this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
