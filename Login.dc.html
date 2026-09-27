@@ -96,7 +96,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
               <span style="display: {{p.selD}}; font-size: 13px; font-weight: 600; line-height: 16px; color: #007AFF">Selected</span>
             </span>
             <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-              <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}} <span style="font-weight: 400; color: #8E8E93">{{p.cc}}</span></span>
+              <span style="display: flex; align-items: baseline; gap: 32px; font-size: 20px; font-weight: 600; line-height: 24px"><span>{{p.name}}</span><span style="font-size: 15px; font-weight: 400; color: #8E8E93">{{p.cc}}</span></span>
               <span style="display: flex; flex-direction: column; gap: 2px; margin-top: 14px">
                 <span style="font-size: 17px; line-height: 21px; color: #000000">{{p.role}}</span>
                 <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{p.org}}</span>
@@ -209,8 +209,8 @@ class Component extends DCLogic {
         'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
       ['amz', 'RN', 'rafael.nogueira', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', '9 states',
         'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.', 'https://images.unsplash.com/photo-1633116182264-d7cc0aba12d4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
-      ['admin', 'AM', 'alex.morgan', 'Alex Morgan', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
-        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'https://images.unsplash.com/photo-1764084052708-c3c0611d89e7?w=240&h=240&fit=crop&crop=faces&auto=format&q=70']
+      ['admin', 'NR', 'nuno.rogerio', 'Nuno Rogerio', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
+        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'assets/people/nuno.jpg']
     ];
     const PH = [['forest-1.webp', 'Mari Potter'], ['forest-2.webp', 'Ivan Dimitrov'], ['forest-3.webp', 'Olena Bohovyk']];   // dark canopies only, so white text stays readable
     if (this._bg0 === undefined) this._bg0 = Math.floor(Math.random() * PH.length);
@@ -233,7 +233,7 @@ class Component extends DCLogic {
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
-        tick: s.sel === id ? 1 : 0, selD: s.sel === id ? 'block' : 'none', cc: ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR' })[id] || '', selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
+        tick: s.sel === id ? 1 : 0, selD: s.sel === id ? 'block' : 'none', cc: ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] || '', selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
         aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (s.sel === id ? ' Selected' : ''),
         pick: () => this.setState({ sel: id, open: false })
       })),
