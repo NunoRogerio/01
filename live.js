@@ -135,7 +135,9 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
         place:[e.nMuns>1?e.muns.slice(0,2).join(', ')+(e.nMuns>2?' +'+(e.nMuns-2):''):'',e.state].filter(Boolean).join(' · '),
         facts:[['Active fronts',e.fronts==null?'—':String(e.fronts)],['Days with fire',e.fireDays!=null&&e.days!=null?e.fireDays+' of '+Math.round(e.days):'—'],
           ['Days without rain',e.dry==null?'—':String(Math.round(e.dry))],['Fire risk',e.risk==null?'—':Math.round(e.risk*100)+'%']],
-        areas:e.areas||[],nAreas:e.nAreas||0,cover:{defor:pct(e.defor),veg:pct(e.veg),trans:pct(e.trans)}};
+        areas:e.areas||[],nAreas:e.nAreas||0,cover:{defor:pct(e.defor),veg:pct(e.veg),trans:pct(e.trans)},
+        // 30%+ of the burned area on land cleared in recent years: the clearing-then-burning pattern behind most Amazon fires
+        deforFire:(e.defor||0)>=30&&!obs};
       var note=(e.status==='Observação'?'Em observação':(e.status||'Ativo'))+' · '+Math.round(e.ha).toLocaleString('pt-PT')+' ha';
       out.push({r:['BRA',e.state,e.id,e.place,note,xy[0],xy[1],null,e.ha,info],w:(obs?0:1e7)+(e.ha||0)});
     });

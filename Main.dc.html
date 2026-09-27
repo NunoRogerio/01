@@ -11,8 +11,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=4"></script>
-<script src="live.js?v=18"></script>
+<script src="fit.js?v=5"></script>
+<script src="live.js?v=19"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -278,6 +278,24 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: {{allState.subC}}">{{allState.nLbl}}</span>
           </button>
         </div>
+      </sc-if>
+      <sc-if value="{{ff.on}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Deforestation and finance" style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; margin: 10px 16px 12px; padding: 14px 16px; border-radius: 14px; background: #FFFFFF">
+          <span style="display: flex; flex-direction: column; gap: 2px">
+            <b style="font-size: 17px; font-weight: 600; line-height: 22px">Fires on cleared land</b>
+            <span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{ff.line}}</span>
+          </span>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+            <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.n}}</b><span style="font-size: 13px; color: #6C6C70">deforestation fires</span></span>
+            <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.ha}}</b><span style="font-size: 13px; color: #6C6C70">hectares burning</span></span>
+          </div>
+          <span style="display: flex; flex-direction: column; gap: 4px; padding-top: 10px; border-top: 1px solid rgba(60,60,67,0.12)">
+            <b style="font-size: 15px; font-weight: 600">Who finances forest-risk farming in Brazil</b>
+            <span style="font-size: 14px; line-height: 19px; color: #3C3C43">USD 206.7 bn of forest-risk credit since 2016 went through Brazil's agriculture finance programme. Largest lenders: Banco do Brasil 99.8 bn · Sicredi 19.5 bn · Bradesco 17.7 bn · Itaú 14.6 bn · Caixa 12.8 bn · Banco da Amazônia 8.3 bn.</span>
+            <span style="font-size: 14px; line-height: 19px; color: #3C3C43">Their conclusion: voluntary pledges have not stopped the finance, so banks should be legally liable for deforestation they fund.</span>
+            <span style="font-size: 12px; line-height: 16px; color: #8E8E93">Forests & Finance, Banking on Biodiversity Collapse (Nov 2025) · USD, loans and underwriting, Brazil-wide</span>
+          </span>
+        </section>
       </sc-if>
       <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
         <button type="button" class="sqrow" data-sel="{{r.selA}}" disabled="{{r.dis}}" aria-disabled="{{r.disA}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 84px 64px 40px; align-items: center; align-content: center; gap: 2px 4px; height: 60px; min-height: 60px; padding: 0 0 0 {{rowPadL}}; box-sizing: border-box; border-radius: 0; border: 0; background-color: {{r.selBg}}; color: {{r.fg}}; text-align: left; font: inherit; cursor: pointer">
@@ -564,6 +582,10 @@ class Component extends DCLogic {
       : usD.filter((d) => !q || d.name.toLowerCase().indexOf(q) >= 0).sort(cmp).map((d) => rowOf(d, selState === d.id, () => this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })), d.n + ' counties', true));
     if (brObj && brObj.id === 'BRA' && !q) { const A = DATA.find((d) => d.id === 'AMZ'); if (A) rows.unshift({ ...rowOf({ ...A, drillLbl: '. Show its 9 states' }, selState === 'AMZ', () => this.wfSlide('fwd', () => this.setState({ scBrowse: 'AMZ', q: '' })), A.n + ' states', true), nameW: 600 }); }
     const allSel = !!brObj && selState === brObj.id && !selCounty;
+    // Amazon: fires burning mostly on recently cleared land (INPE land cover) next to Forests & Finance's findings
+    const ff = (() => { if (!brObj || brObj.id !== 'AMZ') return { on: false }; const inA = window.__wfInArea;
+      const F = SC.W.fires.filter((f) => f.info && inA && inA(f, 'AMZ') && !f.info.resolved), D = F.filter((f) => f.info.deforFire), ha = D.reduce((a, f) => a + (f.info.ha || 0), 0);
+      return { on: F.length > 0, n: D.length.toLocaleString(), ha: Math.round(ha).toLocaleString(), line: D.length + ' of ' + F.length + ' active fires in the Legal Amazon burn mostly on land cleared in recent years, the clearing-then-burning pattern that turns forest into pasture and cropland.' }; })();
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
     const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#6C6C70', fires: brObj.fires, cands: brObj.cands, firesC: '#000000', candsC: '#000000',
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
@@ -622,6 +644,7 @@ class Component extends DCLogic {
       plN: N === 1 ? '' : 's', plF: NF === 1 ? '' : 's',
       liveTxt: window.__wfLiveMap ? (window.__wfLiveAt ? 'Live · ' + new Date(window.__wfLiveAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Loading live data') : 'Live data · 2:31 PM', mapSt: SC.sc.st, mapCo: SC.sc.co || '', alertCount: N, hasAlerts: N > 0, hasCard: M > 0, listMaxH: FIT * ROW, listOverflow: M > FIT ? 'auto' : 'visible',
       ...(() => { const lim = (this.state || {}).listLim || 60, more = ignList.length - lim; return { ignShown: ignList.slice(0, lim), moreD: more > 0 ? 'flex' : 'none', moreTxt: 'Show ' + Math.min(60, Math.max(0, more)) + ' more · ' + Math.max(0, more) + ' left', showMore: () => this.setState({ listLim: lim + 60 }) }; })(),
+      ff,
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
       cardTitle: (N === 1 && NF === 0) ? 'Ignition candidate' : N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'),
       cardSub: N === 0 ? 'Nothing to review' : (N > 1 || NF > 0 ? 'Top: ' + top.place + ' · ' + top.conf + '%' : top.place + ' · ' + top.ago),

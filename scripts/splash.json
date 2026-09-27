@@ -1,74 +1,38 @@
 [
  {
   "file": "forest-1.webp",
-  "id": "photo-1769794305664-cfb57957246f",
-  "caption": "River through the rainforest",
-  "by": "Rohit Tandon"
- },
- {
-  "file": "forest-2.webp",
-  "id": "photo-1671917058523-fd94fee6b293",
-  "caption": "Rainforest canopy",
-  "by": "Jolame Chirwa"
- },
- {
-  "file": "forest-3.webp",
   "id": "photo-1568241640298-1adf2974314c",
   "caption": "Forest canopy from above",
   "by": "Mari Potter"
  },
  {
-  "file": "forest-4.webp",
+  "file": "forest-2.webp",
   "id": "photo-1527701963793-33e969bca5ee",
-  "caption": "Green forest from above",
+  "caption": "Green canopy from above",
   "by": "Dave Hoefler"
  },
  {
-  "file": "forest-5.webp",
-  "id": "photo-1609428324513-c3d25a7ecc51",
-  "caption": "River in the forest",
-  "by": "THLT LCX"
- },
- {
-  "file": "forest-6.webp",
+  "file": "forest-3.webp",
   "id": "photo-1675628675220-399417d59db4",
-  "caption": "Dense forest from above",
+  "caption": "Conifer forest from above",
   "by": "Ivan Dimitrov"
  },
  {
-  "file": "cand-7.webp",
+  "file": "forest-4.webp",
   "id": "photo-1621872111378-4f8340e9cb90",
-  "caption": "Green trees from above",
+  "caption": "Dense canopy from above",
   "by": "Olena Bohovyk"
  },
  {
-  "file": "cand-8.webp",
+  "file": "forest-5.webp",
   "id": "photo-1650006883843-c0335fd03c39",
-  "caption": "Forest from above",
+  "caption": "Misty treetops from above",
   "by": "Axel Czikora"
  },
  {
-  "file": "cand-9.webp",
+  "file": "forest-6.webp",
   "id": "photo-1634919367249-cc2320d74d27",
-  "caption": "Forest seen from a plane",
+  "caption": "Forest from the air",
   "by": "John Vowles"
- },
- {
-  "file": "cand-10.webp",
-  "id": "photo-1769794305657-3f570754ca7f",
-  "caption": "River through the forest",
-  "by": "Rohit Tandon"
- },
- {
-  "file": "cand-11.webp",
-  "id": "photo-1769794142260-c4115835231a",
-  "caption": "Rainforest along a river",
-  "by": "Rohit Tandon"
- },
- {
-  "file": "cand-12.webp",
-  "id": "photo-1621872111945-1b5497a1ce7d",
-  "caption": "Green forest canopy",
-  "by": "Olena Bohovyk"
  }
 ]
