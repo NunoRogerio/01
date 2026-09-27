@@ -601,7 +601,7 @@ class Component extends DCLogic {
     const frow = fv ? (this.wfWorld().fires.find((f) => f.id === fv.id) || null) : null;
     const fres = frow ? (frow.res || null) : null;
     // Active fires in Portugal and California: a read-only view of who is fighting the fire (no crew or station changes).
-    const RO = !!(window.__wfLiveMap && fv && frow && (frow.st === 'PT' || frow.st === 'CA'));
+    const RO = !!(window.__wfLiveMap && fv && frow && (frow.st === 'PT' || frow.st === 'CA' || frow.st === 'BRA'));
     const FMOD = (window.__wfLiveMap && frow && window.__wfFireModel) ? (() => {
       const lat = 34.19 - (frow.y - 662) / 2829, lon = (frow.x - 518) / 2345 - 118.13;
       return { model: window.__wfFireModel({ id: frow.id, st: frow.st, lat, lon, ha: frow.ha, res: frow.res, note: frow.note }) };

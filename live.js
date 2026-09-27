@@ -111,12 +111,34 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
     try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
   }
   // Replace one source's fires (US, Portugal or British Columbia) and keep the others'.
-  var srcOf=function(r){return r[0]==='PT'?'PT':r[0]==='CAN'?'CAN':'US';};
+  var srcOf=function(r){return r[0]==='PT'?'PT':r[0]==='CAN'?'CAN':r[0]==='BRA'?'BR':'US';};
   function publishPart(src,rows){
     var other=(window.__wfLiveFires||[]).filter(function(r){return srcOf(r)!==src;});
     var mine=rows.sort(function(a,b){return b.w-a.w;}).map(function(x){return x.r;});
     window.__wfLiveFires=mine.concat(other);window.__wfLiveAt=Date.now();
     save('t'+src);
+  }
+  // Brazil: INPE Programa Queimadas fire events (satellite detections grouped into individual fires, hourly).
+  // Outlines and fronts live in window.__wfBRGeo (saved in IndexedDB), the rows stay small.
+  var BR_TYPE={'Incêndio':'Wildfire','Queimada':'Burning','Queima':'Burning','Fogo':'Fire'};
+  function buildBR(js){
+    var geo={},out=[];
+    (js&&js.events||[]).forEach(function(e){
+      var obs=/observ/i.test(e.status||''),xy=toXY(e.lat,e.lon);
+      geo[e.id]={ring:e.ring||null,front:e.front||null};
+      var pct=function(v){return v==null?null:Math.round(v);};
+      var info={src:'INPE · Programa Queimadas',st:obs?'Em observação':'Ativo',stEn:obs?'Under observation':'Active',tone:obs?'watch':'hot',
+        type:e.type||'',typeEn:BR_TYPE[e.type]||'',startMs:e.start||null,updMs:e.last||null,ha:e.ha||null,
+        resolved:obs,heldMs:obs?(e.last||null):null,heldSrc:'last satellite detection',
+        place:[e.nMuns>1?e.muns.slice(0,2).join(', ')+(e.nMuns>2?' +'+(e.nMuns-2):''):'',e.state].filter(Boolean).join(' · '),
+        facts:[['Active fronts',e.fronts==null?'—':String(e.fronts)],['Days with fire',e.fireDays!=null&&e.days!=null?e.fireDays+' of '+Math.round(e.days):'—'],
+          ['Days without rain',e.dry==null?'—':String(Math.round(e.dry))],['Fire risk',e.risk==null?'—':Math.round(e.risk*100)+'%']],
+        areas:e.areas||[],nAreas:e.nAreas||0,cover:{defor:pct(e.defor),veg:pct(e.veg),trans:pct(e.trans)}};
+      var note=(obs?'Em observação':'Ativo')+' · '+Math.round(e.ha).toLocaleString('pt-PT')+' ha';
+      out.push({r:['BRA',e.state,e.id,e.place,note,xy[0],xy[1],null,e.ha,info],w:(obs?0:1e7)+(e.ha||0)});
+    });
+    window.__wfBRGeo=geo;idbPut(KEY+'|br',geo);
+    return out;
   }
   // British Columbia Wildfire Service: active fires with crews / aviation / heavy equipment counts.
   var BC_STAGE={OUT_CNTRL:'Out of control',HOLDING:'Being held',UNDR_CNTRL:'Under control'};
@@ -208,6 +230,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   // --- inputs
   function getJSON(u){return fetch(u).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});}
   function officialPerimeter(f){
+    if(/^BR-/.test(f.id)){var G=(window.__wfBRGeo||{})[f.id];return Promise.resolve(G&&G.ring&&G.ring.length>3?{ring:G.ring,src:'Burned area · INPE fire event'}:null);}
     var q=null;
     if(/^BC-/.test(f.id))q='https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/BCWS_FirePerimeters_PublicView/FeatureServer/0/query?where='+encodeURIComponent("FIRE_NUMBER='"+f.id.slice(3)+"'")+'&outFields=FIRE_SIZE_HECTARES,TRACK_DATE&outSR=4326&geometryPrecision=5&f=geojson';
     else if(/^[A-Z]{2}$/.test(f.st)&&f.st!=='PT')q='https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_Current/FeatureServer/0/query?where='+encodeURIComponent("attr_UniqueFireIdentifier='"+f.id+"'")+'&outFields=poly_GISAcres,poly_PolygonDateTime&outSR=4326&geometryPrecision=5&f=geojson';
@@ -323,7 +346,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   };
 
   var c=readCache(),now=Date.now();
-  if(c.rows)window.__wfLiveFires=c.rows;if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0);
+  if(c.rows)window.__wfLiveFires=c.rows;if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
   var fresh=function(k){return c[k]&&now-c[k]<TTL;};
   var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
@@ -359,6 +382,11 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       .catch(function(){return fetch(PT_URL).then(jsonOk);})
       .then(buildPT).then(function(rows){publishPart('PT',rows);})
       .catch(function(e){console.warn('[live fires] Portugal feed failed',e);});
+  }
+  idbGet(KEY+'|br').then(function(g){if(g&&!window.__wfBRGeo){window.__wfBRGeo=g;}});
+  if(!fresh('tBR')){
+    fetch('data/br-fires.json?t='+tick).then(jsonOk).then(buildBR).then(function(rows){publishPart('BR',rows);})
+      .catch(function(e){console.warn('[live fires] Brazil feed failed',e);});
   }
   if(!fresh('tCAN')){
     fetch('data/bc-fires.json?t='+tick).then(jsonOk).then(buildBC).then(function(rows){publishPart('CAN',rows);})

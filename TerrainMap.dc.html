@@ -90,6 +90,7 @@ body{margin:0}
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
           <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.7" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}"></path>
           <path d="{{mNow}}" fill="#FF3B30" fill-opacity="0.28" stroke="#8E0A12" stroke-opacity="0.8" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
+          <path d="{{mFront}}" fill="#FF3B30" fill-opacity="0.55" stroke="#D7263D" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
           <path d="{{mHeld}}" fill="none" stroke="#1E7A34" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
           <path d="{{mActive}}" fill="none" stroke="#FF6A00" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
         </sc-if>
@@ -289,7 +290,7 @@ body{margin:0}
       </sc-for>
     </div>
     <div style="margin: 8px 16px 0; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="display: block; padding: 10px 0 6px; font-size: 14px; font-weight: 600; color: #6C6C70">Forces on scene</span>
+      <span style="display: block; padding: 10px 0 6px; font-size: 14px; font-weight: 600; color: #6C6C70">{{fc.gridTitle}}</span>
       <sc-if value="{{fc.hasForces}}" hint-placeholder-val="{{ true }}">
         <div style="display: grid; grid-template-columns: repeat({{fc.fCols}}, minmax(0, 1fr)); gap: 6px">
           <sc-for list="{{fc.forces}}" as="fo" hint-placeholder-count="3">
@@ -302,6 +303,12 @@ body{margin:0}
         <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0 0; font-size: 15px; line-height: 18px">
           <span style="color: #6C6C70; white-space: nowrap">Burned area</span>
           <span style="text-align: right; min-width: 0"><b style="font-weight: 600; font-variant-numeric: tabular-nums">{{fc.areaTxt}}</b><span style="display: {{fc.areaSubD}}; font-size: 14px; color: #8E8E93">{{fc.areaSub}}</span></span>
+        </div>
+      </sc-if>
+      <sc-if value="{{fc.hasAreas}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 8px 0 0; font-size: 15px; line-height: 19px">
+          <span style="color: #6C6C70">Protected areas and indigenous lands</span>
+          <b style="font-weight: 600">{{fc.areasTxt}}</b>
         </div>
       </sc-if>
     </div>
@@ -856,7 +863,9 @@ class Component extends DCLogic {
     const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn && REAL ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 ? ringPath(snapH.ring) : '',
       mActive: LY.active && showEdge ? edges(snapH, false) : '', mHeld: LY.held && showEdge ? edges(snapH, true) : '',
       // strokes sit inside the CSS-scaled map layer, so size them in screen pixels by dividing by the zoom
-      mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } } : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '', mSw: { thin: 1, edge: 1, dash: '6 5' } };
+      // INPE's newest fire fronts (Brazil): where the fire burned on its latest day
+      mFront: (() => { const G = p.fireId && (window.__wfBRGeo || {})[p.fireId]; return G && G.front && G.front.ring && LY.active && !hz ? ringPath(G.front.ring) : ''; })(),
+      mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } } : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '', mFront: '', mSw: { thin: 1, edge: 1, dash: '6 5' } };
 
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     const OUT = {
@@ -1059,13 +1068,15 @@ class Component extends DCLogic {
     }
     if (!time.length) time.push({ k: 'Started', v: 'Not published', sub: '' });
     time.forEach((t) => { t.subD = t.sub ? 'inline' : 'none'; });
-    const fz = [['Personnel', R.man], ['Crews', R.crews], ['Ground', R.terrain], ['Aircraft', R.aerial], ['Boats', R.water]].filter(([k, v]) => v != null && (k !== 'Boats' || v > 0)).map(([k, v]) => ({ k, v: Number(v).toLocaleString() }));
+    const FACTS = Array.isArray(I.facts) ? I.facts.map(([k, v]) => ({ k, v })) : null;
+    const fz = FACTS || [['Personnel', R.man], ['Crews', R.crews], ['Ground', R.terrain], ['Aircraft', R.aerial], ['Boats', R.water]].filter(([k, v]) => v != null && (k !== 'Boats' || v > 0)).map(([k, v]) => ({ k, v: Number(v).toLocaleString() }));
+    const CV = I.cover || null, coverTxt = CV ? [[CV.defor, 'recent deforestation'], [CV.veg, 'native vegetation'], [CV.trans, 'farmland and pasture']].filter((q) => q[0] != null && q[0] >= 5).map((q) => q[0] + '% ' + q[1]).join(', ') : '';
     const upd = I.updMs || null, age = upd ? (now - upd) / 60000 : null;
     const freshC = age == null ? '#AEAEB2' : age < 60 ? '#34C759' : age < 360 ? '#FF9500' : '#AEAEB2';
     const agoTxt = age == null ? '' : age < 1 ? 'just now' : D(now - upd) + ' ago';
     const u = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ area: g.st === 'PT' ? 'ha' : 'ac' }, v || {}); })();
     const areaTxt = I.ha == null ? '' : u.area === 'ha' ? I.ha.toLocaleString() + ' ha' : Math.round(I.ha / 0.4047).toLocaleString() + ' acres';
-    const B = I.burn, areaSub = B ? ' · ' + [['forest', B.forest], ['scrub', B.scrub], ['farm', B.farm]].filter((q) => q[1] >= 0.5).map((q) => Math.round(q[1]).toLocaleString() + ' ' + q[0]).join(', ') : '';
+    const B = I.burn, areaSub = coverTxt ? ' · ' + coverTxt : B ? ' · ' + [['forest', B.forest], ['scrub', B.scrub], ['farm', B.farm]].filter((q) => q[1] >= 0.5).map((q) => Math.round(q[1]).toLocaleString() + ' ' + q[0]).join(', ') : '';
     const TYPE_ICON = { Scrubland: 'M4 20c2-5 4-7 8-7s6 2 8 7M8 13c0-3 1.8-5 4-5s4 2 4 5M12 8V4', 'Forest stand': 'M12 3 6 12h3l-4 6h14l-4-6h3ZM12 18v3', Agricultural: 'M4 20h16M7 20V10M12 20V7M17 20v-9M7 10l-2-2M12 7l2-2M17 11l2-2' };
     const beh = I.beh ? 'Behavior ' + I.beh.toLowerCase() : '';
     const hEst = 250 + time.length * 26 + (held ? 60 : 0) + (fz.length ? 58 : 20) + (I.ha != null ? 26 : 0);
@@ -1078,7 +1089,8 @@ class Component extends DCLogic {
       hasType: !!(I.type || beh), typeTxt: I.type || beh, typeEn: I.type && I.typeEn ? I.typeEn : '', typeIcon: TYPE_ICON[I.typeEn] || 'M12 21c4 0 6.5-2.7 6.5-6.3 0-3.8-3.3-6-4.4-9.7-2.2 1.6-3.6 3.8-3.6 6.2-1-.6-1.6-1.8-1.8-3C6.9 10 5.5 12.3 5.5 14.7 5.5 18.3 8 21 12 21Z',
       held: !!held, heldTitle: held ? (held.official ? 'Held · ' + held.label.toLowerCase() : 'Held · edge fully contained') : '',
       heldSub: held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve' + (held.official && I.heldSrc === 'last status update' ? ' (to the last status update)' : '') : held.official ? 'Resolution time not published' : 'Per the fire model; official state is ' + I.st) : '',
-      time, forces: fz, hasForces: fz.length > 0, noForces: fz.length === 0, fCols: Math.max(1, Math.min(4, fz.length)), forcesNote: 'Resource numbers not published for this fire',
+      time, forces: fz, hasForces: fz.length > 0, noForces: fz.length === 0, fCols: FACTS ? 2 : Math.max(1, Math.min(4, fz.length)), gridTitle: FACTS ? 'Situation' : 'Forces on scene',
+      hasAreas: !!(I.areas && I.areas.length), areasTxt: I.areas && I.areas.length ? I.areas.slice(0, 3).map((a) => a.replace(/\s*\((REGULARIZADA|HOMOLOGADA|DECLARADA|DELIMITADA|EM ESTUDO)\)/i, '')).join(' · ') + (I.nAreas > 3 ? ' +' + (I.nAreas - 3) : '') : '', forcesNote: 'Resource numbers not published for this fire',
       hasArea: I.ha != null, areaTxt, areaSub, areaSubD: areaSub ? 'inline' : 'none',
       freshC, freshTxt: upd ? 'Updated ' + clockT(upd) + ' · ' + agoTxt : 'Update time not published', srcTxt: I.src,
       goLabel: 'Open fire',
