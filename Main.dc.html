@@ -619,7 +619,7 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 99, scrimBg: side ? 'transparent' : 'rgba(0,0,0,0.32)', scrimBlur: side ? 'none' : 'blur(3px)' };
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 116,   // text sits well clear of the iOS home indicator scrimBg: side ? 'transparent' : 'rgba(0,0,0,0.32)', scrimBlur: side ? 'none' : 'blur(3px)' };
   }
   renderVals() {
     const L = this.wfLayout();
