@@ -43,7 +43,7 @@ a{color:#006A91}a:hover{color:#006A91}
 .lock{animation:lock .5s cubic-bezier(.2,.8,.2,1) both}
 .dot{position:relative;display:inline-block;flex-shrink:0;width:8px;height:8px;border-radius:50%;background:currentColor}
 .dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:ping 1.8s cubic-bezier(0,0,.2,1) infinite}
-.btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:10px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.97);transition-duration:.08s}
 .btn .go{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
@@ -222,7 +222,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
-        <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #0062CC; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
+        <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 10px; background: rgba(118,118,128,0.12); color: #0062CC; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
       </div>
     </div>
     <!-- Collapsed bottom blade: a grabber at the top says it expands; 30px under the text to the screen edge -->
@@ -361,7 +361,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span aria-hidden="true" style="height: 1px; margin-left: 16px; background: rgba(60,60,67,0.14)"></span>
         <button type="button" class="opt" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1">Invite team members</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
       </div>
-      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; height: 50px; border-radius: 12px; color: #0062CC; font-size: 17px; text-decoration: none">Sign out</a>
+      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; height: 50px; border-radius: 10px; color: #0062CC; font-size: 17px; text-decoration: none">Sign out</a>
     </div>
   </section>
   </div>

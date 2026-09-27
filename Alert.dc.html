@@ -42,7 +42,7 @@ a{color:#006A91}a:hover{color:#006A91}
 .lock{animation:lock .5s cubic-bezier(.2,.8,.2,1) both}
 .dot{position:relative;display:inline-block;flex-shrink:0;width:8px;height:8px;border-radius:50%;background:currentColor}
 .dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:ping 1.8s cubic-bezier(0,0,.2,1) infinite}
-.btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:10px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.97);transition-duration:.08s}
 .btn .go{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
@@ -331,7 +331,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
       <h2 style="margin: 16px 0 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 24px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
       <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px; margin-top: 24px; border: 0; border-radius: 12px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset; color: #000000; font-size: 17px; font-weight: 600; text-decoration: none">
+      <a href="Main.dc.html" class="btn" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px; margin-top: 24px; border: 0; border-radius: 10px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset; color: #000000; font-size: 17px; font-weight: 600; text-decoration: none">
         Back to the map
       </a>
       <button type="button" onClick="{{restore}}" style="margin-top: 8px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5); font: 400 17px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">Restore demo alerts</button>
