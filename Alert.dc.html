@@ -163,7 +163,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: {{rootBg}}; transition: background-color .6s ease; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <sc-if value="{{mapLayer}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" mode="pin" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
+      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" mode="pin" no-view="true" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
 
@@ -180,9 +180,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
         <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
           <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-            <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{curRow.place}}</span>
+            <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">Ignition candidate</span>
           </span>
-          <span style="max-width: 100%; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{curRow.sub}}</span>
+          <span style="max-width: 100%; font-size: 15px; line-height: 18px; color: #545458; text-align: left; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{curRow.sub}}</span>
         </button>
       </sc-if>
       <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
@@ -737,7 +737,7 @@ class Component extends DCLogic {
         const others = active.map((c, i) => ({ c, i })).filter((o) => o.i !== ci);
         return {
           multi: n > 1, grabD: n > 1 ? 'block' : 'none', hdrBd: n > 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
-          curRow: { place: cur.place, sub: (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
+          curRow: { place: cur.place, sub: cur.place + ' · ' + (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
             aria: cur.place + ', ' + cur.conf + ' percent. ' + (n > 1 ? (ci + 1) + ' of ' + n + '. Show other candidates' : '') },
           ddRows: (dd ? others.slice(0, 80) : []).map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
             aria: o.c.place + ', ' + o.c.conf + ' percent, ' + o.c.srcList, op: dd ? 1 : 0, tf: dd ? 'none' : 'translateY(-12px)', delay: dd ? (140 + Math.min(k, 12) * 35) + 'ms' : '0ms',
