@@ -85,6 +85,9 @@
     '<path class="ground" d="'+G+'" fill="none" stroke="#8E8E93" stroke-width="1.1" stroke-linecap="round"/></svg>'+
     '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span></div><div class="cap"></div>';
   (document.body||document.documentElement).appendChild(el);
+  var soft=false;try{soft=sessionStorage.getItem('wf-soft')==='1';sessionStorage.removeItem('wf-soft');}catch(e){}
+  if(soft){var ss=document.createElement('style');ss.textContent='#wf-load{transition:opacity .9s cubic-bezier(.4,0,.2,1)}#wf-load .in{animation-duration:.8s;animation-delay:.5s}'+
+    '#dc-root{opacity:0;transform:scale(1.012);transition:opacity 1s cubic-bezier(.4,0,.2,1),transform 1.3s cubic-bezier(.2,.8,.2,1)}html.wf-in #dc-root{opacity:1;transform:none}';document.head.appendChild(ss);}
   var t0=Date.now(),minMs=0;
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
@@ -100,9 +103,9 @@
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
-    if((drawn()&&haveData()&&Date.now()-t0>=minMs)||Date.now()-t0>15000){el.className+=' out';setTimeout(function(){el.remove();
+    if((drawn()&&haveData()&&Date.now()-t0>=minMs)||Date.now()-t0>15000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
       // warm the next photo into the cache for the next cold start
-      try{var n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;(new Image()).src='assets/splash/'+PH[n][0];}catch(e){}},350);return;}
+      try{var n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;(new Image()).src='assets/splash/'+PH[n][0];}catch(e){}},soft?950:350);return;}
     setTimeout(tick,80);
   })();
 })();

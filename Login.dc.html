@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=13"></script>
+<script src="fit.js?v=14"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -34,7 +34,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .pw::placeholder{color:#6C6C70}
 </style>
 </helmet>
-<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 104px 16px 40px; background: transparent; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 104px 16px 40px; background: transparent; overflow: hidden; opacity: {{lvOp}}; transform: translateY({{lvY}}); transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 16px">
     <svg width="34" height="41" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35))"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></svg>
     <h1 style="margin: 10px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: #FFFFFF; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
@@ -95,10 +95,10 @@ a{color:#007AFF}a:hover{color:#0062CC}
               <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 8px; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 19px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
             </span>
             <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-              <span style="display: flex; align-items: baseline; gap: 16px; font-size: 20px; font-weight: 600; line-height: 24px"><span>{{p.name}}</span><span style="font-size: 15px; font-weight: 400; color: #8E8E93">{{p.cc}}</span></span>
+              <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}}</span>
               <span style="display: flex; flex-direction: column; gap: 2px; margin-top: 6px">
                 <span style="font-size: 17px; line-height: 21px; color: #000000">{{p.role}}</span>
-                <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{p.org}}</span>
+                <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{p.orgCc}}</span>
                 <span style="font-size: 15px; font-weight: 600; line-height: 19px; color: #6C6C70">{{p.sees}}</span>
               </span>
             </span>
@@ -211,7 +211,7 @@ class Component extends DCLogic {
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
-    h.style.opacity = '1';                                              // the frosted panel shows the photo through it
+    h.style.transition = (this.state || {}).leaving ? 'opacity .9s cubic-bezier(.4,0,.2,1) .1s' : 'none'; h.style.opacity = (this.state || {}).leaving ? '0' : '1';                                              // the frosted panel shows the photo through it
     // Each photo slowly zooms in while it is shown; photos out of view reset instantly, ready for their next turn.
     const apply = () => B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img;
       d.style.transition = b.sc === 1 && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 10s linear';
@@ -263,12 +263,19 @@ class Component extends DCLogic {
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
-        tick: s.sel === id ? 1 : 0, selD: s.sel === id ? 'block' : 'none', cc: ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] || '', selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
+        tick: s.sel === id ? 1 : 0, selD: s.sel === id ? 'block' : 'none', orgCc: org + (({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] ? ' · ' + ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] : ''), selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
         aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (s.sel === id ? ' Selected' : ''),
         pick: () => { this.setState({ sel: id }); this.closePanel(); }
       })),
-      login: () => {
+      lvOp: s.leaving ? 0 : 1, lvY: s.leaving ? '-10px' : '0px',
+      // Sign in: the form drifts up and fades, the photo dissolves into the app's calm grey, then the map fades in.
+      login: (e) => {
         if (!sel) return;
+        try { e.preventDefault(); } catch (x) {}
+        if (this.state && this.state.leaving) return;
+        try { window.sessionStorage.setItem('wf-soft', '1'); } catch (x) {}
+        this.setState({ leaving: true });
+        setTimeout(() => { window.location.href = 'Main.dc.html'; }, 900);
         try { window.localStorage.setItem('wf-role', sel[0]); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
         window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[0], scope: null });
       }
