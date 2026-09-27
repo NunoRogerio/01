@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=18"></script>
-<script src="i18n.js?v=7"></script>
+<script src="i18n.js?v=8"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -105,6 +105,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
                 <span style="font-size: 17px; line-height: 21px; color: #000000">{{p.role}}</span>
                 <span style="font-size: 15px; line-height: 19px; color: #545458">{{p.orgCc}}</span>
                 <span style="font-size: 15px; font-weight: 600; line-height: 19px; color: #545458">{{p.sees}}</span>
+                <span style="font-size: 15px; font-weight: 600; line-height: 19px; color: #545458">{{p.feats}}</span>
               </span>
             </span>
           </span>
@@ -271,7 +272,7 @@ class Component extends DCLogic {
       selAccess: sel ? ({ admin: 'All countries', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] : '',
       goD: sel ? 'flex' : 'none', offD: sel ? 'none' : 'flex',
       profiles: P.map(([id, code, user, name, role, org, area, sum, photo], i) => ({
-        code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
+        code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), feats: ({})[id] || 'All features enabled', sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
         tick: selId === id ? 1 : 0, selD: selId === id ? 'block' : 'none', orgCc: org + (({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] ? ' · ' + ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', admin: 'PT' })[id] : ''), selStr: selId === id ? 'true' : 'false', ring: selId === id ? '#007AFF' : 'transparent',

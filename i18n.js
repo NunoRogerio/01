@@ -13,7 +13,7 @@
   // ---- exact phrases -----------------------------------------------------------------------------------------
   var X={
     'Forest Fire Watch':'Forest Fire Watch','Log in':'Entrar','Log in to your account':'Entre na sua conta','Username':'Utilizador','Password':'Palavra-passe',
-    'Choose a profile':'Escolha um perfil','Choose a demo profile':'Escolha um perfil de demonstração','Filled in when you choose a profile':'Preenchida quando escolher um perfil','Tap Username to choose a demo profile.':'Toque em Utilizador para escolher um perfil de demonstração.',
+    'Choose a profile':'Escolha um perfil','Choose a demo profile':'Escolha um perfil de demonstração','All features enabled':'Todas as funcionalidades ativas','Filled in when you choose a profile':'Preenchida quando escolher um perfil','Tap Username to choose a demo profile.':'Toque em Utilizador para escolher um perfil de demonstração.',
     'Demo login to show user roles: each profile limits which areas a user can see and which features they can use.':'Acesso de demonstração para mostrar funções de utilizador: cada perfil limita as áreas que cada utilizador vê e as funcionalidades que pode usar.',
     'Demo users · each role sets the areas and features':'Utilizadores de demonstração · cada função define as áreas e as funcionalidades',
     'Sign out':'Terminar sessão','Close':'Fechar','View':'Ver','Cancel':'Cancelar','Apply':'Aplicar','Done':'Concluído','Undo':'Desfazer','Adjust':'Ajustar','Now':'Agora','Not yet':'Ainda não',
