@@ -810,7 +810,7 @@ class Component extends DCLogic {
     const BRF = !!(frow && frow.st === 'BRA'), BI = BRF ? (frow.info || {}) : null;
     const K = BRF ? { k1L: 'Burned area', k1V: BI.ha != null ? Math.round(BI.ha).toLocaleString() : '—', k1S: BI.ha != null ? ' ha' : '', k2L: 'Active fronts', k2V: BI.facts && BI.facts[0] ? BI.facts[0][1] : '—', k2S: '' } : RO ? { k1L: 'Personnel', k1V: fres && fres.man != null ? Number(fres.man).toLocaleString() : '—', k1S: fres && fres.man != null ? ' on scene' : '',
       k2L: RU && RU[1] ? RU[1][0] : 'Status', k2V: RU && RU[1] ? Number(RU[1][1]).toLocaleString() : ((fres && fres.status) || '—'), k2S: '' } : null;
-    const mapUnits = sent ? deployedRaw.map((d) => ({
+    const mapUnits = sent && !(window.__wfLiveMap && fv) ? deployedRaw.map((d) => ({
       x0: d.o[0], y0: d.o[1], x1: d.d[0], y1: d.d[1], eta: d.eta, air: d.air, icon: d.icon, n: d.n,
       c: d.air ? '#0079A6' : '#000000', glow: d.air ? 'rgba(0,121,166,0.55)' : 'rgba(0,0,0,0.35)',
       tt: d.label, td: d.from + ' · on the line in ' + d.eta + ' min (' + clock(d.eta) + ')'
