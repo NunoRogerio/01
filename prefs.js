@@ -43,17 +43,17 @@
   }
   function darkCss() {
     var o = [];
-    [['rgb(242, 242, 247)', '#1C1C1E'], ['rgb(255, 255, 255)', '#2C2C2E'], ['rgb(238, 238, 240)', '#2C2C2E'], ['rgb(229, 229, 234)', '#3A3A3C'],
-      ['rgb(227, 227, 232)', '#3A3A3C'],
+    [['rgb(242, 242, 247)', '#262629'], ['rgb(255, 255, 255)', '#333336'], ['rgb(238, 238, 240)', '#333336'], ['rgb(229, 229, 234)', '#404043'],
+      ['rgb(227, 227, 232)', '#404043'],
       ['rgba(118, 118, 128, 0.12)', 'rgba(118,118,128,0.24)'], ['rgba(60, 60, 67, 0.3)', 'rgba(235,235,245,0.3)'], ['rgba(60, 60, 67, 0.12)', 'rgba(235,235,245,0.12)'],
       ['rgba(52, 199, 89, 0.08)', 'rgba(48,209,88,0.16)'], ['rgba(52, 199, 89, 0.12)', 'rgba(48,209,88,0.18)'], ['rgba(204, 153, 0, 0.12)', 'rgba(255,214,10,0.16)'],
       ['rgba(0, 121, 166, 0.1)', 'rgba(90,200,250,0.16)']
     ].concat([0.7, 0.72, 0.78, 0.8, 0.82, 0.85, 0.88, 0.9, 0.92, 0.94, 0.95, 0.97, 0.98].map(function (a) {   // frosted white panels, chips and pills
-      return ['rgba(255, 255, 255, ' + a + ')', 'rgba(44,44,46,' + Math.max(a, 0.82) + ')']; }))
+      return ['rgba(255, 255, 255, ' + a + ')', 'rgba(51,51,54,' + Math.max(a, 0.82) + ')']; }))
     .concat([0.7, 0.78, 0.8, 0.85, 0.88, 0.9, 0.92, 0.94, 0.96, 0.97, 0.98].map(function (a) {   // frosted grey map controls and legend chips
-      return ['rgba(242, 242, 247, ' + a + ')', 'rgba(28,28,30,' + Math.max(a, 0.88) + ')']; }))
+      return ['rgba(242, 242, 247, ' + a + ')', 'rgba(38,38,41,' + Math.max(a, 0.88) + ')']; }))
     .forEach(function (p) { o.push(col('background', p[0], p[1])); o.push(col('background-color', p[0], p[1])); });
-    [['rgb(0, 0, 0)', '#FFFFFF'], ['rgb(84, 84, 88)', '#AEAEB2'], ['rgb(60, 60, 67)', '#D1D1D6'], ['rgb(72, 72, 74)', '#AEAEB2'], ['rgb(152, 152, 159)', '#8E8E93'],
+    [['rgb(0, 0, 0)', '#E8E8ED'], ['rgb(84, 84, 88)', '#AEAEB2'], ['rgb(60, 60, 67)', '#D1D1D6'], ['rgb(72, 72, 74)', '#AEAEB2'], ['rgb(152, 152, 159)', '#8E8E93'],
       ['rgb(0, 98, 204)', '#409CFF'], ['rgb(0, 106, 145)', '#5AC8FA'], ['rgb(0, 113, 227)', '#409CFF'], ['rgb(10, 111, 219)', '#409CFF'], ['rgb(30, 122, 52)', '#30D158'],
       ['rgb(122, 86, 0)', '#FFD60A'], ['rgb(163, 72, 0)', '#FF9F0A'], ['rgb(176, 0, 26)', '#FF6961'], ['rgb(122, 63, 224)', '#BF5AF2']
     ].forEach(function (p) { o.push(col('color', p[0], p[1])); });
@@ -61,17 +61,17 @@
     o.push('svg [stroke="#545458"]{stroke:#AEAEB2}');
     o.push('[style*="text-shadow: rgb(255, 255, 255)"]{text-shadow:0 0 2px #000,0 0 6px #000!important}');   // map labels and credit: dark halo
     // The screens' own style sheets
-    o.push('html,body{background:#000!important;color:#FFF}a{color:#409CFF}');
+    o.push('html,body{background:#1E1E20!important;color:#E8E8ED}a{color:#409CFF}');
     o.push('.segthumb{background:#636366!important}');
-    o.push('.sheet{background:#1C1C1E!important}.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder{color:#AEAEB2!important}');
-    o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(44,44,46,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
-    o.push('.igpill::after{background:rgba(44,44,46,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#FFF!important}');
+    o.push('.sheet{background:#262629!important}.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder{color:#AEAEB2!important}');
+    o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
+    o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
-    o.push('.stepb,.ghost{background:rgba(118,118,128,0.24)!important;color:#FFF!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(44,44,46,0.88)!important}');
+    o.push('.stepb,.ghost{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#404043!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
     o.push('image[href*="tile.openstreetmap"]{filter:url(#wfNightTiles)}');
-    o.push('rect[fill="#F2F2F7"]{fill:#1C1C1E}');
+    o.push('rect[fill="#F2F2F7"]{fill:#262629}');
     return o.join('\n');
   }
 
@@ -83,7 +83,7 @@
     d.innerHTML = '<svg width="0" height="0"><filter id="wfNightTiles" color-interpolation-filters="sRGB">' +
       '<feComponentTransfer><feFuncR type="table" tableValues="1 0"/><feFuncG type="table" tableValues="1 0"/><feFuncB type="table" tableValues="1 0"/></feComponentTransfer>' +
       '<feColorMatrix type="hueRotate" values="180"/><feColorMatrix type="saturate" values="0.55"/>' +
-      '<feComponentTransfer><feFuncR type="linear" slope="0.82" intercept="0.03"/><feFuncG type="linear" slope="0.82" intercept="0.03"/><feFuncB type="linear" slope="0.85" intercept="0.04"/></feComponentTransfer>' +
+      '<feComponentTransfer><feFuncR type="linear" slope="0.6" intercept="0.2"/><feFuncG type="linear" slope="0.6" intercept="0.2"/><feFuncB type="linear" slope="0.62" intercept="0.21"/></feComponentTransfer>' +
       '</filter></svg>';
     document.body.appendChild(d);
   }
@@ -96,7 +96,7 @@
     var root = document.documentElement;
     root.classList.toggle('wf-dark', theme === 'dark');
     root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
-    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme === 'dark' ? '#1C1C1E' : '#F2F2F7');
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme === 'dark' ? '#262629' : '#F2F2F7');
     var sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]'); if (sb) sb.setAttribute('content', theme === 'dark' ? 'black' : 'default');
     if (theme === 'dark') { if (document.body) ensureNightFilter(); else document.addEventListener('DOMContentLoaded', ensureNightFilter); }
   }
