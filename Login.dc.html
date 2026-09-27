@@ -145,7 +145,13 @@ class Component extends DCLogic {
       };
       raf = requestAnimationFrame(step);
     };
-    const check = () => { if (mode !== 'magnet' || raf) return; const to = nearest(); if (to !== null && Math.abs(to - L.scrollTop) <= FIELD) pull(to); };
+    // Only cards ahead in the swipe's direction attract, so a swipe up or down is never pulled backwards.
+    const check = () => {
+      if (mode !== 'magnet' || raf) return; const y = L.scrollTop;
+      if (held !== null && Math.abs(y - held) <= 40) return;                 // small nudge: settle() returns it
+      const T = targets().filter((t) => (held === null || Math.abs(t - held) > 1) && (dirV >= 0 ? t >= y - 1 : t <= y + 1) && Math.abs(t - y) <= FIELD);
+      if (T.length) pull(T.reduce((b, t) => Math.abs(t - y) < Math.abs(b - y) ? t : b, T[0]));
+    };
     // When a gentle swipe comes to rest with no card in the field, it still never stops on a half-shown card:
     // a small nudge returns to the card it left; otherwise the next card in the swipe's direction is pulled in.
     const settle = () => {
