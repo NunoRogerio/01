@@ -273,9 +273,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 6px; margin: 24px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
       <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{snd.pct}}%; border-radius: 999px; background: {{snd.barC}}; transition: width .6s cubic-bezier(.3,.9,.25,1), background-color .3s ease"></span>
     </span>
-    <ul style="display: flex; flex-direction: column; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF; overflow: hidden">
+    <ul class="wf-snap" style="display: flex; flex-direction: column; flex-shrink: 1; min-height: 0; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF; overflow-y: auto; scrollbar-width: none">
       <sc-for list="{{snd.rows}}" as="o" hint-placeholder-count="2">
-        <li style="display: flex; align-items: center; gap: 16px; min-height: 60px; padding: 10px 16px; box-sizing: border-box; border-top: {{o.sep}}">
+        <li style="display: flex; flex-direction: column; border-top: {{o.sep}}">
+          <div style="display: flex; align-items: center; gap: 16px; min-height: 60px; padding: 10px 16px; box-sizing: border-box">
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 17px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
             <span style="font-size: 15px; line-height: 18px; color: {{o.stC}}">{{o.state}}</span>
@@ -284,10 +285,20 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span class="sndspin" style="position: absolute; inset: 2px; border-radius: 50%; border: 2px solid rgba(60,60,67,0.18); border-top-color: #0062CC; opacity: {{o.spinOp}}; transition: opacity .2s ease"></span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; inset: 0; opacity: {{o.tickOp}}; transform: scale({{o.tickS}}); transition: opacity .25s ease, transform .35s cubic-bezier(.3,.9,.25,1)"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
           </span>
+          </div>
+          <!-- What this station sends -->
+          <ul style="display: flex; flex-direction: column; margin: 0; padding: 0 0 8px; list-style: none">
+            <sc-for list="{{o.units}}" as="u" hint-placeholder-count="2">
+              <li style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px 0 40px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.08)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{u.c}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-left: -28px"><path d="{{u.icon}}"></path></svg>
+                <span style="flex-grow: 1; min-width: 0; font-size: 17px; line-height: 22px">{{u.label}}</span>
+                <span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums">{{u.n}}</span>
+              </li>
+            </sc-for>
+          </ul>
         </li>
       </sc-for>
     </ul>
-    <span style="margin: 16px 4px 0; font-size: 15px; line-height: 20px; color: #545458">{{snd.units}}</span>
     <span style="margin: 8px 4px 0; font-size: 13px; line-height: 18px; color: #545458">Demo: no real order is sent</span>
     <button type="button" class="btn primary" onClick="{{snd.done}}" disabled="{{snd.notDone}}" style="margin-top: auto; height: 56px; font-size: 19px; font-weight: 600; opacity: {{snd.btnOp}}; transition: opacity .3s ease">Done</button>
   </section>
@@ -623,19 +634,30 @@ class Component extends DCLogic {
   wfOrders() { try { return JSON.parse(window.localStorage.getItem('wf-orders') || '{}') || {}; } catch (e) { return {}; } }
   // Orders per station: crews and tenders shared out over the chosen stations (fastest first, up to their free crews
   // when known); helicopters, air tankers and drone swarms go as one 'Air support' order.
-  wfSaveOrder(fireId, list, counts, du) {
-    const all = this.wfOrders(), cur = all[fireId] || [], at = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    const get = (d) => { let o = cur.find((q) => q.id === d.id); if (!o) { o = { id: d.id, code: d.code || '', name: d.name, km: d.km, du, n: [0, 0, 0, 0, 0, 0], at }; cur.push(o); } o.at = at; return o; };
+  // Orders per station: crews and tenders shared out over the chosen stations (fastest first, up to their free crews
+  // when known); helicopters, air tankers and drone swarms go as one 'Air support' order.
+  wfSplit(list, counts) {
+    const out = [], get = (d) => { let o = out.find((q) => q.id === d.id); if (!o) { o = { id: d.id, code: d.code || '', name: d.name, km: d.km, n: [0, 0, 0, 0, 0, 0] }; out.push(o); } return o; };
     const st = list.filter((d) => d.id !== 'none');
     if (st.length) {
+      st.forEach(get);
       let c = counts[0], k = 0; const cap = st.map((d) => (d.free != null ? d.free : Infinity));
       while (c > 0 && cap.some((x) => x > 0)) { const i = k % st.length; if (cap[i] > 0) { get(st[i]).n[0]++; cap[i]--; c--; } k++; }
       if (c > 0) get(st[0]).n[0] += c;
       for (let t = 0; t < counts[1]; t++) get(st[t % st.length]).n[1]++;
     }
     if (counts.slice(2).some((x) => x > 0)) { const a = get({ id: 'air', code: '', name: 'Air support', km: null }); for (let i = 2; i < 6; i++) a.n[i] += counts[i] || 0; }
+    return out.filter((o) => o.n.some((x) => x > 0));
+  }
+  wfSaveOrder(fireId, list, counts, du) {
+    const all = this.wfOrders(), cur = all[fireId] || [], at = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    this.wfSplit(list, counts).forEach((p) => {
+      let o = cur.find((q) => q.id === p.id); if (!o) { o = { id: p.id, code: p.code, name: p.name, km: p.km, du, n: [0, 0, 0, 0, 0, 0], at }; cur.push(o); }
+      o.at = at; p.n.forEach((x, i) => { o.n[i] += x; });
+    });
     all[fireId] = cur; try { window.localStorage.setItem('wf-orders', JSON.stringify(all)); } catch (e) {}
   }
+
   wfNearRows(fv, FIRE, US, st, wide) {
     const du = US ? ' mi' : ' km';
     if (!window.__wfLiveMap) return { rows: [], du, live: false };
@@ -999,19 +1021,20 @@ class Component extends DCLogic {
       // Sending: one order per chosen station, each to that station's coordinator, confirmed in turn; Done shows the dispatch.
       sendAll: () => {
         if (this._sndT) return;
-        const n = chosenList.length;
+        const n = Math.max(1, this.wfSplit(chosenList, counts).length);
         this.setState({ sending: 1, sndN: 0, open: false, cfg: false, full: false });
         let k = 0; const step = () => { k++; this.setState({ sndN: k }); if (k < n) this._sndT = setTimeout(step, 900); else this._sndT = null; };
         this._sndT = setTimeout(step, 1100);
       },
       snd: (() => {
-        const on = !!s.sending, n = chosenList.length, k = Math.min(n, s.sndN || 0), all = on && k >= n;
+        const SP = this.wfSplit(chosenList, counts), on = !!s.sending, n = Math.max(1, SP.length), k = Math.min(n, s.sndN || 0), all = on && k >= n;
         return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
           title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending dispatch orders' : 'Sending dispatch order'), titleC: all ? '#1E7A34' : '#000000',
           sub: 'To station coordinators · ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: all ? '#34C759' : '#0062CC',
-          rows: chosenList.map((d, i) => { const sentO = i < k, now = i === k && on && !all; return { name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+          rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all; return { name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+            units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
             state: sentO ? 'Order received by the coordinator' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
-          units: fmt(counts), notDone: !all, btnOp: all ? 1 : 0.4,
+          notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
           done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU); try { const a = document.querySelector('[data-wf-back]'); if (a) { a.click(); return; } } catch (e) {} this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
       })(), undoSend: () => this.setState({ reinforce: true, stations: null, station: null, counts: null, adjust: false, open: false, cfg: false, full: false, sentUp: false }),
