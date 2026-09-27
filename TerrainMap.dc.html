@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=24"></script>
 <script src="prefs.js?v=4"></script>
-<script src="i18n.js?v=26"></script>
+<script src="i18n.js?v=27"></script>
 <script src="live.js?v=23"></script>
 
 <title>Terrain map</title>
@@ -244,8 +244,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
         <sc-if value="{{pinFire}}" hint-placeholder-val="{{ true }}">
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block">
-          <circle cx="20" cy="20" r="6" fill="none" stroke="#E86A00" stroke-width="1.5"><animate attributeName="r" values="6;18" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
-          <circle cx="20" cy="20" r="6" fill="#E86A00" stroke="#FFFFFF" stroke-width="1.6"></circle>
+          <circle cx="20" cy="20" r="8" fill="none" stroke="{{pinC}}" stroke-width="1.5"><animate attributeName="r" values="8;19" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
+          <polygon points="10.5,12.5 29.5,12.5 20,28.5" fill="{{pinC}}" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
         </svg>
         </sc-if>
         <span class="{{fire.tip}}" role="tooltip"><b>{{fire.tt}}</b>{{fire.td}}</span>
@@ -274,8 +274,9 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <div style="display: flex; align-items: flex-start; gap: 8px">
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
-      <b style="display: block; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{pop.place}}</b>
-      <span style="display: flex; align-items: baseline; gap: 6px; margin-top: 4px"><span style="font-size: 28px; font-weight: 700; line-height: 32px; color: {{pop.pctC}}; font-variant-numeric: tabular-nums">{{pop.pct}}</span><span style="font-size: 15px; color: #545458">likelihood</span></span>
+      <b style="display: block; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">Ignition candidate</b>
+      <span style="display: block; margin-top: 2px; font-size: 15px; line-height: 19px; color: #3C3C43">{{pop.place}}</span>
+      <span style="display: flex; align-items: baseline; gap: 6px; margin-top: 8px"><span style="font-size: 28px; font-weight: 700; line-height: 32px; color: {{pop.pctC}}; font-variant-numeric: tabular-nums">{{pop.pct}}</span><span style="font-size: 15px; color: #545458">likelihood</span></span>
       <span style="display: block; margin-top: 4px; font-size: 15px; line-height: 19px; color: #3C3C43">{{pop.src}}</span>
       <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 16px; color: #545458">{{pop.sub}}</span>
     </sc-if>
@@ -740,12 +741,12 @@ class Component extends DCLogic {
     let spanC = null;
     const NSs = this.nearSt();
     if (NSs.length && p.mode === 'pin') {   // fire maps frame the perimeter and projection instead (set by the screen)
-      const w1 = this.win(), top = w1.t + 14 + 88 + 36, bot = w1.b - 40, left = w1.l + 56, right = this.W() - w1.r - 84;   // below the title box (with its legend) plus a distance label; above the credit   // clear of the legend, the map credit and the full-screen button
-      const xs = [fx].concat(NSs.map((q) => q.x)), ys = [fy].concat(NSs.map((q) => q.y));
-      const x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
-      const sw = Math.max(40, right - left), sh = Math.max(40, bot - top);
-      s0 = Math.min(24, x1 > x0 ? sw / (x1 - x0) : 24, y1 > y0 ? sh / (y1 - y0) : 24);   // as close as the pin and its stations allow
-      fx = (x0 + x1) / 2; fy = (y0 + y1) / 2; spanC = (top + bot) / 2;
+      const w1 = this.win(), top = Math.max(52, w1.t) + 14 + 88 + 36, bot = w1.b - 40, left = w1.l + 56, right = this.W() - w1.r - 84;   // below the title box (with its legend) plus a distance label; above the credit   // clear of the legend, the map credit and the full-screen button
+      // The pin stays in the middle of the clear area; zoom out just enough for every suggested station around it.
+      const dx = Math.max.apply(null, NSs.map((q) => Math.abs(q.x - fx))), dy = Math.max.apply(null, NSs.map((q) => Math.abs(q.y - fy)));
+      const hw = Math.max(20, Math.min(this.W() / 2 - left, right - this.W() / 2)), hh = Math.max(20, Math.min(w1.c - top, bot - w1.c));
+      s0 = Math.min(24, dx > 0 ? hw / dx : 24, dy > 0 ? hh / dy : 24);
+      spanC = w1.c;
     }
     const w0 = this.win(), key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c + ',' + spanC + ',' + w0.l + ',' + w0.r + ',' + this.W() + ',' + this.H();
     if (this._bk !== key) {
@@ -1046,6 +1047,7 @@ class Component extends DCLogic {
       pct: Math.round(s / (this.base().s || 1) * 100) + '%',
       kmPx: Math.round(100 * s),
       isRisk, isSpread: mode === 'spread', isPin,
+      pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g && window.__wfConfC ? window.__wfConfC(g.conf) : g ? (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A') : '#E86A00'; })(),
       pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       camLines: isPin ? (Array.isArray(p.cams) ? p.cams : []).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
       camMarks: isPin ? (Array.isArray(p.cams) ? p.cams : []).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Evidence source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
