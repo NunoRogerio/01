@@ -260,7 +260,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </span>
         <span style="position: absolute; left: 16px; top: 146px; font-size: 13px; color: #98989F">{{tab.meta}}</span>
       </sc-if>
-      <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: grid; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+      <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="seg" aria-hidden="true" style="position: absolute; top: 2px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
           <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
@@ -271,19 +271,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </figure>
 
     <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; margin-top: -28px; background: #F2F2F7; border-radius: 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-    <section class="rise" aria-labelledby="ai" style="display: flex; align-items: center; gap: 20px; padding: 24px 24px 0; animation-delay: 160ms">
-      <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 84px; height: 84px; flex-shrink: 0">
-        <svg width="84" height="84" viewBox="0 0 80 80" role="img" aria-label="{{ringLabel}}" style="position: absolute; left: 0; top: 0; transform: rotate(-90deg)">
-          <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(60,60,67,0.077)" stroke-width="3"></circle>
-          <circle cx="40" cy="40" r="34" fill="none" stroke="{{ringC}}" stroke-width="3" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="{{ringOffset}}" style="transition: stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)"></circle>
+    <section class="rise" aria-labelledby="ai" style="display: flex; align-items: center; gap: 14px; padding: 18px 24px 0; animation-delay: 160ms">
+      <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; flex-shrink: 0">
+        <svg width="58" height="58" viewBox="0 0 80 80" role="img" aria-label="{{ringLabel}}" style="position: absolute; left: 0; top: 0; transform: rotate(-90deg)">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(60,60,67,0.077)" stroke-width="5"></circle>
+          <circle cx="40" cy="40" r="34" fill="none" stroke="{{ringC}}" stroke-width="5" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="{{ringOffset}}" style="transition: stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)"></circle>
         </svg>
-        <span class="kpi">{{cur.conf}}<small>%</small></span>
+        <span class="kpi" style="font-size: 20px">{{cur.conf}}<small style="font-size: 11px">%</small></span>
       </span>
-      <span style="display: flex; flex-direction: column; gap: 6px">
+      <span style="display: flex; flex-direction: column; gap: 4px">
         <span id="ai" class="lbl">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>AI validation
         </span>
-        <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.01em">{{cur.verdict}}</span>
+        <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.01em; line-height: 24px">{{cur.verdict}}</span>
         <span style="display: flex; align-items: center; gap: 10px; font-size: 15px; color: #6C6C70">
           <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(204,153,0,0.12); color: #B37A00; font-size: 15px; font-weight: 400; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
           <span style="display: flex; align-items: center; gap: 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5Z"></path><path d="m2 13 10 5 10-5"></path></svg>{{cur.agree}}</span>
@@ -291,7 +291,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
     </section>
 
-    <ul class="rise" style="display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 22px 24px 0; list-style: none; font-size: 17px; animation-delay: 220ms">
+    <ul class="rise" style="display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 16px 24px 0; list-style: none; font-size: 17px; animation-delay: 220ms">
       <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
         <li style="display: flex; align-items: center; gap: 12px; color: {{r.color}}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{r.icon}}"></path></svg>{{r.t}}
@@ -409,7 +409,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="fsbtn" aria-label="Exit full screen" onClick="{{closeFull}}" style="position: absolute; right: 16px; top: 56px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
-      <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 34px; display: grid; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 44px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+      <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 34px; display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 44px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
           <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
@@ -620,7 +620,7 @@ class Component extends DCLogic {
         ['Not yet confirmed on the ground', false]];
       return { id: c.id, place: c.place, ll: L.ll || '', reg: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
         agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y, zoom: 0.7, fsZoom: 0.9,
-        coords: ll + ' · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
+        coords: 'Heat is inside the dashed circle · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
     };
     const STUB = { id: '', place: 'No ignition candidates', conf: 0, agree: '', srcList: '', src: '', x: 610, y: 290, live: { lat: 0, lon: 0, frp: 0, sat: '', t: '', n: 0 } };
     const build = (c) => {
@@ -736,7 +736,7 @@ class Component extends DCLogic {
       })),
       cur, tab, box: boxFor(tab, 390, 248, true, 0),
       tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#FFFFFF' : '#98989F', pick: () => this.setState({ tab: t.id }) })),
-      nTabs: tabs0.length, segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
+      nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
       reasons: cur.reasons.map(([t, ok]) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#B37A00', color: ok ? '#3C3C43' : '#6C6C70' })),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: cur.conf > 75 ? '#7A3FE0' : cur.conf >= 50 ? '#0A6FDB' : '#48484A', ringLabel: cur.conf + ' percent likelihood',
       pinLabel: n > 1 ? (ci + 1) + ' of ' + n + ' · ' + cur.place : 'Estimated ignition point',
