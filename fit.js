@@ -122,17 +122,46 @@
   var PH=[['forest-1.webp','Forest canopy from above','Mari Potter'],['forest-2.webp','Conifer forest from above','Ivan Dimitrov'],['forest-3.webp','Dense canopy from above','Olena Bohovyk']];
   var cold=false;try{cold=!sessionStorage.getItem('wf-cold');sessionStorage.setItem('wf-cold','1');}catch(e){}
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
-  if(cold){
+  if(soft)minMs=Math.max(minMs,4000);   // right after log in: the loading screen stays at least 4 s
+  // Cold start and log in: a forest photo, slowly zooming in, starts in black and white. A wave of colour spreads out
+  // from the logo to the screen edges: at its front the photo is more saturated than normal, easing back to normal
+  // behind it. When the whole screen is at normal colour, loading is done.
+  var wave=null;
+  if(cold||soft){
+    if(!soft)minMs=Math.max(minMs,2600);
     var ph=PH[nxt],im=new Image(),bg=el.querySelector('.bg');
-    im.onload=function(){if(!el.parentNode)return;bg.style.backgroundImage='url(assets/splash/'+ph[0]+')';el.className='photo';el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';requestAnimationFrame(function(){bg.className='bg on';});};
-    im.src='assets/splash/'+ph[0];minMs=1600;
+    var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+f;return d;};
+    var zoom=document.createElement('div');zoom.style.cssText='position:absolute;inset:0;transform:scale(1);transition:transform 9s cubic-bezier(.2,.6,.3,1);will-change:transform';
+    var gray=mk('grayscale(1) brightness(.92)'),norm=mk('none'),hot=mk('saturate(3) contrast(1.08) brightness(1.08)');
+    zoom.appendChild(gray);zoom.appendChild(norm);zoom.appendChild(hot);
+    im.onload=function(){if(!el.parentNode)return;
+      bg.appendChild(zoom);el.className='photo';el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
+      var sv=el.querySelector('svg').getBoundingClientRect(),cx=sv.left+sv.width/2,cy=sv.top+sv.height/2;
+      var W=innerWidth,H=innerHeight,R=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy))+120,band=150;
+      var at='circle at '+cx+'px '+cy+'px';
+      var paint=function(r){
+        var m1='radial-gradient('+at+',#000 '+Math.max(0,r-band)+'px,transparent '+(r-band*0.35)+'px)';
+        var m2='radial-gradient('+at+',transparent '+Math.max(0,r-band)+'px,#000 '+(r-band*0.45)+'px,#000 '+(r-18)+'px,transparent '+(r+30)+'px)';
+        norm.style.webkitMaskImage=norm.style.maskImage=m1;hot.style.webkitMaskImage=hot.style.maskImage=m2;};
+      paint(0);requestAnimationFrame(function(){bg.className='bg on';zoom.style.transform='scale(1.12)';});
+      var t1=performance.now(),dur=Math.max(minMs-(Date.now()-t0)-300,2400);
+      wave={p:0,done:false};
+      (function step(now){
+        if(!el.parentNode)return;
+        // the wave runs over the minimum time; while live data is still coming it slows and waits short of the edges
+        var tp=Math.min(1,(now-t1)/dur),ready=haveData()&&drawn(),goal=ready?tp:Math.min(tp,.82);
+        wave.p+=(goal-wave.p)*.25;
+        var q=wave.p,e=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;paint(e*(R+band));   // ease in and out
+        if(wave.p>.995&&ready&&tp>=1){wave.done=true;paint(R+band*2);return;}
+        requestAnimationFrame(step);})(t1);
+    };
+    im.src='assets/splash/'+ph[0];
     try{localStorage.setItem('wf-splash-i',String((nxt+1)%PH.length));}catch(e){}
   }
-  if(soft)minMs=Math.max(minMs,4000);   // right after log in: the loading screen stays at least 4 s
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
-    if((drawn()&&haveData()&&Date.now()-t0>=minMs)||Date.now()-t0>15000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
+    if((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done))||Date.now()-t0>15000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
       // warm the next photo into the cache for the next cold start
       try{var n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;(new Image()).src='assets/splash/'+PH[n][0];}catch(e){}},soft?950:350);return;}
     setTimeout(tick,80);
