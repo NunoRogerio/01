@@ -108,12 +108,12 @@
 })();
 
 // Lists marked wf-snap scroll and coast exactly like normal, untouched. Only once the motion has come to rest,
-// if the top item is left half shown, the list eases the short way to show that item (or the next) whole.
+// if the top item is left half shown, the list eases back so that same item shows whole.
 // The last position of the list always stays reachable.
 (function(){
   function stops(L){
-    var max=L.scrollHeight-L.clientHeight,out=[],k=L.children;
-    for(var i=0;i<k.length;i++){var c=k[i];if(!c.offsetHeight)continue;out.push(Math.max(0,Math.min(max,c.offsetParent===L?c.offsetTop:c.offsetTop-L.offsetTop)));}
+    var max=L.scrollHeight-L.clientHeight,out=[],k=L.children,off=parseFloat(L.getAttribute('data-snap-off'))||0;
+    for(var i=0;i<k.length;i++){var c=k[i];if(!c.offsetHeight)continue;out.push(Math.max(0,Math.min(max,(c.offsetParent===L?c.offsetTop:c.offsetTop-L.offsetTop)-off)));}
     out.push(max);return out;
   }
   function state(L){if(!L.__sn){L.__sn={raf:0,touch:false,quiet:0,own:false};if(getComputedStyle(L).position==='static')L.style.position='relative';}return L.__sn;}
@@ -121,7 +121,8 @@
   function settle(L){
     var S=state(L);if(S.raf||S.touch)return;
     var y=L.scrollTop,T=stops(L);if(!T.length)return;
-    var to=T.reduce(function(b,t){return Math.abs(t-y)<Math.abs(b-y)?t:b;},T[0]);
+    // the item cut off at the top comes back fully into view (the list's very end stays where it is)
+    var above=T.filter(function(t){return t<=y+0.5;}),to=above.length?Math.max.apply(null,above):T[0];
     if(Math.abs(to-y)<1)return;
     var from=y,d=to-from,dur=Math.max(200,Math.min(340,160+2*Math.abs(d))),t0=null;S.own=true;
     function step(now){

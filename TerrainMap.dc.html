@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=10"></script>
+<script src="fit.js?v=11"></script>
 <script src="live.js?v=19"></script>
 
 <title>Terrain map</title>
@@ -392,8 +392,23 @@ class Component extends DCLogic {
       const p = this.local(e.clientX, e.clientY);
       this.zoomAt(p.x, p.y, Math.exp(-e.deltaY * 0.0018));
     };
+    // Momentum: a flick keeps the map gliding briefly, losing speed quickly (tight, not floaty).
+    this.stopGlide = () => { if (this._glide) cancelAnimationFrame(this._glide); this._glide = 0; };
+    this.glide = (vx, vy) => {
+      this.stopGlide(); let last = performance.now();
+      const step = (now) => {
+        const dt = Math.min(34, now - last); last = now;
+        const k = this.scaleK(), v = this.view();
+        this.setView(v.cx - vx * dt / k / v.s, v.cy - vy * dt / k / v.s, v.s);
+        const f = Math.exp(-dt / 190); vx *= f; vy *= f;                    // ~0.19 s time constant
+        this._glide = Math.hypot(vx, vy) > 0.02 ? requestAnimationFrame(step) : 0;
+      };
+      this._glide = requestAnimationFrame(step);
+    };
     this.onDown = (e) => {
       if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
+      this.stopGlide();
+      if (!Object.keys(this.pts).length) { this._pinched = false; this._trail = []; }
       try { this.el.setPointerCapture(e.pointerId); } catch (err) {}
       this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
       this.setState({ dragging: true });
@@ -406,8 +421,10 @@ class Component extends DCLogic {
       if (ids.length === 1) {
         const v = this.view();
         this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        const n = performance.now(), T = this._trail || (this._trail = []); T.push([n, e.clientX, e.clientY]); while (T.length > 2 && n - T[0][0] > 80) T.shift();
         this.setView(v.cx - (e.clientX - prev.x) / k / v.s, v.cy - (e.clientY - prev.y) / k / v.s, v.s);
       } else if (ids.length === 2) {
+        this._pinched = true;
         const other = this.pts[ids.find((i) => String(i) !== String(e.pointerId))];
         const d0 = Math.hypot(prev.x - other.x, prev.y - other.y);
         const d1 = Math.hypot(e.clientX - other.x, e.clientY - other.y);
@@ -418,7 +435,15 @@ class Component extends DCLogic {
     };
     this.onUp = (e) => {
       delete this.pts[e.pointerId];
-      if (!Object.keys(this.pts).length) this.setState({ dragging: false });
+      if (Object.keys(this.pts).length) return;
+      this.setState({ dragging: false });
+      const T = this._trail || [], a = T[0], b = T[T.length - 1], n = performance.now();
+      if (!this._pinched && a && b && b[0] > a[0] && n - b[0] < 60) {
+        let vx = (b[1] - a[1]) / (b[0] - a[0]), vy = (b[2] - a[2]) / (b[0] - a[0]);   // screen px per ms
+        const sp = Math.hypot(vx, vy), cap = 2.2; if (sp > cap) { vx *= cap / sp; vy *= cap / sp; }
+        if (sp > 0.2) this.glide(vx, vy);
+      }
+      this._trail = [];
     };
     this.stop = (e) => e.stopPropagation();
     this.zoomIn = () => { this._animUntil = Date.now() + 600; this.zoomAt(this.W() / 2, this.win().c, 1.6); };
@@ -483,7 +508,7 @@ class Component extends DCLogic {
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
   }
-  componentWillUnmount() {
+  componentWillUnmount() { if (this.stopGlide) this.stopGlide();
     if (this._uT) clearInterval(this._uT);
     if (this.el) this.el.removeEventListener('wheel', this.onWheel);
     if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync);
