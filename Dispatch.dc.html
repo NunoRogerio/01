@@ -266,18 +266,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="{{stHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 28px; background: #F2F2F7; clip-path: {{stClip}}; -webkit-clip-path: {{stClip}}; visibility: {{stVis}}; pointer-events: {{stPE}}; translate: 0 {{stDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{stVisDelay}}, translate {{stDyT}} ease">
     <h2 id="sheetTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Choose a station</h2>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{stInOp}}; transform: translateY({{stInY}}); transition: opacity .3s ease {{stInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{stInDelay}}">
-    <p style="margin: 8px 16px 16px 40px; font-size: 15px; line-height: 20px; color: #545458">Choose one or more · sorted by time to the fire line</p>
-    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
+    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 51px; align-items: end; gap: 4px 12px; flex-shrink: 0; padding: 16px 16px 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
       <span></span><span style="text-align: center">Time to<br>fire line</span><span></span>
     </div>
     <div role="group" aria-label="Stations, select one or more" style="display: flex; flex-direction: column; gap: 2px; padding-top: 2px">
       <sc-for list="{{stations}}" as="st" hint-placeholder-count="5">
-        <button type="button" role="checkbox" class="sqrow" data-sel="{{st.checked}}" aria-checked="{{st.checked}}" aria-disabled="{{st.disabled}}" onClick="{{st.pick}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: center; align-content: center; gap: 2px 8px; height: 60px; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: {{st.selBg}}; color: #000000; text-align: left; font: inherit; opacity: {{st.op}}; cursor: {{st.cursor}}">
+        <button type="button" role="switch" class="sqrow" data-sel="false" aria-checked="{{st.checked}}" aria-disabled="{{st.disabled}}" onClick="{{st.pick}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 51px; align-items: center; align-content: center; gap: 2px 12px; height: 60px; min-height: 60px; padding: 0 16px 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: {{st.selBg}}; color: #000000; text-align: left; font: inherit; opacity: {{st.op}}; cursor: {{st.cursor}}">
           <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.code}} · {{st.name}}</span>
             <sc-if value="{{st.isRec}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
           </span>
           <span style="text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap">{{st.etaText}}</span>
-          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #0062CC; opacity: {{st.tickOp}}; transition: opacity .2s ease"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
+          <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 3; position: relative; display: block; width: 51px; height: 31px; border-radius: 999px; background: {{st.swBg}}; transition: background-color .25s ease"><span style="position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16); transform: translateX({{st.swX}}); transition: transform .3s cubic-bezier(.3,.9,.25,1)"></span></span>
           <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{st.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.sub}}</span>
         </button>
       </sc-for>
@@ -679,7 +678,7 @@ class Component extends DCLogic {
     const multi = chosenList.length > 1;
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
-    const subOf = (d) => d.id === 'none' ? d.busy : d.real ? d.km + DU + ' · est. ' + d.eta + ' min · crew availability not published' : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
+    const subOf = (d) => d.id === 'none' ? d.busy : d.real ? d.km + DU : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
     const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#7A5600' : '#545458');
     const sum = chosen.eta, T = chosen.t || [0, 0, 0], sumD = sum || 1;
     const sel = {
@@ -883,8 +882,8 @@ class Component extends DCLogic {
         bd: checked ? 'rgba(232,106,0,0.55)' : 'rgba(60,60,67,0.066)',
         ring: checked ? '#0062CC' : 'rgba(60,60,67,0.3)',
         dotBg: checked ? '#0062CC' : 'transparent',
-        tickOp: checked ? 1 : 0,
-        selBg: checked ? '#FFFFFF' : 'transparent',
+        tickOp: checked ? 1 : 0, swBg: checked ? '#34C759' : 'rgba(120,120,128,0.16)', swX: checked ? '20px' : '0px',
+        selBg: 'transparent',   // the switch shows what is chosen
         op: dis ? 0.45 : 1,
         cursor: dis ? 'not-allowed' : 'pointer',
         pick: () => {
