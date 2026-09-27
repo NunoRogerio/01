@@ -42,7 +42,7 @@
       var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
       // Screens loaded inside other screens (the map) and the scripts keep their plain address, so refresh
       // the phone's copy of every file first; otherwise the new page could still run an old map.
-      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','live.js','support.js'];
+      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','i18n.js','live.js','support.js','Station.dc.html'];
       var go=function(){location.replace(u);};
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
     }).catch(function(){});
