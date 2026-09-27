@@ -120,10 +120,10 @@ class Component extends DCLogic {
   snapList() {
     const L = document.querySelector('#dc-root [role=listbox]'); if (!L || L.__snap) return; L.__snap = true;
     const FIELD = 80, FAST = 0.55;
-    let samples = [], raf = 0, mode = 'off';
+    let samples = [], raf = 0, mode = 'off', held = null;   // held: the card already sitting on the line has no pull
     const stop = () => { if (raf) cancelAnimationFrame(raf); raf = 0; L.style.overflowY = 'auto'; };
     const targets = () => [...L.children].filter((c) => c.getAttribute && c.getAttribute('role') === 'option').map((c) => Math.max(0, Math.min(L.scrollHeight - L.clientHeight, c.offsetTop - 16)));
-    const nearest = () => { const y = L.scrollTop, T = targets(); return T.length ? T.reduce((b, t) => Math.abs(t - y) < Math.abs(b - y) ? t : b, T[0]) : null; };
+    const nearest = () => { const y = L.scrollTop, T = targets().filter((t) => held === null || Math.abs(t - held) > 1); return T.length ? T.reduce((b, t) => Math.abs(t - y) < Math.abs(b - y) ? t : b, T[0]) : null; };
     const pull = (to) => {
       mode = 'off'; stop();
       L.style.overflowY = 'hidden';                                   // cancels the phone's coasting so the magnet takes over
@@ -142,9 +142,9 @@ class Component extends DCLogic {
     };
     const check = () => { if (mode !== 'magnet' || raf) return; const to = nearest(); if (to !== null && Math.abs(to - L.scrollTop) <= FIELD) pull(to); };
     const note = () => { const n = performance.now(); samples.push([n, L.scrollTop]); while (samples.length > 2 && n - samples[0][0] > 100) samples.shift(); };
-    L.addEventListener('touchstart', () => { stop(); mode = 'drag'; samples = []; note(); }, { passive: true });
+    L.addEventListener('touchstart', () => { stop(); mode = 'drag'; samples = []; note(); const on = targets().find((t) => Math.abs(t - L.scrollTop) <= 2); held = on === undefined ? null : on; }, { passive: true });
     L.addEventListener('touchmove', note, { passive: true });
-    L.addEventListener('scroll', () => { if (mode === 'drag') note(); else check(); }, { passive: true });
+    L.addEventListener('scroll', () => { if (held !== null && Math.abs(L.scrollTop - held) > FIELD) held = null; if (mode === 'drag') note(); else check(); }, { passive: true });
     L.addEventListener('touchend', () => {
       note(); const a = samples[0], b = samples[samples.length - 1];
       const v = a && b && b[0] > a[0] ? (b[1] - a[1]) / (b[0] - a[0]) : 0;   // scroll px per ms
