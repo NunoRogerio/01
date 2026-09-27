@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=7"></script>
+<script src="fit.js?v=8"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -36,9 +36,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
 </helmet>
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 104px 16px 40px; background: transparent; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 16px">
-    <div style="display: flex; align-items: center; justify-content: center; width: 88px; height: 88px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 0 0 1px rgba(60,60,67,0.12)">
-      <svg width="43" height="52" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; margin-top: 2px"><path fill="#000000" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#000000" stroke-width="1.1" stroke-linecap="round"></path></svg>
-    </div>
+    <svg width="58" height="70" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.35))"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></svg>
     <h1 style="margin: 8px 0 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 34px; text-align: center; color: #FFFFFF; text-shadow: 0 1px 12px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
     <p style="margin: 0; font-size: 17px; line-height: 20px; color: rgba(255,255,255,0.9); text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">Log in to your account</p>
   </div>
@@ -178,7 +176,7 @@ class Component extends DCLogic {
       check(); if (mode === 'magnet') rest();
     }, { passive: true });
   }
-  componentDidMount() { this.snapList(); this.paintBg(); for (let i = 1; i <= 6; i++) (new Image()).src = 'assets/splash/forest-' + i + '.webp'; this._bgT = setInterval(() => { const n = 6, st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; let k = Math.floor(Math.random() * (n - 1)); if (k >= c) k++; this.setState({ bg: k, bgPrev: c }); }, 8000); }
+  componentDidMount() { this.snapList(); this.paintBg(); for (let i = 1; i <= 3; i++) (new Image()).src = 'assets/splash/forest-' + i + '.webp'; this._bgT = setInterval(() => { const n = 3, st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; let k = Math.floor(Math.random() * (n - 1)); if (k >= c) k++; this.setState({ bg: k, bgPrev: c }); }, 8000); }
   componentWillUnmount() { clearInterval(this._bgT); const h = document.getElementById('wf-login-bg'); if (h) h.remove(); }
   componentDidUpdate() { this.paintBg(); }
   // The photos sit behind the whole window (not inside the scaled phone frame), so they reach every edge.
@@ -214,7 +212,7 @@ class Component extends DCLogic {
       ['admin', 'AM', 'alex.morgan', 'Alex Morgan', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
         'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'https://images.unsplash.com/photo-1764084052708-c3c0611d89e7?w=240&h=240&fit=crop&crop=faces&auto=format&q=70']
     ];
-    const PH = [['forest-1.webp', 'Mari Potter'], ['forest-2.webp', 'Dave Hoefler'], ['forest-3.webp', 'Ivan Dimitrov'], ['forest-4.webp', 'Olena Bohovyk'], ['forest-5.webp', 'Axel Czikora'], ['forest-6.webp', 'John Vowles']];
+    const PH = [['forest-1.webp', 'Mari Potter'], ['forest-2.webp', 'Ivan Dimitrov'], ['forest-3.webp', 'Olena Bohovyk']];   // dark canopies only, so white text stays readable
     if (this._bg0 === undefined) this._bg0 = Math.floor(Math.random() * PH.length);
     const cur = s.bg === undefined ? this._bg0 : s.bg, prev = s.bgPrev === undefined ? -1 : s.bgPrev;
     const sel = P.find((p) => p[0] === s.sel) || null;

@@ -88,8 +88,7 @@
   var t0=Date.now(),minMs=0;
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
-  var PH=[['forest-1.webp','Forest canopy from above','Mari Potter'],['forest-2.webp','Green canopy from above','Dave Hoefler'],['forest-3.webp','Conifer forest from above','Ivan Dimitrov'],
-    ['forest-4.webp','Dense canopy from above','Olena Bohovyk'],['forest-5.webp','Misty treetops from above','Axel Czikora'],['forest-6.webp','Forest from the air','John Vowles']];
+  var PH=[['forest-1.webp','Forest canopy from above','Mari Potter'],['forest-2.webp','Conifer forest from above','Ivan Dimitrov'],['forest-3.webp','Dense canopy from above','Olena Bohovyk']];
   var cold=false;try{cold=!sessionStorage.getItem('wf-cold');sessionStorage.setItem('wf-cold','1');}catch(e){}
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
   if(cold){
