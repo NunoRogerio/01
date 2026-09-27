@@ -34,12 +34,12 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <sc-if value="{{hasMap}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-      <dc-import name="TerrainMap" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{zero}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
+      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{zero}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
 
   <header style="position: relative; z-index: 6; display: flex; align-items: center; gap: 8px; height: 60px; padding: 0 16px 0 8px; background: #F2F2F7">
-    <a href="Main.dc.html" class="stback" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; color: #007AFF; text-decoration: none">
+    <a href="Main.dc.html" data-wf-back="1" class="stback" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; color: #007AFF; text-decoration: none">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
     </a>
     <span style="display: flex; align-items: center; gap: 10px; min-width: 0">
@@ -181,7 +181,7 @@ class Component extends DCLogic {
     if (kind) chips.push({ t: kind, bg: 'rgba(36,138,61,0.12)', fg: '#1E7A34' });
     chips.push(n25 ? { t: n25 + ' active ' + (n25 === 1 ? 'fire' : 'fires') + ' within 25 km', bg: 'rgba(255,59,48,0.12)', fg: '#C4281C' } : { t: 'No active fires within 25 km', bg: 'rgba(118,118,128,0.12)', fg: '#3C3C43' });
     return {
-      none: false, some: true, hasMap: true, back, zero: 0, noList: [], pinId: 'station-' + S.id,
+      none: false, some: true, hasMap: true, back, bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  zero: 0, noList: [], pinId: 'station-' + S.id,
       mapFires: live.map((r) => ({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], res: r[7], ha: r[8], info: r[9] })),
       mapW: 390, mapH: 844, clipT: 112, clipB: 482, ctrlTop: 120, zoom: 0.9, attr: 28,
       st: { title: name, name, operator: op || 'Fire station', coords, x: S.x, y: S.y, chips, hasPhone: !!phone, tel: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '',

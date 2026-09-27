@@ -362,7 +362,7 @@ body{margin:0}
   <span style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"$preview":{"width":366,"height":380}}'>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"onBgTap":{"editor":null},"$preview":{"width":366,"height":380}}'>
 class Component extends DCLogic {
   init() {
     if (this._ok) return;
@@ -408,6 +408,9 @@ class Component extends DCLogic {
       if (!Object.keys(this.pts).length) { this._pinched = false; this._trail = []; }
       try { this.el.setPointerCapture(e.pointerId); } catch (err) {}
       this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      // Remember a possible tap on the bare map (not a marker, popup, legend or button).
+      let bg = false; try { bg = !(e.target && e.target.closest && e.target.closest('button,a,[role=button],[role=group],[role=dialog],[role=tooltip]')); } catch (x) {}
+      this._tap = Object.keys(this.pts).length === 1 ? { x: e.clientX, y: e.clientY, t: performance.now(), bg } : null;
       this.setState({ dragging: true });
     };
     this.onMove = (e) => {
@@ -417,11 +420,12 @@ class Component extends DCLogic {
       const k = this.scaleK();
       if (ids.length === 1) {
         const v = this.view();
+        if (this._tap && Math.hypot(e.clientX - this._tap.x, e.clientY - this._tap.y) > 8) this._tap = null;
         this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
         const n = performance.now(), T = this._trail || (this._trail = []); T.push([n, e.clientX, e.clientY]); while (T.length > 2 && n - T[0][0] > 80) T.shift();
         this.setView(v.cx - (e.clientX - prev.x) / k / v.s, v.cy - (e.clientY - prev.y) / k / v.s, v.s);
       } else if (ids.length === 2) {
-        this._pinched = true;
+        this._pinched = true; this._tap = null;
         const other = this.pts[ids.find((i) => String(i) !== String(e.pointerId))];
         const d0 = Math.hypot(prev.x - other.x, prev.y - other.y);
         const d1 = Math.hypot(e.clientX - other.x, e.clientY - other.y);
@@ -441,6 +445,12 @@ class Component extends DCLogic {
         if (sp > 0.2) this.glide(vx, vy);
       }
       this._trail = [];
+      // A quick tap on the bare map goes back (detail screens pass onBgTap); an open popup closes first.
+      const tp = this._tap; this._tap = null;
+      const p = this.props, full = p.isFull === true || p.isFull === 'true';
+      if (tp && tp.bg && !this._pinched && performance.now() - tp.t < 450 && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) <= 8 && typeof p.onBgTap === 'function' && !full) {
+        if ((this.state || {}).pop) this.setState({ pop: null }); else p.onBgTap();
+      }
     };
     this.stop = (e) => e.stopPropagation();
     this.zoomIn = () => { this._animUntil = Date.now() + 600; this.zoomAt(this.W() / 2, this.win().c, 1.6); };

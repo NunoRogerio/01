@@ -162,7 +162,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <sc-if value="{{mapLayer}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-      <dc-import name="TerrainMap" mode="pin" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
+      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" mode="pin" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
 
@@ -171,7 +171,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <header class="fade" style="display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 12px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Ignition candidates</h1>
-      <a href="Main.dc.html" class="mbtn sqback" onPointerDown="{{navBack}}" onClick="{{navBack}}" aria-label="Back to incidents" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #6C6C70; text-decoration: none">
+      <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onPointerDown="{{navBack}}" onClick="{{navBack}}" aria-label="Back to incidents" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #6C6C70; text-decoration: none">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
       </a>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
@@ -577,6 +577,7 @@ class Component extends DCLogic {
     I.sensor = 'M12 12h.01M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8';
     I.phone = 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z';
     I.cam = 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z';
+    // Demo candidates only (never used with live data); their photos were removed from the repo.
     const IMG = {
       towerA: { src: 'assets/3b173f51b7b1d71444b46237f62a79dd.jpg', iw: 1200, ih: 675, bb: [0.387, 0.166, 0.573, 0.560], alt: 'Tower camera view of a smoke column rising from a ridge' },
       towerB: { src: 'assets/85e76fa0968d690e1950e03e7e32a33a.jpg', iw: 1200, ih: 675, bb: [0.5075, 0.296, 0.631, 0.533], alt: 'Tower camera view of a thin wisp of smoke behind a ridge' },
@@ -775,7 +776,7 @@ class Component extends DCLogic {
       confirmDz: () => { if (this._dzDone) return; this._dzDone = true; const d = this.wfDismissed(); if (!d[cur.id]) { d[cur.id] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._dzDone = false; this.setState({ dz: false, ci: 0, focusId: null, tab: null, full: false }); }, 800); },
       dzY: dz ? '0%' : '105%', dzOp: dz ? 1 : 0, dzPE: dz ? 'auto' : 'none', dzHidden: dz ? 'false' : 'true',
       dismiss, undo, restore, hasToast: !!s.toast && !!dismissed[s.toast], toastText: (s.toast || '') + ' dismissed',
-      confirmCur: () => this.wfConfirm(cur.id), verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
+      confirmCur: () => this.wfConfirm(cur.id), verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
     };
   }
 }
