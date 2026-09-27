@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=24"></script>
-<script src="prefs.js?v=4"></script>
+<script src="prefs.js?v=5"></script>
 <script src="i18n.js?v=29"></script>
 <script src="live.js?v=23"></script>
 
@@ -655,10 +655,10 @@ class Component extends DCLogic {
     Object.keys(CNT).forEach((k) => {
       const o = CNT[k]; const c = P(o.c[0], o.c[1]);
       const pts = o.poly ? o.poly.map(([la, lo]) => P(la, lo)) : null;
-      counties[k] = { st: k.split('|')[0], name: k.split('|')[1], c, d: o.poly ? path(o.poly, true) : circle(c, 900), box: pts ? bbox(pts) : [c[0] - 900, c[1] - 900, c[0] + 900, c[1] + 900] };
+      counties[k] = { st: k.split('|')[0], name: k.split('|')[1], c, d: o.poly ? path(o.poly, true) : circle(c, 900), box: pts ? bbox(pts) : [c[0] - 900, c[1] - 900, c[0] + 900, c[1] + 900], pts };
     });
     const states = {};
-    Object.keys(ST).forEach((k) => { const pts = ST[k].map(([la, lo]) => P(la, lo)); states[k] = { d: path(ST[k], true), box: bbox(pts), label: STN[k][0], c: P(STN[k][1], STN[k][2]) }; });
+    Object.keys(ST).forEach((k) => { const pts = ST[k].map(([la, lo]) => P(la, lo)); states[k] = { d: path(ST[k], true), box: bbox(pts), label: STN[k][0], c: P(STN[k][1], STN[k][2]), pts }; });
     Object.entries({"Aveiro": [40.64, -8.65], "Beja": [37.93, -7.87], "Braga": [41.55, -8.42], "Bragança": [41.6, -6.8], "Castelo Branco": [39.82, -7.49], "Coimbra": [40.2, -8.41], "Évora": [38.57, -7.9], "Faro": [37.2, -8.1], "Guarda": [40.54, -7.27], "Leiria": [39.74, -8.8], "Lisboa": [38.9, -9.15], "Portalegre": [39.2, -7.6], "Porto": [41.2, -8.5], "Santarém": [39.24, -8.5], "Setúbal": [38.3, -8.7], "Viana do Castelo": [41.85, -8.5], "Vila Real": [41.5, -7.6], "Viseu": [40.75, -7.9], "Açores": [38.4, -28.0], "Madeira": [32.75, -16.95]}).forEach(([n, c]) => { const r = n === 'Açores' ? [2, 3.5] : n === 'Madeira' ? [0.4, 0.6] : [0.45, 0.5]; const a = P(c[0] + r[0], c[1] - r[1]), b = P(c[0] - r[0], c[1] + r[1]); counties['PT|' + n] = { st: 'PT', name: n, c: P(c[0], c[1]), d: '', box: [a[0], a[1], b[0], b[1]] }; });
     states.US = { d: '', box: [P(49.4, -125)[0], P(49.4, -125)[1], P(24.5, -66.9)[0], P(24.5, -66.9)[1]], label: 'United States', c: P(39.5, -98.5) };   // lower 48
     states.PT = { d: '', box: [P(42.2, -9.6)[0], P(42.2, -9.6)[1], P(36.9, -6.2)[0], P(36.9, -6.2)[1]], label: 'Portugal', c: P(39.6, -8.0) };
@@ -838,6 +838,29 @@ class Component extends DCLogic {
   // up to three within 10 km in a straight line (about 14 km by road, some 15 minutes); when none is that close,
   // only the nearest one within 40 km. Stations too far to make a difference are left off the map.
   recMode() { const p = this.props; return !!(this.stationFile() && p.stationsSt && (p.mode === 'pin' || (p.fireX != null && p.fireX !== ''))); }
+  // Stations belong to the chosen region: inside its outline (or its box when no outline is drawn), plus a thin band
+  // over the border (~12 km) so the closest help from next door still shows. Map units in, true/false out.
+  inScopeFn() {
+    const p = this.props; if (!p.scopeSt || p.scopeSt === 'US' || p.mode === 'pin' || p.mode === 'spread') return null;
+    const key = p.scopeSt + '|' + (p.scopeCo || ''); if (this._scK === key) return this._scF;
+    const G = this.geo(), reg = p.scopeCo ? G.counties[p.scopeSt + '|' + p.scopeCo] : G.states[p.scopeSt];
+    let f = null;
+    if (reg) {
+      const c0 = reg.c || [(reg.box[0] + reg.box[2]) / 2, (reg.box[1] + reg.box[3]) / 2];
+      const la0 = 34.19 - (c0[1] - 662) / 2829, lo0 = (c0[0] - 518) / 2345 - 118.13;
+      const a = G.P(la0, lo0), b = G.P(la0 + 0.108, lo0), BUF = Math.abs(b[1] - a[1]) || 250;   // ~12 km in map units
+      const poly = reg.pts && reg.pts.length > 2 ? reg.pts : null, bx = reg.box;
+      const segD = (x, y, A, B) => { const dx = B[0] - A[0], dy = B[1] - A[1], L = dx * dx + dy * dy; let u = L ? ((x - A[0]) * dx + (y - A[1]) * dy) / L : 0; u = Math.max(0, Math.min(1, u)); const qx = A[0] + u * dx - x, qy = A[1] + u * dy - y; return Math.sqrt(qx * qx + qy * qy); };
+      f = poly ? (x, y) => {
+        if (x < bx[0] - BUF || x > bx[2] + BUF || y < bx[1] - BUF || y > bx[3] + BUF) return false;
+        let inside = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const A = poly[i], B = poly[j]; if ((A[1] > y) !== (B[1] > y) && x < (B[0] - A[0]) * (y - A[1]) / (B[1] - A[1]) + A[0]) inside = !inside; }
+        if (inside) return true;
+        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) if (segD(x, y, poly[j], poly[i]) <= BUF) return true;
+        return false;
+      } : (x, y) => x >= bx[0] - BUF && x <= bx[2] + BUF && y >= bx[1] - BUF && y <= bx[3] + BUF;
+    }
+    this._scK = key; this._scF = f; return f;
+  }
   nearSt() {
     const p = this.props, SF = this.stationFile(); if (!SF || !p.stationsSt) return [];
     const FOC = p.mode === 'pin' ? [Number(p.pinX), Number(p.pinY)] : (p.fireX != null && p.fireX !== '' ? [Number(p.fireX), Number(p.fireY)] : null);
@@ -984,7 +1007,8 @@ class Component extends DCLogic {
       // On a fire or candidate only the recommended stations show (see nearSt), labelled with their distance;
       // who is actually committed is not published.
       const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km])), onlyRec = this.recMode();
-      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((onlyRec ? NEAR.has(i) : (SK.has(i) || NEAR.has(i))) && vis(q[0], q[1])) V.push(i); }
+      const inSc = onlyRec ? null : this.inScopeFn();
+      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((onlyRec ? NEAR.has(i) : (SK.has(i) || NEAR.has(i))) && vis(q[0], q[1]) && (!inSc || NEAR.has(i) || inSc(q[0], q[1]))) V.push(i); }
       const k = Math.max(1, Math.ceil(V.length / 300));
       const out = [];
       for (let j = 0; j < V.length; j++) { if (j % k && !NEAR.has(V[j])) continue;
@@ -1007,7 +1031,7 @@ class Component extends DCLogic {
       const st = { id, type: ty || 'node', name: nm || t.official_name || '', lat: la, lon: lo, tags: t, x: xy[0], y: xy[1], kmX, kmY };
       return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M5 5H19V19H5Z', fill: '#1E7A34', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
         pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), nm || 'Fire station', td);
-    }).filter(onScreen) : [];
+    }).filter(onScreen).filter((o) => { const f = this.inScopeFn(); return !f || !o._st || f(o._st.x, o._st.y); }) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
     const FX = Number(p.fireX) || 610, FY = Number(p.fireY) || 290;
     const qx = (selSt[2] + FX) / 2 + (selSt[3] - FY) * 0.18, qy = (selSt[3] + FY) / 2 - (selSt[2] - FX) * 0.18;

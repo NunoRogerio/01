@@ -72,6 +72,7 @@
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
     o.push('image[href*="tile.openstreetmap"]{filter:url(#wfNightTiles)}');
     o.push('rect[fill="#F2F2F7"]{fill:#262629}');
+    o.push('path[fill-rule="evenodd"][fill="#FFFFFF"]{fill:#141416;fill-opacity:0.2}');   // outside the chosen region: a light dim, not a bright veil
     return o.join('\n');
   }
 
@@ -83,7 +84,7 @@
     d.innerHTML = '<svg width="0" height="0"><filter id="wfNightTiles" color-interpolation-filters="sRGB">' +
       '<feComponentTransfer><feFuncR type="table" tableValues="1 0"/><feFuncG type="table" tableValues="1 0"/><feFuncB type="table" tableValues="1 0"/></feComponentTransfer>' +
       '<feColorMatrix type="hueRotate" values="180"/><feColorMatrix type="saturate" values="0.55"/>' +
-      '<feComponentTransfer><feFuncR type="linear" slope="0.6" intercept="0.2"/><feFuncG type="linear" slope="0.6" intercept="0.2"/><feFuncB type="linear" slope="0.62" intercept="0.21"/></feComponentTransfer>' +
+      '<feComponentTransfer><feFuncR type="linear" slope="0.62" intercept="0.25"/><feFuncG type="linear" slope="0.62" intercept="0.25"/><feFuncB type="linear" slope="0.64" intercept="0.26"/></feComponentTransfer>' +
       '</filter></svg>';
     document.body.appendChild(d);
   }
