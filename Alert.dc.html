@@ -655,7 +655,7 @@ class Component extends DCLogic {
         [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
         ['Not yet confirmed on the ground', false]];
       return { id: c.id, place: c.place, ll: L.ll || '', reg: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
-        agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y, zoom: 0.7, fsZoom: 0.9,
+        agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y, zoom: 2.6, fsZoom: 2.6,
         coords: 'Heat is inside the dashed circle · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
     };
     const STUB = { id: '', place: 'No ignition candidates', conf: 0, agree: '', srcList: '', src: '', x: 610, y: 290, live: { lat: 0, lon: 0, frp: 0, sat: '', t: '', n: 0 } };
