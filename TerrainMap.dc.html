@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=15"></script>
+<script src="fit.js?v=16"></script>
 <script src="i18n.js?v=4"></script>
 <script src="live.js?v=20"></script>
 
@@ -254,7 +254,7 @@ body{margin:0}
   </sc-for>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
-  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{stop}}" style="position: absolute; z-index: 50; left: 10px; right: 62px; top: {{legTopC}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none">
+  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{stop}}" style="position: absolute; z-index: 50; left: {{legL}}px; right: {{legR}}px; top: {{legTopC}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border: 0; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
         <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0"><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="1.3" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
@@ -351,7 +351,7 @@ body{margin:0}
     </div>
   </div>
   </sc-if>
-  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: 10px; top: {{ctrlBoxTop}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
+  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; top: {{ctrlBoxTop}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
     <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
       <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 14px; background: rgba(242,242,247,0.96); box-shadow: 0 4px 16px rgba(0,0,0,0.08); color: #3C3C43; cursor: pointer">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
@@ -359,10 +359,10 @@ body{margin:0}
     </sc-if>
   </div>
 
-  <span style="position: absolute; left: 12px; bottom: {{attrB}}px; font-size: 13px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+  <span style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"$preview":{"width":366,"height":380}}'>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"$preview":{"width":366,"height":380}}'>
 class Component extends DCLogic {
   init() {
     if (this._ok) return;
@@ -672,7 +672,7 @@ class Component extends DCLogic {
     if (!box) return null;
     const W = this.W(), fw = this.fitWin();
     const bw = Math.max(minSpan, box[2] - box[0]), bh = Math.max(minSpan, box[3] - box[1]);
-    const s = Math.max(window.__wfLiveMap ? 0.0005 : 0.008, Math.min(0.85, Math.min((W - 112) / bw, (fw.h - 60) / bh)));
+    const s = Math.max(window.__wfLiveMap ? 0.0005 : 0.008, Math.min(0.85, Math.min((this.win().cw - 112) / bw, (fw.h - 60) / bh)));
     return { x: Math.round((box[0] + box[2]) / 2), y: Math.round((box[1] + box[3]) / 2), s: +s.toFixed(4), fw: true };
   }
   pinFit() {
@@ -684,7 +684,7 @@ class Component extends DCLogic {
     const xs = cams.map((c) => c.x).concat(PX), ys = cams.map((c) => c.y).concat(PY);
     const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
     const w = this.win(), z = Number(p.zoom) || 0.7;
-    const s = Math.max(0.3, Math.min(z, (this.W() - 150) / Math.max(1, x1 - x0), (w.h - 110) / Math.max(1, y1 - y0)));
+    const s = Math.max(0.3, Math.min(z, (w.cw - 150) / Math.max(1, x1 - x0), (w.h - 110) / Math.max(1, y1 - y0)));
     return { x: Math.round((x0 + x1) / 2), y: Math.round((y0 + y1) / 2), s: +s.toFixed(4) };
   }
   mapStyle() { return 'standard'; }
@@ -705,17 +705,19 @@ class Component extends DCLogic {
   win() {
     const H = this.H();
     const t = Math.max(0, Number(this.props.clipTop) || 0), bt = Math.max(0, Number(this.props.clipBottom) || 0);
-    return { t, b: H - bt, c: (t + H - bt) / 2, h: Math.max(1, H - bt - t) };
+    // clipLeft / clipRight: side panels (landscape) or the notch cover that much of the map's sides.
+    const l = Math.max(0, Number(this.props.clipLeft) || 0), r = Math.max(0, Number(this.props.clipRight) || 0);
+    return { t, b: H - bt, c: (t + H - bt) / 2, h: Math.max(1, H - bt - t), l, r, cw: Math.max(1, this.W() - l - r) };
   }
   base() {
     const p = this.props, F = this.fit() || this.pinFit();
     const s0 = F ? F.s : (Number(p.zoom) || 1.1), fx = F ? F.x : (Number(p.focusX) || 600), fy = F ? F.y : (Number(p.focusY) || 330);
-    const key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c;
+    const w0 = this.win(), key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c + ',' + w0.l + ',' + w0.r + ',' + this.W() + ',' + this.H();
     if (this._bk !== key) {
-      const w = this.win();
+      const w = w0;
       this._bk = key;
       const wc = F && F.fw ? this.fitWin().c : w.c;
-      this._b = { cx: fx, cy: fy + (this.H() / 2 - wc) / s0, s: s0 };
+      this._b = { cx: fx + ((w.r - w.l) / 2) / s0, cy: fy + (this.H() / 2 - wc) / s0, s: s0 };
     }
     return this._b;
   }
@@ -871,13 +873,13 @@ class Component extends DCLogic {
     const tx = W / 2 - c.cx * s, ty = H / 2 - c.cy * s;
     const at = (x, y, extra) => ({ left: +(tx + x * s).toFixed(1), top: +(ty + y * s).toFixed(1), ...extra });
     const WN = this.win();
-    const ck = WN.t + ',' + WN.b;
+    const ck = WN.t + ',' + WN.b + ',' + WN.l + ',' + WN.r;
     if (this._ck !== undefined && this._ck !== ck) this._animUntil = Date.now() + 700;
     this._ck = ck;
     const anim = Date.now() < (this._animUntil || 0) && !(this.state || {}).dragging;
     const EZ = ' .5s cubic-bezier(.2,.8,.2,1)';
     const safeTop = Math.max(WN.t, Number(p.tipSafeTop) || 0);
-    const tip = (o) => { const up = o.top - safeTop, down = WN.b - o.top; return 'tip' + (up < 104 && down > up ? ' dn' : '') + (o.left < 110 ? ' l' : (o.left > W - 110 ? ' r' : '')); };
+    const tip = (o) => { const up = o.top - safeTop, down = WN.b - o.top; return 'tip' + (up < 104 && down > up ? ' dn' : '') + (o.left - WN.l < 110 ? ' l' : (o.left > W - WN.r - 110 ? ' r' : '')); };
     const withTip = (o, tt, td) => ({ ...o, tip: tip(o), tt, td });
     const onScreen = () => true;
     // Draw only what is on screen, and at most the most important markers, so thousands of incidents stay fast.
@@ -1036,7 +1038,7 @@ class Component extends DCLogic {
       fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
       fullLabel: (p.isFull === true || p.isFull === 'true') ? 'Exit full screen' : 'Full screen',
       fullIcon: (p.isFull === true || p.isFull === 'true') ? 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5' : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
-      clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (Number(p.attrBottom ?? 10)) + (H - WN.b),
+      legL: 10 + WN.l, legR: 62 + WN.r, ctrlR: 10 + WN.r, attrL: 12 + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (Number(p.attrBottom ?? 10)) + (H - WN.b),
       mapTr: anim ? 'transform' + EZ : 'none', mv: anim ? 'left' + EZ + ', top' + EZ : 'none', mvSt: anim ? 'left' + EZ + ', top' + EZ + ', background-color .3s, border-color .3s' : 'background-color .3s, border-color .3s',
       ctrl: p.controls === 'top'
         ? { right: '12px', top: '12px', tf: 'none', dir: 'row', sepW: '1px', sepH: '24px', sepM: 'auto 2px' }

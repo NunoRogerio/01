@@ -13,7 +13,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=15"></script>
+<meta name="wf-layout" content="fluid">
+<script src="fit.js?v=16"></script>
 <script src="i18n.js?v=4"></script>
 <script src="live.js?v=20"></script>
 
@@ -169,14 +170,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 </style>
 </helmet>
-<div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
-  <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-  <dc-import name="TerrainMap" mode="risk" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
+  <div style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 1">
+  <dc-import name="TerrainMap" mode="risk" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
   </div>
 
+  <!-- Panels column: the full width in portrait; a side column over the map in landscape and on big screens. -->
+  <div style="position: absolute; left: {{colL}}px; top: 0; width: {{colW}}px; height: {{vh}}px; z-index: 2; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 56px; pointer-events: none">
+
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
+  <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <header class="fade" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
@@ -192,12 +196,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </header>
   </div>
 
-  <div style="position: relative; z-index: 2; width: 390px; flex-grow: 1; pointer-events: none"></div>
+  <div style="position: relative; z-index: 2; flex-grow: 1; pointer-events: none"></div>
 
   <sc-if value="{{hasCard}}" hint-placeholder-val="{{ true }}">
-  <div onClick="{{closeList}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 3; background: rgba(0,0,0,0.32); opacity: {{listOp}}; pointer-events: {{listPE}}; transition: opacity .35s ease"></div>
+  <div onClick="{{closeList}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 3; background: {{scrimBg}}; opacity: {{listOp}}; pointer-events: {{listPE}}; transition: opacity .35s ease"></div>
   <div style="position: absolute; inset: 0; z-index: 4; pointer-events: none; filter: drop-shadow(0 -4px 16px rgba(0,0,0,0.08))">
-  <section role="dialog" aria-labelledby="ignListTitle" style="position: absolute; left: 0; right: 0; top: 56px; bottom: 0; z-index: 4; display: flex; flex-direction: column; box-sizing: border-box; background: #F2F2F7; pointer-events: auto; clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); -webkit-clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); transform: translateY({{downY}}); opacity: {{downOp}}; translate: 0 {{liDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease, translate {{liDyT}} ease">
+  <section role="dialog" aria-labelledby="ignListTitle" style="position: absolute; left: {{padLn}}px; right: 0; top: 56px; bottom: 0; z-index: 4; display: flex; flex-direction: column; box-sizing: border-box; padding-left: {{padL}}px; background: #F2F2F7; pointer-events: auto; clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); -webkit-clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); transform: translateY({{downY}}); opacity: {{downOp}}; translate: 0 {{liDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease, translate {{liDyT}} ease">
     <h2 id="ignListTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">{{listTitle}}</h2>
     <div aria-hidden="{{listHidden}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; visibility: {{listVis}}; opacity: {{liInOp}}; transform: translateY({{liInY}}); transition: opacity .3s ease {{liInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{liInDelay}}, visibility 0s linear {{listVisDelay}}">
       <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hList.down}}" onPointerMove="{{hList.move}}" onPointerUp="{{hList.up}}" onPointerCancel="{{hList.cancel}}" onKeyDown="{{hList.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
@@ -218,11 +222,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
       </div>
     </div>
-    <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: 158px; padding: 12px 12px 0 12px; flex-shrink: 0">
-      <button type="button" onClick="{{homeReset}}" aria-label="Forest Fire Watch, back to the incidents map" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; padding: 0; border: 0; border-top: 1px solid rgba(60,60,67,0.14); border-radius: 0; background: #EEEEF2; cursor: pointer; font: inherit"></button>
+    <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barH}}px; padding: 12px 12px 0 12px; flex-shrink: 0">
+      <sc-if value="{{brandOn}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{homeReset}}" aria-label="Forest Fire Watch, back to the incidents map" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; padding: 0; border: 0; border-top: 1px solid rgba(60,60,67,0.14); border-radius: 0; background: #EEEEF2; cursor: pointer; font: inherit"></button>
       <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #6C6C70; opacity: 0.8; white-space: nowrap; pointer-events: none">
         <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#6C6C70" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#6C6C70" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; font-size: 16px">Forest Fire Watch</span>
-      </span>
+      </span></sc-if>
       <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
           <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px; color: {{barC}}">{{barTitle}}</span>
@@ -238,8 +242,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
 
-  <div class="scrim" onClick="{{closeScope}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(0,0,0,0.32); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); opacity: {{scOp}}; pointer-events: {{scPE}}"></div>
-  <section role="dialog" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: 0; right: 0; top: 56px; bottom: 0; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; background: #F2F2F7; box-shadow: 0 24px 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
+  <div class="scrim" onClick="{{closeScope}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{scOp}}; pointer-events: {{scPE}}"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 56px; bottom: 0; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; padding-left: {{padL}}px; background: #F2F2F7; box-shadow: 0 24px 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px; flex-shrink: 0">
       <button type="button" class="opt" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
@@ -323,6 +327,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 4px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
+  </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
@@ -340,7 +345,7 @@ class Component extends DCLogic {
     // Collapsed blades: a short drag away from the screen edge opens them (tap still works too).
     const self = this;
     return {
-      down: (e) => { let k = 1; try { const R = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R.height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._pl = { key, y: e.clientY, k, done: false }; },
+      down: (e) => { let k = 1; try { const R = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R.width / ((window.__wfVP || {}).w || 390) || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._pl = { key, y: e.clientY, k, done: false }; },
       move: (e) => { const h = self._pl; if (!h || h.key !== key || h.done) return; const dy = (e.clientY - h.y) / h.k; if (dir === 'down' ? dy > 22 : dy < -22) { h.done = true; self._pulled = Date.now(); open(); } },
       up: () => { self._pl = null; }
     };
@@ -348,7 +353,7 @@ class Component extends DCLogic {
   wfHandle(key, dir, close) {
     const self = this;
     return {
-      down: (e) => { let k = 1; try { const R = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R.height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._hd = { key, y: e.clientY, k, dy: 0 }; },
+      down: (e) => { let k = 1; try { const R = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R.width / ((window.__wfVP || {}).w || 390) || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._hd = { key, y: e.clientY, k, dy: 0 }; },
       move: (e) => { const h = self._hd; if (!h || h.key !== key) return; let dy = (e.clientY - h.y) / h.k; dy = dir === 'up' ? Math.min(0, dy) : Math.max(0, dy); h.dy = dy; self.setState({ hdK: key, hdY: dy }); },
       up: () => { const h = self._hd; self._hd = null; if (!h || h.key !== key) return; const d = Math.abs(h.dy); self.setState({ hdK: null, hdY: 0 }); if (d < 6 || d > 60) close(); },
       cancel: () => { self._hd = null; self.setState({ hdK: null, hdY: 0 }); },
@@ -405,8 +410,8 @@ class Component extends DCLogic {
     this._flipT = setTimeout(() => this.setState({ flip: null }), 3000);
     this.setState({ flip: { n0: rec.n0, n1, f0: rec.f0, f1, t: rec.t } });
   }
-  componentDidMount() { if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
-  componentWillUnmount() { try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentDidMount() { if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentWillUnmount() { try { window.removeEventListener('wf-vp', this._wfVp); } catch (e) {} try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   wfNav(mode) { const v = { mode, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { nav: v }); try { window.sessionStorage.setItem('wf-nav', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -531,7 +536,16 @@ class Component extends DCLogic {
   }
   wfSetFireView(f) { const v = { id: f.id, place: f.place, note: f.note, x: f.x, y: f.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} }
   wfSetFocus(id) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: id }); try { window.sessionStorage.setItem('wf-focus', id); } catch (e) {} }
+  // Screen layout: portrait phones use the full width; landscape and big screens (tablet, TV) keep the
+  // panels in a phone-width column on the left, with the map filling the rest of the screen.
+  wfLayout() {
+    const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
+    const side = V.w >= 600, sl = V.sl || 0;
+    const colW = side ? 390 : V.w;
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: side ? 84 : 158, brandOn: !side, scrimBg: side ? 'transparent' : 'rgba(0,0,0,0.32)', scrimBlur: side ? 'none' : 'blur(3px)' };
+  }
   renderVals() {
+    const L = this.wfLayout();
     const s = this.state || {};
     const SC = this.wfScoped();
     const CANDS = SC.cands;
@@ -666,14 +680,15 @@ class Component extends DCLogic {
       stackAria: N + ' ignition candidates and ' + NF + ' active fires, ' + (N + NF) + ' incidents in total. Show all', topPick: focus(top.id),
       openList: () => { this.wfListFlag(false); this.setState({ list: true }); }, closeList: () => { this.wfListFlag(false); this.setState({ list: false }); }, navHome: () => { this.wfListFlag(false); this.setState({ list: false, scOpen: false }); },
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
-      listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - 158px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg',
+      listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg',
       toggleList: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.wfListFlag(false); this.setState({ list: !listOpen }); },
       barTitle: (N === 0 ? 'No' : N) + ' Ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#248A3D' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' active fire' + (NF === 1 ? '' : 's'),
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
-      mapW: 390, mapH: 844, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full ? 40 : 164,
+      ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : 164,
       full: !!s.full, toggleFull: () => this.setState({ full: !s.full, list: false }),
-      padB: s.full ? 40 : 166, clipT: s.full ? 0 : 128, clipBleed: s.full ? 0 : 40, tipSafe: s.full ? 56 : 186, ctrlTop: 422,
+      padB: s.full || L.side ? 40 : 166, clipT: s.full ? 0 : (L.side ? 52 : 128), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : 186, ctrlTop: 422,
+      clipL: L.side && !s.full ? L.colL + L.colW : L.sl, clipR: L.sr,
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: s.full ? '200px' : '0px', downOp: s.full ? 0 : 1,
     };
   }

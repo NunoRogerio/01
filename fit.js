@@ -3,17 +3,45 @@
 // The designs keep a blank strip at the top for the status bar. The phone already reserves its own
 // status bar (Safari and the home-screen app), so that strip is cropped here: the app then fills the
 // screen edge to edge and nothing ever sits under the camera or the status bar.
+// Screens that declare <meta name="wf-layout" content="fluid"> fill any screen instead: they read the
+// screen size from window.__wfVP ({w, h, land, s, sl, sr}, in design pixels) and re-render on 'wf-vp'.
+// Scale: the short side of the screen maps to 390 design pixels (so text stays phone-sized), up to 1.6×
+// on large screens such as a TV. The other screens keep the fixed 390×844 phone frame for now.
 (function(){
-  var W=390,H=844,TOP=52,VH=H-TOP;
+  var W=390,H=844,TOP=52,VH=H-TOP,MAXS=1.6;
+  var m=document.querySelector('meta[name="wf-layout"]'),fluid=!!(m&&m.getAttribute('content')==='fluid');
   var st=document.createElement('style');
   st.textContent='html,body{background:#F2F2F7;overflow:hidden;height:100%;margin:0;overscroll-behavior:none}'+
-    '#dc-root{zoom:var(--fit,1);width:'+W+'px;height:'+H+'px;margin:0 auto;overflow:hidden;position:relative;top:-'+TOP+'px}';
+    '#dc-root{zoom:var(--fit,1);width:var(--wf-w,'+W+'px);height:var(--wf-h,'+H+'px);margin:0 auto;overflow:hidden;position:relative;top:-'+TOP+'px}';
   document.head.appendChild(st);
-  function fit(){
-    var s=Math.min(window.innerWidth/W,window.innerHeight/VH);
-    document.documentElement.style.setProperty('--fit',String(s));
+  var probe=null;
+  function insets(){
+    try{
+      if(!probe){probe=document.createElement('div');probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)';(document.body||document.documentElement).appendChild(probe);}
+      var cs=getComputedStyle(probe);return [parseFloat(cs.paddingLeft)||0,parseFloat(cs.paddingRight)||0];
+    }catch(e){return [0,0];}
   }
-  fit();window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);
+  var last='';
+  function fit(){
+    var iw=window.innerWidth,ih=window.innerHeight,r=document.documentElement.style,s,vp;
+    if(fluid){
+      s=Math.min(Math.min(iw,ih)/W,MAXS);
+      var ins=insets();
+      vp={w:Math.round(iw/s),h:Math.round(ih/s)+TOP,land:iw>ih,s:s,sl:Math.round(ins[0]/s),sr:Math.round(ins[1]/s)};
+      r.setProperty('--wf-w',vp.w+'px');r.setProperty('--wf-h',vp.h+'px');
+    }else{
+      s=Math.min(iw/W,ih/VH);
+      vp={w:W,h:H,land:false,s:s,sl:0,sr:0};
+    }
+    r.setProperty('--fit',String(s));
+    window.__wfVP=vp;
+    var key=vp.w+'x'+vp.h+':'+vp.sl+':'+vp.sr;
+    if(key!==last){var first=!last;last=key;if(!first)try{window.dispatchEvent(new Event('wf-vp'));}catch(e){}}
+  }
+  fit();
+  var t=0;function later(){fit();clearTimeout(t);t=setTimeout(fit,350);}
+  window.addEventListener('resize',later);window.addEventListener('orientationchange',later);
+  document.addEventListener('DOMContentLoaded',fit);
 })();
 // Crash guard: if the last screen died without closing normally (Safari's "A problem repeatedly occurred"),
 // forget the area and screen it was showing, so the app reopens on the default view instead of crashing again.
