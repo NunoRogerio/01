@@ -77,9 +77,13 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   function buildCands(js){
     return (js&&js.points||[]).map(function(p){
       var lat=p[2],lon=p[3],xy=toXY(lat,lon);
-      var place='Hotspot '+Math.abs(lat).toFixed(2)+'°'+(lat>=0?'N':'S')+' '+Math.abs(lon).toFixed(2)+'°'+(lon>=0?'E':'W');
+      var ll=Math.abs(lat).toFixed(2)+'°'+(lat>=0?'N':'S')+' '+Math.abs(lon).toFixed(2)+'°'+(lon>=0?'E':'W');
+      // p[9..11] = nearest named place (GeoNames), km and direction from it; older files have none
+      var nm=p[9]||'',km=p[10],dir=p[11]||'';
+      var place=nm?(km>=1.5?'Near '+nm:nm):'Hotspot '+ll;
+      var nearTxt=nm?(km>=1.5?km.toFixed(1).replace(/\.0$/,'')+' km '+dir+' of '+nm:'In '+nm):'';
       var id='HS-'+Math.round((lat+90)*100)+'-'+Math.round((lon+180)*100);
-      return [p[0],p[1],id,place,p[4],'sat:'+p[5],ago(Date.parse(p[6])),xy[0],xy[1],{lat:lat,lon:lon,frp:p[7],sat:p[5],t:p[6],n:p[8]}];
+      return [p[0],p[1],id,place,p[4],'sat:'+p[5],ago(Date.parse(p[6])),xy[0],xy[1],{lat:lat,lon:lon,frp:p[7],sat:p[5],t:p[6],n:p[8],ll:ll,near:nearTxt}];
     });
   }
   // One cache, with its own timestamp per source (US fires, Portugal fires, satellite), so a source that

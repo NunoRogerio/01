@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=2"></script>
-<script src="live.js?v=13"></script>
+<script src="live.js?v=14"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -615,10 +615,10 @@ class Component extends DCLogic {
       const time = d && !isNaN(d) ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
       const day = d && !isNaN(d) ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) : '';
       const ll = Math.abs(L.lat).toFixed(4) + '° ' + (L.lat >= 0 ? 'N' : 'S') + ' · ' + Math.abs(L.lon).toFixed(4) + '° ' + (L.lon >= 0 ? 'E' : 'W');
-      const reasons = [['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
+      const reasons = [...(L.near ? [[L.near + (c.co ? ', ' + c.co : ''), true]] : []), ['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
         [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
         ['Not yet confirmed on the ground', false]];
-      return { id: c.id, place: c.place, time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
+      return { id: c.id, place: c.place, ll: L.ll || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
         agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y, zoom: 0.7, fsZoom: 0.9,
         coords: ll + ' · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
     };
@@ -714,7 +714,7 @@ class Component extends DCLogic {
         const others = active.map((c, i) => ({ c, i })).filter((o) => o.i !== ci);
         return {
           multi: n > 1, hdrBd: n > 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
-          curRow: { place: cur.place, sub: cur.id + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
+          curRow: { place: cur.place, sub: (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
             aria: cur.place + ', ' + cur.conf + ' percent. ' + (n > 1 ? (ci + 1) + ' of ' + n + '. Show other candidates' : '') },
           ddRows: others.map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
             aria: o.c.place + ', ' + o.c.conf + ' percent, ' + o.c.srcList, op: dd ? 1 : 0, tf: dd ? 'none' : 'translateY(-12px)', delay: dd ? (140 + k * 35) + 'ms' : '0ms',
@@ -724,7 +724,7 @@ class Component extends DCLogic {
           ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', ddOp: 0, ddClip: dd ? 'inset(0px 0px 0px 0px)' : 'inset(0px 0px 100% 0px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
         };
       })(),
-      headerSub: n > 0 ? cur.id + ' · ' + cur.time + ' · ' + (ci + 1) + ' of ' + n : 'Nothing to review',
+      headerSub: n > 0 ? (cur.ll || cur.id) + ' · ' + cur.time + ' · ' + (ci + 1) + ' of ' + n : 'Nothing to review',
       candChips: active.map((c, i) => ({
         place: c.place, conf: c.conf,
         selected: i === ci ? 'true' : 'false',

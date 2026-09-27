@@ -4,12 +4,13 @@
 Writes two files the app reads from its own site:
   data/regions.json   every country's regions (US: states with their counties) for Europe + the Americas
   data/hotspots.json  NASA FIRMS VIIRS hotspots from the last 24 h, clustered and tagged with
-                      country/region (US: state/county), used as satellite ignition candidates
+                      country/region (US: state/county) and the nearest named place (GeoNames),
+                      used as satellite ignition candidates
 
 Needs FIRMS_MAP_KEY (free: https://firms.modaps.eosdis.nasa.gov/api/map_key/).
 Without it only regions.json is written and the app keeps its sample candidates.
 """
-import csv, io, json, os, sys, urllib.request
+import csv, io, json, math, os, sys, urllib.request, zipfile
 from datetime import datetime, timezone
 from shapely.geometry import shape, Point
 from shapely.strtree import STRtree
@@ -40,6 +41,51 @@ def ne(name):
         print('downloading', name, flush=True)
         open(path, 'wb').write(get(NE + name, 600))
     return json.load(open(path, encoding='utf-8'))['features']
+
+
+GEONAMES = 'https://download.geonames.org/export/dump/cities1000.zip'   # every place with 1,000+ people (CC BY 4.0)
+
+
+def places():
+    """Named localities as a 0.5° grid: {(lat cell, lon cell): [(lat, lon, name), ...]}. None if unavailable."""
+    os.makedirs(CACHE, exist_ok=True)
+    path = os.path.join(CACHE, 'cities1000.zip')
+    try:
+        if not os.path.exists(path):
+            print('downloading', GEONAMES, flush=True)
+            open(path, 'wb').write(get(GEONAMES, 600))
+        grid = {}
+        with zipfile.ZipFile(path) as z:
+            for line in io.TextIOWrapper(z.open('cities1000.txt'), encoding='utf-8'):
+                f = line.rstrip('\n').split('\t')
+                if len(f) < 9 or f[6] != 'P':
+                    continue
+                la, lo = float(f[4]), float(f[5])
+                grid.setdefault((math.floor(la * 2), math.floor(lo * 2)), []).append((la, lo, f[1]))
+        print(sum(len(v) for v in grid.values()), 'named places', flush=True)
+        return grid
+    except Exception as e:
+        print('::warning::place names unavailable', e)
+        return None
+
+
+def nearest(grid, lat, lon):
+    """Closest named place: (name, km, compass direction from the place to the point), or None beyond 25 km."""
+    ci, cj = math.floor(lat * 2), math.floor(lon * 2)
+    best = None
+    for di in (-1, 0, 1):
+        for dj in (-1, 0, 1):
+            for la, lo, name in grid.get((ci + di, cj + dj), ()):
+                dy = (lat - la) * 111.2
+                dx = (lon - lo) * 111.2 * math.cos(math.radians(lat))
+                d = math.hypot(dx, dy)
+                if best is None or d < best[1]:
+                    best = (name, d, dx, dy)
+    if not best or best[1] > 25:
+        return None
+    name, d, dx, dy = best
+    dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+    return name, round(d, 1), dirs[int((math.degrees(math.atan2(dx, dy)) + 360 + 22.5) // 45) % 8]
 
 
 def prop(p, *keys):
@@ -144,6 +190,7 @@ def main():
                 c['t'] = max(c['t'], t)
     print(len(cells), 'hotspot clusters', flush=True)
 
+    grid = places()
     sat_name = {'N': 'VIIRS S-NPP', 'N20': 'VIIRS NOAA-20', '1': 'VIIRS NOAA-20', 'N21': 'VIIRS NOAA-21', '2': 'VIIRS NOAA-21'}
     points = []
     for c in cells.values():
@@ -161,8 +208,10 @@ def main():
             sid, region = co
         # repeated detections in one cell raise confidence a little
         score = min(99, c['score'] + min(10, (c['n'] - 1) * 2))
+        near = nearest(grid, c['lat'], c['lon']) if grid else None
         points.append([sid, region, round(c['lat'], 4), round(c['lon'], 4), score,
-                       sat_name.get(str(c['sat']), 'VIIRS'), c['t'].strftime('%Y-%m-%dT%H:%MZ'), round(c['frp'], 1), c['n']])
+                       sat_name.get(str(c['sat']), 'VIIRS'), c['t'].strftime('%Y-%m-%dT%H:%MZ'), round(c['frp'], 1), c['n']]
+                      + (list(near) if near else []))   # + nearest place: name, km, direction from it
     points.sort(key=lambda p: (-p[4], -p[7]))
     points = points[:MAX_POINTS]
     json.dump({'updated': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%MZ'), 'source': 'NASA FIRMS VIIRS NRT, last 24 h',

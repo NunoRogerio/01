@@ -23,7 +23,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .ne-cache
-          key: natural-earth-10m-v1
+          key: natural-earth-10m-geonames-v2
       - name: Install
         run: pip install --quiet shapely
       - name: Build regions and hotspots
