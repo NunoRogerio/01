@@ -582,7 +582,7 @@ class Component extends DCLogic {
     // 'US' = the whole United States: every state (two-letter codes other than Portugal's 'PT')
     const inA = window.__wfInArea || ((r, st, co) => r.st === st && (!co || r.co === co));
     const inScope = (r) => inA(r, sc.st, sc.co);
-    const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-0924-' + String(3 + i).padStart(2, '0'), place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y }));
+    const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y }));
     const allFires = W.fires.concat(confirmedFires);
     const openCands = W.cands.filter((c) => !dz[c.id] && !cf[c.id]);
     // Counts per area from one pass over the data (the area table asks for dozens of areas on every render).
