@@ -1,10 +1,19 @@
-# Forest Fire Watch — clickable prototype
+# Forest Fire Watch
 
-Standalone web version of the Forest Fire Ignition Detection design (LA area).
-Open `Main.dc.html` (or the site root) on a phone and use **Add to Home Screen** for a full-screen app.
+A phone web app prototype for spotting forest-fire ignitions and following active fires, using live
+open data for Portugal, the United States, British Columbia, Brazil (including Amazônia Legal) and
+satellite hotspots across Europe and the Americas.
 
-- Sign in (`Login.dc.html`): Administrator (all areas), or the Portugal, California or Nevada fire coordinator (their area only). Prototype roles, no password; the data files are public.
-- Coordinator flow: Incidents → Ignition candidate → Drone verification → Dispatch sizing
+Open the site on a phone and use **Add to Home Screen** for a full-screen app.
+
+- Sign in (`Login.dc.html`): pick a demo profile. Each role only sees its own area.
+- Coordinator flow: Incidents → Ignition candidate → Drone verification → Dispatch
 - Citizen reporter: `Report.dc.html` → `ReportSent.dc.html`
 
-Design mockup only: no live detection or data.
+Prototype only: not for real emergency decisions.
+
+## Licence
+
+Copyright (c) 2026 Nuno Rogerio. All rights reserved. This is not open source: you may view the code
+here, but you may not copy, reuse or redistribute any part of it without written permission.
+See [LICENSE](LICENSE). Data, map tiles and photos from third parties keep their own terms.

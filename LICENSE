@@ -1,0 +1,21 @@
+Copyright (c) 2026 Nuno Rogerio (github.com/NunoRogerio). All rights reserved.
+
+Forest Fire Watch, including its source code, screen designs, icons, text and
+the scripts in this repository, is proprietary and is not open source.
+
+You may view this repository on GitHub. Without prior written permission from
+the copyright holder, you may not copy, modify, merge, publish, distribute,
+sublicense, sell, host or otherwise use any part of it, in whole or in part,
+including to build a similar product or service.
+
+Third-party material keeps its own terms and is not covered by this notice:
+  - Fire and hotspot data: NASA FIRMS, NIFC WFIGS, INPE Programa Queimadas,
+    Fogos.pt / ANEPC, BC Wildfire Service, GeoNames.
+  - Map tiles and map data: OpenStreetMap contributors.
+  - Photos: their photographers, under the Unsplash licence.
+  - support.js: the design-component runtime, under its own terms.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. It is a
+prototype and must not be relied on for real emergency decisions.
+
+For permission requests, contact the copyright holder through GitHub.
