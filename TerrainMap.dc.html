@@ -351,7 +351,7 @@ body{margin:0}
     </div>
   </div>
   </sc-if>
-  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; top: {{ctrlBoxTop}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
+  <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
     <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
       <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 14px; background: rgba(242,242,247,0.96); box-shadow: 0 4px 16px rgba(0,0,0,0.08); color: #3C3C43; cursor: pointer">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
@@ -1038,7 +1038,7 @@ class Component extends DCLogic {
       fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
       fullLabel: (p.isFull === true || p.isFull === 'true') ? 'Exit full screen' : 'Full screen',
       fullIcon: (p.isFull === true || p.isFull === 'true') ? 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5' : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
-      legL: 10 + WN.l, legR: 62 + WN.r, ctrlR: 10 + WN.r, attrL: 12 + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (Number(p.attrBottom ?? 10)) + (H - WN.b),
+      legL: 10 + WN.l, legR: 10 + WN.r, ctrlB: Math.max(8, (Number(p.attrBottom ?? 10)) + (H - WN.b) - 14), ctrlR: 10 + WN.r, attrL: 12 + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (Number(p.attrBottom ?? 10)) + (H - WN.b),
       mapTr: anim ? 'transform' + EZ : 'none', mv: anim ? 'left' + EZ + ', top' + EZ : 'none', mvSt: anim ? 'left' + EZ + ', top' + EZ + ', background-color .3s, border-color .3s' : 'background-color .3s, border-color .3s',
       ctrl: p.controls === 'top'
         ? { right: '12px', top: '12px', tf: 'none', dir: 'row', sepW: '1px', sepH: '24px', sepM: 'auto 2px' }
