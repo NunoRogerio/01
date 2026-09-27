@@ -60,6 +60,9 @@ body{margin:0}
           <mask id="wfTileMaskY" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#wfTileFadeY)"></rect></mask>
           <mask id="wfTileMask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#wfTileFadeX)" mask="url(#wfTileMaskY)"></rect></mask>
         </defs>
+        <sc-for list="{{tilesOld}}" as="tl" hint-placeholder-count="0">
+          <image href="{{tl.href}}" x="{{tl.x}}" y="{{tl.y}}" width="{{tl.w}}" height="{{tl.h}}" preserveAspectRatio="none" mask="{{tl.mask}}"></image>
+        </sc-for>
         <sc-for list="{{tiles}}" as="tl" hint-placeholder-count="0">
           <image href="{{tl.href}}" x="{{tl.x}}" y="{{tl.y}}" width="{{tl.w}}" height="{{tl.h}}" preserveAspectRatio="none" mask="{{tl.mask}}"></image>
         </sc-for>
@@ -503,6 +506,7 @@ class Component extends DCLogic {
   }
   componentDidMount() { this.unitTick(); }
   componentDidUpdate(prev) {
+    this._pv = null;
     if (prev && prev.hideTips !== this.props.hideTips && this.props.hideTips) {
       try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (e) {}
       this.setState({ selId: '__none', fireHover: false, msOpen: false });
@@ -732,7 +736,7 @@ class Component extends DCLogic {
     return this._b;
   }
   view() {
-    const st = this.state || {};
+    const st = Object.assign({}, this.state || {}, this._pv || {});
     const b = this.base();
     return { s: st.s ?? b.s, cx: st.cx ?? b.cx, cy: st.cy ?? b.cy };
   }
@@ -862,7 +866,9 @@ class Component extends DCLogic {
   zMin() { return window.__wfLiveMap ? 0.0005 : Math.max(0.008, (this.base().s || 0.05) * 0.46); }
   zMax() { return Math.max(window.__wfLiveMap ? 24 : 1, this.base().s || 1); }
   setView(cx, cy, s) {
-    this.setState(this.clampView(cx, cy, s));
+    // Remember the view right away: touch events can arrive faster than the screen updates, and each pinch step
+    // must build on the last one (not on a view that has not been drawn yet), so the zoom follows the fingers smoothly.
+    const v = this.clampView(cx, cy, s); this._pv = Object.assign({}, this._pv || {}, v); this.setState(v);
   }
   zoomAt(lx, ly, f) {
     const v = this.view();
@@ -1037,13 +1043,24 @@ class Component extends DCLogic {
               for (let tx2 = x0; tx2 <= x1; tx2++) {
                 const wx = ((tx2 % n) + n) % n;
                 const X0 = X(lonT(tx2)), X1 = X(lonT(tx2 + 1)), Y0 = Y(latT(ty2)), Y1 = Y(latT(ty2 + 1));
-                tiles.push({ href: url(wx, ty2), x: +X0.toFixed(1), y: +Y0.toFixed(1), w: +(X1 - X0 + 0.6 / s).toFixed(1), h: +(Y1 - Y0 + 0.6 / s).toFixed(1), mask: 'none' });
+                tiles.push({ href: url(wx, ty2), x: +X0.toFixed(4), y: +Y0.toFixed(4), w: +(X1 - X0 + 0.6 / s).toFixed(4), h: +(Y1 - Y0 + 0.6 / s).toFixed(4), mask: 'none' });
               }
             }
           }
         }
+        // Tiles keep their own image element for as long as they are shown (stable slots), so an element never shows
+        // the previous tile's picture at a new place while the next one loads - that made the map jump under the markers.
+        // Tiles leaving at a zoom step stay underneath for a moment, so there is no blank flash while the new ones load.
+        const TS = this._ts || (this._ts = { cur: [], old: [] }), now = Date.now(), want = new Map(tiles.map((t) => [t.href, t]));
+        const freeAt = (A) => { const i = A.indexOf(null); return i < 0 ? A.length : i; };
+        TS.cur = TS.cur.map((sl) => { if (!sl || want.has(sl.href)) return sl; if (!TS.old.some((o) => o && o.href === sl.href)) TS.old[freeAt(TS.old)] = { ...sl, until: now + 1500 }; return null; });
+        want.forEach((t, h) => { if (!TS.cur.some((sl) => sl && sl.href === h)) TS.cur[freeAt(TS.cur)] = { ...t }; });
+        TS.old = TS.old.map((o) => (o && o.until > now && !want.has(o.href) ? o : null));
+        const trim = (A) => { while (A.length && !A[A.length - 1]) A.pop(); return A; }; trim(TS.cur); trim(TS.old);
+        if (TS.old.length && !this._tsT) this._tsT = setTimeout(() => { this._tsT = 0; this.forceUpdate(); }, 1600);
+        const EMPTY = { href: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', x: 0, y: 0, w: 0, h: 0, mask: 'none' };
         return {
-          tiles,
+          tiles: TS.cur.map((t) => t || EMPTY), tilesOld: TS.old.map((t) => t || EMPTY),
           pal: pl,
           ms: { pressed: st === 'vector' ? 'true' : 'false', name: (PAL[st] || PAL.standard).name,
             icon: st === 'vector' ? 'M12 3 2 8l10 5 10-5-10-5ZM2 12.5l10 5 10-5M2 17l10 5 10-5' : 'M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20ZM9 4v13.5M15 6.5V20',
