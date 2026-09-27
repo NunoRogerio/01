@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=19"></script>
-<script src="i18n.js?v=11"></script>
+<script src="i18n.js?v=12"></script>
 <script src="live.js?v=23"></script>
 
 <title>Ignition candidates</title>
@@ -274,14 +274,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; margin-top: -28px; background: #F2F2F7; border-radius: 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
-      <!-- Title on the left, the likelihood KPI at the top right (number over its word, centred), with "(AI validation)" under the word -->
+      <!-- Title on the left, the likelihood KPI at the top right (number over its word, centred), reading "AI likelihood" on one line -->
       <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
         <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
           <h2 id="ai" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
         </span>
         <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0">
           <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
-          <span style="display: flex; flex-direction: column; align-items: center; font-size: 15px; line-height: 19px; color: #545458"><span>Likelihood</span><span>(AI validation)</span></span>
+          <span style="font-size: 15px; line-height: 19px; color: #545458; white-space: nowrap">AI likelihood</span>
         </span>
       </span>
     </section>
