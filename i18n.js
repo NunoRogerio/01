@@ -1,18 +1,10 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
-// Language: the app speaks European Portuguese when opened in Portugal (Portuguese time zones or a Portuguese
-// phone language), English elsewhere. A choice made on the sign-in screen overrides it ('wf-lang').
+// Language: European Portuguese for the Portugal profile, English for all other profiles.
 // It translates the finished screens in place, so every page stays written in one language underneath.
 (function(){
+  // For now the language follows the profile: Rita Cardoso (Portugal) sees the app in Portuguese; everyone else in English.
   var lang='en';
-  try{
-    var o=localStorage.getItem('wf-lang');
-    if(o==='pt'||o==='en')lang=o;
-    else{
-      var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';}catch(e){}
-      var L=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']).join(',').toLowerCase();
-      if(/^(europe\/lisbon|atlantic\/azores|atlantic\/madeira)$/i.test(tz)||/(^|,)pt-pt/.test(L)||/^pt/.test(L))lang='pt';
-    }
-  }catch(e){}
+  try{if(localStorage.getItem('wf-role')==='pt')lang='pt';}catch(e){}
   window.__wfLang=lang;
   window.__wfSetLang=function(l){try{localStorage.setItem('wf-lang',l);}catch(e){}location.reload();};
   if(lang!=='pt')return;
