@@ -872,7 +872,10 @@ class Component extends DCLogic {
       // strokes sit inside the CSS-scaled map layer, so size them in screen pixels by dividing by the zoom
       // INPE's newest fire fronts (Brazil): where the fire burned on its latest day
       mFront: (() => { const G = p.fireId && (window.__wfBRGeo || {})[p.fireId]; return G && G.front && G.front.ring && LY.active && !hz ? ringPath(G.front.ring) : ''; })(),
-      mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } } : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '', mFront: '', mSw: { thin: 1, edge: 1, dash: '6 5' } };
+      mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } } : ((G) => G && G.ring && window.__wfLiveMap && mode === 'spread'
+      // no model yet (or weather unreachable): still draw INPE's burned outline and newest fronts for Brazilian fires
+      ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(G.ring) : '', mFut: '', mActive: '', mHeld: '', mFront: G.front && G.front.ring && LY.active ? ringPath(G.front.ring) : '', mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } }
+      : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId, mNow: '', mFut: '', mActive: '', mHeld: '', mFront: '', mSw: { thin: 1, edge: 1, dash: '6 5' } })(p.fireId && (window.__wfBRGeo || {})[p.fireId]);
 
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     const OUT = {
