@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=17"></script>
-<script src="i18n.js?v=4"></script>
+<script src="i18n.js?v=5"></script>
 <script src="live.js?v=20"></script>
 
 <title>Dispatch sizing</title>
@@ -306,8 +306,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span>
     </button>
     <div style="display: flex; align-items: center; gap: 0; padding: 12px 16px 0 0">
-      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: #248A3D; flex-shrink: 0">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: {{sentIcC}}; flex-shrink: 0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{sentIc}}"></path></svg>
       </span>
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
         <h2 id="sentTitle" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{sentTitle}}</h2>
@@ -326,6 +326,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <ul class="wf-snap" aria-label="{{listAria}}" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; margin: 16px 0 0; padding: 0; list-style: none; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
       <sc-for list="{{deployed}}" as="d" hint-placeholder-count="4">
+        <sc-if value="{{d.head}}" hint-placeholder-val="{{ false }}">
+        <li role="presentation" style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 16px 16px 8px; box-sizing: border-box">
+          <h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #000000">{{d.title}}</h3>
+          <span style="display: {{d.noteD}}; font-size: 15px; line-height: 18px; color: #6C6C70">{{d.note}}</span>
+        </li>
+        </sc-if>
+        <sc-if value="{{d.item}}" hint-placeholder-val="{{ true }}">
         <li class="sqrow" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: start; gap: 2px 12px; flex-shrink: 0; min-height: 60px; padding: 10px 16px 10px 40px; box-sizing: border-box">
           <span aria-hidden="true" style="position: absolute; left: 11px; top: 11px; display: flex; width: 18px; height: 18px; color: {{d.c}}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{d.icon}}"></path></svg>
@@ -334,9 +341,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap"><span style="font-weight: 400; color: #6C6C70">{{d.pre}}</span>{{d.val}}<span style="font-weight: 400; color: #6C6C70">{{d.post}}</span></span>
           <span style="grid-column: 1 / -1; min-width: 0; font-size: 15px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
           <span style="grid-column: 1 / -1; position: relative; display: block; height: 3px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.077); overflow: hidden">
-            <span class="bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{d.w}}%; border-radius: 999px; background: {{d.c}}"></span>
+            <span class="bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{d.w}}%; border-radius: 999px; background: {{d.bar}}"></span>
           </span>
         </li>
+        </sc-if>
       </sc-for>
     </ul>
     <div style="display: grid; grid-template-columns: {{sentCols}}; gap: 10px; margin-top: 14px; padding: 0 16px">
@@ -739,7 +747,7 @@ class Component extends DCLogic {
       { o: [1480, 760], d: [626, 248], air: true, from: 'From San Bernardino air base' },
       { o: [stX - 10, stY - 14], d: [652, 302], air: true, from: 'From the ' + chosen.code + ' swarm unit' }
     ];
-    const deployedRaw = RU ? RU.filter((r) => Number(r[1]) > 0).map(([name, n, icon]) => ({ label: name, valTxt: Number(n).toLocaleString(), eta: 0, icon, from: 'On scene · ' + fres.src, air: name === 'Aircraft', n: Number(n), o: mv([610, 290], true), d: mv([610, 290], true) })) : meta.map((m, i) => ({ m, i, n: counts[i] })).filter((r) => r.n > 0 && !(r.i === 0 && multi)).map(({ m, i, n }) => ({
+    const deployedRaw = RU ? RU.filter((r) => Number(r[1]) > 0).map(([name, n, icon]) => ({ label: name, valTxt: Number(n).toLocaleString(), eta: 0, icon, from: 'On scene', air: name === 'Aircraft', n: Number(n), o: mv([610, 290], true), d: mv([610, 290], true) })) : meta.map((m, i) => ({ m, i, n: counts[i] })).filter((r) => r.n > 0 && !(r.i === 0 && multi)).map(({ m, i, n }) => ({
       label: n + ' × ' + m.name, eta: m.eta, icon: m.icon, from: GEO[i].from, air: GEO[i].air, n, o: (i === 0 || i === 1 || i === 5) ? GEO[i].o : mv(GEO[i].o, false), d: mv(GEO[i].d, true)
     }));
     if (!RU && multi && counts[0] > 0) {
@@ -761,13 +769,23 @@ class Component extends DCLogic {
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
     if (RO) {
       if (!deployed.length) deployed.push({ label: 'Resources not published', from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#6C6C70', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
-      NEAR.rows.slice(0, 5).forEach((q) => deployed.push({ label: q.name, from: 'Nearest fire station · which stations sent crews is not published', icon: 'M12 3.2 21.6 20H2.4Z', c: '#248A3D', bg: 'rgba(52,199,89,0.1)', w: 0, pre: '', val: q.km + DU, post: '' }));
+      NEAR.rows.slice(0, 5).forEach((q) => deployed.push({ label: q.name, from: 'Fire station · straight-line distance', g: 'st', icon: 'M12 3.2 21.6 20H2.4Z', c: '#248A3D', bg: 'rgba(52,199,89,0.1)', w: 0, pre: '', val: q.km + DU, post: '' }));
     }
     // Fire model (live fires): real "now" perimeter, +1/2/3 h prediction and expected containment.
     if (FMOD) {
       const icon = 'M3 17l6-6 4 4 8-8M15 7h6v6', tri = 'M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z', row = (label, val, from, c) => ({ label, val, from, icon, c: c || '#E86A00', bg: 'rgba(232,106,0,0.1)', w: 0, pre: '', post: '' });
       const M = FMOD.model, rows = [];
-      const heldRow = () => ({ ...row(HELD.official ? 'Held · ' + HELD.label.toLowerCase() : 'Held · edge fully contained', HELD.took != null ? DUR(HELD.took) : '—', HELD.took != null ? 'Time it took to resolve' + (INFO && INFO.heldSrc === 'last status update' ? ', to the last status update' : '') + (HELD.at ? ' · ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : '') : (HELD.official ? 'Resolution time not published' : 'Per the fire model · official state ' + (INFO ? INFO.st : '—')), '#1E7A34'), icon: 'M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6ZM8.5 12l2.5 2.5 4.5-5', bg: 'rgba(52,199,89,0.12)' });
+      // One timeline row answers all the held times: how long it burned before it was held, when it was held,
+      // and how long it has been held since. The bar shows the same split: orange while active, green since held.
+      const heldRow = () => {
+        const tk = HELD.took, at = HELD.at, since = at ? Date.now() - at : null, approx = INFO && INFO.heldSrc === 'last status update';
+        const clk = (ms) => { const d = new Date(ms), today = new Date().toDateString() === d.toDateString(); return today ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : d.toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); };
+        const st = HELD.official && HELD.label ? ' · now ' + HELD.label.toLowerCase() : '';
+        const pct = tk != null && since != null && tk + since > 0 ? Math.max(4, Math.min(96, Math.round(100 * tk / (tk + since)))) : null;
+        const r = row(tk != null ? 'Active for ' + DUR(tk) : HELD.official ? 'Held' : 'Edge fully contained', since != null && since > 0 ? 'Held for ' + DUR(since) : '',
+          HELD.official ? (INFO && INFO.startMs ? 'Started ' + clk(INFO.startMs) + (at ? ' · held ' + (approx ? 'by ' : '') + clk(at) : '') + st : (tk == null ? 'Resolution time not published' + st : st.slice(3))) : 'Per the fire model · official state ' + (INFO ? INFO.st : '—'), '#1E7A34');
+        return { ...r, icon: 'M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', bg: 'rgba(52,199,89,0.12)', w: pct != null ? 100 : 0, bar: pct != null ? 'linear-gradient(to right, #E86A00 0 ' + pct + '%, #34C759 ' + pct + '% 100%)' : '' };
+      };
       if (HELD && HELD.official) rows.push(heldRow());
       if (HELD && (!M || M.failed)) { /* held: no model needed */ }
       else if (!M) rows.push(row('Fire model', 'Calculating…', 'Perimeter, weather, terrain and fuel are loading', '#6C6C70'));
@@ -781,7 +799,17 @@ class Component extends DCLogic {
         if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#248A3D'));
         rows.push(row('Conditions', 'Wind ' + I.wind + ' km/h ' + I.from, I.temp + ' °C · humidity ' + I.rh + '% · fuel moisture ' + I.md + '% · slope ' + I.slope + '° · ' + I.fuel + ' · head ' + I.head + ' m/min', '#0079A6'));
       }
+      rows.forEach((r) => { r.g = 'fire'; });
       deployed.unshift(...rows);
+    }
+    deployed.forEach((d) => { if (!d.bar) d.bar = d.c; d.item = true; if (!d.g) d.g = 'res'; });
+    // Group titles, so it is clear what each block is: the fire itself, what is on scene, and stations nearby
+    // (only the nearest by distance; which corporations actually sent crews is not published).
+    if (RO) {
+      const HD = { fire: ['This fire', ''], res: ['On scene', fres && fres.src ? 'Reported by ' + fres.src : ''], st: ['Nearest fire stations', 'Not necessarily on this fire · which stations sent crews is not published'] };
+      const out = []; let g0 = null;
+      deployed.forEach((d) => { if (d.g !== g0) { g0 = d.g; out.push({ head: true, item: false, title: HD[g0][0], note: HD[g0][1], noteD: HD[g0][1] ? 'block' : 'none' }); } out.push(d); });
+      deployed.length = 0; deployed.push(...out);
     }
     const BRF = !!(frow && frow.st === 'BRA'), BI = BRF ? (frow.info || {}) : null;
     const K = BRF ? { k1L: 'Burned area', k1V: BI.ha != null ? Math.round(BI.ha).toLocaleString() : '—', k1S: BI.ha != null ? ' ha' : '', k2L: 'Active fronts', k2V: BI.facts && BI.facts[0] ? BI.facts[0][1] : '—', k2S: '' } : RO ? { k1L: 'Personnel', k1V: fres && fres.man != null ? Number(fres.man).toLocaleString() : '—', k1S: fres && fres.man != null ? ' on scene' : '',
@@ -853,16 +881,16 @@ class Component extends DCLogic {
       mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       sendAll: () => this.setState({ sent: true, adjust: false, open: false, cfg: false, full: false }), undoSend: () => this.setState(fv ? { adjust: true, cfg: true, open: false, full: false } : { sent: false, cfg: true, open: false, full: false }),
-      activeFor, activeAria: HELD ? 'Held. ' + (HELD.took != null ? 'Took ' + DUR(HELD.took) + ' to resolve' : HELD.label) : activeAria,
-      pillTxt: HELD ? (HELD.took != null ? 'Held · ' + DUR(HELD.took) : 'Held') : 'Active ' + activeFor, pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#C25700', pillDot: HELD ? 'none' : 'inline-block',
+      activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
+      pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : 'Active ' + activeFor, pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#C25700', pillDot: HELD ? 'none' : 'inline-block',
       hzShow: HELD ? 'none' : 'grid',
       fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       stApply: () => this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
-      k1C: BRF ? '#3A3A3C' : '#248A3D', unitsTxt: BRF ? '' : ' · ' + deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0) + ' units', sentTitle: HELD ? 'Fire held' : BRF ? 'Fire situation' : RO ? 'Fighting this fire' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      k1C: BRF ? '#3A3A3C' : '#248A3D', unitsTxt: BRF ? '' : ' · ' + deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0) + ' units', sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: HELD ? '#3A3A3C' : '#248A3D', sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting this fire' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),
-      sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? 'Resources on scene at ' + fv.place : 'Forces on the way to ' + fv.place) : 'sent 2:42 PM', undoLabel: 'Adjust',
+      sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (HELD ? fv.place : 'Resources on scene at ' + fv.place) : 'Forces on the way to ' + fv.place) : 'sent 2:42 PM', undoLabel: 'Adjust',
       sentY: (sent && !s.full) ? '0%' : '105%', sentHidden: (sent && !s.full) ? 'false' : 'true',
       hSt: this.wfHandle('st', 'up', () => this.setState({ open: false })), stDy: this.wfDrag('st').y, stDyT: this.wfDrag('st').t,
       hCf: this.wfHandle('cf', 'up', () => this.setState({ cfg: false })), cfDy: this.wfDrag('cf').y, cfDyT: this.wfDrag('cf').t,
