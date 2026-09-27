@@ -26,11 +26,13 @@ jobs:
           curl -fsS --retry 3 --retry-all-errors --connect-timeout 20 -m 300 -A "ForestFireWatch/1.0 (+https://github.com/NunoRogerio/01)" $B/ativos/eventos_ativos.gpkg -o /tmp/ativos.gpkg
           curl -fsS --retry 3 --retry-all-errors --connect-timeout 20 -m 300 -A "ForestFireWatch/1.0 (+https://github.com/NunoRogerio/01)" $B/observacao/eventos_observacao.gpkg -o /tmp/observacao.gpkg
           ls -la /tmp/*.gpkg
-      - name: Describe files
-        run: python3 scripts/inpe_schema.py /tmp/ativos.gpkg /tmp/observacao.gpkg
+      - name: Install
+        run: pip install --quiet shapely
+      - name: Build data/br-fires.json
+        run: python3 scripts/inpe_events.py /tmp/ativos.gpkg /tmp/observacao.gpkg
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/inpe-schema.txt data/br-fires.json 2>/dev/null || git add data/inpe-schema.txt
+          git add data/br-fires.json
           git diff --cached --quiet || (git commit -m "Update Brazil fire events" && git pull --rebase -q && git push)
