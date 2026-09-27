@@ -753,7 +753,7 @@ class Component extends DCLogic {
     return { goHome: () => { const t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { home: t, fromList: false }); try { window.sessionStorage.setItem('wf-home', String(t)); window.sessionStorage.setItem('wf-list', '0'); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} },
       hasActive: n > 0, noActive: showClear, rootBg: showClear ? 'transparent' : '#F2F2F7', panelD: showClear || n === 0 ? 'none' : 'block', backC: showClear ? '#FFFFFF' : '#545458',
       ...(() => {
-        const col = (c) => c > 75 ? '#7A3FE0' : (c >= 50 ? '#0A6FDB' : '#48484A');
+        const col = (c) => c > 75 ? '#7A3FE0' : (c >= 50 ? '#0A66CC' : '#48484A');
         const bg = (c) => c >= 70 ? 'rgba(232,106,0,0.14)' : (c >= 50 ? 'rgba(204,153,0,0.12)' : 'rgba(60,60,67,0.066)');
         const dd = !!s.dd && n > 1;
         const others = active.map((c, i) => ({ c, i })).filter((o) => o.i !== ci);
@@ -776,14 +776,14 @@ class Component extends DCLogic {
         bd: i === ci ? 'rgba(232,106,0,0.55)' : 'rgba(60,60,67,0.088)',
         bg: i === ci ? 'rgba(232,106,0,0.12)' : 'rgba(60,60,67,0.033)',
         fg: i === ci ? '#000000' : '#3C3C43',
-        dot: window.__wfConfC ? window.__wfConfC(c.conf) : (c.conf > 75 ? '#7A3FE0' : c.conf >= 50 ? '#0A6FDB' : '#48484A'),
+        dot: window.__wfConfC ? window.__wfConfC(c.conf) : (c.conf > 75 ? '#7A3FE0' : c.conf >= 50 ? '#0A66CC' : '#48484A'),
         pick: () => this.setState({ ci: i, focusId: null, tab: null })
       })),
       cur, tab, box: boxFor(tab, 390, 248, true, 0),
       tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#FFFFFF' : '#98989F', pick: () => this.setState({ tab: t.id }) })),
       nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
       reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
-      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: cur.conf > 75 ? '#7A3FE0' : cur.conf >= 50 ? '#0A6FDB' : '#48484A', ringLabel: cur.conf + ' percent likelihood',
+      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: cur.conf > 75 ? '#7A3FE0' : cur.conf >= 50 ? '#0A66CC' : '#48484A', ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
       mapIgn: SC.cands.map((c) => ({ id: c.id, x: c.x, y: c.y, place: c.place, conf: c.conf, src: c.src })),

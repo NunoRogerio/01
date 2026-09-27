@@ -523,17 +523,18 @@ class Component extends DCLogic {
     const allFires = W.fires.concat(confirmedFires);
     const openCands = W.cands.filter((c) => !dz[c.id] && !cf[c.id]);
     // Counts per area from one pass over the data (the area table asks for dozens of areas on every render).
-    const IX = { sc: {}, s: {}, US: [0, 0], AMZ: [0, 0], AMZc: {} }, AMZ = window.__wfAMZ || [];
+    const IX = { sc: {}, s: {}, US: [0, 0, 0], AMZ: [0, 0, 0], AMZc: {} }, AMZ = window.__wfAMZ || [];
     const tally = (r, k) => {
-      const a = (IX.s[r.st] || (IX.s[r.st] = [0, 0])); a[k]++;
-      const b = (IX.sc[r.st + '|' + r.co] || (IX.sc[r.st + '|' + r.co] = [0, 0])); b[k]++;
-      if (/^[A-Z]{2}$/.test(r.st || '') && r.st !== 'PT') IX.US[k]++;
-      if (r.st === 'BRA' && AMZ.indexOf(r.co) >= 0) { IX.AMZ[k]++; const c = (IX.AMZc[r.co] || (IX.AMZc[r.co] = [0, 0])); c[k]++; }
+      const top = (v) => { v[k]++; if (k === 0) v[2] = Math.max(v[2] || 0, r.conf || 0); };   // [candidates, fires, top likelihood]
+      top(IX.s[r.st] || (IX.s[r.st] = [0, 0, 0]));
+      top(IX.sc[r.st + '|' + r.co] || (IX.sc[r.st + '|' + r.co] = [0, 0, 0]));
+      if (/^[A-Z]{2}$/.test(r.st || '') && r.st !== 'PT') top(IX.US);
+      if (r.st === 'BRA' && AMZ.indexOf(r.co) >= 0) { top(IX.AMZ); top(IX.AMZc[r.co] || (IX.AMZc[r.co] = [0, 0, 0])); }
     };
     openCands.forEach((c) => tally(c, 0)); allFires.forEach((f) => tally(f, 1));
     const count = (st, co) => {
       const v = st === 'US' ? IX.US : st === 'AMZ' ? (co ? IX.AMZc[co] : IX.AMZ) : (co ? IX.sc[st + '|' + co] : IX.s[st]);
-      return { cands: v ? v[0] : 0, fires: v ? v[1] : 0 };
+      return { cands: v ? v[0] : 0, fires: v ? v[1] : 0, top: v ? v[2] || 0 : 0 };
     };
     return { W, sc, cands: openCands.filter(inScope).sort((a, b) => b.conf - a.conf), fires: allFires.filter(inScope), count };
   }
@@ -576,7 +577,7 @@ class Component extends DCLogic {
     });
     const usD = DATA.filter((d) => d.country === 'US'), ptD = DATA.find((d) => d.id === 'PT');
     const unitOf = (d) => d && (d.id === 'US' || d.id === 'AMZ' || d.id === 'BRA') ? ' states' : d && d.id === 'PT' ? ' districts' : d && d.country === 'US' ? ' counties' : ' regions';
-    const sumOf = (arr) => arr.reduce((a, d) => ({ fires: a.fires + (d.fires || 0), cands: a.cands + (d.cands || 0) }), { fires: 0, cands: 0 });
+    const sumOf = (arr) => arr.reduce((a, d) => ({ fires: a.fires + (d.fires || 0), cands: a.cands + (d.cands || 0), top: Math.max(a.top, d.top || 0) }), { fires: 0, cands: 0, top: 0 });
     const ISO3 = {"Albania":"ALB","Andorra":"AND","Austria":"AUT","Belarus":"BLR","Belgium":"BEL","Bosnia and Herzegovina":"BIH","Bulgaria":"BGR","Croatia":"HRV","Cyprus":"CYP","Czechia":"CZE","Denmark":"DNK","Estonia":"EST","Finland":"FIN","France":"FRA","Germany":"DEU","Greece":"GRC","Hungary":"HUN","Iceland":"ISL","Ireland":"IRL","Italy":"ITA","Kosovo":"KOS","Latvia":"LVA","Liechtenstein":"LIE","Lithuania":"LTU","Luxembourg":"LUX","Malta":"MLT","Moldova":"MDA","Monaco":"MCO","Montenegro":"MNE","Netherlands":"NLD","North Macedonia":"MKD","Norway":"NOR","Poland":"POL","Romania":"ROU","Russia":"RUS","San Marino":"SMR","Serbia":"SRB","Slovakia":"SVK","Slovenia":"SVN","Spain":"ESP","Sweden":"SWE","Switzerland":"CHE","Turkey":"TUR","Ukraine":"UKR","United Kingdom":"GBR","Vatican City":"VAT","Antigua and Barbuda":"ATG","Argentina":"ARG","Bahamas":"BHS","Barbados":"BRB","Belize":"BLZ","Bolivia":"BOL","Brazil":"BRA","Canada":"CAN","Chile":"CHL","Colombia":"COL","Costa Rica":"CRI","Cuba":"CUB","Dominica":"DMA","Dominican Republic":"DOM","Ecuador":"ECU","El Salvador":"SLV","Grenada":"GRD","Guatemala":"GTM","Guyana":"GUY","Haiti":"HTI","Honduras":"HND","Jamaica":"JAM","Mexico":"MEX","Nicaragua":"NIC","Panama":"PAN","Paraguay":"PRY","Peru":"PER","Saint Kitts and Nevis":"KNA","Saint Lucia":"LCA","Saint Vincent and the Grenadines":"VCT","Suriname":"SUR","Trinidad and Tobago":"TTO","Uruguay":"URY","Venezuela":"VEN"};
     const CTRY = [["Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland", "Italy", "Kosovo", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands", "North Macedonia", "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", "Ukraine", "United Kingdom", "Vatican City"].map((n) => [n, 'Europe']), ["Antigua and Barbuda", "Argentina", "Bahamas", "Barbados", "Belize", "Bolivia", "Brazil", "Canada", "Chile", "Colombia", "Costa Rica", "Cuba", "Dominica", "Dominican Republic", "Ecuador", "El Salvador", "Grenada", "Guatemala", "Guyana", "Haiti", "Honduras", "Jamaica", "Mexico", "Nicaragua", "Panama", "Paraguay", "Peru", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Suriname", "Trinidad and Tobago", "United States", "Uruguay", "Venezuela"].map((n) => [n, 'Americas'])].flat().map(([name, cont]) =>
       name === 'United States' ? { name, cont, id: 'US', live: true, n: usD.length, unit: ' states', ...sumOf(usD) }
@@ -605,10 +606,11 @@ class Component extends DCLogic {
     const atCountries = browse === '@', atUS = !brObj && !atCountries;
     const selCountry = stObj.country === 'US' ? 'US' : stObj.id === 'AMZ' ? 'BRA' : stObj.id;
     const CHEV = 'm9 6 6 6-6 6', TICK = 'm5 12 5 5 9-10';
+    const likeC = (c) => c > 75 ? '#7A3FE0' : (c >= 50 ? '#0A66CC' : '#48484A'), FIREC = '#B84A00';
     const num = (v) => ({ v, c: v > 0 ? '#000000' : '#8E8E93' });
     const rowOf = (o, selected, pick, sub, drill) => { const dis = !selected && !o.live && (o.cands || 0) + (o.fires || 0) === 0; return {
       name: o.name, sub, subD: sub ? 'block' : 'none', ...selSty(selected), dis, disA: dis ? 'true' : 'false', ...(dis ? { fg: '#AEAEB2', subC: '#C7C7CC' } : {}),
-      fires: o.fires, firesC: dis ? '#AEAEB2' : selected ? '#000000' : (o.fires > 0 ? '#000000' : '#545458'), cands: o.cands, candsC: dis ? '#AEAEB2' : selected ? '#000000' : (o.cands > 0 ? '#000000' : '#545458'),
+      fires: o.fires, firesC: dis ? '#AEAEB2' : (o.fires > 0 ? FIREC : '#545458'), cands: o.cands, candsC: dis ? '#AEAEB2' : (o.cands > 0 ? likeC(o.top || 0) : '#545458'),
       bd: selected ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: selected ? 'rgba(0,122,255,0.14)' : '#FFFFFF',
       end: drill ? CHEV : '', endC: selected ? '#C7C7CC' : '#C4C4C7', endW: 2,
       aria: o.name + ', ' + o.fires + ' active fires, ' + o.cands + ' ignition candidates' + (drill ? (o.drillLbl || '. Show counties') : (selected ? ', selected' : '')),
@@ -632,10 +634,10 @@ class Component extends DCLogic {
       const F = SC.W.fires.filter((f) => f.info && inA && inA(f, 'AMZ') && !f.info.resolved), D = F.filter((f) => f.info.deforFire), ha = D.reduce((a, f) => a + (f.info.ha || 0), 0);
       return { on: F.length > 0, n: D.length.toLocaleString(), ha: Math.round(ha).toLocaleString(), line: D.length + ' of ' + F.length + ' active fires in the Legal Amazon burn mostly on land cleared in recent years, the clearing-then-burning pattern that turns forest into pasture and cropland.' }; })();
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
-    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: '#000000', candsC: '#000000',
+    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: brObj.fires > 0 ? FIREC : '#545458', candsC: brObj.cands > 0 ? likeC(brObj.top || 0) : '#545458',
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
       aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' ignition candidates',
-      pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + ' states', ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: '#000000', candsC: '#000000',
+      pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + ' states', ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: t.fires > 0 ? FIREC : '#545458', candsC: t.cands > 0 ? likeC(t.top || 0) : '#545458',
       bd: on ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: on ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: on ? 1 : 0, aria: 'United States, ' + t.fires + ' active fires, ' + t.cands + ' ignition candidates. Show the whole country',
       pick: () => { this.wfSetScope({ st: 'US', co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false }; })() : { dis: true, name: '', nCounties: 0, nLbl: '', risk: 0, riskC: '', fires: 0, cands: 0, firesC: '', candsC: '', bd: '', bg: '', tick: 0, aria: '', pick: null };
     const M = N + NF;
@@ -660,7 +662,7 @@ class Component extends DCLogic {
     const ignList = CANDS.map((c, i) => {
       const col = colorOf(c.conf);
       return {
-        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Alert.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + '%', valC: '#000000', nameW: 600,
+        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Alert.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + '%', valC: c.conf > 75 ? '#7A3FE0' : (c.conf >= 50 ? '#0A66CC' : '#48484A'), nameW: 600,
         bg: c.conf > 75 ? 'rgba(122,63,224,0.12)' : (c.conf >= 50 ? 'rgba(10,111,219,0.1)' : 'rgba(60,60,67,0.066)'),
         bd: i === 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
         ...anim(i),
@@ -668,7 +670,7 @@ class Component extends DCLogic {
         pick: listFocus(c.id)
       };
     }).concat(FIRES.map((f, j) => ({
-      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: 'Active', valC: '#000000', nameW: 400, iconPath: FLAME, sub: (geoOf(f) || f.id) + ' · ' + f.note, conf: '',
+      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: 'Active', valC: '#B84A00', nameW: 400, iconPath: FLAME, sub: (geoOf(f) || f.id) + ' · ' + f.note, conf: '',
       bg: 'rgba(232,106,0,0.16)', bd: 'rgba(232,106,0,0.45)', ...anim(N + j),
       aria: 'Active fire ' + f.place + (geoOf(f) ? ', ' + geoOf(f) : '') + ', ' + f.id + ', ' + f.note + '. Open forces dispatched', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
     })));
