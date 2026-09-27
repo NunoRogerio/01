@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=2"></script>
-<script src="i18n.js?v=17"></script>
+<script src="i18n.js?v=18"></script>
 <script src="live.js?v=23"></script>
 
 <title>Ignition candidates</title>
@@ -195,7 +195,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="wf-snap" role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: 100px; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 41px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
     <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
       <span></span>
-      <span style="text-align: center">AI<br>confidence</span>
+      <span style="text-align: center">Likelihood</span>
       <span></span>
     </div>
     <sc-for list="{{ddRows}}" as="dr" hint-placeholder-count="0">
@@ -275,14 +275,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; margin-top: -28px; background: #F2F2F7; border-radius: 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
-      <!-- Title on the left, the likelihood KPI at the top right (number over its word, centred), reading "AI likelihood" on one line -->
+      <!-- Title on the left, the likelihood KPI at the top right (number over its word, centred), reading "Likelihood" -->
       <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
         <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
           <h2 id="ai" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
         </span>
         <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0">
           <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
-          <span style="font-size: 15px; line-height: 19px; color: #545458; white-space: nowrap">AI likelihood</span>
+          <span style="font-size: 15px; line-height: 19px; color: #545458; white-space: nowrap">Likelihood</span>
         </span>
       </span>
     </section>
