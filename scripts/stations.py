@@ -10,11 +10,16 @@ import json, sys, time, urllib.parse, urllib.request
 
 EP = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']
 AREAS = {'pt': 'PT', 'us': 'US', 'br': 'BR'}
+BBOX = {'pt': ['36.8,-9.6,42.2,-6.1', '32.3,-17.4,33.2,-16.2', '36.8,-31.4,39.8,-24.9']}   # mainland, Madeira, Azores
 
 
-def query(iso):
-    q = (f'[out:json][timeout:600];area["ISO3166-1"="{iso}"][admin_level=2]->.a;'
-         '(node["amenity"="fire_station"](area.a);way["amenity"="fire_station"](area.a););out center tags;')
+def query(iso, boxes=None):
+    if boxes:
+        parts = ''.join(f'node["amenity"="fire_station"]({b});way["amenity"="fire_station"]({b});' for b in boxes)
+        q = f'[out:json][timeout:300];({parts});out center tags;'
+    else:
+        q = (f'[out:json][timeout:600];area["ISO3166-1"="{iso}"][admin_level=2]->.a;'
+             '(node["amenity"="fire_station"](area.a);way["amenity"="fire_station"](area.a););out center tags;')
     last = None
     for attempt in range(3):
         for ep in EP:
@@ -34,7 +39,7 @@ def main():
     ok = 0
     for cc, iso in AREAS.items():
         try:
-            js = query(iso)
+            js = query(iso, BBOX.get(cc))
         except Exception as e:
             print('::warning::skipping', cc, e); continue
         rows = []
