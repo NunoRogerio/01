@@ -13,8 +13,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=17"></script>
-<script src="i18n.js?v=6"></script>
+<script src="fit.js?v=18"></script>
+<script src="i18n.js?v=7"></script>
 
 <title>Fire Simulator</title>
 <script src="./support.js"></script>
@@ -44,26 +44,26 @@ a{color:#007AFF}a:hover{color:#0062CC}
     </a>
     <span style="display: flex; flex-direction: column; min-width: 0">
       <h1 style="margin: 0; font-size: 19px; font-weight: 600; line-height: 22px">Fire simulator</h1>
-      <span style="font-size: 15px; line-height: 16px; color: #6C6C70">Training scenario · set it up, then play it</span>
+      <span style="font-size: 15px; line-height: 16px; color: #545458">Training scenario · set it up, then play it</span>
     </span>
   </header>
 
   <div class="scroll" style="flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 16px">
-    <h2 style="margin: 8px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Landscape</h2>
+    <h2 style="margin: 8px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #545458">Landscape</h2>
     <div role="radiogroup" aria-label="Landscape" style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
       <sc-for list="{{lands}}" as="l" hint-placeholder-count="4">
         <button type="button" class="opt" role="radio" aria-checked="{{l.on}}" onClick="{{l.pick}}" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 16px; border: 0; border-top: {{l.sep}}; background: transparent; font: inherit; color: #000000; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: {{l.swatch}}"></span>
           <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
             <span style="font-size: 18px; line-height: 21px">{{l.name}}</span>
-            <span style="font-size: 15px; line-height: 17px; color: #6C6C70">{{l.sub}}</span>
+            <span style="font-size: 15px; line-height: 17px; color: #545458">{{l.sub}}</span>
           </span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; opacity: {{l.tick}}"><path d="m5 12 5 5 9-10"></path></svg>
         </button>
       </sc-for>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Weather</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #545458">Weather</h2>
     <div style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
       <sc-for list="{{wx}}" as="w" hint-placeholder-count="3">
         <div style="display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 12px 0 16px; border-top: {{w.sep}}">
@@ -83,44 +83,44 @@ a{color:#007AFF}a:hover{color:#0062CC}
       </div>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Fire at the start</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #545458">Fire at the start</h2>
     <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #FFFFFF">
       <div role="radiogroup" aria-label="Fire at the start" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 9px; background: #EEEEF0">
         <sc-for list="{{stages}}" as="g" hint-placeholder-count="3">
           <button type="button" class="seg" role="radio" aria-checked="{{g.on}}" onClick="{{g.pick}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; border: 0; border-radius: 7px; background: {{g.bg}}; color: #000000; font: inherit; cursor: pointer; box-shadow: {{g.sh}}">
             <span style="font-size: 16px; font-weight: {{g.fw}}">{{g.label}}</span>
-            <span style="font-size: 14px; color: #6C6C70">{{g.sub}}</span>
+            <span style="font-size: 14px; color: #545458">{{g.sub}}</span>
           </button>
         </sc-for>
       </div>
       <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
         <div style="display: flex; flex-direction: column; gap: 2px">
-          <span style="font-size: 14px; color: #6C6C70">Head rate of spread</span>
-          <span style="font-size: 22px; font-weight: 600; line-height: 28px; color: #C25700; font-variant-numeric: tabular-nums">{{ros}}<small style="font-size: 15px; font-weight: 400; color: #6C6C70"> m/min</small></span>
+          <span style="font-size: 14px; color: #545458">Head rate of spread</span>
+          <span style="font-size: 22px; font-weight: 600; line-height: 28px; color: #C25700; font-variant-numeric: tabular-nums">{{ros}}<small style="font-size: 15px; font-weight: 400; color: #545458"> m/min</small></span>
         </div>
         <div style="display: flex; flex-direction: column; gap: 2px">
-          <span style="font-size: 14px; color: #6C6C70">Fuel moisture</span>
-          <span style="font-size: 22px; font-weight: 600; line-height: 28px; font-variant-numeric: tabular-nums">{{fmc}}<small style="font-size: 15px; font-weight: 400; color: #6C6C70"> %</small></span>
+          <span style="font-size: 14px; color: #545458">Fuel moisture</span>
+          <span style="font-size: 22px; font-weight: 600; line-height: 28px; font-variant-numeric: tabular-nums">{{fmc}}<small style="font-size: 15px; font-weight: 400; color: #545458"> %</small></span>
         </div>
       </div>
-      <p style="margin: 0; font-size: 14px; line-height: 16px; color: #6C6C70">{{rosNote}}</p>
+      <p style="margin: 0; font-size: 14px; line-height: 16px; color: #545458">{{rosNote}}</p>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Goal · contain the fire within</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #545458">Goal · contain the fire within</h2>
     <div role="radiogroup" aria-label="Goal" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 10px; background: #E3E3E8">
       <sc-for list="{{goals}}" as="o" hint-placeholder-count="4">
         <button type="button" class="seg" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="height: 40px; border: 0; border-radius: 8px; background: {{o.bg}}; color: #000000; font: inherit; font-size: 17px; font-weight: {{o.fw}}; cursor: pointer; box-shadow: {{o.sh}}">{{o.label}}</button>
       </sc-for>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Forces in the area</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #545458">Forces in the area</h2>
     <div style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
       <sc-for list="{{forces}}" as="f" hint-placeholder-count="5">
         <div style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 6px 12px 6px 16px; border-top: {{f.sep}}">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{f.icon}}"></path></svg>
           <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
             <span style="font-size: 18px; line-height: 21px">{{f.name}}</span>
-            <span style="font-size: 14px; line-height: 16px; color: #6C6C70">{{f.sub}}</span>
+            <span style="font-size: 14px; line-height: 16px; color: #545458">{{f.sub}}</span>
           </span>
           <button type="button" class="step" onClick="{{f.less}}" aria-label="{{f.lessLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 36px; border: 0; border-radius: 9px 0 0 9px; background: #EEEEF0; color: #000000; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
           <span style="min-width: 28px; text-align: center; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; margin: 0 -12px">{{f.n}}</span>
@@ -128,7 +128,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
         </div>
       </sc-for>
     </div>
-    <p style="margin: 10px 16px 0; font-size: 14px; line-height: 16px; color: #6C6C70">Crews, engines and dozers are split across the village, road and valley fire stations; helicopters wait at the helibase and air tankers at the air base. Tap a station during the game to deploy them. Fire behaviour uses the Rothermel spread model; unit rates are training values, not an operational tool.</p>
+    <p style="margin: 10px 16px 0; font-size: 14px; line-height: 16px; color: #545458">Crews, engines and dozers are split across the village, road and valley fire stations; helicopters wait at the helibase and air tankers at the air base. Tap a station during the game to deploy them. Fire behaviour uses the Rothermel spread model; unit rates are training values, not an operational tool.</p>
   </div>
 
   <div style="flex-shrink: 0; padding: 10px 16px 30px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.1)">

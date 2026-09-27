@@ -13,8 +13,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=17"></script>
-<script src="i18n.js?v=6"></script>
+<script src="fit.js?v=18"></script>
+<script src="i18n.js?v=7"></script>
 
 <title>Fire Simulation</title>
 <script src="./support.js"></script>
@@ -44,7 +44,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
       <h1 style="margin: 0; font-size: 18px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{title}}</h1>
-      <span style="font-size: 14px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{wxLine}}</span>
+      <span style="font-size: 14px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{wxLine}}</span>
     </span>
     <div role="group" aria-label="Simulation speed" style="display: flex; flex-shrink: 0; gap: 2px; padding: 2px; border-radius: 10px; background: #E3E3E8">
       <sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
@@ -58,7 +58,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
   <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 0 12px 8px; flex-shrink: 0">
     <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
       <div style="display: flex; flex-direction: column; padding: 6px 8px; border-radius: 10px; background: #FFFFFF">
-        <span style="font-size: 13px; line-height: 14px; color: #6C6C70; white-space: nowrap">{{k.label}}</span>
+        <span style="font-size: 13px; line-height: 14px; color: #545458; white-space: nowrap">{{k.label}}</span>
         <span style="font-size: 19px; font-weight: 600; line-height: 22px; color: {{k.c}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{k.value}}</span>
       </div>
     </sc-for>
@@ -106,11 +106,11 @@ a{color:#007AFF}a:hover{color:#0062CC}
           <b style="flex-grow: 1; min-width: 0; font-size: 16px; font-weight: 600; line-height: 18px">{{card.name}}</b>
           <button type="button" onClick="{{cardClose}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
         </div>
-        <span style="display: block; margin-top: 2px; font-size: 14px; line-height: 16px; color: #6C6C70">{{card.sub}}</span>
+        <span style="display: block; margin-top: 2px; font-size: 14px; line-height: 16px; color: #545458">{{card.sub}}</span>
         <sc-for list="{{card.rows}}" as="cr" hint-placeholder-count="3">
           <div style="display: flex; align-items: center; gap: 8px; min-height: 50px; margin-top: 6px; border-top: 1px solid rgba(60,60,67,0.12)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{cr.icon}}"></path></svg>
-            <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 16px; font-weight: 600; line-height: 18px">{{cr.name}}</span><span style="font-size: 13px; line-height: 15px; color: #6C6C70">{{cr.sub}}</span></span>
+            <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 16px; font-weight: 600; line-height: 18px">{{cr.name}}</span><span style="font-size: 13px; line-height: 15px; color: #545458">{{cr.sub}}</span></span>
             <button type="button" onClick="{{cr.deploy}}" disabled="{{cr.dis}}" aria-label="{{cr.aria}}" style="height: 40px; padding: 0 14px; flex-shrink: 0; border: 0; border-radius: 10px; background: {{cr.bg}}; color: {{cr.fg}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Deploy</button>
           </div>
         </sc-for>
@@ -130,22 +130,22 @@ a{color:#007AFF}a:hover{color:#0062CC}
         <span style="font-size: 17px; font-weight: 600; line-height: 19px">{{sel.name}}</span>
         <span style="font-size: 14px; line-height: 16px; color: {{sel.subC}}">{{sel.sub}}</span>
         <span style="display: {{sel.barsD}}; gap: 10px; align-items: center">
-          <span style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #6C6C70">Stamina<span style="display: block; width: 60px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.12); overflow: hidden"><span style="display: block; width: {{sel.st}}%; height: 5px; background: {{sel.stC}}"></span></span></span>
-          <span style="display: {{sel.wD}}; align-items: center; gap: 4px; font-size: 13px; color: #6C6C70">Water<span style="display: block; width: 60px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.12); overflow: hidden"><span style="display: block; width: {{sel.w}}%; height: 5px; background: #0079A6"></span></span></span>
+          <span style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #545458">Stamina<span style="display: block; width: 60px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.12); overflow: hidden"><span style="display: block; width: {{sel.st}}%; height: 5px; background: {{sel.stC}}"></span></span></span>
+          <span style="display: {{sel.wD}}; align-items: center; gap: 4px; font-size: 13px; color: #545458">Water<span style="display: block; width: 60px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.12); overflow: hidden"><span style="display: block; width: {{sel.w}}%; height: 5px; background: #0079A6"></span></span></span>
         </span>
       </span>
     </div>
 
-    <h2 style="margin: 12px 4px 6px; font-size: 15px; font-weight: 400; color: #6C6C70">STATIONS · tap one here or on the map to deploy its forces</h2>
+    <h2 style="margin: 12px 4px 6px; font-size: 15px; font-weight: 400; color: #545458">STATIONS · tap one here or on the map to deploy its forces</h2>
     <div class="scroll" role="group" aria-label="Stations" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px">
       <sc-for list="{{stations}}" as="r" hint-placeholder-count="5">
         <button type="button" class="chipb" onClick="{{r.open}}" aria-label="{{r.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex-shrink: 0; min-width: 104px; min-height: 58px; padding: 8px 10px; border: 0; border-radius: 12px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
           <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 21.6 20H2.4Z" fill="{{r.fill}}"></path></svg>{{r.name}}</span>
-          <span style="font-size: 13px; color: #6C6C70; white-space: nowrap">{{r.sub}}</span>
+          <span style="font-size: 13px; color: #545458; white-space: nowrap">{{r.sub}}</span>
         </button>
       </sc-for>
     </div>
-    <p style="margin: 6px 4px 0; font-size: 14px; line-height: 16px; color: #6C6C70">{{hint}}</p>
+    <p style="margin: 6px 4px 0; font-size: 14px; line-height: 16px; color: #545458">{{hint}}</p>
   </div>
 
   <sc-if value="{{over}}" hint-placeholder-val="{{ false }}">
@@ -154,7 +154,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
         <span style="display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; flex-shrink: 0; border-radius: 18px; background: {{deb.gradeBg}}; color: #FFFFFF; font-size: 34px; font-weight: 700">{{deb.grade}}</span>
         <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
           <h2 id="debriefTitle" style="margin: 0; font-size: 20px; font-weight: 700; line-height: 25px">{{deb.title}}</h2>
-          <span style="font-size: 15px; line-height: 17px; color: #6C6C70">{{deb.sub}}</span>
+          <span style="font-size: 15px; line-height: 17px; color: #545458">{{deb.sub}}</span>
         </span>
       </div>
       <div class="scroll" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; margin-top: 16px; overflow-y: auto; border-radius: 12px; background: #FFFFFF">
@@ -162,7 +162,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
           <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 10px 14px; border-top: {{d.sep}}">
             <span style="font-size: 17px; line-height: 20px">{{d.label}}</span>
             <span style="font-size: 17px; font-weight: 600; line-height: 20px; color: {{d.c}}; font-variant-numeric: tabular-nums">{{d.value}}</span>
-            <span style="grid-column: 1 / -1; font-size: 14px; line-height: 16px; color: #6C6C70">{{d.note}}</span>
+            <span style="grid-column: 1 / -1; font-size: 14px; line-height: 16px; color: #545458">{{d.note}}</span>
           </div>
         </sc-for>
       </div>
@@ -503,8 +503,8 @@ class Component extends DCLogic {
       : { name: '', fill: '', left: 0, top: 0, ty: '0', sub: '', rows: [] };
     const selV = sel ? (() => { const TT = T[sel.type];
       return { name: sel.id + ' · ' + TT.name + (TT.people > 2 ? ' · ' + sel.crew + ' people' : ''), sub: (sel.inDanger ? 'DANGER: fire front close, move to burned ground or a road. ' : '') + (STATE[sel.state] || sel.state) + (sel.busyUntil > t ? ' until ' + this.clock(sel.busyUntil) : '') + ' · ' + (TT.air ? 'tap the map to drop' : 'tap the map to move'),
-        subC: sel.inDanger ? '#D70015' : '#6C6C70', icon: TT.icon, bg: TT.color, rad: TT.rad, barsD: TT.stamina || TT.water ? 'flex' : 'none', st: Math.round(TT.stamina ? sel.stamina : 100), stC: sel.stamina < 25 ? '#D70015' : '#248A3D', wD: TT.water ? 'flex' : 'none', w: Math.round(100 * sel.water / (TT.water || 1)) }; })()
-      : { name: 'No unit selected', sub: G.units.some((u) => u.alive) ? 'Tap a unit on the map to give it orders.' : 'Summon forces below. Units appear at the staging point.', subC: '#6C6C70', icon: 'M12 3v4M12 17v4M3 12h4M17 12h4M12 12h.01', bg: '#8E8E93', rad: '50%', barsD: 'none', st: 0, stC: '', wD: 'none', w: 0 };
+        subC: sel.inDanger ? '#D70015' : '#545458', icon: TT.icon, bg: TT.color, rad: TT.rad, barsD: TT.stamina || TT.water ? 'flex' : 'none', st: Math.round(TT.stamina ? sel.stamina : 100), stC: sel.stamina < 25 ? '#D70015' : '#248A3D', wD: TT.water ? 'flex' : 'none', w: Math.round(100 * sel.water / (TT.water || 1)) }; })()
+      : { name: 'No unit selected', sub: G.units.some((u) => u.alive) ? 'Tap a unit on the map to give it orders.' : 'Summon forces below. Units appear at the staging point.', subC: '#545458', icon: 'M12 3v4M12 17v4M3 12h4M17 12h4M12 12h.01', bg: '#8E8E93', rad: '50%', barsD: 'none', st: 0, stC: '', wD: 'none', w: 0 };
     const toastOn = G.toast && t - G.toastAt < 6 && !G.over;
     const base = G.base[Math.min(G.base.length - 1, G.contained || t)] || G.burned;
     const deb = G.over ? this.debrief() : { grade: '', gradeBg: '', title: '', sub: '', rows: [] };

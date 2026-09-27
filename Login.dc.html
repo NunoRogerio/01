@@ -13,8 +13,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=17"></script>
-<script src="i18n.js?v=6"></script>
+<script src="fit.js?v=18"></script>
+<script src="i18n.js?v=7"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -32,25 +32,27 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .go{transition:background-color .15s ease}
 @media (hover:hover){.go:hover{background:#0077ED}}
 .go:active{background:#0062CC}
-.pw::placeholder{color:#6C6C70}
+.pw::placeholder{color:#545458}
 </style>
 </helmet>
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 56px 16px 40px; background: transparent; overflow: hidden; opacity: {{lvOp}}; transform: translateY({{lvY}}); transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
-  <!-- Equal space above the logo and below the log-in button keeps the sign-in block centred on the screen -->
-  <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
+  <!-- The sign-in fields sit at the middle of the screen: equal regions above and below them.
+       The logo group is centred in the region above; the hint, log-in button and credits fill the one below. -->
+  <div style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 0">
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 16px">
     <svg width="34" height="41" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35))"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></svg>
     <h1 style="margin: 10px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: #FFFFFF; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: rgba(255,255,255,0.85); text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">Log in to your account</p>
   </div>
+  </div>
 
-  <form onSubmit="{{noSubmit}}" style="position: relative; z-index: 1; display: flex; flex-direction: column; margin: 40px 0 0">
+  <form onSubmit="{{noSubmit}}" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex-shrink: 0; margin: 0">
     <div style="display: flex; flex-direction: column; border-radius: 14px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset">
       <div style="display: flex; flex-direction: column; padding: 0 16px">
         <span id="userLbl" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Username</span>
         <button type="button" onClick="{{toggle}}" aria-haspopup="dialog" aria-expanded="{{openStr}}" aria-labelledby="userLbl userVal" style="display: flex; align-items: center; gap: 8px; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer">
           <span id="userVal" style="flex-grow: 1; min-width: 0; font-size: 19px; color: {{userC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{userTxt}}</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{rot}}); transition: transform .3s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{rot}}); transition: transform .3s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </button>
       </div>
       <div style="height: 0.5px; margin-left: 16px; background: rgba(60,60,67,0.29)"></div>
@@ -58,37 +60,38 @@ a{color:#007AFF}a:hover{color:#0062CC}
         <input class="pw" type="password" readonly value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
       </label>
     </div>
+  </form>
 
-
+  <div style="position: relative; z-index: 1; flex: 1 1 0; display: flex; flex-direction: column">
     <p style="display: {{offD}}; margin: 8px 16px 0; min-height: 36px; font-size: 15px; line-height: 18px; color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">{{hint}}</p>
     <div style="display: {{goD}}; align-items: center; gap: 14px; margin: 12px 0 0; padding: 12px 16px; border-radius: 14px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset">
       <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 17px; font-weight: 600; overflow: hidden">{{selCode}}<span style="position: absolute; inset: 0; background-image: {{selPhoto}}; background-size: cover; background-position: center"></span></span>
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
         <span style="font-size: 18px; font-weight: 600; line-height: 22px">{{selName}}</span>
         <span style="font-size: 15px; line-height: 19px; color: #3C3C43">{{selRole}}</span>
-        <span style="font-size: 14px; line-height: 18px; color: #6C6C70">{{selOrg}} · {{selAccess}}</span>
+        <span style="font-size: 14px; line-height: 18px; color: #545458">{{selOrg}} · {{selAccess}}</span>
       </span>
     </div>
 
     <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 50px; margin: 16px 0 0; border-radius: 12px; background: #0071E3; color: #FFFFFF; font-size: 19px; font-weight: 600; text-decoration: none">Log in</a>
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 50px; margin: 16px 0 0; border: 0; border-radius: 12px; background: rgba(255,255,255,0.1); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); color: rgba(255,255,255,0.4); font: inherit; font-size: 19px; font-weight: 600">Log in</button>
-  </form>
-
-  <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
-  <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">
+    <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
+    <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">
     <p style="margin: 0; font-size: 15px; line-height: 18px; color: rgba(255,255,255,0.92)">Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">© 2026 Nuno Rogerio. All rights reserved.</p>
+    </div>
   </div>
   <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; opacity: {{dOp}}; transition: clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), opacity {{dOpT}}">
-    <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px 8px; opacity: {{pOp}}; transform: translateY({{pY}}); transition: opacity .35s ease {{pDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pDelay}}">
-      <span style="display: flex; align-items: center; gap: 12px; height: 24px">
-        <h2 id="pickTitle" style="flex-grow: 1; min-width: 0; margin: 0; font-size: 20px; font-weight: 600; line-height: 24px">Choose a profile</h2>
-      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: -6px 0; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; transform: rotate({{xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
+    <!-- Title and description share one text column that stops 24px before the close button and wraps when needed -->
+    <div style="display: flex; align-items: flex-start; gap: 24px; padding: 12px 16px 8px; opacity: {{pOp}}; transform: translateY({{pY}}); transition: opacity .35s ease {{pDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pDelay}}">
+      <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+        <h2 id="pickTitle" style="margin: 0; font-size: 20px; font-weight: 600; line-height: 24px">Choose a demo profile</h2>
+        <span style="font-size: 15px; line-height: 19px; color: #545458">Demo users · each role sets the areas and features</span>
+      </span>
+      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; transform: rotate({{xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
-      </span>
-      <span style="font-size: 15px; line-height: 19px; color: #6C6C70">Demo users · each role sets the areas and features</span>
     </div>
     <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px {{padB}}px; clip-path: inset(6px 0 0 0); opacity: {{pOp}}; transform: translateY({{pY2}}); transition: opacity .35s ease {{pDelay2}}, transform .55s cubic-bezier(.2,.8,.2,1) {{pDelay2}}">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
@@ -99,10 +102,10 @@ a{color:#007AFF}a:hover{color:#0062CC}
             </span>
             <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
               <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}}</span>
-              <span style="display: flex; flex-direction: column; gap: 2px; margin-top: 6px">
+              <span style="display: flex; flex-direction: column; gap: 2px">
                 <span style="font-size: 17px; line-height: 21px; color: #000000">{{p.role}}</span>
-                <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{p.orgCc}}</span>
-                <span style="font-size: 15px; font-weight: 600; line-height: 19px; color: #6C6C70">{{p.sees}}</span>
+                <span style="font-size: 15px; line-height: 19px; color: #545458">{{p.orgCc}}</span>
+                <span style="font-size: 15px; font-weight: 600; line-height: 19px; color: #545458">{{p.sees}}</span>
               </span>
             </span>
           </span>
@@ -256,7 +259,7 @@ class Component extends DCLogic {
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
       xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
       dOp: s.phase === 'out' ? 0 : 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
-      userTxt: sel ? sel[2] : 'Username', userC: sel ? '#000000' : '#6C6C70',
+      userTxt: sel ? sel[2] : 'Username', userC: sel ? '#000000' : '#545458',
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
       selPhoto: sel && sel[8] ? 'url("' + sel[8] + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',

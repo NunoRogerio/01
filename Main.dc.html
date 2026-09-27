@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=17"></script>
-<script src="i18n.js?v=6"></script>
-<script src="live.js?v=21"></script>
+<script src="fit.js?v=18"></script>
+<script src="i18n.js?v=7"></script>
+<script src="live.js?v=22"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -73,8 +73,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#6C6C70}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
+.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#545458}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#545458}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -155,9 +155,9 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .opt,.card,.ddopt{border-radius:20px!important}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
-.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
+.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#545458}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
-.kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#6C6C70}
+.kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#545458}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
 .igpill::after{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1)}
 .tip b,.ctip b{color:#000}
@@ -165,7 +165,7 @@ a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:r
 .navi{border-radius:999px}
 nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 8px 30px rgba(0,0,0,.10)!important}
 .fsin{color:#FFFFFF}
-.sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}.sqrow.nosep::after{display:none}.sqwrap{transition:background-color .15s ease}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover,.sqwrap[data-sel=false]:hover{background-color:rgba(255,255,255,.7)!important}}.sorth{display:inline-flex;align-items:center;justify-content:center;gap:3px;border:0;background:transparent;padding:0;font:inherit;color:inherit;cursor:pointer;line-height:15px}.sorth[aria-sort=ascending],.sorth[aria-sort=descending]{color:#000000}.sqsearch::placeholder{color:#8E8E93}.sqsearch:focus{outline:none}
+.sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}.sqrow.nosep::after{display:none}.sqwrap{transition:background-color .15s ease}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover,.sqwrap[data-sel=false]:hover{background-color:rgba(255,255,255,.7)!important}}.sorth{display:inline-flex;align-items:center;justify-content:center;gap:3px;border:0;background:transparent;padding:0;font:inherit;color:inherit;cursor:pointer;line-height:15px}.sorth[aria-sort=ascending],.sorth[aria-sort=descending]{color:#000000}.sqsearch::placeholder{color:#545458}.sqsearch:focus{outline:none}
 .sqrow:not([disabled]):active{opacity:.6}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
 
 </style>
@@ -186,9 +186,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
         <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
       </span>
-      <span style="font-size: 15px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
+      <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
     </button>
     <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
       <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
@@ -206,7 +206,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div aria-hidden="{{listHidden}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; visibility: {{listVis}}; opacity: {{liInOp}}; transform: translateY({{liInY}}); transition: opacity .3s ease {{liInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{liInDelay}}, visibility 0s linear {{listVisDelay}}">
       <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hList.down}}" onPointerMove="{{hList.move}}" onPointerUp="{{hList.up}}" onPointerCancel="{{hList.cancel}}" onKeyDown="{{hList.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
       <div class="wf-snap" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
-        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #6C6C70">
+        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
           <span></span>
           <span style="text-align: center">Ignition<br>validation level</span>
           <span></span>
@@ -215,8 +215,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; height: 60px; padding: 0 0 0 40px; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 20px; font-size: 17px; font-weight: {{it.nameW}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
             <span style="text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
-            <span style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
-            <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+            <span style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
+            <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
         <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
@@ -226,9 +226,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
           <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px; color: {{barC}}">{{barTitle}}</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{barRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{barRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
-        <span style="font-size: 15px; color: #6C6C70; white-space: nowrap">{{barSub}}</span>
+        <span style="font-size: 15px; color: #545458; white-space: nowrap">{{barSub}}</span>
       </button>
     </div>
   </section>
@@ -244,9 +244,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="opt" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
           <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
-        <span style="font-size: 15px; color: #6C6C70; white-space: nowrap">{{scope.parent}}</span>
+        <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
       </button>
       <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
         <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
@@ -255,13 +255,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; padding: 4px 16px 24px; opacity: {{scInOp}}; transform: translateY({{scInY}}); transition: opacity .3s ease {{scInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{scInDelay}}">
     <h2 id="scopeTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">{{panelTitle}}</h2>
     <sc-if value="{{showSearch}}" hint-placeholder-val="{{ false }}">
-      <label style="display: flex; align-items: center; gap: 6px; height: 36px; margin: 10px 0 0; padding: 0 10px; border-radius: 10px; background: rgba(118,118,128,0.12); color: #8E8E93">
+      <label style="display: flex; align-items: center; gap: 6px; height: 36px; margin: 10px 0 0; padding: 0 10px; border-radius: 10px; background: rgba(118,118,128,0.12); color: #545458">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
         <input class="sqsearch" type="search" aria-label="{{searchPh}}" placeholder="{{searchPh}}" value="{{q}}" onInput="{{onQ}}" style="flex-grow: 1; min-width: 0; height: 36px; border: 0; background: transparent; font: inherit; font-size: 17px; color: #000000">
         <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: #8E8E93; color: #FFFFFF; cursor: pointer"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
       </label>
     </sc-if>
-    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; gap: 4px; margin: 12px -16px 0; padding: 0 12px 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; color: #6C6C70">
+    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; gap: 4px; margin: 12px -16px 0; padding: 0 12px 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; color: #545458">
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.name.aria}}" onClick="{{sort.name.pick}}" style="position: relative; color: {{sort.name.c}}; text-align: left"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -13px; top: 50%; margin-top: -5px; opacity: {{sort.name.op}}; transform: rotate({{sort.name.rot}})"><path d="m6 9 6 6 6-6"></path></svg>{{colName}}</button></span>
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.cands.aria}}" onClick="{{sort.cands.pick}}" style="position: relative; color: {{sort.cands.c}}; text-align: left"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -13px; top: 50%; margin-top: -5px; opacity: {{sort.cands.op}}; transform: rotate({{sort.cands.rot}})"><path d="m6 9 6 6 6-6"></path></svg>Ignition<br>candidates</button></span>
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.fires.aria}}" onClick="{{sort.fires.pick}}" style="position: relative; color: {{sort.fires.c}}; text-align: left"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -13px; top: 50%; margin-top: -5px; opacity: {{sort.fires.op}}; transform: rotate({{sort.fires.rot}})"><path d="m6 9 6 6 6-6"></path></svg>Active<br>fires</button></span>
@@ -289,14 +289,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{ff.line}}</span>
           </span>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
-            <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.n}}</b><span style="font-size: 13px; color: #6C6C70">deforestation fires</span></span>
-            <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.ha}}</b><span style="font-size: 13px; color: #6C6C70">hectares burning</span></span>
+            <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.n}}</b><span style="font-size: 13px; color: #545458">deforestation fires</span></span>
+            <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.ha}}</b><span style="font-size: 13px; color: #545458">hectares burning</span></span>
           </div>
-          <span style="display: flex; flex-direction: column; gap: 4px; padding-top: 10px; border-top: 1px solid rgba(60,60,67,0.12)">
+          <span style="display: flex; flex-direction: column; gap: 2px; padding-top: 10px; border-top: 1px solid rgba(60,60,67,0.12)">
             <b style="font-size: 15px; font-weight: 600">Who finances forest-risk farming in Brazil</b>
             <span style="font-size: 14px; line-height: 19px; color: #3C3C43">USD 206.7 bn of forest-risk credit since 2016 went through Brazil's agriculture finance programme. Largest lenders: Banco do Brasil 99.8 bn · Sicredi 19.5 bn · Bradesco 17.7 bn · Itaú 14.6 bn · Caixa 12.8 bn · Banco da Amazônia 8.3 bn.</span>
             <span style="font-size: 14px; line-height: 19px; color: #3C3C43">Their conclusion: voluntary pledges have not stopped the finance, so banks should be legally liable for deforestation they fund.</span>
-            <span style="font-size: 12px; line-height: 16px; color: #8E8E93">Forests & Finance, Banking on Biodiversity Collapse (Nov 2025) · USD, loans and underwriting, Brazil-wide</span>
+            <span style="font-size: 12px; line-height: 16px; color: #545458">Forests & Finance, Banking on Biodiversity Collapse (Nov 2025) · USD, loans and underwriting, Brazil-wide</span>
           </span>
         </section>
       </sc-if>
@@ -309,19 +309,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="display: {{r.subD}}; grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
           </button>
       </sc-for>
-      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span style="padding: 20px 40px; font-size: 17px; color: #6C6C70">{{noMatchTxt}}</span></sc-if>
+      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span style="padding: 20px 40px; font-size: 17px; color: #545458">{{noMatchTxt}}</span></sc-if>
     </div>
     <a href="SimSetup.dc.html" style="display: {{simD}}; align-items: center; gap: 12px; flex-shrink: 0; min-height: 52px; margin: 8px 0 0; padding: 4px 4px; border-top: 1px solid rgba(60,60,67,0.14); color: #000000; text-decoration: none">
       <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; background: #E86A00; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5Z"></path></svg></span>
-      <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; line-height: 20px">Fire simulator</span><span style="font-size: 14px; line-height: 16px; color: #6C6C70">Play a fire scenario and command the forces</span></span>
+      <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; line-height: 20px">Fire simulator</span><span style="font-size: 14px; line-height: 16px; color: #545458">Play a fire scenario and command the forces</span></span>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C4C4C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
     </a>
     <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin: 0; padding: 8px 4px 0; border-top: 1px solid rgba(60,60,67,0.14)">
-      <span style="flex-grow: 1; min-width: 0; font-size: 15px; line-height: 18px; color: #6C6C70"><span style="display: block; font-size: 17px; line-height: 20px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{acct.name}}</span>{{acct.area}}</span>
+      <span style="flex-grow: 1; min-width: 0; font-size: 15px; line-height: 18px; color: #545458"><span style="display: block; font-size: 17px; line-height: 20px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{acct.name}}</span>{{acct.area}}</span>
       <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; height: 44px; padding: 0 4px; font-size: 17px; color: #007AFF; text-decoration: none; white-space: nowrap">Sign out</a>
     </div>
-    <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 16px 0 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #6C6C70; opacity: 0.8; white-space: nowrap">
-        <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#6C6C70" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#6C6C70" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; font-size: 16px">Forest Fire Watch</span>
+    <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 16px 0 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #545458; opacity: 0.8; white-space: nowrap">
+        <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#545458" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#545458" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; font-size: 16px">Forest Fire Watch</span>
       </span>
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 4px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
@@ -581,8 +581,8 @@ class Component extends DCLogic {
       name === 'United States' ? { name, cont, id: 'US', live: true, n: usD.length, unit: ' states', ...sumOf(usD) }
       : name === 'Portugal' ? { name, cont, id: 'PT', live: true, n: ptD.n, unit: ' districts', ...sumOf([ptD]) }
       : (() => { const d = DATA.find((x) => x.id === ISO3[name]); return d ? { name, cont, id: d.id, live: true, n: d.n, unit: ' regions', ...sumOf([d]) } : { name, cont, id: null, live: false, fires: 0, cands: 0 }; })());
-    const riskC = (r) => r >= 60 ? '#E86A00' : (r >= 40 ? '#B37A00' : '#6C6C70');
-    const selSty = (on) => ({ selBg: on ? '#FFFFFF' : 'transparent', selA: on ? 'true' : 'false', fg: '#000000', subC: '#6C6C70' });
+    const riskC = (r) => r >= 60 ? '#E86A00' : (r >= 40 ? '#B37A00' : '#545458');
+    const selSty = (on) => ({ selBg: on ? '#FFFFFF' : 'transparent', selA: on ? 'true' : 'false', fg: '#000000', subC: '#545458' });
     const riskLvl = (r) => r >= 70 ? 'Extreme' : r >= 55 ? 'High' : r >= 35 ? 'Moderate' : 'Low';
     const RISKP = { Extreme: ['rgba(215,0,21,0.12)', '#B0001A'], High: ['rgba(232,106,0,0.14)', '#B34F00'], Moderate: ['rgba(204,153,0,0.16)', '#7A5600'], Low: ['rgba(60,60,67,0.08)', '#3C3C43'] };
     const riskTag = (r, on) => { const l = riskLvl(r); const P = RISKP[l]; return { riskLbl: l, riskTxt: l, riskBg: 'transparent', riskFg: P[1] }; };
@@ -607,7 +607,7 @@ class Component extends DCLogic {
     const num = (v) => ({ v, c: v > 0 ? '#000000' : '#8E8E93' });
     const rowOf = (o, selected, pick, sub, drill) => { const dis = !selected && !o.live && (o.cands || 0) + (o.fires || 0) === 0; return {
       name: o.name, sub, subD: sub ? 'block' : 'none', ...selSty(selected), dis, disA: dis ? 'true' : 'false', ...(dis ? { fg: '#AEAEB2', subC: '#C7C7CC' } : {}),
-      fires: o.fires, firesC: dis ? '#AEAEB2' : selected ? '#000000' : (o.fires > 0 ? '#000000' : '#6C6C70'), cands: o.cands, candsC: dis ? '#AEAEB2' : selected ? '#000000' : (o.cands > 0 ? '#000000' : '#6C6C70'),
+      fires: o.fires, firesC: dis ? '#AEAEB2' : selected ? '#000000' : (o.fires > 0 ? '#000000' : '#545458'), cands: o.cands, candsC: dis ? '#AEAEB2' : selected ? '#000000' : (o.cands > 0 ? '#000000' : '#545458'),
       bd: selected ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: selected ? 'rgba(0,122,255,0.14)' : '#FFFFFF',
       end: drill ? CHEV : '', endC: selected ? '#C7C7CC' : '#C4C4C7', endW: 2,
       aria: o.name + ', ' + o.fires + ' active fires, ' + o.cands + ' ignition candidates' + (drill ? (o.drillLbl || '. Show counties') : (selected ? ', selected' : '')),
@@ -631,10 +631,10 @@ class Component extends DCLogic {
       const F = SC.W.fires.filter((f) => f.info && inA && inA(f, 'AMZ') && !f.info.resolved), D = F.filter((f) => f.info.deforFire), ha = D.reduce((a, f) => a + (f.info.ha || 0), 0);
       return { on: F.length > 0, n: D.length.toLocaleString(), ha: Math.round(ha).toLocaleString(), line: D.length + ' of ' + F.length + ' active fires in the Legal Amazon burn mostly on land cleared in recent years, the clearing-then-burning pattern that turns forest into pasture and cropland.' }; })();
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
-    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#6C6C70', fires: brObj.fires, cands: brObj.cands, firesC: '#000000', candsC: '#000000',
+    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: '#000000', candsC: '#000000',
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
       aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' ignition candidates',
-      pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + ' states', ...selSty(on), arrowC: '#6C6C70', fires: t.fires, cands: t.cands, firesC: '#000000', candsC: '#000000',
+      pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + ' states', ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: '#000000', candsC: '#000000',
       bd: on ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: on ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: on ? 1 : 0, aria: 'United States, ' + t.fires + ' active fires, ' + t.cands + ' ignition candidates. Show the whole country',
       pick: () => { this.wfSetScope({ st: 'US', co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false }; })() : { dis: true, name: '', nCounties: 0, nLbl: '', risk: 0, riskC: '', fires: 0, cands: 0, firesC: '', candsC: '', bd: '', bg: '', tick: 0, aria: '', pick: null };
     const M = N + NF;

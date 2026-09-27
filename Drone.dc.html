@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=17"></script>
-<script src="i18n.js?v=6"></script>
-<script src="live.js?v=21"></script>
+<script src="fit.js?v=18"></script>
+<script src="i18n.js?v=7"></script>
+<script src="live.js?v=22"></script>
 
 <title>Drone verification</title>
 <script src="./support.js"></script>
@@ -72,8 +72,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#6C6C70}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
+.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#545458}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#545458}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -109,7 +109,7 @@ a.card:hover .go{transform:translateX(4px)}
 .cpt{outline:none;cursor:crosshair}
 .cpt .cguide,.cpt .cdot{opacity:0;transition:opacity .12s ease}
 .cpt:hover .cguide,.cpt:hover .cdot,.cpt:focus .cguide,.cpt:focus .cdot{opacity:1}
-.ctip{position:absolute;left:50%;bottom:calc(100% + 4px);z-index:20;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 12px 26px -10px rgba(0,0,0,0.198);font:400 15px/1.35 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#6C6C70;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .12s ease,transform .12s ease,visibility 0s linear .12s}
+.ctip{position:absolute;left:50%;bottom:calc(100% + 4px);z-index:20;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 12px 26px -10px rgba(0,0,0,0.198);font:400 15px/1.35 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#545458;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .12s ease,transform .12s ease,visibility 0s linear .12s}
 .ctip b{display:block;font-size:17px;font-weight:600;color:#000000;font-variant-numeric:tabular-nums}
 .ctip.l{left:0;transform:translate(0,4px)}
 .ctip.r{left:auto;right:0;transform:translate(0,4px)}
@@ -142,9 +142,9 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .opt,.card,.ddopt{border-radius:20px!important}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
-.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
+.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#545458}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
-.kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#6C6C70}
+.kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#545458}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
 .igpill::after{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1)}
 .tip b,.ctip b{color:#000}
@@ -161,12 +161,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: relative; z-index: 2">
   <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <header class="fade" style="display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 12px 4px">
-    <a href="Alert.dc.html" class="mbtn sqback" aria-label="Back to ignition candidate" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: 0 2px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #6C6C70; text-decoration: none">
+    <a href="Alert.dc.html" class="mbtn sqback" aria-label="Back to ignition candidate" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: 0 2px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #545458; text-decoration: none">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 4px 2px">
       <h1 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">Drone D-3<span style="display: inline-block; margin-left: 8px; padding: 0 8px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3C3C43; font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: 0; vertical-align: 2px">Simulated</span></h1>
-      <span style="display: flex; align-items: center; gap: 4px; max-width: 100%; font-size: 15px; color: #6C6C70; white-space: nowrap">
+      <span style="display: flex; align-items: center; gap: 4px; max-width: 100%; font-size: 15px; color: #545458; white-space: nowrap">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="flex-shrink: 0"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{vPlace}}</span>
       </span>
     </span>
@@ -210,7 +210,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </span>
     <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
       <span style="font-size: 19px; font-weight: 600; line-height: 24px; color: {{dFg}}; font-variant-numeric: tabular-nums">{{dStatus}}</span>
-      <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{dSub}}</span>
+      <span style="font-size: 15px; line-height: 19px; color: #545458">{{dSub}}</span>
     </span>
   </div>
 
@@ -233,7 +233,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
         </sc-for>
       </div>
-      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6C6C70">
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #545458">
         <span>Now</span><span>+24h</span>
       </div>
       </dd>
@@ -256,7 +256,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
         </sc-for>
       </div>
-      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6C6C70">
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #545458">
         <span>Now</span><span>+24h</span>
       </div>
       </dd>
@@ -273,7 +273,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </span>
           </sc-for>
         </div>
-        <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6C6C70; text-align: center; font-variant-numeric: tabular-nums">
+        <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #545458; text-align: center; font-variant-numeric: tabular-nums">
           <span>6</span><span>12</span><span>18</span><span>24</span>
         </div>
       </dd>
@@ -298,7 +298,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; padding: 10px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 1px solid rgba(60,60,67,0.088); box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}})">
     <span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     <h2 id="faTitle" style="margin: 22px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
-    <p id="faBody" style="margin: 8px 0 0; font-size: 17px; line-height: 1.5; color: #6C6C70">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
+    <p id="faBody" style="margin: 8px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
       <button type="button" class="btn ghost" onClick="{{closeFa}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
       <a href="Main.dc.html" class="btn" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #248A3D; font-size: 17px; font-weight: 600">
@@ -526,7 +526,7 @@ class Component extends DCLogic {
     const tempChart = series(tempVals, 84, 132, fmt1, ' ' + tempUnit, 'Peak temperature');
     const DIRS = [['SSW', 202, 1.3], ['SW', 225, 1.1], ['W', 270, 0.5], ['NE', 45, 0.4]];
     const spreadPts = DIRS.map(([d, deg, mph], i) => ({
-      rot: deg, c: mph >= 1.0 ? '#E86A00' : (mph >= 0.7 ? '#B37A00' : '#6C6C70'),
+      rot: deg, c: mph >= 1.0 ? '#E86A00' : (mph >= 0.7 ? '#B37A00' : '#545458'),
       tip: 'ctip' + (i >= 2 ? ' r' : ''),
       v: d + ' · ' + mph.toFixed(1) + ' mph', t: 'T+' + (i + 1) * 6 + ' h',
       aria: 'T+' + (i + 1) * 6 + ' hours: spreading ' + d + ' at ' + mph.toFixed(1) + ' miles per hour'

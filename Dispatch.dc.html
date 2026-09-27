@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=17"></script>
-<script src="i18n.js?v=6"></script>
-<script src="live.js?v=21"></script>
+<script src="fit.js?v=18"></script>
+<script src="i18n.js?v=7"></script>
+<script src="live.js?v=22"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -75,8 +75,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#6C6C70}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
+.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#545458}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#545458}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -144,9 +144,9 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .opt,.card,.ddopt{border-radius:20px!important}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
-.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
+.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#545458}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
-.kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#6C6C70}
+.kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#545458}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
 .igpill::after{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1)}
 .tip b,.ctip b{color:#000}
@@ -176,12 +176,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <header class="fade" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px">
-    <a href="Drone.dc.html" class="mbtn sqback" aria-label="Back to drone verification" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #6C6C70; text-decoration: none">
+    <a href="Drone.dc.html" class="mbtn sqback" aria-label="Back to drone verification" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #545458; text-decoration: none">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding: 4px 8px">
       <h1 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireTitle}}</h1>
-      <span title="{{fireSub}}" style="font-size: 15px; font-weight: 400; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireSub}}</span>
+      <span title="{{fireSub}}" style="font-size: 15px; font-weight: 400; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireSub}}</span>
     </span>
     <span role="status" aria-label="{{activeAria}}" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
       <span class="dot" style="width: 5.6px; height: 5.6px; display: {{pillDot}}"></span>{{pillTxt}}
@@ -205,20 +205,20 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; align-items: center; gap: 8px">
       <h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 20px">On scene now</h2>
       <span style="padding: 0 8px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 14px; line-height: 20px; white-space: nowrap">Real data</span>
-      <span style="margin-left: auto; font-size: 14px; color: #6C6C70; white-space: nowrap">{{res.src}}</span>
+      <span style="margin-left: auto; font-size: 14px; color: #545458; white-space: nowrap">{{res.src}}</span>
     </div>
     <div style="display: grid; grid-template-columns: repeat({{res.cols}}, minmax(0, 1fr)); gap: 8px; margin-top: 12px">
       <sc-for list="{{res.items}}" as="it" hint-placeholder-count="3">
         <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
           <span class="kpi" style="font-size: 22px; line-height: 26px">{{it.v}}</span>
-          <span style="font-size: 14px; line-height: 15px; color: #6C6C70">{{it.k}}</span>
+          <span style="font-size: 14px; line-height: 15px; color: #545458">{{it.k}}</span>
         </div>
       </sc-for>
     </div>
-    <p style="margin: 10px 0 0; font-size: 14px; line-height: 16px; color: #6C6C70">{{res.foot}}</p>
+    <p style="margin: 10px 0 0; font-size: 14px; line-height: 16px; color: #545458">{{res.foot}}</p>
   </section>
   </sc-if>
-  <p style="margin: 14px 20px 0; font-size: 14px; line-height: 18px; color: #8E8E93">Simulated projection</p>
+  <p style="margin: 14px 20px 0; font-size: 14px; line-height: 18px; color: #545458">Simulated projection</p>
   <section class="rise" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: 10px 20px 0; animation-delay: 160ms">
     <div style="display: flex; flex-direction: column; gap: 10px">
       <span class="lbl">Spread in {{hzNum}} h</span>
@@ -248,7 +248,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
       </span>
       <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #0071E3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
+      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
     </button>
   </div>
 
@@ -271,13 +271,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
             <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
           </span>
-          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
+          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
           <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
         </button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{stInOp}}; transform: translateY({{stInY}}); transition: opacity .3s ease {{stInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{stInDelay}}">
-    <p style="margin: 0 16px 14px 40px; font-size: 15px; line-height: 16px; color: #6C6C70">Ranked by time to the fire line. Select one or more stations. {{need}} crews needed for +{{hzNum}}h · {{crewsSel}} selected.</p>
-    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #6C6C70">
+    <p style="margin: 0 16px 14px 40px; font-size: 15px; line-height: 16px; color: #545458">Ranked by time to the fire line. Select one or more stations. {{need}} crews needed for +{{hzNum}}h · {{crewsSel}} selected.</p>
+    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
       <span></span><span style="text-align: center">Time to<br>fire line</span><span></span>
     </div>
     <div role="group" aria-label="Stations, select one or more" style="display: flex; flex-direction: column; gap: 2px; padding-top: 2px">
@@ -311,7 +311,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
         <h2 id="sentTitle" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{sentTitle}}</h2>
-        <span style="font-size: 15px; line-height: 16px; color: #6C6C70">{{fireId}} · {{sentSub}}{{unitsTxt}}</span>
+        <span style="font-size: 15px; line-height: 16px; color: #545458">{{fireId}} · {{sentSub}}{{unitsTxt}}</span>
       </span>
     </div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 40px 0">
@@ -329,7 +329,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-if value="{{d.head}}" hint-placeholder-val="{{ false }}">
         <li role="presentation" style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 16px 16px 8px; box-sizing: border-box">
           <h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #000000">{{d.title}}</h3>
-          <span style="display: {{d.noteD}}; font-size: 15px; line-height: 18px; color: #6C6C70">{{d.note}}</span>
+          <span style="display: {{d.noteD}}; font-size: 15px; line-height: 18px; color: #545458">{{d.note}}</span>
         </li>
         </sc-if>
         <sc-if value="{{d.item}}" hint-placeholder-val="{{ true }}">
@@ -338,8 +338,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{d.icon}}"></path></svg>
           </span>
           <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.label}}</span>
-          <span style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap"><span style="font-weight: 400; color: #6C6C70">{{d.pre}}</span>{{d.val}}<span style="font-weight: 400; color: #6C6C70">{{d.post}}</span></span>
-          <span style="grid-column: 1 / -1; min-width: 0; font-size: 15px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
+          <span style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap"><span style="font-weight: 400; color: #545458">{{d.pre}}</span>{{d.val}}<span style="font-weight: 400; color: #545458">{{d.post}}</span></span>
+          <span style="grid-column: 1 / -1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
           <span style="grid-column: 1 / -1; position: relative; display: block; height: 3px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.077); overflow: hidden">
             <span class="bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{d.w}}%; border-radius: 999px; background: {{d.bar}}"></span>
           </span>
@@ -363,12 +363,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Configure dispatch</span>
             <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
           </span>
-          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
+          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
+          <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
         </button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{cfInOp}}; transform: translateY({{cfInY}}); transition: opacity .3s ease {{cfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{cfInDelay}}">
-    <p style="margin: 0 16px 14px 40px; font-size: 15px; line-height: 16px; color: #6C6C70">
+    <p style="margin: 0 16px 14px 40px; font-size: 15px; line-height: 16px; color: #545458">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="#248A3D" aria-hidden="true" style="vertical-align: -1px; margin-right: 6px"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg><span style="color: #248A3D">Suggested</span> for +{{hzNum}}h: {{recSummary}}
     </p>
     <div role="group" aria-label="Available forces" style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(60,60,67,0.14)">
@@ -379,7 +379,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
           <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
             <span style="font-size: 17px; font-weight: 600; line-height: 20px">{{u.name}}</span>
-            <span style="display: flex; align-items: center; gap: 5px; font-size: 15px; line-height: 16px; color: #6C6C70; white-space: nowrap">
+            <span style="display: flex; align-items: center; gap: 5px; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>{{u.from}}
             </span>
             <span style="font-size: 15px; line-height: 16px; color: {{u.availColor}}">{{u.availText}}</span>
@@ -406,7 +406,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}"><span class="dot" style="width: 5.6px; height: 5.6px"></span></sc-if>
           <sc-if value="{{drone.idle}}" hint-placeholder-val="{{ false }}"><span style="width: 5.6px; height: 5.6px; border-radius: 50%; background: currentColor; opacity: 0.6"></span></sc-if>{{drone.status}}
         </span>
-        <span style="font-size: 15px; line-height: 16px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
+        <span style="font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
       </span>
       <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}">
         <button type="button" class="btn ghost" onClick="{{recallDrone}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; font-size: 17px; font-weight: 500">
@@ -419,7 +419,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
       </sc-if>
     </div>
-    <p style="display: flex; align-items: center; justify-content: space-between; margin: 16px 16px 0 40px; font-size: 15px; color: #6C6C70">
+    <p style="display: flex; align-items: center; justify-content: space-between; margin: 16px 16px 0 40px; font-size: 15px; color: #545458">
       <span>Total</span><span style="color: #000000; font-weight: 600; font-variant-numeric: tabular-nums">{{unitTotal}} units · first on scene {{firstEta}} min</span>
     </p>
     </div>
@@ -672,7 +672,7 @@ class Component extends DCLogic {
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
     const subOf = (d) => d.real ? d.km + DU + ' · est. ' + d.eta + ' min · crew availability not published' : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
-    const colorOf = (d) => d.real ? '#6C6C70' : d.eta === null ? '#6C6C70' : (d.free < need ? '#B37A00' : '#6C6C70');
+    const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#B37A00' : '#545458');
     const sum = chosen.eta;
     const sel = {
       ...chosen,
@@ -681,7 +681,7 @@ class Component extends DCLogic {
       codes: chosenList.map((d) => d.code).join(' + '),
       title: multi ? 'Stations: ' + chosenList.map((d) => d.code).join(', ') : (chosen.real ? chosen.name : 'Station: ' + chosen.code + ' · ' + chosen.name),
       sub: multi ? (chosen.real ? chosenList.length + ' stations' : freeSel + ' free crews') + ' · first on the line in ' + (chosen.real ? 'est. ' : '') + chosen.eta + ' min' : (chosen.real ? (chosen.id === rec.id ? 'Closest station · ' : '') + subOf(chosen) : chosen.id === rec.id ? 'Closest with ' + need + ' free crews · ' + chosen.km + ' mi' : subOf(chosen)),
-      subColor: multi ? (freeSel < need ? '#B37A00' : '#6C6C70') : (chosen.id === rec.id ? '#6C6C70' : colorOf(chosen)),
+      subColor: multi ? (freeSel < need ? '#B37A00' : '#545458') : (chosen.id === rec.id ? '#545458' : colorOf(chosen)),
       at: clock(sum),
       t1: chosen.t[0], t2: chosen.t[1], t3: chosen.t[2],
       p1: Math.round(chosen.t[0] / sum * 100), p2: Math.round(chosen.t[1] / sum * 100), p3: 100 - Math.round(chosen.t[0] / sum * 100) - Math.round(chosen.t[1] / sum * 100),
@@ -764,7 +764,7 @@ class Component extends DCLogic {
     }));
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
     if (RO) {
-      if (!deployed.length) deployed.push({ label: 'Resources not published', from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#6C6C70', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
+      if (!deployed.length) deployed.push({ label: 'Resources not published', from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#545458', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
       NEAR.rows.slice(0, 5).forEach((q) => deployed.push({ label: q.name, from: 'Fire station · straight-line distance', g: 'st', icon: 'M12 3.2 21.6 20H2.4Z', c: '#248A3D', bg: 'rgba(52,199,89,0.1)', w: 0, pre: '', val: q.km + DU, post: '' }));
     }
     // Fire model (live fires): real "now" perimeter, +1/2/3 h prediction and expected containment.
@@ -784,12 +784,12 @@ class Component extends DCLogic {
       };
       if (HELD && HELD.official) rows.push(heldRow());
       if (HELD && (!M || M.failed)) { /* held: no model needed */ }
-      else if (!M) rows.push(row('Fire model', 'Calculating…', 'Perimeter, weather, terrain and fuel are loading', '#6C6C70'));
-      else if (M.failed) rows.push(row('Fire model', 'Unavailable', 'Weather or map services did not answer; try again later', '#6C6C70'));
+      else if (!M) rows.push(row('Fire model', 'Calculating…', 'Perimeter, weather, terrain and fuel are loading', '#545458'));
+      else if (M.failed) rows.push(row('Fire model', 'Unavailable', 'Weather or map services did not answer; try again later', '#545458'));
       else {
         const S0 = M.snaps[0] || {}, Sh = M.snaps[hz] || S0, I = M.info || {};
         if (HELD && !HELD.official) rows.push(heldRow());
-        rows.push(M.assumed ? row('Perimeter', 'Not mapped', M.src.replace('No mapped perimeter · ', '').replace(/^./, (c) => c.toUpperCase()) + ' · no public polygon for this fire yet', '#6C6C70') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
+        rows.push(M.assumed ? row('Perimeter', 'Not mapped', M.src.replace('No mapped perimeter · ', '').replace(/^./, (c) => c.toUpperCase()) + ' · no public polygon for this fire yet', '#545458') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
         if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#248A3D'));
@@ -851,7 +851,7 @@ class Component extends DCLogic {
     const horizons = HZS.map((h) => ({
       label: h ? '+' + h + 'h' : 'Now',
       pressed: h === hz ? 'true' : 'false',
-      fg: h === hz ? '#000000' : '#6C6C70',
+      fg: h === hz ? '#000000' : '#545458',
       pick: () => this.setState(sent ? { hz: h, stations: chosenList.map((q) => q.id), counts: counts.slice() } : { hz: h, counts: null })
     }));
     const AL = this.wfScoped().cands.length;
@@ -896,7 +896,7 @@ class Component extends DCLogic {
       units, unitTotal, firstEta: etas.length ? Math.min(...etas) : '–', recSummary: fmt(REC.map((n, i) => Math.min(n, avail3[i]))),
       cfgSummary: RU ? RU.map((r) => Number(r[1]).toLocaleString() + ' ' + r[0].toLowerCase()).join(' · ') : fmt(counts), cfgTag: RU ? 'Real data' : isRecCfg ? 'Suggested' : 'Your choice', cfgTagBg: RU || isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(0,113,227,0.12)', cfgTagFg: RU || isRecCfg ? '#248A3D' : '#0060C7',
       drone: s.droneOff
-        ? { flying: false, idle: true, status: 'At base', sub: 'Altadena pad · 4 min away', fg: '#6C6C70', bg: 'rgba(60,60,67,0.017)', bd: 'rgba(60,60,67,0.055)' }
+        ? { flying: false, idle: true, status: 'At base', sub: 'Altadena pad · 4 min away', fg: '#545458', bg: 'rgba(60,60,67,0.017)', bd: 'rgba(60,60,67,0.055)' }
         : { flying: true, idle: false, status: 'On route · 3 min to scene', sub: 'Live video and thermal on arrival', fg: '#0079A6', bg: 'rgba(0,121,166,0.05)', bd: 'rgba(0,121,166,0.22)' },
       launchDrone: () => this.setState({ droneOff: false }), recallDrone: () => this.setState({ droneOff: true }),
       openCfg: (e) => this.setState({ cfg: true, ogC: measure(e, s.ogC || { t: 602, b: 662 }) }), resetCfg: () => { if (!isRecCfg) this.setState({ counts: null }); },
