@@ -44,17 +44,16 @@ a{color:#007AFF}a:hover{color:#0062CC}
 
   <form onSubmit="{{noSubmit}}" style="position: relative; z-index: 1; display: flex; flex-direction: column; margin: 40px 0 0">
     <div style="display: flex; flex-direction: column; border-radius: 14px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset">
-      <div style="display: flex; flex-direction: column; padding: 8px 16px 0">
-        <span id="userLbl" style="font-size: 15px; line-height: 18px; color: #6C6C70">Username</span>
-        <button type="button" onClick="{{toggle}}" aria-haspopup="dialog" aria-expanded="{{openStr}}" aria-labelledby="userLbl userVal" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer">
+      <div style="display: flex; flex-direction: column; padding: 0 16px">
+        <span id="userLbl" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Username</span>
+        <button type="button" onClick="{{toggle}}" aria-haspopup="dialog" aria-expanded="{{openStr}}" aria-labelledby="userLbl userVal" style="display: flex; align-items: center; gap: 8px; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer">
           <span id="userVal" style="flex-grow: 1; min-width: 0; font-size: 19px; color: {{userC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{userTxt}}</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{rot}}); transition: transform .3s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </button>
       </div>
       <div style="height: 0.5px; margin-left: 16px; background: rgba(60,60,67,0.29)"></div>
-      <label style="display: flex; flex-direction: column; padding: 8px 16px 0">
-        <span style="font-size: 15px; line-height: 18px; color: #6C6C70">Password</span>
-        <input class="pw" type="password" readonly value="{{pw}}" placeholder="Filled in when you choose a profile" autocomplete="off" style="height: 44px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
+      <label style="display: flex; flex-direction: column; padding: 0 16px">
+        <input class="pw" type="password" readonly value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
       </label>
     </div>
 
@@ -243,7 +242,7 @@ class Component extends DCLogic {
     const sel = P.find((p) => p[0] === s.sel) || null;
     const open = !!s.open;
     return {
-      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.16 : 1, keep: i === prev })),
+      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.3 : 1, keep: i === prev })),
       credit: 'Photo: ' + PH[cur][1] + ' / Unsplash',
       noSubmit: (e) => { try { e.preventDefault(); } catch (x) {} },
       toggle: () => (open ? this.closePanel(true) : this.openPanel()),
@@ -254,7 +253,7 @@ class Component extends DCLogic {
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
       xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
       dOp: s.phase === 'out' ? 0 : 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
-      userTxt: sel ? sel[2] : 'Choose a profile', userC: sel ? '#000000' : '#6C6C70',
+      userTxt: sel ? sel[2] : 'Username', userC: sel ? '#000000' : '#6C6C70',
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
       selPhoto: sel && sel[8] ? 'url("' + sel[8] + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
