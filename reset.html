@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
+<meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fire Watch">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Fire Watch · Reset</title>
+<style>
+html,body{height:100%;margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#000}
+main{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 24px;text-align:center}
+h1{margin:6px 0 0;font-size:22px;font-weight:600}
+p{margin:0;font-size:16px;line-height:1.4;color:#6C6C70}
+</style>
+</head><body>
+<main role="status" aria-live="polite">
+  <svg width="56" height="68" viewBox="3.4 5 17.2 20.9" aria-hidden="true"><path fill="#E8590C" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"/><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#000" stroke-width="1.1" stroke-linecap="round"/></svg>
+  <h1>Updating Forest Fire Watch</h1>
+  <p id="msg">Clearing old versions…</p>
+</main>
+<script>
+// Clears everything this app keeps on the phone (saved settings, cached data, old copies of the screens)
+// and loads the newest version, then opens the sign-in screen.
+(function(){
+  var msg=document.getElementById('msg');
+  var FILES=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html',
+    'SimSetup.dc.html','SimPlay.dc.html','index.html','fit.js','live.js','support.js','manifest.webmanifest'];
+  function wait(p,ms){return Promise.race([p,new Promise(function(r){setTimeout(r,ms);})]);}
+  var jobs=[];
+  try{localStorage.clear();}catch(e){}
+  try{sessionStorage.clear();}catch(e){}
+  try{if(window.indexedDB)jobs.push(new Promise(function(r){var q=indexedDB.deleteDatabase('wf-cache');q.onsuccess=q.onerror=q.onblocked=function(){r();};}));}catch(e){}
+  try{if(window.caches)jobs.push(caches.keys().then(function(k){return Promise.all(k.map(function(n){return caches.delete(n);}));}));}catch(e){}
+  try{if(navigator.serviceWorker)jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister();}));}));}catch(e){}
+  wait(Promise.all(jobs).catch(function(){}),3000).then(function(){
+    msg.textContent='Loading the newest version…';
+    var ver=fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).catch(function(){return '';});
+    var re=FILES.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});});
+    return wait(Promise.all([ver].concat(re)),8000).then(function(a){return ((a&&a[0])||'').trim();});
+  }).then(function(v){
+    try{if(v)localStorage.setItem('wf-app-version',v);}catch(e){}
+    msg.textContent='Done';
+    location.replace('Login.dc.html?v='+(v||Date.now()));
+  });
+})();
+</script>
+</body></html>

@@ -15,6 +15,19 @@
   }
   fit();window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);
 })();
+// Crash guard: if the last screen died without closing normally (Safari's "A problem repeatedly occurred"),
+// forget the area and screen it was showing, so the app reopens on the default view instead of crashing again.
+(function(){
+  var K='wf-alive';
+  try{
+    if(sessionStorage.getItem(K)||localStorage.getItem(K)){['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus'].forEach(function(k){sessionStorage.removeItem(k);});}
+    var on=function(){try{sessionStorage.setItem(K,'1');localStorage.setItem(K,'1');}catch(e){}};
+    var off=function(){try{sessionStorage.removeItem(K);localStorage.removeItem(K);}catch(e){}};
+    on();
+    window.addEventListener('pagehide',off);window.addEventListener('pageshow',on);
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')off();else on();});
+  }catch(e){}
+})();
 // Self-update: the home-screen app can keep an old copy for a while. On open and whenever it comes back
 // to the front, read version.txt past every cache; if a new version is out, reload onto it once.
 (function(){
@@ -27,7 +40,11 @@
       try{localStorage.setItem(K,v);}catch(e){}
       if(!seen)return;                                  // first run: nothing older to replace
       var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
-      location.replace(u);
+      // Screens loaded inside other screens (the map) and the scripts keep their plain address, so refresh
+      // the phone's copy of every file first; otherwise the new page could still run an old map.
+      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','live.js','support.js'];
+      var go=function(){location.replace(u);};
+      Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
     }).catch(function(){});
   }
   check();
