@@ -170,7 +170,7 @@ body{margin:0}
   </sc-for>
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
-    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvSt}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; white-space: nowrap">
+    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; white-space: nowrap">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="{{t.fill}}" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
@@ -195,13 +195,13 @@ body{margin:0}
       <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
-      <span class="tipwrap" tabindex="0" aria-label="{{om.aria}}" style="position: absolute; left: {{om.left}}px; top: {{om.top}}px; width: 28px; height: 28px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: {{mv}}">
+      <span class="tipwrap" tabindex="0" aria-label="{{om.aria}}" style="position: absolute; left: {{om.left}}px; top: {{om.top}}px; width: 28px; height: 28px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: {{mvI}}">
         <svg width="16" height="15" viewBox="0 0 16 15" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><polygon points="1,1.5 15,1.5 8,13.5" fill="{{om.c}}" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"></polygon></svg>
         <span class="{{om.tip}}" role="tooltip"><b>{{om.tt}}</b>{{om.td}}</span>
       </span>
     </sc-for>
     <sc-for list="{{ignMarks}}" as="ig" hint-placeholder-count="2">
-      <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mv}}">
+      <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mvI}}">
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
           <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none">
             <g transform="translate(48 47.5)"><polygon points="-9.5,-5.5 9.5,-5.5 0,11" fill="none" stroke="{{ig.c}}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
@@ -1229,6 +1229,12 @@ class Component extends DCLogic {
     const P = (this.state || {}).pop, strip = (t) => String(t || '').replace(/\n?Tap to [^\n]*\.?$/, '').trim();
     const sel = (kind, key) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault(); this.setState({ pop: { kind, key } }); };
     this._fireMarks = OUT.fireMarks || [];
+    // Markers are drawn by position in their list. Animate their movement only while the list keeps the same
+    // members in the same order; otherwise a marker would glide from one station to another. Snap instead.
+    const sig = (L, f) => (L || []).map(f).join('|'), SG = this._sigs || (this._sigs = {});
+    const sS = sig(OUT.stations, (m) => (m._st ? m._st.id : m.tt)), sI = sig(OUT.ignMarks, (m) => m._id) + '#' + sig(OUT.otherMarks, (m) => m.tt);
+    OUT.mvS = SG.st === sS ? OUT.mvSt : 'background-color .3s, border-color .3s'; OUT.mvI = SG.ig === sI ? OUT.mv : 'none';
+    SG.st = sS; SG.ig = sI;
     (OUT.fireMarks || []).forEach((m, i) => { m.sel = sel('fire', m._g ? m._g.id : i); });
     (OUT.ignMarks || []).forEach((m, i) => { m.sel = sel('ign', m._id || i); });
     (OUT.stations || []).forEach((m, i) => { m.sel = sel('st', i); });
