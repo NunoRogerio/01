@@ -14,3 +14,22 @@
   }
   fit();window.addEventListener('resize',fit);window.addEventListener('orientationchange',fit);
 })();
+// Self-update: the home-screen app can keep an old copy for a while. On open and whenever it comes back
+// to the front, read version.txt past every cache; if a new version is out, reload onto it once.
+(function(){
+  var K='wf-app-version';
+  function check(){
+    fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(v){
+      v=(v||'').trim();if(!v)return;
+      var seen='';try{seen=localStorage.getItem(K)||'';}catch(e){}
+      if(seen===v)return;
+      try{localStorage.setItem(K,v);}catch(e){}
+      if(!seen)return;                                  // first run: nothing older to replace
+      var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
+      location.replace(u);
+    }).catch(function(){});
+  }
+  check();
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check();});
+})();
+
