@@ -77,11 +77,11 @@ a{color:#007AFF}a:hover{color:#0062CC}
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">© 2026 Nuno Rogerio. All rights reserved.</p>
   </div>
-  <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: #F2F2F7; padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; opacity: {{dOp}}; transition: clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), opacity {{dOpT}}">
+  <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; opacity: {{dOp}}; transition: clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), opacity {{dOpT}}">
     <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 16px 8px; opacity: {{pOp}}; transform: translateY({{pY}}); transition: opacity .35s ease {{pDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pDelay}}">
       <span style="display: flex; align-items: center; gap: 12px; height: 24px">
         <h2 id="pickTitle" style="flex-grow: 1; min-width: 0; margin: 0; font-size: 20px; font-weight: 600; line-height: 24px">Choose a profile</h2>
-      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: -6px 0; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; transform: rotate({{xRot}}); transition: transform .5s cubic-bezier(.4,0,.2,1)">
+      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: -6px 0; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; transform: rotate({{xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
       </span>
@@ -195,7 +195,7 @@ class Component extends DCLogic {
   closePanel(fromX) {
     clearTimeout(this._pt); clearTimeout(this._pt2);
     const fold = () => { this.setState({ phase: 'out', fromClip: this.fieldClip() }); this._pt = setTimeout(() => this.setState({ open: false, phase: null, spin: false }), 1150); };
-    if (fromX) { this.setState({ spin: true }); this._pt2 = setTimeout(fold, 260); } else fold();
+    if (fromX) { this.setState({ spin: true }); this._pt2 = setTimeout(fold, 320); } else fold();
   }
   componentWillUnmount() { clearTimeout(this._pt); clearInterval(this._bgT); const h = document.getElementById('wf-login-bg'); if (h) h.remove(); }
   componentDidUpdate() { this.paintBg(); }
@@ -211,7 +211,7 @@ class Component extends DCLogic {
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
-    const ph = (this.state || {}).phase; h.style.transition = ph === 'in' ? 'opacity .2s ease .5s' : 'opacity .1s ease'; h.style.opacity = ph === 'in' ? '0' : '1';
+    h.style.opacity = '1';                                              // the frosted panel shows the photo through it
     // Each photo slowly zooms in while it is shown; photos out of view reset instantly, ready for their next turn.
     const apply = () => B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img;
       d.style.transition = b.sc === 1 && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 10s linear';
@@ -251,7 +251,7 @@ class Component extends DCLogic {
       pClip: s.phase === 'in' ? 'inset(0px 0px 0px 0px round 0px)' : (s.fromClip || 'inset(40% 16px 45% 16px round 14px)'),
       pOp: s.phase === 'in' ? 1 : 0, pY: s.phase === 'in' ? '0px' : '-8px', pY2: s.phase === 'in' ? '0px' : '24px',
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
-      xRot: s.spin ? '360deg' : '0deg', padB: s.padB || 32,
+      xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
       dOp: s.phase === 'out' ? 0 : 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
       userTxt: sel ? sel[2] : 'Choose a profile', userC: sel ? '#000000' : '#6C6C70',
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
