@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=24"></script>
 <script src="prefs.js?v=4"></script>
-<script src="i18n.js?v=28"></script>
+<script src="i18n.js?v=29"></script>
 <script src="live.js?v=23"></script>
 
 <title>Ignition candidates</title>
@@ -442,7 +442,7 @@ class Component extends DCLogic {
     try {
       const W = this.wfWorld(), c = W.cands.find((q) => q.id === id); if (!c) return;
       const i = W.cands.filter((q) => d[q.id]).sort((a, b) => d[a.id] - d[b.id]).findIndex((q) => q.id === id);
-      const v = { id: 'F-' + id, place: c.place, note: 'Confirmed from ' + id, x: c.x, y: c.y, t: Date.now() };
+      const v = { id: 'F-' + id, place: c.place, note: 'Confirmed from ' + id, x: c.x, y: c.y, det: c.live && c.live.t ? Date.parse(c.live.t) || null : null, t: Date.now() };
       window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v, focus: v.id });
       window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); window.sessionStorage.setItem('wf-focus', v.id);
     } catch (e) {}

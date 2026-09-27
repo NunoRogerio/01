@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=24"></script>
 <script src="prefs.js?v=4"></script>
-<script src="i18n.js?v=28"></script>
+<script src="i18n.js?v=29"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -180,16 +180,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div style="position: relative; z-index: 23; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
+  <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7; border-radius: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <header class="fade" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px">
     <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #545458; text-decoration: none">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding: 4px 8px">
-      <h1 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireTitle}}</h1>
-      <span title="{{fireSub}}" style="font-size: 15px; font-weight: 400; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fireSub}}</span>
+      <h1 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{hd.c}}">{{hd.title}}</h1>
+      <span title="{{hd.sub}}" style="font-size: 15px; font-weight: 400; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span>
+      <span role="timer" aria-label="{{hd.detAria}}" style="display: {{hd.tagD}}; align-self: flex-start; align-items: center; gap: 4px; height: 28px; margin-top: 8px; padding: 0 12px; border-radius: 999px; background: rgba(232,106,0,0.14); color: #A34800; font-size: 15px; white-space: nowrap; font-variant-numeric: tabular-nums"><span class="dot" style="width: 5.6px; height: 5.6px; margin-right: 3px"></span><span>{{hd.pre}}</span><span data-tl-since="{{hd.t0}}">{{hd.el}}</span><span style="display: {{hd.postD}}">ago</span></span>
     </span>
-    <span role="status" aria-label="{{activeAria}}" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
+    <span role="status" aria-label="{{activeAria}}" style="display: {{hd.pillD}}; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
       <span class="dot" style="width: 5.6px; height: 5.6px; display: {{pillDot}}"></span>{{pillTxt}}
     </span>
   </header>
@@ -224,7 +225,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <p style="margin: 10px 0 0; font-size: 14px; line-height: 16px; color: #545458">{{res.foot}}</p>
   </section>
   </sc-if>
-  <section class="rise" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: 16px 20px 0; animation-delay: 160ms">
+  <div class="rise" style="display: {{vmD}}; padding: 16px 16px 0; animation-delay: 100ms"><button type="button" class="btn ghost" onClick="{{openMap}}" style="width: 100%; height: 48px; font-size: 17px; font-weight: 500">View on map</button></div>
+  <section class="rise" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: {{kpiPad}}; animation-delay: 160ms">
     <div style="display: flex; flex-direction: column; gap: 10px">
       <span class="lbl" style="white-space: nowrap">{{spreadLbl}}</span>
       <button type="button" class="unitbtn" onClick="{{toggleArea}}" aria-label="{{areaAria}}"><span class="kpi" style="display: block; white-space: nowrap">{{areaV}}<small> {{areaU}}</small></span></button>
@@ -256,7 +258,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
       <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">{{cfgSummary}}</span>
     </button>
-    <button type="button" class="btn ghost" onClick="{{openMap}}" style="width: 100%; height: 48px; margin-top: 16px; font-size: 17px; font-weight: 500">View on map</button>
   </div>
 
   <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding: 12px 16px 40px; animation-delay: 360ms">
@@ -763,8 +764,8 @@ class Component extends DCLogic {
       const T0 = window.__wfT0 || (window.__wfT0 = Date.now());
       const live = (Date.now() - T0) / 60000;
       const KNOWN = { 'F-0924-01': 1818, 'F-0924-02': 3725, 'F-CA-11': 4480 };
-      const m = /Confirmed from (IC-[\d-]+)/.exec((fv && fv.note) || '');
-      if (m) { const t = this.wfConfirmed()[m[1]]; if (t) return (Date.now() - t) / 60000 + 2; }
+      const m = /Confirmed from (\S+)/.exec((fv && fv.note) || '');
+      if (m) { const t0 = (fv && fv.det) || this.wfConfirmed()[m[1]] || (fv && fv.t); if (t0) return Math.max(0, Date.now() - t0) / 60000; }
       if (!fv) return 2 + live;
       if (INFO && INFO.startMs) return ((HELD && HELD.at) ? HELD.at : Date.now()) - INFO.startMs > 0 ? (((HELD && HELD.at) ? HELD.at : Date.now()) - INFO.startMs) / 60000 : 0;
       if (KNOWN[fireId] != null) return KNOWN[fireId] + live;
@@ -1117,6 +1118,12 @@ class Component extends DCLogic {
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
       pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
       hzShow: HELD || (!sent && !s.full) ? 'none' : 'grid',
+      hd: (() => { const ign = !!(fv && /^Confirmed from /.test(fv.note || '')); const sec = Math.floor(Math.max(0, actMin) * 60), dd = Math.floor(sec / 86400), hh = Math.floor((sec % 86400) / 3600), mm = Math.floor((sec % 3600) / 60), ss = sec % 60;
+        const p2 = (n) => String(n).padStart(2, '0'), el = (dd ? dd + 'd ' + p2(hh) + 'h ' + p2(mm) + 'm' : hh ? hh + 'h ' + p2(mm) + 'm ' + p2(ss) + 's' : mm + 'm ' + p2(ss) + 's');
+        const pt = /^pt/i.test(document.documentElement.lang || ''), t0 = Math.round(Date.now() - Math.max(0, actMin) * 60000);
+        return ign ? { title: 'Ignition confirmed', c: '#1E7A34', sub: fv.place, tagD: 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
+          : { title: fv ? fv.place : 'North ridge', c: '#000000', sub: 'Fire ' + fireId, tagD: 'none', pillD: 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
+      vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       crewNote: chosenList.some((d) => d.real) ? 'Crew availability not published' : '',   // real stations: said once, above the list
