@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=4"></script>
-<script src="live.js?v=16"></script>
+<script src="live.js?v=17"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -472,16 +472,17 @@ class Component extends DCLogic {
   }
   wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
-  wfLock() { return ({ pt: 'PT', ca: 'CA', nv: 'NV' })[this.wfRole()] || null; }
+  wfLock() { return ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[this.wfRole()] || null; }
   wfSetScope(v) { window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); try { window.sessionStorage.setItem('wf-scope', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   wfScoped(scopeIn) {
     const W = this.wfWorld(), sc = scopeIn || this.wfScope(), dz = this.wfDismissed(), cf = this.wfConfirmed();
     // 'US' = the whole United States: every state (two-letter codes other than Portugal's 'PT')
-    const inScope = (r) => sc.st === 'US' ? (/^[A-Z]{2}$/.test(r.st) && r.st !== 'PT') : (r.st === sc.st && (!sc.co || r.co === sc.co));
+    const inA = window.__wfInArea || ((r, st, co) => r.st === st && (!co || r.co === co));
+    const inScope = (r) => inA(r, sc.st, sc.co);
     const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-0924-' + String(3 + i).padStart(2, '0'), place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y }));
     const allFires = W.fires.concat(confirmedFires);
     const openCands = W.cands.filter((c) => !dz[c.id] && !cf[c.id]);
-    const count = (st, co) => ({ cands: openCands.filter((c) => c.st === st && (!co || c.co === co)).length, fires: allFires.filter((f) => f.st === st && (!co || f.co === co)).length });
+    const count = (st, co) => ({ cands: openCands.filter((c) => inA(c, st, co)).length, fires: allFires.filter((f) => inA(f, st, co)).length });
     return { W, sc, cands: openCands.filter(inScope).sort((a, b) => b.conf - a.conf), fires: allFires.filter(inScope), count };
   }
   wfMarkFlip() {
@@ -513,7 +514,7 @@ class Component extends DCLogic {
       return { ...st, n: names.length, counties, ...SC.count(st.id, null) };
     });
     const usD = DATA.filter((d) => d.country === 'US'), ptD = DATA.find((d) => d.id === 'PT');
-    const unitOf = (d) => d && d.id === 'US' ? ' states' : d && d.id === 'PT' ? ' districts' : d && d.country === 'US' ? ' counties' : ' regions';
+    const unitOf = (d) => d && (d.id === 'US' || d.id === 'AMZ' || d.id === 'BRA') ? ' states' : d && d.id === 'PT' ? ' districts' : d && d.country === 'US' ? ' counties' : ' regions';
     const sumOf = (arr) => arr.reduce((a, d) => ({ fires: a.fires + (d.fires || 0), cands: a.cands + (d.cands || 0) }), { fires: 0, cands: 0 });
     const ISO3 = {"Albania":"ALB","Andorra":"AND","Austria":"AUT","Belarus":"BLR","Belgium":"BEL","Bosnia and Herzegovina":"BIH","Bulgaria":"BGR","Croatia":"HRV","Cyprus":"CYP","Czechia":"CZE","Denmark":"DNK","Estonia":"EST","Finland":"FIN","France":"FRA","Germany":"DEU","Greece":"GRC","Hungary":"HUN","Iceland":"ISL","Ireland":"IRL","Italy":"ITA","Kosovo":"KOS","Latvia":"LVA","Liechtenstein":"LIE","Lithuania":"LTU","Luxembourg":"LUX","Malta":"MLT","Moldova":"MDA","Monaco":"MCO","Montenegro":"MNE","Netherlands":"NLD","North Macedonia":"MKD","Norway":"NOR","Poland":"POL","Romania":"ROU","Russia":"RUS","San Marino":"SMR","Serbia":"SRB","Slovakia":"SVK","Slovenia":"SVN","Spain":"ESP","Sweden":"SWE","Switzerland":"CHE","Turkey":"TUR","Ukraine":"UKR","United Kingdom":"GBR","Vatican City":"VAT","Antigua and Barbuda":"ATG","Argentina":"ARG","Bahamas":"BHS","Barbados":"BRB","Belize":"BLZ","Bolivia":"BOL","Brazil":"BRA","Canada":"CAN","Chile":"CHL","Colombia":"COL","Costa Rica":"CRI","Cuba":"CUB","Dominica":"DMA","Dominican Republic":"DOM","Ecuador":"ECU","El Salvador":"SLV","Grenada":"GRD","Guatemala":"GTM","Guyana":"GUY","Haiti":"HTI","Honduras":"HND","Jamaica":"JAM","Mexico":"MEX","Nicaragua":"NIC","Panama":"PAN","Paraguay":"PRY","Peru":"PER","Saint Kitts and Nevis":"KNA","Saint Lucia":"LCA","Saint Vincent and the Grenadines":"VCT","Suriname":"SUR","Trinidad and Tobago":"TTO","Uruguay":"URY","Venezuela":"VEN"};
     const CTRY = [["Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland", "Italy", "Kosovo", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands", "North Macedonia", "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", "Ukraine", "United Kingdom", "Vatican City"].map((n) => [n, 'Europe']), ["Antigua and Barbuda", "Argentina", "Bahamas", "Barbados", "Belize", "Bolivia", "Brazil", "Canada", "Chile", "Colombia", "Costa Rica", "Cuba", "Dominica", "Dominican Republic", "Ecuador", "El Salvador", "Grenada", "Guatemala", "Guyana", "Haiti", "Honduras", "Jamaica", "Mexico", "Nicaragua", "Panama", "Paraguay", "Peru", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Suriname", "Trinidad and Tobago", "United States", "Uruguay", "Venezuela"].map((n) => [n, 'Americas'])].flat().map(([name, cont]) =>
@@ -538,7 +539,7 @@ class Component extends DCLogic {
     const browse = lock || (s.scBrowse === undefined ? selState : s.scBrowse);
     const brObj = DATA.find((d) => d.id === browse);
     const atCountries = browse === '@', atUS = !brObj && !atCountries;
-    const selCountry = stObj.country === 'US' ? 'US' : stObj.id;
+    const selCountry = stObj.country === 'US' ? 'US' : stObj.id === 'AMZ' ? 'BRA' : stObj.id;
     const CHEV = 'm9 6 6 6-6 6', TICK = 'm5 12 5 5 9-10';
     const num = (v) => ({ v, c: v > 0 ? '#000000' : '#8E8E93' });
     const rowOf = (o, selected, pick, sub, drill) => { const dis = !selected && !o.live && (o.cands || 0) + (o.fires || 0) === 0; return {
@@ -560,8 +561,9 @@ class Component extends DCLogic {
       : atCountries
       ? CTRY.filter((c) => !q || c.name.toLowerCase().indexOf(q) >= 0).sort((a, b) => ((b.live ? 1 : 0) - (a.live ? 1 : 0)) || cmp(a, b)).map((c) => rowOf({ ...c, drillLbl: c.id === 'US' ? '. Show states' : c.id === 'PT' ? '. Show districts' : '. Show regions' }, selCountry === c.id, c.live ? () => this.wfSlide('fwd', () => this.setState({ scBrowse: c.id === 'US' ? null : c.id, q: '' })) : null, c.live ? c.n + c.unit : c.cont + ' · No live feed yet', c.live))
       : usD.filter((d) => !q || d.name.toLowerCase().indexOf(q) >= 0).sort(cmp).map((d) => rowOf(d, selState === d.id, () => this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })), d.n + ' counties', true));
+    if (brObj && brObj.id === 'BRA' && !q) { const A = DATA.find((d) => d.id === 'AMZ'); if (A) rows.unshift({ ...rowOf({ ...A, drillLbl: '. Show its 9 states' }, selState === 'AMZ', () => this.wfSlide('fwd', () => this.setState({ scBrowse: 'AMZ', q: '' })), A.n + ' states', true), nameW: 600 }); }
     const allSel = !!brObj && selState === brObj.id && !selCounty;
-    rows.forEach((r) => { r.nameW = brObj ? 400 : 600; });
+    rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
     const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#6C6C70', fires: brObj.fires, cands: brObj.cands, firesC: '#000000', candsC: '#000000',
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
       aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' ignition candidates',
@@ -604,13 +606,13 @@ class Component extends DCLogic {
     })));
     return {
       scope, rows, allState, inCounties: !!brObj || atUS, inStates: !brObj, rowPadL: '40px', homeReset: () => this.wfDemoReset(), homeTick: s.homeTick || 0, sort: { name: sortCol('name'), cands: sortCol('cands'), fires: sortCol('fires') }, showSearch: (!!brObj && brObj.counties.length > 10) || atCountries, searchPh: atCountries ? 'Search ' + CTRY.length + ' countries' : 'Search ' + (brObj ? brObj.n : 0) + unitOf(brObj), q: s.q || '', hasQ: !!(s.q || ''), noMatch: q.length > 0 && rows.length === 0, noMatchTxt: 'No ' + (atCountries ? 'countries' : brObj ? unitOf(brObj).trim() : 'states') + ' match “' + q + '”', onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }), crumb: brObj ? 'United States › ' + brObj.name : 'United States',
-      panelTitle: brObj ? brObj.name : atCountries ? 'Choose a country' : 'United States', colName: brObj ? (brObj.id === 'PT' ? 'District' : brObj.country === 'US' ? 'County' : 'Region') : atCountries ? 'Country' : 'State',
+      panelTitle: brObj ? brObj.name : atCountries ? 'Choose a country' : 'United States', colName: brObj ? (brObj.id === 'PT' ? 'District' : brObj.id === 'AMZ' || brObj.id === 'BRA' ? 'State' : brObj.country === 'US' ? 'County' : 'Region') : atCountries ? 'Country' : 'State',
       hScope: this.wfHandle('sc', 'up', () => this.setState({ scOpen: false })), scDy: this.wfDrag('sc').y, scDyT: this.wfDrag('sc').t,
       hList: this.wfHandle('li', 'down', () => { this.wfListFlag(false); this.setState({ list: false }); }), liDy: this.wfDrag('li').y, liDyT: this.wfDrag('li').t,
       openScope: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.setState({ scOpen: true, scBrowse: undefined }); }, pScope: this.wfPull('sc', 'down', () => this.setState({ scOpen: true, scBrowse: undefined })), pList: this.wfPull('li', 'up', () => { this.wfListFlag(false); this.setState({ list: true }); }), closeScope: () => this.setState({ scOpen: false }),
-      simD: 'none', /* fire simulator hidden for now; set to 'flex' to bring it back */ backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : '@', q: '' })), acct: ({ admin: { name: 'Alex Morgan · Platform administrator', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
+      simD: 'none', /* fire simulator hidden for now; set to 'flex' to bring it back */ backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : brObj && brObj.id === 'AMZ' ? 'BRA' : '@', q: '' })), acct: ({ amz: { name: 'Rafael Nogueira · Prevfogo Amazônia', area: 'Ibama · Access: Amazônia Legal only' }, admin: { name: 'Alex Morgan · Platform administrator', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
       signOut: () => { try { window.localStorage.removeItem('wf-role'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
-      backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
+      backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : brObj && brObj.id === 'AMZ' ? 'Back to Brazil' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
       scOp: 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? '0px' : 'calc(100% - 68px)', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
       scopeStr: scOpen ? 'true' : 'false', scopeRot: scOpen ? '180deg' : '0deg',
       scopeAria: 'Area: ' + scope.title + ', ' + scope.parent + '. Change area',

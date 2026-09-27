@@ -115,6 +115,8 @@ class Component extends DCLogic {
         'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
       ['nv', 'DW', 'dana.whitfield', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', '17 counties',
         'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
+      ['amz', 'RN', 'rafael.nogueira', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', '9 states',
+        'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.', 'https://images.unsplash.com/photo-1633116182264-d7cc0aba12d4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
       ['admin', 'AM', 'alex.morgan', 'Alex Morgan', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
         'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'https://images.unsplash.com/photo-1764084052708-c3c0611d89e7?w=240&h=240&fit=crop&crop=faces&auto=format&q=70']
     ];
@@ -126,9 +128,9 @@ class Component extends DCLogic {
       openStr: open ? 'true' : 'false', rot: open ? '180deg' : '0deg', listD: open ? 'flex' : 'none',
       userTxt: sel ? sel[2] : 'Choose a profile', userC: sel ? '#000000' : '#AEAEB2',
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
-      hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
+      hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
       selPhoto: sel && sel[8] ? 'url("' + sel[8] + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
-      selAccess: sel ? ({ admin: 'All countries', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only' })[sel[0]] : '',
+      selAccess: sel ? ({ admin: 'All countries', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] : '',
       goD: sel ? 'flex' : 'none', offD: sel ? 'none' : 'flex',
       profiles: P.map(([id, code, user, name, role, org, area, sum, photo], i) => ({
         code, user, name, role, org, area, sum, photoBg: photo ? 'url("' + photo + '")' : 'none',

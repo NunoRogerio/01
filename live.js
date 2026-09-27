@@ -10,7 +10,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v12', TTL=5*60*1000;
+  var KEY='wf-live-fires-v13', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -70,8 +70,15 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   // Also fills window.__wfGeoBoxes: {'ESP': [w,s,e,n], 'ESP|Galicia': [w,s,e,n], 'NV': ..., 'NV|Washoe': ...} for the map.
   function buildGeo(js){
     var bx={};(js&&js.states||[]).forEach(function(g){if(g[4])bx[g[0]]=g[4];var rb=g[5]||{};Object.keys(rb).forEach(function(n){bx[g[0]+'|'+n]=rb[n];});});
+    // Amazônia Legal: Brazil's official Legal Amazon (9 states), kept as a special 'state' of Brazil with the
+    // states as its regions. Its box is the union of theirs; candidates stay tagged BRA|<state>.
+    var AMZ=window.__wfAMZ,ab=null;
+    AMZ.forEach(function(n){var b=bx['BRA|'+n];if(!b)return;bx['AMZ|'+n]=b;ab=ab?[Math.min(ab[0],b[0]),Math.min(ab[1],b[1]),Math.max(ab[2],b[2]),Math.max(ab[3],b[3])]:b.slice();});
+    if(ab)bx.AMZ=ab;
     window.__wfGeoBoxes=bx;
-    return (js&&js.states||[]).map(function(g){return [g[0],g[1],g[3].length,g[3].map(function(n){return [n,0];}),g[2]];});
+    var out=(js&&js.states||[]).map(function(g){return [g[0],g[1],g[3].length,g[3].map(function(n){return [n,0];}),g[2]];});
+    if(out.some(function(g){return g[0]==='BRA';}))out.push(['AMZ','Amazônia Legal',AMZ.length,AMZ.map(function(n){return [n,0];}),'BRA']);
+    return out;
   }
   // hotspots.json: {points:[[st,co,lat,lon,conf,sat,isoTime,frp,n],...]}  ->  candidate rows
   function buildCands(js){
@@ -292,6 +299,9 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   // Shared by the map card and the fire screen: durations, and whether a fire is held (resolved) rather than alive.
   // Ignition-candidate confidence scale: above 75% purple, 50–75% blue, below 50% dark gray.
   window.__wfConfC=function(c){return c>75?'#7A3FE0':c>=50?'#0A6FDB':'#48484A';};
+  window.__wfAMZ=['Acre','Amapá','Amazonas','Maranhão','Mato Grosso','Pará','Rondônia','Roraima','Tocantins'];
+  // Row filter for an area: a state id, or 'US' (all states) or 'AMZ' (the Legal Amazon states of Brazil).
+  window.__wfInArea=function(r,st,co){if(st==='US')return /^[A-Z]{2}$/.test(r.st)&&r.st!=='PT';if(st==='AMZ')return r.st==='BRA'&&window.__wfAMZ.indexOf(r.co)>=0&&(!co||r.co===co);return r.st===st&&(!co||r.co===co);};
   window.__wfDur=function(ms){if(ms==null||!isFinite(ms)||ms<0)return '';var m=Math.round(ms/60000),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+'d '+h+'h':h?h+'h '+mm+'m':mm+' min';};
   window.__wfHeld=function(info,model){
     if(info&&info.resolved)return {official:true,st:info.st,label:info.stEn,took:(info.heldMs&&info.startMs&&info.heldMs>info.startMs)?info.heldMs-info.startMs:null,at:info.heldMs||null,src:info.heldSrc||''};
