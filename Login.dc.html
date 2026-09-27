@@ -91,14 +91,16 @@ a{color:#007AFF}a:hover{color:#0062CC}
     </div>
     <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 16px 32px">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
-        <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; align-items: flex-start; gap: 14px; flex-shrink: 0; padding: 16px 12px 16px 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
-          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; flex-shrink: 0; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 19px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
-          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-            <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}}</span>
-            <span style="font-size: 18px; line-height: 21px; color: #000000">{{p.role}}</span>
-            <span style="font-size: 16px; line-height: 19px; color: #6C6C70">{{p.org}} · {{p.area}}</span>
-            <span style="margin-top: 8px; font-size: 18px; line-height: 22px; color: #3C3C43">{{p.sum}}</span>
+        <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; flex-direction: column; flex-shrink: 0; padding: 0; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; overflow: hidden; font: inherit; color: #000000; text-align: left; cursor: pointer">
+          <span style="display: flex; align-items: stretch; gap: 16px; width: 100%">
+            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 112px; min-height: 124px; flex-shrink: 0; border-radius: 14px 0 0 0; overflow: hidden; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 24px; font-weight: 600; letter-spacing: 0.02em">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center 30%"></span></span>
+            <span style="display: flex; flex-direction: column; justify-content: center; gap: 3px; flex-grow: 1; min-width: 0; padding: 14px 40px 14px 0">
+              <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}}</span>
+              <span style="font-size: 17px; line-height: 21px; color: #000000">{{p.role}}</span>
+              <span style="font-size: 15px; line-height: 19px; color: #6C6C70">{{p.org}} · {{p.area}}</span>
+            </span>
           </span>
+          <span style="display: block; padding: 12px 16px 16px; font-size: 17px; line-height: 22px; color: #3C3C43">{{p.sum}}</span>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; top: 14px; right: 12px; opacity: {{p.tick}}"><path d="m5 12 5 5 9-10"></path></svg>
         </button>
       </sc-for>
@@ -124,6 +126,7 @@ class Component extends DCLogic {
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
+    h.style.opacity = (this.state || {}).open ? '0' : '1'; h.style.transition = 'opacity .25s ease';
     B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img; d.style.opacity = String(b.op); d.style.transform = 'scale(' + b.sc + ')'; });
   }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
@@ -134,15 +137,15 @@ class Component extends DCLogic {
     // Photos: Unsplash (free licence), stock models standing in for fictional personas; initials show if a photo can't load.
     const P = [
       ['pt', 'RC', 'rita.cardoso', 'Rita Cardoso', 'Comandante Nacional de Emergência e Proteção Civil', 'ANEPC · Comando Nacional', '20 districts',
-        'Leads the national wildfire command. Sets the national alert level, moves reinforcement groups and aerial means between districts, and decides when a fire goes to national command.', 'https://images.unsplash.com/photo-1771254507173-e40b54571924?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
+        'Leads the national wildfire command. Sets the national alert level, moves reinforcement groups and aerial means between districts, and decides when a fire goes to national command.', 'https://images.unsplash.com/photo-1771254507173-e40b54571924?w=240&h=280&fit=crop&crop=faces&auto=format&q=70'],
       ['ca', 'MR', 'marcus.reyes', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', '58 counties',
-        'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
+        'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=280&fit=crop&crop=faces&auto=format&q=70'],
       ['nv', 'DW', 'dana.whitfield', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', '17 counties',
-        'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
+        'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=280&fit=crop&crop=faces&auto=format&q=70'],
       ['amz', 'RN', 'rafael.nogueira', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', '9 states',
-        'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.', 'https://images.unsplash.com/photo-1633116182264-d7cc0aba12d4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
+        'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.', 'https://images.unsplash.com/photo-1633116182264-d7cc0aba12d4?w=240&h=280&fit=crop&crop=faces&auto=format&q=70'],
       ['admin', 'AM', 'alex.morgan', 'Alex Morgan', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
-        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'https://images.unsplash.com/photo-1764084052708-c3c0611d89e7?w=240&h=240&fit=crop&crop=faces&auto=format&q=70']
+        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'https://images.unsplash.com/photo-1764084052708-c3c0611d89e7?w=240&h=280&fit=crop&crop=faces&auto=format&q=70']
     ];
     const PH = [['forest-1.webp', 'Mari Potter'], ['forest-2.webp', 'Dave Hoefler'], ['forest-3.webp', 'Ivan Dimitrov'], ['forest-4.webp', 'Olena Bohovyk'], ['forest-5.webp', 'Axel Czikora'], ['forest-6.webp', 'John Vowles']];
     if (this._bg0 === undefined) this._bg0 = Math.floor(Math.random() * PH.length);
