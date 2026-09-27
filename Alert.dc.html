@@ -274,16 +274,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </figure>
 
     <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; margin-top: -28px; background: #F2F2F7; border-radius: 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-    <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 8px; padding: 20px 16px 0; animation-delay: 160ms">
-      <span role="img" aria-label="{{ringLabel}}" style="display: flex; align-items: baseline; gap: 8px">
-        <span style="font-size: 40px; font-weight: 700; line-height: 44px; letter-spacing: -0.01em; color: {{ringC}}; font-variant-numeric: tabular-nums">{{cur.conf}}%</span>
-        <span style="font-size: 17px; color: #545458">likelihood</span>
+    <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
+      <!-- Title first (what the satellite saw), then the likelihood as a KPI like the fire screen's: number over its word, centred -->
+      <span style="display: flex; flex-direction: column; gap: 2px">
+        <h2 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
+        <span id="ai" style="display: inline-flex; align-items: center; gap: 4px; font-size: 15px; line-height: 19px; color: #545458"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>AI validation</span>
       </span>
-      <span style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap">
-        <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{cur.verdict}}</span>
-        <span id="ai" style="display: inline-flex; align-items: center; gap: 4px; font-size: 15px; color: #545458"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>AI validation</span>
+      <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 8px">
+        <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
+        <span style="font-size: 15px; line-height: 19px; color: #545458">likelihood</span>
       </span>
-      <span style="display: flex; align-items: center; gap: 12px; font-size: 15px; color: #545458">
+      <span style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 8px; font-size: 15px; color: #545458">
         <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
         <span style="display: flex; align-items: center; gap: 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5Z"></path><path d="m2 13 10 5 10-5"></path></svg>{{cur.agree}}</span>
       </span>
@@ -291,7 +292,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <section class="rise" aria-label="Evidence" style="padding: 16px 16px 0; animation-delay: 220ms">
       <h2 style="margin: 0 0 8px 4px; font-size: 15px; font-weight: 600; color: #545458">Evidence</h2>
-      <ul class="wf-snap" style="display: flex; flex-direction: column; height: 172px; margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; list-style: none; border-radius: 14px; background: #FFFFFF">
+      <ul class="wf-snap" style="display: flex; flex-direction: column; height: 128px; margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; list-style: none; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
           <li style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 12px 16px; border-top: {{r.sep}}; font-size: 17px; line-height: 22px; color: {{r.color}}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="{{r.icon}}"></path></svg>{{r.t}}
@@ -302,7 +303,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 24px; animation-delay: 300ms">
       <button type="button" class="btn primary" onClick="{{openConfirm}}" aria-haspopup="dialog" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z"></path></svg>
         <span style="flex-grow: 1; text-align: left">Confirm fire</span>
         <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
@@ -310,10 +310,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </button>
       <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
         <a href="Drone.dc.html" class="btn ghost" onPointerDown="{{verifyCur}}" onClick="{{verifyCur}}" style="height: 48px; font-size: 17px; font-weight: 500">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="5" r="2.5"></circle><circle cx="19" cy="5" r="2.5"></circle><circle cx="5" cy="19" r="2.5"></circle><circle cx="19" cy="19" r="2.5"></circle><path d="M7 7l3 3M17 7l-3 3M7 17l3-3M17 17l-3-3"></path></svg>Verify by drone
+          Verify by drone
         </a>
         <button type="button" class="btn ghost" onClick="{{openDz}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">
-          <svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
+          Dismiss
         </button>
       </div>
     </div>
@@ -328,7 +328,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h2 style="margin: 16px 0 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 24px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
       <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
       <a href="Main.dc.html" class="btn" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px; margin-top: 24px; border: 0; border-radius: 12px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset; color: #000000; font-size: 17px; font-weight: 600; text-decoration: none">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2Z"></path><path d="M9 4v14M15 6v14"></path></svg>Back to the map
+        Back to the map
       </a>
       <button type="button" onClick="{{restore}}" style="margin-top: 8px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5); font: 400 17px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">Restore demo alerts</button>
     </div>
@@ -369,7 +369,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </button>
     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 22px">
       <a href="Dispatch.dc.html" class="btn primary" onPointerDown="{{confirmCur}}" onClick="{{confirmCur}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
         <span style="flex-grow: 1">Confirm and size response</span>
         <span class="go" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
@@ -387,7 +386,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
       <button type="button" class="btn ghost" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
       <a href="Main.dc.html" class="btn" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #1E7A34; font-size: 17px; font-weight: 600">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
+        Dismiss
       </a>
     </div>
   </section>
