@@ -185,13 +185,17 @@ class Component extends DCLogic {
     if (!h) {
       h = document.createElement('div'); h.id = 'wf-login-bg'; h.setAttribute('aria-hidden', 'true');
       h.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;background:#1E2B22;overflow:hidden';
-      B.forEach(() => { const d = document.createElement('div'); d.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1.08);transition:opacity 1.6s ease,transform 9.6s linear'; h.appendChild(d); });
+      B.forEach(() => { const d = document.createElement('div'); d.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);transition:opacity 1.6s ease'; h.appendChild(d); });
       const sh = document.createElement('div'); sh.style.cssText = 'position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)'; h.appendChild(sh);
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
     h.style.opacity = (this.state || {}).open ? '0' : '1'; h.style.transition = 'opacity .25s ease';
-    B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img; d.style.opacity = String(b.op); d.style.transform = 'scale(' + b.sc + ')'; });
+    // Each photo slowly zooms in while it is shown; photos out of view reset instantly, ready for their next turn.
+    const apply = () => B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img;
+      d.style.transition = b.sc === 1 && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 10s linear';
+      d.style.opacity = String(b.op); d.style.transform = 'scale(' + b.sc + ')'; });
+    if (!this._bgPainted) { this._bgPainted = true; requestAnimationFrame(() => requestAnimationFrame(apply)); } else apply();
   }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
   renderVals() {
@@ -217,7 +221,7 @@ class Component extends DCLogic {
     const sel = P.find((p) => p[0] === s.sel) || null;
     const open = !!s.open;
     return {
-      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: i === cur ? 1 : 1.08 })),
+      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.08 : 1, keep: i === prev })),
       credit: 'Photo: ' + PH[cur][1] + ' / Unsplash',
       noSubmit: (e) => { try { e.preventDefault(); } catch (x) {} },
       toggle: () => this.setState({ open: !open }),

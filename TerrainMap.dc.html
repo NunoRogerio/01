@@ -182,7 +182,7 @@ body{margin:0}
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
-    <span style="position: absolute; left: {{fire.left}}px; top: {{fire.top}}px; transform: translate(-50%, 22px); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 12px; border-radius: 16px; background: rgba(255,255,255,0.82); border: 1px solid rgba(232,106,0,0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap; pointer-events: none; transition: {{mv}}">
+    <span style="position: absolute; left: {{fire.left}}px; top: {{fire.top}}px; transform: translate(-50%, 22px); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 12px; border-radius: 16px; background: rgba(255,255,255,0.82); border: 1px solid {{pinBd}}; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap; pointer-events: none; transition: {{mv}}">
       <span style="font-size: 15px; font-weight: 600">{{pinLabel}}</span>
       <span style="font-size: 13px; color: #6C6C70; font-variant-numeric: tabular-nums">{{pinCoords}}</span>
     </span>
@@ -203,7 +203,7 @@ body{margin:0}
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mv}}">
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
           <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none">
-            <circle cx="48" cy="48" r="8" fill="none" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="8;20" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
+            <g transform="translate(48 47.5)"><polygon points="-9.5,-5.5 9.5,-5.5 0,11" fill="none" stroke="{{ig.c}}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
             <polygon points="38.5,42 57.5,42 48,58.5" fill="{{ig.c}}" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35))"></polygon>
           </svg>
           <span class="igpill" role="tooltip">
@@ -216,7 +216,7 @@ body{margin:0}
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
           <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none">
-            <circle cx="32" cy="32" r="{{ig.r}}" fill="none" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="{{ig.anim}}" dur="{{ig.dur}}" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="{{ig.dur}}" repeatCount="indefinite"></animate></circle>
+            <g transform="translate(32 32.7)"><polygon points="-8,-5.7 8,-5.7 0,8.3" fill="none" stroke="{{ig.c}}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
             <polygon points="24,27 40,27 32,41" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
           </svg>
           </sc-if>
@@ -231,10 +231,15 @@ body{margin:0}
     </sc-for>
     <sc-if value="{{noLink}}" hint-placeholder-val="{{ false }}">
       <span class="tipwrap" tabindex="0" style="position: absolute; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
+        <sc-if value="{{pinSt}}" hint-placeholder-val="{{ false }}">
+          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block"><rect x="12" y="12" width="16" height="16" rx="3" fill="#248A3D" stroke="#FFFFFF" stroke-width="2" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35))"></rect></svg>
+        </sc-if>
+        <sc-if value="{{pinFire}}" hint-placeholder-val="{{ true }}">
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block">
           <circle cx="20" cy="20" r="6" fill="none" stroke="#E86A00" stroke-width="1.5"><animate attributeName="r" values="6;18" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
           <circle cx="20" cy="20" r="6" fill="#E86A00" stroke="#FFFFFF" stroke-width="1.6"></circle>
         </svg>
+        </sc-if>
         <span class="{{fire.tip}}" role="tooltip"><b>{{fire.tt}}</b>{{fire.td}}</span>
       </span>
     </sc-if>
@@ -780,7 +785,8 @@ class Component extends DCLogic {
       const bb = [b[1], b[0], b[3], b[2]].map((v) => v.toFixed(3)).join(',');
       const q = '[out:json][timeout:25];(node["amenity"="fire_station"](' + bb + ');way["amenity"="fire_station"](' + bb + '););out center 400;';
       fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(q)).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((js) => {
-        S[key] = (js.elements || []).map((e) => [e.id, (e.tags || {}).name || '', e.lat ?? (e.center || {}).lat, e.lon ?? (e.center || {}).lon]).filter((x) => x[2] != null);
+        const KEEP = ['name', 'official_name', 'operator', 'operator:type', 'fire_station:type', 'fire_station:code', 'ref', 'addr:street', 'addr:housenumber', 'addr:postcode', 'addr:city', 'phone', 'contact:phone', 'email', 'contact:email', 'website', 'contact:website', 'opening_hours', 'wheelchair', 'building', 'start_date', 'wikidata'];
+        S[key] = (js.elements || []).map((e) => { const t = e.tags || {}, keep = {}; KEEP.forEach((k) => { if (t[k]) keep[k] = t[k]; }); return [e.id, t.name || '', e.lat ?? (e.center || {}).lat, e.lon ?? (e.center || {}).lon, keep, e.type]; }).filter((x) => x[2] != null);
         try { this.forceUpdate(); } catch (e) {}
       }).catch(() => { setTimeout(() => { F[key] = false; }, 60000); });
     }
@@ -805,13 +811,13 @@ class Component extends DCLogic {
       ['active', 'Active edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#FF6A00'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
-      ['cands', 'Ignition candidates', 'M17.6 3.2H25.4L21.5 10.4Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
-      ['stations', 'Fire stations', 'M7 1.6 12.9 12.2H1.1Z', '#248A3D', '#FFFFFF']
+      ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
+      ['stations', 'Fire stations', 'M2.5 2.5H11.5V11.5H2.5Z', '#248A3D', '#FFFFFF']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
       // Candidates: three triangles, low to high confidence
-      const C = k === 'cands', off = (c) => (on ? c : 'none');
+      const C = false, off = (c) => (on ? c : 'none');
       return { label, d, fill: on ? fill : 'none', stroke: on ? stroke : '#8E8E93', fg: on ? '#000000' : '#8E8E93', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
         aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
@@ -886,7 +892,16 @@ class Component extends DCLogic {
       return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch; dotted line shows the route.' : '.'));
     }).filter((o) => !isPin).filter(onScreen);
     const osmKey = window.__wfLiveMap ? this.osmStations() : null;
-    const osmStations = osmKey ? ((window.__wfStations || {})[osmKey] || []).map(([id, nm, la, lo]) => { const xy = this.geo().P(la, lo); return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M12 3.2 21.6 20H2.4Z', fill: '#248A3D', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1 }), 'Fire station' + (nm ? ' · ' + nm : ''), 'Location from OpenStreetMap. Crew availability is not published.'); }).filter(onScreen) : [];
+    const osmStations = osmKey ? ((window.__wfStations || {})[osmKey] || []).map(([id, nm, la, lo, tg, ty]) => {
+      const G = this.geo(), xy = G.P(la, lo), t = tg || {}, ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
+      const kmX = 1.113 * Math.cos(la * Math.PI / 180) / Math.max(1e-9, Math.abs(ex[0] - xy[0])), kmY = 1.113 / Math.max(1e-9, Math.abs(ey[1] - xy[1]));
+      const addr = [[t['addr:street'], t['addr:housenumber']].filter(Boolean).join(' '), [t['addr:postcode'], t['addr:city']].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+      const phone = t.phone || t['contact:phone'] || '';
+      const td = [t.operator, addr, phone].filter(Boolean).join('\n') || 'Location from OpenStreetMap';
+      const st = { id, type: ty || 'node', name: nm || t.official_name || '', lat: la, lon: lo, tags: t, x: xy[0], y: xy[1], kmX, kmY };
+      return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M5 5H19V19H5Z', fill: '#248A3D', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+        pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), nm || 'Fire station', td);
+    }).filter(onScreen) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
     const FX = Number(p.fireX) || 610, FY = Number(p.fireY) || 290;
     const qx = (selSt[2] + FX) / 2 + (selSt[3] - FY) * 0.18, qy = (selSt[3] + FY) / 2 - (selSt[2] - FX) * 0.18;
@@ -926,7 +941,7 @@ class Component extends DCLogic {
       pct: Math.round(s / (this.base().s || 1) * 100) + '%',
       kmPx: Math.round(100 * s),
       isRisk, isSpread: mode === 'spread', isPin,
-      pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '',
+      pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       camLines: isPin ? (Array.isArray(p.cams) ? p.cams : []).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
       camMarks: isPin ? (Array.isArray(p.cams) ? p.cams : []).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Evidence source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
       hasFull: typeof p.onFull === 'function',
@@ -1169,7 +1184,7 @@ class Component extends DCLogic {
     if (g && g.info) { OUT.hasFc = true; OUT.fc = this.fireCard(g, m, x, y); return OUT; }
     OUT.hasPop = true;
     OUT.pop = { tt: m.tt || '', td: strip(m.td), left: Math.round(Math.max(8, Math.min(W - 248, x - 120))), top: Math.round(above ? y - 22 : y + 26), ty: above ? '-100%' : '0',
-      hasView: P.kind !== 'st', href: P.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
+      hasView: P.kind !== 'st' || !!m._st, href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
     return OUT;
   }
 }

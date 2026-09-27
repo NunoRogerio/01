@@ -53,7 +53,7 @@
 // Loading screen: the logo's flame catching fire on a loop, the name underneath, until the screen has
 // drawn and (on the data screens) the live fires and satellite candidates are in. Never shows empty states.
 (function(){
-  var needsData=/(Main|Alert|Drone|Dispatch)\.dc\.html/.test(location.pathname)||/\/$/.test(location.pathname);
+  var needsData=/(Main|Alert|Drone|Dispatch|Station)\.dc\.html/.test(location.pathname)||/\/$/.test(location.pathname);
   var F='M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z',G='M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8';
   var st=document.createElement('style');
   st.textContent='#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
