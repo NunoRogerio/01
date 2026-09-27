@@ -11,7 +11,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v13', TTL=5*60*1000;
+  var KEY='wf-live-fires-v14', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+'h ago':Math.round(h/24)+'d ago';}
@@ -42,7 +42,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var info={src:'NIFC · WFIGS',st:S[0],stEn:S[1],tone:S[2],pc:pc!=null?Math.round(pc):null,beh:p.FireBehaviorGeneral||'',cause:p.FireCause||'',
         startMs:p.FireDiscoveryDateTime||null,updMs:p.ModifiedOnDateTime_dt||null,ac:p.IncidentSize!=null?Math.round(p.IncidentSize):null,ha:p.IncidentSize?+(p.IncidentSize*0.4047).toFixed(1):null,
         resolved:S[0]!=='Active',heldMs:p.ContainmentDateTime||p.ControlDateTime||p.FireOutDateTime||null,heldSrc:'containment report',place:[p.POOCounty?p.POOCounty+' County':'',st].filter(Boolean).join(' · ')};
-      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1],res,info.ha,info],w:p.IncidentSize||0});
+      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1],res,info.ha,info,p.POOCity?title(p.POOCity):''],w:p.IncidentSize||0});
     });
     return out;
   }
@@ -65,7 +65,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
         startMs:i.dateTime&&i.dateTime.sec?i.dateTime.sec*1000:(i.created&&i.created.sec?i.created.sec*1000:null),updMs:i.updated&&i.updated.sec?i.updated.sec*1000:null,
         ha:BA&&BA.total?Math.round(BA.total*10)/10:null,burn:BA&&BA.total?{forest:BA.povoamento||0,scrub:BA.mato||0,farm:BA.agricola||0}:null,
         resolved:sc>=8,heldMs:sc>=8&&i.updated&&i.updated.sec?i.updated.sec*1000:null,heldSrc:'last status update',place:[i.concelho?title(i.concelho):'',d].filter(Boolean).join(' · ')};
-      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1],res,info.ha,info],w:man+air*20});
+      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1],res,info.ha,info,i.freguesia&&i.concelho?title(i.concelho):''],w:man+air*20});
     });
     return out;
   }
@@ -161,7 +161,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var upd=i.lastUpdatedTimestamp?new Date(i.lastUpdatedTimestamp).toLocaleString([], {day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'';
       var res=has?{crews:cnt.crews,aerial:cnt.aerial,heavy:cnt.heavy,imt:cnt.imt,structure:cnt.structure,status:st,start:i.discoveryDate?new Date(i.discoveryDate).toLocaleDateString([], {day:'numeric',month:'short'}):'',updated:upd,src:'BC Wildfire Service'}:null;
       var xy=toXY(lat,lng);
-      out.push({r:['CAN','British Columbia','BC-'+(i.incidentNumberLabel||out.length),title(i.incidentName||i.incidentNumberLabel||'Wildfire'),note,xy[0],xy[1],res,ha||null],w:ha||0});
+      out.push({r:['CAN','British Columbia','BC-'+(i.incidentNumberLabel||out.length),title(i.incidentName||i.incidentNumberLabel||'Wildfire'),note,xy[0],xy[1],res,ha||null,undefined,i.fireCentreName||''],w:ha||0});
     });
     return out;
   }
@@ -376,7 +376,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
 
   // US: NIFC. Failure keeps the previous US fires.
   if(!fresh('tUS')){
-    var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
+    var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,POOCity,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
     // ask for the personnel count too; if the service doesn't know that field, ask again without it
     var q2=q.replace('UniqueFireIdentifier','UniqueFireIdentifier,TotalIncidentPersonnel,FireBehaviorGeneral,FireCause,ContainmentDateTime,ControlDateTime,FireOutDateTime,ModifiedOnDateTime_dt');
     fetch(US_URL+'?'+q2).then(jsonOk).then(function(js){return js&&js.error?fetch(US_URL+'?'+q).then(jsonOk):js;}).then(buildUS).then(function(rows){publishPart('US',rows);})

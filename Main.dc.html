@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=17"></script>
 <script src="i18n.js?v=5"></script>
-<script src="live.js?v=20"></script>
+<script src="live.js?v=21"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -506,7 +506,7 @@ class Component extends DCLogic {
       ['NV', 'Washoe', 'F-NV-02', 'Pyramid Hwy', 'Contained 70%'],
       ['WA', 'Chelan', 'F-WA-05', 'Wenatchee Hts', 'Crews on scene'], ['WA', 'Okanogan', 'F-WA-06', 'Twisp', 'Contained 25%'],
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
-    ]).slice()).map(([st, co, id, place, note, x, y, res, ha, info]) => { const a = anchor(st, co); return { res: res || null, ha: ha || null, info: info || null, st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
+    ]).slice()).map(([st, co, id, place, note, x, y, res, ha, info, parent]) => { const a = anchor(st, co); return { res: res || null, ha: ha || null, info: info || null, parent: parent || '', st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
     return (window.__wfWorld = { states, cands: C, fires });
   }
@@ -589,6 +589,9 @@ class Component extends DCLogic {
     const riskTag = (r, on) => { const l = riskLvl(r); const P = RISKP[l]; return { riskLbl: l, riskTxt: l, riskBg: 'transparent', riskFg: P[1] }; };
     const selState = SC.sc.st;
     const selCounty = SC.sc.co || null;
+    // Under each fire's name: the place one level up (municipality, city or town, fire centre). The levels the
+    // region choice already names are left out; when only a country or state is chosen, the district or county is added.
+    const geoOf = (f) => [f.parent, !selCounty && f.co && f.st !== 'CAN' && f.co !== f.parent ? (/^[A-Z]{2}$/.test(f.st) && f.st !== 'PT' ? f.co + ' County' : f.co) : ''].filter(Boolean).join(', ');
     const US_ALL = { id: 'US', name: 'United States', country: 'US', n: usD.length, counties: [], ...sumOf(usD) };
     const stObj = selState === 'US' ? US_ALL : (DATA.find((d) => d.id === selState) || DATA[0]);
     const coObj = selCounty ? stObj.counties.find((c) => c.name === selCounty) : null;
@@ -665,9 +668,9 @@ class Component extends DCLogic {
         pick: listFocus(c.id)
       };
     }).concat(FIRES.map((f, j) => ({
-      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: 'Active', valC: '#000000', nameW: 400, iconPath: FLAME, sub: f.id + ' · ' + f.note, conf: '',
+      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: 'Active', valC: '#000000', nameW: 400, iconPath: FLAME, sub: (geoOf(f) || f.id) + ' · ' + f.note, conf: '',
       bg: 'rgba(232,106,0,0.16)', bd: 'rgba(232,106,0,0.45)', ...anim(N + j),
-      aria: 'Active fire ' + f.place + ', ' + f.id + ', ' + f.note + '. Open forces dispatched', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
+      aria: 'Active fire ' + f.place + (geoOf(f) ? ', ' + geoOf(f) : '') + ', ' + f.id + ', ' + f.note + '. Open forces dispatched', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
     })));
     return {
       scope, rows, allState, inCounties: !!brObj || atUS, inStates: !brObj, rowPadL: '40px', homeReset: () => this.wfDemoReset(), homeTick: s.homeTick || 0, sort: { name: sortCol('name'), cands: sortCol('cands'), fires: sortCol('fires') }, gridCols: 'minmax(0, 1fr) 102px 64px ' + (rows.some((r) => r.end) ? '28px' : '0px'), showSearch: (!!brObj && brObj.counties.length > 10) || atCountries, searchPh: atCountries ? 'Search ' + CTRY.length + ' countries' : 'Search ' + (brObj ? brObj.n : 0) + unitOf(brObj), q: s.q || '', hasQ: !!(s.q || ''), noMatch: q.length > 0 && rows.length === 0, noMatchTxt: 'No ' + (atCountries ? 'countries' : brObj ? unitOf(brObj).trim() : 'states') + ' match “' + q + '”', onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }), crumb: brObj ? 'United States › ' + brObj.name : 'United States',
