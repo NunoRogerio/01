@@ -87,7 +87,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
     </div>
-    <div role="listbox" class="wf-snap" data-snap-off="16" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px 32px">
+    <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px 32px">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
         <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
           <span style="display: flex; align-items: flex-start; gap: 16px; width: 100%">
@@ -114,7 +114,69 @@ a{color:#007AFF}a:hover{color:#0062CC}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   // Background: aerial forest photos, a random new one every 8 s with a slow cross-fade and drift.
-  componentDidMount() { this.paintBg(); for (let i = 1; i <= 3; i++) (new Image()).src = 'assets/splash/forest-' + i + '.webp'; this._bgT = setInterval(() => { const n = 3, st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; let k = Math.floor(Math.random() * (n - 1)); if (k >= c) k++; this.setState({ bg: k, bgPrev: c }); }, 8000); }
+  // Profile list magnet: after a gentle swipe, up or down, once a card comes within 150px of the line (and always, once it comes to rest), 16px below the top
+  // (even while it is still coasting) it glides in smoothly and comes to rest exactly on the line.
+  // A vigorous swipe is left to the phone's own momentum and never snaps.
+  snapList() {
+    const L = document.querySelector('#dc-root [role=listbox]'); if (!L || L.__snap) return; L.__snap = true;
+    const FIELD = 150, FAST = 0.55;
+    let samples = [], trail = [], raf = 0, mode = 'off', held = null, dirV = 0, quiet = 0;   // held: the card already sitting on the line has no pull
+    const stop = () => { if (raf) cancelAnimationFrame(raf); raf = 0; L.style.overflowY = 'auto'; };
+    const targets = () => [...L.children].filter((c) => c.getAttribute && c.getAttribute('role') === 'option').map((c) => Math.max(0, Math.min(L.scrollHeight - L.clientHeight, c.offsetTop - 16)));
+    const nearest = () => { const y = L.scrollTop, T = targets().filter((t) => held === null || Math.abs(t - held) > 1); return T.length ? T.reduce((b, t) => Math.abs(t - y) < Math.abs(b - y) ? t : b, T[0]) : null; };
+    // Smooth pull: picks up the list's current speed and glides it to rest exactly on the line, with no jolt,
+    // no overshoot and no sudden braking (a cubic curve that matches the starting speed and ends at zero speed).
+    const speed = () => { const a = trail[0], b = trail[trail.length - 1]; return a && b && b[0] - a[0] > 8 ? (b[1] - a[1]) / (b[0] - a[0]) : 0; };
+    const pull = (to) => {
+      const v0 = speed(); mode = 'off'; clearTimeout(quiet); stop();
+      L.style.overflowY = 'hidden';                                   // hands the motion over from the phone's coasting
+      let from = null, d = 0, dur = 0, m0 = 0, t0 = 0;
+      const step = (now) => {
+        if (from === null) {                                          // start from wherever the list really is on this frame
+          from = L.scrollTop; d = to - from; t0 = now;
+          if (Math.abs(d) < 0.5) { L.scrollTop = to; raf = 0; L.style.overflowY = 'auto'; return; }
+          dur = Math.max(300, Math.min(560, 260 + 0.9 * Math.abs(d)));
+          m0 = v0 * dur; if (Math.sign(m0) !== Math.sign(d)) m0 = 0; m0 = Math.sign(d) * Math.min(Math.abs(m0), 2 * Math.abs(d));
+        }
+        const t = Math.min(1, (now - t0 + 16) / dur), t2 = t * t, t3 = t2 * t;
+        L.scrollTop = from * (2 * t3 - 3 * t2 + 1) + m0 * (t3 - 2 * t2 + t) + to * (-2 * t3 + 3 * t2);
+        if (t < 1) { raf = requestAnimationFrame(step); return; }
+        L.scrollTop = to; raf = 0; L.style.overflowY = 'auto';
+      };
+      raf = requestAnimationFrame(step);
+    };
+    // Only cards ahead in the swipe's direction attract, so a swipe up or down is never pulled backwards.
+    const check = () => {
+      if (mode !== 'magnet' || raf) return; const y = L.scrollTop;
+      if (held !== null && Math.abs(y - held) <= 40) return;                 // small nudge: settle() returns it
+      const T = targets().filter((t) => (held === null || Math.abs(t - held) > 1) && (dirV >= 0 ? t >= y - 1 : t <= y + 1) && Math.abs(t - y) <= FIELD);
+      if (T.length) pull(T.reduce((b, t) => Math.abs(t - y) < Math.abs(b - y) ? t : b, T[0]));
+    };
+    // When a gentle swipe comes to rest with no card in the field, it still never stops on a half-shown card:
+    // a small nudge returns to the card it left; otherwise the next card in the swipe's direction is pulled in.
+    const settle = () => {
+      if (mode !== 'magnet' || raf) return;
+      const y = L.scrollTop, T = targets(); if (!T.length) return;
+      if (T.some((t) => Math.abs(t - y) <= 1)) { mode = 'off'; return; }
+      if (held !== null && Math.abs(y - held) <= 40) { pull(held); return; }
+      const others = T.filter((t) => held === null || Math.abs(t - held) > 1), pool = others.length ? others : T;
+      const ahead = pool.filter((t) => dirV >= 0 ? t >= y : t <= y), use = ahead.length ? ahead : pool;
+      pull(use.reduce((b, t) => Math.abs(t - y) < Math.abs(b - y) ? t : b, use[0]));
+    };
+    const rest = () => { clearTimeout(quiet); quiet = setTimeout(settle, 110); };
+    const note = () => { const n = performance.now(); samples.push([n, L.scrollTop]); while (samples.length > 2 && n - samples[0][0] > 100) samples.shift(); };
+    L.addEventListener('touchstart', () => { clearTimeout(quiet); stop(); trail = []; mode = 'drag'; samples = []; note(); const on = targets().find((t) => Math.abs(t - L.scrollTop) <= 2); held = on === undefined ? null : on; }, { passive: true });
+    L.addEventListener('touchmove', note, { passive: true });
+    L.addEventListener('scroll', () => { if (!raf) { const n = performance.now(); trail.push([n, L.scrollTop]); while (trail.length > 2 && n - trail[0][0] > 60) trail.shift(); } if (mode === 'drag') note(); else { check(); if (mode === 'magnet') rest(); } }, { passive: true });
+    L.addEventListener('touchend', () => {
+      note(); const a = samples[0], b = samples[samples.length - 1];
+      const v = a && b && b[0] > a[0] ? (b[1] - a[1]) / (b[0] - a[0]) : 0;   // scroll px per ms
+      samples = [];
+      mode = Math.abs(v) > FAST ? 'off' : 'magnet'; dirV = v;
+      check(); if (mode === 'magnet') rest();
+    }, { passive: true });
+  }
+  componentDidMount() { this.snapList(); this.paintBg(); for (let i = 1; i <= 3; i++) (new Image()).src = 'assets/splash/forest-' + i + '.webp'; this._bgT = setInterval(() => { const n = 3, st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; let k = Math.floor(Math.random() * (n - 1)); if (k >= c) k++; this.setState({ bg: k, bgPrev: c }); }, 8000); }
   componentWillUnmount() { clearInterval(this._bgT); const h = document.getElementById('wf-login-bg'); if (h) h.remove(); }
   componentDidUpdate() { this.paintBg(); }
   // The photos sit behind the whole window (not inside the scaled phone frame), so they reach every edge.
