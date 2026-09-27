@@ -70,18 +70,24 @@ def places():
 
 
 def nearest(grid, lat, lon):
-    """Closest named place: (name, km, compass direction from the place to the point), or None beyond 25 km."""
+    """Closest named place: (name, km, compass direction from the place to the point).
+    Searches outward ring by ring (0.5° cells) up to ~5°, so remote hotspots still get a reference town."""
     ci, cj = math.floor(lat * 2), math.floor(lon * 2)
     best = None
-    for di in (-1, 0, 1):
-        for dj in (-1, 0, 1):
-            for la, lo, name in grid.get((ci + di, cj + dj), ()):
-                dy = (lat - la) * 111.2
-                dx = (lon - lo) * 111.2 * math.cos(math.radians(lat))
-                d = math.hypot(dx, dy)
-                if best is None or d < best[1]:
-                    best = (name, d, dx, dy)
-    if not best or best[1] > 25:
+    for r in range(0, 11):
+        for di in range(-r, r + 1):
+            for dj in range(-r, r + 1):
+                if max(abs(di), abs(dj)) != r:
+                    continue
+                for la, lo, name in grid.get((ci + di, cj + dj), ()):
+                    dy = (lat - la) * 111.2
+                    dx = (lon - lo) * 111.2 * math.cos(math.radians(lat))
+                    d = math.hypot(dx, dy)
+                    if best is None or d < best[1]:
+                        best = (name, d, dx, dy)
+        if best and best[1] < r * 0.5 * 111.2 * math.cos(math.radians(lat)):   # nothing closer can lie further out
+            break
+    if not best:
         return None
     name, d, dx, dy = best
     dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
@@ -164,10 +170,11 @@ def main():
         return
 
     # --- FIRMS hotspots, last 24 h
-    cells = {}
+    cells, now = {}, datetime.now(timezone.utc)
     for src in SOURCES:
         for box in BOXES:
-            url = f'https://firms.modaps.eosdis.nasa.gov/api/area/csv/{key}/{src}/{box}/1'
+            # 2 days, then keep the last 24 h: '1' means 'today (UTC)', which is empty just after midnight
+            url = f'https://firms.modaps.eosdis.nasa.gov/api/area/csv/{key}/{src}/{box}/2'
             try:
                 text = get(url).decode('utf-8')
             except Exception as e:
@@ -180,6 +187,8 @@ def main():
                 frp = float(r.get('frp') or 0)
                 score = min(99, conf + min(15, int(frp / 5)))
                 t = datetime.strptime(r['acq_date'] + r['acq_time'].zfill(4), '%Y-%m-%d%H%M').replace(tzinfo=timezone.utc)
+                if (now - t).total_seconds() > 86400:
+                    continue
                 k = (round(lat / CELL), round(lon / CELL))
                 c = cells.get(k)
                 if not c:

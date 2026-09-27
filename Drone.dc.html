@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=2"></script>
-<script src="live.js?v=14"></script>
+<script src="live.js?v=15"></script>
 
 <title>Drone verification</title>
 <script src="./support.js"></script>
@@ -69,8 +69,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:14px;font-weight:500;letter-spacing:0;color:#6C6C70}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
+.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#6C6C70}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -89,7 +89,7 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .tipwrap{pointer-events:auto;cursor:help}
 a.tipwrap{cursor:pointer}
 .tipwrap:hover,.tipwrap:focus-visible{z-index:15}
-.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 14px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
+.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 15px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
 .tip b{display:block;margin-bottom:2px;font-weight:600;color:#000000}
 .tip.dn{bottom:auto;top:calc(100% + 10px)}
 .tip.l{left:-6px;transform:translate(0,4px)}
@@ -106,8 +106,8 @@ a.card:hover .go{transform:translateX(4px)}
 .cpt{outline:none;cursor:crosshair}
 .cpt .cguide,.cpt .cdot{opacity:0;transition:opacity .12s ease}
 .cpt:hover .cguide,.cpt:hover .cdot,.cpt:focus .cguide,.cpt:focus .cdot{opacity:1}
-.ctip{position:absolute;left:50%;bottom:calc(100% + 4px);z-index:20;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 12px 26px -10px rgba(0,0,0,0.198);font:400 14px/1.35 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#6C6C70;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .12s ease,transform .12s ease,visibility 0s linear .12s}
-.ctip b{display:block;font-size:16px;font-weight:600;color:#000000;font-variant-numeric:tabular-nums}
+.ctip{position:absolute;left:50%;bottom:calc(100% + 4px);z-index:20;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 12px 26px -10px rgba(0,0,0,0.198);font:400 15px/1.35 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#6C6C70;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .12s ease,transform .12s ease,visibility 0s linear .12s}
+.ctip b{display:block;font-size:17px;font-weight:600;color:#000000;font-variant-numeric:tabular-nums}
 .ctip.l{left:0;transform:translate(0,4px)}
 .ctip.r{left:auto;right:0;transform:translate(0,4px)}
 .cpt:hover .ctip,.cpt:focus .ctip{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .15s ease .08s,transform .15s ease .08s,visibility 0s linear .08s}
@@ -139,7 +139,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .opt,.card,.ddopt{border-radius:20px!important}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
-.lbl{font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
+.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
 .kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#6C6C70}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
@@ -162,12 +162,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 4px 2px">
-      <h1 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">Drone D-3<span style="display: inline-block; margin-left: 8px; padding: 0 8px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3C3C43; font-size: 13px; font-weight: 400; line-height: 20px; letter-spacing: 0; vertical-align: 2px">Simulated</span></h1>
-      <span style="display: flex; align-items: center; gap: 4px; max-width: 100%; font-size: 14px; color: #6C6C70; white-space: nowrap">
+      <h1 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">Drone D-3<span style="display: inline-block; margin-left: 8px; padding: 0 8px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3C3C43; font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: 0; vertical-align: 2px">Simulated</span></h1>
+      <span style="display: flex; align-items: center; gap: 4px; max-width: 100%; font-size: 15px; color: #6C6C70; white-space: nowrap">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="flex-shrink: 0"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">On scene · {{vPlace}}</span>
       </span>
     </span>
-    <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(0,121,166,0.1); color: #0079A6; font-size: 14px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
+    <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(0,121,166,0.1); color: #0079A6; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
       <span class="dot" style="width: 5.6px; height: 5.6px"></span>Verifying
     </span>
   </header>
@@ -183,7 +183,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <path d="M195 109v10M195 143v10M173 131h10M207 131h10" stroke-opacity="0.55"></path>
       </g>
     </svg>
-    <span style="position: absolute; left: 24px; top: 52px; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.7)">
+    <span style="position: absolute; left: 24px; top: 52px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.7)">
       <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>LIVE · 400 ft
     </span>
     <button type="button" class="fsbtn" aria-label="View full screen" onClick="{{openFull}}" style="position: absolute; right: 12px; top: 40px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
@@ -191,10 +191,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </button>
     <div role="group" aria-label="Camera" style="position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 220px; height: 44px; padding: 4px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
       <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
-      <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 14px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
+      <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"></path></svg>Thermal
       </button>
-      <button type="button" class="chip" aria-pressed="{{visual.pressed}}" onClick="{{visual.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{visual.fg}}; font: 500 14px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
+      <button type="button" class="chip" aria-pressed="{{visual.pressed}}" onClick="{{visual.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{visual.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>Visual
       </button>
     </div>
@@ -207,19 +207,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <ol aria-label="Verification progress" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none">
       <li style="display: flex; flex-direction: column; align-items: center; gap: 8px">
         <span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #0079A6; color: #062024"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
-        <span style="font-size: 14px; font-weight: 400; color: #000000">Launched</span>
+        <span style="font-size: 15px; font-weight: 400; color: #000000">Launched</span>
       </li>
       <li style="display: flex; flex-direction: column; align-items: center; gap: 8px">
         <span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #0079A6; color: #062024"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
-        <span style="font-size: 14px; font-weight: 400; color: #000000">En route</span>
+        <span style="font-size: 15px; font-weight: 400; color: #000000">En route</span>
       </li>
       <li aria-current="step" style="display: flex; flex-direction: column; align-items: center; gap: 8px">
         <span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #F2F2F7; border: 1.5px solid #E86A00; box-sizing: border-box; color: #E86A00"><span class="dot" style="width: 8px; height: 8px"></span></span>
-        <span style="font-size: 14px; font-weight: 600; color: #E86A00">On scene</span>
+        <span style="font-size: 15px; font-weight: 600; color: #E86A00">On scene</span>
       </li>
       <li style="display: flex; flex-direction: column; align-items: center; gap: 8px">
         <span style="width: 24px; height: 24px; border-radius: 50%; background: #F2F2F7; border: 1.5px solid rgba(60,60,67,0.176); box-sizing: border-box"></span>
-        <span style="font-size: 14px; font-weight: 400; color: #6C6C70">Confirmed</span>
+        <span style="font-size: 15px; font-weight: 400; color: #6C6C70">Confirmed</span>
       </li>
     </ol>
   </div>
@@ -243,7 +243,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
         </sc-for>
       </div>
-      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 12px; font-weight: 500; color: #6C6C70">
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6C6C70">
         <span>Now</span><span>+24h</span>
       </div>
       </dd>
@@ -266,7 +266,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
         </sc-for>
       </div>
-      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 12px; font-weight: 500; color: #6C6C70">
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6C6C70">
         <span>Now</span><span>+24h</span>
       </div>
       </dd>
@@ -283,7 +283,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </span>
           </sc-for>
         </div>
-        <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 84px; margin-top: 6px; font-size: 12px; font-weight: 500; color: #6C6C70; text-align: center; font-variant-numeric: tabular-nums">
+        <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 84px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6C6C70; text-align: center; font-variant-numeric: tabular-nums">
           <span>6</span><span>12</span><span>18</span><span>24</span>
         </div>
       </dd>
@@ -291,14 +291,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </dl>
 
   <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; padding: 0 16px 88px; animation-delay: 340ms">
-    <a href="Dispatch.dc.html" class="btn primary" onPointerDown="{{confirmHere}}" onClick="{{confirmHere}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 18px; font-weight: 600">
+    <a href="Dispatch.dc.html" class="btn primary" onPointerDown="{{confirmHere}}" onClick="{{confirmHere}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
       <span style="flex-grow: 1">Confirm fire</span>
       <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </span>
     </a>
-    <button type="button" class="btn ghost" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; font-size: 16px; font-weight: 500">
+    <button type="button" class="btn ghost" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">
         <svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
       </button>
   </div>
@@ -308,10 +308,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; padding: 10px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 1px solid rgba(60,60,67,0.088); box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}})">
     <span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     <h2 id="faTitle" style="margin: 22px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
-    <p id="faBody" style="margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: #6C6C70">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
+    <p id="faBody" style="margin: 8px 0 0; font-size: 17px; line-height: 1.5; color: #6C6C70">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
-      <button type="button" class="btn ghost" onClick="{{closeFa}}" style="height: 48px; font-size: 16px; font-weight: 500">Cancel</button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #248A3D; font-size: 16px; font-weight: 600">
+      <button type="button" class="btn ghost" onClick="{{closeFa}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
+      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #248A3D; font-size: 17px; font-weight: 600">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
       </a>
     </div>
@@ -321,7 +321,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div class="fsin" role="dialog" aria-modal="true" aria-label="Drone feed full screen" style="position: absolute; inset: 0; z-index: 60; background: #000000">
       <video class="xfade" ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed, full screen" style="position: absolute; left: 0; top: 292px; width: 390px; height: 260px; object-fit: cover; opacity: {{visualOp}}"></video>
       <video class="xfade" ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed, full screen" style="position: absolute; left: 0; top: 292px; width: 390px; height: 260px; object-fit: cover; opacity: {{thermalOp}}"></video>
-      <span style="position: absolute; left: 20px; top: 68px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; letter-spacing: 0.08em">
+      <span style="position: absolute; left: 20px; top: 68px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; letter-spacing: 0.08em">
         <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>LIVE · D-3 · 400 ft
       </span>
       <button type="button" class="fsbtn" aria-label="Exit full screen" onClick="{{closeFull}}" style="position: absolute; right: 16px; top: 56px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.6); color: #FFFFFF; cursor: pointer">
@@ -330,10 +330,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div style="position: absolute; left: 0; right: 0; bottom: 34px; height: 44px">
     <div role="group" aria-label="Camera" style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 220px; height: 44px; padding: 4px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
       <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
-      <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 14px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
+      <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"></path></svg>Thermal
       </button>
-      <button type="button" class="chip" aria-pressed="{{visual.pressed}}" onClick="{{visual.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{visual.fg}}; font: 500 14px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
+      <button type="button" class="chip" aria-pressed="{{visual.pressed}}" onClick="{{visual.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{visual.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>Visual
       </button>
     </div>
@@ -341,7 +341,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
   </sc-if>
   <a href="Main.dc.html" class="ffwfoot" onPointerDown="{{goHome}}" onClick="{{goHome}}" aria-label="Forest Fire Watch, back to the incidents map" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; height: 74px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.14); background: #EEEEF2; text-decoration: none; color: inherit">
-      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 12px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
+      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
         <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#6C6C70" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#6C6C70" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; margin-right: -0.32em">FOREST FIRE WATCH</span>
       </span>
   </a>

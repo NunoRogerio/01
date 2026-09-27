@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=2"></script>
-<script src="live.js?v=14"></script>
+<script src="live.js?v=15"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -69,8 +69,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:14px;font-weight:500;letter-spacing:0;color:#6C6C70}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
+.kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#6C6C70}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#6C6C70}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -89,7 +89,7 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .tipwrap{pointer-events:auto;cursor:help}
 a.tipwrap{cursor:pointer}
 .tipwrap:hover,.tipwrap:focus-visible{z-index:15}
-.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 14px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
+.tip{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:20;width:210px;box-sizing:border-box;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,0.97);border:1px solid rgba(60,60,67,0.11);box-shadow:0 14px 30px -12px rgba(0,0,0,0.198);font:400 15px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-transform:none;text-align:left;white-space:normal;color:#3C3C43;text-shadow:none;opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,4px);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
 .tip b{display:block;margin-bottom:2px;font-weight:600;color:#000000}
 .tip.dn{bottom:auto;top:calc(100% + 10px)}
 .tip.l{left:-6px;transform:translate(0,4px)}
@@ -105,7 +105,7 @@ a.card:hover .go{transform:translateX(4px)}
 @keyframes checkdraw{from{stroke-dashoffset:40}to{stroke-dashoffset:0}}
 .hscroll{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .hscroll::-webkit-scrollbar{display:none}
-.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 14px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
+.igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 15px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
 .igpill::after{content:"";position:absolute;left:50%;bottom:-5px;width:8px;height:8px;margin-left:-4px;background:rgba(255,255,255,0.9);border-right:1px solid rgba(60,60,67,0.154);border-bottom:1px solid rgba(60,60,67,0.154);transform:rotate(45deg)}
 .igmore{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease}
 .igmore>span{overflow:hidden;min-height:0}
@@ -141,7 +141,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .opt,.card,.ddopt{border-radius:20px!important}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
-.lbl{font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
+.lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6C6C70}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
 .kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#6C6C70}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
@@ -174,23 +174,23 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
         <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
           <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-            <span style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{curRow.place}}</span>
+            <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{curRow.place}}</span>
             <sc-if value="{{multi}}" hint-placeholder-val="{{ true }}">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ddRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
             </sc-if>
           </span>
-          <span style="max-width: 100%; font-size: 14px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{curRow.sub}}</span>
+          <span style="max-width: 100%; font-size: 15px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{curRow.sub}}</span>
         </button>
       </sc-if>
       <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
-        <span style="display: flex; flex-direction: column; padding: 4px 8px"><span style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Ignition candidates</span><span style="font-size: 14px; color: #6C6C70">{{scopeName}}</span></span>
+        <span style="display: flex; flex-direction: column; padding: 4px 8px"><span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Ignition candidates</span><span style="font-size: 15px; color: #6C6C70">{{scopeName}}</span></span>
       </sc-if>
   </header>
   </div>
 
   <div class="scrim" onClick="{{ddClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 5; background: rgba(0,0,0,0.32); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: {{ddOp}}; pointer-events: {{ddPE}}"></div>
   <div role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: 100px; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 36px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
-    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 13px; font-weight: 400; line-height: 15px; color: #6C6C70">
+    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #6C6C70">
       <span></span>
       <span style="text-align: center">AI<br>confidence</span>
       <span></span>
@@ -198,10 +198,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <sc-for list="{{ddRows}}" as="dr" hint-placeholder-count="0">
       <div style="opacity: {{dr.op}}; transform: {{dr.tf}}; transition: transform .45s cubic-bezier(.2,.8,.2,1) {{dr.delay}}, opacity .25s ease {{dr.delay}}">
         <button type="button" role="option" aria-selected="false" class="sqrow" data-sel="false" onClick="{{dr.pick}}" aria-label="{{dr.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: center; align-content: center; gap: 2px 8px; width: 100%; height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-          <span style="min-width: 0; line-height: 20px; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.place}}</span>
-          <span style="text-align: center; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: #000000">{{dr.conf}}%</span>
+          <span style="min-width: 0; line-height: 20px; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.place}}</span>
+          <span style="text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: #000000">{{dr.conf}}%</span>
           <span style="display: flex; justify-content: center; margin-left: -4px; color: #6C6C70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 14px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.sub}}</span>
+          <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: #6C6C70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.sub}}</span>
         </button>
       </div>
     </sc-for>
@@ -221,10 +221,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="position: absolute; left: 0; bottom: 0; width: 14px; height: 14px; border-left: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-left-radius: 5px"></span>
           <span style="position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; border-right: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-right-radius: 5px"></span>
         </span>
-        <span class="pop" style="position: absolute; left: {{box.left}}px; top: {{box.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 12px; font-weight: 700; white-space: nowrap; animation-delay: 650ms">
+        <span class="pop" style="position: absolute; left: {{box.left}}px; top: {{box.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap; animation-delay: 650ms">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>{{tab.score}}
         </span>
-        <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; text-shadow: 0 1px 6px rgba(0,0,0,0.6)">
+        <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500; text-shadow: 0 1px 6px rgba(0,0,0,0.6)">
           <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
         </figcaption>
         <button type="button" class="fsbtn" aria-label="View full screen" onClick="{{openFull}}" style="position: absolute; right: 12px; top: 8px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
@@ -233,14 +233,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-if>
       <sc-if value="{{tab.isSensor}}" hint-placeholder-val="{{ false }}">
         <span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(120% 90% at 80% 0%, rgba(255,159,10,0.10), rgba(28,28,30,0) 60%)"></span>
-        <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500">
+        <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500">
           <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
         </figcaption>
         <span style="position: absolute; left: 16px; top: 42px; display: flex; align-items: baseline; gap: 18px; font-variant-numeric: tabular-nums">
-          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #FF9F0A">{{tab.pmNow}}</span><span style="font-size: 12px; color: #98989F">µg/m³ smoke</span></span>
-          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #64D2FF">{{tab.dT}}°F</span><span style="font-size: 12px; color: #98989F">now {{tab.tNow}}°F</span></span>
+          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #FF9F0A">{{tab.pmNow}}</span><span style="font-size: 13px; color: #98989F">µg/m³ smoke</span></span>
+          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #64D2FF">{{tab.dT}}°F</span><span style="font-size: 13px; color: #98989F">now {{tab.tNow}}°F</span></span>
         </span>
-        <span class="pop" style="position: absolute; right: 16px; top: 46px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 12px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
+        <span class="pop" style="position: absolute; right: 16px; top: 46px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
         <svg width="390" height="220" viewBox="0 0 390 220" aria-hidden="true" style="position: absolute; left: 0; top: 0; pointer-events: none">
           <path d="M16 154.5H374M16 125.5H374M16 96.5H374" stroke="rgba(255,255,255,0.06)" stroke-width="1"></path>
           <path d="{{tab.pmArea}}" fill="rgba(255,159,10,0.18)"></path>
@@ -250,20 +250,20 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-if>
       <sc-if value="{{tab.isCall}}" hint-placeholder-val="{{ false }}">
         <span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(120% 90% at 80% 0%, rgba(100,210,255,0.08), rgba(28,28,30,0) 60%)"></span>
-        <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500">
+        <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500">
           <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
         </figcaption>
-        <span class="pop" style="position: absolute; right: 16px; top: 12px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 12px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
-        <span style="position: absolute; left: 16px; right: 16px; top: 44px; font-size: 16px; line-height: 1.4; color: #FFFFFF">{{tab.quote}}</span>
+        <span class="pop" style="position: absolute; right: 16px; top: 12px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
+        <span style="position: absolute; left: 16px; right: 16px; top: 44px; font-size: 17px; line-height: 1.4; color: #FFFFFF">{{tab.quote}}</span>
         <span aria-hidden="true" style="position: absolute; left: 16px; top: 112px; display: flex; align-items: center; gap: 3px; height: 28px">
           <sc-for list="{{tab.bars}}" as="bar" hint-placeholder-count="20"><span style="width: 3px; height: {{bar.h}}px; border-radius: 2px; background: rgba(100,210,255,0.55)"></span></sc-for>
         </span>
-        <span style="position: absolute; left: 16px; top: 146px; font-size: 12px; color: #98989F">{{tab.meta}}</span>
+        <span style="position: absolute; left: 16px; top: 146px; font-size: 13px; color: #98989F">{{tab.meta}}</span>
       </sc-if>
       <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: grid; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="seg" aria-hidden="true" style="position: absolute; top: 2px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
-          <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 14px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
+          <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}
           </button>
         </sc-for>
@@ -284,14 +284,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>AI validation
         </span>
         <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.01em">{{cur.verdict}}</span>
-        <span style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #6C6C70">
-          <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(204,153,0,0.12); color: #B37A00; font-size: 14px; font-weight: 400; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
+        <span style="display: flex; align-items: center; gap: 10px; font-size: 15px; color: #6C6C70">
+          <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(204,153,0,0.12); color: #B37A00; font-size: 15px; font-weight: 400; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
           <span style="display: flex; align-items: center; gap: 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5Z"></path><path d="m2 13 10 5 10-5"></path></svg>{{cur.agree}}</span>
         </span>
       </span>
     </section>
 
-    <ul class="rise" style="display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 22px 24px 0; list-style: none; font-size: 16px; animation-delay: 220ms">
+    <ul class="rise" style="display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 22px 24px 0; list-style: none; font-size: 17px; animation-delay: 220ms">
       <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
         <li style="display: flex; align-items: center; gap: 12px; color: {{r.color}}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{r.icon}}"></path></svg>{{r.t}}
@@ -300,7 +300,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </ul>
 
     <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding: 0 16px 88px; animation-delay: 300ms">
-      <button type="button" class="btn primary" onClick="{{openConfirm}}" aria-haspopup="dialog" style="height: 56px; padding: 0 8px 0 22px; font-size: 18px; font-weight: 600">
+      <button type="button" class="btn primary" onClick="{{openConfirm}}" aria-haspopup="dialog" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z"></path></svg>
         <span style="flex-grow: 1; text-align: left">Confirm fire</span>
         <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
@@ -308,10 +308,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </span>
       </button>
       <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
-        <a href="Drone.dc.html" class="btn ghost" onPointerDown="{{verifyCur}}" onClick="{{verifyCur}}" style="height: 48px; font-size: 16px; font-weight: 500">
+        <a href="Drone.dc.html" class="btn ghost" onPointerDown="{{verifyCur}}" onClick="{{verifyCur}}" style="height: 48px; font-size: 17px; font-weight: 500">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="5" r="2.5"></circle><circle cx="19" cy="5" r="2.5"></circle><circle cx="5" cy="19" r="2.5"></circle><circle cx="19" cy="19" r="2.5"></circle><path d="M7 7l3 3M17 7l-3 3M7 17l3-3M17 17l-3-3"></path></svg>Verify by drone
         </a>
-        <button type="button" class="btn ghost" onClick="{{openDz}}" aria-haspopup="dialog" style="height: 48px; font-size: 16px; font-weight: 500">
+        <button type="button" class="btn ghost" onClick="{{openDz}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">
           <svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
         </button>
       </div>
@@ -324,19 +324,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="pop" style="display: flex; align-items: center; justify-content: center; width: 84px; height: 84px; border-radius: 50%;">
         <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#248A3D" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
       </span>
-      <h2 style="margin: 8px 0 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em">No active alerts</h2>
-      <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #6C6C70">All clear in {{scopeName}}. New candidates will appear here.</p>
-      <a href="Main.dc.html" class="btn ghost" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="height: 48px; padding: 0 22px; margin-top: 14px; font-size: 16px; font-weight: 500">
+      <h2 style="margin: 8px 0 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em">No active alerts</h2>
+      <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #6C6C70">All clear in {{scopeName}}. New candidates will appear here.</p>
+      <a href="Main.dc.html" class="btn ghost" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="height: 48px; padding: 0 22px; margin-top: 14px; font-size: 17px; font-weight: 500">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2Z"></path><path d="M9 4v14M15 6v14"></path></svg>Back to the map
       </a>
-      <button type="button" onClick="{{restore}}" style="margin-top: 4px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: #007AFF; font: 400 16px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">Restore demo alerts</button>
+      <button type="button" onClick="{{restore}}" style="margin-top: 4px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: #007AFF; font: 400 17px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">Restore demo alerts</button>
     </div>
   </sc-if>
 
   <sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
-    <div class="pop" role="status" style="position: absolute; left: 50%; top: 132px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: rgba(255,255,255,0.94); border: 1px solid rgba(60,60,67,0.11); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 30px -10px rgba(0,0,0,0.176); white-space: nowrap; font-size: 14px">
+    <div class="pop" role="status" style="position: absolute; left: 50%; top: 132px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: rgba(255,255,255,0.94); border: 1px solid rgba(60,60,67,0.11); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 30px -10px rgba(0,0,0,0.176); white-space: nowrap; font-size: 15px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6C6C70" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>{{toastText}}
-      <button type="button" class="btn" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #007AFF; font-size: 16px; font-weight: 600">Undo</button>
+      <button type="button" class="btn" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #007AFF; font-size: 17px; font-weight: 600">Undo</button>
     </div>
   </sc-if>
 
@@ -349,32 +349,32 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
     </div>
-    <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #6C6C70">You're declaring <span style="color: #000000">{{cur.id}}</span> in {{cur.place}} a real ignition, based on the evidence you reviewed: {{srcNote}}.</p>
+    <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #6C6C70">You're declaring <span style="color: #000000">{{cur.id}}</span> in {{cur.place}} a real ignition, based on the evidence you reviewed: {{srcNote}}.</p>
     <div style="display: flex; gap: 8px; margin-top: 18px">
       <sc-for list="{{thumbs}}" as="th" hint-placeholder-count="3">
         <sc-if value="{{th.isImg}}" hint-placeholder-val="{{ true }}"><img src="{{th.src}}" alt="{{th.caption}}" style="flex: 1 1 0; min-width: 0; height: 64px; object-fit: cover; border-radius: 14px"></sc-if>
-        <sc-if value="{{th.isPanel}}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="{{th.caption}}" style="flex: 1 1 0; min-width: 0; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 14px; background: rgba(60,60,67,0.055); border: 1px solid rgba(60,60,67,0.088); color: #3C3C43; font-size: 12px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{th.icon}}"></path></svg>{{th.label}}</span></sc-if>
+        <sc-if value="{{th.isPanel}}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="{{th.caption}}" style="flex: 1 1 0; min-width: 0; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 14px; background: rgba(60,60,67,0.055); border: 1px solid rgba(60,60,67,0.088); color: #3C3C43; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{th.icon}}"></path></svg>{{th.label}}</span></sc-if>
       </sc-for>
     </div>
     <button type="button" role="switch" aria-checked="{{droneOnStr}}" onClick="{{toggleDrone}}" style="display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 14px 0; border: 0; border-top: 1px solid rgba(60,60,67,0.14); border-bottom: 1px solid rgba(60,60,67,0.14); background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="5" r="2.5"></circle><circle cx="19" cy="5" r="2.5"></circle><circle cx="5" cy="19" r="2.5"></circle><circle cx="19" cy="19" r="2.5"></circle><path d="M7 7l3 3M17 7l-3 3M7 17l3-3M17 17l-3-3"></path></svg>
       <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
-        <span style="font-size: 16px; font-weight: 500">Also send drone {{cur.drone}}</span>
-        <span style="font-size: 14px; color: #6C6C70">Live footage for crews, no need to wait for it</span>
+        <span style="font-size: 17px; font-weight: 500">Also send drone {{cur.drone}}</span>
+        <span style="font-size: 15px; color: #6C6C70">Live footage for crews, no need to wait for it</span>
       </span>
       <span class="track" aria-hidden="true" style="position: relative; width: 51px; height: 31px; border-radius: 999px; background-color: {{trackBg}}; flex-shrink: 0">
         <span class="knob" style="position: absolute; left: 2px; top: 2px; width: 27px; height: 27px; border-radius: 50%; background-color: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.033), 0 1px 1px rgba(0,0,0,0.035); transform: translateX({{knobX}})"></span>
       </span>
     </button>
     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 22px">
-      <a href="Dispatch.dc.html" class="btn primary" onPointerDown="{{confirmCur}}" onClick="{{confirmCur}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 18px; font-weight: 600">
+      <a href="Dispatch.dc.html" class="btn primary" onPointerDown="{{confirmCur}}" onClick="{{confirmCur}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>
         <span style="flex-grow: 1">Confirm and size response</span>
         <span class="go" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
         </span>
       </a>
-      <button type="button" class="btn ghost" onClick="{{closeConfirm}}" style="height: 48px; font-size: 16px; font-weight: 500">Not yet</button>
+      <button type="button" class="btn ghost" onClick="{{closeConfirm}}" style="height: 48px; font-size: 17px; font-weight: 500">Not yet</button>
     </div>
   </section>
 
@@ -382,10 +382,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; padding: 10px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}})">
     <span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span>
     <h2 id="dzTitle" style="margin: 22px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
-    <p id="dzBody" style="margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: #6C6C70">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
+    <p id="dzBody" style="margin: 8px 0 0; font-size: 17px; line-height: 1.5; color: #6C6C70">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
-      <button type="button" class="btn ghost" onClick="{{closeDz}}" style="height: 48px; font-size: 16px; font-weight: 500">Cancel</button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #248A3D; font-size: 16px; font-weight: 600">
+      <button type="button" class="btn ghost" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
+      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #248A3D; font-size: 17px; font-weight: 600">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
       </a>
     </div>
@@ -401,8 +401,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="position: absolute; left: 0; bottom: 0; width: 14px; height: 14px; border-left: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-left-radius: 5px"></span>
           <span style="position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; border-right: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-right-radius: 5px"></span>
         </span>
-        <span style="position: absolute; left: {{fsBox.left}}px; top: {{fsBox.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 12px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
-        <span style="position: absolute; left: 20px; top: 66px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500">
+        <span style="position: absolute; left: {{fsBox.left}}px; top: {{fsBox.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
+        <span style="position: absolute; left: 20px; top: 66px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500">
           <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
         </span>
       </sc-if>
@@ -412,7 +412,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 34px; display: grid; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 44px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
-          <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 14px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
+          <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}
           </button>
         </sc-for>
@@ -420,7 +420,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
   </sc-if>
   <a href="Main.dc.html" class="ffwfoot" onPointerDown="{{goHome}}" onClick="{{goHome}}" aria-label="Forest Fire Watch, back to the incidents map" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; height: 74px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.14); background: #EEEEF2; text-decoration: none; color: inherit">
-      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 12px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
+      <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.32em; color: #6C6C70; opacity: 0.75; white-space: nowrap; pointer-events: none">
         <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#6C6C70" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#6C6C70" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; margin-right: -0.32em">FOREST FIRE WATCH</span>
       </span>
   </a>
@@ -618,7 +618,7 @@ class Component extends DCLogic {
       const reasons = [...(L.near ? [[L.near + (c.co ? ', ' + c.co : ''), true]] : []), ['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
         [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
         ['Not yet confirmed on the ground', false]];
-      return { id: c.id, place: c.place, ll: L.ll || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
+      return { id: c.id, place: c.place, ll: L.ll || '', reg: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
         agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y, zoom: 0.7, fsZoom: 0.9,
         coords: ll + ' · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
     };
@@ -714,7 +714,7 @@ class Component extends DCLogic {
         const others = active.map((c, i) => ({ c, i })).filter((o) => o.i !== ci);
         return {
           multi: n > 1, hdrBd: n > 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
-          curRow: { place: cur.place, sub: (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
+          curRow: { place: cur.place, sub: (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
             aria: cur.place + ', ' + cur.conf + ' percent. ' + (n > 1 ? (ci + 1) + ' of ' + n + '. Show other candidates' : '') },
           ddRows: others.map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
             aria: o.c.place + ', ' + o.c.conf + ' percent, ' + o.c.srcList, op: dd ? 1 : 0, tf: dd ? 'none' : 'translateY(-12px)', delay: dd ? (140 + k * 35) + 'ms' : '0ms',
@@ -724,7 +724,7 @@ class Component extends DCLogic {
           ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', ddOp: 0, ddClip: dd ? 'inset(0px 0px 0px 0px)' : 'inset(0px 0px 100% 0px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
         };
       })(),
-      headerSub: n > 0 ? (cur.ll || cur.id) + ' · ' + cur.time + ' · ' + (ci + 1) + ' of ' + n : 'Nothing to review',
+      headerSub: n > 0 ? (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + ' · ' + (ci + 1) + ' of ' + n : 'Nothing to review',
       candChips: active.map((c, i) => ({
         place: c.place, conf: c.conf,
         selected: i === ci ? 'true' : 'false',
