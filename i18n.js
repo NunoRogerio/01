@@ -26,7 +26,7 @@
     'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.':'Supervisiona a plataforma em todos os países: acessos, fontes de dados e saúde dos modelos. Apoia os comandantes quando um incêndio atravessa uma fronteira.',
     'Sees all countries and regions':'Vê todos os países e regiões','Access: all countries and regions':'Acesso: todos os países e regiões','All countries':'Todos os países','Portugal only':'Apenas Portugal',
     'Incidents':'Incidentes','Incidents in':'Incidentes em','Ignition candidates':'Candidatos a ignição','Ignition candidate':'Candidato a ignição','Active fires':'Incêndios ativos','Active fire':'Incêndio ativo','No active fires':'Sem incêndios ativos',
-    'Fire stations':'Quartéis de bombeiros','Fire station':'Quartel de bombeiros','Burned area':'Área ardida','Active edge':'Frente ativa','Held line':'Linha dominada',
+    'Fire stations':'Quartéis de bombeiros','Fire station':'Quartel de bombeiros','Burned area':'Área ardida','Active edge':'Frente ativa','Burning edge':'Frente a arder','Held line':'Linha dominada',
     'District':'Distrito','County':'Condado','State':'Estado','Country':'País','Region':'Região','Area':'Área','Choose a country':'Escolha um país','United States':'Estados Unidos','Europe':'Europa','Americas':'Américas',
     'Back to countries':'Voltar aos países','Back to United States':'Voltar aos Estados Unidos','Back to Brazil':'Voltar ao Brasil','Close area picker':'Fechar seletor de área','Map controls':'Controlos do mapa','Collapse map controls':'Recolher controlos do mapa',
     'Full screen':'Ecrã inteiro','Exit full screen':'Sair do ecrã inteiro','Raise the panel over the map':'Subir o painel sobre o mapa','Lower the panel':'Baixar o painel',
@@ -75,6 +75,9 @@
     'USD 206.7 bn of forest-risk credit since 2016 went through Brazil\'s agriculture finance programme. Largest lenders: Banco do Brasil 99.8 bn · Sicredi 19.5 bn · Bradesco 17.7 bn · Itaú 14.6 bn · Caixa 12.8 bn · Banco da Amazônia 8.3 bn.':'206,7 mil milhões de USD em crédito de risco florestal passaram desde 2016 pelo programa de crédito agrícola do Brasil. Maiores credores: Banco do Brasil 99,8 · Sicredi 19,5 · Bradesco 17,7 · Itaú 14,6 · Caixa 12,8 · Banco da Amazônia 8,3 (mil milhões).',
     'Forests & Finance, Banking on Biodiversity Collapse (Nov 2025) · USD, loans and underwriting, Brazil-wide':'Forests & Finance, Banking on Biodiversity Collapse (nov 2025) · USD, empréstimos e subscrição, todo o Brasil',
     'Nevada Division of Forestry · US':'Nevada Division of Forestry · US','Fire origin':'Origem do incêndio','Wind':'Vento',
+    'Fighting this fire':'A combater este incêndio','Personnel':'Operacionais','Ground vehicles':'Viaturas terrestres','on scene':'no local','Fire model':'Modelo do incêndio',
+    'Weather or map services did not answer; try again later':'Os serviços de meteorologia ou de mapas não responderam; tente mais tarde','Aircraft':'Meios aéreos','Crews':'Equipas',
+    'Perimeter not mapped':'Perímetro não cartografado','Resources on scene and nearest fire stations':'Meios no local e quartéis mais próximos',
     'We will notify you':'Vamos notificá-lo','Received':'Recebido','What do you see?':'O que vê?','How far away is it?':'A que distância está?','New photo':'Nova fotografia','Wildfire Response':'Resposta a Incêndios'
   };
   // ---- patterns (whole text) -----------------------------------------------------------------------------------
@@ -103,6 +106,7 @@
     [/^All crews on (.+)$/,'Todas as equipas em $1'],[/^Confirmed at (.+) on the north ridge\.$/,'Confirmado às $1 na cumeada norte.'],
     [/^Closest with (\d+) free crews · (.+)$/,'Mais próximo com $1 equipas livres · $2'],[/^Station: (.+)$/,'Quartel: $1'],
     [/^will be closed and drone (.+) will return to base\.$/,'será fechado e o drone $1 regressará à base.'],
+    [/^(.+) · Resources on scene at (.+) · (\d+) units$/,'$1 · Meios no local em $2 · $3 meios'],[/^On scene · (.+)$/,'No local · $1'],[/^Fire (PT-\S+|BR-\S+|\S+-\S+)$/,'Incêndio $1'],
     [/^([\d.,]+) × (.+)$/,function(m,n,u){return n+' × '+(X[u]||u);}]
   ];
   // ---- fragments inside longer text (applied when no exact/pattern match) ---------------------------------------

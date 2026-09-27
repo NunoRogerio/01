@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=15"></script>
-<script src="i18n.js?v=2"></script>
-<script src="live.js?v=19"></script>
+<script src="i18n.js?v=4"></script>
+<script src="live.js?v=20"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -77,11 +77,11 @@ body{margin:0}
     </svg>
     <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
       <sc-for list="{{burns}}" as="bn" hint-placeholder-count="0">
-        <path d="{{bn.area}}" fill="#FF3B30" fill-opacity="0.22" stroke="#8E0A12" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-        <path d="{{bn.front}}" fill="none" stroke="#FF3B30" stroke-opacity="0.85" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+        <path d="{{bn.area}}" fill="#3A3A3C" fill-opacity="0.34" stroke="#1C1C1E" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+        <path d="{{bn.front}}" fill="none" stroke="#E8590C" stroke-opacity="0.95" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       </sc-for>
       <sc-for list="{{burnFx}}" as="bf" hint-placeholder-count="0">
-        <path d="{{bf.front}}" fill="none" stroke="#FF3B30" stroke-opacity="0.85" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#E0301E;#FF7A1A;#E0301E" dur="2.4s" repeatCount="indefinite"></animate></path>
+        <path d="{{bf.front}}" fill="none" stroke="#E8590C" stroke-opacity="0.95" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#D9480F;#FF7A1A;#D9480F" dur="2.4s" repeatCount="indefinite"></animate></path>
       </sc-for>
       <sc-if value="{{isSpread}}" hint-placeholder-val="{{ false }}">
         <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3 6" vector-effect="non-scaling-stroke"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.2s" repeatCount="indefinite"></animate></path>
@@ -95,10 +95,10 @@ body{margin:0}
         </sc-if>
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
           <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.7" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}"></path>
-          <path d="{{mNow}}" fill="#FF3B30" fill-opacity="0.28" stroke="#8E0A12" stroke-opacity="0.8" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
-          <path d="{{mFront}}" fill="#FF3B30" fill-opacity="0.55" stroke="#D7263D" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
+          <path d="{{mNow}}" fill="#3A3A3C" fill-opacity="0.4" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
+          <path d="{{mFront}}" fill="#E8590C" fill-opacity="0.6" stroke="#C2410C" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
           <path d="{{mHeld}}" fill="none" stroke="#1E7A34" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="{{mActive}}" fill="none" stroke="#FF6A00" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="{{mActive}}" fill="none" stroke="#E8590C" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
         </sc-if>
       </sc-if>
       <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
@@ -838,8 +838,8 @@ class Component extends DCLogic {
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
-      ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(255,59,48,0.45)', '#8E0A12'],
-      ['active', 'Active edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#FF6A00'],
+      ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
+      ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
       ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
