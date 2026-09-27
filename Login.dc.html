@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=17"></script>
-<script src="i18n.js?v=5"></script>
+<script src="i18n.js?v=6"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -73,7 +73,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
   </form>
 
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 6px; margin: auto 16px 0; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">
-    <p style="margin: 0; font-size: 15px; line-height: 18px; color: rgba(255,255,255,0.92)">Demo login: each profile shows how roles limit which areas a user can see.</p>
+    <p style="margin: 0; font-size: 15px; line-height: 18px; color: rgba(255,255,255,0.92)">Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">© 2026 Nuno Rogerio. All rights reserved.</p>
   </div>
@@ -85,7 +85,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
       </span>
-      <span style="font-size: 15px; line-height: 19px; color: #6C6C70">Demo users · each sees only their own area</span>
+      <span style="font-size: 15px; line-height: 19px; color: #6C6C70">Demo users · each role sets the areas and features</span>
     </div>
     <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px {{padB}}px; clip-path: inset(6px 0 0 0); opacity: {{pOp}}; transform: translateY({{pY2}}); transition: opacity .35s ease {{pDelay2}}, transform .55s cubic-bezier(.2,.8,.2,1) {{pDelay2}}">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
