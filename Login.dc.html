@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
-<script src="i18n.js?v=14"></script>
+<script src="i18n.js?v=15"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -56,7 +56,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span id="userVal" style="font-size: {{userFs}}; font-weight: {{userFw}}; line-height: 24px; color: {{userC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{userTxt}}</span>
             <span style="display: {{goB}}; font-size: 15px; line-height: 19px; color: #3C3C43">{{selRole}}</span>
-            <span style="display: {{goB}}; font-size: 15px; line-height: 19px; color: #545458">{{selOrg}} · {{selAccess}}</span>
+            <span style="display: {{goB}}; font-size: 15px; line-height: 19px; color: #545458">{{selOrg}}</span>
+            <span style="display: {{goB}}; font-size: 15px; line-height: 19px; color: #545458">{{selAccess}}</span>
           </span>
         </button>
       </div>
@@ -269,7 +270,7 @@ class Component extends DCLogic {
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
       selPhoto: sel && sel[8] ? 'url("' + sel[8] + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
-      selAccess: sel ? ({ admin: 'All countries', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] : '',
+      selAccess: sel ? 'Access to all features · ' + ({ admin: 'All regions', pt: 'Portugal region only', ca: 'California region only', nv: 'Nevada region only', amz: 'Amazônia Legal region only' })[sel[0]] : '',   // mini card: organisation, then access on a row of its own
       goD: sel ? 'flex' : 'none', offD: sel ? 'none' : 'flex',
       profiles: P.map(([id, code, user, name, role, org, area, sum, photo], i) => ({
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), feats: ({})[id] || 'All features enabled', sum, photoBg: photo ? 'url("' + photo + '")' : 'none',

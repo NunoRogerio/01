@@ -11,11 +11,11 @@
 
   // Demo profiles (the same people as the login screen): [id, initials, name, title, organisation, access, photo, language]
   var PEOPLE = {
-    pt: ['RC', 'Rita Cardoso', 'Comandante Nacional de Emergência e Proteção Civil', 'ANEPC · Comando Nacional', 'Portugal only', 'https://images.unsplash.com/photo-1771254507173-e40b54571924?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'pt'],
-    ca: ['MR', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', 'California only', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
-    nv: ['DW', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', 'Nevada only', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
-    amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal only', '', 'en'],
-    admin: ['NR', 'Nuno Rogerio', 'Platform administrator', 'Forest Fire Watch', 'All countries', 'assets/people/nuno.jpg?v=2', 'en']
+    pt: ['RC', 'Rita Cardoso', 'Comandante Nacional de Emergência e Proteção Civil', 'ANEPC · Comando Nacional', 'Portugal region only', 'https://images.unsplash.com/photo-1771254507173-e40b54571924?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'pt'],
+    ca: ['MR', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', 'California region only', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
+    nv: ['DW', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', 'Nevada region only', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
+    amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
+    admin: ['NR', 'Nuno Rogerio', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/people/nuno.jpg?v=2', 'en']
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
@@ -104,7 +104,7 @@
   var who = PEOPLE[role] || null;
   window.__wfPrefs = {
     role: role,
-    person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: who[4], photo: who[5], lang: who[6] } : null,
+    person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'Access to all features · ' + who[4], photo: who[5], lang: who[6] } : null,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) { try { localStorage.setItem(key(k), v); } catch (e) {} apply(); }
   };
