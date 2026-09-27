@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=2"></script>
-<script src="i18n.js?v=18"></script>
+<script src="i18n.js?v=19"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -850,7 +850,7 @@ class Component extends DCLogic {
     // Group titles, so it is clear what each block is: the fire itself, what is on scene, and stations nearby
     // (only the nearest by distance; which corporations actually sent crews is not published).
     if (RO) {
-      const HD = { fire: ['', ''], res: ['', ''], st: ['Recommended stations', 'Within an ideal first attack · which stations sent crews is not published'] };
+      const HD = { fire: ['', ''], res: ['', ''], st: ['Suggested stations', 'Within an ideal first attack · which stations sent crews is not published'] };
       const out = []; let g0 = null;
       const ord = { fire: 0, res: 1, st: 2 }; deployed.sort((a, b) => (ord[a.g] ?? 1) - (ord[b.g] ?? 1) || (b.tl ? 1 : 0) - (a.tl ? 1 : 0));
       deployed.forEach((d) => { if (d.g !== g0) { g0 = d.g; if (HD[g0][0]) out.push({ head: true, item: false, title: HD[g0][0], note: HD[g0][1], noteD: HD[g0][1] ? 'block' : 'none' }); } out.push(d); });
