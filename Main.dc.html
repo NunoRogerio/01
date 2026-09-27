@@ -335,10 +335,23 @@ class Component extends DCLogic {
   wfSlide(dir, apply) {
     if (this._sl) return; this._sl = true; const w = dir === 'fwd' ? -1 : 1;
     const raf = (f) => (typeof requestAnimationFrame === 'function' ? requestAnimationFrame(f) : setTimeout(f, 16));
+    // Each level of the region selector remembers where its list was scrolled (and its search text),
+    // so going back returns to the same spot; going forward starts the new level at the top.
+    const list = () => document.querySelector('[data-sort-list]');
+    const lvl = () => String((this.state || {}).scBrowse);
+    const pos = this._scPos || (this._scPos = {});
+    const L0 = list(); if (L0) pos[lvl()] = { top: L0.scrollTop, q: (this.state || {}).q || '' };
     this.setState({ slX: w * 100, slO: 0.4, slT: 'transform .2s cubic-bezier(.4,0,1,1), opacity .2s ease-in' });
     setTimeout(() => {
       apply(); this.setState({ slX: -w * 100, slO: 0.4, slT: 'none' });
-      raf(() => raf(() => { this._sl = false; this.setState({ slX: 0, slO: 1, slT: 'transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease-out' }); }));
+      raf(() => {
+        const p = dir === 'back' ? pos[lvl()] : null;
+        if (p && p.q) this.setState({ q: p.q });
+        raf(() => {
+          const L = list(); if (L) { const S = L.__sn; if (S && S.raf) { cancelAnimationFrame(S.raf); S.raf = 0; } L.scrollTop = p ? p.top : 0; }
+          raf(() => { this._sl = false; this.setState({ slX: 0, slO: 1, slT: 'transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease-out' }); });
+        });
+      });
     }, 200);
   }
   wfPull(key, dir, open) {
