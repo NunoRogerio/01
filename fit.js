@@ -32,4 +32,37 @@
   check();
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check();});
 })();
+// Loading screen: the logo's flame catching fire on a loop, the name underneath, until the screen has
+// drawn and (on the data screens) the live fires and satellite candidates are in. Never shows empty states.
+(function(){
+  var needsData=/(Main|Alert|Drone|Dispatch)\.dc\.html/.test(location.pathname)||/\/$/.test(location.pathname);
+  var F='M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z',G='M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8';
+  var st=document.createElement('style');
+  st.textContent='#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
+    '#wf-load.out{opacity:0;pointer-events:none}'+
+    '#wf-load .in{display:flex;flex-direction:column;align-items:center;gap:22px;opacity:0;animation:wfin .4s ease .25s forwards}'+
+    '@keyframes wfin{to{opacity:1}}'+
+    '@keyframes wfburn{0%,12%{opacity:0}45%,62%{opacity:1}100%{opacity:0}}'+
+    '@keyframes wfsweep{from{background-position:120% 0}to{background-position:-120% 0}}'+
+    '#wf-load .fire{animation:wfburn 1.8s ease-in-out infinite}'+
+    '#wf-load .name{font:600 14px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:.32em;margin-right:-.32em;'+
+      'background:linear-gradient(90deg,#8E8E93 0%,#8E8E93 40%,#E8590C 50%,#8E8E93 60%,#8E8E93 100%);background-size:250% 100%;'+
+      '-webkit-background-clip:text;background-clip:text;color:transparent;animation:wfsweep 1.8s linear infinite}'+
+    '#wf-load .sub{font:400 15px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#8E8E93}';
+  document.head.appendChild(st);
+  var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+  el.innerHTML='<div class="in"><svg width="74" height="90" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
+    '<defs><radialGradient id="wfLoadFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"/><stop offset="0.35" stop-color="#FFA41B"/><stop offset="0.7" stop-color="#FF5A1F"/><stop offset="1" stop-color="#D7263D"/></radialGradient></defs>'+
+    '<path fill="#8E8E93" fill-rule="evenodd" d="'+F+'"/><path class="fire" fill="url(#wfLoadFire)" fill-rule="evenodd" d="'+F+'"/>'+
+    '<path d="'+G+'" fill="none" stroke="#8E8E93" stroke-width="1.1" stroke-linecap="round"/></svg>'+
+    '<span class="name">FOREST FIRE WATCH</span><span class="sub">Loading live data</span></div>';
+  (document.body||document.documentElement).appendChild(el);
+  var t0=Date.now();
+  function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
+  function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
+  (function tick(){
+    if((drawn()&&haveData())||Date.now()-t0>15000){el.className='out';setTimeout(function(){el.remove();},350);return;}
+    setTimeout(tick,80);
+  })();
+})();
 

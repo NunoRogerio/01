@@ -90,9 +90,15 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   // One cache, with its own timestamp per source (US fires, Portugal fires, satellite), so a source that
   // loads fast can never mark a slower one as fresh.
   function readCache(){try{return JSON.parse(localStorage.getItem(KEY)||'null')||{};}catch(e){return {};}}
+  // Big satellite data (thousands of candidates, region boxes) goes to IndexedDB: localStorage caps at ~5 MB,
+  // which iPhone Safari counts double, so it silently refused the save and every screen started empty.
+  function idb(){return new Promise(function(ok,no){try{var q=indexedDB.open('wf-cache',1);q.onupgradeneeded=function(){q.result.createObjectStore('kv');};q.onsuccess=function(){ok(q.result);};q.onerror=function(){no(q.error);};}catch(e){no(e);}});}
+  function idbPut(k,v){return idb().then(function(db){return new Promise(function(ok){var t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=function(){ok();};t.onerror=function(){ok();};});}).catch(function(){});}
+  function idbGet(k){return idb().then(function(db){return new Promise(function(ok){var r=db.transaction('kv').objectStore('kv').get(k);r.onsuccess=function(){ok(r.result);};r.onerror=function(){ok(null);};});}).catch(function(){return null;});}
   function save(stamp){
     var c=readCache();c[stamp]=Date.now();
-    c.rows=window.__wfLiveFires||null;c.cands=window.__wfLiveCands||null;c.geo=window.__wfGeoStates||null;c.boxes=window.__wfGeoBoxes||null;
+    c.rows=window.__wfLiveFires||null;c.geo=window.__wfGeoStates||null;delete c.cands;delete c.boxes;
+    if(stamp==='tSat')idbPut(KEY,{cands:window.__wfLiveCands||null,boxes:window.__wfGeoBoxes||null,t:c.tSat});
     try{localStorage.setItem(KEY,JSON.stringify(c));}catch(e){}
     window.__wfWorld=null;window.__wfGeo=null;
     try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
@@ -307,17 +313,25 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   };
 
   var c=readCache(),now=Date.now();
-  if(c.rows)window.__wfLiveFires=c.rows;if(c.cands)window.__wfLiveCands=c.cands;if(c.geo)window.__wfGeoStates=c.geo;if(c.boxes)window.__wfGeoBoxes=c.boxes;if(c.tPT||c.tUS||c.tCAN)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0);
+  if(c.rows)window.__wfLiveFires=c.rows;if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0);
   var fresh=function(k){return c[k]&&now-c[k]<TTL;};
   var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
 
   // Satellite hotspots + regions (same site, written by the FIRMS GitHub Action). Missing files: keep sample candidates.
-  if(!fresh('tSat'))Promise.all([fetch('data/regions.json?t='+Math.floor(tick/1440)).then(jsonOk).catch(function(){return null;}),
+  // Satellite candidates: the saved copy (IndexedDB) first, then the network when it is stale or missing.
+  window.__wfSatDone=false;
+  var satNet=function(){return Promise.all([fetch('data/regions.json?t='+Math.floor(tick/1440)).then(jsonOk).catch(function(){return null;}),
                fetch('data/hotspots.json?t='+tick).then(jsonOk).catch(function(){return null;})]).then(function(r){
     if(r[0]){var g=buildGeo(r[0]);if(g.length)window.__wfGeoStates=g;}
     if(r[1]&&r[0]){window.__wfLiveCands=buildCands(r[1]);}
     if(r[0]&&r[1])save('tSat');
+  }).then(function(){window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}});};
+  idbGet(KEY).then(function(v){
+    var have=v&&v.cands&&v.t===c.tSat;
+    if(have&&!window.__wfLiveCands){window.__wfLiveCands=v.cands;if(v.boxes)window.__wfGeoBoxes=v.boxes;window.__wfWorld=null;window.__wfGeo=null;
+      window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
+    if(!have||!fresh('tSat'))satNet();
   });
 
   // US: NIFC. Failure keeps the previous US fires.
