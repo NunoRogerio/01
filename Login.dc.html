@@ -114,12 +114,12 @@ a{color:#007AFF}a:hover{color:#0062CC}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   // Background: aerial forest photos, a random new one every 8 s with a slow cross-fade and drift.
-  // Profile list magnet: after a gentle swipe, once a card comes within 80px of the line 16px below the top
+  // Profile list magnet: after a gentle swipe, up or down, once a card comes within 150px of the line 16px below the top
   // (even while it is still coasting) it is pulled in, speeding up as it closes, and stops dead with a tiny clack.
   // A vigorous swipe is left to the phone's own momentum and never snaps.
   snapList() {
     const L = document.querySelector('#dc-root [role=listbox]'); if (!L || L.__snap) return; L.__snap = true;
-    const FIELD = 80, FAST = 0.55;
+    const FIELD = 150, FAST = 0.55;
     let samples = [], raf = 0, mode = 'off', held = null;   // held: the card already sitting on the line has no pull
     const stop = () => { if (raf) cancelAnimationFrame(raf); raf = 0; L.style.overflowY = 'auto'; };
     const targets = () => [...L.children].filter((c) => c.getAttribute && c.getAttribute('role') === 'option').map((c) => Math.max(0, Math.min(L.scrollHeight - L.clientHeight, c.offsetTop - 16)));
@@ -129,7 +129,7 @@ class Component extends DCLogic {
       L.style.overflowY = 'hidden';                                   // cancels the phone's coasting so the magnet takes over
       const from = L.scrollTop, d = to - from, dir = Math.sign(d) || 1;
       if (Math.abs(d) < 0.5) { L.scrollTop = to; L.style.overflowY = 'auto'; return; }
-      const dur = 90 + 1.8 * Math.abs(d), kick = 2.4, t0 = performance.now();    // ~235 ms from the edge of the field
+      const dur = 90 + 1.3 * Math.abs(d), kick = 2.4, t0 = performance.now();    // ~285 ms from the edge of the field
       const step = (now) => {
         const t = (now - t0) / dur;
         if (t < 1) { const e = 0.2 * t + 0.8 * t * t * t; L.scrollTop = from + (d + dir * kick) * e; raf = requestAnimationFrame(step); return; }
@@ -144,7 +144,7 @@ class Component extends DCLogic {
     const note = () => { const n = performance.now(); samples.push([n, L.scrollTop]); while (samples.length > 2 && n - samples[0][0] > 100) samples.shift(); };
     L.addEventListener('touchstart', () => { stop(); mode = 'drag'; samples = []; note(); const on = targets().find((t) => Math.abs(t - L.scrollTop) <= 2); held = on === undefined ? null : on; }, { passive: true });
     L.addEventListener('touchmove', note, { passive: true });
-    L.addEventListener('scroll', () => { if (held !== null && Math.abs(L.scrollTop - held) > FIELD) held = null; if (mode === 'drag') note(); else check(); }, { passive: true });
+    L.addEventListener('scroll', () => { if (mode === 'drag') note(); else check(); }, { passive: true });
     L.addEventListener('touchend', () => {
       note(); const a = samples[0], b = samples[samples.length - 1];
       const v = a && b && b[0] > a[0] ? (b[1] - a[1]) / (b[0] - a[0]) : 0;   // scroll px per ms
