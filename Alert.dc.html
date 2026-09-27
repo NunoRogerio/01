@@ -159,7 +159,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 </style>
 </helmet>
-<div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: {{rootBg}}; transition: background-color .6s ease; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <sc-if value="{{mapLayer}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
       <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" mode="pin" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
@@ -168,10 +168,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div style="position: relative; z-index: 6; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
+  <span aria-hidden="true" style="display: {{panelD}}; position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <header class="fade" style="display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 12px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Ignition candidates</h1>
-      <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onPointerDown="{{navBack}}" onClick="{{navBack}}" aria-label="Back to incidents" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: #6C6C70; text-decoration: none">
+      <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onPointerDown="{{navBack}}" onClick="{{navBack}}" aria-label="Back to incidents" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: {{backC}}; text-decoration: none">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
       </a>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
@@ -186,7 +186,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
       </sc-if>
       <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
-        <span style="display: flex; flex-direction: column; padding: 4px 8px"><span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Ignition candidates</span><span style="font-size: 15px; color: #6C6C70">{{scopeName}}</span></span>
+        <span style="display: flex; flex-direction: column; padding: 4px 8px; color: #FFFFFF; text-shadow: 0 1px 10px rgba(0,0,0,0.45)"><span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Ignition candidates</span><span style="font-size: 15px; color: rgba(255,255,255,0.85)">{{scopeName}}</span></span>
       </sc-if>
   </header>
   </div>
@@ -321,16 +321,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </sc-if>
 
   <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
-    <div class="rise" style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 150px 32px 0; text-align: center">
-      <span class="pop" style="display: flex; align-items: center; justify-content: center; width: 84px; height: 84px; border-radius: 50%;">
-        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#248A3D" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
+    <div class="rise" style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 168px 32px 0; text-align: center; color: #FFFFFF">
+      <span class="pop" style="display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.18); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.4) inset">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
       </span>
-      <h2 style="margin: 8px 0 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em">No active alerts</h2>
-      <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #6C6C70">All clear in {{scopeName}}. New candidates will appear here.</p>
-      <a href="Main.dc.html" class="btn ghost" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="height: 48px; padding: 0 22px; margin-top: 14px; font-size: 17px; font-weight: 500">
+      <h2 style="margin: 16px 0 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 24px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
+      <p style="margin: 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
+      <a href="Main.dc.html" class="btn" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px; margin-top: 24px; border: 0; border-radius: 12px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset; color: #000000; font-size: 17px; font-weight: 600; text-decoration: none">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2Z"></path><path d="M9 4v14M15 6v14"></path></svg>Back to the map
       </a>
-      <button type="button" onClick="{{restore}}" style="margin-top: 4px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: #007AFF; font: 400 17px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">Restore demo alerts</button>
+      <button type="button" onClick="{{restore}}" style="margin-top: 8px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5); font: 400 17px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">Restore demo alerts</button>
     </div>
   </sc-if>
 
@@ -437,9 +437,32 @@ class Component extends DCLogic {
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   wfFocus() { let f = null; try { f = window.sessionStorage.getItem('wf-focus'); window.sessionStorage.removeItem('wf-focus'); } catch (e) {} const m = window.__wfMem || {}; f = f || m.focus; m.focus = null; if (f) { this.setState({ focusId: f, tab: null, confirm: false, full: false }); return true; } return false; }
   componentDidMount() { this.wfFocus(); this._wfSync = () => { if (!this.wfFocus()) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
-  componentWillUnmount() { try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentDidUpdate() { this.wfClearBg(!!this._showClear); }
+  componentWillUnmount() { this.wfClearBg(false, true); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
+  // The all-clear screen sits on the same forest photos as the login: each slowly zooms in, and they dissolve into one another.
+  wfClearBg(on, gone) {
+    let h = document.getElementById('wf-clear-bg');
+    if (!on) { clearInterval(this._cbT); this._cbT = null; if (h) { if (gone) h.remove(); else h.style.opacity = '0'; } return; }
+    const PH = ['forest-1.webp', 'forest-2.webp', 'forest-3.webp'];
+    if (!h) {
+      h = document.createElement('div'); h.id = 'wf-clear-bg'; h.setAttribute('aria-hidden', 'true');
+      h.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;background:#1E2B22;overflow:hidden;opacity:0;transition:opacity .9s cubic-bezier(.4,0,.2,1)';
+      for (let i = 0; i < 2; i++) { const d = document.createElement('div'); d.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1)'; h.appendChild(d); }
+      const sh = document.createElement('div'); sh.style.cssText = 'position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.34) 0%,rgba(0,0,0,0.14) 30%,rgba(0,0,0,0.30) 62%,rgba(0,0,0,0.62) 100%)'; h.appendChild(sh);
+      document.body.appendChild(h);
+      const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
+      this._cbI = Math.floor(Math.random() * PH.length); this._cbL = 0;
+    }
+    const show = () => { const d = h.children[this._cbL], o = h.children[1 - this._cbL];
+      d.style.transition = 'none'; d.style.transform = 'scale(1)'; d.style.backgroundImage = 'url("assets/splash/' + PH[this._cbI] + '")';
+      requestAnimationFrame(() => requestAnimationFrame(() => { d.style.transition = 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)'; d.style.opacity = '1'; d.style.transform = 'scale(1.3)'; o.style.transition = 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)'; o.style.opacity = '0'; })); };
+    if (!this._cbT) {
+      show(); requestAnimationFrame(() => { h.style.opacity = '1'; });
+      this._cbT = setInterval(() => { let k = Math.floor(Math.random() * (PH.length - 1)); if (k >= this._cbI) k++; this._cbI = k; this._cbL = 1 - this._cbL; show(); }, 8000);
+    }
+  }
   wfNav(mode) { const v = { mode, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { nav: v }); try { window.sessionStorage.setItem('wf-nav', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   wfConfirmed() { let d = null; try { const v = window.sessionStorage.getItem('wf-confirmed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).confirmed; return Object.assign({}, d || {}); }
   wfSaveConfirmed(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { confirmed: d }); try { window.sessionStorage.setItem('wf-confirmed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -712,14 +735,21 @@ class Component extends DCLogic {
     const segW = (300 - 2 - 6) / tabs0.length;
     const fsH = tab.isImg ? Math.round(390 * tab.ih / tab.iw) : 844;
     const fsTop = Math.round((844 - fsH) / 2);
-    const dismiss = () => { this.wfSave({ ...dismissed, [cur.id]: true }); this.setState({ toast: cur.id, ci: 0, focusId: null, tab: null, confirm: false, full: false }); };
+    // All clear shows only when the last candidate was cleared on this screen. Arriving with none left
+    // (going back from drone verification or dispatch after confirming it) returns straight to the incidents.
+    const ready = !window.__wfLiveMap || !!(window.__wfLiveCands || window.__wfSatDone);
+    const showClear = n === 0 && !!this._cleared;
+    this._showClear = showClear;
+    if (n === 0 && !this._cleared && ready && !this._redir) { this._redir = true; setTimeout(() => { this.wfNav('back'); try { window.location.replace('Main.dc.html'); } catch (e) { window.location.href = 'Main.dc.html'; } }, 0); }
+    if (n > 0) this._redir = false;
+    const dismiss = () => { this._cleared = true; this.wfSave({ ...dismissed, [cur.id]: true }); this.setState({ toast: cur.id, ci: 0, focusId: null, tab: null, confirm: false, full: false }); };
     const undo = () => { const d = { ...dismissed }; delete d[s.toast]; this.wfSave(d); this.setState({ toast: null }); };
     const restore = () => { this.wfSaveConfirmed({}); this.wfSave({}); this.setState({ toast: null, ci: 0, focusId: null, tab: null }); };
     const droneOn = s.droneToo !== false;
     const dz = !!s.dz;
     const open = !!s.confirm;
     return { goHome: () => { const t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { home: t, fromList: false }); try { window.sessionStorage.setItem('wf-home', String(t)); window.sessionStorage.setItem('wf-list', '0'); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} },
-      hasActive: n > 0, noActive: n === 0,
+      hasActive: n > 0, noActive: showClear, rootBg: showClear ? 'transparent' : '#F2F2F7', panelD: showClear || n === 0 ? 'none' : 'block', backC: showClear ? '#FFFFFF' : '#6C6C70',
       ...(() => {
         const col = (c) => c > 75 ? '#7A3FE0' : (c >= 50 ? '#0A6FDB' : '#48484A');
         const bg = (c) => c >= 70 ? 'rgba(232,106,0,0.14)' : (c >= 50 ? 'rgba(204,153,0,0.12)' : 'rgba(60,60,67,0.066)');
