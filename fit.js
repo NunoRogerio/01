@@ -128,6 +128,7 @@
     im.src='assets/splash/'+ph[0];minMs=1600;
     try{localStorage.setItem('wf-splash-i',String((nxt+1)%PH.length));}catch(e){}
   }
+  if(soft)minMs=Math.max(minMs,4000);   // right after log in: the loading screen stays at least 4 s
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
