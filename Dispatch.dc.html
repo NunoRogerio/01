@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=2"></script>
-<script src="i18n.js?v=19"></script>
+<script src="i18n.js?v=20"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -267,7 +267,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h2 id="sheetTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Choose a station</h2>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{stInOp}}; transform: translateY({{stInY}}); transition: opacity .3s ease {{stInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{stInDelay}}">
     <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 51px; align-items: end; gap: 4px 12px; flex-shrink: 0; padding: 16px 16px 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
-      <span></span><span style="text-align: center">Time to<br>fire line</span><span></span>
+      <span style="align-self: end">{{crewNote}}</span><span style="text-align: center">Time to<br>fire line</span><span></span>
     </div>
     <div role="group" aria-label="Stations, select one or more" style="display: flex; flex-direction: column; gap: 2px; padding-top: 2px">
       <sc-for list="{{stations}}" as="st" hint-placeholder-count="5">
@@ -932,6 +932,7 @@ class Component extends DCLogic {
       pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
       hzShow: HELD ? 'none' : 'grid',
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
+      crewNote: chosenList.some((d) => d.real) ? 'Crew availability not published' : '',   // real stations: said once, above the list
       stApply: () => this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
       k1C: BRF ? '#3A3A3C' : '#1E7A34', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
