@@ -460,7 +460,7 @@ class Component extends DCLogic {
       requestAnimationFrame(() => requestAnimationFrame(() => { d.style.transition = 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)'; d.style.opacity = '1'; d.style.transform = 'scale(1.3)'; o.style.transition = 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)'; o.style.opacity = '0'; })); };
     if (!this._cbT) {
       show(); requestAnimationFrame(() => { h.style.opacity = '1'; });
-      this._cbT = setInterval(() => { let k = Math.floor(Math.random() * (PH.length - 1)); if (k >= this._cbI) k++; this._cbI = k; this._cbL = 1 - this._cbL; show(); }, 8000);
+      this._cbT = setInterval(() => { this._cbI = (this._cbI + 1) % PH.length; this._cbL = 1 - this._cbL; show(); }, 8000);
     }
   }
   wfNav(mode) { const v = { mode, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { nav: v }); try { window.sessionStorage.setItem('wf-nav', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
