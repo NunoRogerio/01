@@ -321,8 +321,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 28px"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
   <!-- (The region selector's bottom grabber sits 28px above the screen edge, clear of the iOS home indicator.) -->
-  <!-- Preferences: grows out of the profile photo and folds back into it; the close button turns a quarter circle first -->
-  <section role="dialog" aria-modal="true" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 0; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; clip-path: {{pfClip}}; -webkit-clip-path: {{pfClip}}; opacity: {{pfOp}}; visibility: {{pfVis}}; pointer-events: {{pfPE}}; transition: clip-path {{pfDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{pfDur}} cubic-bezier(.3,.9,.25,1), opacity {{pfOpT}}, visibility 0s linear {{pfVisDelay}}">
+  <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
+  <section role="dialog" aria-modal="true" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 0; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{pfY}}); visibility: {{pfVis}}; pointer-events: {{pfPE}}; transition: transform {{pfDur}} {{pfEase}}, visibility 0s linear {{pfVisDelay}}">
     <h2 id="pfTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Preferences</h2>
     <div style="position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; height: 62px; padding: 0 64px; opacity: {{pfInOp}}; transition: opacity .3s ease {{pfInDelay}}">
     <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #545458; white-space: nowrap">
@@ -556,12 +556,11 @@ class Component extends DCLogic {
     const group = (label, cur, opts, pick) => { const i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
       label, cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 4px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
       opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, pick: () => { if (o[0] !== cur) pick(o[0]); } })) }; };
-    const at = 'calc(100% - 36px) 87px';
     return {
       me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none',
-      pfClip: pf ? 'circle(150% at ' + at + ')' : 'circle(20px at ' + at + ')', pfDur: pf ? '.55s' : '.6s',
-      pfOp: pf ? 1 : 0, pfOpT: pf ? '.15s ease' : '.3s ease .35s', pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.7s',
+      pfY: pf ? '0%' : '-104%', pfDur: pf ? '.55s' : '.45s', pfEase: pf ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)',
+      pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
       pfInOp: pf ? 1 : 0, pfInY: pf ? '0px' : '-12px', pfInDelay: pf ? '.15s' : '0s', pfXRot: s.pfSpin ? '90deg' : '0deg',
       openPrefs: () => this.setState({ pf: true, pfSpin: false }),
       closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); }, 280); },
