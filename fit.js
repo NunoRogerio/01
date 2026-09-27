@@ -84,7 +84,7 @@
   var needsData=/(Main|Alert|Drone|Dispatch|Station)\.dc\.html/.test(location.pathname)||/\/$/.test(location.pathname);
   var F='M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z',G='M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8';
   var st=document.createElement('style');
-  st.textContent='#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
+  st.textContent='@view-transition{navigation:auto}#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
     '#wf-load.out{opacity:0;pointer-events:none}'+
     '#wf-load .in{display:flex;flex-direction:column;align-items:center;gap:22px;opacity:0;animation:wfin .4s ease .25s forwards}'+
     '@keyframes wfin{to{opacity:1}}'+
@@ -107,21 +107,32 @@
     '#wf-load.photo .cap{opacity:1}';
   document.head.appendChild(st);
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
-  el.innerHTML='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="74" height="90" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
+  var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="74" height="90" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
     '<defs><radialGradient id="wfLoadFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"/><stop offset="0.35" stop-color="#FFA41B"/><stop offset="0.7" stop-color="#FF5A1F"/><stop offset="1" stop-color="#D7263D"/></radialGradient></defs>'+
     '<path class="base" fill="#8E8E93" fill-rule="evenodd" d="'+F+'"/><path class="fire" fill="url(#wfLoadFire)" fill-rule="evenodd" d="'+F+'"/>'+
     '<path class="ground" d="'+G+'" fill="none" stroke="#8E8E93" stroke-width="1.1" stroke-linecap="round"/></svg>'+
     '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span></div><div class="cap"></div>';
+  el.innerHTML=TPL;
   (document.body||document.documentElement).appendChild(el);
+  var PH=[['forest-1.webp','Forest canopy from above','Mari Potter'],['forest-2.webp','Conifer forest from above','Ivan Dimitrov'],['forest-3.webp','Dense canopy from above','Olena Bohovyk']];
+  var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
+  // The black-and-white forest, as the loading screen starts: used by the sign-in screen to hand over without a gap.
+  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:grayscale(1) brightness(.92)';return d;};
+  window.__wfSoftOut=function(){
+    var o=document.createElement('div');o.id='wf-load';o.className='photo';o.innerHTML=TPL;o.style.opacity='0';o.style.transition='opacity .7s cubic-bezier(.4,0,.2,1)';
+    var ph=PH[nxt],b=o.querySelector('.bg');b.appendChild(grayLayer(ph));b.style.transition='none';b.className='bg on';b.style.transform='scale(1)';
+    o.querySelector('.in').style.animation='none';o.querySelector('.in').style.opacity='1';o.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
+    document.body.appendChild(o);requestAnimationFrame(function(){requestAnimationFrame(function(){o.style.opacity='1';});});
+  };
   var soft=false;try{soft=sessionStorage.getItem('wf-soft')==='1';sessionStorage.removeItem('wf-soft');}catch(e){}
   if(soft){var ss=document.createElement('style');ss.textContent='#wf-load{transition:opacity .9s cubic-bezier(.4,0,.2,1)}#wf-load .in{animation-duration:.8s;animation-delay:.5s}'+
     '#dc-root{opacity:0;transform:scale(1.012);transition:opacity 1s cubic-bezier(.4,0,.2,1),transform 1.3s cubic-bezier(.2,.8,.2,1)}html.wf-in #dc-root{opacity:1;transform:none}';document.head.appendChild(ss);}
+  if(soft){try{var ph0=PH[nxt],b0=el.querySelector('.bg');b0.appendChild(grayLayer(ph0));b0.style.transition='none';b0.className='bg on';b0.style.transform='scale(1)';el.className='photo';
+    var in0=el.querySelector('.in');in0.style.animation='none';in0.style.opacity='1';el.querySelector('.cap').textContent=ph0[1]+' · Photo: '+ph0[2]+' / Unsplash';}catch(e){}}
   var t0=Date.now(),minMs=0;
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
-  var PH=[['forest-1.webp','Forest canopy from above','Mari Potter'],['forest-2.webp','Conifer forest from above','Ivan Dimitrov'],['forest-3.webp','Dense canopy from above','Olena Bohovyk']];
   var cold=false;try{cold=!sessionStorage.getItem('wf-cold');sessionStorage.setItem('wf-cold','1');}catch(e){}
-  var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
   if(soft)minMs=Math.max(minMs,4000);   // right after log in: the loading screen stays at least 4 s
   // Cold start and log in: a forest photo, slowly zooming in, starts in black and white. A wave of colour spreads out
   // from the logo to the screen edges: at its front the photo is more saturated than normal, easing back to normal

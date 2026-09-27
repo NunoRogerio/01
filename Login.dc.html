@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=24"></script>
+<script src="fit.js?v=25"></script>
 <script src="i18n.js?v=30"></script>
 
 <title>Log in</title>
@@ -218,7 +218,7 @@ class Component extends DCLogic {
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
-    h.style.transition = (this.state || {}).leaving ? 'opacity .9s cubic-bezier(.4,0,.2,1) .1s' : 'none'; h.style.opacity = (this.state || {}).leaving ? '0' : '1';                                              // the frosted panel shows the photo through it
+    h.style.transition = 'none'; h.style.opacity = '1';   // on sign in the loading screen fades in over the photo; no grey in between                                              // the frosted panel shows the photo through it
     // Each photo slowly zooms in while it is shown; photos out of view reset instantly, ready for their next turn.
     // A photo coming into view always starts its zoom from the beginning, whatever happened to it before.
     const apply = () => B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img;
@@ -281,14 +281,16 @@ class Component extends DCLogic {
         pick: () => { this.setState({ sel: id }); this.closePanel(); }
       })),
       lvOp: s.leaving ? 0 : 1, lvY: s.leaving ? '-10px' : '0px',
-      // Sign in: the form drifts up and fades, the photo dissolves into the app's calm grey, then the map fades in.
+      // Sign in: the form drifts up and fades as the loading screen (black-and-white forest, logo) fades in over it;
+      // the app then opens on that same frame and the colour wave carries on.
       login: (e) => {
         if (!sel) return;
         try { e.preventDefault(); } catch (x) {}
         if (this.state && this.state.leaving) return;
         try { window.sessionStorage.setItem('wf-soft', '1'); } catch (x) {}
         this.setState({ leaving: true });
-        setTimeout(() => { window.location.href = 'Main.dc.html'; }, 900);
+        try { if (window.__wfSoftOut) window.__wfSoftOut(); } catch (x) {}   // the loading screen takes over right here, then carries on in the app
+        setTimeout(() => { window.location.href = 'Main.dc.html'; }, 800);
         try { window.localStorage.setItem('wf-role', sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
         window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[0], scope: null });
       }
