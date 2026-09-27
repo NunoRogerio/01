@@ -143,3 +143,37 @@
     rest(L,140);                                                // wait until the coasting has fully died out
   },{passive:true,capture:true});
 })();
+// Touch feedback for everything tappable: a soft highlight grows from the finger across the control and fades,
+// plus a light tap on the phone (vibration where the browser allows it; on iPhone, the system haptic that
+// Safari gives a switch control, which is the only haptic web pages can reach).
+(function(){
+  var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],label,summary,.opt,.sqrow';
+  var st=document.createElement('style');
+  st.textContent='#wf-fx{position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:99998}'+
+    '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.22);transform:scale(0);opacity:1;transition:transform .42s cubic-bezier(.2,.8,.2,1),opacity .35s ease}'+
+    '#wf-hap{position:fixed;left:-99px;top:-99px;width:1px;height:1px;opacity:0;pointer-events:none}';
+  document.head.appendChild(st);
+  var box=null,dot=null,sx=0,sy=0,live=false,hap=null;
+  function haptic(){
+    try{if(navigator.vibrate&&navigator.vibrate(8))return;}catch(e){}
+    try{if(!hap){hap=document.createElement('label');hap.id='wf-hap';hap.setAttribute('aria-hidden','true');var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;hap.appendChild(c);document.body.appendChild(hap);}hap.click();}catch(e){}
+  }
+  function fade(fast){if(!box)return;var b=box,d=dot;box=dot=null;d.style.transition='transform .42s cubic-bezier(.2,.8,.2,1),opacity '+(fast?'.12s':'.35s')+' ease';d.style.opacity='0';setTimeout(function(){b.remove();},fast?150:420);}
+  document.addEventListener('pointerdown',function(e){
+    var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap'))return;
+    if(t.closest('[role=application]')&&!t.closest('[role=group]'))return;          // map panning stays clean
+    fade(true);
+    var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
+    var cs=getComputedStyle(t),k=r.width/(t.offsetWidth||r.width);
+    box=document.createElement('div');box.id='wf-fx';
+    box.style.cssText='left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;border-radius:'+(parseFloat(cs.borderTopLeftRadius)||0)*k+'px';
+    var x=e.clientX-r.left,y=e.clientY-r.top,R=Math.hypot(Math.max(x,r.width-x),Math.max(y,r.height-y));
+    dot=document.createElement('i');dot.style.cssText='left:'+(x-R)+'px;top:'+(y-R)+'px;width:'+2*R+'px;height:'+2*R+'px';
+    box.appendChild(dot);document.body.appendChild(box);sx=e.clientX;sy=e.clientY;live=true;
+    requestAnimationFrame(function(){if(dot)dot.style.transform='scale(1)';});
+  },{capture:true,passive:true});
+  document.addEventListener('pointermove',function(e){if(live&&Math.hypot(e.clientX-sx,e.clientY-sy)>10){live=false;fade(true);}},{capture:true,passive:true});
+  document.addEventListener('pointerup',function(){if(live){live=false;setTimeout(function(){fade(false);},120);}},{capture:true,passive:true});
+  document.addEventListener('pointercancel',function(){live=false;fade(true);},{capture:true,passive:true});
+  document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap'))return;haptic();},{capture:true});
+})();
