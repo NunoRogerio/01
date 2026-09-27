@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=1"></script>
-<script src="i18n.js?v=13"></script>
+<script src="i18n.js?v=14"></script>
 <script src="live.js?v=23"></script>
 
 <title>Incidents</title>
@@ -182,7 +182,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 133px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
-  <!-- Top blade: the area on the left, when the data was updated in the middle, the profile photo on the right (opens preferences);
+  <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
   <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
@@ -192,7 +192,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
       <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
     </button>
-    <span style="flex: 1 1 auto; min-width: 0; margin-top: 17px; font-size: 15px; line-height: 20px; color: #545458; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{liveTxt}}</span>
+    <span aria-hidden="true" style="flex: 1 1 auto"></span>
     <button type="button" class="opt" onClick="{{openPrefs}}" aria-haspopup="dialog" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
     <span aria-hidden="true" style="position: absolute; left: 50%; bottom: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3); pointer-events: none"></span>
   </header>
@@ -250,7 +250,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </span>
         <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
       </button>
-      <span style="flex: 1 1 auto; min-width: 0; margin-top: 17px; font-size: 15px; line-height: 20px; color: #545458; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{liveTxt}}</span>
+      <span aria-hidden="true" style="flex: 1 1 auto"></span>
       <button type="button" class="opt" onClick="{{openPrefs}}" aria-haspopup="dialog" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; padding: 4px 16px 24px; opacity: {{scInOp}}; transform: translateY({{scInY}}); transition: opacity .3s ease {{scInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{scInDelay}}">

@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=1"></script>
-<script src="i18n.js?v=13"></script>
+<script src="i18n.js?v=14"></script>
 <script src="live.js?v=23"></script>
 
 <title>Terrain map</title>
@@ -189,10 +189,11 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
-    <span style="position: absolute; z-index: 30; left: {{pinLab.l}}px; top: {{fire.top}}px; transform: translate(-50%, {{pinLab.ty}}); display: flex; flex-direction: column; align-items: center; gap: 2px; box-sizing: border-box; width: max-content; max-width: {{pinLab.w}}px; padding: 6px 12px; border-radius: 16px; background: rgba(255,255,255,0.82); border: 1px solid {{pinBd}}; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-align: center; pointer-events: none; transition: {{mv}}">
-      <span style="font-size: 15px; font-weight: 600">{{pinLabel}}</span>
-      <span style="font-size: 13px; color: #545458; font-variant-numeric: tabular-nums">{{pinCoords}}</span>
-    </span>
+    <!-- The pin's label is the map's title, above the legend, so nothing on the map sits under it -->
+    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; height: 54px; padding: 8px 16px; border-radius: 14px; background: rgba(242,242,247,0.94); border: 1px solid {{pinBd}}; box-shadow: 0 2px 10px rgba(0,0,0,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+      <span style="font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pinLabel}}</span>
+      <span style="font-size: 13px; line-height: 16px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pinCoords}}</span>
+    </div>
   </sc-if>
 
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
@@ -728,15 +729,24 @@ class Component extends DCLogic {
   }
   base() {
     const p = this.props, F = this.fit() || this.pinFit();
-    let s0 = F ? F.s : (Number(p.zoom) || 1.1); const fx = F ? F.x : (Number(p.focusX) || 600), fy = F ? F.y : (Number(p.focusY) || 330);
-    const NS = this.nearSt()[0];
-    if (NS) { const w1 = this.win(), dx = Math.abs(NS.x - fx), dy = Math.abs(NS.y - fy);   // the closest station stays in view
-      s0 = Math.min(s0, dx > 0 ? (w1.cw / 2 - 56) / dx : s0, dy > 0 ? (w1.h / 2 - (NS.y < fy ? 100 : 56)) / dy : s0); }   // more room at the top: the legend row sits there
-    const w0 = this.win(), key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c + ',' + w0.l + ',' + w0.r + ',' + this.W() + ',' + this.H();
+    let s0 = F ? F.s : (Number(p.zoom) || 1.1); let fx = F ? F.x : (Number(p.focusX) || 600), fy = F ? F.y : (Number(p.focusY) || 330);
+    // The pin (or fire) and every recommended station fit in the clear part of the map: below the title (pin) and the
+    // legend row, above the map credit, with room for the distance labels.
+    let spanC = null;
+    const NSs = this.nearSt();
+    if (NSs.length) {
+      const w1 = this.win(), top = w1.t + (p.mode === 'pin' ? 62 : 0) + 84, bot = w1.b - 68, left = w1.l + 56, right = this.W() - w1.r - 84;   // clear of the legend, the map credit and the full-screen button
+      const xs = [fx].concat(NSs.map((q) => q.x)), ys = [fy].concat(NSs.map((q) => q.y));
+      const x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+      const sw = Math.max(40, right - left), sh = Math.max(40, bot - top);
+      s0 = Math.min(s0, x1 > x0 ? sw / (x1 - x0) : s0, y1 > y0 ? sh / (y1 - y0) : s0);
+      fx = (x0 + x1) / 2; fy = (y0 + y1) / 2; spanC = (top + bot) / 2;
+    }
+    const w0 = this.win(), key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c + ',' + spanC + ',' + w0.l + ',' + w0.r + ',' + this.W() + ',' + this.H();
     if (this._bk !== key) {
       const w = w0;
       this._bk = key;
-      const wc = F && F.fw ? this.fitWin().c : w.c;
+      const wc = spanC != null ? spanC : (F && F.fw ? this.fitWin().c : w.c);
       this._b = { cx: fx + ((w.r - w.l) / 2) / s0, cy: fy + (this.H() / 2 - wc) / s0, s: s0 };
     }
     return this._b;
@@ -818,7 +828,10 @@ class Component extends DCLogic {
     if (d.geo !== G) { d.geo = G; d.pts = d.rows.map((r) => { const xy = G.P(r[2], r[3]); return [xy[0], xy[1]]; }); }
     return d;
   }
-  // On a fire or candidate: the nearest stations (straight line, within 40 km) - the ones that could respond or support.
+  // On a fire or candidate: the recommended stations - the ones that could reach it in an ideal first attack:
+  // up to three within 10 km in a straight line (about 14 km by road, some 15 minutes); when none is that close,
+  // only the nearest one within 40 km. Stations too far to make a difference are left off the map.
+  recMode() { const p = this.props; return !!(this.stationFile() && p.stationsSt && (p.mode === 'pin' || (p.fireX != null && p.fireX !== ''))); }
   nearSt() {
     const p = this.props, SF = this.stationFile(); if (!SF || !p.stationsSt) return [];
     const FOC = p.mode === 'pin' ? [Number(p.pinX), Number(p.pinY)] : (p.fireX != null && p.fireX !== '' ? [Number(p.fireX), Number(p.fireY)] : null);
@@ -826,7 +839,8 @@ class Component extends DCLogic {
     const key = FOC.join(',') + '|' + SF.rows.length; if (this._nsK === key) return this._ns;
     const la0 = 34.19 - (FOC[1] - 662) / 2829, lo0 = (FOC[0] - 518) / 2345 - 118.13, kx = 111.32 * Math.cos(la0 * Math.PI / 180), d = [];
     for (let i = 0; i < SF.rows.length; i++) { const r = SF.rows[i]; if (Math.abs(r[2] - la0) > 0.4 || Math.abs(r[3] - lo0) > 0.6) continue; const km = Math.hypot((r[2] - la0) * 111.32, (r[3] - lo0) * kx); if (km <= 40) d.push({ i, km, x: SF.pts[i][0], y: SF.pts[i][1], fx: FOC[0], fy: FOC[1] }); }
-    this._nsK = key; this._ns = d.sort((a, b) => a.km - b.km).slice(0, 3); return this._ns;
+    d.sort((a, b) => a.km - b.km); const close = d.filter((q) => q.km <= 10);
+    this._nsK = key; this._ns = close.length ? close.slice(0, 3) : d.slice(0, 1); return this._ns;
   }
   // Fetch real fire stations (OpenStreetMap, via Overpass) for the selected area once; returns its cache key.
   osmStations() {
@@ -868,7 +882,7 @@ class Component extends DCLogic {
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
       ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
-      ['stations', 'Fire stations', 'M2.5 2.5H11.5V11.5H2.5Z', '#1E7A34', '#FFFFFF']
+      ['stations', this.recMode() ? 'Recommended stations' : 'Fire stations', 'M2.5 2.5H11.5V11.5H2.5Z', '#1E7A34', '#FFFFFF']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
@@ -961,10 +975,10 @@ class Component extends DCLogic {
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
       const SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], 34, s);   // fixed per zoom step: no popping while panning
-      // On a fire or candidate: the nearest stations (straight line, within 40 km) are the ones that could respond or
-      // support. They always show, labelled with their distance; who is actually committed is not published.
-      const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km]));
-      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((SK.has(i) || NEAR.has(i)) && vis(q[0], q[1])) V.push(i); }
+      // On a fire or candidate only the recommended stations show (see nearSt), labelled with their distance;
+      // who is actually committed is not published.
+      const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km])), onlyRec = this.recMode();
+      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((onlyRec ? NEAR.has(i) : (SK.has(i) || NEAR.has(i))) && vis(q[0], q[1])) V.push(i); }
       const k = Math.max(1, Math.ceil(V.length / 300));
       const out = [];
       for (let j = 0; j < V.length; j++) { if (j % k && !NEAR.has(V[j])) continue;
@@ -1183,7 +1197,8 @@ class Component extends DCLogic {
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
-        return { legend, legOn: legend.length > 0, legTop: Math.round(Math.max(52, this.win().t) + 8 + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 14 + (Number(p.legendOffset) || 0)),
+        const TT = p.mode === 'pin' ? 62 : 0;   // the pin's title sits above the legend
+        return { legend, legOn: legend.length > 0, ttlOp: 1, ttlTop: Math.round(Math.max(52, this.win().t) + 14), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 14 + TT + (Number(p.legendOffset) || 0)),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;

@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=1"></script>
-<script src="i18n.js?v=13"></script>
+<script src="i18n.js?v=14"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -620,7 +620,9 @@ class Component extends DCLogic {
         try { this.forceUpdate(); } catch (e) {}
       }).catch(() => { setTimeout(() => { F[key] = false; }, 60000); });
     }
-    const L = S[key] || [];
+    // Recommended stations, as on the maps: up to three within 10 km in a straight line (an ideal first attack,
+    // some 15 minutes by road); when none is that close, only the nearest one.
+    const L0 = S[key] || [], L = L0.filter((q) => q.km <= 10).slice(0, 3).length ? L0.filter((q) => q.km <= 10).slice(0, 3) : L0.slice(0, 1);
     const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
     return { du: US ? ' mi' : ' km', rows: L.map((q, i) => {
       const xy = P(q.la, q.lo), drive = Math.max(1, Math.round(q.km * 1.35 / 50 * 60));   // road ≈ 1.35 × straight line, 50 km/h average
@@ -856,7 +858,7 @@ class Component extends DCLogic {
     // Group titles, so it is clear what each block is: the fire itself, what is on scene, and stations nearby
     // (only the nearest by distance; which corporations actually sent crews is not published).
     if (RO) {
-      const HD = { fire: ['This fire', ''], res: ['On scene', fres && fres.src ? 'Reported by ' + fres.src : ''], st: ['Nearest fire stations', 'Not necessarily on this fire · which stations sent crews is not published'] };
+      const HD = { fire: ['This fire', ''], res: ['On scene', fres && fres.src ? 'Reported by ' + fres.src : ''], st: ['Recommended stations', 'Within an ideal first attack · which stations sent crews is not published'] };
       const out = []; let g0 = null;
       const ord = { fire: 0, res: 1, st: 2 }; deployed.sort((a, b) => (ord[a.g] ?? 1) - (ord[b.g] ?? 1) || (b.tl ? 1 : 0) - (a.tl ? 1 : 0));
       deployed.forEach((d) => { if (d.g !== g0) { g0 = d.g; out.push({ head: true, item: false, title: HD[g0][0], note: HD[g0][1], noteD: HD[g0][1] ? 'block' : 'none' }); } out.push(d); });
