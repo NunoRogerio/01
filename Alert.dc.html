@@ -762,7 +762,7 @@ class Component extends DCLogic {
       mapIgn: SC.cands.map((c) => ({ id: c.id, x: c.x, y: c.y, place: c.place, conf: c.conf, src: c.src })),
       mapFires: SC.fires,
       cycleTo: (id) => this.setState({ focusId: id, confirm: false }),
-      mapW: 390, mapH: 844, fsW: 390, fsH: 844, zero: 0, attr: s.full && tab.isMap ? 96 : 92, no: false, yes: true,
+      mapW: 390, mapH: 844, fsW: 390, fsH: 844, zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
       full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && !!tab.isMap,
       toggleFull: () => this.setState({ full: !s.full }),
       figBg: tab.isMap ? 'transparent' : '#1C1C1E', figPE: tab.isMap ? 'none' : 'auto',

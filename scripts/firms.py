@@ -199,6 +199,10 @@ def main():
                     c.update(lat=lat, lon=lon, score=score, frp=frp, sat=r.get('satellite', ''))
                 c['t'] = max(c['t'], t)
     print(len(cells), 'hotspot clusters', flush=True)
+    if not cells:
+        # FIRMS answered with nothing (outage, rate limit or bad key): keep the last good file instead of blanking the app
+        print('::warning::FIRMS returned no hotspots - keeping the previous data/hotspots.json', flush=True)
+        return
 
     grid = places()
     sat_name = {'N': 'VIIRS S-NPP', 'N20': 'VIIRS NOAA-20', '1': 'VIIRS NOAA-20', 'N21': 'VIIRS NOAA-21', '2': 'VIIRS NOAA-21'}

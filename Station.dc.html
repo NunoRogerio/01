@@ -170,7 +170,7 @@ class Component extends DCLogic {
     return {
       none: false, some: true, hasMap: true, back, zero: 0, noList: [], pinId: 'station-' + S.id,
       mapFires: live.map((r) => ({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], res: r[7], ha: r[8], info: r[9] })),
-      mapW: 390, mapH: 844, clipT: 112, clipB: 482, ctrlTop: 120, zoom: 0.9, attr: 486,
+      mapW: 390, mapH: 844, clipT: 112, clipB: 482, ctrlTop: 120, zoom: 0.9, attr: 28,
       st: { title: name, name, operator: op || 'Fire station', coords, x: S.x, y: S.y, chips, hasPhone: !!phone, tel: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '',
         dir: 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, dirBg: phone ? 'rgba(0,113,227,0.12)' : '#0071E3', dirFg: phone ? '#0071E3' : '#FFFFFF',
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
