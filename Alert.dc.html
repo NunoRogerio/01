@@ -168,19 +168,18 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div style="position: relative; z-index: 6; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="display: {{panelD}}; position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
-  <header class="fade" style="display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 12px 12px">
+  <span aria-hidden="true" style="display: {{panelD}}; position: absolute; left: 0; right: 0; top: -56px; height: 133px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
+  <!-- Top blade: with other candidates to switch to, a grabber at its bottom edge says it expands -->
+  <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 8px 12px">
+    <span aria-hidden="true" style="display: {{grabD}}; position: absolute; left: 50%; bottom: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3); opacity: {{grabOp}}; transition: opacity .3s ease; pointer-events: none"></span>
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Ignition candidates</h1>
       <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onPointerDown="{{navBack}}" onClick="{{navBack}}" aria-label="Back to incidents" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: {{backC}}; text-decoration: none">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
       </a>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
-        <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
+        <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
           <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
             <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{curRow.place}}</span>
-            <sc-if value="{{multi}}" hint-placeholder-val="{{ true }}">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ddRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
-            </sc-if>
           </span>
           <span style="max-width: 100%; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{curRow.sub}}</span>
         </button>
@@ -192,7 +191,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div class="scrim" onClick="{{ddClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 5; background: rgba(0,0,0,0.32); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: {{ddOp}}; pointer-events: {{ddPE}}"></div>
-  <div class="wf-snap" role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: 100px; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 36px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
+  <div class="wf-snap" role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: 100px; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 41px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
     <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
       <span></span>
       <span style="text-align: center">AI<br>confidence</span>
@@ -758,7 +757,7 @@ class Component extends DCLogic {
         const dd = !!s.dd && n > 1;
         const others = active.map((c, i) => ({ c, i })).filter((o) => o.i !== ci);
         return {
-          multi: n > 1, hdrBd: n > 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
+          multi: n > 1, grabD: n > 1 ? 'block' : 'none', hdrBd: n > 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
           curRow: { place: cur.place, sub: (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
             aria: cur.place + ', ' + cur.conf + ' percent. ' + (n > 1 ? (ci + 1) + ' of ' + n + '. Show other candidates' : '') },
           ddRows: (dd ? others.slice(0, 80) : []).map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
@@ -766,7 +765,7 @@ class Component extends DCLogic {
             pick: () => this.setState({ ci: o.i, focusId: null, tab: null, dd: false, confirm: false, full: false }) })),
           hDd: this.wfHandle('dd', 'up', () => this.setState({ dd: false })), ddDy: this.wfDrag('dd').y, ddDyT: this.wfDrag('dd').t,
           ddToggle: () => { if (n > 1) this.setState({ dd: !s.dd }); }, ddClose: () => this.setState({ dd: false }),
-          ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', ddOp: 0, ddClip: dd ? 'inset(0px 0px 0px 0px)' : 'inset(0px 0px 100% 0px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
+          ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', grabOp: dd ? 0 : 1, ddOp: 0, ddClip: dd ? 'inset(0px 0px 0px 0px)' : 'inset(0px 0px 100% 0px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
         };
       })(),
       headerSub: n > 0 ? (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + ' · ' + (ci + 1) + ' of ' + n : 'Nothing to review',
@@ -793,7 +792,7 @@ class Component extends DCLogic {
       full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && !!tab.isMap,
       toggleFull: () => this.setState({ full: !s.full }),
       figBg: tab.isMap ? 'transparent' : '#1C1C1E', figPE: tab.isMap ? 'none' : 'auto',
-      clipT: s.full && tab.isMap ? 0 : 128, clipBleed: s.full && tab.isMap ? 0 : 40, clipB: s.full && tab.isMap ? 0 : 468, ctrlTop: 238,
+      clipT: s.full && tab.isMap ? 0 : 133, clipBleed: s.full && tab.isMap ? 0 : 40, clipB: s.full && tab.isMap ? 0 : 468, ctrlTop: 238,
       topY: s.full && tab.isMap ? '-200px' : '0px', topOp: s.full && tab.isMap ? 0 : 1, topPE: s.full && tab.isMap ? 'none' : 'auto',
       downY: s.full && tab.isMap ? '480px' : '0px', navY: s.full && tab.isMap ? '140px' : '0px', downOp: s.full && tab.isMap ? 0 : 1,
       segY: s.full && tab.isMap ? '428px' : '0px', fs: { top: fsTop, h: fsH }, fsBox: boxFor(tab, 390, fsH, false, fsTop),

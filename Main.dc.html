@@ -180,15 +180,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: absolute; left: {{colL}}px; top: 0; width: {{colW}}px; height: {{vh}}px; z-index: 2; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 56px; pointer-events: none">
 
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
-  <header class="fade" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px">
+  <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 133px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
+  <!-- Top blade: a grabber at its bottom edge says it expands -->
+  <header class="fade" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
-    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
         <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
       </span>
-      <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
+      <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
+      <span aria-hidden="true" style="position: absolute; left: 50%; bottom: 0; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span>
     </button>
     <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.08); color: #1E7A34; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
       <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
@@ -222,13 +223,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #0062CC; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
       </div>
     </div>
-    <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barH}}px; padding: 12px 12px 0 12px; flex-shrink: 0">
-      <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <!-- Collapsed bottom blade: a grabber at the top says it expands; 30px under the text to the screen edge -->
+    <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barH}}px; padding: 0 12px; flex-shrink: 0">
+      <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 23px 8px 4px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+        <span aria-hidden="true" style="position: absolute; left: 50%; top: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3); opacity: {{barGrabOp}}; transition: opacity .3s ease"></span>
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
           <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px; color: {{barC}}">{{barTitle}}</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{barRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
-        <span style="font-size: 15px; color: #545458; white-space: nowrap">{{barSub}}</span>
+        <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{barSub}}</span>
       </button>
     </div>
   </section>
@@ -244,7 +246,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="opt" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
           <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{scopeRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
         <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
       </button>
@@ -554,7 +555,7 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 84, scrimBg: side ? 'transparent' : 'rgba(0,0,0,0.32)', scrimBlur: side ? 'none' : 'blur(3px)' };
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 99, scrimBg: side ? 'transparent' : 'rgba(0,0,0,0.32)', scrimBlur: side ? 'none' : 'blur(3px)' };
   }
   renderVals() {
     const L = this.wfLayout();
@@ -695,14 +696,14 @@ class Component extends DCLogic {
       stackAria: N + ' ignition candidates and ' + NF + ' active fires, ' + (N + NF) + ' incidents in total. Show all', topPick: focus(top.id),
       openList: () => { this.wfListFlag(false); this.setState({ list: true }); }, closeList: () => { this.wfListFlag(false); this.setState({ list: false }); }, navHome: () => { this.wfListFlag(false); this.setState({ list: false, scOpen: false }); },
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
-      listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg',
+      listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg', barGrabOp: listOpen ? 0 : 1,
       toggleList: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.wfListFlag(false); this.setState({ list: !listOpen }); },
       barTitle: (N === 0 ? 'No' : N) + ' Ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#1E7A34' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' active fire' + (NF === 1 ? '' : 's'),
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
-      ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : 90,
+      ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,
       full: !!s.full, toggleFull: () => this.setState({ full: !s.full, list: false }),
-      padB: s.full || L.side ? 40 : 92, clipT: s.full ? 0 : (L.side ? 52 : 128), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : 186, ctrlTop: 422,
+      padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : 133), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : 191, ctrlTop: 422,
       clipL: L.side && !s.full ? L.colL + L.colW : L.sl, clipR: L.sr,
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: s.full ? '200px' : '0px', downOp: s.full ? 0 : 1,
     };
