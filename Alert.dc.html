@@ -275,16 +275,18 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; margin-top: -28px; background: #F2F2F7; border-radius: 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
-      <!-- Title first (what the satellite saw), then the likelihood as a KPI like the fire screen's: number over its word, centred -->
-      <span style="display: flex; flex-direction: column; gap: 2px">
-        <h2 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
-        <span id="ai" style="display: inline-flex; align-items: center; gap: 4px; font-size: 15px; line-height: 19px; color: #545458"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>AI validation</span>
+      <!-- Title on the left, the likelihood KPI at the top right (number over its word, centred) -->
+      <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
+        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+          <h2 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
+          <span id="ai" style="display: inline-flex; align-items: center; gap: 4px; font-size: 15px; line-height: 19px; color: #545458"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>AI validation</span>
+        </span>
+        <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0">
+          <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
+          <span style="font-size: 15px; line-height: 19px; color: #545458">likelihood</span>
+        </span>
       </span>
-      <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 8px">
-        <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
-        <span style="font-size: 15px; line-height: 19px; color: #545458">likelihood</span>
-      </span>
-      <span style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 8px; font-size: 15px; color: #545458">
+      <span style="display: flex; align-items: center; gap: 16px; margin-top: 8px; font-size: 15px; color: #545458">
         <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
         <span style="display: flex; align-items: center; gap: 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5Z"></path><path d="m2 13 10 5 10-5"></path></svg>{{cur.agree}}</span>
       </span>
@@ -292,7 +294,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <section class="rise" aria-label="Evidence" style="padding: 16px 16px 0; animation-delay: 220ms">
       <h2 style="margin: 0 0 8px 4px; font-size: 15px; font-weight: 600; color: #545458">Evidence</h2>
-      <ul class="wf-snap" style="display: flex; flex-direction: column; height: 128px; margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; list-style: none; border-radius: 14px; background: #FFFFFF">
+      <ul class="wf-snap" style="display: flex; flex-direction: column; height: 204px; margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; list-style: none; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
           <li style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 12px 16px; border-top: {{r.sep}}; font-size: 17px; line-height: 22px; color: {{r.color}}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="{{r.icon}}"></path></svg>{{r.t}}
