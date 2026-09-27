@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=2"></script>
-<script src="i18n.js?v=15"></script>
+<script src="i18n.js?v=16"></script>
 <script src="live.js?v=23"></script>
 
 <title>Terrain map</title>
@@ -734,7 +734,7 @@ class Component extends DCLogic {
     // legend row, above the map credit, with room for the distance labels.
     let spanC = null;
     const NSs = this.nearSt();
-    if (NSs.length) {
+    if (NSs.length && p.mode === 'pin') {   // fire maps frame the perimeter and projection instead (set by the screen)
       const w1 = this.win(), top = w1.t + (p.mode === 'pin' ? 62 : 0) + 84, bot = w1.b - 68, left = w1.l + 56, right = this.W() - w1.r - 84;   // clear of the legend, the map credit and the full-screen button
       const xs = [fx].concat(NSs.map((q) => q.x)), ys = [fy].concat(NSs.map((q) => q.y));
       const x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
@@ -969,7 +969,7 @@ class Component extends DCLogic {
         fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#1E7A34',
         op: (!isRisk && busy) ? 0.5 : 1
       });
-      return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch; dotted line shows the route.' : '.'));
+      return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch.' : '.'));
     }).filter((o) => !isPin).filter(onScreen);
     const SF = this.stationFile();
     const fileStations = SF ? (() => {
@@ -1005,7 +1005,7 @@ class Component extends DCLogic {
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
     const FX = Number(p.fireX) || 610, FY = Number(p.fireY) || 290;
     const qx = (selSt[2] + FX) / 2 + (selSt[3] - FY) * 0.18, qy = (selSt[3] + FY) / 2 - (selSt[2] - FX) * 0.18;
-    const route = Math.hypot(FX - 610, FY - 290) > 1500 ? '' : 'M' + selSt[2] + ' ' + (selSt[3] - 10) + ' Q' + qx.toFixed(0) + ' ' + qy.toFixed(0) + ' ' + FX + ' ' + FY;
+    const route = '';   // no drawn route: the real road path from the station is not known
     const strikes = isRisk && on(p.lightning)
       ? [[640, 236], [704, 300], [578, 334], [732, 262], [182, 862], [668, 190], [858, 236], [826, 268]].map(([x, y], i) => withTip(at(x, y), 'Lightning strike', 'Detected at ' + ['11:40 AM', '12:05 PM', '12:18 PM', '12:31 PM', '1:02 PM', '1:15 PM', '11:40 AM', '11:52 AM'][i] + ' by the lightning network. Strikes can smoulder for hours.')).filter(onScreen) : [];
     const sensors = isRisk && on(p.moisture)

@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=2"></script>
-<script src="i18n.js?v=15"></script>
+<script src="i18n.js?v=16"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -219,43 +219,42 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <p style="margin: 10px 0 0; font-size: 14px; line-height: 16px; color: #545458">{{res.foot}}</p>
   </section>
   </sc-if>
-  <p style="margin: 14px 20px 0; font-size: 14px; line-height: 18px; color: #545458">Simulated projection</p>
-  <section class="rise" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: 10px 20px 0; animation-delay: 160ms">
+  <section class="rise" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: 16px 20px 0; animation-delay: 160ms">
     <div style="display: flex; flex-direction: column; gap: 10px">
-      <span class="lbl">Spread in {{hzNum}} h</span>
+      <span class="lbl" style="white-space: nowrap">{{spreadLbl}}</span>
       <button type="button" class="unitbtn" onClick="{{toggleArea}}" aria-label="{{areaAria}}"><span class="kpi" style="display: block; white-space: nowrap">{{areaV}}<small> {{areaU}}</small></span></button>
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px; padding-left: 16px; border-left: 1px solid rgba(60,60,67,0.14)">
-      <span class="lbl">Alarm to fire line</span>
+      <span class="lbl">Time to fire line</span>
       <span class="kpi" style="color: #A34800; white-space: nowrap">{{sel.eta}}<small> min · {{sel.at}}</small></span>
     </div>
   </section>
 
   <div class="rise" style="padding: 14px 16px 0; animation-delay: 240ms">
-    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43">1 · Select station</span>
-    <button type="button" class="prep" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{stationAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 1.5px solid rgba(0,113,227,0.28); border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43">Select station</span>
+    <button type="button" class="prep" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{stationAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
         <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
       </span>
-      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #0071E3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
+      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
       <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
     </button>
   </div>
 
   <div class="rise" style="padding: 18px 16px 0; animation-delay: 330ms">
-    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43">2 · Configure dispatch</span>
-    <button type="button" class="prep" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{cfgAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 1.5px solid rgba(0,113,227,0.28); border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43">Configure dispatch</span>
+    <button type="button" class="prep" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{cfgAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Forces · {{unitTotal}} units</span>
         <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
       </span>
-      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #0071E3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
+      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
       <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
     </button>
   </div>
 
   <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding: 12px 16px 40px; animation-delay: 360ms">
     <button type="button" class="btn primary green" onClick="{{sendAll}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
-      <span style="flex-grow: 1; text-align: left">Dispatch {{unitTotal}} units · {{sel.codes}}</span>
+      <span style="flex-grow: 1; text-align: left">Send dispatch</span>
       <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </span>
@@ -266,17 +265,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="scrim" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{scrimOp}}; pointer-events: {{scrimPE}}"></div>
   <section role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="{{stHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 28px; background: #F2F2F7; clip-path: {{stClip}}; -webkit-clip-path: {{stClip}}; visibility: {{stVis}}; pointer-events: {{stPE}}; translate: 0 {{stDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{stVisDelay}}, translate {{stDyT}} ease">
     <h2 id="sheetTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Choose a station</h2>
-    <div style="flex-shrink: 0; padding-top: 8px; transform: translateY({{stRepY}}); transition: transform .55s cubic-bezier(.2,.8,.2,1)">
-        <button type="button" class="sqrow sqtop" onClick="{{closeSheet}}" aria-label="Close station list" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
-            <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
-          </span>
-          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
-        </button>
-    </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{stInOp}}; transform: translateY({{stInY}}); transition: opacity .3s ease {{stInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{stInDelay}}">
-    <p style="margin: 0 16px 14px 40px; font-size: 15px; line-height: 16px; color: #545458">Ranked by time to the fire line. Select one or more stations. {{need}} crews needed for +{{hzNum}}h · {{crewsSel}} selected.</p>
+    <p style="margin: 8px 16px 16px 40px; font-size: 15px; line-height: 20px; color: #545458">Choose one or more · sorted by time to the fire line</p>
     <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
       <span></span><span style="text-align: center">Time to<br>fire line</span><span></span>
     </div>
@@ -385,9 +375,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{cfInOp}}; transform: translateY({{cfInY}}); transition: opacity .3s ease {{cfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{cfInDelay}}">
-    <p style="margin: 0 16px 14px 40px; font-size: 15px; line-height: 16px; color: #545458">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="#248A3D" aria-hidden="true" style="vertical-align: -1px; margin-right: 6px"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg><span style="color: #1E7A34">Suggested</span> for +{{hzNum}}h: {{recSummary}}
-    </p>
     <div role="group" aria-label="Available forces" style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(60,60,67,0.14)">
       <sc-for list="{{units}}" as="u" hint-placeholder-count="3">
         <div class="sqrow" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 12px; min-height: 60px; padding: 10px 16px 10px 40px; box-sizing: border-box">
@@ -599,32 +586,29 @@ class Component extends DCLogic {
   wfUnits() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ temp: 'F', area: 'ac' }, v || {}); }
   wfToggleUnit(k) { const u = this.wfUnits(); if (k === 'temp') u.temp = u.temp === 'F' ? 'C' : 'F'; else u.area = u.area === 'ac' ? 'ha' : 'ac'; window.__wfMem = Object.assign(window.__wfMem || {}, { units: u }); try { window.sessionStorage.setItem('wf-units', JSON.stringify(u)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} this.forceUpdate(); }
   wfSetFocus(id) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: id }); try { window.sessionStorage.setItem('wf-focus', id); } catch (e) {} }
-  // Real fire stations nearest to a live fire (OpenStreetMap via Overpass), with real distances and estimated drive times.
-  wfNearRows(fv, FIRE, US) {
-    const none = { rows: [], du: ' mi' };
-    if (!window.__wfLiveMap || !fv) return none;
-    const lat = 34.19 - (FIRE[1] - 662) / 2829, lon = (FIRE[0] - 518) / 2345 - 118.13;
-    const key = lat.toFixed(2) + ',' + lon.toFixed(2);
-    const S = window.__wfNear || (window.__wfNear = {}), F = window.__wfNearF || (window.__wfNearF = {});
-    if (!S[key] && !F[key]) {
-      F[key] = true;
-      const c = lat.toFixed(4) + ',' + lon.toFixed(4);
-      const q = '[out:json][timeout:25];(node["amenity"="fire_station"](around:40000,' + c + ');way["amenity"="fire_station"](around:40000,' + c + '););out center 200;';
-      fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(q)).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((js) => {
-        const rad = Math.PI / 180;
-        S[key] = (js.elements || []).map((e) => {
-          const la = e.lat ?? (e.center || {}).lat, lo = e.lon ?? (e.center || {}).lon; if (la == null) return null;
-          const a = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((lo - lon) * rad / 2) ** 2;
-          return { osm: e.id, name: (e.tags || {}).name || 'Fire station', la, lo, km: 12742 * Math.asin(Math.sqrt(a)) };
-        }).filter(Boolean).sort((a, b) => a.km - b.km).slice(0, 8);
-        try { this.forceUpdate(); } catch (e) {}
-      }).catch(() => { setTimeout(() => { F[key] = false; }, 60000); });
+  // Recommended fire stations for a live fire, as on the maps: up to three within 10 km in a straight line (an ideal
+  // first attack, some 15 minutes by road); when none is that close, only the nearest one. Stations come from the
+  // weekly OpenStreetMap snapshot of the fire's country (the same file the map uses), with estimated drive times.
+  wfNearRows(fv, FIRE, US, st) {
+    const du = US ? ' mi' : ' km';
+    if (!window.__wfLiveMap) return { rows: [], du, live: false };
+    const lat = 34.19 - (FIRE[1] - 662) / 2829, lon = (FIRE[0] - 518) / 2345 - 118.13, rad = Math.PI / 180;
+    const cc = st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : null;
+    const D = window.__wfStFile || (window.__wfStFile = {}), F = window.__wfStFileGet || (window.__wfStFileGet = {});
+    if (cc && !D[cc] && !F[cc]) {
+      F[cc] = true;
+      fetch('data/stations-' + cc + '.json').then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then((js) => { D[cc] = { rows: js.s || [], geo: null, pts: null }; try { this.forceUpdate(); } catch (e) {} })
+        .catch(() => { D[cc] = { rows: [], geo: null, pts: null }; try { this.forceUpdate(); } catch (e) {} });
     }
-    // Recommended stations, as on the maps: up to three within 10 km in a straight line (an ideal first attack,
-    // some 15 minutes by road); when none is that close, only the nearest one.
-    const L0 = S[key] || [], L = L0.filter((q) => q.km <= 10).slice(0, 3).length ? L0.filter((q) => q.km <= 10).slice(0, 3) : L0.slice(0, 1);
+    const file = cc ? D[cc] : null;
+    if (!file) return { rows: [], du, live: true, loading: true };
+    const hav = (la, lo) => { const a = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((lo - lon) * rad / 2) ** 2; return 12742 * Math.asin(Math.sqrt(a)); };
+    const box = file.rows.filter((r) => Math.abs(r[2] - lat) < 1 && Math.abs(r[3] - lon) < 1.5);
+    const all = (box.length ? box : file.rows).map((r) => ({ osm: r[0], name: r[4] || 'Fire station', la: r[2], lo: r[3], km: hav(r[2], r[3]) })).sort((a, b) => a.km - b.km);
+    const close = all.filter((q) => q.km <= 10).slice(0, 3), L = close.length ? close : all.slice(0, 1);
     const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
-    return { du: US ? ' mi' : ' km', rows: L.map((q, i) => {
+    return { du, live: true, rows: L.map((q, i) => {
       const xy = P(q.la, q.lo), drive = Math.max(1, Math.round(q.km * 1.35 / 50 * 60));   // road ≈ 1.35 × straight line, 50 km/h average
       return { id: 'osm' + q.osm, code: 'S' + (i + 1), name: q.name, x: xy[0], y: xy[1], km: +(US ? q.km * 0.621 : q.km).toFixed(1), free: null, total: null, t: [2, drive, 5], real: true };
     }) };
@@ -675,9 +659,11 @@ class Component extends DCLogic {
     const activeAria = 'Active for ' + actD + ' day' + (actD === 1 ? '' : 's') + ', ' + actH + ' hour' + (actH === 1 ? '' : 's') + ' and ' + actMm + ' minute' + (actMm === 1 ? '' : 's');
     const SH = [FIRE[0] - 610, FIRE[1] - 290];
     const far = Math.hypot(SH[0], SH[1]) > 1500;
-    const NEAR = this.wfNearRows(fv, FIRE, !!(frow && /^[A-Z]{2}$/.test(frow.st) && frow.st !== 'PT'));
+    // The fire's country: a live fire's own, or the candidate it was confirmed from, or the area on screen.
+    const stC = frow ? frow.st : (() => { const m = /Confirmed from (IC-[\d-]+)/.exec((fv && fv.note) || ''); const c = m && this.wfWorld().cands.find((q) => q.id === m[1]); return c ? c.st : fv ? ((this.wfScope && this.wfScope().st) || '') : 'CA'; })();   // no fire chosen: the design fire in Los Angeles
+    const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC);
     const DU = NEAR.du;
-    const data = (NEAR.rows.length ? NEAR.rows : [
+    const data = (NEAR.rows.length ? NEAR.rows : NEAR.live ? [{ id: 'none', code: '—', name: NEAR.loading ? 'Finding recommended stations…' : 'No fire station found nearby', x: FIRE[0], y: FIRE[1], km: 0, free: null, total: null, t: null, busy: NEAR.loading ? 'OpenStreetMap' : 'OpenStreetMap has none mapped near this fire', real: true }] : [
       { id: 'st7', code: 'ST-7', name: 'Sierra Madre', x: 674, y: 566, km: 2.5, free: 0, total: 3, t: null, busy: 'All crews on F-0924-01' },
       { id: 'st5', code: 'ST-5', name: 'Altadena', x: 518, y: 662, km: 3.7, free: 3, total: 4, t: [2, 9, 5] },
       { id: 'st2', code: 'ST-2', name: 'La Crescenta', x: 326, y: 590, km: 4.2, free: 2, total: 3, t: [2, 11, 5] },
@@ -685,7 +671,7 @@ class Component extends DCLogic {
       { id: 'st1', code: 'ST-1', name: 'Tujunga', x: 110, y: 542, km: 5.5, free: 4, total: 4, t: [3, 14, 6] }
     ]).map((d) => ({ ...d, eta: d.t ? d.t[0] + d.t[1] + d.t[2] : null }));
     const avail = data.filter((d) => d.eta !== null && (d.free == null || d.free >= need)).sort((a, b) => a.eta - b.eta);
-    const rec = avail[0] || data.filter((d) => d.eta !== null).sort((a, b) => a.eta - b.eta)[0];
+    const rec = avail[0] || data.filter((d) => d.eta !== null).sort((a, b) => a.eta - b.eta)[0] || data[0];
     const selIds = (Array.isArray(s.stations) && s.stations.length ? s.stations : (s.station ? [s.station] : [rec.id])).filter((id) => data.some((d) => d.id === id && d.eta !== null));
     const chosenList = data.filter((d) => selIds.indexOf(d.id) >= 0 && d.eta !== null).sort((a, b) => a.eta - b.eta);
     if (!chosenList.length) chosenList.push(rec);
@@ -693,9 +679,9 @@ class Component extends DCLogic {
     const multi = chosenList.length > 1;
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
-    const subOf = (d) => d.real ? d.km + DU + ' · est. ' + d.eta + ' min · crew availability not published' : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
+    const subOf = (d) => d.id === 'none' ? d.busy : d.real ? d.km + DU + ' · est. ' + d.eta + ' min · crew availability not published' : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
     const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#7A5600' : '#545458');
-    const sum = chosen.eta;
+    const sum = chosen.eta, T = chosen.t || [0, 0, 0], sumD = sum || 1;
     const sel = {
       ...chosen,
       isRec: chosen.id === rec.id,
@@ -704,11 +690,11 @@ class Component extends DCLogic {
       title: multi ? 'Stations: ' + chosenList.map((d) => d.code).join(', ') : (chosen.real ? chosen.name : 'Station: ' + chosen.code + ' · ' + chosen.name),
       sub: multi ? (chosen.real ? chosenList.length + ' stations' : freeSel + ' free crews') + ' · first on the line in ' + (chosen.real ? 'est. ' : '') + chosen.eta + ' min' : (chosen.real ? (chosen.id === rec.id ? 'Closest station · ' : '') + subOf(chosen) : chosen.id === rec.id ? 'Closest with ' + need + ' free crews · ' + chosen.km + ' mi' : subOf(chosen)),
       subColor: multi ? (freeSel < need ? '#7A5600' : '#545458') : (chosen.id === rec.id ? '#545458' : colorOf(chosen)),
-      at: clock(sum),
-      t1: chosen.t[0], t2: chosen.t[1], t3: chosen.t[2],
-      p1: Math.round(chosen.t[0] / sum * 100), p2: Math.round(chosen.t[1] / sum * 100), p3: 100 - Math.round(chosen.t[0] / sum * 100) - Math.round(chosen.t[1] / sum * 100),
-      barLabel: 'Turnout ' + chosen.t[0] + ' min, drive ' + chosen.t[1] + ' min, deploy ' + chosen.t[2] + ' min',
-      mapLabel: chosen.code + ' · ' + sum + ' min'
+      at: sum != null ? clock(sum) : '—',
+      t1: T[0], t2: T[1], t3: T[2],
+      p1: Math.round(T[0] / sumD * 100), p2: Math.round(T[1] / sumD * 100), p3: 100 - Math.round(T[0] / sumD * 100) - Math.round(T[1] / sumD * 100),
+      barLabel: 'Turnout ' + T[0] + ' min, drive ' + T[1] + ' min, deploy ' + T[2] + ' min',
+      mapLabel: sum != null ? chosen.code + ' · ' + sum + ' min' : ''
     };
     const open = !!s.open;
     const measure = (e, fb) => { try { const el = e && e.currentTarget; const root = el && el.closest && el.closest('[data-wfroot]'); if (el && root) { const r = el.getBoundingClientRect(), R = root.getBoundingClientRect(); const k = R.height / 844 || 1; return { t: Math.round((r.top - R.top) / k), b: Math.round((r.bottom - R.top) / k) }; } } catch (x) {} return fb; };
@@ -716,7 +702,9 @@ class Component extends DCLogic {
     const cfg = !!s.cfg;
     const REC = { 1: [1, 2, 0, 0, 0, 0], 2: [2, 3, 1, 1, 0, 1], 3: [4, 5, 2, 2, 1, 2] }[hzK];
     const tenders = { st7: 0, st5: 3, st2: 2, st9: 2, st1: 3 };
-    const avail3 = [freeSel, chosenList.reduce((a, d) => a + tenders[d.id], 0) + 3, 2, 3, 1, 2];
+    // Real stations don't publish crews or engines, so their forces aren't capped by an invented availability.
+    const realSt = chosenList.some((d) => d.real);
+    const avail3 = realSt ? [99, 99, 99, 99, 99, 99] : [freeSel, chosenList.reduce((a, d) => a + (tenders[d.id] || 0), 0) + 3, 2, 3, 1, 2];
     const counts = (s.counts || REC).map((n, i) => Math.min(n, avail3[i]));
     const words = [['crew', 'crews'], ['tender', 'tenders'], ['helicopter', 'helicopters'], ['air tanker', 'air tankers'], ['jet tanker', 'jet tankers'], ['drone swarm', 'drone swarms']];
     const fmt = (c) => { const p = c.map((n, i) => n ? n + ' ' + words[i][n === 1 ? 0 : 1] : '').filter(Boolean); return p.length ? p.join(' · ') : 'No units selected'; };
@@ -914,15 +902,16 @@ class Component extends DCLogic {
     const AL = this.wfScoped().cands.length;
     return { bgTap: () => { this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} }, goHome: () => this._goHome(), _unused: () => { const t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { home: t, fromList: false }); try { window.sessionStorage.setItem('wf-home', String(t)); window.sessionStorage.setItem('wf-list', '0'); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} },
       navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
-      horizons, hzNum: hz, need, area: areas[hzK],
+      horizons, hzNum: hz, spreadLbl: 'Spread T+' + hzK, need, area: areas[hzK],
       ...(() => { const u = this.wfUnits(); const ac = Number(areas[hzK]); const v = u.area === 'ha' ? (ac * 0.4047 < 10 ? (ac * 0.4047).toFixed(1) : String(Math.round(ac * 0.4047))) : String(ac); const un = u.area === 'ha' ? 'ha' : 'acres'; return { areaV: v, areaU: un, areaAria: 'Spread area ' + v + ' ' + un + '. Switch to ' + (u.area === 'ha' ? 'acres' : 'hectares'), toggleArea: () => this.wfToggleUnit('area') }; })(), pkg: pkgs[hzK],
       segLeft: 3 + Math.max(0, HZS.indexOf(hz)) * 54, hzCols: 'repeat(' + HZS.length + ', 54px)', legOff: s.full ? 106 : 54, ctrlOff: s.full ? 52 : 0,
       sel, stations,
       view: (FMOD && FMOD.model && FMOD.model.snaps && FMOD.model.snaps[0]) ? (() => {
-        // Open centred on the fire, as close as the map goes (zoom 24 ≈ street level), framing the real perimeter when one is mapped.
+        // Open framing the fire's perimeter and its whole projected spread (the furthest horizon), so switching
+        // between Now / +1h / +2h / +3h never leaves the projection outside the map.
         const M = FMOD.model, P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
-        if (M.assumed) return { zoom: 24, fx: FIRE[0], fy: FIRE[1] };
-        const pts = M.snaps[0].ring.map((q) => P(q[0], q[1]));
+        const pts = [].concat.apply([], M.snaps.filter((q) => q && q.ring && q.ring.length).map((q) => q.ring.map((r) => P(r[0], r[1]))));
+        if (!pts.length) return { zoom: 24, fx: FIRE[0], fy: FIRE[1] };
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
         const z = Math.max(0.0015, Math.min(24, Math.min(330 / bw, 230 / bh) * 0.85));
         return { zoom: +z.toFixed(4), fx: Math.round((Math.max(...xs) + Math.min(...xs)) / 2), fy: Math.round((Math.max(...ys) + Math.min(...ys)) / 2) };
@@ -937,7 +926,7 @@ class Component extends DCLogic {
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
       pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : 'Active for ' + activeFor, pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
       hzShow: HELD ? 'none' : 'grid',
-      fireSt: frow && window.__wfLiveMap ? frow.st : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
+      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       stApply: () => this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
       k1C: BRF ? '#3A3A3C' : '#1E7A34', unitsTxt: BRF ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: HELD ? '#3A3A3C' : '#1E7A34', sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting this fire' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
