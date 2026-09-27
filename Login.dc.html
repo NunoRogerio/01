@@ -59,12 +59,13 @@ a{color:#007AFF}a:hover{color:#0062CC}
 
 
     <p style="display: {{offD}}; margin: 8px 16px 0; min-height: 36px; font-size: 15px; line-height: 18px; color: #6C6C70">{{hint}}</p>
-    <div style="display: {{goD}}; flex-direction: column; gap: 2px; margin: 12px 0 0; padding: 12px 16px; border-radius: 12px; background: #FFFFFF">
-      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">{{selOrg}}</span>
-      <span style="font-size: 17px; font-weight: 600; line-height: 20px">{{selName}}</span>
-      <span style="font-size: 15px; line-height: 18px; color: #3C3C43">{{selRole}}</span>
-      <span style="margin-top: 6px; font-size: 15px; line-height: 18px; color: #3C3C43">{{selSum}}</span>
-      <span style="margin-top: 6px; font-size: 14px; line-height: 16px; color: #6C6C70">{{selAccess}}</span>
+    <div style="display: {{goD}}; align-items: center; gap: 14px; margin: 12px 0 0; padding: 12px 16px; border-radius: 12px; background: #FFFFFF">
+      <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 17px; font-weight: 600; overflow: hidden">{{selCode}}<span style="position: absolute; inset: 0; background-image: {{selPhoto}}; background-size: cover; background-position: center"></span></span>
+      <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <span style="font-size: 18px; font-weight: 600; line-height: 22px">{{selName}}</span>
+        <span style="font-size: 15px; line-height: 19px; color: #3C3C43">{{selRole}}</span>
+        <span style="font-size: 14px; line-height: 18px; color: #6C6C70">{{selOrg}} · {{selAccess}}</span>
+      </span>
     </div>
 
     <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 50px; margin: 16px 0 0; border-radius: 12px; background: #0071E3; color: #FFFFFF; font-size: 19px; font-weight: 600; text-decoration: none">Log in</a>
@@ -84,15 +85,15 @@ a{color:#007AFF}a:hover{color:#0062CC}
     </div>
     <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 16px 32px">
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
-        <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="display: flex; align-items: flex-start; gap: 14px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
-          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 17px; font-weight: 600; letter-spacing: 0.02em">{{p.code}}</span>
+        <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; align-items: flex-start; gap: 14px; flex-shrink: 0; padding: 16px 12px 16px 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
+          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; flex-shrink: 0; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 19px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}}</span>
             <span style="font-size: 18px; line-height: 21px; color: #000000">{{p.role}}</span>
             <span style="font-size: 16px; line-height: 19px; color: #6C6C70">{{p.org}} · {{p.area}}</span>
             <span style="margin-top: 8px; font-size: 18px; line-height: 22px; color: #3C3C43">{{p.sum}}</span>
           </span>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 11px; opacity: {{p.tick}}"><path d="m5 12 5 5 9-10"></path></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; top: 14px; right: 12px; opacity: {{p.tick}}"><path d="m5 12 5 5 9-10"></path></svg>
         </button>
       </sc-for>
     </div>
@@ -105,16 +106,17 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state || {};
     // Demo personas: senior operational deciders, with each country's real command title.
-    // [id, initials, username, name, title, organisation, area, summary]
+    // [id, initials, username, name, title, organisation, area, summary, photo]
+    // Photos: Unsplash (free licence), stock models standing in for fictional personas; initials show if a photo can't load.
     const P = [
       ['pt', 'RC', 'rita.cardoso', 'Rita Cardoso', 'Comandante Nacional de Emergência e Proteção Civil', 'ANEPC · Comando Nacional', '20 districts',
-        'Leads the national wildfire command. Sets the national alert level, moves reinforcement groups and aerial means between districts, and decides when a fire goes to national command.'],
+        'Leads the national wildfire command. Sets the national alert level, moves reinforcement groups and aerial means between districts, and decides when a fire goes to national command.', 'https://images.unsplash.com/photo-1771254507173-e40b54571924?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
       ['ca', 'MR', 'marcus.reyes', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', '58 counties',
-        'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.'],
+        'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
       ['nv', 'DW', 'dana.whitfield', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', '17 counties',
-        'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.'],
+        'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
       ['admin', 'AM', 'alex.morgan', 'Alex Morgan', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
-        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.']
+        'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'https://images.unsplash.com/photo-1764084052708-c3c0611d89e7?w=240&h=240&fit=crop&crop=faces&auto=format&q=70']
     ];
     const sel = P.find((p) => p[0] === s.sel) || null;
     const open = !!s.open;
@@ -125,11 +127,11 @@ class Component extends DCLogic {
       userTxt: sel ? sel[2] : 'Choose a profile', userC: sel ? '#000000' : '#AEAEB2',
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
-      selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
-      selAccess: sel ? 'Access: ' + ({ admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only' })[sel[0]] + ' · ' + sel[6] : '',
+      selPhoto: sel && sel[8] ? 'url("' + sel[8] + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
+      selAccess: sel ? ({ admin: 'All countries', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only' })[sel[0]] : '',
       goD: sel ? 'flex' : 'none', offD: sel ? 'none' : 'flex',
-      profiles: P.map(([id, code, user, name, role, org, area, sum], i) => ({
-        code, user, name, role, org, area, sum,
+      profiles: P.map(([id, code, user, name, role, org, area, sum, photo], i) => ({
+        code, user, name, role, org, area, sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
         tick: s.sel === id ? 1 : 0, selStr: s.sel === id ? 'true' : 'false', ring: s.sel === id ? '#007AFF' : 'transparent',
