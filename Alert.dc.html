@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=18"></script>
+<script src="fit.js?v=19"></script>
 <script src="i18n.js?v=8"></script>
 <script src="live.js?v=22"></script>
 
@@ -25,7 +25,7 @@
 <helmet>
 <style>
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-a{color:#0079A6}a:hover{color:#006A91}
+a{color:#006A91}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes ping{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.8);opacity:0}}
@@ -125,7 +125,7 @@ a.card:hover .go{transform:translateX(4px)}
 
 /* iOS layer */
 body{background:#F2F2F7;color:#000}
-a{color:#007AFF}a:hover{color:#0062CC}
+a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
@@ -137,8 +137,8 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .primary.green{background:#248A3D}.primary.green:hover{background:#1F7F37}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
-.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#007AFF}
-.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#007AFF}
+.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
+.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#0062CC}
 .ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 2px 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
@@ -284,7 +284,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span id="ai" style="display: inline-flex; align-items: center; gap: 4px; font-size: 15px; color: #545458"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>AI validation</span>
       </span>
       <span style="display: flex; align-items: center; gap: 12px; font-size: 15px; color: #545458">
-        <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(204,153,0,0.12); color: #B37A00; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
+        <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
         <span style="display: flex; align-items: center; gap: 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5Z"></path><path d="m2 13 10 5 10-5"></path></svg>{{cur.agree}}</span>
       </span>
     </section>
@@ -337,7 +337,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
     <div class="pop" role="status" style="position: absolute; left: 50%; top: 132px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: rgba(255,255,255,0.94); border: 1px solid rgba(60,60,67,0.11); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 30px -10px rgba(0,0,0,0.176); white-space: nowrap; font-size: 15px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>{{toastText}}
-      <button type="button" class="btn" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #007AFF; font-size: 17px; font-weight: 600">Undo</button>
+      <button type="button" class="btn" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #0062CC; font-size: 17px; font-weight: 600">Undo</button>
     </div>
   </sc-if>
 
@@ -383,10 +383,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; padding: 10px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}})">
     <span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span>
     <h2 id="dzTitle" style="margin: 22px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
-    <p id="dzBody" style="margin: 8px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
+    <p id="dzBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
       <button type="button" class="btn ghost" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #248A3D; font-size: 17px; font-weight: 600">
+      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #1E7A34; font-size: 17px; font-weight: 600">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
       </a>
     </div>
@@ -655,7 +655,7 @@ class Component extends DCLogic {
         [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
         ['Not yet confirmed on the ground', false]];
       return { id: c.id, place: c.place, ll: L.ll || '', reg: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
-        agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y, zoom: 2.6, fsZoom: 2.6,
+        agree: c.agree, srcList: c.srcList, src: c.src, drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y + 12, zoom: 2.6, fsZoom: 2.6,   // pin sits a little above centre, leaving room for its label
         coords: 'Heat is inside the dashed circle · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
     };
     const STUB = { id: '', place: 'No ignition candidates', conf: 0, agree: '', srcList: '', src: '', x: 610, y: 290, live: { lat: 0, lon: 0, frp: 0, sat: '', t: '', n: 0 } };
@@ -780,7 +780,7 @@ class Component extends DCLogic {
       cur, tab, box: boxFor(tab, 390, 248, true, 0),
       tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#FFFFFF' : '#98989F', pick: () => this.setState({ tab: t.id }) })),
       nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
-      reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#B37A00', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
+      reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: cur.conf > 75 ? '#7A3FE0' : cur.conf >= 50 ? '#0A6FDB' : '#48484A', ringLabel: cur.conf + ' percent likelihood',
       pinLabel: n > 1 ? (ci + 1) + ' of ' + n + ' · ' + cur.place : 'Estimated ignition point',
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
@@ -801,7 +801,7 @@ class Component extends DCLogic {
       thumbs: cur.tabs.filter((t) => !t.isMap).map((t) => ({ ...t, isPanel: !t.isImg })),
       srcNote: cur.agree + ' · ' + cur.srcList,
       droneOnStr: droneOn ? 'true' : 'false', toggleDrone: () => this.setState({ droneToo: !droneOn }),
-      trackBg: droneOn ? '#248A3D' : 'rgba(120,120,128,0.16)', knobX: droneOn ? '20px' : '0px',
+      trackBg: droneOn ? '#1E7A34' : 'rgba(120,120,128,0.16)', knobX: droneOn ? '20px' : '0px',
       openDz: () => this.setState({ dz: true, dd: false }), closeDz: () => this.setState({ dz: false }),
       confirmDz: () => { if (this._dzDone) return; this._dzDone = true; const d = this.wfDismissed(); if (!d[cur.id]) { d[cur.id] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._dzDone = false; this.setState({ dz: false, ci: 0, focusId: null, tab: null, full: false }); }, 800); },
       dzY: dz ? '0%' : '105%', dzOp: dz ? 1 : 0, dzPE: dz ? 'auto' : 'none', dzHidden: dz ? 'false' : 'true',

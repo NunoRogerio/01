@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=18"></script>
+<script src="fit.js?v=19"></script>
 <script src="i18n.js?v=8"></script>
 <script src="live.js?v=22"></script>
 
@@ -26,7 +26,7 @@
 <helmet>
 <style>
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-a{color:#0079A6}a:hover{color:#006A91}
+a{color:#006A91}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes ping{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.8);opacity:0}}
@@ -132,11 +132,11 @@ a.card:hover .go{transform:translateX(4px)}
 @keyframes flapTop{from{transform:rotateX(0);filter:brightness(1)}to{transform:rotateX(-90deg);filter:brightness(.55)}}
 @keyframes flapBot{from{transform:rotateX(90deg);filter:brightness(.55)}to{transform:rotateX(0);filter:brightness(1)}}
 .flap.go{animation:flapGlow 2s ease .7s both}
-@keyframes flapGlow{0%,100%{box-shadow:inset 0 0 0 1px rgba(60,60,67,0.11)}25%,60%{box-shadow:inset 0 0 0 1px rgba(232,106,0,0.95),0 0 16px rgba(232,106,0,0.55);color:#C25700}}
+@keyframes flapGlow{0%,100%{box-shadow:inset 0 0 0 1px rgba(60,60,67,0.11)}25%,60%{box-shadow:inset 0 0 0 1px rgba(232,106,0,0.95),0 0 16px rgba(232,106,0,0.55);color:#A34800}}
 
 /* iOS layer */
 body{background:#F2F2F7;color:#000}
-a{color:#007AFF}a:hover{color:#0062CC}
+a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
@@ -148,8 +148,8 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .primary.green{background:#248A3D}.primary.green:hover{background:#1F7F37}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
-.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#007AFF}
-.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#007AFF}
+.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
+.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#0062CC}
 .ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 2px 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
@@ -190,7 +190,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
       <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
     </button>
-    <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
+    <span class="rise" style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.08); color: #1E7A34; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; animation-delay: 60ms">
       <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
     </span>
   </header>
@@ -219,7 +219,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
-        <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #007AFF; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
+        <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 12px; background: rgba(118,118,128,0.12); color: #0062CC; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
       </div>
     </div>
     <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barH}}px; padding: 12px 12px 0 12px; flex-shrink: 0">
@@ -248,7 +248,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </span>
         <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
       </button>
-      <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.1); color: #248A3D; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
+      <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(52,199,89,0.08); color: #1E7A34; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
         <span class="dot" style="width: 5.6px; height: 5.6px"></span>{{liveTxt}}
       </span>
     </div>
@@ -318,9 +318,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </a>
     <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin: 0; padding: 8px 4px 0; border-top: 1px solid rgba(60,60,67,0.14)">
       <span style="flex-grow: 1; min-width: 0; font-size: 15px; line-height: 18px; color: #545458"><span style="display: block; font-size: 17px; line-height: 20px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{acct.name}}</span>{{acct.area}}</span>
-      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; height: 44px; padding: 0 4px; font-size: 17px; color: #007AFF; text-decoration: none; white-space: nowrap">Sign out</a>
+      <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; height: 44px; padding: 0 4px; font-size: 17px; color: #0062CC; text-decoration: none; white-space: nowrap">Sign out</a>
     </div>
-    <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 16px 0 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #545458; opacity: 0.8; white-space: nowrap">
+    <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 16px 0 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #545458; white-space: nowrap">
         <svg width="23" height="28" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; position: relative; top: 2px; overflow: visible"><defs><radialGradient id="ffwFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"></stop><stop offset="0.35" stop-color="#FFA41B"></stop><stop offset="0.7" stop-color="#FF5A1F"></stop><stop offset="1" stop-color="#D7263D"></stop></radialGradient><filter id="ffwCarve" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="0.55" result="off"></feOffset><feGaussianBlur in="off" stdDeviation="0.3" result="blur"></feGaussianBlur><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"></feComposite><feFlood flood-color="#000000" flood-opacity="0.5"></feFlood><feComposite in2="edge" operator="in" result="shade"></feComposite><feMerge><feMergeNode in="SourceGraphic"></feMergeNode><feMergeNode in="shade"></feMergeNode></feMerge></filter></defs><g transform="translate(0 0.45)" opacity="0.9"><path fill="#FFFFFF" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path></g><g filter="url(#ffwCarve)"><path fill="#545458" fill-opacity="0.8" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path fill="url(#ffwFire)" fill-rule="evenodd" opacity="0" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.86;0.9;0.95;1" dur="10s" repeatCount="indefinite"></animate></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#545458" stroke-opacity="0.8" stroke-width="1.1" stroke-linecap="round"></path></g></svg><span style="position: relative; top: 4px; font-size: 16px">Forest Fire Watch</span>
       </span>
     </div>
@@ -581,7 +581,7 @@ class Component extends DCLogic {
       name === 'United States' ? { name, cont, id: 'US', live: true, n: usD.length, unit: ' states', ...sumOf(usD) }
       : name === 'Portugal' ? { name, cont, id: 'PT', live: true, n: ptD.n, unit: ' districts', ...sumOf([ptD]) }
       : (() => { const d = DATA.find((x) => x.id === ISO3[name]); return d ? { name, cont, id: d.id, live: true, n: d.n, unit: ' regions', ...sumOf([d]) } : { name, cont, id: null, live: false, fires: 0, cands: 0 }; })());
-    const riskC = (r) => r >= 60 ? '#E86A00' : (r >= 40 ? '#B37A00' : '#545458');
+    const riskC = (r) => r >= 60 ? '#E86A00' : (r >= 40 ? '#7A5600' : '#545458');
     const selSty = (on) => ({ selBg: on ? '#FFFFFF' : 'transparent', selA: on ? 'true' : 'false', fg: '#000000', subC: '#545458' });
     const riskLvl = (r) => r >= 70 ? 'Extreme' : r >= 55 ? 'High' : r >= 35 ? 'Moderate' : 'Low';
     const RISKP = { Extreme: ['rgba(215,0,21,0.12)', '#B0001A'], High: ['rgba(232,106,0,0.14)', '#B34F00'], Moderate: ['rgba(204,153,0,0.16)', '#7A5600'], Low: ['rgba(60,60,67,0.08)', '#3C3C43'] };
@@ -618,7 +618,7 @@ class Component extends DCLogic {
     const cmp = (a, b) => (act(b) - act(a)) || (SK === 'name' ? a.name.localeCompare(b.name) * SD : ((a[SK] - b[SK]) * SD || (SK === 'cands' ? (a.fires - b.fires) * SD : (a.cands - b.cands) * SD) || a.name.localeCompare(b.name)));
     const q = (s.q || '').trim().toLowerCase();
     const coList = brObj ? brObj.counties.filter((c) => !q || c.name.toLowerCase().indexOf(q) >= 0) : [];
-    const sortCol = (k, label) => { const on = SK === k; return { aria: on ? (SD > 0 ? 'ascending' : 'descending') : 'none', op: on ? 1 : 0, d: on ? 'block' : 'none', c: on ? '#007AFF' : 'inherit', rot: on && SD > 0 ? '180deg' : '0deg', pick: () => { this.setState({ sortK: k, sortD: on ? -SD : (k === 'name' ? 1 : -1) }); const L = document.querySelector('[data-sort-list]'); if (L && L.scrollTop > 0) { try { L.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { L.scrollTop = 0; } } } }; };
+    const sortCol = (k, label) => { const on = SK === k; return { aria: on ? (SD > 0 ? 'ascending' : 'descending') : 'none', op: on ? 1 : 0, d: on ? 'block' : 'none', c: on ? '#0062CC' : 'inherit', rot: on && SD > 0 ? '180deg' : '0deg', pick: () => { this.setState({ sortK: k, sortD: on ? -SD : (k === 'name' ? 1 : -1) }); const L = document.querySelector('[data-sort-list]'); if (L && L.scrollTop > 0) { try { L.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { L.scrollTop = 0; } } } }; };
     const rows = brObj
       ? coList.sort(cmp).map((c) => rowOf(c, selState === brObj.id && selCounty === c.name, () => { this.wfSetScope({ st: brObj.id, co: c.name }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, '', false))
       : atCountries
@@ -697,7 +697,7 @@ class Component extends DCLogic {
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
       listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg',
       toggleList: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.wfListFlag(false); this.setState({ list: !listOpen }); },
-      barTitle: (N === 0 ? 'No' : N) + ' Ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#248A3D' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' active fire' + (NF === 1 ? '' : 's'),
+      barTitle: (N === 0 ? 'No' : N) + ' Ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#1E7A34' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' active fire' + (NF === 1 ? '' : 's'),
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
       ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : 90,

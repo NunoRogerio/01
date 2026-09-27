@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=18"></script>
+<script src="fit.js?v=19"></script>
 <script src="i18n.js?v=8"></script>
 <script src="live.js?v=22"></script>
 
@@ -39,7 +39,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   </sc-if>
 
   <header style="position: relative; z-index: 6; display: flex; align-items: center; gap: 8px; height: 60px; padding: 0 16px 0 8px; background: #F2F2F7">
-    <a href="Main.dc.html" data-wf-back="1" class="stback" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; color: #007AFF; text-decoration: none">
+    <a href="Main.dc.html" data-wf-back="1" class="stback" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; color: #0062CC; text-decoration: none">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
     </a>
     <span style="display: flex; align-items: center; gap: 10px; min-width: 0">
@@ -55,9 +55,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <p style="margin: 24px 0; font-size: 17px; line-height: 22px; color: #545458; text-align: center">No station selected. Open a fire station from the map.</p>
     </sc-if>
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
-      <div style="display: flex; flex-direction: column; gap: 4px; padding: 0 4px 16px">
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px 16px">
         <span style="font-size: 17px; line-height: 22px; color: #3C3C43">{{st.operator}}</span>
-        <span style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px">
+        <span style="display: flex; flex-wrap: wrap; gap: 8px">
           <sc-for list="{{st.chips}}" as="c" hint-placeholder-count="2">
             <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 999px; background: {{c.bg}}; color: {{c.fg}}; font-size: 15px; font-weight: 600">{{c.t}}</span>
           </sc-for>
@@ -101,7 +101,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
           <div class="strow">
             <span style="width: 96px; flex-shrink: 0; font-size: 15px; color: #545458">{{r.k}}</span>
-            <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #007AFF; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
+            <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
             <sc-if value="{{r.plain}}" hint-placeholder-val="{{ true }}"><span style="min-width: 0; font-size: 17px; line-height: 22px; overflow-wrap: anywhere">{{r.v}}</span></sc-if>
           </div>
         </sc-for>

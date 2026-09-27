@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=18"></script>
+<script src="fit.js?v=19"></script>
 <script src="i18n.js?v=8"></script>
 <script src="live.js?v=22"></script>
 
@@ -25,7 +25,7 @@
 <helmet>
 <style>
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-a{color:#0079A6}a:hover{color:#006A91}
+a{color:#006A91}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes ping{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.8);opacity:0}}
@@ -125,7 +125,7 @@ a.card:hover .go{transform:translateX(4px)}
 
 /* iOS layer */
 body{background:#F2F2F7;color:#000}
-a{color:#007AFF}a:hover{color:#0062CC}
+a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
@@ -137,8 +137,8 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .primary.green{background:#248A3D}.primary.green:hover{background:#1F7F37}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
-.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#007AFF}
-.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#007AFF}
+.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
+.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#0062CC}
 .ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 2px 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
@@ -226,7 +226,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <div style="display: flex; flex-direction: column; gap: 10px; padding-left: 16px; border-left: 1px solid rgba(60,60,67,0.14)">
       <span class="lbl">Alarm to fire line</span>
-      <span class="kpi" style="color: #E86A00; white-space: nowrap">{{sel.eta}}<small> min · {{sel.at}}</small></span>
+      <span class="kpi" style="color: #A34800; white-space: nowrap">{{sel.eta}}<small> min · {{sel.at}}</small></span>
     </div>
   </section>
 
@@ -234,7 +234,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43">1 · Select station</span>
     <button type="button" class="prep" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{stationAria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 1.5px solid rgba(0,113,227,0.28); border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
-        <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
+        <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
       </span>
       <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #0071E3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
       <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
@@ -269,7 +269,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="flex-shrink: 0; padding-top: 8px; transform: translateY({{stRepY}}); transition: transform .55s cubic-bezier(.2,.8,.2,1)">
         <button type="button" class="sqrow sqtop" onClick="{{closeSheet}}" aria-label="Close station list" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
           <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.title}}</span>
-            <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
+            <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
           </span>
           <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
           <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sel.sub}}</span>
@@ -284,10 +284,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-for list="{{stations}}" as="st" hint-placeholder-count="5">
         <button type="button" role="checkbox" class="sqrow" data-sel="{{st.checked}}" aria-checked="{{st.checked}}" aria-disabled="{{st.disabled}}" onClick="{{st.pick}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: center; align-content: center; gap: 2px 8px; height: 60px; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: {{st.selBg}}; color: #000000; text-align: left; font: inherit; opacity: {{st.op}}; cursor: {{st.cursor}}">
           <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.code}} · {{st.name}}</span>
-            <sc-if value="{{st.isRec}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #248A3D; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
+            <sc-if value="{{st.isRec}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
           </span>
           <span style="text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap">{{st.etaText}}</span>
-          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #007AFF; opacity: {{st.tickOp}}; transition: opacity .2s ease"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
+          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #0062CC; opacity: {{st.tickOp}}; transition: opacity .2s ease"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
           <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{st.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.sub}}</span>
         </button>
       </sc-for>
@@ -369,7 +369,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{cfInOp}}; transform: translateY({{cfInY}}); transition: opacity .3s ease {{cfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{cfInDelay}}">
     <p style="margin: 0 16px 14px 40px; font-size: 15px; line-height: 16px; color: #545458">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="#248A3D" aria-hidden="true" style="vertical-align: -1px; margin-right: 6px"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg><span style="color: #248A3D">Suggested</span> for +{{hzNum}}h: {{recSummary}}
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#248A3D" aria-hidden="true" style="vertical-align: -1px; margin-right: 6px"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg><span style="color: #1E7A34">Suggested</span> for +{{hzNum}}h: {{recSummary}}
     </p>
     <div role="group" aria-label="Available forces" style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(60,60,67,0.14)">
       <sc-for list="{{units}}" as="u" hint-placeholder-count="3">
@@ -397,7 +397,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </div>
     <div class="sqrow" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 12px; min-height: 60px; margin-top: 2px; padding: 10px 16px 10px 40px; box-sizing: border-box">
-      <span aria-hidden="true" style="position: absolute; left: 11px; top: 11px; display: flex; width: 18px; height: 18px; color: #0079A6">
+      <span aria-hidden="true" style="position: absolute; left: 11px; top: 11px; display: flex; width: 18px; height: 18px; color: #006A91">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19M7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M7 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0"></path></svg>
       </span>
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
@@ -424,7 +424,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </p>
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; padding: 0 16px; flex-shrink: 0">
-      <button type="button" class="btn" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; background-color: {{sugBg}}; border-color: {{sugBd}}; color: #248A3D; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
+      <button type="button" class="btn" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; background-color: {{sugBg}}; border-color: {{sugBd}}; color: #1E7A34; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5M4 4v4.5h4.5"></path></svg>Suggested
       </button>
       <button type="button" class="btn" onClick="{{closeSheet}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600">
@@ -672,7 +672,7 @@ class Component extends DCLogic {
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
     const subOf = (d) => d.real ? d.km + DU + ' · est. ' + d.eta + ' min · crew availability not published' : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
-    const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#B37A00' : '#545458');
+    const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#7A5600' : '#545458');
     const sum = chosen.eta;
     const sel = {
       ...chosen,
@@ -681,7 +681,7 @@ class Component extends DCLogic {
       codes: chosenList.map((d) => d.code).join(' + '),
       title: multi ? 'Stations: ' + chosenList.map((d) => d.code).join(', ') : (chosen.real ? chosen.name : 'Station: ' + chosen.code + ' · ' + chosen.name),
       sub: multi ? (chosen.real ? chosenList.length + ' stations' : freeSel + ' free crews') + ' · first on the line in ' + (chosen.real ? 'est. ' : '') + chosen.eta + ' min' : (chosen.real ? (chosen.id === rec.id ? 'Closest station · ' : '') + subOf(chosen) : chosen.id === rec.id ? 'Closest with ' + need + ' free crews · ' + chosen.km + ' mi' : subOf(chosen)),
-      subColor: multi ? (freeSel < need ? '#B37A00' : '#545458') : (chosen.id === rec.id ? '#545458' : colorOf(chosen)),
+      subColor: multi ? (freeSel < need ? '#7A5600' : '#545458') : (chosen.id === rec.id ? '#545458' : colorOf(chosen)),
       at: clock(sum),
       t1: chosen.t[0], t2: chosen.t[1], t3: chosen.t[2],
       p1: Math.round(chosen.t[0] / sum * 100), p2: Math.round(chosen.t[1] / sum * 100), p3: 100 - Math.round(chosen.t[0] / sum * 100) - Math.round(chosen.t[1] / sum * 100),
@@ -720,8 +720,8 @@ class Component extends DCLogic {
       return {
         ...m, n,
         availText: a === 0 ? 'None available' : (n >= a ? 'All ' + a + ' assigned' : (a - n) + ' of ' + a + ' still free'),
-        availColor: n >= a ? '#B37A00' : '#248A3D',
-        nColor: n === Math.min(REC[i], a) ? '#248A3D' : '#0071E3',
+        availColor: n >= a ? '#7A5600' : '#1E7A34',
+        nColor: n === Math.min(REC[i], a) ? '#1E7A34' : '#0071E3',
         bg: n > 0 ? 'rgba(60,60,67,0.044)' : 'rgba(60,60,67,0.017)',
         bd: n > 0 ? 'rgba(60,60,67,0.11)' : 'rgba(60,60,67,0.055)',
         less: () => { if (!lessDis) setCount(i, -1); }, more: () => { if (!moreDis) setCount(i, 1); },
@@ -765,7 +765,7 @@ class Component extends DCLogic {
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
     if (RO) {
       if (!deployed.length) deployed.push({ label: 'Resources not published', from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#545458', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
-      NEAR.rows.slice(0, 5).forEach((q) => deployed.push({ label: q.name, from: 'Fire station · straight-line distance', g: 'st', icon: 'M12 3.2 21.6 20H2.4Z', c: '#248A3D', bg: 'rgba(52,199,89,0.1)', w: 0, pre: '', val: q.km + DU, post: '' }));
+      NEAR.rows.slice(0, 5).forEach((q) => deployed.push({ label: q.name, from: 'Fire station · straight-line distance', g: 'st', icon: 'M12 3.2 21.6 20H2.4Z', c: '#1E7A34', bg: 'rgba(52,199,89,0.1)', w: 0, pre: '', val: q.km + DU, post: '' }));
     }
     // Fire model (live fires): real "now" perimeter, +1/2/3 h prediction and expected containment.
     if (FMOD) {
@@ -792,7 +792,7 @@ class Component extends DCLogic {
         rows.push(M.assumed ? row('Perimeter', 'Not mapped', M.src.replace('No mapped perimeter · ', '').replace(/^./, (c) => c.toUpperCase()) + ' · no public polygon for this fire yet', '#545458') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
-        if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#248A3D'));
+        if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#1E7A34'));
         rows.push(row('Conditions', 'Wind ' + I.wind + ' km/h ' + I.from, I.temp + ' °C · humidity ' + I.rh + '% · fuel moisture ' + I.md + '% · slope ' + I.slope + '° · ' + I.fuel + ' · head ' + I.head + ' m/min', '#0079A6'));
       }
       rows.forEach((r) => { r.g = 'fire'; });
@@ -830,8 +830,8 @@ class Component extends DCLogic {
         etaText: dis ? 'Busy' : d.eta + ' min',
         bg: checked ? 'rgba(232,106,0,0.08)' : 'rgba(60,60,67,0.022)',
         bd: checked ? 'rgba(232,106,0,0.55)' : 'rgba(60,60,67,0.066)',
-        ring: checked ? '#007AFF' : 'rgba(60,60,67,0.3)',
-        dotBg: checked ? '#007AFF' : 'transparent',
+        ring: checked ? '#0062CC' : 'rgba(60,60,67,0.3)',
+        dotBg: checked ? '#0062CC' : 'transparent',
         tickOp: checked ? 1 : 0,
         selBg: checked ? '#FFFFFF' : 'transparent',
         op: dis ? 0.45 : 1,
@@ -878,12 +878,12 @@ class Component extends DCLogic {
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       sendAll: () => this.setState({ sent: true, adjust: false, open: false, cfg: false, full: false }), undoSend: () => this.setState(fv ? { adjust: true, cfg: true, open: false, full: false } : { sent: false, cfg: true, open: false, full: false }),
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
-      pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : 'Active ' + activeFor, pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#C25700', pillDot: HELD ? 'none' : 'inline-block',
+      pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : 'Active ' + activeFor, pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
       hzShow: HELD ? 'none' : 'grid',
       fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       stApply: () => this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
-      k1C: BRF ? '#3A3A3C' : '#248A3D', unitsTxt: BRF ? '' : ' · ' + deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0) + ' units', sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: HELD ? '#3A3A3C' : '#248A3D', sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting this fire' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      k1C: BRF ? '#3A3A3C' : '#1E7A34', unitsTxt: BRF ? '' : ' · ' + deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0) + ' units', sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: HELD ? '#3A3A3C' : '#1E7A34', sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting this fire' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),
       sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (HELD ? fv.place : 'Resources on scene at ' + fv.place) : 'Forces on the way to ' + fv.place) : 'sent 2:42 PM', undoLabel: 'Adjust',
@@ -894,7 +894,7 @@ class Component extends DCLogic {
       closeSheet: () => this.setState({ open: false, cfg: false }),
       ...panelVals('st', open, s.ogS || { t: 468, b: 528 }), ...panelVals('cf', cfg, s.ogC || { t: 602, b: 662 }), scrimOp: 0, scrimPE: (open || cfg) ? 'auto' : 'none', sheetHidden: open ? 'false' : 'true',
       units, unitTotal, firstEta: etas.length ? Math.min(...etas) : '–', recSummary: fmt(REC.map((n, i) => Math.min(n, avail3[i]))),
-      cfgSummary: RU ? RU.map((r) => Number(r[1]).toLocaleString() + ' ' + r[0].toLowerCase()).join(' · ') : fmt(counts), cfgTag: RU ? 'Real data' : isRecCfg ? 'Suggested' : 'Your choice', cfgTagBg: RU || isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(0,113,227,0.12)', cfgTagFg: RU || isRecCfg ? '#248A3D' : '#0060C7',
+      cfgSummary: RU ? RU.map((r) => Number(r[1]).toLocaleString() + ' ' + r[0].toLowerCase()).join(' · ') : fmt(counts), cfgTag: RU ? 'Real data' : isRecCfg ? 'Suggested' : 'Your choice', cfgTagBg: RU || isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(0,113,227,0.12)', cfgTagFg: RU || isRecCfg ? '#1E7A34' : '#0060C7',
       drone: s.droneOff
         ? { flying: false, idle: true, status: 'At base', sub: 'Altadena pad · 4 min away', fg: '#545458', bg: 'rgba(60,60,67,0.017)', bd: 'rgba(60,60,67,0.055)' }
         : { flying: true, idle: false, status: 'On route · 3 min to scene', sub: 'Live video and thermal on arrival', fg: '#0079A6', bg: 'rgba(0,121,166,0.05)', bd: 'rgba(0,121,166,0.22)' },

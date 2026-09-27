@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=18"></script>
+<script src="fit.js?v=19"></script>
 <script src="i18n.js?v=8"></script>
 
 <title>Fire Simulation</title>
@@ -24,7 +24,7 @@
 <helmet>
 <style>
 body{margin:0;background:#1C1C1E;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-a{color:#007AFF}a:hover{color:#0062CC}
+a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 @keyframes flick{0%,100%{opacity:1}50%{opacity:.72}}
 @keyframes warn{0%,100%{box-shadow:0 0 0 2px #FF3B30,0 0 0 6px rgba(255,59,48,.35)}50%{box-shadow:0 0 0 2px #FF3B30,0 0 0 10px rgba(255,59,48,0)}}
@@ -39,7 +39,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
 </helmet>
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <header style="display: flex; align-items: center; gap: 6px; padding: 0 10px 6px 4px; flex-shrink: 0">
-    <a href="SimSetup.dc.html" onClick="{{quit}}" aria-label="End the scenario and go back to the setup" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; color: #007AFF; text-decoration: none">
+    <a href="SimSetup.dc.html" onClick="{{quit}}" aria-label="End the scenario and go back to the setup" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; color: #0062CC; text-decoration: none">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
@@ -82,9 +82,9 @@ a{color:#007AFF}a:hover{color:#0062CC}
       <path class="fireL" d="{{hotD}}" fill="#FFD60A" fill-opacity="0.9"></path>
       <path d="{{orderD}}" fill="none" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="4 4"></path>
     </svg>
-    <span aria-hidden="true" style="position: absolute; left: {{lake.x}}px; top: {{lake.y}}px; transform: translate(-50%, -50%); padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,0.85); font-size: 12px; font-weight: 600; color: #0079A6; pointer-events: none">Lake</span>
+    <span aria-hidden="true" style="position: absolute; left: {{lake.x}}px; top: {{lake.y}}px; transform: translate(-50%, -50%); padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,0.85); font-size: 12px; font-weight: 600; color: #006A91; pointer-events: none">Lake</span>
     <span aria-hidden="true" style="position: absolute; left: {{vil.x}}px; top: {{vil.y}}px; transform: translate(-50%, -140%); padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,0.85); font-size: 12px; font-weight: 600; color: #3C3C43; pointer-events: none">{{vil.label}}</span>
-    <span aria-hidden="true" style="position: absolute; right: 8px; top: 8px; display: flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; color: #0079A6; pointer-events: none">
+    <span aria-hidden="true" style="position: absolute; right: 8px; top: 8px; display: flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; color: #006A91; pointer-events: none">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{windRot}}deg)"><path d="M12 20V5M6 11l6-6 6 6"></path></svg>{{windTxt}}
     </span>
     <sc-for list="{{stations}}" as="s" hint-placeholder-count="5">
@@ -167,7 +167,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
         </sc-for>
       </div>
       <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px">
-        <a href="SimSetup.dc.html" style="display: flex; align-items: center; justify-content: center; height: 50px; border-radius: 12px; background: rgba(118,118,128,0.14); color: #007AFF; font-size: 18px; font-weight: 600; text-decoration: none">Change setup</a>
+        <a href="SimSetup.dc.html" style="display: flex; align-items: center; justify-content: center; height: 50px; border-radius: 12px; background: rgba(118,118,128,0.14); color: #0062CC; font-size: 18px; font-weight: 600; text-decoration: none">Change setup</a>
         <button type="button" onClick="{{restart}}" style="height: 50px; border: 0; border-radius: 12px; background: #0071E3; color: #FFFFFF; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer">Play again</button>
       </div>
     </section>
@@ -247,9 +247,9 @@ class Component extends DCLogic {
     const pickRoad = (tx, ty) => { let b = roadCells[0], bd = 1e9; for (const i of roadCells) { const d = Math.hypot(i % N - tx, ((i / N) | 0) - ty); if (d < bd) { bd = d; b = i; } } return [b % N, (b / N) | 0]; };
     const corners = [[3, 3], [N - 4, 3], [3, N - 4], [N - 4, N - 4]].sort((a, b) => Math.hypot(b[0] - ign[0], b[1] - ign[1]) - Math.hypot(a[0] - ign[0], a[1] - ign[1]));
     const stations = [
-      { id: 'S1', name: 'Village fire station', short: 'Village', at: pickRoad(vil[0] + px * 5, vil[1] + py * 5), kinds: ['crew', 'engine', 'dozer'], fill: '#248A3D' },
-      { id: 'S2', name: 'Road fire station', short: 'Road', at: pickRoad(stg[0] + (cx - stg[0]) * 0.14, stg[1] + (cy - stg[1]) * 0.14), kinds: ['crew', 'engine', 'dozer'], fill: '#248A3D' },
-      { id: 'S3', name: 'Valley fire station', short: 'Valley', at: pickRoad(vil[0] - px * 22, vil[1] - py * 22), kinds: ['crew', 'engine', 'dozer'], fill: '#248A3D' },
+      { id: 'S1', name: 'Village fire station', short: 'Village', at: pickRoad(vil[0] + px * 5, vil[1] + py * 5), kinds: ['crew', 'engine', 'dozer'], fill: '#1E7A34' },
+      { id: 'S2', name: 'Road fire station', short: 'Road', at: pickRoad(stg[0] + (cx - stg[0]) * 0.14, stg[1] + (cy - stg[1]) * 0.14), kinds: ['crew', 'engine', 'dozer'], fill: '#1E7A34' },
+      { id: 'S3', name: 'Valley fire station', short: 'Valley', at: pickRoad(vil[0] - px * 22, vil[1] - py * 22), kinds: ['crew', 'engine', 'dozer'], fill: '#1E7A34' },
       { id: 'H', name: 'Helibase', short: 'Helibase', at: [Math.max(1, Math.min(N - 2, lk[0] + 7)), Math.max(1, Math.min(N - 2, lk[1]))], kinds: ['heli'], fill: '#0079A6' },
       { id: 'A', name: 'Air base', short: 'Air base', at: corners[0], kinds: ['tanker'], fill: '#6E3AD0' }
     ];
@@ -344,7 +344,7 @@ class Component extends DCLogic {
     G.queue = G.queue.filter((q) => { if (q.at > t) return true; const TT = T[q.type], ST = G.stations[q.st] || { at: W.stg, name: 'Staging' }, k = G.units.length, ang = k * 2.4, sx = (ST.at[0] + 0.5) * W.CELL + Math.cos(ang) * 70, sy = (ST.at[1] + 0.5) * W.CELL + Math.sin(ang) * 70;
       const id = TT.tag + (G.units.filter((u) => u.type === q.type).length + 1);
       G.units.push({ id, type: q.type, x: sx, y: sy, tx: null, ty: null, crew: TT.people, stamina: 100, water: TT.water || 0, state: 'ready', alive: true, scene: 0, work: 0, danger: 0, lineBuilt: 0, ext: 0, drops: 0, busyUntil: 0 });
-      if (!G.sel) G.sel = id; this.say(id + ' ' + TT.name.toLowerCase() + ' ready at ' + ST.name.toLowerCase() + '. Select it, then tap where to go.', '#248A3D'); return false; });
+      if (!G.sel) G.sel = id; this.say(id + ' ' + TT.name.toLowerCase() + ' ready at ' + ST.name.toLowerCase() + '. Select it, then tap where to go.', '#1E7A34'); return false; });
     // units
     for (const u of G.units) {
       if (!u.alive) continue;
@@ -503,7 +503,7 @@ class Component extends DCLogic {
       : { name: '', fill: '', left: 0, top: 0, ty: '0', sub: '', rows: [] };
     const selV = sel ? (() => { const TT = T[sel.type];
       return { name: sel.id + ' · ' + TT.name + (TT.people > 2 ? ' · ' + sel.crew + ' people' : ''), sub: (sel.inDanger ? 'DANGER: fire front close, move to burned ground or a road. ' : '') + (STATE[sel.state] || sel.state) + (sel.busyUntil > t ? ' until ' + this.clock(sel.busyUntil) : '') + ' · ' + (TT.air ? 'tap the map to drop' : 'tap the map to move'),
-        subC: sel.inDanger ? '#D70015' : '#545458', icon: TT.icon, bg: TT.color, rad: TT.rad, barsD: TT.stamina || TT.water ? 'flex' : 'none', st: Math.round(TT.stamina ? sel.stamina : 100), stC: sel.stamina < 25 ? '#D70015' : '#248A3D', wD: TT.water ? 'flex' : 'none', w: Math.round(100 * sel.water / (TT.water || 1)) }; })()
+        subC: sel.inDanger ? '#D70015' : '#545458', icon: TT.icon, bg: TT.color, rad: TT.rad, barsD: TT.stamina || TT.water ? 'flex' : 'none', st: Math.round(TT.stamina ? sel.stamina : 100), stC: sel.stamina < 25 ? '#D70015' : '#1E7A34', wD: TT.water ? 'flex' : 'none', w: Math.round(100 * sel.water / (TT.water || 1)) }; })()
       : { name: 'No unit selected', sub: G.units.some((u) => u.alive) ? 'Tap a unit on the map to give it orders.' : 'Summon forces below. Units appear at the staging point.', subC: '#545458', icon: 'M12 3v4M12 17v4M3 12h4M17 12h4M12 12h.01', bg: '#8E8E93', rad: '50%', barsD: 'none', st: 0, stC: '', wD: 'none', w: 0 };
     const toastOn = G.toast && t - G.toastAt < 6 && !G.over;
     const base = G.base[Math.min(G.base.length - 1, G.contained || t)] || G.burned;
@@ -516,7 +516,7 @@ class Component extends DCLogic {
       kpis: [
         { label: 'Time', value: this.clock(t), c: goalLeft < 0 ? '#D70015' : '#000000' },
         { label: 'Burned', value: (G.burned || 0).toLocaleString() + ' ha', c: '#000000' },
-        { label: 'Active front', value: ((G.active || 0) * 0.25).toFixed(1) + ' ha', c: '#C25700' },
+        { label: 'Active front', value: ((G.active || 0) * 0.25).toFixed(1) + ' ha', c: '#A34800' },
         { label: 'Casualties', value: String(G.inj + G.dead), c: G.dead ? '#D70015' : G.inj ? '#B34F00' : '#000000' }
       ],
       fuelPaths: S.fuelPaths, roads: S.roads, shade: S.shade, shade2: S.shade2,
@@ -549,7 +549,7 @@ class Component extends DCLogic {
     let score = 40 * saved + (onTime ? 20 : G.won ? 10 : 0) + 15 * workPct + 15 * lineEff + 10 * sizing - 15 * G.dead - 3 * G.inj - 8 * G.vehLost - Math.min(10, G.housesLost);
     score = Math.max(0, Math.min(100, Math.round(score)));
     const grade = score >= 85 ? 'A' : score >= 70 ? 'B' : score >= 55 ? 'C' : score >= 40 ? 'D' : 'F';
-    const pct = (v) => Math.round(v * 100) + '%', good = '#248A3D', mid = '#B34F00', bad = '#D70015';
+    const pct = (v) => Math.round(v * 100) + '%', good = '#1E7A34', mid = '#B34F00', bad = '#D70015';
     const rows = [
       ['Result', G.won ? 'Contained at ' + this.clock(G.contained) : 'Not contained', onTime ? 'Inside your goal of ' + c.goal / 60 + ' h.' : G.won ? 'Contained, but after your goal of ' + c.goal / 60 + ' h.' : 'The fire was still running after ' + this.clock(G.t) + '.', onTime ? good : G.won ? mid : bad],
       ['Burned area', G.burned.toLocaleString() + ' ha', 'Without any intervention the same fire would have burned about ' + Math.round(base).toLocaleString() + ' ha by then: you saved ' + pct(saved) + '.', saved > 0.6 ? good : saved > 0.3 ? mid : bad],
@@ -559,7 +559,7 @@ class Component extends DCLogic {
       ['Safety', G.dead ? G.dead + ' killed · ' + G.inj + ' injured' : G.inj ? G.inj + ' injured' : 'No casualties', (G.vehLost ? G.vehLost + ' vehicle(s) destroyed. ' : '') + Math.round(dang) + ' unit-minutes spent in the path of the fire. Keep crews on burned ground, roads or line when the head approaches.', G.dead ? bad : G.inj || G.vehLost ? mid : good],
       ['Homes', G.housesLost ? G.housesLost + ' lots burned' : 'Protected', G.housesLost ? 'The fire reached ' + this.landName() + '.' : 'The fire never reached ' + this.landName() + '.', G.housesLost ? bad : good]
     ].map(([label, value, note, cc], i) => ({ label, value, note, c: cc, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' }));
-    return { grade, gradeBg: { A: '#248A3D', B: '#34A853', C: '#B37A00', D: '#E86A00', F: '#D70015' }[grade], title: G.won ? (onTime ? 'Fire contained' : 'Contained, late') : 'The fire got away', sub: 'Score ' + score + ' / 100 · efficiency of sizing and positioning your forces', rows };
+    return { grade, gradeBg: { A: '#1E7A34', B: '#34A853', C: '#7A5600', D: '#E86A00', F: '#D70015' }[grade], title: G.won ? (onTime ? 'Fire contained' : 'Contained, late') : 'The fire got away', sub: 'Score ' + score + ' / 100 · efficiency of sizing and positioning your forces', rows };
   }
 }
 </script>

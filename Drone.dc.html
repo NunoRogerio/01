@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=18"></script>
+<script src="fit.js?v=19"></script>
 <script src="i18n.js?v=8"></script>
 <script src="live.js?v=22"></script>
 
@@ -25,7 +25,7 @@
 <helmet>
 <style>
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-a{color:#0079A6}a:hover{color:#006A91}
+a{color:#006A91}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes ping{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.8);opacity:0}}
@@ -123,7 +123,7 @@ a.card:hover .go{transform:translateX(4px)}
 
 /* iOS layer */
 body{background:#F2F2F7;color:#000}
-a{color:#007AFF}a:hover{color:#0062CC}
+a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
@@ -135,8 +135,8 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .primary.green{background:#248A3D}.primary.green:hover{background:#1F7F37}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
-.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#007AFF}
-.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#007AFF}
+.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
+.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#0062CC}
 .ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 2px 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
@@ -170,7 +170,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="flex-shrink: 0"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{vPlace}}</span>
       </span>
     </span>
-    <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(0,121,166,0.1); color: #0079A6; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
+    <span style="display: flex; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: rgba(0,121,166,0.1); color: #006A91; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0">
       <span class="dot" style="width: 5.6px; height: 5.6px"></span>Verifying
     </span>
   </header>
@@ -241,7 +241,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; gap: 10px; padding: 0 12px; border-left: 1px solid rgba(60,60,67,0.14)">
       <dt class="lbl">Peak</dt>
       <dd style="margin: 0">
-        <button type="button" class="unitbtn" onClick="{{toggleTemp}}" aria-label="{{tempAria}}"><span class="kpi" style="display: block; color: #E86A00; white-space: nowrap">{{tempV}}<small> {{tempU}}</small></span></button>
+        <button type="button" class="unitbtn" onClick="{{toggleTemp}}" aria-label="{{tempAria}}"><span class="kpi" style="display: block; color: #A34800; white-space: nowrap">{{tempV}}<small> {{tempU}}</small></span></button>
       <div role="img" aria-label="{{tempChart.aria}}" style="position: relative; width: 84px; height: 24px; margin-top: 14px">
         <svg width="84" height="24" viewBox="0 0 84 24" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible">
           <path d="{{tempChart.area}}" fill="rgba(232,106,0,0.1)"></path>
@@ -298,10 +298,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; padding: 10px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 1px solid rgba(60,60,67,0.088); box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}})">
     <span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     <h2 id="faTitle" style="margin: 22px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
-    <p id="faBody" style="margin: 8px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
+    <p id="faBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
       <button type="button" class="btn ghost" onClick="{{closeFa}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #248A3D; font-size: 17px; font-weight: 600">
+      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #1E7A34; font-size: 17px; font-weight: 600">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>Dismiss
       </a>
     </div>
@@ -473,7 +473,7 @@ class Component extends DCLogic {
       if (!this._tick) this._tick = setInterval(() => { this.forceUpdate(); if ((Date.now() - this._t0) / 1000 * 20 >= 600) { clearInterval(this._tick); this._tick = null; } }, 1000);
       return { dStatus: (left >= 100 ? (left / 1000).toFixed(1) + ' km' : Math.round(left) + ' m') + ' to scene', dSub: 'En route · arriving in ' + Math.ceil(left / 20) + ' s', dFg: '#0079A6', dBg: 'rgba(0,121,166,0.1)' };
     }
-    return { dStatus: 'On scene', dSub: 'Live video from the fire', dFg: '#C25700', dBg: 'rgba(232,106,0,0.12)' };
+    return { dStatus: 'On scene', dSub: 'Live video from the fire', dFg: '#A34800', dBg: 'rgba(232,106,0,0.12)' };
   }
   renderVals() {
     if (!this.setVid) {
@@ -526,7 +526,7 @@ class Component extends DCLogic {
     const tempChart = series(tempVals, 84, 132, fmt1, ' ' + tempUnit, 'Peak temperature');
     const DIRS = [['SSW', 202, 1.3], ['SW', 225, 1.1], ['W', 270, 0.5], ['NE', 45, 0.4]];
     const spreadPts = DIRS.map(([d, deg, mph], i) => ({
-      rot: deg, c: mph >= 1.0 ? '#E86A00' : (mph >= 0.7 ? '#B37A00' : '#545458'),
+      rot: deg, c: mph >= 1.0 ? '#E86A00' : (mph >= 0.7 ? '#7A5600' : '#545458'),
       tip: 'ctip' + (i >= 2 ? ' r' : ''),
       v: d + ' · ' + mph.toFixed(1) + ' mph', t: 'T+' + (i + 1) * 6 + ' h',
       aria: 'T+' + (i + 1) * 6 + ' hours: spreading ' + d + ' at ' + mph.toFixed(1) + ' miles per hour'

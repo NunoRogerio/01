@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<script src="fit.js?v=18"></script>
+<script src="fit.js?v=19"></script>
 <script src="i18n.js?v=8"></script>
 
 <title>Report a fire</title>
@@ -24,7 +24,7 @@
 <helmet>
 <style>
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-a{color:#0079A6}a:hover{color:#006A91}
+a{color:#006A91}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes ping{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.8);opacity:0}}
@@ -108,7 +108,7 @@ a.card:hover .go{transform:translateX(4px)}
 
 /* iOS layer */
 body{background:#F2F2F7;color:#000}
-a{color:#007AFF}a:hover{color:#0062CC}
+a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
@@ -120,8 +120,8 @@ a{color:#007AFF}a:hover{color:#0062CC}
 .primary.green{background:#248A3D}.primary.green:hover{background:#1F7F37}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
-.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#007AFF}
-.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#007AFF}
+.ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
+.ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#0062CC}
 .ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 2px 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
@@ -152,7 +152,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h1 style="margin: 0; max-width: 100%; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Report a fire</h1>
       <span style="max-width: 100%; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Wildfire Response</span>
     </span>
-    <a href="tel:911" class="btn" style="gap: 6px; height: 36px; margin: 0 4px 0 0; padding: 0 14px; flex-shrink: 0; background-color: rgba(255,59,48,0.12); border-color: transparent; color: #D70015; font-size: 17px; font-weight: 600; white-space: nowrap">
+    <a href="tel:911" class="btn" style="gap: 6px; height: 36px; margin: 0 4px 0 0; padding: 0 14px; flex-shrink: 0; background-color: rgba(255,59,48,0.12); border-color: transparent; color: #B0001A; font-size: 17px; font-weight: 600; white-space: nowrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"></path></svg>Call 911
     </a>
   </header>
@@ -250,7 +250,7 @@ class Component extends DCLogic {
       pressed: label === cur ? 'true' : 'false',
       bd: label === cur ? 'rgba(0,122,255,0)' : 'rgba(60,60,67,0.0)',
       bg: label === cur ? '#0071E3' : '#FFFFFF',
-      fg: label === cur ? '#FFFFFF' : '#F2F2F7',
+      fg: label === cur ? '#FFFFFF' : '#000000',
       pick: () => this.setState({ [key]: label })
     }));
     return { goHome: () => { const t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { home: t, fromList: false }); try { window.sessionStorage.setItem('wf-home', String(t)); window.sessionStorage.setItem('wf-list', '0'); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }, 
