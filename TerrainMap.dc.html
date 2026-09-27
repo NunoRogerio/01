@@ -786,6 +786,23 @@ class Component extends DCLogic {
     }
     return { area, pts: P, front: front.trim() };
   }
+  // Every fire station of the country (weekly OpenStreetMap snapshot in data/), so they show even fully zoomed out.
+  stationFile() {
+    const st = this.props.scopeSt || '';
+    const cc = st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : (st === 'US' || /^[A-Z]{2}$/.test(st)) ? 'us' : null;
+    if (!cc || !window.__wfLiveMap) return null;
+    const D = window.__wfStFile || (window.__wfStFile = {}), F = window.__wfStFileGet || (window.__wfStFileGet = {});
+    if (!D[cc] && !F[cc]) {
+      F[cc] = true;
+      fetch('data/stations-' + cc + '.json').then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then((js) => { D[cc] = { rows: js.s || [], geo: null, pts: null }; try { this.forceUpdate(); } catch (e) {} })
+        .catch(() => { D[cc] = { rows: [], geo: null, pts: null }; });
+    }
+    const d = D[cc]; if (!d || !d.rows.length) return null;
+    const G = this.geo();
+    if (d.geo !== G) { d.geo = G; d.pts = d.rows.map((r) => { const xy = G.P(r[2], r[3]); return [xy[0], xy[1]]; }); }
+    return d;
+  }
   // Fetch real fire stations (OpenStreetMap, via Overpass) for the selected area once; returns its cache key.
   osmStations() {
     const p = this.props, GB = window.__wfGeoBoxes || {};
@@ -906,6 +923,21 @@ class Component extends DCLogic {
       });
       return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch; dotted line shows the route.' : '.'));
     }).filter((o) => !isPin).filter(onScreen);
+    const SF = this.stationFile();
+    const fileStations = SF ? (() => {
+      const G = this.geo(), V = [];
+      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if (vis(q[0], q[1])) V.push(i); }
+      const k = Math.max(1, Math.ceil(V.length / 150));                     // at most ~150 on screen, evenly spread
+      const out = [];
+      for (let j = 0; j < V.length; j += k) {
+        const r = SF.rows[V[j]], xy = SF.pts[V[j]], la = r[2], lo = r[3], ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
+        const kmX = 1.113 * Math.cos(la * Math.PI / 180) / Math.max(1e-9, Math.abs(ex[0] - xy[0])), kmY = 1.113 / Math.max(1e-9, Math.abs(ey[1] - xy[1]));
+        const st = { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4] || '', lat: la, lon: lo, tags: r[5] ? { operator: r[5] } : {}, x: xy[0], y: xy[1], kmX, kmY, partial: true };
+        out.push(withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M5 5H19V19H5Z', fill: '#248A3D', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+          pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), r[4] || 'Fire station', r[5] || 'Location from OpenStreetMap'));
+      }
+      return out;
+    })() : null;
     const osmKey = window.__wfLiveMap ? this.osmStations() : null;
     const osmStations = osmKey ? ((window.__wfStations || {})[osmKey] || []).map(([id, nm, la, lo, tg, ty]) => {
       const G = this.geo(), xy = G.P(la, lo), t = tg || {}, ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
@@ -1042,7 +1074,7 @@ class Component extends DCLogic {
             return { countyLabels: counties, cityLabels: (window.__wfLiveMap && this.mapStyle() === 'standard') ? [] : cities };
           })(),
           showSea: !(window.__wfLiveMap && this.mapStyle() === 'standard'), sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: !LY.stations ? [] : window.__wfLiveMap ? (s >= 0.012 ? osmStations : []) : ((near && laScope) ? stations : []), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
+          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: !LY.stations ? [] : window.__wfLiveMap ? (fileStations || (s >= 0.012 ? osmStations : [])) : ((near && laScope) ? stations : []), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
         };
       })(),
       fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
@@ -1088,7 +1120,7 @@ class Component extends DCLogic {
       burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; }) : [],
       burnFx: !MANY && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
-        const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(stKey && ((window.__wfStations || {})[stKey] || []).length) };
+        const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
         return { legend, legOn: legend.length > 0, legTop: Math.round(this.win().t + 8 + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(this.win().t + 14 + (Number(p.legendOffset) || 0)),
           optOpen, optStr: optOpen ? 'true' : 'false',

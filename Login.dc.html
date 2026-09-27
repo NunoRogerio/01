@@ -219,7 +219,7 @@ class Component extends DCLogic {
     h.style.transition = (this.state || {}).leaving ? 'opacity .9s cubic-bezier(.4,0,.2,1) .1s' : 'none'; h.style.opacity = (this.state || {}).leaving ? '0' : '1';                                              // the frosted panel shows the photo through it
     // Each photo slowly zooms in while it is shown; photos out of view reset instantly, ready for their next turn.
     const apply = () => B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img;
-      d.style.transition = b.sc === 1 && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 10s linear';
+      d.style.transition = b.sc === 1 && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)';
       d.style.opacity = String(b.op); d.style.transform = 'scale(' + b.sc + ')'; });
     if (!this._bgPainted) { this._bgPainted = true; requestAnimationFrame(() => requestAnimationFrame(apply)); } else apply();
   }
@@ -247,7 +247,7 @@ class Component extends DCLogic {
     const sel = P.find((p) => p[0] === s.sel) || null;
     const open = !!s.open;
     return {
-      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.08 : 1, keep: i === prev })),
+      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.16 : 1, keep: i === prev })),
       credit: 'Photo: ' + PH[cur][1] + ' / Unsplash',
       toEn: () => window.__wfSetLang && window.__wfSetLang('en'), toPt: () => window.__wfSetLang && window.__wfSetLang('pt'),
       enC: window.__wfLang === 'pt' ? 'rgba(255,255,255,0.6)' : '#FFFFFF', ptC: window.__wfLang === 'pt' ? '#FFFFFF' : 'rgba(255,255,255,0.6)', enW: window.__wfLang === 'pt' ? 400 : 600, ptW: window.__wfLang === 'pt' ? 600 : 400,

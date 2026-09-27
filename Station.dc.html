@@ -119,7 +119,19 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  componentDidMount() { this._sync = () => this.forceUpdate(); try { window.addEventListener('wf-sync', this._sync); } catch (e) {} this._t = setTimeout(this._sync, 1500); }
+  componentDidMount() {
+    // Stations from the country snapshot carry only name and operator: read the rest (address, phone, website…) live.
+    const S = this.station();
+    if (S && S.partial) {
+      const q = '[out:json][timeout:25];' + (S.type === 'way' ? 'way' : 'node') + '(' + S.id + ');out tags;';
+      fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(q)).then((r) => r.json()).then((js) => {
+        const e = (js.elements || [])[0]; if (!e) return;
+        const s2 = Object.assign({}, S, { tags: Object.assign({}, S.tags, e.tags || {}), partial: false, name: S.name || (e.tags || {}).name || '' });
+        window.__wfMem = Object.assign(window.__wfMem || {}, { station: s2 }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(s2)); } catch (x) {}
+        this.forceUpdate();
+      }).catch(() => {});
+    }
+    this._sync = () => this.forceUpdate(); try { window.addEventListener('wf-sync', this._sync); } catch (e) {} this._t = setTimeout(this._sync, 1500); }
   componentWillUnmount() { try { window.removeEventListener('wf-sync', this._sync); } catch (e) {} clearTimeout(this._t); }
   station() {
     let s = (window.__wfMem || {}).station || null;
