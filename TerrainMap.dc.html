@@ -75,7 +75,10 @@ body{margin:0}
     <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
       <sc-for list="{{burns}}" as="bn" hint-placeholder-count="0">
         <path d="{{bn.area}}" fill="#FF3B30" fill-opacity="0.22" stroke="#8E0A12" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-        <path d="{{bn.front}}" fill="none" stroke="#FF3B30" stroke-opacity="0.85" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#E0301E;#FF7A1A;#E0301E" dur="2.4s" repeatCount="indefinite"></animate></path>
+        <path d="{{bn.front}}" fill="none" stroke="#FF3B30" stroke-opacity="0.85" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      </sc-for>
+      <sc-for list="{{burnFx}}" as="bf" hint-placeholder-count="0">
+        <path d="{{bf.front}}" fill="none" stroke="#FF3B30" stroke-opacity="0.85" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#E0301E;#FF7A1A;#E0301E" dur="2.4s" repeatCount="indefinite"></animate></path>
       </sc-for>
       <sc-if value="{{isSpread}}" hint-placeholder-val="{{ false }}">
         <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3 6" vector-effect="non-scaling-stroke"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.2s" repeatCount="indefinite"></animate></path>
@@ -196,7 +199,7 @@ body{margin:0}
     </sc-for>
     <sc-for list="{{ignMarks}}" as="ig" hint-placeholder-count="2">
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mv}}">
-        <sc-if value="{{ig.sel}}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
           <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none">
             <circle cx="48" cy="48" r="8" fill="none" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="8;20" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
             <polygon points="38.5,42 57.5,42 48,58.5" fill="{{ig.c}}" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35))"></polygon>
@@ -209,10 +212,17 @@ body{margin:0}
           </span>
         </sc-if>
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
+          <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
           <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none">
-            <circle cx="32" cy="32" r="{{ig.r}}" fill="none" style="display: {{ig.pulseD}}" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="{{ig.anim}}" dur="{{ig.dur}}" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="{{ig.dur}}" repeatCount="indefinite"></animate></circle>
+            <circle cx="32" cy="32" r="{{ig.r}}" fill="none" stroke="{{ig.c}}" stroke-width="1.4"><animate attributeName="r" values="{{ig.anim}}" dur="{{ig.dur}}" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="{{ig.dur}}" repeatCount="indefinite"></animate></circle>
             <polygon points="24,27 40,27 32,41" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
           </svg>
+          </sc-if>
+          <sc-if value="{{ig.still}}" hint-placeholder-val="{{ false }}">
+          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none">
+            <polygon points="24,27 40,27 32,41" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round"></polygon>
+          </svg>
+          </sc-if>
           <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
         </sc-if>
       </button>
@@ -816,7 +826,7 @@ class Component extends DCLogic {
     const onScreen = () => true;
     // Draw only what is on screen, and at most the most important markers, so thousands of incidents stay fast.
     const WN0 = this.win(), vis = (x, y) => { const L = tx + x * s, T = ty + y * s; return L > -40 && L < W + 40 && T > WN0.t - 40 && T < WN0.b + 40; };
-    const CAP = 140, selNow = (this.state || {}).selId;
+    const CAP = 90, selNow = (this.state || {}).selId;
     const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g) => vis(g.x, g.y)).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAP) : [];
     const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
     const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => vis(q.g.x, q.g.y) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, CAP) : null;
@@ -1009,7 +1019,7 @@ class Component extends DCLogic {
       fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
-        const small = x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
+        const small = MANY || x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
         const zone = small
           ? { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' }
           : { zl: +x0.toFixed(1), zt: +y0.toFixed(1), zw: +(x1 - x0).toFixed(1), zh: +(y1 - y0).toFixed(1), rad: '0', flameD: 'none', clip: "path('M" + sp.map((q) => (q[0] - x0).toFixed(1) + ' ' + (q[1] - y0).toFixed(1)).join(' L') + " Z')" };
@@ -1018,7 +1028,8 @@ class Component extends DCLogic {
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
-      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)) : [],
+      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; }) : [],
+      burnFx: !MANY && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(stKey && ((window.__wfStations || {})[stKey] || []).length) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
@@ -1038,7 +1049,7 @@ class Component extends DCLogic {
         const c = window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : (mid ? '#0A6FDB' : '#48484A'));
         return withTip(at(g.x, g.y, {
           c, rim: hi ? '#FFFFFF' : (mid ? '#FFFFFF' : '#FFFFFF'), r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
-          pulseD: MANY ? 'none' : 'inline', _id: g.id, sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
+          pulse: !MANY && !sel, still: MANY && !sel, _id: g.id, isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
           aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent',
           pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
         }), g.place + ' · ' + g.id, g.conf + '% likelihood · ' + g.src + '.\nTap to review.');
