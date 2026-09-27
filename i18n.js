@@ -76,7 +76,7 @@
     'USD 206.7 bn of forest-risk credit since 2016 went through Brazil\'s agriculture finance programme. Largest lenders: Banco do Brasil 99.8 bn · Sicredi 19.5 bn · Bradesco 17.7 bn · Itaú 14.6 bn · Caixa 12.8 bn · Banco da Amazônia 8.3 bn.':'206,7 mil milhões de USD em crédito de risco florestal passaram desde 2016 pelo programa de crédito agrícola do Brasil. Maiores credores: Banco do Brasil 99,8 · Sicredi 19,5 · Bradesco 17,7 · Itaú 14,6 · Caixa 12,8 · Banco da Amazônia 8,3 (mil milhões).',
     'Forests & Finance, Banking on Biodiversity Collapse (Nov 2025) · USD, loans and underwriting, Brazil-wide':'Forests & Finance, Banking on Biodiversity Collapse (nov 2025) · USD, empréstimos e subscrição, todo o Brasil',
     'Nevada Division of Forestry · US':'Nevada Division of Forestry · US','Fire origin':'Origem do incêndio','Wind':'Vento',
-    'Fighting this fire':'A combater este incêndio','Personnel':'Operacionais','Ground vehicles':'Viaturas terrestres','on scene':'no local','Fire model':'Modelo do incêndio',
+    'Fighting this fire':'A combater este incêndio','Fighting':'A combater','Personnel':'Operacionais','Ground vehicles':'Viaturas terrestres','on scene':'no local','Fire model':'Modelo do incêndio',
     'Weather or map services did not answer; try again later':'Os serviços de meteorologia ou de mapas não responderam; tente mais tarde','Aircraft':'Meios aéreos','Crews':'Equipas',
     'Perimeter not mapped':'Perímetro não cartografado','Resources on scene and nearest fire stations':'Meios no local e quartéis mais próximos',
     'We will notify you':'Vamos notificá-lo','Received':'Recebido','What do you see?':'O que vê?','How far away is it?':'A que distância está?','New photo':'Nova fotografia','Wildfire Response':'Resposta a Incêndios'
@@ -100,7 +100,7 @@
     [/^([\d.,]+) km to scene$/,'A $1 km do local'],[/^On route · ([\d.,]+) min to scene$/,'A caminho · a $1 min do local'],[/^En route · arriving in (.+)$/,'A caminho · chega em $1'],
     [/^([\d.,]+) of ([\d.,]+) still free$/,'$1 de $2 ainda livres'],[/^([\d.,]+) free crews$/,'$1 equipas livres'],
     [/^Active ([\dhm ]+)$/,'Ativo há $1'],
-    [/^Reported by (.+)$/,'Reportado por $1'],[/^Started (.+)$/,'Início $1'],[/^Expected containment ~(.+)$/,'Contenção prevista ~$1'],[/^Held since (.+)$/,'Dominado desde $1'],[/^Held for (.+)$/,'Dominado há $1'],[/^Active for (.+)$/,'Ativo durante $1'],[/^Edge fully contained$/,'Perímetro totalmente contido'],
+    [/^Reported by (.+)$/,'Reportado por $1'],[/^((?:\d+d )?\d+h \d+m) active$/,'$1 ativo'],[/^Started (.+)$/,'Início $1'],[/^Expected containment ~(.+)$/,'Contenção prevista ~$1'],[/^Held since (.+)$/,'Dominado desde $1'],[/^Held for (.+)$/,'Dominado há $1'],[/^Active for (.+)$/,'Ativo durante $1'],[/^Edge fully contained$/,'Perímetro totalmente contido'],
     [/^Started (.+?) · held (by )?(.+?)( · now (.+))?$/,function(m,a,by,b,x,st){return 'Início '+a+' · dominado '+(by?'até às ':'às ')+b+(st?' · agora '+(X[st.charAt(0).toUpperCase()+st.slice(1)]||st).toLowerCase():'');}],
     [/^(PT-\S+|BR-\S+|\S+-\S+) · (.+) · (\d+) units$/,'$1 · $2 · $3 meios'],[/^Live · (.+)$/,'Em direto · $1'],[/^Updated (.+)$/,'Atualizado $1'],[/^Contained (\d+)%$/,'Contido a $1%'],[/^Reported (.+)$/,'Reportado $1'],
     [/^© (\d+) Nuno Rogerio\. All rights reserved\.$/,'© $1 Nuno Rogerio. Todos os direitos reservados.'],[/^Photo: (.+) \/ Unsplash$/,'Fotografia: $1 / Unsplash'],
