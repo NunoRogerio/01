@@ -1038,7 +1038,8 @@ class Component extends DCLogic {
       fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
       fullLabel: (p.isFull === true || p.isFull === 'true') ? 'Exit full screen' : 'Full screen',
       fullIcon: (p.isFull === true || p.isFull === 'true') ? 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5' : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
-      legL: 10 + WN.l, legR: 10 + WN.r, ctrlB: Math.max(8, (Number(p.attrBottom ?? 10)) + (H - WN.b) - 14), ctrlR: 10 + WN.r, attrL: 12 + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (Number(p.attrBottom ?? 10)) + (H - WN.b),
+      legL: 10 + WN.l, legR: 10 + WN.r, // The maximize button sits 16px above whatever panel covers the map's bottom edge (panels overlap the map by attrBottom - 6).
+      ctrlB: Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + (H - WN.b) + 16, ctrlR: 16 + WN.r, attrL: 12 + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (Number(p.attrBottom ?? 10)) + (H - WN.b),
       mapTr: anim ? 'transform' + EZ : 'none', mv: anim ? 'left' + EZ + ', top' + EZ : 'none', mvSt: anim ? 'left' + EZ + ', top' + EZ + ', background-color .3s, border-color .3s' : 'background-color .3s, border-color .3s',
       ctrl: p.controls === 'top'
         ? { right: '12px', top: '12px', tf: 'none', dir: 'row', sepW: '1px', sepH: '24px', sepM: 'auto 2px' }
