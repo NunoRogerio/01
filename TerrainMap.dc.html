@@ -113,6 +113,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-for>
         <circle cx="{{pin.x}}" cy="{{pin.y}}" r="9" fill="#E86A00" fill-opacity="0.1" stroke="#E86A00" stroke-width="1.2" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></circle>
       </sc-if>
+      <sc-for list="{{routeLines}}" as="rl" hint-placeholder-count="0">
+        <path d="{{rl.d}}" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" style="opacity: 0.7"></path>
+        <path d="{{rl.d}}" fill="none" stroke="#1E7A34" stroke-width="2.4" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      </sc-for>
     </svg>
   </div>
 
@@ -861,6 +865,27 @@ class Component extends DCLogic {
     }
     this._scK = key; this._scF = f; return f;
   }
+  // Road route from a suggested station to the fire or ignition point (OpenStreetMap roads via the OSRM router):
+  // real distance, drive time and the path the crews would drive. Null while loading; { fail: true } if unavailable.
+  routeOf(q) {
+    const p = this.props, SF = this.stationFile(); if (!SF || !window.__wfLiveMap || !q) return null;
+    const FOC = p.mode === 'pin' ? [Number(p.pinX), Number(p.pinY)] : [Number(p.fireX), Number(p.fireY)];
+    if (!isFinite(FOC[0]) || !isFinite(FOC[1])) return null;
+    const r0 = SF.rows[q.i], la1 = r0[2], lo1 = r0[3], la2 = 34.19 - (FOC[1] - 662) / 2829, lo2 = (FOC[0] - 518) / 2345 - 118.13;
+    const key = lo1.toFixed(5) + ',' + la1.toFixed(5) + ';' + lo2.toFixed(5) + ',' + la2.toFixed(5);
+    const R = window.__wfRoutes || (window.__wfRoutes = {});
+    if (R[key] === undefined) {
+      R[key] = null;
+      fetch('https://router.project-osrm.org/route/v1/driving/' + key + '?overview=full&geometries=geojson')
+        .then((res) => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+        .then((js) => { const rt = js && js.routes && js.routes[0]; if (!rt) throw new Error('no route');
+          const G = this.geo(), pts = rt.geometry.coordinates.map(([lo, la]) => G.P(la, lo));
+          R[key] = { km: rt.distance / 1000, min: Math.max(1, Math.round(rt.duration / 60)), d: 'M' + pts.map((q2) => q2[0] + ' ' + q2[1]).join(' L') };
+          try { this.forceUpdate(); } catch (e) {} })
+        .catch(() => { R[key] = { fail: true }; try { this.forceUpdate(); } catch (e) {} });
+    }
+    return R[key];
+  }
   nearSt() {
     const p = this.props, SF = this.stationFile(); if (!SF || !p.stationsSt) return [];
     const FOC = p.mode === 'pin' ? [Number(p.pinX), Number(p.pinY)] : (p.fireX != null && p.fireX !== '' ? [Number(p.fireX), Number(p.fireY)] : null);
@@ -896,7 +921,9 @@ class Component extends DCLogic {
     const d = { fires: true, cands: true, stations: true, burn: true, active: true, held: true };
     let v = window.__wfLayers;
     if (!v) { try { v = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
-    return Object.assign(d, v || {});
+    const out = Object.assign(d, v || {});
+    if (this.props.mode === 'pin' || this.props.mode === 'spread') out.stations = true;   // the suggested stations always show on a fire or candidate
+    return out;
   }
   toggleLayer(k) {
     const v = this.layers(); v[k] = !v[k]; window.__wfLayers = v;
@@ -919,7 +946,7 @@ class Component extends DCLogic {
       const C = false, off = (c) => (on ? c : 'none');
       return { label, d, fill: on ? fill : 'none', stroke: on ? stroke : '#8E8E93', fg: on ? '#000000' : '#8E8E93', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
-        aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
+        aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => { if (k === 'stations' && (this.props.mode === 'pin' || this.props.mode === 'spread')) return; this.toggleLayer(k); } };
     });
   }
   zMin() { return window.__wfLiveMap ? 0.0005 : Math.max(0.008, (this.base().s || 0.05) * 0.46); }
@@ -1015,9 +1042,10 @@ class Component extends DCLogic {
         const r = SF.rows[V[j]], xy = SF.pts[V[j]], la = r[2], lo = r[3], ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
         const kmX = 1.113 * Math.cos(la * Math.PI / 180) / Math.max(1e-9, Math.abs(ex[0] - xy[0])), kmY = 1.113 / Math.max(1e-9, Math.abs(ey[1] - xy[1]));
         const st = { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4] || '', lat: la, lon: lo, tags: r[5] ? { operator: r[5] } : {}, x: xy[0], y: xy[1], kmX, kmY, partial: true };
-        const nk = NEAR.get(V[j]), near = nk != null;
-        out.push(withTip(at(xy[0], xy[1] + 4, { label: near ? (nk < 10 ? nk.toFixed(1) : Math.round(nk)) + ' km' : '', icon: 'M5 5H19V19H5Z', fill: '#1E7A34', bg: near ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near ? 'rgba(30,122,52,0.55)' : 'transparent', fg: near ? '#1E7A34' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
-          pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), r[4] || 'Fire station', r[5] || 'Location from OpenStreetMap'));
+        const nk = NEAR.get(V[j]), near = nk != null, RT = near ? this.routeOf({ i: V[j] }) : null, rOk = !!(RT && !RT.fail);
+        const kmT = (k) => (k < 10 ? k.toFixed(1) : String(Math.round(k))) + ' km';
+        out.push(withTip(at(xy[0], xy[1] + 4, { label: near ? (rOk ? kmT(RT.km) + ' · ' + RT.min + ' min' : kmT(nk)) : '', icon: 'M5 5H19V19H5Z', fill: '#1E7A34', bg: near ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near ? 'rgba(30,122,52,0.55)' : 'transparent', fg: near ? '#1E7A34' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+          pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), r[4] || 'Fire station', [r[5] || 'Location from OpenStreetMap'].concat(near ? [rOk ? 'By road ' + kmT(RT.km) + ' · about ' + RT.min + ' min drive to the ' + (p.mode === 'pin' ? 'ignition point' : 'fire') : RT && RT.fail ? kmT(nk) + ' in a straight line · road route not available' : kmT(nk) + ' in a straight line · finding the road route…'] : []).join('\n')));
       }
       return out;
     })() : null;
@@ -1073,6 +1101,7 @@ class Component extends DCLogic {
       isRisk, isSpread: mode === 'spread', isPin,
       pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g && window.__wfConfC ? window.__wfConfC(g.conf) : g ? (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A') : '#E86A00'; })(),
       pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
+      routeLines: this.recMode() ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
       camLines: isPin ? (Array.isArray(p.cams) ? p.cams : []).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
       camMarks: isPin ? (Array.isArray(p.cams) ? p.cams : []).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Evidence source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
       hasFull: typeof p.onFull === 'function',
