@@ -786,6 +786,15 @@ class Component extends DCLogic {
     }
     return { area, pts: P, front: front.trim() };
   }
+  // Stable thinning: one marker per cell of a grid fixed to the map (not the screen), sized for the zoom in
+  // power-of-two steps. Panning never changes which markers show; only a real zoom step does.
+  thinKeep(key, items, xy, better, px, sc) {
+    const k = Math.ceil(Math.log2(px / Math.max(1e-9, sc))), T = this._thin || (this._thin = {}), c = T[key];
+    if (c && c.items === items && c.k === k) return c.keep;
+    const cell = Math.pow(2, k), best = new Map();
+    for (let i = 0; i < items.length; i++) { const q = xy(items[i], i); const g = Math.floor(q[0] / cell) + ',' + Math.floor(q[1] / cell); const b = best.get(g); if (b === undefined || better(i, b)) best.set(g, i); }
+    const keep = new Set(best.values()); T[key] = { items, k, keep }; return keep;
+  }
   // Every fire station of the country (weekly OpenStreetMap snapshot in data/), so they show even fully zoomed out.
   stationFile() {
     const st = this.props.scopeSt || '';
@@ -891,9 +900,11 @@ class Component extends DCLogic {
     // Draw only what is on screen, and at most the most important markers, so thousands of incidents stay fast.
     const WN0 = this.win(), vis = (x, y) => { const L = tx + x * s, T = ty + y * s; return L > -40 && L < W + 40 && T > WN0.t - 40 && T < WN0.b + 40; };
     const CAP = 90, selNow = (this.state || {}).selId;
-    const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g) => vis(g.x, g.y)).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAP) : [];
+    const FK = Array.isArray(p.fires) ? this.thinKeep('fires', p.fires, (g) => [g.x, g.y], (i, j) => { const A = p.fires[i], B = p.fires[j], a1 = A.info && !A.info.resolved ? 1 : 0, b1 = B.info && !B.info.resolved ? 1 : 0; return a1 !== b1 ? a1 > b1 : (A.ha || 0) > (B.ha || 0); }, 30, s) : null;
+    const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g, i) => FK.has(i) && vis(g.x, g.y)).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAP) : [];
     const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
-    const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => vis(q.g.x, q.g.y) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, CAP) : null;
+    const IK = IGN_ALL ? this.thinKeep('ign', IGN_ALL, (g) => [g.x, g.y], (i, j) => IGN_ALL[i].conf > IGN_ALL[j].conf, 30, s) : null;
+    const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => (IK.has(q.i) && vis(q.g.x, q.g.y)) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, CAP) : null;
     // Whole countries (and any crowded view): markers stay still — no pulses or animated edges — to keep phones light.
     const MANY = ['US', 'BRA', 'AMZ', 'PT', 'CAN'].indexOf(p.scopeSt) >= 0 || (IGN_V ? IGN_V.length : 0) + FIRES_V.length > 40;
     const mode = p.mode || 'risk';
@@ -926,8 +937,9 @@ class Component extends DCLogic {
     const SF = this.stationFile();
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
-      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if (vis(q[0], q[1])) V.push(i); }
-      const k = Math.max(1, Math.ceil(V.length / 150));                     // at most ~150 on screen, evenly spread
+      const SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], 34, s);   // fixed per zoom step: no popping while panning
+      for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if (SK.has(i) && vis(q[0], q[1])) V.push(i); }
+      const k = Math.max(1, Math.ceil(V.length / 300));
       const out = [];
       for (let j = 0; j < V.length; j += k) {
         const r = SF.rows[V[j]], xy = SF.pts[V[j]], la = r[2], lo = r[3], ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
