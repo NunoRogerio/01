@@ -549,7 +549,8 @@ class Component extends DCLogic {
   wfSetScope(v) { window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); try { window.sessionStorage.setItem('wf-scope', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   wfScoped(scopeIn) {
     const W = this.wfWorld(), sc = scopeIn || this.wfScope(), dz = this.wfDismissed(), cf = this.wfConfirmed();
-    const inScope = (r) => r.st === sc.st && (!sc.co || r.co === sc.co);
+    // 'US' = the whole United States: every state (two-letter codes other than Portugal's 'PT')
+    const inScope = (r) => sc.st === 'US' ? (/^[A-Z]{2}$/.test(r.st) && r.st !== 'PT') : (r.st === sc.st && (!sc.co || r.co === sc.co));
     const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-0924-' + String(3 + i).padStart(2, '0'), place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y }));
     const allFires = W.fires.concat(confirmedFires);
     const openCands = W.cands.filter((c) => !dz[c.id] && !cf[c.id]);

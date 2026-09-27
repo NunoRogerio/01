@@ -592,6 +592,7 @@ class Component extends DCLogic {
     const states = {};
     Object.keys(ST).forEach((k) => { const pts = ST[k].map(([la, lo]) => P(la, lo)); states[k] = { d: path(ST[k], true), box: bbox(pts), label: STN[k][0], c: P(STN[k][1], STN[k][2]) }; });
     Object.entries({"Aveiro": [40.64, -8.65], "Beja": [37.93, -7.87], "Braga": [41.55, -8.42], "Bragança": [41.6, -6.8], "Castelo Branco": [39.82, -7.49], "Coimbra": [40.2, -8.41], "Évora": [38.57, -7.9], "Faro": [37.2, -8.1], "Guarda": [40.54, -7.27], "Leiria": [39.74, -8.8], "Lisboa": [38.9, -9.15], "Portalegre": [39.2, -7.6], "Porto": [41.2, -8.5], "Santarém": [39.24, -8.5], "Setúbal": [38.3, -8.7], "Viana do Castelo": [41.85, -8.5], "Vila Real": [41.5, -7.6], "Viseu": [40.75, -7.9], "Açores": [38.4, -28.0], "Madeira": [32.75, -16.95]}).forEach(([n, c]) => { const r = n === 'Açores' ? [2, 3.5] : n === 'Madeira' ? [0.4, 0.6] : [0.45, 0.5]; const a = P(c[0] + r[0], c[1] - r[1]), b = P(c[0] - r[0], c[1] + r[1]); counties['PT|' + n] = { st: 'PT', name: n, c: P(c[0], c[1]), d: '', box: [a[0], a[1], b[0], b[1]] }; });
+    states.US = { d: '', box: [P(49.4, -125)[0], P(49.4, -125)[1], P(24.5, -66.9)[0], P(24.5, -66.9)[1]], label: 'United States', c: P(39.5, -98.5) };   // lower 48
     states.PT = { d: '', box: [P(42.2, -9.6)[0], P(42.2, -9.6)[1], P(36.9, -6.2)[0], P(36.9, -6.2)[1]], label: 'Portugal', c: P(39.6, -8.0) };
     const GB = window.__wfGeoBoxes || {};
     Object.keys(GB).forEach((k) => { const g = GB[k], a = P(g[3], g[0]), z = P(g[1], g[2]), b = [a[0], a[1], z[0], z[1]], c = [Math.round((b[0] + b[2]) / 2), Math.round((b[1] + b[3]) / 2)], i = k.indexOf('|');
@@ -622,7 +623,7 @@ class Component extends DCLogic {
     const pts = [].concat(Array.isArray(p.ignitions) ? p.ignitions : [], Array.isArray(p.fires) ? p.fires : []).map((g) => [g.x, g.y]);
     const bb = (a) => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; a.forEach(([x, y]) => { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }); return [x0, y0, x1, y1]; };
     // Frame the incidents themselves (ignitions + fires) in every state and county; fall back to the area outline when there are none.
-    let box = pts.length ? bb(pts) : null, minSpan = 220;
+    let box = p.scopeSt === 'US' ? G.states.US.box : (pts.length ? bb(pts) : null), minSpan = p.scopeSt === 'US' ? 1 : 220;
     if (!box) { const c = (p.scopeCo && G.counties[p.scopeSt + '|' + p.scopeCo]) || G.states[p.scopeSt]; box = c ? c.box : null; minSpan = 1; }
     if (!box) return null;
     const W = this.W(), fw = this.fitWin();
