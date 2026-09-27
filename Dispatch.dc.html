@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=24"></script>
-<script src="prefs.js?v=3"></script>
-<script src="i18n.js?v=25"></script>
+<script src="prefs.js?v=4"></script>
+<script src="i18n.js?v=26"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -278,7 +278,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <ul class="wf-snap" style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 1; min-height: 0; margin: 24px 0 0; padding: 0; list-style: none; overflow-y: auto; scrollbar-width: none">
       <sc-for list="{{snd.rows}}" as="o" hint-placeholder-count="2">
         <li style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
-          <div style="display: flex; align-items: center; gap: 16px; min-height: 60px; padding: 10px 16px; box-sizing: border-box">
+          <div style="display: flex; align-items: center; gap: 16px; min-height: 60px; padding: 10px 16px; box-sizing: border-box; background-color: {{o.hdBg}}">
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 17px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
             <span style="font-size: 15px; line-height: 18px; color: {{o.stC}}">{{o.state}}</span>
@@ -1039,7 +1039,7 @@ class Component extends DCLogic {
         return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
           title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending dispatch orders' : 'Sending dispatch order'), titleC: all ? '#1E7A34' : '#000000',
           sub: 'To station coordinators · ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: all ? '#34C759' : '#0062CC',
-          rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all; return { name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+          rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all; return { hdBg: d.id === 'air' ? 'rgba(0, 113, 227, 0.06)' : 'rgba(52, 199, 89, 0.08)', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
             units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
             state: sentO ? 'Order received by the coordinator' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           redo: () => { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
