@@ -1,0 +1,34 @@
+name: Loading-screen forest photos
+# Downloads the aerial forest photos listed in scripts/splash.json (Unsplash licence) at phone size into
+# assets/splash/, so the app ships them itself. Runs when the list changes.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/splash.json', '.github/workflows/splash.yml']
+permissions:
+  contents: write
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download
+        run: |
+          mkdir -p assets/splash
+          python3 - <<'PY'
+          import json, subprocess, os
+          for p in json.load(open('scripts/splash.json')):
+              url = 'https://images.unsplash.com/%s?w=780&h=1560&fit=crop&crop=entropy&q=58&fm=webp' % p['id']
+              out = 'assets/splash/' + p['file']
+              r = subprocess.run(['curl', '-fsSL', '--retry', '3', '-A', 'ForestFireWatch/1.0', url, '-o', out])
+              print(p['file'], 'ok' if r.returncode == 0 else 'FAILED', os.path.getsize(out) if os.path.exists(out) else 0)
+          PY
+          ls -la assets/splash
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/splash
+          git diff --cached --quiet || (git commit -m "Update loading-screen forest photos" && git pull --rebase -q && git push)
