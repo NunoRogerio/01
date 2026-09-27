@@ -544,7 +544,19 @@ class Component extends DCLogic {
     const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-0924-' + String(3 + i).padStart(2, '0'), place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y }));
     const allFires = W.fires.concat(confirmedFires);
     const openCands = W.cands.filter((c) => !dz[c.id] && !cf[c.id]);
-    const count = (st, co) => ({ cands: openCands.filter((c) => inA(c, st, co)).length, fires: allFires.filter((f) => inA(f, st, co)).length });
+    // Counts per area from one pass over the data (the area table asks for dozens of areas on every render).
+    const IX = { sc: {}, s: {}, US: [0, 0], AMZ: [0, 0], AMZc: {} }, AMZ = window.__wfAMZ || [];
+    const tally = (r, k) => {
+      const a = (IX.s[r.st] || (IX.s[r.st] = [0, 0])); a[k]++;
+      const b = (IX.sc[r.st + '|' + r.co] || (IX.sc[r.st + '|' + r.co] = [0, 0])); b[k]++;
+      if (/^[A-Z]{2}$/.test(r.st || '') && r.st !== 'PT') IX.US[k]++;
+      if (r.st === 'BRA' && AMZ.indexOf(r.co) >= 0) { IX.AMZ[k]++; const c = (IX.AMZc[r.co] || (IX.AMZc[r.co] = [0, 0])); c[k]++; }
+    };
+    openCands.forEach((c) => tally(c, 0)); allFires.forEach((f) => tally(f, 1));
+    const count = (st, co) => {
+      const v = st === 'US' ? IX.US : st === 'AMZ' ? (co ? IX.AMZc[co] : IX.AMZ) : (co ? IX.sc[st + '|' + co] : IX.s[st]);
+      return { cands: v ? v[0] : 0, fires: v ? v[1] : 0 };
+    };
     return { W, sc, cands: openCands.filter(inScope).sort((a, b) => b.conf - a.conf), fires: allFires.filter(inScope), count };
   }
   wfMarkFlip() {

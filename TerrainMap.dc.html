@@ -742,6 +742,11 @@ class Component extends DCLogic {
     return { cx, cy, s };
   }
   fireBurn(g) {
+    const FB = window.__wfBurnMemo || (window.__wfBurnMemo = new Map()), mk = (g && g.id) + '|' + (g && g.x) + '|' + (g && g.y) + '|' + (g && g.note);
+    const hit = FB.get(mk); if (hit) return hit;
+    const out = this.fireBurn0(g); if (FB.size > 3000) FB.clear(); FB.set(mk, out); return out;
+  }
+  fireBurn0(g) {
     // Burned area in map units: a wind-driven teardrop that grows downwind from the ignition point,
     // with canyon "fingers" at the head and an uneven perimeter. Fronts = the still-active edges.
     g = g || {}; const id = String(g.id || 'f');
@@ -863,7 +868,8 @@ class Component extends DCLogic {
     const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g) => vis(g.x, g.y)).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAP) : [];
     const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
     const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => vis(q.g.x, q.g.y) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, CAP) : null;
-    const MANY = (IGN_V ? IGN_V.length : 0) + FIRES_V.length > 40;
+    // Whole countries (and any crowded view): markers stay still — no pulses or animated edges — to keep phones light.
+    const MANY = ['US', 'BRA', 'AMZ', 'PT', 'CAN'].indexOf(p.scopeSt) >= 0 || (IGN_V ? IGN_V.length : 0) + FIRES_V.length > 40;
     const mode = p.mode || 'risk';
     const isRisk = mode === 'risk';
     const isPin = mode === 'pin';
@@ -1057,7 +1063,7 @@ class Component extends DCLogic {
           })
         };
       })(),
-      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
+      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
       fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));

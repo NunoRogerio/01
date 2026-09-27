@@ -541,7 +541,19 @@ class Component extends DCLogic {
     const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-0924-' + String(3 + i).padStart(2, '0'), place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y }));
     const allFires = W.fires.concat(confirmedFires);
     const openCands = W.cands.filter((c) => !dz[c.id] && !cf[c.id]);
-    const count = (st, co) => ({ cands: openCands.filter((c) => inA(c, st, co)).length, fires: allFires.filter((f) => inA(f, st, co)).length });
+    // Counts per area from one pass over the data (the area table asks for dozens of areas on every render).
+    const IX = { sc: {}, s: {}, US: [0, 0], AMZ: [0, 0], AMZc: {} }, AMZ = window.__wfAMZ || [];
+    const tally = (r, k) => {
+      const a = (IX.s[r.st] || (IX.s[r.st] = [0, 0])); a[k]++;
+      const b = (IX.sc[r.st + '|' + r.co] || (IX.sc[r.st + '|' + r.co] = [0, 0])); b[k]++;
+      if (/^[A-Z]{2}$/.test(r.st || '') && r.st !== 'PT') IX.US[k]++;
+      if (r.st === 'BRA' && AMZ.indexOf(r.co) >= 0) { IX.AMZ[k]++; const c = (IX.AMZc[r.co] || (IX.AMZc[r.co] = [0, 0])); c[k]++; }
+    };
+    openCands.forEach((c) => tally(c, 0)); allFires.forEach((f) => tally(f, 1));
+    const count = (st, co) => {
+      const v = st === 'US' ? IX.US : st === 'AMZ' ? (co ? IX.AMZc[co] : IX.AMZ) : (co ? IX.sc[st + '|' + co] : IX.s[st]);
+      return { cands: v ? v[0] : 0, fires: v ? v[1] : 0 };
+    };
     return { W, sc, cands: openCands.filter(inScope).sort((a, b) => b.conf - a.conf), fires: allFires.filter(inScope), count };
   }
   wfMarkFlip() {
@@ -614,7 +626,9 @@ class Component extends DCLogic {
     const series = (seed, n, base, rise) => Array.from({ length: n }, (_, i) => { const k = i / (n - 1); const w = Math.sin(seed * 7.1 + i * 1.9) * 0.08 + Math.sin(seed * 3.3 + i * 0.7) * 0.05; return Math.max(0, base + rise * Math.pow(Math.max(0, k - 0.45) / 0.55, 1.6) + w * base); });
     const pathOf = (a, W, H, x0, y0, lo, hi, area) => { const pts = a.map((v, i) => [x0 + i * W / (a.length - 1), y0 + H - (v - lo) / (hi - lo || 1) * H]); const d = pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' '); return area ? d + ' L' + (x0 + W) + ' ' + (y0 + H) + ' L' + x0 + ' ' + (y0 + H) + ' Z' : d; };
     // Real satellite candidates (NASA FIRMS): show only what the satellite measured.
-    const buildLive = (c) => {
+    const BLM = window.__wfBuildMemo || (window.__wfBuildMemo = new Map());   // dates are slow to format; build each candidate once
+    const buildLive = (c) => { const k = c.id + '|' + c.conf + '|' + (c.live && c.live.t) + '|' + c.x + '|' + c.y; let v = BLM.get(k); if (!v) { v = buildLive0(c); if (BLM.size > 5000) BLM.clear(); BLM.set(k, v); } return v; };
+    const buildLive0 = (c) => {
       const L = c.live, d = L.t ? new Date(L.t) : null;
       const time = d && !isNaN(d) ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
       const day = d && !isNaN(d) ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) : '';
@@ -720,8 +734,8 @@ class Component extends DCLogic {
           multi: n > 1, hdrBd: n > 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
           curRow: { place: cur.place, sub: (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
             aria: cur.place + ', ' + cur.conf + ' percent. ' + (n > 1 ? (ci + 1) + ' of ' + n + '. Show other candidates' : '') },
-          ddRows: others.map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
-            aria: o.c.place + ', ' + o.c.conf + ' percent, ' + o.c.srcList, op: dd ? 1 : 0, tf: dd ? 'none' : 'translateY(-12px)', delay: dd ? (140 + k * 35) + 'ms' : '0ms',
+          ddRows: (dd ? others.slice(0, 80) : []).map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
+            aria: o.c.place + ', ' + o.c.conf + ' percent, ' + o.c.srcList, op: dd ? 1 : 0, tf: dd ? 'none' : 'translateY(-12px)', delay: dd ? (140 + Math.min(k, 12) * 35) + 'ms' : '0ms',
             pick: () => this.setState({ ci: o.i, focusId: null, tab: null, dd: false, confirm: false, full: false }) })),
           hDd: this.wfHandle('dd', 'up', () => this.setState({ dd: false })), ddDy: this.wfDrag('dd').y, ddDyT: this.wfDrag('dd').t,
           ddToggle: () => { if (n > 1) this.setState({ dd: !s.dd }); }, ddClose: () => this.setState({ dd: false }),
