@@ -45,7 +45,7 @@
     '@keyframes wfburn{0%,12%{opacity:0}45%,62%{opacity:1}100%{opacity:0}}'+
     '@keyframes wfsweep{from{background-position:120% 0}to{background-position:-120% 0}}'+
     '#wf-load .fire{animation:wfburn 1.8s ease-in-out infinite}'+
-    '#wf-load .name{font:600 14px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:.32em;margin-right:-.32em;'+
+    '#wf-load .name{font:600 20px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:.02em;'+
       'background:linear-gradient(90deg,#8E8E93 0%,#8E8E93 40%,#E8590C 50%,#8E8E93 60%,#8E8E93 100%);background-size:250% 100%;'+
       '-webkit-background-clip:text;background-clip:text;color:transparent;animation:wfsweep 1.8s linear infinite}'+
     '#wf-load .sub{font:400 15px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#8E8E93}';
@@ -55,7 +55,7 @@
     '<defs><radialGradient id="wfLoadFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"/><stop offset="0.35" stop-color="#FFA41B"/><stop offset="0.7" stop-color="#FF5A1F"/><stop offset="1" stop-color="#D7263D"/></radialGradient></defs>'+
     '<path fill="#8E8E93" fill-rule="evenodd" d="'+F+'"/><path class="fire" fill="url(#wfLoadFire)" fill-rule="evenodd" d="'+F+'"/>'+
     '<path d="'+G+'" fill="none" stroke="#8E8E93" stroke-width="1.1" stroke-linecap="round"/></svg>'+
-    '<span class="name">FOREST FIRE WATCH</span><span class="sub">Loading live data</span></div>';
+    '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span></div>';
   (document.body||document.documentElement).appendChild(el);
   var t0=Date.now();
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}

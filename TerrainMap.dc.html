@@ -280,7 +280,7 @@ body{margin:0}
       </div>
     </sc-if>
     <div style="margin: 0 16px; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="display: block; padding: 10px 0 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">Time</span>
+      <span style="display: block; padding: 10px 0 4px; font-size: 14px; font-weight: 600; color: #6C6C70">Time</span>
       <sc-for list="{{fc.time}}" as="tr" hint-placeholder-count="3">
         <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 15px; line-height: 18px">
           <span style="color: #6C6C70; white-space: nowrap">{{tr.k}}</span>
@@ -289,7 +289,7 @@ body{margin:0}
       </sc-for>
     </div>
     <div style="margin: 8px 16px 0; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="display: block; padding: 10px 0 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8E8E93">Forces on scene</span>
+      <span style="display: block; padding: 10px 0 6px; font-size: 14px; font-weight: 600; color: #6C6C70">Forces on scene</span>
       <sc-if value="{{fc.hasForces}}" hint-placeholder-val="{{ true }}">
         <div style="display: grid; grid-template-columns: repeat({{fc.fCols}}, minmax(0, 1fr)); gap: 6px">
           <sc-for list="{{fc.forces}}" as="fo" hint-placeholder-count="3">

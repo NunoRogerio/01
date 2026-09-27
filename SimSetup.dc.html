@@ -46,7 +46,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
   </header>
 
   <div class="scroll" style="flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 16px">
-    <h2 style="margin: 8px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">LANDSCAPE</h2>
+    <h2 style="margin: 8px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Landscape</h2>
     <div role="radiogroup" aria-label="Landscape" style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
       <sc-for list="{{lands}}" as="l" hint-placeholder-count="4">
         <button type="button" class="opt" role="radio" aria-checked="{{l.on}}" onClick="{{l.pick}}" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 16px; border: 0; border-top: {{l.sep}}; background: transparent; font: inherit; color: #000000; text-align: left; cursor: pointer">
@@ -60,7 +60,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
       </sc-for>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">WEATHER</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Weather</h2>
     <div style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
       <sc-for list="{{wx}}" as="w" hint-placeholder-count="3">
         <div style="display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 12px 0 16px; border-top: {{w.sep}}">
@@ -80,7 +80,7 @@ a{color:#007AFF}a:hover{color:#0062CC}
       </div>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">FIRE AT THE START</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Fire at the start</h2>
     <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #FFFFFF">
       <div role="radiogroup" aria-label="Fire at the start" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 9px; background: #EEEEF0">
         <sc-for list="{{stages}}" as="g" hint-placeholder-count="3">
@@ -103,14 +103,14 @@ a{color:#007AFF}a:hover{color:#0062CC}
       <p style="margin: 0; font-size: 14px; line-height: 16px; color: #6C6C70">{{rosNote}}</p>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">GOAL · CONTAIN THE FIRE WITHIN</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Goal · contain the fire within</h2>
     <div role="radiogroup" aria-label="Goal" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 10px; background: #E3E3E8">
       <sc-for list="{{goals}}" as="o" hint-placeholder-count="4">
         <button type="button" class="seg" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="height: 40px; border: 0; border-radius: 8px; background: {{o.bg}}; color: #000000; font: inherit; font-size: 17px; font-weight: {{o.fw}}; cursor: pointer; box-shadow: {{o.sh}}">{{o.label}}</button>
       </sc-for>
     </div>
 
-    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">FORCES IN THE AREA</h2>
+    <h2 style="margin: 22px 16px 8px; font-size: 15px; font-weight: 400; line-height: 18px; color: #6C6C70">Forces in the area</h2>
     <div style="display: flex; flex-direction: column; border-radius: 12px; background: #FFFFFF; overflow: hidden">
       <sc-for list="{{forces}}" as="f" hint-placeholder-count="5">
         <div style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 6px 12px 6px 16px; border-top: {{f.sep}}">
