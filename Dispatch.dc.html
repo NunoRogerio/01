@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <script src="fit.js?v=20"></script>
 <script src="prefs.js?v=3"></script>
-<script src="i18n.js?v=21"></script>
+<script src="i18n.js?v=22"></script>
 <script src="live.js?v=23"></script>
 
 <title>Dispatch sizing</title>
@@ -617,7 +617,23 @@ class Component extends DCLogic {
   // Recommended fire stations for a live fire, as on the maps: up to three within 10 km in a straight line (an ideal
   // first attack, some 15 minutes by road); when none is that close, only the nearest one. Stations come from the
   // weekly OpenStreetMap snapshot of the fire's country (the same file the map uses), with estimated drive times.
-  wfNearRows(fv, FIRE, US, st) {
+  wfOrders() { try { return JSON.parse(window.localStorage.getItem('wf-orders') || '{}') || {}; } catch (e) { return {}; } }
+  // Orders per station: crews and tenders shared out over the chosen stations (fastest first, up to their free crews
+  // when known); helicopters, air tankers and drone swarms go as one 'Air support' order.
+  wfSaveOrder(fireId, list, counts, du) {
+    const all = this.wfOrders(), cur = all[fireId] || [], at = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const get = (d) => { let o = cur.find((q) => q.id === d.id); if (!o) { o = { id: d.id, code: d.code || '', name: d.name, km: d.km, du, n: [0, 0, 0, 0, 0, 0], at }; cur.push(o); } o.at = at; return o; };
+    const st = list.filter((d) => d.id !== 'none');
+    if (st.length) {
+      let c = counts[0], k = 0; const cap = st.map((d) => (d.free != null ? d.free : Infinity));
+      while (c > 0 && cap.some((x) => x > 0)) { const i = k % st.length; if (cap[i] > 0) { get(st[i]).n[0]++; cap[i]--; c--; } k++; }
+      if (c > 0) get(st[0]).n[0] += c;
+      for (let t = 0; t < counts[1]; t++) get(st[t % st.length]).n[1]++;
+    }
+    if (counts.slice(2).some((x) => x > 0)) { const a = get({ id: 'air', code: '', name: 'Air support', km: null }); for (let i = 2; i < 6; i++) a.n[i] += counts[i] || 0; }
+    all[fireId] = cur; try { window.localStorage.setItem('wf-orders', JSON.stringify(all)); } catch (e) {}
+  }
+  wfNearRows(fv, FIRE, US, st, wide) {
     const du = US ? ' mi' : ' km';
     if (!window.__wfLiveMap) return { rows: [], du, live: false };
     const lat = 34.19 - (FIRE[1] - 662) / 2829, lon = (FIRE[0] - 518) / 2345 - 118.13, rad = Math.PI / 180;
@@ -634,7 +650,7 @@ class Component extends DCLogic {
     const hav = (la, lo) => { const a = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((lo - lon) * rad / 2) ** 2; return 12742 * Math.asin(Math.sqrt(a)); };
     const box = file.rows.filter((r) => Math.abs(r[2] - lat) < 1 && Math.abs(r[3] - lon) < 1.5);
     const all = (box.length ? box : file.rows).map((r) => ({ osm: r[0], name: r[4] || 'Fire station', la: r[2], lo: r[3], km: hav(r[2], r[3]) })).sort((a, b) => a.km - b.km);
-    const close = all.filter((q) => q.km <= 10).slice(0, 3), L = close.length ? close : all.slice(0, 1);
+    const close = all.filter((q) => q.km <= 10).slice(0, 3), L = wide ? all.filter((q) => q.km <= 40).slice(0, 8) : close.length ? close : all.slice(0, 1);   // reinforcing: stations further away too
     const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
     return { du, live: true, rows: L.map((q, i) => {
       const xy = P(q.la, q.lo), drive = Math.max(1, Math.round(q.km * 1.35 / 50 * 60));   // road ≈ 1.35 × straight line, 50 km/h average
@@ -689,7 +705,10 @@ class Component extends DCLogic {
     const far = Math.hypot(SH[0], SH[1]) > 1500;
     // The fire's country: a live fire's own, or the candidate it was confirmed from, or the area on screen.
     const stC = frow ? frow.st : (() => { const m = /Confirmed from (IC-[\d-]+)/.exec((fv && fv.note) || ''); const c = m && this.wfWorld().cands.find((q) => q.id === m[1]); return c ? c.st : fv ? ((this.wfScope && this.wfScope().st) || '') : 'CA'; })();   // no fire chosen: the design fire in Los Angeles
-    const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC);
+    // Dispatch orders sent from this app for this fire, per station: [{ id, code, name, km, n: [crews, tenders, helicopters, air tankers, jets, swarms], at }]
+    const ORD = this.wfOrders()[fireId] || [], reinforce = !!s.reinforce;
+    const sentN = (id) => { const o = ORD.find((q) => q.id === id); return o ? o.n : null; };
+    const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC, reinforce);
     const DU = NEAR.du;
     const data = (NEAR.rows.length ? NEAR.rows : NEAR.live ? [{ id: 'none', code: '—', name: NEAR.loading ? 'Finding recommended stations…' : 'No fire station found nearby', x: FIRE[0], y: FIRE[1], km: 0, free: null, total: null, t: null, busy: NEAR.loading ? 'OpenStreetMap' : 'OpenStreetMap has none mapped near this fire', real: true }] : [
       { id: 'st7', code: 'ST-7', name: 'Sierra Madre', x: 674, y: 566, km: 2.5, free: 0, total: 3, t: null, busy: 'All crews on F-0924-01' },
@@ -697,9 +716,14 @@ class Component extends DCLogic {
       { id: 'st2', code: 'ST-2', name: 'La Crescenta', x: 326, y: 590, km: 4.2, free: 2, total: 3, t: [2, 11, 5] },
       { id: 'st9', code: 'ST-9', name: 'Monrovia', x: 926, y: 638, km: 4.7, free: 1, total: 2, t: [2, 12, 7] },
       { id: 'st1', code: 'ST-1', name: 'Tujunga', x: 110, y: 542, km: 5.5, free: 4, total: 4, t: [3, 14, 6] }
-    ]).map((d) => ({ ...d, eta: d.t ? d.t[0] + d.t[1] + d.t[2] : null }));
+    ]).map((d) => ({ ...d, eta: d.t ? d.t[0] + d.t[1] + d.t[2] : null })).map((d) => {
+      const n = sentN(d.id); if (!n) return d;
+      const txt = [n[0] ? n[0] + ' crew' + (n[0] === 1 ? '' : 's') : '', n[1] ? n[1] + ' tender' + (n[1] === 1 ? '' : 's') : ''].filter(Boolean).join(' · ') || 'order sent';
+      if (d.free != null) { const left = d.free - n[0]; if (left <= 0) return { ...d, t: null, eta: null, busy: 'All crews already on this fire', onFire: true }; return { ...d, free: left, sentTxt: txt, onFire: true }; }
+      return { ...d, sentTxt: txt, onFire: true };
+    });
     const avail = data.filter((d) => d.eta !== null && (d.free == null || d.free >= need)).sort((a, b) => a.eta - b.eta);
-    const rec = avail[0] || data.filter((d) => d.eta !== null).sort((a, b) => a.eta - b.eta)[0] || data[0];
+    const rec = (reinforce && avail.find((d) => !d.onFire)) || avail[0] || data.filter((d) => d.eta !== null).sort((a, b) => a.eta - b.eta)[0] || data[0];
     const selIds = (Array.isArray(s.stations) && s.stations.length ? s.stations : (s.station ? [s.station] : [rec.id])).filter((id) => data.some((d) => d.id === id && d.eta !== null));
     const chosenList = data.filter((d) => selIds.indexOf(d.id) >= 0 && d.eta !== null).sort((a, b) => a.eta - b.eta);
     if (!chosenList.length) chosenList.push(rec);
@@ -707,7 +731,7 @@ class Component extends DCLogic {
     const multi = chosenList.length > 1;
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
-    const subOf = (d) => d.id === 'none' ? d.busy : d.real ? d.km + DU : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free');
+    const subOf = (d) => (d.sentTxt ? 'On this fire: ' + d.sentTxt + ' · ' : '') + (d.id === 'none' ? d.busy : d.real ? d.km + DU : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free'));
     const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#7A5600' : '#545458');
     const sum = chosen.eta, T = chosen.t || [0, 0, 0], sumD = sum || 1;
     const sel = {
@@ -769,7 +793,9 @@ class Component extends DCLogic {
       };
     });
     const unitTotal = counts.reduce((a, b) => a + b, 0);
-    const sent = RO ? true : (fv ? !s.adjust : !!s.sent);
+    // A fire opens as a read-only dispatch list: what is on scene (live data) and the orders sent from this app, per
+    // station. A fire with nothing dispatched yet (just confirmed) opens on configuring the dispatch; Reinforce opens it too.
+    const sent = (RO || ORD.length > 0) && !reinforce;
     const stX = chosen.x + (far ? SH[0] : 0), stY = chosen.y + (far ? SH[1] : 0);
     const mv = (p, dest) => dest || far ? [p[0] + SH[0], p[1] + SH[1]] : p;
     const DRONE_ICON = 'M5 5l14 14M19 5 5 19M7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M7 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0';
@@ -803,8 +829,14 @@ class Component extends DCLogic {
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
     if (RO) {
       if (!deployed.length) deployed.push({ label: 'Resources not published', from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#545458', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
-      NEAR.rows.slice(0, 5).forEach((q) => deployed.push({ label: q.name, from: 'Fire station · straight-line distance', g: 'st', icon: 'M12 3.2 21.6 20H2.4Z', c: '#1E7A34', bg: 'rgba(52,199,89,0.1)', w: 0, pre: '', val: q.km + DU, post: '' }));
     }
+    if (!RO) deployed.length = 0;
+    const ordRows = [];
+    ORD.forEach((o) => {
+      ordRows.push({ head: true, item: false, title: (o.code && o.code !== '—' ? o.code + ' · ' : '') + o.name, note: (o.km != null ? o.km + (o.du || DU) + ' · ' : '') + 'order sent ' + o.at, noteD: 'block' });
+      o.n.forEach((n, i) => { if (n > 0) ordRows.push({ item: true, g: 'ord', label: meta[i].name, icon: meta[i].icon, c: i >= 2 ? '#0079A6' : '#000000', from: '', w: 0, barD: 'none', pre: '', val: String(n), post: '' }); });
+    });
+    if (!ORD.length && RO) ordRows.push({ head: true, item: false, title: 'Stations on this fire', note: 'Not published per station · none dispatched from this app yet', noteD: 'block' });
     // Fire model (live fires): real "now" perimeter, +1/2/3 h prediction and expected containment.
     if (FMOD) {
       const icon = 'M3 17l6-6 4 4 8-8M15 7h6v6', tri = 'M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z', row = (label, val, from, c) => ({ label, val, from, icon, c: c || '#E86A00', bg: 'rgba(232,106,0,0.1)', w: 0, pre: '', post: '' });
@@ -884,11 +916,14 @@ class Component extends DCLogic {
       deployed.forEach((d) => { if (d.g !== g0) { g0 = d.g; if (HD[g0][0]) out.push({ head: true, item: false, title: HD[g0][0], note: HD[g0][1], noteD: HD[g0][1] ? 'block' : 'none' }); } out.push(d); });
       deployed.length = 0; deployed.push(...out);
     }
+    deployed.push(...ordRows);
     const BRF = !!(frow && frow.st === 'BRA'), BI = BRF ? (frow.info || {}) : null;
     // Status colours, as in the fire's timeline: fighting / active deep orange, held green, out grey, forces on the way blue.
     const sentTitleC = TL && TL.curC ? TL.curC : HELD ? '#1E7A34' : (RO || BRF) ? '#B84A00' : '#0062CC';
     const K = BRF ? { k1L: 'Burned area', k1V: BI.ha != null ? Math.round(BI.ha).toLocaleString() : '—', k1S: BI.ha != null ? ' ha' : '', k2L: 'Active fronts', k2V: BI.facts && BI.facts[0] ? BI.facts[0][1] : '—', k2S: '' } : RO ? { k1L: 'Personnel', k1V: fres && fres.man != null ? Number(fres.man).toLocaleString() : '—', k1S: '',
-      k2L: RU && RU[1] ? RU[1][0] : 'Status', k2V: RU && RU[1] ? Number(RU[1][1]).toLocaleString() : ((fres && fres.status) || '—'), k2S: '' } : null;
+      k2L: RU && RU[1] ? RU[1][0] : 'Status', k2V: RU && RU[1] ? Number(RU[1][1]).toLocaleString() : ((fres && fres.status) || '—'), k2S: '' }
+      // Orders sent from this app: how many stations and units (no invented arrival times)
+      : { k1L: 'Stations', k1V: String(ORD.filter((o) => o.id !== 'air').length), k1S: '', k2L: 'Units', k2V: String(ORD.reduce((a, o) => a + o.n.reduce((x, y) => x + y, 0), 0)), k2S: '' };
     const mapUnits = sent && !(window.__wfLiveMap && fv) ? deployedRaw.map((d) => ({
       x0: d.o[0], y0: d.o[1], x1: d.d[0], y1: d.d[1], eta: d.eta, air: d.air, icon: d.icon, n: d.n,
       c: d.air ? '#0079A6' : '#000000', glow: d.air ? 'rgba(0,121,166,0.55)' : 'rgba(0,0,0,0.35)',
@@ -974,8 +1009,8 @@ class Component extends DCLogic {
             state: sentO ? 'Order received by the coordinator' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           units: fmt(counts), notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
-          done: () => { if (!all) return; try { const a = document.querySelector('[data-wf-back]'); if (a) { a.click(); return; } } catch (e) {} this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
-      })(), undoSend: () => this.setState(fv ? { adjust: true, cfg: true, open: false, full: false } : { sent: false, cfg: true, open: false, full: false }),
+          done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU); try { const a = document.querySelector('[data-wf-back]'); if (a) { a.click(); return; } } catch (e) {} this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
+      })(), undoSend: () => this.setState({ reinforce: true, stations: null, station: null, counts: null, adjust: false, open: false, cfg: false, full: false, sentUp: false }),
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
       pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
       hzShow: HELD ? 'none' : 'grid',
@@ -984,13 +1019,13 @@ class Component extends DCLogic {
       stNone: !!(stDraft && !stDraft.length), stApplyOp: stDraft && !stDraft.length ? 0.4 : 1,   // Apply waits for at least one station
       stApply: () => (stDraft && !stDraft.length) ? null : this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
-      k1C: BRF ? '#3A3A3C' : '#1E7A34', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Forces dispatched', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: RO ? 'none' : 'flex', sentCols: RO ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: 'flex', sentCols: 'repeat(2, minmax(0, 1fr))',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),
       // KPI numbers share one size; the words go centred under the number ('Contained 30%' -> '30%' over 'contained').
       ...(() => { const v1s = String(K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : '')).replace(/^\s*·?\s*/, ''), v2 = String(K ? K.k2V : maxEta), s2 = String(K ? K.k2S : ' min · ' + clock(maxEta)).replace(/^\s*·?\s*/, '');
         const m = /^(\D*?)\s*(\d+%)$/.exec(v2); return { k1Sub: v1s, k2Val: m && m[1] ? m[2] : v2, k2Sub: m && m[1] ? m[1].toLowerCase() : s2 }; })(),
-      sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (fres && fres.src ? 'Reported by ' + fres.src : fv.place) : 'Forces on the way to ' + fv.place) : 'sent 2:42 PM', undoLabel: 'Adjust',
+      sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (fres && fres.src ? 'Reported by ' + fres.src : fv.place) : 'Orders from this app') : 'Orders from this app', undoLabel: 'Reinforce',
       sentY: (sent && !s.full) ? '0%' : '105%', sentHidden: (sent && !s.full) ? 'false' : 'true',
       hSt: this.wfHandle('st', 'up', () => this.setState({ open: false })), stDy: this.wfDrag('st').y, stDyT: this.wfDrag('st').t,
       hCf: this.wfHandle('cf', 'up', () => this.setState({ cfg: false })), cfDy: this.wfDrag('cf').y, cfDyT: this.wfDrag('cf').t,
