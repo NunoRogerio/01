@@ -107,42 +107,38 @@
   })();
 })();
 
-// Lists marked wf-snap scroll and coast exactly like normal. Only as the motion is about to die out, if the
-// top item would stop half shown, the list glides on (matching its speed, then easing to rest) so a whole item
-// sits at the top. The last position of the list always stays reachable.
+// Lists marked wf-snap scroll and coast exactly like normal, untouched. Only once the motion has come to rest,
+// if the top item is left half shown, the list eases the short way to show that item (or the next) whole.
+// The last position of the list always stays reachable.
 (function(){
-  var cur=null;
   function stops(L){
     var max=L.scrollHeight-L.clientHeight,out=[],k=L.children;
-    for(var i=0;i<k.length;i++){var c=k[i];if(!c.offsetHeight)continue;var t=Math.max(0,Math.min(max,c.offsetParent===L?c.offsetTop:c.offsetTop-L.offsetTop));out.push(t);}
+    for(var i=0;i<k.length;i++){var c=k[i];if(!c.offsetHeight)continue;out.push(Math.max(0,Math.min(max,c.offsetParent===L?c.offsetTop:c.offsetTop-L.offsetTop)));}
     out.push(max);return out;
   }
-  function state(L){if(!L.__sn){L.__sn={trail:[],raf:0,touch:false,quiet:0};if(getComputedStyle(L).position==='static')L.style.position='relative';}return L.__sn;}
-  function speed(S){var a=S.trail[0],b=S.trail[S.trail.length-1];return a&&b&&b[0]-a[0]>8?(b[1]-a[1])/(b[0]-a[0]):0;}
-  function stop(L){var S=state(L);if(S.raf)cancelAnimationFrame(S.raf);S.raf=0;L.style.overflowY='auto';}
-  function glide(L,v){
-    var S=state(L),y=L.scrollTop,T=stops(L);if(!T.length)return;
-    var aim=y+v*140,to=T.reduce(function(b,t){return Math.abs(t-aim)<Math.abs(b-aim)?t:b;},T[0]);
+  function state(L){if(!L.__sn){L.__sn={raf:0,touch:false,quiet:0,own:false};if(getComputedStyle(L).position==='static')L.style.position='relative';}return L.__sn;}
+  function stop(S){if(S.raf)cancelAnimationFrame(S.raf);S.raf=0;S.own=false;}
+  function settle(L){
+    var S=state(L);if(S.raf||S.touch)return;
+    var y=L.scrollTop,T=stops(L);if(!T.length)return;
+    var to=T.reduce(function(b,t){return Math.abs(t-y)<Math.abs(b-y)?t:b;},T[0]);
     if(Math.abs(to-y)<1)return;
-    stop(L);L.style.overflowY='hidden';
-    var from=null,d=0,dur=0,m0=0,t0=0;
+    var from=y,d=to-from,dur=Math.max(200,Math.min(340,160+2*Math.abs(d))),t0=null;S.own=true;
     function step(now){
-      if(from===null){from=L.scrollTop;d=to-from;t0=now;dur=Math.max(220,Math.min(420,180+1.4*Math.abs(d)));
-        m0=v*dur;if(Math.sign(m0)!==Math.sign(d))m0=0;m0=Math.sign(d)*Math.min(Math.abs(m0),2*Math.abs(d));}
-      var t=Math.min(1,(now-t0+16)/dur),t2=t*t,t3=t2*t;
-      L.scrollTop=from*(2*t3-3*t2+1)+m0*(t3-2*t2+t)+to*(-2*t3+3*t2);
+      if(S.touch){stop(S);return;}
+      if(t0===null)t0=now;var t=Math.min(1,(now-t0)/dur),e=t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;   // gentle ease in and out
+      L.scrollTop=from+d*e;
       if(t<1){S.raf=requestAnimationFrame(step);return;}
-      L.scrollTop=to;S.raf=0;L.style.overflowY='auto';
+      L.scrollTop=to;S.raf=0;setTimeout(function(){S.own=false;},60);
     }
     S.raf=requestAnimationFrame(step);
   }
-  document.addEventListener('touchstart',function(e){var L=e.target&&e.target.closest&&e.target.closest('.wf-snap');if(!L)return;cur=L;var S=state(L);stop(L);S.touch=true;S.trail=[];clearTimeout(S.quiet);},{passive:true,capture:true});
-  document.addEventListener('touchend',function(){if(!cur)return;var L=cur,S=state(L);S.touch=false;clearTimeout(S.quiet);S.quiet=setTimeout(function(){if(!S.raf&&!S.touch)glide(L,0);},120);},{passive:true,capture:true});
+  function rest(L,ms){var S=state(L);clearTimeout(S.quiet);S.quiet=setTimeout(function(){settle(L);},ms);}
+  document.addEventListener('touchstart',function(e){var L=e.target&&e.target.closest&&e.target.closest('.wf-snap');if(!L)return;var S=state(L);stop(S);S.touch=true;clearTimeout(S.quiet);},{passive:true,capture:true});
+  document.addEventListener('touchend',function(e){var L=e.target&&e.target.closest&&e.target.closest('.wf-snap');if(!L)return;var S=state(L);S.touch=false;rest(L,160);},{passive:true,capture:true});
   document.addEventListener('scroll',function(e){
-    var L=e.target;if(!L||!L.classList||!L.classList.contains('wf-snap'))return;var S=state(L);if(S.raf)return;
-    var n=performance.now();S.trail.push([n,L.scrollTop]);while(S.trail.length>2&&n-S.trail[0][0]>60)S.trail.shift();
-    if(S.touch)return;
-    clearTimeout(S.quiet);S.quiet=setTimeout(function(){if(!S.raf&&!S.touch)glide(L,0);},120);
-    var v=speed(S);if(Math.abs(v)>0&&Math.abs(v)<0.3)glide(L,v);          // coasting has nearly died out: finish it on a whole item
+    var L=e.target;if(!L||!L.classList||!L.classList.contains('wf-snap'))return;var S=state(L);
+    if(S.own||S.touch)return;                                   // our own glide, or the finger is still down
+    rest(L,140);                                                // wait until the coasting has fully died out
   },{passive:true,capture:true});
 })();
