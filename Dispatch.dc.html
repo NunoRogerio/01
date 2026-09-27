@@ -37,8 +37,8 @@ a{color:#006A91}a:hover{color:#006A91}
 @keyframes lock{0%{opacity:0;transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}
 @keyframes shimmer{from{background-position:-200% 0}to{background-position:200% 0}}
 .rise{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
-@keyframes nudge{0%{transform:translateY(0);box-shadow:0 0 0 0 rgba(0,113,227,0)}28%{transform:translateY(-6px);box-shadow:0 6px 22px 3px rgba(0,113,227,0.3)}52%{transform:translateY(0);box-shadow:0 2px 16px 2px rgba(0,113,227,0.22)}68%{transform:translateY(-2px)}84%{transform:translateY(0)}100%{transform:translateY(0);box-shadow:0 0 0 0 rgba(0,113,227,0)}}
-.nudge{animation:nudge 1.2s cubic-bezier(.3,.7,.3,1) both}
+@keyframes nudge{0%{transform:translateY(0);box-shadow:0 0 0 0 rgba(52,199,89,0)}38%{transform:translateY(-4px);box-shadow:0 0 18px 2px rgba(52,199,89,0.32)}70%{transform:translateY(0);box-shadow:0 0 14px 1px rgba(52,199,89,0.18)}100%{transform:translateY(0);box-shadow:0 0 0 0 rgba(52,199,89,0)}}
+.nudge{animation:nudge 1.7s cubic-bezier(.45,0,.25,1) both}
 @media (prefers-reduced-motion: reduce){.nudge{animation:none}}
 .fade{animation:fade .9s ease both}
 .pop{animation:pop .6s cubic-bezier(.2,.8,.2,1) both}
@@ -249,7 +249,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <div class="rise" style="padding: 18px 16px 0; animation-delay: 330ms">
     <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43; opacity: {{pk.cfLblOp}}; transform: translateY({{pk.cfLblY}}); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1)">Configure dispatch</span>
-    <button type="button" class="{{pk.cfCls}}" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{pk.cfAria}}" style="animation-delay: 1650ms; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <button type="button" class="{{pk.cfCls}}" onClick="{{openCfg}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{pk.cfAria}}" style="animation-delay: 1800ms; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span aria-hidden="true" style="position: absolute; left: 14px; right: 50px; top: 50%; font-size: 17px; font-weight: 600; line-height: 20px; color: #3C3C43; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; opacity: {{pk.cfPhOp}}; transform: translateY(calc(-50% + {{pk.cfPhY}})); transition: opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1)">2 · Configure dispatch</span><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">Forces · {{unitTotal}} units</span>
         <span style="opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s; flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
       </span>
