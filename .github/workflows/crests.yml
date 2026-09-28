@@ -1,9 +1,8 @@
 name: Station crests
 # Crests and logos of the fire stations of California and Portugal, from Wikidata / Wikimedia Commons.
-# Weekly after the station snapshot, and whenever the script changes.
+# Defined once: crests and their colours are kept as they are. Runs only by hand (or when the script changes),
+# and never changes a crest or colour already saved.
 on:
-  schedule:
-    - cron: '47 4 * * 1'
   workflow_dispatch:
   push:
     branches: [main]

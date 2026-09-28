@@ -176,8 +176,17 @@ def main():
         portugal(json.load(open('data/stations-pt.json', encoding='utf-8'))['s'], out)
     except Exception as e:
         print('::warning::portugal', e)
+    # Crests and colours are defined once: anything already saved stays exactly as it is
+    try:
+        prev = json.load(open('data/crests.json', encoding='utf-8')).get('s', {})
+    except Exception:
+        prev = {}
+    for k, v in prev.items():
+        out[k] = v
     cols = {}
-    for k, v in out.items():                  # one download per distinct image
+    for k, v in out.items():
+        if len(v) > 3:
+            continue                  # one download per distinct image
         if v[0] not in cols:
             cols[v[0]] = dominant(v[0]); time.sleep(0.2)
         v.append(cols[v[0]] or '')
