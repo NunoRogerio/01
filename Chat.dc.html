@@ -236,7 +236,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <button type="button" class="chbtn" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg class="chx" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{sh.xRot}})"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
       </header>
-      <div class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 24px">
+      <div class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 0">
         <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
           <!-- Time in each stage -->
           <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
@@ -292,7 +292,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <p style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{t.demo}}</p>
         </sc-if>
       </div>
-      <button type="button" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="display: flex; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></button>
+      <button type="button" class="wf-grab gb" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="display: flex; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></button>
     </section>
   </sc-if>
 

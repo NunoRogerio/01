@@ -97,6 +97,11 @@
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
+    // Grabbers (the grey line that opens and closes blades), one rule for the whole app: the line sits 8px from the blade's edge
+    // and keeps 40px clear between it and the blade's content. gb = line at the bottom (top blades), gt = line at the top (bottom blades).
+    '.wf-grab{box-sizing:border-box!important;height:53px!important;flex-shrink:0}' +
+    '.wf-grab.gb{padding:0 0 8px!important;align-items:flex-end!important}' +
+    '.wf-grab.gt{padding:8px 0 0!important;align-items:flex-start!important}' +
     // Forest headers, one definition for the whole app: the aerial forest photos zoom in slowly as on the login screen.
     // .wf-fhost goes on the header; inside it <span class="wf-forest"><i></i><i></i><i></i><b></b></span> cycles the three photos
     // (a new one every 8 s, cross-fading); <span class="wf-forest one"><i style="background-image:…"></i><b></b></span> zooms a single photo.
