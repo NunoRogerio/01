@@ -100,14 +100,14 @@
     '#wf-load .bg.on{opacity:1;transform:scale(1)}'+
     '#wf-load .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.25) 60%,rgba(0,0,0,.62) 100%);opacity:0;transition:opacity .7s ease}'+
     '#wf-load.photo .shade{opacity:1}#wf-load .in{position:relative}'+
-    '#wf-load.photo .name{background:none;color:#FFFFFF;animation:none;text-shadow:0 1px 12px rgba(0,0,0,.45)}'+
+    '#wf-load.photo .name{background:none;color:#D7F41A;animation:none;text-shadow:0 1px 12px rgba(0,0,0,.45)}'+
     '#wf-load.photo .sub{color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
-    '#wf-load.photo .base{fill:#FFFFFF}#wf-load.photo .ground{stroke:#FFFFFF}#wf-load.photo svg{filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}'+
+    '#wf-load.photo .base{fill:#D7F41A}#wf-load.photo .ground{stroke:#D7F41A}#wf-load.photo svg{filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}'+
     '#wf-load .cap{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));text-align:center;font:400 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:rgba(255,255,255,.8);opacity:0;transition:opacity .7s ease .3s}'+
     '#wf-load.photo .cap{opacity:1}';
   document.head.appendChild(st);
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
-  var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="74" height="90" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
+  var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
     '<defs><radialGradient id="wfLoadFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"/><stop offset="0.35" stop-color="#FFA41B"/><stop offset="0.7" stop-color="#FF5A1F"/><stop offset="1" stop-color="#D7263D"/></radialGradient></defs>'+
     '<path class="base" fill="#8E8E93" fill-rule="evenodd" d="'+F+'"/><path class="fire" fill="url(#wfLoadFire)" fill-rule="evenodd" d="'+F+'"/>'+
     '<path class="ground" d="'+G+'" fill="none" stroke="#8E8E93" stroke-width="1.1" stroke-linecap="round"/></svg>'+

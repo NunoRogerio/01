@@ -74,6 +74,16 @@
   }
   function ccOf(st) { return st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : { CAN: 'ca', ESP: 'es', FRA: 'fr', ITA: 'it', GRC: 'gr' }[st] || 'pt'; }
   function isUS(c) { return ccOf(c.st) === 'us'; }
+  // Portrait photos for the team (placeholder portraits from randomuser.me), only on fires in California, Nevada and
+  // Portugal. The name pools alternate men and women, so each name gets a fixed portrait of the matching gender.
+  var PHOTO_ST = { CA: 1, NV: 1, PT: 1 };
+  function photoOf(c, name) {
+    if (!c || !PHOTO_ST[c.st] || !name) return '';
+    var lg = null, i = -1; ['pt', 'us', 'br', 'es', 'fr', 'it', 'de', 'el'].some(function (k) { i = (NAMES[k] || []).indexOf(name); if (i >= 0) { lg = k; return true; } return false; });
+    if (i < 0) return '';
+    var n = (Math.floor(i / 2) * 6 + (lg === 'pt' ? 3 : lg === 'us' ? 0 : 1)) % 99;
+    return 'https://randomuser.me/api/portraits/' + (i % 2 ? 'women' : 'men') + '/' + n + '.jpg';
+  }
   // Team members carry names from the fire's country
   var LANG = { PT: 'pt', BRA: 'br', AMZ: 'br', ESP: 'es', MEX: 'es', ARG: 'es', CHL: 'es', COL: 'es', PER: 'es', BOL: 'es', ECU: 'es', VEN: 'es', URY: 'es', PRY: 'es', CRI: 'es', GTM: 'es', HND: 'es', NIC: 'es', PAN: 'es', SLV: 'es', CUB: 'es', DOM: 'es', AND: 'es',
     FRA: 'fr', BEL: 'fr', LUX: 'fr', MCO: 'fr', HTI: 'fr', ITA: 'it', SMR: 'it', VAT: 'it', DEU: 'de', AUT: 'de', CHE: 'de', LIE: 'de', GRC: 'el', CYP: 'el' };
@@ -729,8 +739,8 @@
     var me = (window.__wfPrefs && window.__wfPrefs.person) || {};
     var A = (loadAch()[name] || []).slice().sort(function (a, b) { return b.vt - a.vt; });
     if (me.name && name === me.name) return { name: name, code: me.code || initials(name), photo: me.photo || '', roleEn: 'Fire owner', rolePt: 'Responsável pelo incêndio', station: me.title || '', ach: A, me: true };
-    var db = load(), out = null;
-    Object.keys(db.chats).some(function (k) {
+    var db = load(), out = null, ch = null;
+    Object.keys(db.chats).some(function (k) { ch = db.chats[k];
       return (db.chats[k].forces || []).concat(db.chats[k].people.map(function (p) { return { coord: p.name, station: p.org, crew: [] }; })).some(function (f) {
         if (f.coord === name) { out = { roleEn: 'Crew coordinator', rolePt: 'Coordenador de equipa', station: f.station }; return true; }
         if (f.crew.indexOf(name) >= 0) { out = { roleEn: 'Firefighter', rolePt: 'Bombeiro', station: f.station }; return true; }
@@ -738,7 +748,8 @@
       });
     });
     if (!out && A[0]) out = { roleEn: A[0].roleEn, rolePt: A[0].rolePt, station: A[0].station };
-    return Object.assign({ name: name, code: initials(name), photo: '', roleEn: 'Firefighter', rolePt: 'Bombeiro', station: '', ach: A }, out || {}, { ach: A });
+    if (!out) ch = null;
+    return Object.assign({ name: name, code: initials(name), photo: ch ? photoOf(ch, name) : '', roleEn: 'Firefighter', rolePt: 'Bombeiro', station: '', ach: A }, out || {}, { ach: A });
   }
 
   // ---- helpers for the screens ----------------------------------------------------------------------------------------
@@ -766,7 +777,7 @@
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,
-    vnow: vnow, since: since, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
+    vnow: vnow, since: since, photo: photoOf, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },

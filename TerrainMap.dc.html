@@ -11,12 +11,12 @@
 <meta name="apple-mobile-web-app-title" content="Fire Watch">
 <meta name="theme-color" content="#F2F2F7">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-192.png">
-<script src="fit.js?v=25"></script>
+<link rel="apple-touch-icon" href="icon-180.png?v=2">
+<link rel="icon" href="icon-192.png?v=2">
+<script src="fit.js?v=26"></script>
 <script src="prefs.js?v=7"></script>
 <script src="i18n.js?v=30"></script>
-<script src="live.js?v=24"></script>
+<script src="live.js?v=25"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -385,7 +385,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
     <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
-      <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 14px; background: rgba(242,242,247,0.96); box-shadow: 0 4px 16px rgba(0,0,0,0.08); color: #3C3C43; cursor: pointer">
+      <button type="button" class="mbtn wf-sec" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 14px; background: #2C2C2E; box-shadow: 0 4px 16px rgba(0,0,0,0.16); color: #D7F41A; cursor: pointer">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
       </button>
     </sc-if>
@@ -979,7 +979,7 @@ class Component extends DCLogic {
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
-      ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
+      ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#0A6FDB', 'rgba(0,0,0,0.25)'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
@@ -1145,7 +1145,7 @@ class Component extends DCLogic {
       pct: Math.round(s / (this.base().s || 1) * 100) + '%',
       kmPx: Math.round(100 * s),
       isRisk, isSpread: mode === 'spread', isPin,
-      pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g && window.__wfConfC ? window.__wfConfC(g.conf) : g ? (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A') : '#E86A00'; })(),
+      pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g && window.__wfConfC ? window.__wfConfC(g.conf) : g ? '#0A6FDB' : '#E86A00'; })(),
       pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinTriD: p.mode === 'spread' ? 'none' : 'inline', pinCirD: p.mode === 'spread' ? 'inline' : 'none', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w25: +(2.5 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w50: +(5 * k).toFixed(5), w70: +(7 * k).toFixed(5), o12: +(12 * k).toFixed(5) + ';0',
         d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
@@ -1316,7 +1316,7 @@ class Component extends DCLogic {
           })
         };
       })(),
-      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
+      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : '#0A6FDB', aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
       fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
@@ -1349,7 +1349,7 @@ class Component extends DCLogic {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
         const sel = g.id === selId;
         const hi = g.conf >= 70, mid = g.conf >= 50;
-        const c = window.__wfConfC ? window.__wfConfC(g.conf) : (g.conf > 75 ? '#7A3FE0' : (mid ? '#0A6FDB' : '#48484A'));
+        const c = window.__wfConfC ? window.__wfConfC(g.conf) : '#0A6FDB';
         return withTip(at(g.x, g.y, {
           c, rim: hi ? '#FFFFFF' : (mid ? '#FFFFFF' : '#FFFFFF'), r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
           pulse: !MANY && !sel, still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
@@ -1415,12 +1415,12 @@ class Component extends DCLogic {
       stTxt: I.st, stEn: I.stEn && I.stEn !== I.st ? I.stEn : '', stBg: TONE[0], stFg: TONE[1],
       hasType: !!(I.type || beh), typeTxt: I.type || beh, typeEn: I.type && I.typeEn ? I.typeEn : '', typeIcon: TYPE_ICON[I.typeEn] || 'M12 21c4 0 6.5-2.7 6.5-6.3 0-3.8-3.3-6-4.4-9.7-2.2 1.6-3.6 3.8-3.6 6.2-1-.6-1.6-1.8-1.8-3C6.9 10 5.5 12.3 5.5 14.7 5.5 18.3 8 21 12 21Z',
       held: !!held, heldTitle: held ? (held.official ? 'Held · ' + held.label.toLowerCase() : 'Held · edge fully contained') : '',
-      heldSub: held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve' + (held.official && I.heldSrc === 'last status update' ? ' (to the last status update)' : '') : held.official ? 'Resolution time not published' : 'Per the fire model; official state is ' + I.st) : '',
+      heldSub: held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve' + (held.official && I.heldSrc === 'last status update' ? ' (to the last status update)' : '') : held.official ? (I.startMs && I.updMs && I.updMs > I.startMs ? 'About ' + D(I.updMs - I.startMs) + ' to resolve (estimate, to the last update)' : 'Resolution time not published') : 'Per the fire model; official state is ' + I.st) : '',
       time, forces: fz, hasForces: fz.length > 0, noForces: fz.length === 0, fCols: FACTS ? 2 : Math.max(1, Math.min(4, fz.length)), gridTitle: FACTS ? 'Situation' : R.est ? 'Forces on scene · estimate' : R.estF && (R.estF.terrain || R.estF.aerial) ? 'Forces on scene · partly estimated' : 'Forces on scene',
       deforFire: !!I.deforFire, deforPct: I.cover ? I.cover.defor : 0,
       hasAreas: !!(I.areas && I.areas.length), areasTxt: I.areas && I.areas.length ? I.areas.slice(0, 3).map((a) => a.replace(/\s*\((REGULARIZADA|HOMOLOGADA|DECLARADA|DELIMITADA|EM ESTUDO)\)/i, '')).join(' · ') + (I.nAreas > 3 ? ' +' + (I.nAreas - 3) : '') : '', forcesNote: 'Resource numbers not published for this fire',
       hasArea: I.ha != null, areaTxt, areaSub, areaSubD: areaSub ? 'inline' : 'none',
-      freshC, freshTxt: upd ? 'Updated ' + clockT(upd) + ' · ' + agoTxt : 'Update time not published', srcTxt: I.src,
+      freshC, freshTxt: upd ? 'Updated ' + clockT(upd) + ' · ' + agoTxt : 'Checked ' + clockT(window.__wfLiveAt || now) + ' · the source gives no update time', srcTxt: I.src,
       goLabel: 'View',
       w: Math.min(358, this.W() - 32), left: Math.round((this.W() - Math.min(358, this.W() - 32)) / 2), top: Math.round((top0 + bot0) / 2), maxH: Math.round(bot0 - top0),
       go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); }

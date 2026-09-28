@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-title" content="Fire Watch">
 <meta name="theme-color" content="#F2F2F7">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-192.png">
-<script src="fit.js?v=25"></script>
+<link rel="apple-touch-icon" href="icon-180.png?v=2">
+<link rel="icon" href="icon-192.png?v=2">
+<script src="fit.js?v=26"></script>
 <script src="prefs.js?v=7"></script>
 <script src="i18n.js?v=30"></script>
-<script src="live.js?v=24"></script>
-<script src="chat.js?v=6"></script>
+<script src="live.js?v=25"></script>
+<script src="chat.js?v=7"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -127,7 +127,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
-            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 12px; font-weight: 600; visibility: {{m.avVis}}">{{m.code}}</span>
+            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 12px; font-weight: 600; overflow: hidden; visibility: {{m.avVis}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
             <div style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: #FFFFFF">
               <span style="display: {{m.nameD}}; font-size: 13px; line-height: 16px; color: #545458">{{m.name}}</span>
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
@@ -269,7 +269,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                   </div>
                   <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
                     <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
-                      <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600">{{p.code}}</span>
+                      <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
                       <span style="flex-grow: 1; min-width: 0; font-size: 15px; font-weight: {{p.w}}; line-height: 20px">{{p.name}}</span>
                       <span style="font-size: 13px; line-height: 16px; color: #545458">{{p.role}}</span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
@@ -334,7 +334,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px 8px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{f.station}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{f.veh}}</span></div>
             <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
               <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
-                <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600">{{p.code}}</span>
+                <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
                 <span style="flex-grow: 1; min-width: 0; font-size: 15px; font-weight: {{p.w}}; line-height: 20px">{{p.name}}</span>
                 <span style="font-size: 13px; line-height: 16px; color: #545458">{{p.role}}</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
@@ -483,6 +483,7 @@ class Component extends DCLogic {
     const c = C.get(s.key);
     if (!c) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, groups: [], noChats: true, listSub: '' };
     const S = C.stageOf(c), us = C.isUS(c), vn = C.vnow(c), t0 = C.since(c);
+    const pic = (name) => { const u = C.photo(c, name); return u ? 'url("' + u + '")' : 'none'; };
 
     // Time in each stage (also the timeline of the resolution summary)
     const D = C.stageDurs(c), maxMs = Math.max(1, ...D.map((d) => d.ms));
@@ -498,7 +499,7 @@ class Component extends DCLogic {
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby;
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
       return { station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
-        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '1px solid rgba(60,60,67,0.08)' : '1px solid rgba(60,60,67,0.12)', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
+        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '1px solid rgba(60,60,67,0.08)' : '1px solid rgba(60,60,67,0.12)', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
     const extras = [];
     if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2] }); }
     if (c.evac) extras.push({ name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
@@ -550,7 +551,7 @@ class Component extends DCLogic {
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, avVis: 'visible', gap: same ? '0' : '4px' });
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), avVis: 'visible', gap: same ? '0' : '4px' });
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
@@ -575,7 +576,7 @@ class Component extends DCLogic {
     });
     // The team: you, the fire owner, then the crew coordinator of each station
     const team = [{ name: me.name, role: L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: '0 0 0 2px #FFFFFF, 0 0 0 4px #D7F41A', roleC: '#1E7A34' }]
-      .concat(c.people.map((p) => ({ name: p.name, role: L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: 'none', bg: '#FFF6D6', ring: 'none', roleC: '#545458' })))
+      .concat(c.people.map((p) => ({ name: p.name, role: L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: 'none', roleC: '#545458' })))
       .map((p) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name) }));
     const ty = C.typing(c);
     const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), cls: a.primary || a.danger ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? '#D7F41A' : a.danger ? 'rgba(215,0,21,0.10)' : '#2C2C2E', fg: a.primary ? '#1C1C1E' : a.danger ? '#B3001B' : '#D7F41A', w: a.primary ? 600 : 400, go: () => run(a.key) }));
