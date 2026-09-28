@@ -211,17 +211,37 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div aria-hidden="{{listHidden}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; visibility: {{listVis}}; opacity: {{liInOp}}; transform: translateY({{liInY}}); transition: opacity .3s ease {{liInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{liInDelay}}, visibility 0s linear {{listVisDelay}}">
       <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hList.down}}" onPointerMove="{{hList.move}}" onPointerUp="{{hList.up}}" onPointerCancel="{{hList.cancel}}" onKeyDown="{{hList.key}}" style="display: flex; align-items: flex-start; justify-content: center; box-sizing: border-box; height: 29px; padding-top: 8px; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
       <div class="wf-snap" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
-        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
-          <span></span>
-          <span style="text-align: center">Ignition<br>validation level</span>
+        <!-- Incidents: one table for ignition candidates, one for fires with their state -->
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 0 16px 16px">
+          <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Incidents</span>
+          <span style="font-size: 15px; line-height: 18px; color: #545458">{{incSub}}</span>
+        </div>
+        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; padding: 0 16px 8px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; line-height: 18px; color: #545458">
+          <span style="font-weight: 600">Ignition candidates</span>
+          <span style="text-align: right">Likelihood</span>
           <span></span>
         </div>
-        <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="6">
-          <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; height: 60px; padding: 0 0 0 40px; box-sizing: border-box; color: #000000; text-decoration: none">
-            <span style="min-width: 0; line-height: 20px; font-size: 17px; font-weight: {{it.nameW}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
-            <span style="text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
-            <span style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
-            <span style="grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+        <sc-if value="{{noCands}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #545458">None in this area</span></sc-if>
+        <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
+          <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 8px 16px; box-sizing: border-box; border-bottom: 1px solid rgba(60,60,67,0.08); color: #000000; text-decoration: none">
+            <span style="min-width: 0; line-height: 20px; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
+            <span style="text-align: right; font-size: 17px; line-height: 20px; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
+            <span style="grid-row: 1 / span 2; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
+            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 18px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+          </a>
+        </sc-for>
+        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; margin-top: 16px; padding: 0 16px 8px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; line-height: 18px; color: #545458">
+          <span style="font-weight: 600">Fires</span>
+          <span style="text-align: right">State</span>
+          <span></span>
+        </div>
+        <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #545458">None in this area</span></sc-if>
+        <sc-for list="{{fireShown}}" as="it" hint-placeholder-count="3">
+          <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 8px 16px; box-sizing: border-box; border-bottom: 1px solid rgba(60,60,67,0.08); color: #000000; text-decoration: none">
+            <span style="min-width: 0; line-height: 20px; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
+            <span style="text-align: right; font-size: 15px; line-height: 20px; white-space: nowrap; color: {{it.valC}}">{{it.val}}</span>
+            <span style="grid-row: 1 / span 2; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
+            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 18px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
         <button type="button" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 8px 16px 16px; border: 0; border-radius: 10px; background: rgba(118,118,128,0.12); color: #0062CC; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer">{{moreTxt}}</button>
@@ -805,11 +825,16 @@ class Component extends DCLogic {
         aria: c.place + ', ignition validation level ' + c.conf + ' percent, ' + c.srcList + ', ' + c.ago,
         pick: listFocus(c.id)
       };
-    }).concat(FIRES.map((f, j) => ({
-      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: 'Active', valC: '#B84A00', nameW: 400, iconPath: FLAME, sub: (geoOf(f) || f.id) + ' · ' + (/^Confirmed from /.test(f.note || '') ? 'Confirmed from a satellite detection' : f.note), conf: '',
+    });
+    // Fires: their reported state (ANEPC / NIFC / INPE), most active first; confirmed ignitions are active fires
+    const TONE = { hot: ['#B84A00', 0], warn: ['#B84A00', 1], amber: ['#7A5600', 2], ok: ['#1E7A34', 3], watch: ['#00707A', 4], off: ['#636366', 5] };
+    const fState = (f) => { const I = f.info; if (!I || !I.stEn) return /^Confirmed from /.test(f.note || '') ? ['Confirmed', TONE.hot] : ['Active', TONE.hot]; return [I.stEn, TONE[I.tone] || TONE.hot]; };
+    const fireList = FIRES.map((f, j) => ({ f, j, st: fState(f) })).sort((a, b) => a.st[1][1] - b.st[1][1]).map(({ f, j, st }) => ({
+      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: st[0], valC: st[1][0], nameW: 400, iconPath: FLAME,
+      sub: /^Confirmed from /.test(f.note || '') ? 'Confirmed from a satellite detection' : [geoOf(f)].concat(String(f.note || '').split(' · ').filter((x) => x && !(f.info && (x === f.info.st || x === f.info.stEn)))).filter(Boolean).join(' · '), conf: '',
       bg: 'rgba(232,106,0,0.16)', bd: 'rgba(232,106,0,0.45)', ...anim(N + j),
-      aria: 'Active fire ' + f.place + (geoOf(f) ? ', ' + geoOf(f) : '') + ', ' + f.id + ', ' + f.note + '. Open forces dispatched', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
-    })));
+      aria: 'Fire ' + f.place + ', ' + st[0] + (geoOf(f) ? ', ' + geoOf(f) : '') + '. Open', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
+    }));
     return {
       nt: this.wfNotes(CANDS, FIRES, scope, listFocus),
       scope, rows, allState, inCounties: !!brObj || atUS, inStates: !brObj, rowPadL: '40px', homeReset: () => this.wfDemoReset(), homeTick: s.homeTick || 0, sort: { name: sortCol('name'), cands: sortCol('cands'), fires: sortCol('fires') }, gridCols: 'minmax(0, 1fr) 102px 64px ' + (rows.some((r) => r.end) ? '28px' : '0px'), showSearch: (!!brObj && brObj.counties.length > 10) || atCountries, searchPh: atCountries ? 'Search ' + CTRY.length + ' countries' : 'Search ' + (brObj ? brObj.n : 0) + unitOf(brObj), q: s.q || '', hasQ: !!(s.q || ''), noMatch: q.length > 0 && rows.length === 0, noMatchTxt: 'No ' + (atCountries ? 'countries' : brObj ? unitOf(brObj).trim() : 'states') + ' match “' + q + '”', onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }), crumb: brObj ? 'United States › ' + brObj.name : 'United States',
@@ -828,7 +853,7 @@ class Component extends DCLogic {
       plN: N === 1 ? '' : 's', plF: NF === 1 ? '' : 's',
       liveTxt: window.__wfLiveMap ? (window.__wfLiveAt ? 'Updated ' + new Date(window.__wfLiveAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Loading…') : 'Updated 2:31 PM',
       ...this.wfPrefVals(), mapSt: SC.sc.st, mapCo: SC.sc.co || '', alertCount: N, hasAlerts: N > 0, hasCard: M > 0, listMaxH: FIT * ROW, listOverflow: M > FIT ? 'auto' : 'visible',
-      ...(() => { const lim = (this.state || {}).listLim || 60, more = ignList.length - lim; return { ignShown: ignList.slice(0, lim), moreD: more > 0 ? 'flex' : 'none', moreTxt: 'Show ' + Math.min(60, Math.max(0, more)) + ' more · ' + Math.max(0, more) + ' left', showMore: () => this.setState({ listLim: lim + 60 }) }; })(),
+      ...(() => { const lim = (this.state || {}).listLim || 60, more = Math.max(0, ignList.length - lim) + Math.max(0, fireList.length - lim); return { ignShown: ignList.slice(0, lim), fireShown: fireList.slice(0, lim), noCands: !ignList.length, noFires: !fireList.length, incSub: (scope && scope.title ? scope.title + ' · ' : '') + ignList.length + ' ignition candidate' + (ignList.length === 1 ? '' : 's') + ' · ' + fireList.length + ' fire' + (fireList.length === 1 ? '' : 's'), moreD: more > 0 ? 'flex' : 'none', moreTxt: 'Show ' + Math.min(60, Math.max(0, more)) + ' more · ' + Math.max(0, more) + ' left', showMore: () => this.setState({ listLim: lim + 60 }) }; })(),
       ff,
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
       cardTitle: (N === 1 && NF === 0) ? 'Ignition candidate' : N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'),
@@ -838,7 +863,7 @@ class Component extends DCLogic {
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
       listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg', barGrabOp: listOpen ? 0 : 1,
       toggleList: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.wfListFlag(false); this.setState({ list: !listOpen }); },
-      barTitle: N === 0 ? 'No ignition candidates' : N + ' Ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#1E7A34' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' active fire' + (NF === 1 ? '' : 's'),
+      barTitle: N === 0 ? 'No ignition candidates' : N + ' ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#1E7A34' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' fire' + (NF === 1 ? '' : 's'),
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
       ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,
