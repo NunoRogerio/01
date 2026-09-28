@@ -339,8 +339,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div aria-hidden="true" onClick="{{focusTap}}" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{focusOp}}; pointer-events: {{focusPE}}; transition: opacity .45s ease"></div>
-  <section role="dialog" aria-labelledby="sentTitle" aria-hidden="{{sentHidden}}" class="sheet blade" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; height: {{sentH}}; transition: height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1); box-sizing: border-box; padding: 0 0 30px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{sentY}})">
-    <button type="button" onClick="{{sentToggle}}" aria-expanded="{{sentUpStr}}" aria-label="{{sentUpLabel}}" style="align-self: center; display: flex; align-items: flex-start; justify-content: center; box-sizing: border-box; width: 96px; height: 29px; padding-top: 8px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer">
+  <section role="dialog" aria-labelledby="sentTitle" aria-hidden="{{sentHidden}}" class="sheet blade" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; height: {{sentH}}; transition: {{sbTr}}; box-sizing: border-box; padding: 0 0 30px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{sentY}})">
+    <button type="button" onPointerDown="{{sb.down}}" onPointerMove="{{sb.move}}" onPointerUp="{{sb.up}}" onPointerCancel="{{sb.cancel}}" onKeyDown="{{sb.key}}" aria-expanded="{{sentUpStr}}" aria-label="{{sentUpLabel}}" style="align-self: stretch; display: flex; align-items: flex-start; justify-content: center; box-sizing: border-box; height: 37px; flex-shrink: 0; margin: 0 0 -8px; padding: 8px 0 0; border: 0; border-radius: 28px 28px 0 0; background: transparent; cursor: grab; touch-action: none">
       <span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     </button>
     <div style="display: flex; align-items: center; gap: 0; padding: 12px 16px 0 0">
@@ -536,6 +536,17 @@ class Component extends DCLogic {
       up: () => { const h = self._hd; self._hd = null; if (!h || h.key !== key) return; const d = Math.abs(h.dy); self.setState({ hdK: null, hdY: 0 }); if (d < 6 || d > 60) close(); },
       cancel: () => { self._hd = null; self.setState({ hdK: null, hdY: 0 }); },
       key: (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { if (e.preventDefault) e.preventDefault(); close(); } }
+    };
+  }
+  // Two-way blade drag: the blade follows the finger; let go past 40 px to raise or lower it, a tap toggles it.
+  wfBlade(isUp, set) {
+    const self = this, span = 260;
+    return {
+      down: (e) => { let k = 1; try { const R = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R.height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._sb = { y: e.clientY, k, dy: 0 }; },
+      move: (e) => { const h = self._sb; if (!h) return; let dy = (e.clientY - h.y) / h.k; dy = isUp ? Math.max(-24, Math.min(span, dy)) : Math.max(-span, Math.min(24, dy)); h.dy = dy; if (Math.abs(dy) > 3) self.setState({ sbDy: dy }); },
+      up: () => { const h = self._sb; self._sb = null; if (!h) return; const d = h.dy; self.setState({ sbDy: null }); if (Math.abs(d) < 6) set(!isUp); else if (d < -40) set(true); else if (d > 40) set(false); },
+      cancel: () => { self._sb = null; self.setState({ sbDy: null }); },
+      key: (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { if (e.preventDefault) e.preventDefault(); set(!isUp); } }
     };
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
@@ -1064,15 +1075,15 @@ class Component extends DCLogic {
         // between Now / +1h / +2h / +3h never leaves the projection outside the map.
         const M = FMOD.model, P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
         const pts = [].concat.apply([], Object.values(M.snaps).filter((q) => q && q.ring && q.ring.length).map((q) => q.ring.map((r) => P(r[0], r[1]))));
-        if (!pts.length) return { zoom: 24, fx: FIRE[0], fy: FIRE[1] };
+        if (!pts.length) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
-        const z = Math.max(0.0015, Math.min(24, Math.min(330 / bw, 230 / bh) * 0.85));
+        const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85));
         return { zoom: +z.toFixed(4), fx: Math.round((Math.max(...xs) + Math.min(...xs)) / 2), fy: Math.round((Math.max(...ys) + Math.min(...ys)) / 2) };
       })() : (window.__wfLiveMap && fv && BRF && ((window.__wfBRGeo || {})[fv.id] || {}).ring) ? (() => {
         const P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662], pts = window.__wfBRGeo[fv.id].ring.map((q) => P(q[0], q[1]));
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
-        return { zoom: +Math.max(0.0015, Math.min(24, Math.min(330 / bw, 230 / bh) * 0.85)).toFixed(4), fx: Math.round((Math.max(...xs) + Math.min(...xs)) / 2), fy: Math.round((Math.max(...ys) + Math.min(...ys)) / 2) };
-      })() : (window.__wfLiveMap && fv && RO) ? { zoom: 12, fx: FIRE[0], fy: FIRE[1] } : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
+        return { zoom: +Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)).toFixed(4), fx: Math.round((Math.max(...xs) + Math.min(...xs)) / 2), fy: Math.round((Math.max(...ys) + Math.min(...ys)) / 2) };
+      })() : (window.__wfLiveMap && fv && RO) ? { zoom: 3, fx: FIRE[0], fy: FIRE[1] } : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
       mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       hasRU: !!RU, noRU: !RU,
@@ -1127,7 +1138,7 @@ class Component extends DCLogic {
           : { title: fv ? fv.place : 'North ridge', c: '#000000', sub: 'Fire ' + fireId, tagD: 'none', pillD: 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
-      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: s.sentUp ? '700px' : '440px', sentUpStr: s.sentUp ? 'true' : 'false', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
+      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: (s.sentUp ? 700 : 440) - (s.sbDy || 0) + 'px', sb: this.wfBlade(!!s.sentUp, (up) => this.setState({ sentUp: up })), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdrB: this._hdrB || 170,
       crewNote: chosenList.some((d) => d.real) ? 'Crew availability not published' : '',   // real stations: said once, above the list
       stNone: !!(stDraft && !stDraft.length), stApplyOp: stDraft && !stDraft.length ? 0.4 : 1,   // Apply waits for at least one station
@@ -1141,7 +1152,7 @@ class Component extends DCLogic {
       ...(() => { const v1s = String(K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : '')).replace(/^\s*·?\s*/, ''), v2 = String(K ? K.k2V : maxEta), s2 = String(K ? K.k2S : ' min · ' + clock(maxEta)).replace(/^\s*·?\s*/, '');
         const m = /^(\D*?)\s*(\d+%)$/.exec(v2); return { k1Sub: v1s, k2Val: m && m[1] ? m[2] : v2, k2Sub: m && m[1] ? m[1].toLowerCase() : s2 }; })(),
       sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (fres && fres.src ? 'Reported by ' + fres.src : fv.place) : 'Orders from this app') : 'Orders from this app', undoLabel: 'Reinforce',
-      focusOp: (sent && !s.full) ? 1 : 0, focusPE: (sent && !s.full) ? 'auto' : 'none',
+      focusOp: (sent && !s.full && s.sentUp) ? 1 : 0, focusPE: (sent && !s.full) ? 'auto' : 'none',
       focusTap: () => this.setState(s.sentUp ? { sentUp: false } : { full: true, open: false, cfg: false }),   // blurred map: lower a raised panel, else open the map full screen
       sentY: (sent && !s.full) ? '0%' : 'calc(100% + 120px)',   // fully off screen on tall phones too sentHidden: (sent && !s.full) ? 'false' : 'true',
       hSt: this.wfHandle('st', 'up', () => this.setState({ open: false })), stDy: this.wfDrag('st').y, stDyT: this.wfDrag('st').t,

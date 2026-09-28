@@ -248,8 +248,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
         <sc-if value="{{pinFire}}" hint-placeholder-val="{{ true }}">
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1">
-          <circle cx="20" cy="20" r="8" fill="none" stroke="{{pinC}}" stroke-width="1.5"><animate attributeName="r" values="8;19" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
-          <polygon points="10.5,12.5 29.5,12.5 20,28.5" fill="{{pinC}}" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
+          <circle cx="20" cy="20" r="8" fill="none" stroke="{{pinC}}" stroke-width="1.5" style="display: {{pinTriD}}"><animate attributeName="r" values="8;19" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
+          <circle cx="20" cy="20" r="8" fill="none" stroke="#D70015" stroke-width="1.5" style="display: {{pinCirD}}"><animate attributeName="r" values="8;19" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
+          <polygon points="10.5,12.5 29.5,12.5 20,28.5" fill="{{pinC}}" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" style="display: {{pinTriD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
+          <circle cx="20" cy="20" r="7.5" fill="rgba(255,59,48,0.45)" stroke="#8E0A12" stroke-width="1.6" style="display: {{pinCirD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></circle>
         </svg>
         </sc-if>
         <span class="{{fire.tip}}" role="tooltip"><b>{{fire.tt}}</b>{{fire.td}}</span>
@@ -1101,7 +1103,7 @@ class Component extends DCLogic {
       kmPx: Math.round(100 * s),
       isRisk, isSpread: mode === 'spread', isPin,
       pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g && window.__wfConfC ? window.__wfConfC(g.conf) : g ? (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A') : '#E86A00'; })(),
-      pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
+      pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinTriD: p.mode === 'spread' ? 'none' : 'inline', pinCirD: p.mode === 'spread' ? 'inline' : 'none', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w70: +(7 * k).toFixed(5),
         d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
       routeLines: this.recMode() ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],

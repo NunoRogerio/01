@@ -157,7 +157,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 </style>
 </helmet>
-<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
   <div style="position: relative; z-index: 2">
   <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 128px; z-index: -1; background: #F2F2F7; border-radius: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
@@ -294,8 +294,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div class="scrim" onClick="{{closeFa}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{faOp}}; pointer-events: {{faPE}}"></div>
-  <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; padding: 8px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 1px solid rgba(60,60,67,0.088); box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}})">
-    <span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
+  <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; padding: 8px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 1px solid rgba(60,60,67,0.088); box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}}); transition-duration: {{faT}}">
+    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hFa.down}}" onPointerMove="{{hFa.move}}" onPointerUp="{{hFa.up}}" onPointerCancel="{{hFa.cancel}}" onKeyDown="{{hFa.key}}" style="display: flex; justify-content: center; height: 29px; margin: -8px -20px -21px; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
     <h2 id="faTitle" style="margin: 22px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
     <p id="faBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
@@ -333,6 +333,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  wfHandle(key, dir, close) {
+    const self = this;
+    return {
+      down: (e) => { let k = 1; try { const R = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R.height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._hd = { key, y: e.clientY, k, dy: 0 }; },
+      move: (e) => { const h = self._hd; if (!h || h.key !== key) return; let dy = (e.clientY - h.y) / h.k; dy = dir === 'up' ? Math.min(0, dy) : Math.max(0, dy); h.dy = dy; self.setState({ hdK: key, hdY: dy }); },
+      up: () => { const h = self._hd; self._hd = null; if (!h || h.key !== key) return; const d = Math.abs(h.dy); self.setState({ hdK: null, hdY: 0 }); if (d < 6 || d > 60) close(); },
+      cancel: () => { self._hd = null; self.setState({ hdK: null, hdY: 0 }); },
+      key: (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { if (e.preventDefault) e.preventDefault(); close(); } }
+    };
+  }
+  wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   componentDidMount() { this._wfSync = () => this.forceUpdate(); window.addEventListener('pageshow', (ev) => { if (ev && ev.persisted) { this._leaving = false; this._gone = false; this.forceUpdate(); } }); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { if (this._tick) clearInterval(this._tick); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
@@ -555,7 +566,7 @@ class Component extends DCLogic {
       toggleArea: () => this.wfToggleUnit('area'), toggleTemp: () => this.wfToggleUnit('temp'),
       openFa: () => this.setState({ fa: true }), closeFa: () => this.setState({ fa: false }),
       confirmFa: () => { if (this._faDone) return; this._leaving = true; this._faDone = true; this.setState({ ret: true }); const d = this.wfDismissed(); if (!d[vId]) { d[vId] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._faDone = false; this.setState({ fa: false }); }, 800); },
-      faY: fa ? '0%' : '105%', faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
+      faY: fa ? 'calc(0% + ' + this.wfDrag('fa').y + 'px)' : '105%', faT: this.wfDrag('fa').t === '0s' ? '0s' : '.5s', hFa: this.wfHandle('fa', 'down', () => this.setState({ fa: false })), faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
       vId, vPlace, confirmHere: () => { this._leaving = true; this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
       setVid: this.setVid, full: !!s.full, openFull: () => this.setState({ full: true }), closeFull: () => this.setState({ full: false }),
       thermalOp: isThermal ? 1 : 0,
