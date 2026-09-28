@@ -6,7 +6,7 @@ California: the service that runs each station (the OpenStreetMap operator, or t
 name, e.g. 'Los Angeles County Fire Department Fire Station 104') -> its logo (P154), seal (P158) or coat of arms (P94).
 Portugal: the corporation's own logo when Wikidata has one; otherwise the coat of arms of the municipality (or parish)
 the corporation is named after, marked as such ('arms').
-Writes data/crests.json: {"updated": ..., "s": {"n123": [image url, kind, source label], ...}}
+Writes data/crests.json: {"updated": ..., "s": {"n123": [image url, kind, source label, predominant colour], ...}}
 kind: 'logo' (the service's own logo or seal) or 'arms' (the town's coat of arms). Stations not found are left out;
 the app draws a crest from the station's own data for those.
 """
@@ -141,6 +141,31 @@ def portugal(rows, out):
     print('Portugal: own logos', n_own, '· town arms', n_arms, 'of', len(rows), 'stations', flush=True)
 
 
+def dominant(url):
+    """Predominant colour of a crest: the most frequent clearly coloured pixel group (not white, black or transparent)."""
+    try:
+        from PIL import Image
+        import io
+        with urllib.request.urlopen(urllib.request.Request(url.replace('?width=120', '?width=64'), headers=UA), timeout=60) as r:
+            im = Image.open(io.BytesIO(r.read())).convert('RGBA').resize((48, 48))
+        buckets = {}
+        for (R, G, B, A) in im.getdata():
+            if A < 128:
+                continue
+            mx, mn = max(R, G, B), min(R, G, B)
+            if mx > 235 and mn > 220 or mx < 30 or (mx - mn) < 28:   # white, black and greys say little about the crest
+                continue
+            k = (R // 32, G // 32, B // 32)
+            b = buckets.setdefault(k, [0, 0, 0, 0]); b[0] += R; b[1] += G; b[2] += B; b[3] += 1
+        if not buckets:
+            return None
+        R, G, B, n = max(buckets.values(), key=lambda v: v[3])
+        return '#%02X%02X%02X' % (R // n, G // n, B // n)
+    except Exception as e:
+        print('::warning::colour', url[:80], e)
+        return None
+
+
 def main():
     out = {}
     try:
@@ -151,6 +176,12 @@ def main():
         portugal(json.load(open('data/stations-pt.json', encoding='utf-8'))['s'], out)
     except Exception as e:
         print('::warning::portugal', e)
+    cols = {}
+    for k, v in out.items():                  # one download per distinct image
+        if v[0] not in cols:
+            cols[v[0]] = dominant(v[0]); time.sleep(0.2)
+        v.append(cols[v[0]] or '')
+    print('colours for', sum(1 for c in cols.values() if c), 'of', len(cols), 'images', flush=True)
     if len(out) < 20:
         print('::warning::too few crests, keeping the previous file'); return
     json.dump({'updated': time.strftime('%Y-%m-%dT%H:%MZ', time.gmtime()), 'source': 'Wikidata · Wikimedia Commons', 's': out},

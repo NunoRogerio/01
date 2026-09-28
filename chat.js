@@ -898,7 +898,7 @@
     vnow: vnow, since: since, photo: photoOf,
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
-      return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '' };
+      return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
     }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },

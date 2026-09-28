@@ -20,7 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Find crests
-        run: python3 scripts/crests.py
+        run: |
+          pip install --quiet pillow
+          python3 scripts/crests.py
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"

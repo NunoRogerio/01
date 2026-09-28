@@ -103,8 +103,16 @@
   var HER = [['#B0001A', '#F2C200'], ['#1F2B45', '#D7F41A'], ['#2E6B3A', '#F4F4F2'], ['#7A1F12', '#F2C200'], ['#0B4F8A', '#F4F4F2'], ['#4A2A6B', '#F2C200']];
   function hsh(t) { var h = 0; t = String(t || ''); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function normName(name) { return String(name || 'Fire station').trim().replace(/^BV\s+/, 'Bombeiros Voluntários de ').replace(/^BM\s+/, 'Bombeiros Municipais de ').replace(/^BS\s+/, 'Bombeiros Sapadores de '); }
+  // A crest colour strong enough for an outline: very light colours are deepened
+  function usable(hex) {
+    if (!/^#[0-9A-F]{6}$/i.test(hex || '')) return '';
+    var c = [1, 3, 5].map(function (i) { return parseInt(hex.slice(i, i + 2), 16); }), l = (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255;
+    if (l > 0.72) c = c.map(function (v) { return Math.round(v * 0.62 / l); });
+    return '#' + c.map(function (v) { return Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0'); }).join('').toUpperCase();
+  }
   function drawn(name) {
-    var n = String(name || 'Fire station').trim().replace(/^BV\s+/, 'Bombeiros Voluntários de ').replace(/^BM\s+/, 'Bombeiros Municipais de ').replace(/^BS\s+/, 'Bombeiros Sapadores de '), num = (n.match(/(\d{1,3})\s*$/) || n.match(/#\s*(\d{1,3})/) || n.match(/\b(\d{1,3})\b/) || [])[1] || '';
+    var n = normName(name), num = (n.match(/(\d{1,3})\s*$/) || n.match(/#\s*(\d{1,3})/) || n.match(/\b(\d{1,3})\b/) || [])[1] || '';
     var top = '', mid = '';
     var pt = /bombeiros/i.exec(n);
     if (pt) {
@@ -131,8 +139,8 @@
   // key: OSM 'n123' / 'w123' when known; name: the station's name
   window.__wfCrest = function (key, name) {
     var C = window.__wfCrests || {}, hit = key ? C[key] : null;
-    if (hit) return { url: hit[0], kind: hit[1], label: hit[2] || '' };
-    return { url: drawn(name), kind: 'drawn', label: '' };
+    if (hit) return { url: hit[0], kind: hit[1], label: hit[2] || '', color: usable(hit[3]) };
+    return { url: drawn(name), kind: 'drawn', label: '', color: HER[hsh(normName(name)) % HER.length][0] };
   };
   // A real crest that cannot load (offline, blocked) is replaced by the drawn one: every crest image carries data-crest="<station name>"
   try { window.addEventListener('error', function (e) { var t = e.target; if (t && t.tagName === 'IMG' && t.getAttribute && t.getAttribute('data-crest') && !/^data:/.test(t.src)) t.src = window.__wfCrest('', t.getAttribute('data-crest')).url; }, true); } catch (e) {}
