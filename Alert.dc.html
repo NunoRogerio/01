@@ -189,7 +189,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-if>
   </header>
   <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}"><div style="padding: 0 16px 28px"><button type="button" class="btn ghost" onClick="{{openMap}}" style="width: 100%; height: 48px; font-size: 17px; font-weight: 500">View on map</button></div></sc-if>
-  <span aria-hidden="true" style="display: {{grabD}}; position: absolute; left: 50%; bottom: 10px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(60,60,67,0.3); opacity: {{grabOp}}; transition: opacity .3s ease; pointer-events: none"></span>
+  <span aria-hidden="true" style="display: {{grabD}}; position: absolute; left: 50%; bottom: 8px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); opacity: {{grabOp}}; transition: opacity .3s ease; pointer-events: none"></span>
   </div>
 
   <div class="scrim" onClick="{{ddClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 5; background: rgba(0,0,0,0.32); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: {{ddOp}}; pointer-events: {{ddPE}}"></div>
@@ -209,7 +209,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
       </div>
     </sc-for>
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hDd.down}}" onPointerMove="{{hDd.move}}" onPointerUp="{{hDd.up}}" onPointerCancel="{{hDd.cancel}}" onKeyDown="{{hDd.key}}" style="display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; cursor: grab; touch-action: none; margin-top: auto"><span aria-hidden="true" style="width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span></div>
+    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hDd.down}}" onPointerMove="{{hDd.move}}" onPointerUp="{{hDd.up}}" onPointerCancel="{{hDd.cancel}}" onKeyDown="{{hDd.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin-top: auto"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </div>
 
   <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
@@ -349,8 +349,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div class="scrim" onClick="{{closeDz}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{dzOp}}; pointer-events: {{dzPE}}"></div>
-  <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; padding: 10px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}})">
-    <span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3)"></span>
+  <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; padding: 8px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}})">
+    <span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     <h2 id="dzTitle" style="margin: 22px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
     <p id="dzBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
