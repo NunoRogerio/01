@@ -136,6 +136,9 @@
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
   var cold=false;try{cold=!sessionStorage.getItem('wf-cold');sessionStorage.setItem('wf-cold','1');}catch(e){}
+  // The loading screen (logo, 'Loading live data', counter) shows only on opening the app and right after log in.
+  // Moving between screens inside the app shows no loading: just a plain surface until the screen has drawn.
+  if(!cold&&!soft){el.innerHTML='';el.style.transition='opacity .2s ease';}
   if(soft)minMs=Math.max(minMs,6000);   // right after log in: the loading screen stays at least 6 s
   // Cold start and log in: a forest photo, slowly zooming in, starts in black and white. A wave of colour spreads out
   // from the logo to the screen edges: at its front the photo is more saturated than normal, easing back to normal
@@ -174,9 +177,9 @@
   }
   // The counter runs 0% to 100% over the loading time; it waits at 90% while live data is still coming,
   // then finishes, and the screen only fades once it reads 100%.
-  var pctEl=el.querySelector('.pct'),pv=0,pctDone=false;
+  var pctEl=el.querySelector('.pct'),pv=0,pctDone=!pctEl;   // no counter between screens: nothing to wait for
   (function count(){
-    if(!el.parentNode)return;
+    if(!el.parentNode||!pctEl)return;
     var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
     if(!ready||(wave&&!wave.done&&goal>=100))goal=Math.min(goal,ready?99:90);
     pv+=(goal-pv)*.18;if(goal>=100&&pv>99.4)pv=100;
