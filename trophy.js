@@ -28,7 +28,7 @@
     '.forest i.out{animation-name:f,zo}' +
     '.forest b{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
     '@keyframes f{0%{opacity:1;z-index:1}25%{opacity:1;z-index:2;animation-timing-function:cubic-bezier(.45,0,.55,1)}34.62%{opacity:0;z-index:2}34.7%{opacity:0;z-index:0}100%{opacity:0;z-index:0}}' +
-    '@keyframes o{0%{opacity:0}9.62%{opacity:1}25%{opacity:1}34.62%{opacity:0}100%{opacity:0}}' +
+    '@keyframes o{0%{opacity:0}4.33%{opacity:0}5.77%{opacity:1}28.27%{opacity:1}29.33%{opacity:0}100%{opacity:0}}' +
     '@keyframes zi{0%{transform:scale(1)}34.7%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
     '@keyframes zo{0%{transform:scale(1.3)}34.7%{transform:scale(1)}100%{transform:scale(1)}}' +
     'canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}' +
@@ -120,8 +120,6 @@
       this._lis = true; var sv = this._cup.querySelector('svg'), onTurn = function (e) { if (e.animationName === 'spin' && self._run) show(); };
       sv.addEventListener('animationstart', onTurn); sv.addEventListener('animationiteration', onTurn);
     }
-    var SPR = document.createElement('canvas'); (function () { var z = 64, c = SPR.getContext('2d'); SPR.width = SPR.height = z;
-      var rr = z / 2 * (4.5 * 2) / (4.5 * 2 + 12); c.shadowColor = 'rgba(215,244,26,0.8)'; c.shadowBlur = z / (4.5 * 2 + 12) * 6; c.fillStyle = '#D7F41A'; c.beginPath(); c.arc(z / 2, z / 2, rr, 0, Math.PI * 2); c.fill(); })();   // one glowing spark, drawn once and reused
     var draw = function () {
       if (!self._run) return;
       var cv = self._cv, R = self._card.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, W = Math.round(R.width * dpr), H = Math.round(R.height * dpr);
@@ -131,8 +129,9 @@
       parts = parts.filter(function (q) { return now - q.born < q.life; });
       var live = parts.filter(function (q) { return now >= q.born; });
 
-      live.forEach(function (q) { var t = (now - q.born) / q.life, e = t * (1.6 - 0.6 * t), w = q.curl * e * e, S = q.r * 21 / 4.5;   // curl: a sideways drift; the sprite scales with the spark
-        g.globalAlpha = e < 0.55 ? 1 : Math.max(0, 1 - (e - 0.55) / 0.45); g.drawImage(SPR, q.x0 + q.dx * q.d * e - q.dy * w - S / 2, q.y0 + q.dy * q.d * e + q.dx * w - S / 2, S, S); });
+      g.fillStyle = '#D7F41A';   // crisp vector dots: no glow, no blur
+      live.forEach(function (q) { var t = (now - q.born) / q.life, e = t * (1.6 - 0.6 * t), w = q.curl * e * e;   // curl: a sideways drift
+        g.globalAlpha = e < 0.55 ? 1 : Math.max(0, 1 - (e - 0.55) / 0.45); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
       g.globalAlpha = 1;
       requestAnimationFrame(draw);
     };
