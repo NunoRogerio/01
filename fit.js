@@ -209,16 +209,26 @@ window.__wfBlink=function(path,dur){
     var zoom=document.createElement('div');var zOut=nxt%2===1;   // every other launch zooms out, the others zoom in
     zoom.style.cssText='position:absolute;inset:0;transform:scale('+(zOut?1.12:1)+');transition:transform 12s cubic-bezier(.2,.6,.3,1);will-change:transform';
     var gray=mk('grayscale(1) brightness(.92)'),norm=mk('none'),hot=mk('saturate(3) contrast(1.08) brightness(1.08)');
-    zoom.appendChild(gray);zoom.appendChild(norm);zoom.appendChild(hot);
+    zoom.appendChild(gray);zoom.appendChild(hot);zoom.appendChild(norm);
     im.onload=function(){if(!el.parentNode)return;
       bg.appendChild(zoom);el.className='photo';el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
       var sv=el.querySelector('svg').getBoundingClientRect(),cx=sv.left+sv.width/2,cy=sv.top+sv.height/2;
-      var W=innerWidth,H=innerHeight,R=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy))+120,band=150;
-      var at='circle at '+cx+'px '+cy+'px';
+      var W=innerWidth,H=innerHeight,R=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy))+220,band=75;
+      // The colour wave: an organic, rounded but irregular front that keeps changing shape as it spreads out. It is the
+      // union of a few soft discs whose centres drift around the logo and whose radii breathe; the saturated band at the
+      // front is thin (about half the old width) and twice as soft, so it reads as a glow rather than a line. The glow layer
+      // sits under the normal-colour layer, so the band keeps an even width along the whole irregular front.
+      var LOB=[0,1,2,3,4].map(function(k){return {a:k/5*Math.PI*2+Math.random()*.9,w:.7+Math.random()*.9,v:.9+Math.random()*1.2,p:Math.random()*6.28,q:Math.random()*6.28,s:(Math.random()<.5?-1:1)};});
       var paint=function(r){
-        var m1='radial-gradient('+at+',#000 '+Math.max(0,r-band)+'px,transparent '+(r-band*0.35)+'px)';
-        var m2='radial-gradient('+at+',transparent '+Math.max(0,r-band)+'px,#000 '+(r-band*0.45)+'px,#000 '+(r-18)+'px,transparent '+(r+30)+'px)';
-        norm.style.webkitMaskImage=norm.style.maskImage=m1;hot.style.webkitMaskImage=hot.style.maskImage=m2;};
+        var t=performance.now()/1000,m1=[],m2=[];
+        LOB.forEach(function(L){
+          var off=Math.min(90,r*.07+4),ang=L.a+L.s*t*.35+Math.sin(t*L.w+L.p)*.6;   // centres wander around the logo
+          var x=cx+Math.cos(ang)*off*(.6+.4*Math.sin(t*L.v+L.q)),y=cy+Math.sin(ang)*off*(.6+.4*Math.cos(t*L.w+L.p));
+          var rr=Math.max(0,r*(.94+.06*Math.sin(t*L.v*1.3+L.p))),at='circle at '+x.toFixed(1)+'px '+y.toFixed(1)+'px';
+          m1.push('radial-gradient('+at+',#000 '+Math.max(0,rr-band*1.45)+'px,rgba(0,0,0,.5) '+Math.max(0,rr-band*1)+'px,transparent '+Math.max(1,rr-band*.5)+'px)');   // normal colour behind the front
+          m2.push('radial-gradient('+at+',#000 '+Math.max(0,rr-band*.15)+'px,rgba(0,0,0,.5) '+Math.max(0,rr+band*.3)+'px,transparent '+Math.max(1,rr+band*.75)+'px)');   // the saturated glow reaching just past it
+        });
+        norm.style.webkitMaskImage=norm.style.maskImage=m1.join(',');hot.style.webkitMaskImage=hot.style.maskImage=m2.join(',');};
       paint(0);requestAnimationFrame(function(){bg.className='bg on';zoom.style.transform='scale('+(zOut?1:1.12)+')';});
       var t1=performance.now(),dur=Math.max(minMs-(Date.now()-t0)-300,2400);
       wave={p:0,done:false};
@@ -227,8 +237,8 @@ window.__wfBlink=function(path,dur){
         // the wave runs over the minimum time; while live data is still coming it slows and waits short of the edges
         var tp=Math.min(1,(now-t1)/dur),ready=haveData()&&drawn(),goal=ready?tp:Math.min(tp,.82);
         wave.p+=(goal-wave.p)*.25;
-        var q=wave.p,e=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;paint(e*(R+band));   // ease in and out
-        if(wave.p>.995&&ready&&tp>=1){wave.done=true;paint(R+band*2);return;}
+        var q=wave.p,e=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;paint(e*(R*1.08+band*1.6));   // ease in and out
+        if(wave.p>.995&&ready&&tp>=1){wave.done=true;norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
     im.src='assets/splash/'+ph[0];
