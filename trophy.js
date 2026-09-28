@@ -8,7 +8,7 @@
 // - the small Forest Fire Watch logo on top, as on the login screen (yellow on the photo, soft shadows, no blink)
 // - the trophy in its yellow circle, turning a full circle on its vertical axis every 8 s
 // - yellow fireworks: sparks leave the trophy's circle at full opacity and fade out at the photo's edges;
-//   three random bursts during each turn of the trophy (every 8 s), no two bursts alike
+//   one burst streaming for the whole of each turn of the trophy (every 8 s), no two bursts alike
 // - action: an optional full-width button label; a tap anywhere on the card reaches the page's own onClick
 (function () {
   if (window.customElements && customElements.get('wf-trophy')) return;
@@ -81,31 +81,39 @@
   Trophy.prototype.startSparks = function () {
     if (this._run) return; this._run = true;
     var self = this, parts = [];
-    // Every burst is different: its own shape, particle count, reach, speed, rotation and curl, and each spark its own
-    // size (radius 2 px up to 3.2 px, the largest before), so no two bursts look the same.
-    var rnd = function (a, b) { return a + Math.random() * (b - a); }, last = '';
-    var burst = function () {
+    // One burst per turn of the trophy: sparks stream out from the moment it starts turning until it stops (the turn is
+    // 14% of the 8 s spin). Every burst is different: its own shape, spark count, reach, speed, sweep, curl and rhythm,
+    // and each spark its own size (radius 2 px up to 4.5 px), so no two bursts look the same.
+    var rnd = function (a, b) { return a + Math.random() * (b - a); }, last = '', TURN = 8000 * 0.14;
+    var show = function () {
       var R = self._card.getBoundingClientRect(), T = self._cup.getBoundingClientRect(); if (!R.width) return;
-      var cx = T.left + T.width / 2 - R.left, cy = T.top + T.height / 2 - R.top, r0 = T.width / 2, now = performance.now();
+      var cx = T.left + T.width / 2 - R.left, cy = T.top + T.height / 2 - R.top, r0 = T.width / 2, t0 = performance.now();
       var shapes = ['scatter', 'ring', 'rings', 'spiral', 'fan'].filter(function (k) { return k !== last; }), shape = shapes[Math.floor(Math.random() * shapes.length)]; last = shape;
-      var n = Math.round(rnd(60, 78)), rot = rnd(0, Math.PI * 2), reach = rnd(0.7, 1), life = rnd(1300, 2000), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
-      var fanDir = rnd(0, Math.PI * 2), fanW = rnd(Math.PI * 0.9, Math.PI * 1.5);
+      var n = Math.round(rnd(320, 385)), rot = rnd(0, Math.PI * 2), reach = rnd(0.7, 1), life = rnd(1300, 2000), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
+      var sweep = (Math.random() < 0.5 ? -1 : 1) * rnd(0.5, 2) * Math.PI * 2, fanDir = rnd(0, Math.PI * 2), fanW = rnd(Math.PI * 0.9, Math.PI * 1.5);
+      var pulses = Math.floor(rnd(0, 4)), depth = rnd(0.3, 0.8), ph = rnd(0, Math.PI * 2);   // the stream's rhythm: steady, or in 1 to 3 swells
+      var ring = Math.round(rnd(14, 26));   // sparks per ring for the ring shapes
       for (var i = 0; i < n; i++) {
-        var a = shape === 'ring' || shape === 'spiral' ? rot + i / n * Math.PI * 2 + rnd(-0.06, 0.06)
-          : shape === 'rings' ? rot + (i % Math.ceil(n / 2)) / Math.ceil(n / 2) * Math.PI * 2 + (i % 2) * 0.12
-          : shape === 'fan' ? fanDir + rnd(-fanW / 2, fanW / 2) : Math.random() * Math.PI * 2;
+        var u = i / n;
+        if (pulses) u = u - depth * Math.sin(u * pulses * Math.PI * 2 + ph) / (pulses * Math.PI * 2) * 0.5;   // bunch sparks into swells
+        u = Math.min(1, Math.max(0, u));
+        var turn = rot + sweep * u, j = i % ring;
+        var a = shape === 'ring' ? turn + j / ring * Math.PI * 2 + rnd(-0.05, 0.05)
+          : shape === 'spiral' ? turn + (i % 3) * Math.PI * 2 / 3 + rnd(-0.08, 0.08)
+          : shape === 'rings' ? turn + j / ring * Math.PI * 2 + (Math.floor(i / ring) % 2) * Math.PI / ring
+          : shape === 'fan' ? fanDir + sweep * 0.25 * u + rnd(-fanW / 2, fanW / 2) : Math.random() * Math.PI * 2;
         var dx = Math.cos(a), dy = Math.sin(a);
         var tx = dx > 0 ? (R.width - cx) / dx : dx < 0 ? -cx / dx : 1e9, ty = dy > 0 ? (R.height - cy) / dy : dy < 0 ? -cy / dy : 1e9;   // to the photo's edge
-        var edge = Math.max(10, Math.min(tx, ty) - r0), k = shape === 'rings' ? (i < n / 2 ? 1 : rnd(0.5, 0.65)) : shape === 'scatter' || shape === 'fan' ? rnd(0.55, 1) : rnd(0.92, 1);
-        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge * reach * k, curl: curl * rnd(0.7, 1.3), born: now + rnd(0, 90), life: life * rnd(0.8, 1.2), r: rnd(2, 3.2) });
+        var edge = Math.max(10, Math.min(tx, ty) - r0), k = shape === 'rings' ? (Math.floor(i / ring) % 2 ? rnd(0.5, 0.65) : 1) : shape === 'scatter' || shape === 'fan' ? rnd(0.55, 1) : rnd(0.9, 1);
+        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge * reach * k, curl: curl * rnd(0.7, 1.3), born: t0 + u * TURN, life: life * rnd(0.8, 1.2), r: rnd(2, 4.5) });
       }
     };
-    // The show runs while the trophy turns: three bursts at random moments inside each 1.1 s turn
-    var show = function () { burst(); setTimeout(burst, rnd(280, 480)); setTimeout(burst, rnd(620, 950)); };
     if (!this._lis && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
       this._lis = true; var sv = this._cup.querySelector('svg'), onTurn = function (e) { if (e.animationName === 'spin' && self._run) show(); };
       sv.addEventListener('animationstart', onTurn); sv.addEventListener('animationiteration', onTurn);
     }
+    var SPR = document.createElement('canvas'); (function () { var z = 64, c = SPR.getContext('2d'); SPR.width = SPR.height = z;
+      var rr = z / 2 * (4.5 * 2) / (4.5 * 2 + 12); c.shadowColor = 'rgba(215,244,26,0.8)'; c.shadowBlur = z / (4.5 * 2 + 12) * 6; c.fillStyle = '#D7F41A'; c.beginPath(); c.arc(z / 2, z / 2, rr, 0, Math.PI * 2); c.fill(); })();   // one glowing spark, drawn once and reused
     var draw = function () {
       if (!self._run) return;
       var cv = self._cv, R = self._card.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, W = Math.round(R.width * dpr), H = Math.round(R.height * dpr);
@@ -114,9 +122,10 @@
       var now = performance.now();
       parts = parts.filter(function (q) { return now - q.born < q.life; });
       var live = parts.filter(function (q) { return now >= q.born; });
-      g.fillStyle = '#D7F41A'; g.shadowColor = 'rgba(215,244,26,0.8)'; g.shadowBlur = 6;
-      live.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 2), w = q.curl * e * e;   // curl: a sideways drift
-        g.globalAlpha = Math.max(0, 1 - e); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
+
+      live.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 2), w = q.curl * e * e, S = q.r * 21 / 4.5;   // curl: a sideways drift; the sprite scales with the spark
+        g.globalAlpha = Math.max(0, 1 - e); g.drawImage(SPR, q.x0 + q.dx * q.d * e - q.dy * w - S / 2, q.y0 + q.dy * q.d * e + q.dx * w - S / 2, S, S); });
+      g.globalAlpha = 1;
       requestAnimationFrame(draw);
     };
     requestAnimationFrame(draw);
