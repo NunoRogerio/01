@@ -1,0 +1,19 @@
+# Nature photos for the app's photo headers, cards and loading screen (Unsplash licence).
+# file|images.unsplash.com photo id|photographer|description
+leaf-1.webp|photo-1591943466271-dcfeedd9e58e|Tony Sebastian|Green leaf with water droplets
+leaf-2.webp|photo-1613303179355-564f87b055a7|Yoksel Zok|Green leaf, macro
+leaf-3.webp|photo-1580133318324-f2f76d987dd8|Clay Banks|Green leaf with drops of water
+leaf-4.webp|photo-1571119533952-b78846829e4e|David Clode|Green leaf, close up
+leaf-5.webp|photo-1693002583620-7224a470395f|Pedro Vit|Green leaf, close up
+leaf-6.webp|photo-1598516334061-9c4f1e43a4b2|Sameer Meshram|Yellow and red leaves
+flower-1.webp|photo-1603353139254-70e25b77b8f2|Olga Kozachenko|Yellow and purple flower, macro
+flower-2.webp|photo-1712231991180-b6c9d0960673|Klara Kulikova|Pink and white flower, close up
+flower-3.webp|photo-1442277282747-62e04545a48a|Aaron Burden|Pink flower, macro
+flower-4.webp|photo-1646505690396-9068da4332a5|Christian Buehner|Yellow flower, close up
+flower-5.webp|photo-1483519396903-1ef292f4974a|v2osk|Yellow clustered flower, close up
+flower-6.webp|photo-1695556647000-43fbd81456a1|Alexandra|Water drop on a purple flower
+lake-1.webp|photo-1640958904329-ba496b8c7e0b|Gabriel Mihalcea|Lake among trees from above
+lake-2.webp|photo-1640958906254-0beafc84520d|Gabriel Mihalcea|Lake surrounded by trees from above
+lake-3.webp|photo-1652946754662-5aa170e4b175|Kristīne Kozaka|Lake surrounded by forest
+lake-4.webp|photo-1696639457568-444001aa11b4|John Murphey|Small island in a forest lake
+lake-5.webp|photo-1504288978281-c214cad655ac|Leo Wieling|Lake with a bridge among trees from above
