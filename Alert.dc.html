@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=11"></script>
+<script src="prefs.js?v=12"></script>
 <script src="i18n.js?v=31"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=15"></script>
@@ -281,14 +281,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
       <!-- The current conclusion, in its own card: verdict and status on the left, the likelihood KPI on the right -->
       <div style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF">
-      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px">
-        <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0">
-          <h2 id="ai" style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{cur.verdict}}</h2>
+      <!-- The verdict and its status on top; the likelihood, big and in the app's yellow, at the centre of the card -->
+      <div style="display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding: 16px">
+        <span style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0">
+          <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{cur.verdict}}</h2>
           <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
         </span>
-        <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0">
-          <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
-          <span style="font-size: 15px; line-height: 19px; color: #545458; white-space: nowrap">Likelihood</span>
+        <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 0 8px">
+          <span class="kpi wf-like" style="font-size: 60px; line-height: 64px">{{cur.conf}}%</span>
+          <span style="font-size: 17px; line-height: 22px; color: #545458; white-space: nowrap">Likelihood</span>
         </span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 0 16px; padding: 12px 0 8px; border-top: 1px solid rgba(60,60,67,0.12); font-size: 17px; line-height: 22px; color: #3C3C43">

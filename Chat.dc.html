@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=11"></script>
+<script src="prefs.js?v=12"></script>
 <script src="i18n.js?v=31"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=15"></script>
@@ -149,7 +149,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
           <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden">
-            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px">
+            <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 12px; padding: 12px 16px">
               <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="20" height="20" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
               <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
                 <span style="font-size: 13px; line-height: 16px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
@@ -157,8 +157,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 <span style="display: {{m.bodyD}}; font-size: 15px; line-height: 20px; color: #545458">{{m.body}}</span>
               </div>
               <sc-if value="{{m.hasKpi}}" hint-placeholder-val="{{ false }}">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0">
-                  <span style="font-size: 30px; font-weight: 600; line-height: 32px; color: {{m.kpiC}}; font-variant-numeric: tabular-nums">{{m.kpiV}}</span>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; flex-basis: {{m.kpiBasis}}; padding: {{m.kpiPad}}">
+                  <span class="{{m.kpiCls}}" style="font-size: {{m.kpiFs}}; font-weight: 600; line-height: {{m.kpiLh}}; color: {{m.kpiC}}; font-variant-numeric: tabular-nums">{{m.kpiV}}</span>
                   <span style="font-size: 13px; line-height: 16px; color: #545458">{{m.kpiL}}</span>
                 </div>
               </sc-if>
@@ -601,7 +601,7 @@ class Component extends DCLogic {
         const toSheet = !!m.fire && !c.closed;
         items.push({ isCard: true, time, tag: T(m.tag), tagC: I ? I.c : DK && m.tagC ? lite(m.tagC, 0.45) : (m.tagC || '#545458'), title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
-          hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? m.kpi.c : '#000000',
+          hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (/%$/.test(m.kpi.v) ? '#D7F41A' : m.kpi.c) : '#000000', kpiCls: m.kpi && /%$/.test(m.kpi.v) ? 'wf-like' : '', kpiFs: m.kpi && /%$/.test(m.kpi.v) ? '60px' : '30px', kpiLh: m.kpi && /%$/.test(m.kpi.v) ? '64px' : '32px', kpiWrap: m.kpi && /%$/.test(m.kpi.v) ? 'wrap' : 'nowrap', kpiBasis: m.kpi && /%$/.test(m.kpi.v) ? '100%' : 'auto', kpiPad: m.kpi && /%$/.test(m.kpi.v) ? '8px 0 4px' : '0',
           hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: r.rc, crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',

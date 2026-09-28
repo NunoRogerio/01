@@ -99,6 +99,8 @@
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
+    // A likelihood KPI: the app's hi-vis yellow with a dark outline so it reads on white and on dark
+    '.wf-like{color:#D7F41A!important;-webkit-text-stroke:2px #1C1C1E;paint-order:stroke fill;font-weight:700!important}' +
     // The glass overlay behind panels, one definition for the whole app: a slightly dark frosted layer, so the panel's edge
     // reads clearly against what is underneath. Change it here and every overlay changes.
     ':root{--wf-glass-bg:rgba(60,60,67,0.24);--wf-glass-blur:blur(10px) saturate(120%)}' +
