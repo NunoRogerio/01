@@ -206,7 +206,7 @@ window.__wfBlink=function(path,dur){
   if(!cold&&!soft){el.innerHTML='';el.style.transition='opacity .2s ease';}
   // Opening the app: just the logo and its animation (no 'Loading live data', no counter); the counter stays for log in.
   if(cold&&!soft){var sb=el.querySelector('.sub'),pc=el.querySelector('.pct');if(sb)sb.remove();if(pc)pc.remove();}
-  if(soft)minMs=Math.max(minMs,5000);   // right after log in: the loading screen stays at least 5 s
+  if(soft)minMs=Math.max(minMs,3500);   // right after log in: the loading screen stays at least 3.5 s
   // Cold start and log in: a forest photo, slowly zooming in, starts in black and white. A wave of colour spreads out
   // from the logo to the screen edges: at its front the photo is more saturated than normal, easing back to normal
   // behind it. When the whole screen is at normal colour, loading is done.
