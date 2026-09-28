@@ -221,7 +221,7 @@ window.__wfBlink=function(path,dur){
     im.onload=function(){if(!el.parentNode)return;
       bg.appendChild(zoom);el.className='photo';el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
       var sv=el.querySelector('svg').getBoundingClientRect(),cx=sv.left+sv.width/2,cy=sv.top+sv.height/2;
-      var W=innerWidth,H=innerHeight,R=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy))+220,band=75;
+      var W=innerWidth,H=innerHeight,R=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy)),band=75;   // R: the farthest screen corner from the logo
       // The colour wave: an organic, rounded but irregular front that keeps changing shape as it spreads out. It is the
       // union of a few soft discs whose centres drift around the logo and whose radii breathe; the saturated band at the
       // front is thin (about half the old width) and twice as soft, so it reads as a glow rather than a line. The glow layer
@@ -238,7 +238,7 @@ window.__wfBlink=function(path,dur){
         });
         norm.style.webkitMaskImage=norm.style.maskImage=m1.join(',');hot.style.webkitMaskImage=hot.style.maskImage=m2.join(',');};
       paint(0);requestAnimationFrame(function(){bg.className='bg on';zoom.style.transform='scale('+(zOut?1:1.12)+')';});
-      // The wave spreads steadily with time over the loading time, eased in and out; the counter reads its progress.
+      // The wave spreads steadily with time over the loading time; the counter reads its progress, so both stay in step.
       // While live data is still coming it glides to a stop short of the edges, then carries on; every change of pace
       // is smoothed over about a quarter of a second, so it never stutters.
       var t1=performance.now(),dur=Math.max(minMs-(Date.now()-t0),2000),last=t1;
@@ -247,7 +247,9 @@ window.__wfBlink=function(path,dur){
         if(!el.parentNode)return;
         var tp=Math.min(1,(now-t1)/dur),ready=haveData()&&drawn(),goal=ready?tp:Math.min(tp,.88),dt=Math.min(64,now-last);last=now;
         wave.p+=(goal-wave.p)*(1-Math.exp(-dt/220));
-        var q=Math.min(1,wave.p),e=.5-.5*Math.cos(Math.PI*q);paint(e*(R*1.08+band*1.6));   // ease in and out (sine)
+        // in step with the counter: at n% the front has covered n% of the way to the farthest corner, and at 100% the
+        // normal colour has just reached every corner (the shape's smallest lobe included)
+        var q=Math.min(1,wave.p);paint(q*(R+band*1.5)/.94);
         if(wave.p>.985&&ready&&tp>=1){wave.p=1;wave.done=true;norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
