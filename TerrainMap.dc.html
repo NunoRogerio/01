@@ -1125,13 +1125,25 @@ class Component extends DCLogic {
           const X = (lon) => (lon + 118.13) * 2345 + 518, Y = (lat) => (34.19 - lat) * 2829 + 662;
           const lat0 = Math.max(-85, Math.min(85, latOf(vy1))), lat1 = Math.max(-85, Math.min(85, latOf(vy0)));
           // One 256px tile ≈ 256 screen px wide at this zoom.
-          const z = Math.max(2, Math.min(17, Math.round(Math.log2(2345 * s * 360 / 256))));
-          const n = Math.pow(2, z);
-          const tX = (lon) => Math.floor((lon + 180) / 360 * n);
-          const tY = (lat) => { const r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n); };
-          const lonT = (x) => x / n * 360 - 180;
-          const latT = (y) => { const m = Math.PI - 2 * Math.PI * y / n; return 180 / Math.PI * Math.atan(0.5 * (Math.exp(m) - Math.exp(-m))); };
-          const x0 = tX(lonOf(vx0)), x1 = tX(lonOf(vx1)), y0 = tY(lat1), y1 = tY(lat0);
+          // Zoom level with hysteresis: keep the current level until the scale has clearly moved past the midpoint,
+          // so a pinch hovering near a boundary never flips the whole tile set back and forth.
+          const zf = Math.log2(2345 * s * 360 / 256);
+          let z = this._tz;
+          if (!(z >= 2) || Math.abs(zf - z) > 0.62) z = Math.round(zf);
+          z = Math.max(2, Math.min(17, z));
+          let n, tX, tY, lonT, latT, x0, x1, y0, y1;
+          const setZ = () => {
+            n = Math.pow(2, z);
+            tX = (lon) => Math.floor((lon + 180) / 360 * n);
+            tY = (lat) => { const r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n); };
+            lonT = (x) => x / n * 360 - 180;
+            latT = (y) => { const m = Math.PI - 2 * Math.PI * y / n; return 180 / Math.PI * Math.atan(0.5 * (Math.exp(m) - Math.exp(-m))); };
+            x0 = tX(lonOf(vx0)); x1 = tX(lonOf(vx1)); y0 = tY(lat1); y1 = tY(lat0);
+          };
+          setZ();
+          // Too many tiles for this view (hysteresis held a high level while zooming out): step down until it fits.
+          while ((x1 - x0 + 1) * (y1 - y0 + 1) > 120 && z > 2) { z--; setZ(); }
+          this._tz = z;
           const url = (x, y) => 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
           if ((x1 - x0 + 1) * (y1 - y0 + 1) <= 120) {
             for (let ty2 = Math.max(0, y0); ty2 <= Math.min(n - 1, y1); ty2++) {
@@ -1146,13 +1158,30 @@ class Component extends DCLogic {
         // Tiles keep their own image element for as long as they are shown (stable slots), so an element never shows
         // the previous tile's picture at a new place while the next one loads - that made the map jump under the markers.
         // Tiles leaving at a zoom step stay underneath for a moment, so there is no blank flash while the new ones load.
-        const TS = this._ts || (this._ts = { cur: [], old: [] }), now = Date.now(), want = new Map(tiles.map((t) => [t.href, t]));
+        // A tile is only placed on the map once its picture has loaded (it is fetched off-screen first), so nothing
+        // blank or half-drawn ever shows. Until every tile of the new set is in, the previous set stays underneath.
+        const TS = this._ts || (this._ts = { cur: [], old: [], done: new Set(), busy: new Set() }), now = Date.now();
+        const want = new Map(tiles.map((t) => [t.href, t]));
+        let pending = 0;
+        want.forEach((t, h) => {
+          if (TS.done.has(h)) return;
+          pending++;
+          if (TS.busy.has(h)) return;
+          TS.busy.add(h);
+          const im = new Image();
+          const fin = () => { TS.busy.delete(h); TS.done.add(h); if (TS.done.size > 3000) TS.done.clear();
+            if (!this._tsR) this._tsR = requestAnimationFrame(() => { this._tsR = 0; this.forceUpdate(); }); };
+          im.onload = fin; im.onerror = () => { TS.busy.delete(h); };
+          im.src = h;
+        });
         const freeAt = (A) => { const i = A.indexOf(null); return i < 0 ? A.length : i; };
-        TS.cur = TS.cur.map((sl) => { if (!sl || want.has(sl.href)) return sl; if (!TS.old.some((o) => o && o.href === sl.href)) TS.old[freeAt(TS.old)] = { ...sl, until: now + 1500 }; return null; });
-        want.forEach((t, h) => { if (!TS.cur.some((sl) => sl && sl.href === h)) TS.cur[freeAt(TS.cur)] = { ...t }; });
-        TS.old = TS.old.map((o) => (o && o.until > now && !want.has(o.href) ? o : null));
+        // Old tiles leave once the new set has fully loaded (plus a frame or two), or after a safety limit.
+        const keepOld = pending > 0 ? now + 4000 : now + 250;
+        TS.cur = TS.cur.map((sl) => { if (!sl || want.has(sl.href)) return sl; if (!TS.old.some((o) => o && o.href === sl.href)) TS.old[freeAt(TS.old)] = { ...sl, until: keepOld }; return null; });
+        want.forEach((t, h) => { if (TS.done.has(h) && !TS.cur.some((sl) => sl && sl.href === h)) TS.cur[freeAt(TS.cur)] = { ...t }; });
+        TS.old = TS.old.map((o) => { if (!o || want.has(o.href)) return null; if (o.until > keepOld) o.until = keepOld; return o.until > now ? o : null; });
         const trim = (A) => { while (A.length && !A[A.length - 1]) A.pop(); return A; }; trim(TS.cur); trim(TS.old);
-        if (TS.old.length && !this._tsT) this._tsT = setTimeout(() => { this._tsT = 0; this.forceUpdate(); }, 1600);
+        if (TS.old.length && !this._tsT) this._tsT = setTimeout(() => { this._tsT = 0; this.forceUpdate(); }, pending > 0 ? 4100 : 300);
         const EMPTY = { href: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', x: 0, y: 0, w: 0, h: 0, mask: 'none' };
         return {
           tiles: TS.cur.map((t) => t || EMPTY), tilesOld: TS.old.map((t) => t || EMPTY),
