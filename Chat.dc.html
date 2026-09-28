@@ -16,8 +16,8 @@
 <script src="fit.js?v=25"></script>
 <script src="prefs.js?v=6"></script>
 <script src="i18n.js?v=30"></script>
-<script src="live.js?v=23"></script>
-<script src="chat.js?v=4"></script>
+<script src="live.js?v=24"></script>
+<script src="chat.js?v=5"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -503,7 +503,7 @@ class Component extends DCLogic {
     if (c.evac) extras.push({ name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
     const live = FF.filter((f) => f.st !== 'standby');
     // Published counts win over the scenario's (the named crews stay illustrative)
-    const RR = c.realRes, fk = RR ? [{ v: String(RR.man), l: L('Personnel', 'Operacionais') }, { v: String(RR.terrain), l: L('Ground vehicles', 'Meios terrestres') }, { v: String(RR.aerial), l: L('Aircraft', 'Meios aéreos') }]
+    const RR = c.realRes, EE = (RR && RR.estF) || {}, fk = RR ? [{ v: (EE.man ? '~' : '') + RR.man, l: L('Personnel', 'Operacionais') }, { v: (EE.terrain ? '~' : '') + RR.terrain, l: L('Ground vehicles', 'Meios terrestres') }, { v: (EE.aerial ? '~' : '') + RR.aerial, l: L('Aircraft', 'Meios aéreos') }]
       : [{ v: String(live.reduce((a, f) => a + 1 + f.crew.length, 0)), l: L('People', 'Pessoas') }, { v: String(live.reduce((a, f) => a + f.veh.length, 0)), l: L('Vehicles', 'Veículos') }, { v: String(c.air ? 1 : 0), l: L('Aircraft', 'Meios aéreos') }];
 
     // ----- resolution summary -----

@@ -16,8 +16,8 @@
 <script src="fit.js?v=25"></script>
 <script src="prefs.js?v=6"></script>
 <script src="i18n.js?v=30"></script>
-<script src="live.js?v=23"></script>
-<script src="chat.js?v=4"></script>
+<script src="live.js?v=24"></script>
+<script src="chat.js?v=5"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -211,10 +211,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: relative; z-index: 2; display: flex; flex-direction: column; flex-grow: 1; background: #F2F2F7; border-radius: {{panelRad}}; box-shadow: {{panelSh}}; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <sc-if value="{{hasRes}}" hint-placeholder-val="{{ false }}">
   <section class="rise" aria-label="Resources on scene" style="margin: 20px 16px 0; padding: 14px 16px 12px; border-radius: 12px; background: #FFFFFF; animation-delay: 120ms">
-    <div style="display: flex; align-items: center; gap: 8px">
-      <h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 20px">On scene now</h2>
-      <span style="padding: 0 8px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 14px; line-height: 20px; white-space: nowrap">Real data</span>
-      <span style="margin-left: auto; font-size: 14px; color: #545458; white-space: nowrap">{{res.src}}</span>
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 20px; white-space: nowrap">On scene now</h2>
+        <span style="padding: 0 8px; border-radius: 999px; background: {{res.tagBg}}; color: {{res.tagFg}}; font-size: 14px; line-height: 20px; white-space: nowrap">{{res.tag}}</span>
+      </div>
+      <span style="font-size: 14px; line-height: 18px; color: #545458">{{res.src}}</span>
     </div>
     <div style="display: grid; grid-template-columns: repeat({{res.cols}}, minmax(0, 1fr)); gap: 8px; margin-top: 12px">
       <sc-for list="{{res.items}}" as="it" hint-placeholder-count="3">
@@ -742,7 +744,7 @@ class Component extends DCLogic {
     const du = US ? ' mi' : ' km';
     if (!window.__wfLiveMap) return { rows: [], du, live: false };
     const lat = 34.19 - (FIRE[1] - 662) / 2829, lon = (FIRE[0] - 518) / 2345 - 118.13, rad = Math.PI / 180;
-    const cc = st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : null;
+    const cc = st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : { CAN: 'ca', ESP: 'es', FRA: 'fr', ITA: 'it', GRC: 'gr' }[st] || null;
     const D = window.__wfStFile || (window.__wfStFile = {}), F = window.__wfStFileGet || (window.__wfStFileGet = {});
     if (cc && !D[cc] && !F[cc]) {
       F[cc] = true;
@@ -791,8 +793,8 @@ class Component extends DCLogic {
     const resView = fres ? (() => {
       const OPT = { Boats: 1, 'Management teams': 1, 'Structure protection': 1 };
       const items = [['Personnel', fres.man], ['Crews', fres.crews], ['Ground vehicles', fres.terrain], ['Heavy equipment', fres.heavy], ['Aircraft', fres.aerial], ['Boats', fres.water], ['Management teams', fres.imt], ['Structure protection', fres.structure]]
-        .filter(([k, v]) => v != null && (!OPT[k] || v > 0)).map(([k, v]) => ({ k, v: Number(v).toLocaleString() }));
-      return { src: fres.src || '', cols: Math.max(1, Math.min(4, items.length)), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
+        .filter(([k, v]) => v != null && (!OPT[k] || v > 0)).map(([k, v]) => ({ k, v: (fres.estF && fres.estF[{ Personnel: 'man', 'Ground vehicles': 'terrain', Aircraft: 'aerial' }[k]] ? '~' : '') + Number(v).toLocaleString() }));
+      return { tag: fres.est ? 'Estimate' : fres.estF ? 'Partly estimated' : 'Real data', tagBg: fres.estF ? 'rgba(135,88,0,0.12)' : 'rgba(52,199,89,0.12)', tagFg: fres.estF ? '#875800' : '#1E7A34', src: fres.src || '', cols: Math.max(1, Math.min(4, items.length)), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
     })() : { src: '', cols: 1, items: [], foot: '' };
     const actMin = (() => {
       const T0 = window.__wfT0 || (window.__wfT0 = Date.now());
@@ -973,7 +975,7 @@ class Component extends DCLogic {
       else if (M.failed) rows.push(row('Fire model', 'Unavailable', 'Weather or map services did not answer; try again later', '#545458'));
       else {
         const S0 = M.snaps[0] || {}, Sh = M.snaps[hz] || S0, I = M.info || {};
-        rows.push(M.assumed ? row('Perimeter', 'Not mapped', M.src.replace('No mapped perimeter · ', '').replace(/^./, (c) => c.toUpperCase()) + ' · no public polygon for this fire yet', '#545458') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
+        rows.push(M.assumed ? row('Perimeter', 'Estimated', (M.src.indexOf('ha reported') > 0 ? 'Drawn from the reported ' + M.src.replace(/^.*· /, '') : 'Drawn from a typical size for its state') + ' · no public polygon for this fire yet', '#875800') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
         if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#1E7A34'));
@@ -1174,14 +1176,14 @@ class Component extends DCLogic {
       stCancel: () => this.setState({ open: false, stDraft: null }),
       kpiD: (RO && RU && RU.length) || (K && String(K.k1V) === '—' && String(K.k2V) === '—') ? 'none' : 'grid',
       kpiRowD: RO && RU && RU.length ? 'flex' : 'none',
-      kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0] === 'Ground vehicles' ? 'Ground vehicles' : r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
+      kpiRow: RO && RU ? RU.map((r, i) => ({ v: (fres && fres.estF && fres.estF[{ Personnel: 'man', 'Ground vehicles': 'terrain', Aircraft: 'aerial' }[r[0]]] ? '~' : '') + Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),
       // KPI numbers share one size; the words go centred under the number ('Contained 30%' -> '30%' over 'contained').
       ...(() => { const v1s = String(K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : '')).replace(/^\s*·?\s*/, ''), v2 = String(K ? K.k2V : maxEta), s2 = String(K ? K.k2S : ' min · ' + clock(maxEta)).replace(/^\s*·?\s*/, '');
         const m = /^(\D*?)\s*(\d+%)$/.exec(v2); return { k1Sub: v1s, k2Val: m && m[1] ? m[2] : v2, k2Sub: m && m[1] ? m[1].toLowerCase() : s2 }; })(),
-      sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (fres && fres.src ? 'Reported by ' + fres.src : fv.place) : 'Orders from this app') : 'Orders from this app', undoLabel: 'Reinforce',
+      sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (fres && fres.est ? fres.src : fres && fres.src ? 'Reported by ' + fres.src : fv.place) : 'Orders from this app') : 'Orders from this app', undoLabel: 'Reinforce',
       focusOp: (sent && !s.full && s.sentUp) ? 1 : 0, focusPE: (sent && !s.full) ? 'auto' : 'none',
       focusTap: () => this.setState(s.sentUp ? { sentUp: false } : { full: true, open: false, cfg: false }),   // blurred map: lower a raised panel, else open the map full screen
       sentY: (sent && !s.full) ? '0%' : 'calc(100% + 120px)',   // fully off screen on tall phones too sentHidden: (sent && !s.full) ? 'false' : 'true',

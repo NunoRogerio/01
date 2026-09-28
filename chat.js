@@ -72,7 +72,7 @@
     return String(n || '').replace(/^Bombeiros Volunt[aá]rios (de |da |do |das |dos )?/i, 'BV ').replace(/^Associação Humanitária dos /i, '')
       .replace(/Los Angeles County Fire Department/i, 'LACoFD').replace(/Los Angeles Fire Department/i, 'LAFD').replace(/\bFire Station\b/i, 'Station').replace(/\s+/g, ' ').trim();
   }
-  function ccOf(st) { return st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : 'pt'; }
+  function ccOf(st) { return st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : { CAN: 'ca', ESP: 'es', FRA: 'fr', ITA: 'it', GRC: 'gr' }[st] || 'pt'; }
   function isUS(c) { return ccOf(c.st) === 'us'; }
   // Team members carry names from the fire's country
   var LANG = { PT: 'pt', BRA: 'br', AMZ: 'br', ESP: 'es', MEX: 'es', ARG: 'es', CHL: 'es', COL: 'es', PER: 'es', BOL: 'es', ECU: 'es', VEN: 'es', URY: 'es', PRY: 'es', CRI: 'es', GTM: 'es', HND: 'es', NIC: 'es', PAN: 'es', SLV: 'es', CUB: 'es', DOM: 'es', AND: 'es',
@@ -145,7 +145,7 @@
     // The fire's history before this chat opened: a candidate starts at its detection; a fire already in progress gets
     // plausible earlier stages, so its timeline is complete from the first detection.
     if (+inc.ha > 0) ch.realHa = +inc.ha;
-    if (inc.res && inc.res.man != null) ch.realRes = { man: +inc.res.man || 0, terrain: +inc.res.terrain || 0, aerial: +inc.res.aerial || 0 };
+    if (inc.res && inc.res.man != null) ch.realRes = { man: +inc.res.man || 0, terrain: +inc.res.terrain || 0, aerial: +inc.res.aerial || 0, estF: inc.res.estF || null };
     if (stage === 0) ch.hist.push({ s: 0, vt: Math.min(now, inc.det || now) });
     else if (inc.startMs && inc.startMs < now - 20 * MIN) {
       // A fire already in progress: its history runs from the real start time. Detection, confirmation and the drive

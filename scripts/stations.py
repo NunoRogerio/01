@@ -3,13 +3,13 @@
 """Fire stations for Forest Fire Watch, from OpenStreetMap (Overpass API).
 
 Writes one compact file per country so the map can show every station even fully zoomed out:
-data/stations-pt.json, data/stations-us.json, data/stations-br.json
+data/stations-{pt,us,br,ca,es,fr,it,gr}.json
 Each row: [osm id, 'n' or 'w', lat, lon, name, operator]. Full details are read live when a station is opened.
 """
 import json, sys, time, urllib.parse, urllib.request
 
 EP = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']
-AREAS = {'pt': 'PT', 'us': 'US', 'br': 'BR'}
+AREAS = {'pt': 'PT', 'us': 'US', 'br': 'BR', 'ca': 'CA', 'es': 'ES', 'fr': 'FR', 'it': 'IT', 'gr': 'GR'}
 BBOX = {'pt': ['36.8,-9.6,42.2,-6.1', '32.3,-17.4,33.2,-16.2', '36.8,-31.4,39.8,-24.9']}   # mainland, Madeira, Azores
 
 

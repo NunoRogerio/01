@@ -115,7 +115,28 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   }
   // Replace one source's fires (US, Portugal or British Columbia) and keep the others'.
   var srcOf=function(r){return r[0]==='PT'?'PT':r[0]==='CAN'?'CAN':r[0]==='BRA'?'BR':'US';};
+  // Forces where the source publishes none (NIFC publishes personnel only for fires with an incident report and never
+  // vehicles or aircraft; Canada and Brazil publish none): an estimate from the fire's size, state and containment,
+  // at typical wildland staffing (about 4 to 5 people per ground vehicle, aircraft on growing fires over ~10 ha).
+  // Every estimated number is flagged (res.estF) so the screens can say so.
+  function estRes(r){
+    var I=r[9]||{},R=r[7]||{},ha=+r[8]||+I.ha||0;
+    var id=String(r[2]||''),h=0;for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;
+    var base=Math.min(900,6*Math.pow(10,0.55*Math.log10(ha+1)))*(0.85+(h%30)/100);   // ~8 people at 1 ha, ~75 at 100 ha, ~270 at 1,000 ha
+    var stt=String(R.status||I.st||'');
+    var f={hot:1,warn:1,amber:0.7,ok:0.35,watch:0.15,off:0}[I.tone];
+    if(f==null)f=/out of control/i.test(stt)?1:/being held|held/i.test(stt)?0.4:/under control/i.test(stt)?0.15:/out$/i.test(stt)?0:0.8;
+    if(I.pc!=null)f*=Math.max(0.2,1-I.pc/150);
+    var man=R.man!=null?+R.man:(f?Math.max(4,Math.round(base*f)):0);
+    var live=I.tone==='hot'||I.tone==='warn'||(!I.tone&&!I.resolved&&f>=0.8);
+    var out={man:man,terrain:R.terrain!=null?R.terrain:(man?Math.max(1,Math.round(man/4.5)):0),aerial:R.aerial!=null?R.aerial:(live?(ha>=50?Math.min(8,Math.round(ha/400)+1):ha>=10?1:0):0),
+      status:R.status||'',start:R.start||'',src:R.src||'',estF:{man:R.man==null,terrain:R.terrain==null,aerial:R.aerial==null}};
+    out.est=out.estF.man&&out.estF.terrain&&out.estF.aerial;
+    out.src=out.est?'Estimate from the fire size and state':(R.src||'')+' · vehicles and aircraft estimated';
+    return out;
+  }
   function publishPart(src,rows){
+    rows.forEach(function(x){var r=x.r;if(r&&(!r[7]||r[7].man==null||r[7].terrain==null||r[7].aerial==null)&&r[0]!=='PT')r[7]=estRes(r);});
     var other=(window.__wfLiveFires||[]).filter(function(r){return srcOf(r)!==src;});
     var mine=rows.sort(function(a,b){return b.w-a.w;}).map(function(x){return x.r;});
     window.__wfLiveFires=mine.concat(other);window.__wfLiveAt=Date.now();
