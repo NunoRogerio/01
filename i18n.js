@@ -96,7 +96,7 @@
     [/^([\d.,]+(?:\.\d+)?) km (north|south|east|west|northeast|northwest|southeast|southwest) of (.+)$/,function(m,n,d,p){return n+' km a '+DIR[d]+' de '+p;}],
     [/^Fire radiative power ([\d.,]+) MW(?: · ([\d.,]+) detections within 3 km)?$/,function(m,a,b){return 'Potência radiativa do fogo '+a+' MW'+(b?' · '+b+' deteções num raio de 3 km':'');}],
     [/^([\d.,]+) detections within 3 km$/,'$1 deteções num raio de 3 km'],
-    [/^Heat detected by (.+?)(?: at (.+))?$/,function(m,s,t){return 'Calor detetado pelo '+s+(t?' às '+t:'');}],
+    [/^Heat detected by (.+?)(?: at (.+))?$/,function(m,s,t){if(t)F.forEach(function(q){t=t.replace(q[0],q[1]);});return 'Calor detetado pelo '+s+(t?' às '+t:'');}],
     [/^min · at (.+)$/,'min · às $1'],[/^Detected (.+) ago$/,'Detetado há $1'],    [/^([\d.,]+) km to scene$/,'A $1 km do local'],[/^On route · ([\d.,]+) min to scene$/,'A caminho · a $1 min do local'],[/^En route · arriving in (.+)$/,'A caminho · chega em $1'],
     [/^([\d.,]+) of ([\d.,]+) still free$/,'$1 de $2 ainda livres'],[/^([\d.,]+) free crews$/,'$1 equipas livres'],
     [/^Active ([\dhm ]+)$/,'Ativo há $1'],
@@ -116,7 +116,7 @@
   // ---- fragments inside longer text (applied when no exact/pattern match) ---------------------------------------
   var F=[
     [/\bTap to review\./g,'Toque para abrir.'],[/\bTap to see forces dispatched\./g,'Toque para ver os meios empenhados.'],[/\bTap the crosshair to cycle to it\./g,'Toque na mira para ir até ele.'],
-    [/(\d+)% likelihood/g,'$1% de probabilidade'],[/\bNear (?=[A-ZÀ-Ý])/g,'Perto de '],[/\b(\d+) of (\d+)\b/g,'$1 de $2'],[/\bActive fire\b/g,'Incêndio ativo'],[/\bSatellite\b/g,'Satélite'],
+    [/(\d+)% likelihood/g,'$1% de probabilidade'],[/\bNear (?=[A-ZÀ-Ý])/g,'Perto de '],[/\b(\d+)([ \u00a0])of[ \u00a0](\d+)\b/g,'$1$2de$2$3'],[/\bActive fire\b/g,'Incêndio ativo'],[/\bSatellite\b/g,'Satélite'],
     [/ · (\d+) min ago\b/g,' · há $1 min'],[/ · (\d+)h ago\b/g,' · há $1 h'],[/\bAccess: /g,'Acesso: '],[/ only$/,' apenas'],[/\bPlatform administrator\b/g,'Administrador da plataforma'],
     [/\b(\d+) crews\b/g,'$1 equipas'],[/\b1 crew\b/g,'1 equipa'],[/\b1 tender\b/g,'1 autotanque'],[/\b(\d+) helicopters?\b/g,function(m,n){return n+(n==='1'?' helicóptero':' helicópteros');}],[/\b(\d+) air tankers?\b/g,function(m,n){return n+(n==='1'?' avião-tanque':' aviões-tanque');}],[/\b(\d+) drone swarms?\b/g,function(m,n){return n+(n==='1'?' enxame de drones':' enxames de drones');}],[/\b(\d+) tenders\b/g,'$1 autotanques'],[/\b1 helicopter\b/g,'1 helicóptero'],[/\b(\d+) helicopters\b/g,'$1 helicópteros'],
     [/\b1 air tanker\b/g,'1 avião-tanque'],[/\b(\d+) air tankers\b/g,'$1 aviões-tanque'],[/\b1 drone swarm\b/g,'1 enxame de drones'],[/\b(\d+) drone swarms\b/g,'$1 enxames de drones'],

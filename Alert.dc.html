@@ -169,31 +169,29 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div style="position: relative; z-index: 6; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="display: {{panelD}}; position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
-  <!-- Top blade: with other candidates to switch to, a grabber at its bottom edge says it expands -->
+  <span aria-hidden="true" style="display: {{panelD}}; position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7"></span>
+  <!-- Top header: the place on top, what it is underneath. Tapping it lists the other candidates. No grabber: it is not a drag-to-expand blade. -->
   <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 8px 12px">
         <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Ignition candidates</h1>
       <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onClick="{{navBack}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: {{backC}}; text-decoration: none">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
       </a>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
-        <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
+        <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
           <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-            <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">Ignition candidate</span>
+            <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{curRow.place}}</span>
           </span>
-          <span style="max-width: 100%; font-size: 15px; line-height: 18px; color: #545458; text-align: left; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{curRow.sub}}</span>
+          <span style="max-width: 100%; font-size: 15px; line-height: 18px; color: #545458; text-align: left; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden"><span>Ignition candidate</span>{{curRow.sub}}</span>
         </button>
       </sc-if>
       <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
         <span style="display: flex; flex-direction: column; padding: 4px 8px; color: #FFFFFF; text-shadow: 0 1px 10px rgba(0,0,0,0.45)"><span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Ignition candidates</span><span style="font-size: 15px; color: rgba(255,255,255,0.85)">{{scopeName}}</span></span>
       </sc-if>
   </header>
-  <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}"><div style="padding: 0 16px 28px"><button type="button" class="btn ghost" onClick="{{openMap}}" style="width: 100%; height: 48px; font-size: 17px; font-weight: 500">View on map</button></div></sc-if>
-  <span aria-hidden="true" style="display: {{grabD}}; position: absolute; left: 50%; bottom: 8px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); opacity: {{grabOp}}; transition: opacity .3s ease; pointer-events: none"></span>
   </div>
 
   <div class="scrim" onClick="{{ddClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 5; background: rgba(0,0,0,0.32); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: {{ddOp}}; pointer-events: {{ddPE}}"></div>
-  <div class="wf-snap" role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: 176px; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 41px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
+  <div class="wf-snap" data-wf-dd="1" role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: {{ddTop}}px; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 16px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
     <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 96px 40px; align-items: end; gap: 4px 8px; flex-shrink: 0; padding: 0 0 8px 40px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
       <span></span>
       <span style="text-align: center">Likelihood</span>
@@ -274,32 +272,33 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
     </figure>
 
-    <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; margin-top: {{panelMt}}; background: #F2F2F7; border-radius: 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-    <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 24px 16px 0; animation-delay: 160ms">
-      <!-- Title on the left, the likelihood KPI at the top right (number over its word, centred), reading "Likelihood" -->
-      <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
-        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+    <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; margin-top: {{panelMt}}; background: #F2F2F7; border-radius: 0; box-shadow: {{panelSh}}; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+    <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
+      <!-- The current conclusion, in its own card: verdict and status on the left, the likelihood KPI on the right -->
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px; border-radius: 14px; background: #FFFFFF">
+        <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0">
           <h2 id="ai" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
+          <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
         </span>
         <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0">
           <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
           <span style="font-size: 15px; line-height: 19px; color: #545458; white-space: nowrap">Likelihood</span>
         </span>
-      </span>
+      </div>
     </section>
 
     <section class="rise" aria-label="Evidence" style="display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; padding: 16px 16px 0; animation-delay: 220ms">
-      <!-- Heading with its source count on the left; the status tag on the right, flush with the card's right edge -->
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 8px 4px">
+      <!-- Heading with its source count -->
+      <div style="display: flex; align-items: center; gap: 16px; margin: 0 0 8px 4px">
         <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0; font-size: 15px; color: #545458; white-space: nowrap">
           <h2 style="margin: 0; font-size: 15px; font-weight: 600; color: #545458">Evidence</h2><span aria-hidden="true">·</span><span>{{cur.agree}}</span>
         </span>
-        <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
       </div>
       <ul class="wf-snap" style="display: flex; flex-direction: column; flex: 0 1 auto; min-height: 96px; margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; list-style: none; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
-          <li style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 12px 16px; border-top: {{r.sep}}; font-size: 17px; line-height: 22px; color: {{r.color}}">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="{{r.icon}}"></path></svg>{{r.t}}
+          <li style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 12px 16px {{r.padB}}; border-top: {{r.sep}}; font-size: 17px; line-height: 22px; color: {{r.color}}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="{{r.icon}}"></path></svg>
+            <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0">{{r.t}}<button type="button" class="btn" onClick="{{openMap}}" style="display: {{r.mapD}}; height: 36px; margin: 0 0 0 -12px; padding: 0 12px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500">View on map</button></span>
           </li>
         </sc-for>
       </ul>
@@ -405,8 +404,9 @@ class Component extends DCLogic {
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   wfFocus() { let f = null; try { f = window.sessionStorage.getItem('wf-focus'); window.sessionStorage.removeItem('wf-focus'); } catch (e) {} const m = window.__wfMem || {}; f = f || m.focus; m.focus = null; if (f) { this.setState({ focusId: f, tab: null, confirm: false, full: false }); return true; } return false; }
-  componentDidMount() { this.wfFocus(); this._wfSync = () => { if (!this.wfFocus()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted) { this._toFire = false; this._redir = false; this.forceUpdate(); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
-  componentDidUpdate() { this.wfClearBg(!!this._showClear); }
+  componentDidMount() { setTimeout(() => this.wfHdrMeasure(), 0); this.wfFocus(); this._wfSync = () => { if (!this.wfFocus()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted) { this._toFire = false; this._redir = false; this.forceUpdate(); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+  componentDidUpdate() { this.wfClearBg(!!this._showClear); this.wfHdrMeasure(); }
+  wfHdrMeasure() { try { const h = document.querySelector('header.fade'), lb = document.querySelector('[data-wf-dd]'); if (!h || !lb || !lb.offsetParent) return; let y = h.offsetHeight, e = h; while (e && e !== lb.offsetParent) { y += e.offsetTop; e = e.offsetParent; } if (e && y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
   componentWillUnmount() { this.wfClearBg(false, true); try { window.removeEventListener('pageshow', this._wfShow); } catch (e) {} try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -740,7 +740,7 @@ class Component extends DCLogic {
         const others = active.map((c, i) => ({ c, i })).filter((o) => o.i !== ci);
         return {
           multi: n > 1, grabD: n > 1 ? 'block' : 'none', hdrBd: n > 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
-          curRow: { place: cur.place, sub: cur.place + ' · ' + (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + (n > 1 ? ' · ' + (ci + 1) + ' of ' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
+          curRow: { place: cur.place, sub: ' · ' + (cur.reg ? cur.reg + ' · ' : '') + cur.time + (n > 1 ? ' · ' + (ci + 1) + '\u00a0of\u00a0' + n : ''), conf: cur.conf, c: col(cur.conf), bg: bg(cur.conf), cursor: n > 1 ? 'pointer' : 'default',
             aria: cur.place + ', ' + cur.conf + ' percent. ' + (n > 1 ? (ci + 1) + ' of ' + n + '. Show other candidates' : '') },
           ddRows: (dd ? others.slice(0, 80) : []).map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
             aria: o.c.place + ', ' + o.c.conf + ' percent, ' + o.c.srcList, op: dd ? 1 : 0, tf: dd ? 'none' : 'translateY(-12px)', delay: dd ? (140 + Math.min(k, 12) * 35) + 'ms' : '0ms',
@@ -763,7 +763,8 @@ class Component extends DCLogic {
       cur, tab, box: boxFor(tab, 390, 248, true, 0),
       tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#FFFFFF' : '#98989F', pick: () => this.setState({ tab: t.id }) })),
       nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
-      reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
+      // The location row carries the coordinates and the map button (the first row; live candidates start with where the heat is)
+      reasons: cur.reasons.map(([t, ok], i) => ({ t: i === 0 && cur.ll ? t + ' · ' + cur.ll : t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', mapD: i === 0 ? 'flex' : 'none', padB: i === 0 ? '8px' : '12px' })),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: cur.conf > 75 ? '#7A3FE0' : cur.conf >= 50 ? '#0A66CC' : '#48484A', ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
@@ -771,7 +772,7 @@ class Component extends DCLogic {
       mapFires: [],
       cycleTo: (id) => this.setState({ focusId: id, confirm: false }),
       mapW: 390, mapH: 844, fsW: 390, fsH: 844, zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
-      full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && onMap, figD: hasFig ? 'block' : 'none', panelMt: hasFig ? '-28px' : '8px',
+      full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && onMap, figD: hasFig ? 'block' : 'none', panelMt: hasFig ? '-28px' : '8px', ddTop: this._hdrB || 92, panelSh: hasFig ? '0 -4px 16px rgba(0,0,0,0.08)' : 'none',
       openMap: () => this.setState({ tab: 'map', full: true, dd: false }),
       toggleFull: () => { const st = this.state || {}; this.setState(st.full && st.tab === 'map' ? { full: false, tab: null } : { full: !st.full }); },   // reads the live state: the map may hold an older copy of this handler
       figBg: tab.isMap ? 'transparent' : '#1C1C1E', figPE: tab.isMap ? 'none' : 'auto',
