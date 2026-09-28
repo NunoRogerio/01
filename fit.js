@@ -115,22 +115,27 @@ window.__wfBlink=function(path,dur){
 // to the front, read version.txt past every cache; if a new version is out, reload onto it once.
 (function(){
   var K='wf-app-version';
+  // Resolves true when a new version is being loaded (the loading screen then waits for it, instead of playing on
+  // the old page and being cut short by the reload).
   function check(){
-    fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(v){
-      v=(v||'').trim();if(!v)return;
+    return fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(v){
+      v=(v||'').trim();if(!v)return false;
       var seen='';try{seen=localStorage.getItem(K)||'';}catch(e){}
-      if(seen===v)return;
+      if(seen===v)return false;
       try{localStorage.setItem(K,v);}catch(e){}
-      if(!seen)return;                                  // first run: nothing older to replace
+      if(!seen)return false;                            // first run: nothing older to replace
+      window.__wfUpdating=true;
       var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
       // Screens loaded inside other screens (the map) and the scripts keep their plain address, so refresh
       // the phone's copy of every file first; otherwise the new page could still run an old map.
       var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js'];
-      var go=function(){location.replace(u);};
+      // The new page opens as this one would have: the opening loading screen, or the one after log in, plays there once
+      var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');if(window.__wfSoftPage)sessionStorage.setItem('wf-soft','1');}catch(e){}location.replace(u);};
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
-    }).catch(function(){});
+      return true;
+    }).catch(function(){return false;});
   }
-  check();
+  window.__wfUpd=check();
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check();});
 })();
 // Loading screen: the logo in hi-vis yellow, still (no animation), the name underneath, until the screen has
@@ -193,6 +198,7 @@ window.__wfBlink=function(path,dur){
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
   var cold=false;try{cold=!sessionStorage.getItem('wf-cold');sessionStorage.setItem('wf-cold','1');}catch(e){}
+  window.__wfColdPage=cold;window.__wfSoftPage=soft;
   // The loading screen (logo, 'Loading live data', counter) shows only on opening the app and right after log in.
   // Moving between screens inside the app shows no loading: just a plain surface until the screen has drawn.
   if(!cold&&!soft){el.innerHTML='';el.style.transition='opacity .2s ease';}
@@ -242,7 +248,8 @@ window.__wfBlink=function(path,dur){
         if(wave.p>.995&&ready&&tp>=1){wave.done=true;norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
-    im.src='assets/splash/'+ph[0];
+    var start=function(up){if(!up&&!im.src)im.src='assets/splash/'+ph[0];};
+    Promise.race([window.__wfUpd||Promise.resolve(false),new Promise(function(r){setTimeout(function(){r(false);},1200);})]).then(start,function(){start(false);});
     window.__wfSplashNext(nxt);
   }
   // The counter runs 0% to 100% over the loading time; it waits at 90% while live data is still coming,
@@ -261,7 +268,7 @@ window.__wfBlink=function(path,dur){
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
-    if((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done)&&pctDone)||Date.now()-t0>17000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
+    if(!window.__wfUpdating&&((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done)&&pctDone)||Date.now()-t0>17000)){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
       // warm the next photo into the cache for the next cold start
       try{var P2=window.__wfSplashPH(),n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%P2.length;(new Image()).src='assets/splash/'+P2[n][0];}catch(e){}},soft?450:350);return;}
     setTimeout(tick,80);
