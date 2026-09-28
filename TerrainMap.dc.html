@@ -386,7 +386,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
     <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
-      <button type="button" class="mbtn wf-sec" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 14px; background: #2C2C2E; box-shadow: 0 4px 16px rgba(0,0,0,0.16); color: #D7F41A; cursor: pointer">
+      <button type="button" class="mbtn wf-sec" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 50%; background: #2C2C2E; box-shadow: 0 4px 16px rgba(0,0,0,0.16); color: #D7F41A; cursor: pointer">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fullIcon}}"></path></svg>
       </button>
     </sc-if>
