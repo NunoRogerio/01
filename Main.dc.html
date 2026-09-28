@@ -218,8 +218,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div class="wf-snap" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
         <!-- Incidents: one table for ignition candidates, one for fires with their state -->
         <div style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 0 16px 16px">
-          <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Incidents</span>
-          <span style="font-size: 15px; line-height: 18px; color: #545458">{{incSub}}</span>
+          <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">Incidents</span>
+          <span style="font-size: 17px; line-height: 22px; color: #545458">{{incSub}}</span>
         </div>
         <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; padding: 0 16px 8px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; line-height: 18px; color: #545458">
           <span style="font-weight: 600">Ignition candidates</span>
@@ -256,10 +256,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barH}}px; padding: 0 12px; flex-shrink: 0">
       <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 53px 8px 4px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span aria-hidden="true" style="position: absolute; left: 50%; top: 8px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); opacity: {{barGrabOp}}; transition: opacity .3s ease"></span>
-        <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-          <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px; color: {{barC}}">{{barTitle}}</span>
+        <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
+          <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px; color: {{barC}}">{{barTitle}}</span>
         </span>
-        <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{barSub}}</span>
+        <span style="font-size: 17px; line-height: 22px; color: #545458; white-space: nowrap">{{barSub}}</span>
       </button>
     </div>
   </section>
@@ -356,8 +356,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section role="dialog" data-swipe="up" data-swipe-key="nt" aria-modal="true" aria-labelledby="ntTitle" aria-hidden="{{nt.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 32px; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{nt.y}}); translate: 0 {{nt.dy}}px; visibility: {{nt.vis}}; pointer-events: {{nt.pe}}; transition: transform {{nt.dur}} {{nt.ease}}, visibility 0s linear {{nt.visDelay}}">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px; flex-shrink: 0">
       <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px">
-        <h2 id="ntTitle" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Notifications</h2>
-        <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{nt.sub}}</span>
+        <h2 id="ntTitle" style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">Notifications</h2>
+        <span style="font-size: 17px; line-height: 22px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{nt.sub}}</span>
       </span>
       <button type="button" class="opt" data-swipe-go="1" onClick="{{nt.close}}" aria-label="Close notifications" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{nt.xRot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg>
@@ -796,7 +796,7 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 146, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 158, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
     const L = this.wfLayout();
