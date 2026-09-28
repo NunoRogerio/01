@@ -1,0 +1,19 @@
+Firefighter photos used for the chat teams and demo profiles (cropped to the face).
+Pexels and Unsplash photos, free to use under their licences.
+
+pt-m1.jpg  Vadym Alyekseyenko  https://images.pexels.com/photos/20316405/pexels-photo-20316405.jpeg
+pt-m2.jpg  Vadym Alyekseyenko  https://images.pexels.com/photos/20316405/pexels-photo-20316405.jpeg
+pt-m3.jpg  Anna Shvets  https://images.pexels.com/photos/5965214/pexels-photo-5965214.jpeg
+pt-m4.jpg  Neron Photos  https://images.pexels.com/photos/6547471/pexels-photo-6547471.jpeg
+pt-f1.jpg  Rebornfilmes  https://images.pexels.com/photos/29379358/pexels-photo-29379358.jpeg
+pt-f2.jpg  Franco Monsalvo  https://images.pexels.com/photos/34136293/pexels-photo-34136293.jpeg
+pt-f3.jpg  Fabricio Rivera  https://images.pexels.com/photos/16737198/pexels-photo-16737198.png
+pt-f4.jpg  Dottie Di Liddo  https://images.unsplash.com/photo-1777059017572-bfec87299e80
+us-m1.jpg  Richard Goff  https://images.unsplash.com/photo-1630163516144-924d9f3b1031
+us-m2.jpg  Logan Weaver  https://images.unsplash.com/photo-1614771327015-38e3d0b66b1b
+us-m3.jpg  Gustavo Fring  https://images.pexels.com/photos/7155813/pexels-photo-7155813.jpeg
+us-m4.jpg  Leon Films  https://images.pexels.com/photos/30788263/pexels-photo-30788263.jpeg
+us-f1.jpg  Bwalya Marcel Ngosa  https://images.pexels.com/photos/7179617/pexels-photo-7179617.jpeg
+us-f2.jpg  Josias Salinas  https://images.pexels.com/photos/39123998/pexels-photo-39123998.jpeg
+us-f3.jpg  Dottie Di Liddo  https://images.unsplash.com/photo-1777059017606-5707f0fe7c2c
+us-f4.jpg  Mirada Robot  https://images.pexels.com/photos/19487942/pexels-photo-19487942.jpeg

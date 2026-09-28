@@ -76,13 +76,14 @@
   function isUS(c) { return ccOf(c.st) === 'us'; }
   // Portraits for the team (illustrated, avatar.js), only on fires in California, Nevada and Portugal: each person in
   // their own service's uniform; coordinators wear the command helmet.
-  var PHOTO_ST = { CA: 1, NV: 1, PT: 1 };
+  var PHOTO_ST = { CA: 'us', PT: 'pt' };   // only Portugal and California chats show photos (a team of 8 each); the rest show initials
   function photoOf(c, name) {
-    if (!c || !PHOTO_ST[c.st] || !name || !window.__wfAvatar) return '';
-    var lead = c.people.find(function (p) { return p.name === name; }), f = (c.forces || []).find(function (x) { return x.coord === name || x.crew.indexOf(name) >= 0; });
-    var org = (lead && lead.org) || (f && f.station) || '';
-    var kit = c.st === 'PT' ? 'pt' : c.st === 'NV' ? 'nv' : /CAL ?FIRE|CDF/i.test(org) ? 'calfire' : 'us';
-    return window.__wfAvatar(name, kit, !!lead || !!(f && f.coord === name));
+    var team = c && PHOTO_ST[c.st];
+    if (!team || !name || !window.__wfFacePick) return '';
+    // each person in this chat gets a random photo of their gender from the team, never one already used in this chat
+    var F = c.face || (c.face = {});
+    if (!F[name]) { var used = Object.keys(F).map(function (k) { return F[k]; }); F[name] = window.__wfFacePick(team, window.__wfGender(name) || (/a$/.test(name.split(' ')[0]) ? 'f' : 'm'), used); try { save(); } catch (e) {} }
+    return F[name] ? window.__wfFaceUrl(F[name]) : '';
   }
   // Team members carry names from the fire's country
   var LANG = { PT: 'pt', BRA: 'br', AMZ: 'br', ESP: 'es', MEX: 'es', ARG: 'es', CHL: 'es', COL: 'es', PER: 'es', BOL: 'es', ECU: 'es', VEN: 'es', URY: 'es', PRY: 'es', CRI: 'es', GTM: 'es', HND: 'es', NIC: 'es', PAN: 'es', SLV: 'es', CUB: 'es', DOM: 'es', AND: 'es',

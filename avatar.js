@@ -144,10 +144,24 @@
   };
   // A real crest that cannot load (offline, blocked) is replaced by the drawn one: every crest image carries data-crest="<station name>"
   try { window.addEventListener('error', function (e) { var t = e.target; if (t && t.tagName === 'IMG' && t.getAttribute && t.getAttribute('data-crest') && !/^data:/.test(t.src)) t.src = window.__wfCrest('', t.getAttribute('data-crest')).url; }, true); } catch (e) {}
+  // Firefighter photos (Pexels / Unsplash, see assets/faces/CREDITS.txt): one team of eight for Portugal and one for
+  // California, four women and four men each. A chat takes them at random without repeating one; demo profiles keep one.
+  var FACES = { pt: { m: ['pt-m1', 'pt-m2', 'pt-m3', 'pt-m4'], f: ['pt-f1', 'pt-f2', 'pt-f3', 'pt-f4'] }, us: { m: ['us-m1', 'us-m2', 'us-m3', 'us-m4'], f: ['us-f1', 'us-f2', 'us-f3', 'us-f4'] } };
+  var FKIT = { pt: 'pt', anepc: 'pt', br: 'pt', us: 'us', calfire: 'us', nv: 'us' };
+  var furl = function (k) { return 'assets/faces/' + k + '.jpg'; };
+  window.__wfGender = function (name) { var q = PEOPLE[name]; return q ? q[0] : ''; };
+  // A random photo of that team and gender that is not in taken (list of photo keys); null if the team has none
+  window.__wfFacePick = function (team, g, taken) { var T = FACES[team]; if (!T) return null; var pool = T[g === 'f' ? 'f' : 'm'], free = pool.filter(function (k) { return (taken || []).indexOf(k) < 0; });
+    var c = free.length ? free : pool; return c[Math.floor(Math.random() * c.length)]; };
+  window.__wfFaceUrl = furl;
+  var STAFF = { 'Nuno Rogerio': 1, 'Susana Vasconcellos': 1 };   // the app's own team keep their illustrated portraits
+  var DEMO = { 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3' };   // the demo profiles' own photos
   var CACHE = {};
   // kit: 'pt' | 'anepc' | 'us' | 'calfire' | 'nv' | 'br'; chief: a coordinator or commander (helmet by rank)
   window.__wfAvatar = function (name, kit, chief) {
+    if (DEMO[name]) return furl(DEMO[name]);   // demo profiles: a real photo
     var q = PEOPLE[name]; if (!q) return '';
+    var tm = FKIT[kit]; if (tm && FACES[tm] && !STAFF[name]) { var P = FACES[tm][q[0] === 'f' ? 'f' : 'm']; return furl(P[hsh(name) % P.length]); }
     var k = name + '|' + kit + '|' + (chief ? 1 : 0);
     return CACHE[k] || (CACHE[k] = svg({ g: q[0], skin: q[1], hair: q[2], style: q[3], beard: q[4] || '', glasses: q[5] || '', kit: kit, chief: !!chief }));
   };
