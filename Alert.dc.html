@@ -435,11 +435,12 @@ class Component extends DCLogic {
       this._cbI = Math.floor(Math.random() * PH.length); this._cbL = 0;
     }
     const show = () => { const d = h.children[this._cbL], o = h.children[1 - this._cbL];
-      d.style.transition = 'none'; d.style.transform = 'scale(1)'; d.style.backgroundImage = 'url("assets/splash/' + PH[this._cbI] + '")';
-      requestAnimationFrame(() => requestAnimationFrame(() => { d.style.transition = 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)'; d.style.opacity = '1'; d.style.transform = 'scale(1.3)'; o.style.transition = 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)'; o.style.opacity = '0'; })); };
+      const out = this._cbI === 1;   // forest-2 zooms out, the others zoom in
+      d.style.transition = 'none'; d.style.transform = 'scale(' + (out ? 1.3 : 1) + ')'; d.style.backgroundImage = 'url("assets/splash/' + PH[this._cbI] + '")';
+      requestAnimationFrame(() => requestAnimationFrame(() => { d.style.transition = 'opacity 1.6s ease, transform 12.6s cubic-bezier(.3,.1,.3,1)'; d.style.opacity = '1'; d.style.transform = 'scale(' + (out ? 1 : 1.3) + ')'; o.style.transition = 'opacity 1.6s ease, transform 12.6s cubic-bezier(.3,.1,.3,1)'; o.style.opacity = '0'; })); };
     if (!this._cbT) {
       show(); requestAnimationFrame(() => { h.style.opacity = '1'; });
-      this._cbT = setInterval(() => { this._cbI = (this._cbI + 1) % PH.length; this._cbL = 1 - this._cbL; show(); }, 8000);
+      this._cbT = setInterval(() => { this._cbI = (this._cbI + 1) % PH.length; this._cbL = 1 - this._cbL; show(); }, 11000);
     }
   }
   wfNav(mode) { const v = { mode, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { nav: v }); try { window.sessionStorage.setItem('wf-nav', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }

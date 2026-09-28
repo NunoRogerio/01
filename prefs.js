@@ -107,15 +107,16 @@
     // (a new one every 8 s, cross-fading); <span class="wf-forest one"><i style="background-image:…"></i><b></b></span> zooms a single photo.
     '.wf-fhost{position:relative;isolation:isolate;overflow:hidden}' +
     '.wf-forest{position:absolute;inset:0;z-index:-1;overflow:hidden;background:#1E2B22;pointer-events:none;border-radius:inherit}' +
-    '.wf-forest>i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);will-change:transform,opacity;animation:wfKenO 24s linear infinite,wfKenS 24s linear infinite}' +
+    '.wf-forest>i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);will-change:transform,opacity;animation:wfKenO 33s linear infinite,wfKenS 33s linear infinite}' +
     '.wf-forest>i:nth-of-type(1){background-image:url(assets/splash/forest-1.webp)}' +
-    '.wf-forest>i:nth-of-type(2){background-image:url(assets/splash/forest-2.webp);animation-delay:8s,8s}' +
-    '.wf-forest>i:nth-of-type(3){background-image:url(assets/splash/forest-3.webp);animation-delay:16s,16s}' +
-    '.wf-forest.one>i{opacity:1;animation:wfKenOne 9.6s cubic-bezier(.3,.1,.3,1) infinite alternate}' +
+    '.wf-forest>i:nth-of-type(2){background-image:url(assets/splash/forest-2.webp);animation-delay:11s,11s;animation-name:wfKenO,wfKenSo}' +
+    '.wf-forest>i:nth-of-type(3){background-image:url(assets/splash/forest-3.webp);animation-delay:22s,22s}' +
+    '.wf-forest.one>i{opacity:1;animation:wfKenOne 12.6s cubic-bezier(.3,.1,.3,1) infinite alternate}' +
     '.wf-forest>b{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.14) 32%,rgba(0,0,0,0.30) 64%,rgba(0,0,0,0.58) 100%)}' +
     '.wf-forest.one>b{background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
-    '@keyframes wfKenO{0%{opacity:0}6.7%{opacity:1}33.3%{opacity:1}40%{opacity:0}100%{opacity:0}}' +
-    '@keyframes wfKenS{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,.1,.3,1)}40%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
+    '@keyframes wfKenO{0%{opacity:0}4.8%{opacity:1}33.3%{opacity:1}38.2%{opacity:0}100%{opacity:0}}' +
+    '@keyframes wfKenS{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,.1,.3,1)}38%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
+    '@keyframes wfKenSo{0%{transform:scale(1.3);animation-timing-function:cubic-bezier(.3,.1,.3,1)}38%{transform:scale(1)}100%{transform:scale(1)}}' +
     '@keyframes wfKenOne{from{transform:scale(1)}to{transform:scale(1.3)}}' +
     '@media (prefers-reduced-motion:reduce){.wf-forest>i{animation:none!important}.wf-forest>i:nth-of-type(1){opacity:1}}';   // switch thumbs stay white in both themes
   function apply() {

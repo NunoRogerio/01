@@ -192,7 +192,7 @@ class Component extends DCLogic {
   }
   componentDidMount() { const eye = () => { try { window.__wfBlink(document.querySelector('[data-wf-eye]')); } catch (e) {} };   // the logo's eye blinks every 8 s
     this._eyeT0 = setTimeout(() => { eye(); this._eyeT = setInterval(eye, 8000); }, 1500);
-    this.snapList(); this.paintBg(); for (let i = 1; i <= 3; i++) (new Image()).src = 'assets/splash/forest-' + i + '.webp'; this._bgT = setInterval(() => { const n = 3, st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; const k = (c + 1) % n; this.setState({ bg: k, bgPrev: c }); }, 8000); }
+    this.snapList(); this.paintBg(); for (let i = 1; i <= 3; i++) (new Image()).src = 'assets/splash/forest-' + i + '.webp'; this._bgT = setInterval(() => { const n = 3, st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; const k = (c + 1) % n; this.setState({ bg: k, bgPrev: c }); }, 11000); }
   fieldClip() {
     try { const f = document.querySelector('#dc-root form'), r = document.querySelector('#dc-root [role=dialog]'); if (!f || !r) return null;
       const H = r.offsetHeight, W = r.offsetWidth, t = f.offsetTop, fb = f.firstElementChild ? f.firstElementChild.offsetHeight : 120;
@@ -228,9 +228,9 @@ class Component extends DCLogic {
     // Each photo slowly zooms in while it is shown; photos out of view reset instantly, ready for their next turn.
     // A photo coming into view always starts its zoom from the beginning, whatever happened to it before.
     const apply = () => B.forEach((b, i) => { const d = h.children[i]; if (b.img !== 'none' && d.style.backgroundImage !== b.img) d.style.backgroundImage = b.img;
-      if (b.op === 1 && d.__on !== true) { d.style.transition = 'none'; d.style.transform = 'scale(1)'; void d.offsetWidth; }
+      if (b.op === 1 && d.__on !== true) { d.style.transition = 'none'; d.style.transform = 'scale(' + b.from + ')'; void d.offsetWidth; }
       d.__on = b.op === 1;
-      d.style.transition = b.sc === 1 && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 9.6s cubic-bezier(.3,.1,.3,1)';
+      d.style.transition = b.sc === b.from && b.op === 0 && !b.keep ? 'opacity 1.6s ease' : 'opacity 1.6s ease, transform 12.6s cubic-bezier(.3,.1,.3,1)';
       d.style.opacity = String(b.op); d.style.transform = 'scale(' + b.sc + ')'; });
     if (!this._bgPainted) { this._bgPainted = true; requestAnimationFrame(() => requestAnimationFrame(apply)); } else apply();
   }
@@ -266,7 +266,7 @@ class Component extends DCLogic {
     const sel = P.find((p) => p[0] === selId) || null;
     const open = !!s.open;
     return {
-      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.3 : 1, keep: i === prev })),
+      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? (i === 1 ? 1 : 1.3) : (i === 1 ? 1.3 : 1), from: i === 1 ? 1.3 : 1, keep: i === prev })),   // forest-2 zooms out, the others zoom in
       credit: 'Photo: ' + PH[cur][1] + ' / Unsplash',
       noSubmit: (e) => { try { e.preventDefault(); } catch (x) {} },
       toggle: () => (open ? this.closePanel(true) : this.openPanel()),
