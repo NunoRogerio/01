@@ -198,6 +198,8 @@ window.__wfBlink=function(path,dur){
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
   var cold=false;try{cold=!sessionStorage.getItem('wf-cold');sessionStorage.setItem('wf-cold','1');}catch(e){}
+  // Opening the app goes straight to its first screen: no opening animation (the loading screen stays only after log in)
+  cold=false;
   window.__wfColdPage=cold;window.__wfSoftPage=soft;
   // The loading screen (logo, 'Loading live data', counter) shows only on opening the app and right after log in.
   // Moving between screens inside the app shows no loading: just a plain surface until the screen has drawn.
