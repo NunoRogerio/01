@@ -14,10 +14,11 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=2">
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=26"></script>
-<script src="prefs.js?v=7"></script>
+<script src="avatar.js?v=2"></script>
+<script src="prefs.js?v=8"></script>
 <script src="i18n.js?v=30"></script>
 <script src="live.js?v=25"></script>
-<script src="chat.js?v=9"></script>
+<script src="chat.js?v=10"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -29,7 +30,7 @@
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 .chrow{transition:background-color .15s ease,filter .15s ease}.chrow:active{filter:brightness(.94)}
 .chbtn{transition:opacity .15s ease}.chbtn:active{opacity:.6}
-.chscroll{scrollbar-width:none}.chscroll::-webkit-scrollbar{display:none}
+.chscroll{scrollbar-width:none}.chscroll>*{flex-shrink:0}.chscroll::-webkit-scrollbar{display:none}
 @keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}
 @keyframes chDot{0%,80%,100%{opacity:.25}40%{opacity:1}}.chdot{animation:chDot 1.2s infinite}
 @keyframes chView{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}.chview{animation:chView .45s cubic-bezier(.2,.8,.2,1)}
@@ -127,8 +128,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
-            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 12px; font-weight: 600; overflow: hidden; visibility: {{m.avVis}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
-            <div style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: #FFFFFF">
+            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 12px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}; visibility: {{m.avVis}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
+            <div style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
               <span style="display: {{m.nameD}}; font-size: 13px; line-height: 16px; color: #545458">{{m.name}}</span>
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
               <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
@@ -136,18 +137,18 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chmsg" style="align-self: flex-end; display: flex; flex-direction: column; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: #1C1C1E; color: #FFFFFF">
+          <div class="chmsg" style="align-self: flex-end; display: flex; flex-direction: column; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: {{meBub}}; color: #000000">
             <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
-            <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: rgba(255,255,255,0.72); font-variant-numeric: tabular-nums">{{m.time}}</span>
+            <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
         </sc-if>
         <sc-if value="{{m.isWin}}" hint-placeholder-val="{{ false }}">
-          <button type="button" class="chmsg chrow" onClick="{{m.go}}" style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 8px; padding: 24px 16px 16px; border: 0; border-radius: 20px; background: {{winBg}}; color: #000000; font: inherit; text-align: center; cursor: pointer">
+          <button type="button" class="chmsg chrow" onClick="{{m.go}}" style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 8px; padding: 24px 16px 16px; border: 0; border-radius: 20px; background: {{heroBg}}; color: #FFFFFF; font: inherit; text-align: center; cursor: pointer">
             <span aria-hidden="true" class="chtrophy" style="display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #D7F41A"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
-            <span style="font-size: 13px; line-height: 16px; color: #1E7A34">{{m.tag}} · {{m.time}}</span>
-            <span style="font-size: 22px; font-weight: 600; line-height: 28px">{{m.title}}</span>
-            <span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{m.body}}</span>
-            <span class="wf-sec" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 44px; margin-top: 8px; border-radius: 10px; background: #2C2C2E; color: #D7F41A; font-size: 17px; font-weight: 600">{{m.link}}</span>
+            <span style="font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{m.tag}} · {{m.time}}</span>
+            <span style="font-size: 22px; font-weight: 600; line-height: 28px; color: #D7F41A; text-shadow: 0 1px 12px rgba(0,0,0,0.45)">{{m.title}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{m.body}}</span>
+            <span style="display: flex; align-items: center; justify-content: center; width: 100%; height: 44px; margin-top: 8px; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600">{{m.link}}</span>
           </button>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
@@ -264,13 +265,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               </div>
               <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
                 <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
-                  <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 16px 8px">
+                  <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 16px 8px; background: {{f.hd}}">
                     <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{f.station}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{f.veh}}</span></div>
                     <span style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 26px; padding: 0 10px; border-radius: 999px; background: {{f.pillBg}}; color: {{f.pillFg}}; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: currentColor"></span>{{f.stTxt}}</span>
                   </div>
                   <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
                     <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
-                      <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+                      <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
                       <span style="flex-grow: 1; min-width: 0; font-size: 15px; font-weight: {{p.w}}; line-height: 20px">{{p.name}}</span>
                       <span style="font-size: 13px; line-height: 16px; color: #545458">{{p.role}}</span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
@@ -303,11 +304,12 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </div>
     </header>
     <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
-      <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 16px 24px; border-radius: 20px; background: {{winBg}}; text-align: center">
-        <span aria-hidden="true" class="chtrophy" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #D7F41A; box-shadow: 0 8px 24px rgba(135,160,0,0.35)"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
-        <span style="margin-top: 8px; font-size: 15px; line-height: 18px; color: #1E7A34; font-weight: 600">{{sum.kicker}}</span>
-        <span style="font-size: 26px; font-weight: 700; line-height: 32px; letter-spacing: -0.01em; text-wrap: balance">{{sum.headline}}</span>
-        <span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{sum.closedAt}}</span>
+      <section style="position: relative; display: flex; flex-shrink: 0; flex-direction: column; align-items: center; gap: 8px; padding: 32px 16px 16px; border-radius: 20px; background: {{heroBg}}; text-align: center; overflow: hidden">
+        <span aria-hidden="true" class="chtrophy" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #D7F41A; box-shadow: 0 8px 24px rgba(0,0,0,0.35)"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
+        <span style="margin-top: 8px; font-size: 15px; line-height: 18px; color: rgba(255,255,255,0.9); font-weight: 600; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{sum.kicker}}</span>
+        <span style="font-size: 30px; font-weight: 700; line-height: 34px; letter-spacing: 0.01em; color: #D7F41A; text-wrap: balance; text-shadow: 0 1px 12px rgba(0,0,0,0.45)">{{sum.headline}}</span>
+        <span style="font-size: 15px; line-height: 20px; color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{sum.closedAt}}</span>
+        <span style="margin-top: 12px; font-size: 12px; line-height: 14px; color: rgba(255,255,255,0.72)">{{heroCredit}}</span>
       </section>
       <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
         <sc-for list="{{sum.kpis}}" as="k" hint-placeholder-count="4">
@@ -333,10 +335,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 15px; line-height: 18px; color: #545458">{{sum.forcesSub}}</span></div>
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
           <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
-            <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px 8px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{f.station}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{f.veh}}</span></div>
+            <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px 8px; background: {{f.hd}}"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{f.station}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{f.veh}}</span></div>
             <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
               <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
-                <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+                <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
                 <span style="flex-grow: 1; min-width: 0; font-size: 15px; font-weight: {{p.w}}; line-height: 20px">{{p.name}}</span>
                 <span style="font-size: 13px; line-height: 16px; color: #545458">{{p.role}}</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
@@ -440,8 +442,10 @@ class Component extends DCLogic {
       ach: L('Achievements', 'Conquistas'), noAch: L('No resolved fires yet. Achievements appear here when a fire this person worked on is closed.', 'Ainda sem incêndios resolvidos. As conquistas aparecem aqui quando um incêndio em que esta pessoa trabalhou é encerrado.'),
       demo: L('Simulation: crew coordinators, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: os coordenadores de equipa, as respostas, os veículos e os tempos são encenados. Os quartéis e os incidentes são reais.'),
       simNote: L('Simulation: people, times, area and population figures come from the role-played scenario, not from live data.', 'Simulação: pessoas, tempos, área e população vêm do cenário encenado, não de dados em direto.') };
+    const FOR = [['forest-1.webp', 'Mari Potter'], ['forest-2.webp', 'Ivan Dimitrov'], ['forest-3.webp', 'Olena Bohovyk']], fh = (k) => FOR[String(k || '').split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 0) % FOR.length];
+    const hero = fh(s.key), heroBg = 'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.42) 45%, rgba(0,0,0,0.66) 100%), url("assets/splash/' + hero[0] + '") center / cover', heroCredit = L('Photo: ', 'Foto: ') + hero[1] + ' / Unsplash';
     const ic = { trophy: C ? C.ICON.trophy : '' }, winBg = document.documentElement.classList.contains('wf-dark') ? 'linear-gradient(160deg, #3A3A20 0%, #1F3A28 100%)' : 'linear-gradient(160deg, #FFF6D6 0%, #E4F3E8 100%)';
-    if (!C) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, groups: [], noChats: true, listSub: '' };
+    if (!C) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroCredit, groups: [], noChats: true, listSub: '' };
     // Stage colours: light tints by day; in dark mode a deep tint of the same colour and a lighter shade for text
     const DK = document.documentElement.classList.contains('wf-dark');
     const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
@@ -459,7 +463,7 @@ class Component extends DCLogic {
     if (s.view === 'person' && s.person) {
       const P = C.person(s.person), A = P.ach || [];
       const resTot = A.reduce((a, r) => a + (r.res || 0), 0), popTot = A.reduce((a, r) => a + (r.pop || 0), 0);
-      return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, pop: this.popFn(),
+      return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroCredit, pop: this.popFn(),
         pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? L('Fire owner', 'Responsável pelo incêndio') + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
           kpis: [{ v: String(A.length), l: L('Fires resolved', 'Incêndios resolvidos') }, { v: A.length ? C.dur(resTot).replace(/ \d+ min$/, '') : '0', l: L('On incidents', 'Em incidentes') }, { v: String(popTot), l: L('People protected', 'Pessoas protegidas') }],
           none: !A.length, ach: A.map((r) => ({ kicker: L('Fire resolved', 'Incêndio resolvido') + ' · ' + dayTxt(r.vt), place: r.place + (r.reg ? ', ' + r.reg : ''),
@@ -488,8 +492,15 @@ class Component extends DCLogic {
     }
 
     const c = C.get(s.key);
-    if (!c) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, groups: [], noChats: true, listSub: '' };
+    if (!c) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroCredit, groups: [], noChats: true, listSub: '' };
     const S = C.stageOf(c), us = C.isUS(c), vn = C.vnow(c), t0 = C.since(c);
+    // One outline colour per station (you keep the hi-vis yellow); message bubbles carry it at 10%
+    const SCOL = window.__wfStationCol || ['#FF7A1A', '#B45CFF', '#00B39F', '#FF4FA0', '#7BC043', '#E0A800'];
+    const hx = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',');
+    const colOfOrg = (org) => { const i = c.people.findIndex((p) => p.org === org); return SCOL[(i < 0 ? 0 : i) % SCOL.length]; };
+    const colOf = (i) => SCOL[i % SCOL.length], ME_C = '#D7F41A';
+    const ring = (col) => '0 0 0 2px ' + (DK ? '#1E1E20' : '#FFFFFF') + ', 0 0 0 4px ' + col;
+    const tint = (col) => 'linear-gradient(rgba(' + hx(col) + ',' + (DK ? 0.18 : 0.1) + '), rgba(' + hx(col) + ',' + (DK ? 0.18 : 0.1) + ')), ' + (DK ? '#2C2C2E' : '#FFFFFF');
     const pic = (name) => { const u = C.photo(c, name); return u ? 'url("' + u + '")' : 'none'; };
 
     // Time in each stage (also the timeline of the resolution summary)
@@ -503,10 +514,10 @@ class Component extends DCLogic {
     const stTxt = { standby: [L('Standby', 'Prevenção'), 'rgba(135,88,0,0.12)', '#875800'], enroute: [L('En route', 'A caminho'), 'rgba(184,54,10,0.12)', '#B8360A'], onscene: [L('On scene', 'No local'), 'rgba(179,20,27,0.10)', '#B3141B'],
       watch: [L('On watch', 'Em vigilância'), 'rgba(0,112,122,0.12)', '#00707A'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
     const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby');
-    const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby;
+    const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
-      return { station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
-        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '1px solid rgba(60,60,67,0.08)' : '1px solid rgba(60,60,67,0.12)', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
+      return { hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
+        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '1px solid rgba(60,60,67,0.08)' : '1px solid rgba(60,60,67,0.12)', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
     const extras = [];
     if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2] }); }
     if (c.evac) extras.push({ name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
@@ -528,7 +539,7 @@ class Component extends DCLogic {
     if (s.view === 'summary') {
       const Z = c.sum || C.stats(c);
       const area = Z.us ? { v: String(Z.acres), u: 'acres' } : { v: String(Z.ha).replace('.', PTL ? ',' : '.'), u: 'ha' };
-      return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, winBg, pop: this.popFn(), tl, tlTotal, forces, extras, sim,
+      return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, winBg, heroBg, heroCredit, pop: this.popFn(), tl, tlTotal, forces, extras, sim,
         sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: B ? L('Drill complete', 'Simulação concluída') : L('Fire resolved', 'Incêndio resolvido'), headline: c.place, closedAt: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
           note: B ? L('Training drill against the real fire of ', 'Simulação contra o incêndio real de ') + dayTxt(B.t) + L('. Crew replies are role-played, and drills do not go into firefighters’ profiles.', '. As respostas das equipas são encenadas e as simulações não entram nos perfis dos bombeiros.') : '', noteD: B ? 'block' : 'none',
           kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Time to response', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Time to resolution', 'Tempo até à resolução'), c: '#1E7A34', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
@@ -568,7 +579,7 @@ class Component extends DCLogic {
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), avVis: 'visible', gap: same ? '0' : '4px' });
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), avVis: 'visible', gap: same ? '0' : '4px' });
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
@@ -593,7 +604,7 @@ class Component extends DCLogic {
     });
     // The team: you, the fire owner, then the crew coordinator of each station
     const team = [{ name: me.name, role: L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: '0 0 0 2px #FFFFFF, 0 0 0 4px #D7F41A', roleC: '#1E7A34' }]
-      .concat(c.people.map((p) => ({ name: p.name, role: L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: 'none', roleC: '#545458' })))
+      .concat(c.people.map((p, i) => ({ name: p.name, role: L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
       .map((p) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name) }));
     const ty = C.typing(c);
     const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), cls: a.primary || a.danger ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? '#D7F41A' : a.danger ? 'rgba(215,0,21,0.10)' : '#2C2C2E', fg: a.primary ? '#1C1C1E' : a.danger ? '#B3001B' : '#D7F41A', w: a.primary ? 600 : 400, go: () => run(a.key) }));
@@ -602,8 +613,8 @@ class Component extends DCLogic {
     const sh = !!s.sheet;
     const firePt = { x: c.x, y: c.y, id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, st: c.st, zoom: 2.2 };
     return {
-      isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, winBg, items, team, tl, tlTotal, forces, extras, fk,
-      sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
+      isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroCredit, items, team, tl, tlTotal, forces, extras, fk,
+      meBub: tint(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
       sh: { y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },

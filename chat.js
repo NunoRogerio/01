@@ -74,15 +74,15 @@
   }
   function ccOf(st) { return st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : { CAN: 'ca', ESP: 'es', FRA: 'fr', ITA: 'it', GRC: 'gr' }[st] || 'pt'; }
   function isUS(c) { return ccOf(c.st) === 'us'; }
-  // Portrait photos for the team (placeholder portraits from randomuser.me), only on fires in California, Nevada and
-  // Portugal. The name pools alternate men and women, so each name gets a fixed portrait of the matching gender.
+  // Portraits for the team (illustrated, avatar.js), only on fires in California, Nevada and Portugal: each person in
+  // their own service's uniform; coordinators wear the command helmet.
   var PHOTO_ST = { CA: 1, NV: 1, PT: 1 };
   function photoOf(c, name) {
-    if (!c || !PHOTO_ST[c.st] || !name) return '';
-    var lg = null, i = -1; ['pt', 'us', 'br', 'es', 'fr', 'it', 'de', 'el'].some(function (k) { i = (NAMES[k] || []).indexOf(name); if (i >= 0) { lg = k; return true; } return false; });
-    if (i < 0) return '';
-    var n = (Math.floor(i / 2) * 6 + (lg === 'pt' ? 3 : lg === 'us' ? 0 : 1)) % 99;
-    return 'https://randomuser.me/api/portraits/' + (i % 2 ? 'women' : 'men') + '/' + n + '.jpg';
+    if (!c || !PHOTO_ST[c.st] || !name || !window.__wfAvatar) return '';
+    var lead = c.people.find(function (p) { return p.name === name; }), f = (c.forces || []).find(function (x) { return x.coord === name || x.crew.indexOf(name) >= 0; });
+    var org = (lead && lead.org) || (f && f.station) || '';
+    var kit = c.st === 'PT' ? 'pt' : c.st === 'NV' ? 'nv' : /CAL ?FIRE|CDF/i.test(org) ? 'calfire' : 'us';
+    return window.__wfAvatar(name, kit, !!lead || !!(f && f.coord === name));
   }
   // Team members carry names from the fire's country
   var LANG = { PT: 'pt', BRA: 'br', AMZ: 'br', ESP: 'es', MEX: 'es', ARG: 'es', CHL: 'es', COL: 'es', PER: 'es', BOL: 'es', ECU: 'es', VEN: 'es', URY: 'es', PRY: 'es', CRI: 'es', GTM: 'es', HND: 'es', NIC: 'es', PAN: 'es', SLV: 'es', CUB: 'es', DOM: 'es', AND: 'es',
@@ -410,6 +410,8 @@
     if (s === 1) { A.push({ key: 'dispatch', en: 'Send dispatch orders', pt: 'Enviar ordens de despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air) A.push({ key: 'next', en: 'Move to Being resolved', pt: 'Passar a Em resolução', primary: true }); }
+    if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Deploy another station', pt: 'Empenhar outro quartel' });
+    if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     if (s === 4) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
     if (s === 5) A.push({ key: 'next', en: 'Move to Under surveillance', pt: 'Passar a Vigilância', primary: true });
     if (s === 6 && !c.flags.closeCard) A.push({ key: 'closeCheck', en: 'Close the fire', pt: 'Encerrar o incêndio', primary: true });
@@ -457,9 +459,13 @@
     } else if (a === 'more') {
       c.flags.more = true; var r = c.reserve; me('Calling ' + r.short + ' as well.', 'Chamo também ' + r.short + '.');
       var n = pickNames(c, 1, 'more')[0]; c.people.push({ name: n, code: initials(n), org: r.short, kind: 'lead' }); c.stations.push(r);
-      var f = forceFor(c, c.stations.length - 1, 'standby'); f.extra = true; c.forces.push(f);
+      var f = forceFor(c, c.stations.length - 1, c.stage >= 2 ? (c.stage >= 3 ? 'onscene' : 'enroute') : 'standby'); f.extra = true; c.forces.push(f);
       sys(c, n + ', crew coordinator of ' + r.short + ', joined', n + ', coordenador de equipa de ' + r.short + ', entrou na conversa', 900, 1);
       say(c, c.people.length - 1, 'Available, ' + kmTxt(r.km) + ' away.', 'Disponíveis, a ' + kmTxt(r.km) + '.', 4000, 2);
+    } else if (a === 'recall') {
+      var rf = (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).pop();
+      if (rf) { rf.st = 'released'; me('Recalling ' + rf.station + ': released from the fire, back in service.', 'Recolho ' + rf.station + ': libertado do incêndio, de volta ao serviço.');
+        var ri = c.people.findIndex(function (p) { return p.org === rf.station; }); if (ri >= 0) say(c, ri, 'Copy. Packing up and heading back.', 'Entendido. A arrumar e a regressar.', 2500, 3); }
     } else if (a === 'update') {
       me('Update, please.', 'Ponto de situação, por favor.');
       if (P[0]) say(c, 0, 'Almost there, smoke column clearly visible.', 'Quase a chegar, coluna de fumo bem visível.', 2500, 2);
@@ -667,7 +673,7 @@
   var AI_SYS = 'You role-play the crew coordinators of fire stations in a wildfire incident chat. This is a realistic training simulation inside a fire command app; the person writing to you is the fire owner (incident commander) who makes all decisions. ' +
     'Stay in character: each coordinator has their own voice (given in the brief). Write like real fireground radio traffic on a phone chat: short, specific, 1 to 3 sentences, no emojis, no markdown. ' +
     'Be consistent with the brief: the stage, the forces and where they are, the time elapsed, the burnt area, air support and evacuation. Describe fire behaviour, terrain, water, crew welfare and needs plausibly for this stage. ' +
-    'Never change the incident stage, never declare the fire held, resolved or closed on your own, and never invent new stations, aircraft or people. You may ask the fire owner for decisions or resources. ' +
+    'Coordinators may take operational decisions themselves (deploy or recall their own crews, launch the drone, order a local evacuation) and announce them as decisions. Only the fire owner changes the incident stage: never declare the fire held, resolved or closed, and never invent new stations, aircraft or people. ' +
     'If the fire owner names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
     'Answer with JSON only, no prose around it: {"replies":[{"who":<team index>,"text":"<message>","minutes":<minutes of fire time before this message, 1 to 15>}]} with one reply, or two when a second coordinator genuinely adds something.';
   function aiSys() { return AI_SYS.replace('LANGUAGE', PT() ? 'European Portuguese (pt-PT), fireground vocabulary used by Portuguese bombeiros' : 'English'); }
@@ -699,6 +705,43 @@
     });
   }
 
+
+  // ---- decisions by the crew coordinators ---------------------------------------------------------------------------
+  // Anyone on the team can deploy or recall their crews, launch the drone or order a local evacuation, and says so in
+  // the chat as a decision. Only the fire owner changes the stage of the fire.
+  var DECIS = { 2: [{ who: 1, key: 'deploy2' }], 3: [{ who: 2, key: 'drone' }, { who: 1, key: 'evac' }], 4: [{ who: 0, key: 'relief' }], 5: [{ who: 2, key: 'recall' }] };
+  function decision(c, who, title, body, adv) {
+    var p = c.people[who] || {};
+    card(c, { decision: true, by: who, tag: { en: 'Decision · ' + p.name, pt: 'Decisão · ' + p.name }, tagC: '#0A66CC', title: title, body: body }, 1200, adv || 6);
+  }
+  function decide(c, d) {
+    var who = lead(c, d.who), P = c.people[who]; if (!P) return false;
+    var us = isUS(c), f = (c.forces || []).find(function (x) { return x.si === who; });
+    if (d.key === 'deploy2') {
+      if (!f || f.st === 'standby') return false;
+      var v = us ? 'Engine ' + (40 + hash(c.key) % 50) : 'VLCI 0' + (2 + hash(c.key) % 6); f.veh.push(v);
+      say(c, who, 'We have a second crew free, sending ' + v + ' as well.', 'Temos uma segunda equipa livre, enviamos também o ' + v + '.', 600, 3);
+      decision(c, who, { en: 'Second vehicle deployed', pt: 'Segundo veículo empenhado' }, { en: v + ' from ' + P.org + ' · on the way', pt: v + ' de ' + P.org + ' · a caminho' }, 1);
+    } else if (d.key === 'drone') {
+      if (c.flags.drone3) return false; c.flags.drone3 = true;
+      decision(c, who, { en: 'Drone launched', pt: 'Drone lançado' }, { en: 'D-5 over the head to read the fire behaviour', pt: 'D-5 sobre a cabeça para ler o comportamento do fogo' }, 4);
+      card(c, { tag: { en: 'Drone D-5 · over the head', pt: 'Drone D-5 · sobre a cabeça' }, tagC: '#0A66CC', title: { en: 'Running upslope', pt: 'A subir a encosta' }, body: { en: 'Spotting up to 50 m ahead of the head', pt: 'Projeções até 50 m à frente da cabeça' }, fire: true }, 7000, 8);
+    } else if (d.key === 'evac') {
+      if (c.flags.evac) return false; c.flags.evac = true; c.evac = { people: 60 + hash(c.key + 'ev') % 180 };
+      say(c, who, 'The head is getting close to the homes. I am ordering the evacuation of the north-east side now.', 'A cabeça está a aproximar-se das casas. Ordeno já a evacuação do lado nordeste.', 600, 4);
+      decision(c, who, { en: 'Evacuation ordered', pt: 'Evacuação ordenada' }, { en: 'Homes north-east of the fire · civil protection and ' + (us ? "the sheriff's department" : 'the local police') + ' informed', pt: 'Casas a nordeste do incêndio · proteção civil e forças de segurança informadas' }, 1);
+      sys(c, (us ? "Sheriff's deputies moving " : 'Local police (GNR) moving ') + c.evac.people + ' residents to safety', (us ? 'Xerifes' : 'GNR') + ' a encaminhar ' + c.evac.people + ' moradores para local seguro', 5000, 12);
+    } else if (d.key === 'relief') {
+      if (!f || f.st !== 'onscene') return false;
+      decision(c, who, { en: 'Crew relief', pt: 'Rendição de equipa' }, { en: 'Fresh crew from ' + P.org + ' takes over; the day crew stands down to rest', pt: 'Equipa fresca de ' + P.org + ' assume; a equipa do dia descansa' }, 20);
+    } else if (d.key === 'recall') {
+      if (!f || (f.st !== 'onscene' && f.st !== 'enroute')) return false; f.st = 'released';
+      say(c, who, 'Mop-up is covered here. Recalling our crew to the station so we are ready for the next call.', 'O rescaldo está garantido. Recolhemos a nossa equipa ao quartel para estarmos prontos para a próxima ocorrência.', 600, 10);
+      decision(c, who, { en: 'Crew recalled', pt: 'Equipa recolhida' }, { en: P.org + ' released from the fire, back in service', pt: P.org + ' libertado do incêndio, de volta ao serviço' }, 1);
+    } else return false;
+    return true;
+  }
+
   // Unprompted progress updates while a stage runs: the coordinators report as the fire evolves
   var PROGRESS = {
     3: [[1, function (c) { return ['Spot fire 30 m ahead of the head, we have it.', 'Foco secundário 30 m à frente da cabeça, está controlado.']; }, 12],
@@ -714,9 +757,11 @@
   function idle(c, now) {
     if (c.pending && now - c.pending.at > 45000) c.pending = null;
     if (c.closed || c.dismissed || c.queue.length || c.pending) return false;
-    var L0 = PROGRESS[c.stage]; if (!L0) return false;
     var last = Math.max(c.idleAt || 0, (c.msgs[c.msgs.length - 1] || {}).t || 0);
     if (now - last < 22000) return false;
+    var D0 = (DECIS[c.stage] || []).filter(function (d) { return !(c.dec = c.dec || {})[c.stage + d.key]; });
+    for (var i = 0; i < D0.length; i++) { c.dec[c.stage + D0[i].key] = 1; if (decide(c, D0[i])) { c.idleAt = now; return true; } }
+    var L0 = PROGRESS[c.stage]; if (!L0) return false;
     var done = (c.prog = c.prog || {})[c.stage] || 0; if (done >= L0.length) return false;
     var p = L0[done]; c.prog[c.stage] = done + 1; c.idleAt = now;
     var scripted = function (cc) { var a = p[1](cc); say(cc, lead(cc, p[0]), a[0], a[1], 1200, p[2]); };

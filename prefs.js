@@ -110,10 +110,13 @@
     if (theme === 'dark') { if (document.body) ensureNightFilter(); else document.addEventListener('DOMContentLoaded', ensureNightFilter); }
   }
 
+  // Demo profiles are shown in their own service's uniform (illustrated portraits, avatar.js)
+  var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1] };
+  function uniform(r, name) { var k = KITS[r]; return k && window.__wfAvatar ? window.__wfAvatar(name, k[0], !!k[1]) : ''; }
   var who = PEOPLE[role] || null;
   window.__wfPrefs = {
     role: role,
-    person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'Access to all features · ' + who[4], photo: who[5], lang: who[6] } : null,
+    person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'Access to all features · ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) { try { localStorage.setItem(key(k), v); } catch (e) {} apply(); }
   };
