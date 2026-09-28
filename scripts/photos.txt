@@ -3,6 +3,5 @@
 leaf-1.webp|photo-1591943466271-dcfeedd9e58e|Tony Sebastian|Green leaf with water droplets
 leaf-6.webp|photo-1598516334061-9c4f1e43a4b2|Sameer Meshram|Yellow and red leaves
 flower-1.webp|photo-1603353139254-70e25b77b8f2|Olga Kozachenko|Yellow and purple flower, macro
-flower-3.webp|photo-1442277282747-62e04545a48a|Aaron Burden|Pink flower, macro
 forest-4.webp|photo-1759681770982-313332e7f42c|Kristaps Ungurs|Dense autumn forest from above
 forest-5.webp|photo-1599940824399-b87987ceb72a|Olena Bohovyk|Pine forest from above

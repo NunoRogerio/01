@@ -11,7 +11,6 @@
     {f:"forest-4.webp",g:'forest',by:"Kristaps Ungurs",alt:"Dense autumn forest from above",b:1},
     {f:"forest-5.webp",g:'forest',by:"Olena Bohovyk",alt:"Pine forest from above",b:1},
     {f:"flower-1.webp",g:'macro',by:"Olga Kozachenko",alt:"Yellow and purple flower, macro",b:0.53},
-    {f:"flower-3.webp",g:'macro',by:"Aaron Burden",alt:"Pink flower, macro",b:0.64},
     {f:"leaf-1.webp",g:'macro',by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1},
     {f:"leaf-6.webp",g:'macro',by:"Sameer Meshram",alt:"Yellow and red leaves",b:0.73}];
   var G=['forest','macro'].filter(function(g){return L.some(function(p){return p.g===g;});});
