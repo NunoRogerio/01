@@ -844,7 +844,7 @@ class Component extends DCLogic {
     const atCountries = browse === '@', atUS = !brObj && !atCountries;
     const selCountry = stObj.country === 'US' ? 'US' : stObj.id === 'AMZ' ? 'BRA' : stObj.id;
     const CHEV = 'm9 6 6 6-6 6', TICK = 'm5 12 5 5 9-10';
-    const likeC = (c) => '#0A66CC', FIREC = '#B84A00';
+    const likeC = (c) => (window.__wfConfTxt ? window.__wfConfTxt(c) : '#0A66CC'), FIREC = '#B84A00';
     const num = (v) => ({ v, c: v > 0 ? '#000000' : '#8E8E93' });
     const rowOf = (o, selected, pick, sub, drill) => { const dis = !selected && !o.live && (o.cands || 0) + (o.fires || 0) === 0; return {
       name: o.name, sub, subD: sub ? 'block' : 'none', ...selSty(selected), dis, disA: dis ? 'true' : 'false', ...(dis ? { fg: '#AEAEB2', subC: '#C7C7CC' } : {}),
@@ -921,7 +921,7 @@ class Component extends DCLogic {
     const ignList = CANDS.map((c, i) => {
       const col = colorOf(c.conf);
       return {
-        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Alert.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + '%', valC: '#0A66CC', nameW: 600,
+        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Alert.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + '%', valC: (window.__wfConfTxt ? window.__wfConfTxt(c.conf) : '#0A66CC'), nameW: 600,
         bg: c.conf > 75 ? 'rgba(122,63,224,0.12)' : (c.conf >= 50 ? 'rgba(10,111,219,0.1)' : 'rgba(60,60,67,0.066)'),
         bd: i === 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
         ...anim(i),

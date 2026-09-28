@@ -745,7 +745,7 @@ class Component extends DCLogic {
     return { goHome: () => { const t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { home: t, fromList: false }); try { window.sessionStorage.setItem('wf-home', String(t)); window.sessionStorage.setItem('wf-list', '0'); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} },
       hasActive: n > 0, noActive: showClear, rootBg: showClear ? 'transparent' : '#F2F2F7', panelD: showClear || n === 0 ? 'none' : 'block', backC: showClear ? '#FFFFFF' : '#545458',
       ...(() => {
-        const col = (c) => '#0A66CC';
+        const col = (c) => (window.__wfConfTxt ? window.__wfConfTxt(c) : '#0A66CC');
         const bg = (c) => c >= 70 ? 'rgba(232,106,0,0.14)' : (c >= 50 ? 'rgba(204,153,0,0.12)' : 'rgba(60,60,67,0.066)');
         const dd = !!s.dd && n > 1;
         const others = active.map((c, i) => ({ c, i })).filter((o) => o.i !== ci);
@@ -777,7 +777,7 @@ class Component extends DCLogic {
       // Location is not evidence: it sits in the conclusion card with the map button
       locTxt: cur.loc || cur.coords || '', locD: (cur.loc || cur.coords) ? 'block' : 'none',
       reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
-      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: '#0A66CC', ringLabel: cur.conf + ' percent likelihood',
+      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
       mapIgn: [cur].map((c) => ({ id: c.id, x: c.x, y: c.y, place: c.place, conf: c.conf, src: c.src })),   // only this candidate and its suggested stations

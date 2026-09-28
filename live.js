@@ -349,7 +349,9 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   }
   // Shared by the map card and the fire screen: durations, and whether a fire is held (resolved) rather than alive.
   // Ignition-candidate confidence scale: above 75% purple, 50–75% blue, below 50% dark gray.
-  window.__wfConfC=function(c){return '#0A6FDB';};   // one candidate colour everywhere, as in the map legend (confidence is the percentage)
+  window.__wfConfC=function(c){return '#0A6FDB';};   // map markers and icons: one candidate colour, as in the map legend
+  // Likelihood percentages keep their colour coding: above 75% purple, 50-75% blue, below 50% grey
+  window.__wfConfTxt=function(c){return c>75?'#7A3FE0':c>=50?'#0A66CC':'#48484A';};
   window.__wfAMZ=['Acre','Amapá','Amazonas','Maranhão','Mato Grosso','Pará','Rondônia','Roraima','Tocantins'];
   // Row filter for an area: a state id, or 'US' (all states) or 'AMZ' (the Legal Amazon states of Brazil).
   window.__wfInArea=function(r,st,co){if(st==='US')return /^[A-Z]{2}$/.test(r.st)&&r.st!=='PT';if(st==='AMZ')return r.st==='BRA'&&window.__wfAMZ.indexOf(r.co)>=0&&(!co||r.co===co);return r.st===st&&(!co||r.co===co);};
