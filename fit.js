@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 // Nature photos, one list for the whole app (loading screen, sign in, alert header, chat header, trophy cards, forest
-// headers), in two groups (Unsplash): forests from above, and macros of flowers and leaves. Photos are shown one group
+// headers): forests from above (Unsplash), in a random order. Groups are kept for future sets: photos are shown one group
 // at a time in turn (never two of the same group in a row), and the photo from each
 // group is picked at random; every page gets a new random order. b dims a bright photo so white text keeps its contrast.
 (function(){
@@ -12,8 +12,7 @@
     {f:"forest-5.webp",g:'forest',by:"Olena Bohovyk",alt:"Pine forest from above",b:1},
     {f:"forest-6.webp",g:'forest',by:"John O'Nolan",alt:"Forest canopy from above",b:0.9},
     {f:"forest-7.webp",g:'forest',by:"shayd johnson",alt:"Tall conifers from above",b:1},
-    {f:"forest-8.webp",g:'forest',by:"Adam Vradenburg",alt:"Dense forest from above",b:1},
-    {f:"leaf-1.webp",g:'macro',by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1}];
+    {f:"forest-8.webp",g:'forest',by:"Adam Vradenburg",alt:"Dense forest from above",b:1}];
   var G=['forest','macro'].filter(function(g){return L.some(function(p){return p.g===g;});});
   var sh=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;};
   // A random order that spreads the groups evenly through it (a smaller group comes round at even intervals, never two
