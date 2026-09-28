@@ -1,27 +1,48 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 // Nature photos, one list for the whole app (loading screen, sign in, alert header, chat header, trophy cards, forest
-// headers): aerial forests, macros of leaves and flowers, forest lakes from above (Unsplash). Every page gets them in a
-// new random order; b dims a bright photo so white text on it keeps its contrast.
+// headers), in three groups of five (Unsplash): forests from above, macros of flowers and leaves, country villages from
+// above. Photos are shown one group at a time in turn (never two of the same group in a row), and the photo from each
+// group is picked at random; every page gets a new random order. b dims a bright photo so white text keeps its contrast.
 (function(){
-  var L=[{f:"forest-1.webp",by:"Mari Potter",alt:"Forest canopy from above",b:1},{f:"forest-2.webp",by:"Ivan Dimitrov",alt:"Conifer forest from above",b:1},{f:"forest-3.webp",by:"Olena Bohovyk",alt:"Dense canopy from above",b:1},{f:"leaf-1.webp",by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1},{f:"leaf-2.webp",by:"Yoksel Zok",alt:"Green leaf, macro",b:0.61},{f:"leaf-3.webp",by:"Clay Banks",alt:"Green leaf with drops of water",b:1},{f:"leaf-4.webp",by:"David Clode",alt:"Green leaf, close up",b:1},{f:"leaf-5.webp",by:"Pedro Vit",alt:"Green leaf, close up",b:1},{f:"leaf-6.webp",by:"Sameer Meshram",alt:"Yellow and red leaves",b:0.73},{f:"flower-1.webp",by:"Olga Kozachenko",alt:"Yellow and purple flower, macro",b:0.53},{f:"flower-2.webp",by:"Klara Kulikova",alt:"Pink and white flower, close up",b:0.54},{f:"flower-3.webp",by:"Aaron Burden",alt:"Pink flower, macro",b:0.64},{f:"flower-4.webp",by:"Christian Buehner",alt:"Yellow flower, close up",b:0.52},{f:"flower-5.webp",by:"v2osk",alt:"Yellow clustered flower, close up",b:0.7},{f:"flower-6.webp",by:"Alexandra",alt:"Water drop on a purple flower",b:1},{f:"lake-1.webp",by:"Gabriel Mihalcea",alt:"Lake among trees from above",b:0.92},{f:"lake-2.webp",by:"Gabriel Mihalcea",alt:"Lake surrounded by trees from above",b:0.85},{f:"lake-3.webp",by:"Kristīne Kozaka",alt:"Lake surrounded by forest",b:1},{f:"lake-4.webp",by:"John Murphey",alt:"Small island in a forest lake",b:1}];
+  var L=[
+    {f:"forest-1.webp",g:'forest',by:"Mari Potter",alt:"Forest canopy from above",b:1},
+    {f:"forest-2.webp",g:'forest',by:"Ivan Dimitrov",alt:"Conifer forest from above",b:1},
+    {f:"forest-3.webp",g:'forest',by:"Olena Bohovyk",alt:"Dense canopy from above",b:1},
+    {f:"forest-4.webp",g:'forest',by:"Kristaps Ungurs",alt:"Dense autumn forest from above",b:1},
+    {f:"forest-5.webp",g:'forest',by:"Olena Bohovyk",alt:"Pine forest from above",b:1},
+    {f:"flower-1.webp",g:'macro',by:"Olga Kozachenko",alt:"Yellow and purple flower, macro",b:0.53},
+    {f:"flower-3.webp",g:'macro',by:"Aaron Burden",alt:"Pink flower, macro",b:0.64},
+    {f:"flower-6.webp",g:'macro',by:"Alexandra",alt:"Water drop on a purple flower",b:1},
+    {f:"leaf-1.webp",g:'macro',by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1},
+    {f:"leaf-6.webp",g:'macro',by:"Sameer Meshram",alt:"Yellow and red leaves",b:0.73},
+    {f:"village-1.webp",g:'village',by:"Ammar Sabanovic",alt:"Rural village and fields from above",b:0.65},
+    {f:"village-2.webp",g:'village',by:"Mira Romanescu",alt:"Village in a green valley",b:0.8},
+    {f:"village-3.webp",g:'village',by:"konrad dobosz",alt:"Small town among mountains from above",b:1},
+    {f:"village-4.webp",g:'village',by:"jason hu",alt:"Village among green fields from above",b:0.76},
+    {f:"village-5.webp",g:'village',by:"Éole Wind",alt:"Small village in the countryside from above",b:0.75}];
+  var G=['forest','macro','village'];
   var sh=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;};
+  // A random order that takes one photo from each group in turn (the groups in a random order too)
+  var mix=function(){var gs=sh(G),by={},out=[],k=0;gs.forEach(function(g){by[g]=sh(L.filter(function(p){return p.g===g;}));});
+    while(out.length<L.length){var g=gs[k%gs.length];if(by[g].length)out.push(by[g].shift());k++;}return out;};
   var last='';try{last=sessionStorage.getItem('wf-photo-first')||'';}catch(e){}
-  var P=sh(L);if(P.length>1&&P[0].f===last)P.push(P.shift());   // a new screen does not open on the photo the last one opened on
+  var P=mix();if(P.length>1&&P[0].f===last)P=P.slice(1).concat(P.slice(0,1));   // a new screen does not open on the photo the last one opened on
   try{sessionStorage.setItem('wf-photo-first',P[0].f);}catch(e){}
-  window.__wfPhotoList=L;window.__wfPhotos=P;window.__wfShuffle=sh;
+  window.__wfPhotoList=L;window.__wfPhotos=P;window.__wfShuffle=sh;window.__wfPhotoMix=mix;
   window.__wfPhotoUrl=function(p){return 'assets/splash/'+p.f;};
   window.__wfPhotoFilter=function(p){return p.b<1?'brightness('+p.b+')':'none';};
   window.__wfPhotoCredit=function(p){return 'Photo: '+p.by+' / Unsplash';};
-  // A random next photo, different from the ones given (for cycling layers)
-  window.__wfPhotoOther=function(not){var c=L.filter(function(p){return (not||[]).indexOf(p.f)<0;});return c[Math.floor(Math.random()*c.length)]||L[0];};
+  // A random photo of a group (the group of the photo it replaces), not one of those given (for cycling layers)
+  window.__wfPhotoOther=function(not,g){var c=L.filter(function(p){return (!g||p.g===g)&&(not||[]).indexOf(p.f)<0;});return c[Math.floor(Math.random()*c.length)]||L[0];};
   // Loading screen: its own order kept across launches, so each launch shows a different photo until all have shown
-  window.__wfSplashPH=function(){var p=null;try{p=JSON.parse(localStorage.getItem('wf-splash-perm')||'null');}catch(e){}
-    var ok=p&&p.length===L.length&&p.every(function(f){return L.some(function(q){return q.f===f;});});
-    if(!ok){p=sh(L).map(function(q){return q.f;});try{localStorage.setItem('wf-splash-perm',JSON.stringify(p));localStorage.setItem('wf-splash-i','0');}catch(e){}}
-    return p.map(function(f){var q=L.find(function(x){return x.f===f;});return [q.f,q.alt,q.by,q.b];});};
+  var byF=function(f){return L.find(function(x){return x.f===f;});};
+  window.__wfSplashPH=function(){var p=null;try{p=JSON.parse(localStorage.getItem('wf-splash-perm2')||'null');}catch(e){}
+    var ok=p&&p.length===L.length&&p.every(function(f){return !!byF(f);});
+    if(!ok){p=mix().map(function(q){return q.f;});try{localStorage.setItem('wf-splash-perm2',JSON.stringify(p));localStorage.setItem('wf-splash-i','0');}catch(e){}}
+    return p.map(function(f){var q=byF(f);return [q.f,q.alt,q.by,q.b];});};
   window.__wfSplashNext=function(i){var n=L.length;if(i+1<n){try{localStorage.setItem('wf-splash-i',String(i+1));}catch(e){}return;}
-    var p=sh(L).map(function(q){return q.f;}),cur=(window.__wfSplashPH()[i]||[])[0];if(p[0]===cur)p.push(p.shift());
-    try{localStorage.setItem('wf-splash-perm',JSON.stringify(p));localStorage.setItem('wf-splash-i','0');}catch(e){}};
+    var cur=byF((window.__wfSplashPH()[i]||[])[0])||{},p;for(var t=0;t<20;t++){p=mix();if(p[0].g!==cur.g)break;}   // the next round starts on another group
+    try{localStorage.setItem('wf-splash-perm2',JSON.stringify(p.map(function(q){return q.f;})));localStorage.setItem('wf-splash-i','0');}catch(e){}};
 })();
 // The logo's eye blinks: the upper lid (curve through y=12) comes down to the lower one and both meet near y=17.4, then open.
 window.__wfBlink=function(path,dur){

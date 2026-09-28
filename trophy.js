@@ -14,10 +14,11 @@
   if (window.customElements && customElements.get('wf-trophy')) return;
   var LOGO = 'M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z';
   var TROPHY = 'M8 3.5h8v5.5a4 4 0 0 1-8 0Z M8 5.5H4.5v1.2A3.3 3.3 0 0 0 8 10 M16 5.5h3.5v1.2A3.3 3.3 0 0 1 16 10 M12 13v3.5 M8 20.5h8 M9.5 16.5h5v4h-5Z';
-  // Nature photos (fit.js): each card starts with three at random, and each layer takes a new random photo every time it
-  // comes round again (while hidden), so the sequence never repeats in a fixed order. The middle layer zooms out.
+  // Nature photos (fit.js): each card starts with one random photo from each group (forest, macro, village), and each
+  // layer takes a new random photo of its group every time it comes round again (while hidden), so the groups take
+  // turns and the photos never repeat in a fixed order. The middle layer zooms out.
   var POOL = function () { return window.__wfPhotoList || [{ f: 'forest-1.webp', by: 'Mari Potter', b: 1 }, { f: 'forest-2.webp', by: 'Ivan Dimitrov', b: 1 }, { f: 'forest-3.webp', by: 'Olena Bohovyk', b: 1 }]; };
-  var pick3 = function () { var L = POOL(), a = window.__wfShuffle ? window.__wfShuffle(L) : L.slice(); while (a.length < 3) a = a.concat(a); return a.slice(0, 3); };
+  var pick3 = function () { var a = window.__wfPhotoMix ? window.__wfPhotoMix() : POOL().slice(); while (a.length < 3) a = a.concat(a); return a.slice(0, 3); };   // one photo from each group
   var bgOf = function (p) { return 'background-image:url(assets/splash/' + p.f + ');filter:' + (p.b < 1 ? 'brightness(' + p.b + ')' : 'none'); };
   var CSS =
     ':host{display:block}' +
@@ -62,10 +63,10 @@
         '<span class="credit">' + PH.map(function (p, i) { return '<span style="animation-delay:' + (i * 11) + 's">Photo: ' + p.by + ' / Unsplash</span>'; }).join('') + '</span></div>';
       this._cv = r.querySelector('canvas'); this._cup = r.querySelector('.cup'); this._card = r.querySelector('.card');
       // A layer that has just faded out comes round again with a new photo, not one on screen or about to show
-      var layers = [].slice.call(r.querySelectorAll('.forest i')), credits = [].slice.call(r.querySelectorAll('.credit span')), shown = PH.map(function (p) { return p.f; });
+      var layers = [].slice.call(r.querySelectorAll('.forest i')), credits = [].slice.call(r.querySelectorAll('.credit span')), shown = PH.map(function (p) { return p.f; }), groups = PH.map(function (p) { return p.g; });
       layers.forEach(function (el, i) { el.addEventListener('animationiteration', function (e) {
         if (e.animationName !== 'o' || !window.__wfPhotoOther) return;
-        var p = window.__wfPhotoOther(shown); shown[i] = p.f; el.style.backgroundImage = 'url(assets/splash/' + p.f + ')'; el.style.filter = p.b < 1 ? 'brightness(' + p.b + ')' : 'none';
+        var p = window.__wfPhotoOther(shown, groups[i]); shown[i] = p.f; el.style.backgroundImage = 'url(assets/splash/' + p.f + ')'; el.style.filter = p.b < 1 ? 'brightness(' + p.b + ')' : 'none';
         if (credits[i]) credits[i].textContent = 'Photo: ' + p.by + ' / Unsplash'; (new Image()).src = 'assets/splash/' + p.f; }); });
     }
     this.fill(); this.startSparks();

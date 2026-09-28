@@ -6,30 +6,6 @@
   "kb": 245
  },
  {
-  "f": "leaf-2.webp",
-  "by": "Yoksel Zok",
-  "alt": "Green leaf, macro",
-  "kb": 88
- },
- {
-  "f": "leaf-3.webp",
-  "by": "Clay Banks",
-  "alt": "Green leaf with drops of water",
-  "kb": 214
- },
- {
-  "f": "leaf-4.webp",
-  "by": "David Clode",
-  "alt": "Green leaf, close up",
-  "kb": 418
- },
- {
-  "f": "leaf-5.webp",
-  "by": "Pedro Vit",
-  "alt": "Green leaf, close up",
-  "kb": 91
- },
- {
   "f": "leaf-6.webp",
   "by": "Sameer Meshram",
   "alt": "Yellow and red leaves",
@@ -42,28 +18,10 @@
   "kb": 26
  },
  {
-  "f": "flower-2.webp",
-  "by": "Klara Kulikova",
-  "alt": "Pink and white flower, close up",
-  "kb": 14
- },
- {
   "f": "flower-3.webp",
   "by": "Aaron Burden",
   "alt": "Pink flower, macro",
   "kb": 34
- },
- {
-  "f": "flower-4.webp",
-  "by": "Christian Buehner",
-  "alt": "Yellow flower, close up",
-  "kb": 15
- },
- {
-  "f": "flower-5.webp",
-  "by": "v2osk",
-  "alt": "Yellow clustered flower, close up",
-  "kb": 47
  },
  {
   "f": "flower-6.webp",
@@ -72,141 +30,45 @@
   "kb": 8
  },
  {
-  "f": "lake-1.webp",
-  "by": "Gabriel Mihalcea",
-  "alt": "Lake among trees from above",
-  "kb": 104
+  "f": "forest-4.webp",
+  "by": "Kristaps Ungurs",
+  "alt": "Dense autumn forest from above",
+  "kb": 221
  },
  {
-  "f": "lake-2.webp",
-  "by": "Gabriel Mihalcea",
-  "alt": "Lake surrounded by trees from above",
+  "f": "forest-5.webp",
+  "by": "Olena Bohovyk",
+  "alt": "Pine forest from above",
+  "kb": 196
+ },
+ {
+  "f": "village-5.webp",
+  "by": "Éole Wind",
+  "alt": "Small village in the countryside from above",
   "kb": 168
  },
  {
-  "f": "lake-3.webp",
-  "by": "Kristīne Kozaka",
-  "alt": "Lake surrounded by forest",
-  "kb": 171
- },
- {
-  "f": "lake-4.webp",
-  "by": "John Murphey",
-  "alt": "Small island in a forest lake",
-  "kb": 161
- },
- {
-  "f": "cf-1.webp",
-  "by": "Kristaps Ungurs",
-  "alt": "Dense autumn forest from above",
-  "kb": 947
- },
- {
-  "f": "cf-2.webp",
-  "by": "Olena Bohovyk",
-  "alt": "Pine forest from above",
-  "kb": 846
- },
- {
-  "f": "cf-3.webp",
-  "by": "Dave Hoefler",
-  "alt": "Forest canopy from above",
-  "kb": 1066
- },
- {
-  "f": "cf-4.webp",
-  "by": "Olena Bohovyk",
-  "alt": "Forest from above",
-  "kb": 746
- },
- {
-  "f": "cf-5.webp",
-  "by": "Jason Leem",
-  "alt": "Forest from above",
-  "kb": 871
- },
- {
-  "f": "cf-6.webp",
-  "by": "John O'Nolan",
-  "alt": "Forest canopy from above",
-  "kb": 879
- },
- {
-  "f": "cf-7.webp",
-  "by": "shayd johnson",
-  "alt": "Tall trees from above",
-  "kb": 531
- },
- {
-  "f": "cf-8.webp",
-  "by": "Adam Vradenburg",
-  "alt": "Trees from above",
-  "kb": 652
- },
- {
-  "f": "cf-9.webp",
-  "by": "Miha Rekar",
-  "alt": "Green trees from above",
-  "kb": 1173
- },
- {
-  "f": "cv-1.webp",
-  "by": "Éole Wind",
-  "alt": "Small village in the countryside from above",
-  "kb": 748
- },
- {
-  "f": "cv-2.webp",
-  "by": "Vít Luštinec",
-  "alt": "Village with winding roads from above",
-  "kb": 837
- },
- {
-  "f": "cv-3.webp",
+  "f": "village-4.webp",
   "by": "jason hu",
   "alt": "Village among green fields from above",
-  "kb": 658
+  "kb": 138
  },
  {
-  "f": "cv-4.webp",
-  "by": "Pascal Kiefer",
-  "alt": "Town among forests and fields from above",
-  "kb": 929
- },
- {
-  "f": "cv-5.webp",
-  "by": "Cristi N",
-  "alt": "Small town among green fields from above",
-  "kb": 416
- },
- {
-  "f": "cv-6.webp",
+  "f": "village-1.webp",
   "by": "Ammar Sabanovic",
   "alt": "Rural village and fields from above",
-  "kb": 486
+  "kb": 105
  },
  {
-  "f": "cv-7.webp",
-  "by": "Josef Litoš",
-  "alt": "Small village among trees at dusk",
-  "kb": 442
- },
- {
-  "f": "cv-8.webp",
+  "f": "village-3.webp",
   "by": "konrad dobosz",
   "alt": "Small town among mountains from above",
-  "kb": 680
+  "kb": 139
  },
  {
-  "f": "cv-9.webp",
+  "f": "village-2.webp",
   "by": "Mira Romanescu",
   "alt": "Village in a green valley",
-  "kb": 990
- },
- {
-  "f": "cv-10.webp",
-  "by": "Puscas Adryan",
-  "alt": "Village with red roofs in a green valley",
-  "kb": 586
+  "kb": 255
  }
 ]

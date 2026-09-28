@@ -1,37 +1,14 @@
 # Nature photos for the app's photo headers, cards and loading screen (Unsplash licence).
 # file|images.unsplash.com photo id|photographer|description
 leaf-1.webp|photo-1591943466271-dcfeedd9e58e|Tony Sebastian|Green leaf with water droplets
-leaf-2.webp|photo-1613303179355-564f87b055a7|Yoksel Zok|Green leaf, macro
-leaf-3.webp|photo-1580133318324-f2f76d987dd8|Clay Banks|Green leaf with drops of water
-leaf-4.webp|photo-1571119533952-b78846829e4e|David Clode|Green leaf, close up
-leaf-5.webp|photo-1693002583620-7224a470395f|Pedro Vit|Green leaf, close up
 leaf-6.webp|photo-1598516334061-9c4f1e43a4b2|Sameer Meshram|Yellow and red leaves
 flower-1.webp|photo-1603353139254-70e25b77b8f2|Olga Kozachenko|Yellow and purple flower, macro
-flower-2.webp|photo-1712231991180-b6c9d0960673|Klara Kulikova|Pink and white flower, close up
 flower-3.webp|photo-1442277282747-62e04545a48a|Aaron Burden|Pink flower, macro
-flower-4.webp|photo-1646505690396-9068da4332a5|Christian Buehner|Yellow flower, close up
-flower-5.webp|photo-1483519396903-1ef292f4974a|v2osk|Yellow clustered flower, close up
 flower-6.webp|photo-1695556647000-43fbd81456a1|Alexandra|Water drop on a purple flower
-lake-1.webp|photo-1640958904329-ba496b8c7e0b|Gabriel Mihalcea|Lake among trees from above
-lake-2.webp|photo-1640958906254-0beafc84520d|Gabriel Mihalcea|Lake surrounded by trees from above
-lake-3.webp|photo-1652946754662-5aa170e4b175|Kristīne Kozaka|Lake surrounded by forest
-lake-4.webp|photo-1696639457568-444001aa11b4|John Murphey|Small island in a forest lake
-cf-1.webp|photo-1759681770982-313332e7f42c|Kristaps Ungurs|Dense autumn forest from above
-cf-2.webp|photo-1599940824399-b87987ceb72a|Olena Bohovyk|Pine forest from above
-cf-3.webp|photo-1527701963793-33e969bca5ee|Dave Hoefler|Forest canopy from above
-cf-4.webp|photo-1599940824219-e6aa9be5fba2|Olena Bohovyk|Forest from above
-cf-5.webp|photo-1475359524104-d101d02a042b|Jason Leem|Forest from above
-cf-6.webp|photo-1498925008800-019c7d59d903|John O'Nolan|Forest canopy from above
-cf-7.webp|photo-1510694853838-e4a8c978f518|shayd johnson|Tall trees from above
-cf-8.webp|photo-1558022103-603c34ab10ce|Adam Vradenburg|Trees from above
-cf-9.webp|photo-1593679916468-851527f3ee27|Miha Rekar|Green trees from above
-cv-1.webp|photo-1707212216690-bf13dfd7399c|Éole Wind|Small village in the countryside from above
-cv-2.webp|photo-1763327374244-157b04b597d5|Vít Luštinec|Village with winding roads from above
-cv-3.webp|photo-1776584324215-7a551a3cbe02|jason hu|Village among green fields from above
-cv-4.webp|photo-1782749998106-ef01710c1893|Pascal Kiefer|Town among forests and fields from above
-cv-5.webp|photo-1780690049563-00f96f9bea1a|Cristi N|Small town among green fields from above
-cv-6.webp|photo-1784714968184-28b03b0aa02e|Ammar Sabanovic|Rural village and fields from above
-cv-7.webp|photo-1764080400538-4487aa44172f|Josef Litoš|Small village among trees at dusk
-cv-8.webp|photo-1716639057064-4cb0e6677750|konrad dobosz|Small town among mountains from above
-cv-9.webp|photo-1777719812735-e3aadb261f13|Mira Romanescu|Village in a green valley
-cv-10.webp|photo-1788517217773-9976e50f534d|Puscas Adryan|Village with red roofs in a green valley
+forest-4.webp|photo-1759681770982-313332e7f42c|Kristaps Ungurs|Dense autumn forest from above
+forest-5.webp|photo-1599940824399-b87987ceb72a|Olena Bohovyk|Pine forest from above
+village-5.webp|photo-1707212216690-bf13dfd7399c|Éole Wind|Small village in the countryside from above
+village-4.webp|photo-1776584324215-7a551a3cbe02|jason hu|Village among green fields from above
+village-1.webp|photo-1784714968184-28b03b0aa02e|Ammar Sabanovic|Rural village and fields from above
+village-3.webp|photo-1716639057064-4cb0e6677750|konrad dobosz|Small town among mountains from above
+village-2.webp|photo-1777719812735-e3aadb261f13|Mira Romanescu|Village in a green valley
