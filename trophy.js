@@ -97,7 +97,7 @@
       var R = self._card.getBoundingClientRect(), T = self._cup.getBoundingClientRect(); if (!R.width) return;
       var cx = T.left + T.width / 2 - R.left, cy = T.top + T.height / 2 - R.top, r0 = T.width / 2, t0 = performance.now();
       var shapes = ['scatter', 'ring', 'rings', 'spiral', 'fan'].filter(function (k) { return k !== last; }), shape = shapes[Math.floor(Math.random() * shapes.length)]; last = shape;
-      var n = Math.round(rnd(256, 308)), rot = rnd(0, Math.PI * 2), life = rnd(2800, 3600), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
+      var n = Math.round(rnd(256, 308)), rot = rnd(0, Math.PI * 2), life = rnd(3800, 4600), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
       var sweep = (Math.random() < 0.5 ? -1 : 1) * rnd(0.5, 2) * Math.PI * 2, fanDir = rnd(0, Math.PI * 2), fanW = rnd(Math.PI * 0.9, Math.PI * 1.5);
       var pulses = Math.floor(rnd(0, 4)), depth = rnd(0.3, 0.8), ph = rnd(0, Math.PI * 2);   // the stream's rhythm: steady, or in 1 to 3 swells
       var ring = Math.round(rnd(14, 26));   // sparks per ring for the ring shapes
@@ -130,8 +130,8 @@
       var live = parts.filter(function (q) { return now >= q.born; });
 
       g.fillStyle = '#D7F41A';   // crisp vector dots: no glow, no blur
-      live.forEach(function (q) { var t = (now - q.born) / q.life, e = t * (1.6 - 0.6 * t), w = q.curl * e * e;   // curl: a sideways drift
-        g.globalAlpha = e < 0.55 ? 1 : Math.max(0, 1 - (e - 0.55) / 0.45); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
+      live.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 3), w = q.curl * e * e;   // curl: a sideways drift
+        g.globalAlpha = t < 0.45 ? 1 : Math.max(0, 1 - (t - 0.45) / 0.55); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
       g.globalAlpha = 1;
       requestAnimationFrame(draw);
     };
