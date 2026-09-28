@@ -110,10 +110,10 @@
     var cc = ccOf(st);
     var done = function (rows) {
       var kx = 111.32 * Math.cos(lat * Math.PI / 180);
-      var near = rows.map(function (r) { return { name: r[4] || 'Fire station', km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
+      var near = rows.map(function (r) { return { ck: r[1] + r[0], name: r[4] || 'Fire station', km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
         .filter(function (q) { return q.km < 80 && !/aeroporto|airport|base aérea/i.test(q.name); })
         .sort(function (a, b) { return a.km - b.km; }).slice(0, 4);
-      cb(near.map(function (q) { var min = Math.round(q.km * 1.3 / 50 * 60) + 3; return { name: q.name, short: shortStation(q.name), km: q.km, min: min }; }));
+      cb(near.map(function (q) { var min = Math.round(q.km * 1.3 / 50 * 60) + 3; return { ck: q.ck, name: q.name, short: shortStation(q.name), km: q.km, min: min }; }));
     };
     if (SF[cc]) return done(SF[cc]);
     fetch('data/stations-' + cc + '.json').then(function (r) { return r.json(); }).then(function (js) { SF[cc] = js.s || []; done(SF[cc]); }).catch(function () { SF[cc] = []; done([]); });
@@ -140,7 +140,7 @@
   function forceFor(c, si, st) {
     var s = c.stations[si], P = c.people[si];
     var crew = pickNames(c, si === 0 ? 4 : si === 1 ? 4 : 3, 'crew' + si);
-    return { si: si, station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: vehiclesFor(c, s, si), st: st || 'standby' };
+    return { si: si, ck: s.ck || '', station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: vehiclesFor(c, s, si), st: st || 'standby' };
   }
   function setForces(c, from, to) { (c.forces || []).forEach(function (f) { if (!from || from.indexOf(f.st) >= 0) f.st = to; }); }
 
@@ -895,7 +895,11 @@
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,
-    vnow: vnow, since: since, photo: photoOf, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
+    vnow: vnow, since: since, photo: photoOf,
+    crest: function (c, station) {   // a station of this chat, by short or full name
+      var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
+      return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '' };
+    }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },

@@ -87,6 +87,49 @@
   // (Blue stays for air support; the fire owner keeps the hi-vis yellow.)
   window.__wfStationCol = ['#FF7A1A', '#B45CFF', '#00B39F', '#FF4FA0', '#7BC043', '#E0A800'];
   window.__wfTint = function (hex, a) { return 'rgba(' + [1, 3, 5].map(function (i) { return parseInt(hex.slice(i, i + 2), 16); }).join(',') + ',' + a + ')'; };
+  // ---- station crests ----------------------------------------------------------------------------------------------
+  // data/crests.json (weekly from Wikidata / Wikimedia Commons): the service's logo in California, the corporation's
+  // logo or its town's arms in Portugal. Where none is found, a shield is drawn from the station's own data
+  // (its service or corporation initials, its town and number), never imitating an official crest.
+  window.__wfCrests = null;
+  try { fetch('data/crests.json').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (js) { window.__wfCrests = js.s || {}; try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} })
+    .catch(function () { window.__wfCrests = {}; }); } catch (e) { window.__wfCrests = {}; }
+  var HER = [['#B0001A', '#F2C200'], ['#1F2B45', '#D7F41A'], ['#2E6B3A', '#F4F4F2'], ['#7A1F12', '#F2C200'], ['#0B4F8A', '#F4F4F2'], ['#4A2A6B', '#F2C200']];
+  function hsh(t) { var h = 0; t = String(t || ''); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function drawn(name) {
+    var n = String(name || 'Fire station').trim().replace(/^BV\s+/, 'Bombeiros Voluntários de ').replace(/^BM\s+/, 'Bombeiros Municipais de ').replace(/^BS\s+/, 'Bombeiros Sapadores de '), num = (n.match(/(\d{1,3})\s*$/) || n.match(/#\s*(\d{1,3})/) || n.match(/\b(\d{1,3})\b/) || [])[1] || '';
+    var top = '', mid = '';
+    var pt = /bombeiros/i.exec(n);
+    if (pt) {
+      top = /municipa/i.test(n) ? 'BM' : /sapador/i.test(n) ? 'BS' : 'BV';
+      var town = n.replace(/^.*?bombeiros\s+(volunt[aá]rios|municipais|sapadores)?\s*(de|da|do|dos|das)?\s*/i, '').replace(/^(a|o)\s+/i, '');
+      var w = town.split(/[\s-]+/).filter(function (x) { return x && !/^(de|da|do|dos|das|e)$/i.test(x); });
+      mid = w.length > 1 ? (w[0][0] + w[1][0]) : (w[0] || n).slice(0, 2);
+    } else {
+      var ag = n.replace(/\b(fire\s+)?station\b.*$/i, '').replace(/[^A-Za-zÀ-ÿ\s-]/g, '').trim();
+      var ini = ag.split(/[\s-]+/).filter(function (x) { return x && !/^(of|and|the|de|la|county's)$/i.test(x); }).map(function (x) { return x[0]; }).join('').toUpperCase();
+      if (!ini) ini = 'FS';
+      top = ini.length > 5 ? ini.slice(0, 5) : ini; mid = num || ini.slice(0, 2); if (num) num = '';
+    }
+    mid = mid.toUpperCase();
+    var c = HER[hsh(n) % HER.length];
+    var o = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
+      '<path d="M32 3 L56 10 V30 C56 45 45 55 32 61 C19 55 8 45 8 30 V10 Z" fill="' + c[0] + '" stroke="' + c[1] + '" stroke-width="2.5"/>' +
+      '<path d="M8.9 10.6 L32 3.9 L55.1 10.6 V20 H8.9 Z" fill="' + c[1] + '"/>' +
+      '<text x="32" y="17.4" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="9" font-weight="800" letter-spacing="0.5" fill="' + c[0] + '">' + esc(top) + '</text>' +
+      '<text x="32" y="' + (num ? 40 : 43) + '" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="' + (mid.length > 2 ? 15 : 19) + '" font-weight="800" fill="' + c[1] + '">' + esc(mid) + '</text>' +
+      (num ? '<text x="32" y="52" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="9" font-weight="700" fill="' + c[1] + '">' + esc(num) + '</text>' : '') + '</svg>';
+    return 'data:image/svg+xml,' + encodeURIComponent(o);
+  }
+  // key: OSM 'n123' / 'w123' when known; name: the station's name
+  window.__wfCrest = function (key, name) {
+    var C = window.__wfCrests || {}, hit = key ? C[key] : null;
+    if (hit) return { url: hit[0], kind: hit[1], label: hit[2] || '' };
+    return { url: drawn(name), kind: 'drawn', label: '' };
+  };
+  // A real crest that cannot load (offline, blocked) is replaced by the drawn one: every crest image carries data-crest="<station name>"
+  try { window.addEventListener('error', function (e) { var t = e.target; if (t && t.tagName === 'IMG' && t.getAttribute && t.getAttribute('data-crest') && !/^data:/.test(t.src)) t.src = window.__wfCrest('', t.getAttribute('data-crest')).url; }, true); } catch (e) {}
   var CACHE = {};
   // kit: 'pt' | 'anepc' | 'us' | 'calfire' | 'nv' | 'br'; chief: a coordinator or commander (helmet by rank)
   window.__wfAvatar = function (name, kit, chief) {
