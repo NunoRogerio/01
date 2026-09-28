@@ -157,6 +157,7 @@
     // The fire's history before this chat opened: a candidate starts at its detection; a fire already in progress gets
     // plausible earlier stages, so its timeline is complete from the first detection.
     if (+inc.ha > 0) ch.realHa = +inc.ha;
+    if (inc.past) { ch.past = true; ch.flags.air = !!inc.air; ch.flags.evac = !!inc.evac; if (inc.evac) ch.evac = { people: inc.evac }; }
     if (inc.res && inc.res.man != null) ch.realRes = { man: +inc.res.man || 0, terrain: +inc.res.terrain || 0, aerial: +inc.res.aerial || 0, estF: inc.res.estF || null };
     if (stage === 0) ch.hist.push({ s: 0, vt: Math.min(now, inc.det || now) });
     else if (inc.startMs && inc.startMs < now - 20 * MIN) {
@@ -164,7 +165,7 @@
       // take minutes; the rest of the time is shared between the later stages as such fires usually spend it.
       ch.startMs = inc.startMs;
       var cur = inc.curMs && inc.curMs > inc.startMs + 40 * MIN && inc.curMs < now ? inc.curMs : null;   // the official time of the current state
-      var D = ((cur || now) - inc.startMs) / MIN, fixed = [8, 3, 18], wts = [0, 0, 0, 150, 240, 300, 600], du = [];
+      var D = ((cur || now) - inc.startMs) / MIN, fixed = [8, 3, 18], wts = [0, 0, 0, 150, 240, 300, 600, 0], du = [];
       for (var q = 0; q <= stage; q++) du.push(q < 3 ? fixed[q] + hash(k + q) % 4 : wts[q] * (0.7 + (hash(k + q) % 60) / 100));
       var sF = 0, sW = 0; du.forEach(function (d, q) { if (q < 3) sF += d; else sW += d; });
       if (stage < 3 || D < sF * 1.5) du = du.map(function (d) { return d * D / (sF + sW); });
@@ -188,6 +189,7 @@
         c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); });
       }
       if (c.kind === 'fire' && c.startMs) backfill(c); else start(c);
+      if (c.past) closePast(c);
       save(); emit();
     });
     return ch;
@@ -279,6 +281,12 @@
         msg(0, 'On scene. Fire in ' + (us ? 'chaparral and dry grass' : 'pine and eucalyptus') + ', head running with the wind.', 'No local. Fogo em ' + (us ? 'chaparral e erva seca' : 'pinhal e eucaliptal') + ', cabeça a progredir com o vento.', at(3) + 3 * MIN);
         me('Anchor on the road, protect the homes first, then work the head.', 'Ancorem na estrada, protejam primeiro as casas e depois ataquem a cabeça.', at(3) + 6 * MIN);
         msg(1, 'Copy. Homes covered, starting on the flanks.', 'Entendido. Casas protegidas, a começar pelos flancos.', at(3) + 9 * MIN);
+        if (c.flags.air) { var heli = us ? 'Helicopter 15' : 'Helicóptero H-21'; c.air = { name: heli, kind: us ? 'Firefighting helicopter · LAFD Air Operations' : 'Helicóptero de ataque inicial · Força Aérea', st: 'released' };
+          msg(1, 'We need air support to hold the head before the ridge.', 'Precisamos de meio aéreo para segurar a cabeça antes da cumeada.', at(3) + 20 * MIN);
+          me('Air support approved.', 'Meio aéreo aprovado.', at(3) + 22 * MIN);
+          add({ kind: 'sys', en: heli + ' on scene · first water drops on the head', pt: heli + ' no local · primeiras descargas na cabeça' }, at(3) + 38 * MIN); }
+        if (c.evac) { me('Evacuation order for the homes north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.', at(3) + 30 * MIN);
+          add({ kind: 'sys', en: (us ? "Sheriff's deputies" : 'Local police (GNR)') + ' moving ' + c.evac.people + ' residents to safety', pt: (us ? 'Xerifes' : 'GNR') + ' a encaminhar ' + c.evac.people + ' moradores para local seguro' }, at(3) + 44 * MIN); }
       }
       if (q === 4) msg(0, 'Head is held. Working both flanks.', 'Cabeça dominada. A trabalhar os dois flancos.', at(4) + 4 * MIN);
       if (q === 5) msg(1, 'Perimeter held. Mop-up along the edge.', 'Perímetro dominado. Rescaldo no perímetro.', at(5) + 5 * MIN);
@@ -289,6 +297,42 @@
     }
     c.msgs.sort(function (a, b) { return a.vt - b.vt; });
     c.seenAt = now; c.updated = now; c.vNow = now; c.vAt = now;
+  }
+
+
+  // ---- past fires, already closed: their chats sit in the Resolved tab with the whole story -------------------------
+  function closePast(c) {
+    var t7 = (c.hist.find(function (h) { return h.s === 7; }) || {}).vt || Date.now() - 86400000, now = Date.now(), P = c.people;
+    var add = function (m, vt) { m.id = newId(); m.t = now - 1000; m.vt = vt; c.msgs.push(m); };
+    add({ kind: 'card', tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close the fire', pt: 'Encerrar o incêndio' }, close: true, done: 'close',
+      checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
+      actions: [{ key: 'close', en: 'Declare fire closed', pt: 'Declarar incêndio encerrado', primary: true }] }, t7 - 3 * MIN);
+    add({ kind: 'msg', from: 'me', en: 'Declaring the fire closed. Thank you all.', pt: 'Declaro o incêndio encerrado. Obrigado a todos.' }, t7 - MIN);
+    c.stage = 7; c.closed = true; c.closedVt = t7; c.vNow = t7; c.vAt = now;
+    (c.forces || []).forEach(function (f) { f.st = 'released'; }); if (c.air) c.air.st = 'released';
+    var sc = stageCard(c, 7); sc.kind = 'card'; add(sc, t7);
+    if (P[0]) add({ kind: 'msg', from: 0, en: 'Thanks everyone. Good work.', pt: 'Obrigado a todos. Bom trabalho.' }, t7 + 2 * MIN);
+    add({ kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#1E7A34' }, t7 + 3 * MIN);
+    c.msgs.sort(function (a, b) { return a.vt - b.vt; });
+    c.msgs.forEach(function (m) { m.t = Math.min(m.vt || m.t, now - DAY / 2); });   // a past fire: its messages belong to its own days
+    c.sum = stats(c); award(c); c.seenAt = now; c.updated = t7;
+  }
+  var DAY = 86400000;
+  var PAST = {
+    pt: [{ place: 'Manteigas', reg: 'Guarda', st: 'PT', lat: 40.40, lon: -7.54, d0: 9.4, d1: 7.1, ha: 212, air: 1, evac: 146 }, { place: 'Mação', reg: 'Santarém', st: 'PT', lat: 39.55, lon: -8.00, d0: 4.3, d1: 3.2, ha: 38 }],
+    ca: [{ place: 'Castaic', reg: 'Los Angeles', st: 'CA', lat: 34.49, lon: -118.61, d0: 8.2, d1: 6.4, ha: 164, air: 1, evac: 212 }, { place: 'Acton', reg: 'Los Angeles', st: 'CA', lat: 34.47, lon: -118.19, d0: 3.6, d1: 2.9, ha: 27 }],
+    nv: [{ place: 'Washoe Valley', reg: 'Washoe', st: 'NV', lat: 39.30, lon: -119.83, d0: 7.5, d1: 5.8, ha: 96, air: 1, evac: 88 }, { place: 'Carson City', reg: 'Carson City', st: 'NV', lat: 39.13, lon: -119.80, d0: 3.1, d1: 2.4, ha: 19 }],
+    amz: [{ place: 'Near Manaus', reg: 'Amazonas', st: 'AMZ', lat: -3.05, lon: -60.10, d0: 10.2, d1: 7.6, ha: 480, air: 1 }, { place: 'Near Porto Velho', reg: 'Rondônia', st: 'AMZ', lat: -8.70, lon: -63.85, d0: 5.1, d1: 3.9, ha: 75 }]
+  };
+  PAST.design = [PAST.pt[0], PAST.ca[0]]; PAST.admin = [PAST.pt[0], PAST.ca[0]];
+  function seedPast() {
+    var db = load(); if (db.pastSeeded) return; db.pastSeeded = true; save();
+    var now = Date.now();
+    (PAST[role] || PAST.admin).forEach(function (f, i) {
+      create({ kind: 'fire', id: 'SIM-' + (role || 'x') + '-' + i, place: f.place, reg: f.reg, st: f.st, lat: f.lat, lon: f.lon, sc: 10, past: true, air: f.air, evac: f.evac, ha: f.ha,
+        x: Math.round((f.lon + 118.13) * 2345 + 518), y: Math.round((34.19 - f.lat) * 2829 + 662), note: 'Closed · simulation',
+        startMs: now - f.d0 * DAY, curMs: now - f.d1 * DAY });
+    });
   }
 
   function start(c) {
@@ -796,4 +840,5 @@
     reset: function () { DB = { chats: {} }; save(); emit(); }
   };
   tick();
+  if (role) setTimeout(seedPast, 400);   // two past fires per profile, already resolved, for the Resolved tab
 })();
