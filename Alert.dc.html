@@ -292,7 +292,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 0 16px; padding: 12px 0 8px; border-top: 1px solid rgba(60,60,67,0.12); font-size: 17px; line-height: 22px; color: #3C3C43">
         <span style="display: {{locD}}">{{locTxt}}</span>
-        <button type="button" class="btn wf-ghost" onClick="{{openMap}}" style="height: 36px; margin: 0; padding: 0 14px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500">View on map</button>
+        <button type="button" class="btn wf-ter" onClick="{{openMap}}" style="height: 36px; margin: 0; padding: 0 14px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500">View on map</button>
       </div>
       </div>
     </section>
@@ -329,7 +329,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           Dismiss ignition
         </button>
       </div>
-      <a href="Main.dc.html" data-wf-back="1" class="btn wf-ghost" onClick="{{navBack}}" style="height: 44px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Go back</a>
+      <a href="Main.dc.html" data-wf-back="1" class="btn wf-ter" onClick="{{navBack}}" style="height: 44px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Go back</a>
     </div>
     </div>
   </sc-if>
@@ -351,7 +351,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
     <div class="pop" role="status" style="position: absolute; left: 50%; top: 132px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: rgba(255,255,255,0.94); border: 1px solid rgba(60,60,67,0.11); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 30px -10px rgba(0,0,0,0.176); white-space: nowrap; font-size: 15px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>{{toastText}}
-      <button type="button" class="btn wf-ghost" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #0062CC; font-size: 17px; font-weight: 600">Undo</button>
+      <button type="button" class="btn wf-ter" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #0062CC; font-size: 17px; font-weight: 600">Undo</button>
     </div>
   </sc-if>
 

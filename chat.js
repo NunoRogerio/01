@@ -509,7 +509,9 @@
   // unprompted progress updates are written by Claude, in character, from the whole picture of the fire. Without a key,
   // or if a call fails, the in-app replies above take over, so the chat never stalls.
   var AIK = 'wf-ai-key', AIS = 'wf-ai-status', MODELS = ['claude-sonnet-5', 'claude-haiku-4-5-20251001'];
-  function aiKey() { try { return localStorage.getItem(AIK) || ''; } catch (e) { return ''; } }
+  function rawKey() { try { return localStorage.getItem(AIK) || ''; } catch (e) { return ''; } }
+  function aiOff() { try { return localStorage.getItem('wf-ai-off') === '1'; } catch (e) { return false; } }
+  function aiKey() { return aiOff() ? '' : rawKey(); }   // switched off: the key stays saved, the in-app replies are used
   function aiStatus(st) { if (st) { try { localStorage.setItem(AIS, JSON.stringify(st)); } catch (e) {} try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} return st; } try { return JSON.parse(localStorage.getItem(AIS) || 'null'); } catch (e) { return null; } }
   function aiCall(system, user, maxTok, cb, mi) {
     var k = aiKey(); mi = mi || 0; if (!k) return cb(new Error('No API key'));
@@ -741,9 +743,10 @@
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { c.seenAt = Date.now(); save(); emit(); } },
     send: send, act: act,
-    ai: { key: aiKey, status: function () { return aiStatus(); },
+    ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
+      setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
       set: function (k, cb) { k = String(k || '').trim(); try { if (k) localStorage.setItem(AIK, k); else { localStorage.removeItem(AIK); localStorage.removeItem(AIS); } } catch (e) {} emit();
-        if (k) aiCall('Reply with the single word: ready', 'Ready?', 5, function (err) { if (cb) cb(err); }); else if (cb) cb(null); } },
+        if (k) { try { localStorage.removeItem('wf-ai-off'); } catch (e) {} } if (k) aiCall('Reply with the single word: ready', 'Ready?', 5, function (err) { if (cb) cb(err); }); else if (cb) cb(null); } },
     // The system calls you when a candidate is detected in your area: one chat is started for the most likely one
     autoStart: function (inc) { var db = load(); if (db.auto || !inc) return; db.auto = true; save(); create(inc); },
     reset: function () { DB = { chats: {} }; save(); emit(); }
