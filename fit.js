@@ -13,7 +13,6 @@
     {f:"forest-6.webp",g:'forest',by:"John O'Nolan",alt:"Forest canopy from above",b:0.9},
     {f:"forest-7.webp",g:'forest',by:"shayd johnson",alt:"Tall conifers from above",b:1},
     {f:"forest-8.webp",g:'forest',by:"Adam Vradenburg",alt:"Dense forest from above",b:1},
-    {f:"flower-1.webp",g:'macro',by:"Olga Kozachenko",alt:"Yellow and purple flower, macro",b:0.53},
     {f:"leaf-1.webp",g:'macro',by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1}];
   var G=['forest','macro'].filter(function(g){return L.some(function(p){return p.g===g;});});
   var sh=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;};
