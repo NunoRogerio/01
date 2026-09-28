@@ -112,8 +112,10 @@
 
   // ---- forces: one crew per station, led by the station's crew coordinator ------------------------------------------
   function pickNames(c, n, salt) {
-    var pool = NAMES[langOf(c)] || NAMES.us, used = c.used || (c.used = {}), out = [], i = hash(c.key + salt);
-    while (out.length < n) { var nm = pool[i % pool.length]; i += 7; if (!used[nm]) { used[nm] = 1; out.push(nm); } if (out.length + Object.keys(used).length > pool.length * 2) break; }
+    // Walk the whole pool once from a stable starting point; if every name is taken, reuse names rather than loop forever
+    var pool = NAMES[langOf(c)] || NAMES.us, used = c.used || (c.used = {}), out = [], i0 = hash(c.key + salt);
+    for (var j = 0; j < pool.length && out.length < n; j++) { var nm = pool[(i0 + j) % pool.length]; if (!used[nm]) { used[nm] = 1; out.push(nm); } }
+    for (var k = 0; out.length < n; k++) out.push(pool[(i0 + k) % pool.length]);
     return out;
   }
   function vehiclesFor(c, s, i) {
@@ -482,6 +484,37 @@
     for (var i = 0; i < P.length; i++) { var fn = P[i].name.split(' ')[0].toLowerCase(); if (low.indexOf(fn) >= 0 || (P[i].org && low.indexOf(P[i].org.toLowerCase()) >= 0)) return i; }
     return -1;
   }
+
+  // Orders configured on the fire's dispatch screen: the chat records what was actually sent, the chosen stations'
+  // crews go en route (a station not yet in the chat joins with its coordinator), and the fire moves on.
+  function dispatched(key, orders) {
+    var c = load().chats[key]; if (!c || c.dismissed || c.stage > 1) return;
+    orders = (orders || []).filter(function (o) { return o && o.name && o.id !== 'air'; });
+    if (!orders.length) return;
+    var norm = function (t) { return String(t || '').toLowerCase().replace(/[^a-z0-9à-ÿ]+/g, ' ').trim(); };
+    var sent = [];
+    orders.forEach(function (o) {
+      var i = c.stations.findIndex(function (st) { var a = norm(st.name), b = norm(o.name); return a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0; });
+      if (i < 0) {
+        c.stations.push({ name: o.name, short: shortStation(o.name), km: o.km || 5, min: o.eta || 10 });
+        i = c.stations.length - 1; var nm = pickNames(c, 1, 'd' + i)[0];
+        c.people.push({ name: nm, code: initials(nm), org: shortStation(o.name), kind: 'lead' });
+        sys(c, nm + ', crew coordinator of ' + shortStation(o.name) + ', joined', nm + ', coordenador de equipa de ' + shortStation(o.name) + ', entrou na conversa', 300, 0);
+      }
+      var f = (c.forces || []).find(function (x) { return x.si === i; }) || (function () { var ff = forceFor(c, i, 'enroute'); c.forces = (c.forces || []).concat([ff]); return ff; })();
+      f.st = 'enroute'; if (o.units && o.units.length) f.veh = o.units.map(function (u) { return u.n + ' × ' + u.label; });
+      sent.push({ i: i, txt: c.stations[i].short + (o.units && o.units.length ? ' (' + o.units.map(function (u) { return u.n + ' ' + u.label.toLowerCase(); }).join(', ') + ')' : '') });
+    });
+    (c.forces || []).forEach(function (f) { if (!sent.some(function (x) { return x.i === f.si; }) && f.st !== 'enroute') f.st = 'standby'; });
+    c.flags.dispatched = true;
+    mine(c, 'Dispatch orders sent: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.', 'Ordens de despacho enviadas: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.');
+    var cm = c.msgs.filter(function (x) { return x.kind === 'card' && x.stage === 1; }).pop();
+    if (cm && cm.rows) cm.rows.forEach(function (r, i) { var on = sent.some(function (x) { return x.i === i; }); r.r = on ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = on ? '#1E7A34' : '#875800'; });
+    say(c, sent[0].i < c.people.length ? sent[0].i : 0, 'Order received. Rolling now.', 'Ordem recebida. A sair agora.', 1500, 1);
+    setStage(c, 2, 3000, 2);
+    c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
+  }
+
   function send(key, text) {
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
@@ -742,7 +775,7 @@
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { c.seenAt = Date.now(); save(); emit(); } },
-    send: send, act: act,
+    send: send, act: act, dispatched: dispatched,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
       setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
       set: function (k, cb) { k = String(k || '').trim(); try { if (k) localStorage.setItem(AIK, k); else { localStorage.removeItem(AIK); localStorage.removeItem(AIS); } } catch (e) {} emit();

@@ -68,7 +68,7 @@
     o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
     o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
-    o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(215,244,26,0.1);--wf-ter-fg:#E8E8ED}');
+    o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#E8E8ED}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#404043!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
@@ -93,9 +93,9 @@
 
   // Button colours, one definition for the whole app: secondary = dark grey with the hi-vis yellow label;
   // tertiary (subtle) = the yellow at 10% with dark text by day and light text at night. (Primary stays hi-vis yellow.)
-  var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:#D7F41A;--wf-ter-bg:rgba(215,244,26,0.1);--wf-ter-fg:#3A3A3C}' +
+  var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:#D7F41A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
-    ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;border-color:transparent!important}' +
+    ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}';   // switch thumbs stay white in both themes
   function apply() {
     var theme = get('theme', 'light'), size = get('text', 'normal');
