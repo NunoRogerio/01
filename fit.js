@@ -121,6 +121,8 @@ window.__wfBlink=function(path,dur){
       v=(v||'').trim();if(!v)return false;
       var seen='';try{seen=localStorage.getItem(K)||'';}catch(e){}
       if(seen===v)return false;
+      // right after log in the loading screen plays out undisturbed; the new version loads next time the app comes back
+      var sf=false;try{sf=sessionStorage.getItem('wf-soft')==='1';}catch(e){}if(sf||window.__wfSoftPage)return false;
       try{localStorage.setItem(K,v);}catch(e){}
       if(!seen)return false;                            // first run: nothing older to replace
       window.__wfUpdating=true;
@@ -129,7 +131,7 @@ window.__wfBlink=function(path,dur){
       // the phone's copy of every file first; otherwise the new page could still run an old map.
       var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js','index.html'];
       // The new page opens as this one would have: the opening loading screen, or the one after log in, plays there once
-      var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');if(window.__wfSoftPage)sessionStorage.setItem('wf-soft','1');}catch(e){}location.replace(u);};
+      var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');}catch(e){}location.replace(u);};
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
       return true;
     }).catch(function(){return false;});
@@ -219,7 +221,10 @@ window.__wfBlink=function(path,dur){
     if(handLayout(o,L0,true)){var pc0=o.querySelector('.pct');if(pc0)pc0.textContent='0%';}
     document.body.appendChild(o);requestAnimationFrame(function(){requestAnimationFrame(function(){o.style.opacity='1';});});
   };
-  var soft=false;try{soft=sessionStorage.getItem('wf-soft')==='1';sessionStorage.removeItem('wf-soft');}catch(e){}
+  // The loading screen shows only right after tapping Log in (the sign-in screen hands its layout over). Anything else
+  // (a reload for a new version, a notification, a chat message, reopening the app) goes straight to the screen.
+  var soft=false;try{soft=sessionStorage.getItem('wf-soft')==='1'&&!!LAY;sessionStorage.removeItem('wf-soft');}catch(e){}
+  if(!soft){try{sessionStorage.removeItem('wf-soft-layout');sessionStorage.removeItem('wf-soft-photo');}catch(e){}}
   if(soft){var ss=document.createElement('style');ss.textContent='#wf-load{transition:opacity .8s cubic-bezier(.4,0,.2,1)}#wf-load .in{animation-duration:.8s;animation-delay:.5s}'+
     '#dc-root{opacity:0;transform:scale(1.012);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}html.wf-in #dc-root{opacity:1;transform:none}';document.head.appendChild(ss);}
   var ZOOM=null,PHS=soft?handPH(HAND):null;try{sessionStorage.removeItem('wf-soft-photo');}catch(e){}
