@@ -347,7 +347,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- (Grabbers sit 8px from their blade's edge. Panels that drop down from the top stop 32px above the screen's bottom edge, clear of the iOS home indicator.) -->
   <!-- Notifications: grow down out of the top blade; close with the X (a gentle quarter turn) or by tapping outside -->
   <div class="scrim" aria-hidden="true" style="position: absolute; inset: 0; z-index: 39; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{nt.op}}; pointer-events: {{nt.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-labelledby="ntTitle" aria-hidden="{{nt.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 32px; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{nt.y}}); visibility: {{nt.vis}}; pointer-events: {{nt.pe}}; transition: transform {{nt.dur}} {{nt.ease}}, visibility 0s linear {{nt.visDelay}}">
+  <section role="dialog" aria-modal="true" aria-labelledby="ntTitle" aria-hidden="{{nt.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 32px; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{nt.y}}); translate: 0 {{nt.dy}}px; visibility: {{nt.vis}}; pointer-events: {{nt.pe}}; transition: transform {{nt.dur}} {{nt.ease}}, visibility 0s linear {{nt.visDelay}}">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px; flex-shrink: 0">
       <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px">
         <h2 id="ntTitle" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Notifications</h2>
@@ -373,11 +373,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </ul>
       <span style="display: {{nt.listD}}; padding: 8px 4px 0; font-size: 13px; line-height: 18px; color: #545458">{{nt.note}}</span>
     </div>
+    <div role="button" tabindex="0" aria-label="Close notifications" onPointerDown="{{nt.h.down}}" onPointerMove="{{nt.h.move}}" onPointerUp="{{nt.h.up}}" onPointerCancel="{{nt.h.cancel}}" onKeyDown="{{nt.h.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; margin-top: auto; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
 
   <div class="scrim" aria-hidden="true" style="position: absolute; inset: 0; z-index: 39; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{pfScrimOp}}; pointer-events: {{pfPE}}; transition: opacity .35s ease"></div>
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
-  <section role="dialog" aria-modal="true" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 32px; z-index: 40; overflow: hidden; border-radius: 0 0 28px 28px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{pfY}}); visibility: {{pfVis}}; pointer-events: {{pfPE}}; transition: transform {{pfDur}} {{pfEase}}, visibility 0s linear {{pfVisDelay}}">
+  <section role="dialog" aria-modal="true" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 32px; z-index: 40; overflow: hidden; border-radius: 0 0 28px 28px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{pfY}}); translate: 0 {{pfDy}}px; visibility: {{pfVis}}; pointer-events: {{pfPE}}; transition: transform {{pfDur}} {{pfEase}}, visibility 0s linear {{pfVisDelay}}">
     <h2 id="pfTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Preferences</h2>
     <div style="position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; height: 62px; padding: 0 64px; opacity: {{pfInOp}}; transition: opacity .3s ease {{pfInDelay}}">
     <span aria-hidden="true" style="display: flex; flex-shrink: 0; margin: 0; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em; color: #545458; white-space: nowrap">
@@ -417,6 +418,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <a href="Login.dc.html" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; height: 50px; border-radius: 10px; color: #0062CC; font-size: 17px; text-decoration: none">Sign out</a>
     </div>
+    <div role="button" tabindex="0" aria-label="Close preferences" onPointerDown="{{hPf.down}}" onPointerMove="{{hPf.move}}" onPointerUp="{{hPf.up}}" onPointerCancel="{{hPf.cancel}}" onKeyDown="{{hPf.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; margin-top: auto; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
   </div>
 </div>
@@ -615,7 +617,7 @@ class Component extends DCLogic {
       opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, pick: () => { if (o[0] !== cur) pick(o[0]); } })) }; };
     return {
       me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
-      pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none', pfScrimOp: pf ? 1 : 0,
+      pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none', pfScrimOp: pf ? 1 : 0, pfDy: this.wfDrag('pf').y, hPf: this.wfHandle('pf', 'up', () => this.setState({ pf: false })),
       pfY: pf ? '0%' : '-104%', pfDur: boot ? '0s' : pf ? '.55s' : '.45s', pfEase: pf ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)',
       pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
       pfInOp: pf ? 1 : 0, pfInY: pf ? '0px' : '-12px', pfInDelay: boot ? '0s' : pf ? '.15s' : '0s', pfXRot: s.pfSpin ? '90deg' : '0deg',
@@ -706,7 +708,7 @@ class Component extends DCLogic {
       note: 'Station updates are examples until a dispatch feed is connected.',
       aria: unread ? 'Notifications, ' + unread + ' unread' : 'Notifications', str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
       op: open ? 1 : 0, pe: open ? 'auto' : 'none', y: open ? '0%' : '-104%', dur: open ? '.55s' : '.45s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '.5s',
-      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg',
+      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg', dy: this.wfDrag('nt').y, h: this.wfHandle('nt', 'up', () => this.setState({ ntOpen: false })),
       open: () => { this.setState({ ntOpen: true, scOpen: false }); },
       close: () => { if (this._ntT) return; this.wfNtSeen(now); this.setState({ ntSpin: true }); this._ntT = setTimeout(() => { this._ntT = null; this.setState({ ntOpen: false, ntSpin: false }); }, 260); }
     };
@@ -716,7 +718,7 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 116, scrimBg: side ? 'transparent' : 'rgba(0,0,0,0.32)', scrimBlur: side ? 'none' : 'blur(3px)' };
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 116, scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
     const L = this.wfLayout();
