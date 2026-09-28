@@ -181,19 +181,27 @@ window.__wfBlink=function(path,dur){
   el.innerHTML=TPL;
   (document.body||document.documentElement).appendChild(el);
   var PH=window.__wfSplashPH();
+  // Sign in hands its photo over (which photo, and how far it had zoomed): the loading screen carries on with that very
+  // photo from that zoom at the same steady pace, so the picture never jumps. RATE: the slideshow's zoom per second.
+  var RATE=0.3/18,HAND=null;try{HAND=JSON.parse(sessionStorage.getItem('wf-soft-photo')||'null');}catch(e){}
+  var handPH=function(h){var q=h&&(window.__wfPhotoList||[]).find(function(x){return x.f===h.f;});return q?[q.f,q.alt,q.by,q.b]:null;};
+  var handS=function(h){return h?h.s+RATE*Math.max(0,Date.now()-h.t)/1000:1;};
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
   // The black-and-white forest, as the loading screen starts: used by the sign-in screen to hand over without a gap.
   var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:grayscale(1) brightness('+(0.92*(ph[3]||1)).toFixed(2)+')';return d;};
   window.__wfSoftOut=function(){
+    var H0=window.__wfSoftPhoto||null;if(H0){try{sessionStorage.setItem('wf-soft-photo',JSON.stringify(H0));}catch(e){}}
     var o=document.createElement('div');o.id='wf-load';o.className='photo';o.innerHTML=TPL;o.style.opacity='0';o.style.transition='opacity .4s cubic-bezier(.4,0,.2,1)';
-    var ph=PH[nxt],b=o.querySelector('.bg');b.appendChild(grayLayer(ph));b.style.transition='none';b.className='bg on';b.style.transform='scale(1)';
+    var ph=handPH(H0)||PH[nxt],b=o.querySelector('.bg'),s0=handS(H0),z0=document.createElement('div');z0.style.cssText='position:absolute;inset:0;transform:scale('+s0+');transition:transform 30s linear';z0.appendChild(grayLayer(ph));b.appendChild(z0);b.style.transition='none';b.className='bg on';b.style.transform='none';requestAnimationFrame(function(){z0.style.transform='scale('+(s0+RATE*30)+')';});
     o.querySelector('.in').style.animation='none';o.querySelector('.in').style.opacity='1';o.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
     document.body.appendChild(o);requestAnimationFrame(function(){requestAnimationFrame(function(){o.style.opacity='1';});});
   };
   var soft=false;try{soft=sessionStorage.getItem('wf-soft')==='1';sessionStorage.removeItem('wf-soft');}catch(e){}
-  if(soft){var ss=document.createElement('style');ss.textContent='#wf-load{transition:opacity .4s cubic-bezier(.4,0,.2,1)}#wf-load .in{animation-duration:.8s;animation-delay:.5s}'+
+  if(soft){var ss=document.createElement('style');ss.textContent='#wf-load{transition:opacity .8s cubic-bezier(.4,0,.2,1)}#wf-load .in{animation-duration:.8s;animation-delay:.5s}'+
     '#dc-root{opacity:0;transform:scale(1.012);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}html.wf-in #dc-root{opacity:1;transform:none}';document.head.appendChild(ss);}
-  if(soft){try{var ph0=PH[nxt],b0=el.querySelector('.bg');b0.appendChild(grayLayer(ph0));b0.style.transition='none';b0.className='bg on';b0.style.transform='scale(1)';el.className='photo';
+  var ZOOM=null,PHS=soft?handPH(HAND):null;try{sessionStorage.removeItem('wf-soft-photo');}catch(e){}
+  if(soft){try{var ph0=PHS||PH[nxt],b0=el.querySelector('.bg'),s1=handS(HAND);ZOOM=document.createElement('div');ZOOM.style.cssText='position:absolute;inset:0;transform:scale('+s1+');transition:transform 30s linear;will-change:transform';
+    ZOOM.appendChild(grayLayer(ph0));b0.appendChild(ZOOM);b0.style.transition='none';b0.className='bg on';b0.style.transform='none';el.className='photo';requestAnimationFrame(function(){ZOOM.style.transform='scale('+(s1+RATE*30)+')';});
     var in0=el.querySelector('.in');in0.style.animation='none';in0.style.opacity='1';el.querySelector('.cap').textContent=ph0[1]+' · Photo: '+ph0[2]+' / Unsplash';}catch(e){}}
   var t0=Date.now(),minMs=0;
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
@@ -214,14 +222,14 @@ window.__wfBlink=function(path,dur){
   var wave=null;
   if(cold||soft){
     if(!soft)minMs=Math.max(minMs,4600);
-    var ph=PH[nxt],im=new Image(),bg=el.querySelector('.bg');
+    var ph=(soft&&PHS)||PH[nxt],im=new Image(),bg=el.querySelector('.bg');
     var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+(ph[3]<1?f.replace('none','')+' brightness('+ph[3]+')':f);return d;};
-    var zoom=document.createElement('div');var zOut=nxt%2===1;   // every other launch zooms out, the others zoom in
-    zoom.style.cssText='position:absolute;inset:0;transform:scale('+(zOut?1.12:1)+');transition:transform 12s cubic-bezier(.2,.6,.3,1);will-change:transform';
+    // one steady zoom-in for the whole loading screen (after log in it is the one already running, carried on from sign in)
+    var zoom=ZOOM||document.createElement('div');if(!ZOOM)zoom.style.cssText='position:absolute;inset:0;transform:scale(1);transition:transform 30s linear;will-change:transform';
     var gray=mk('grayscale(1) brightness(.92)'),norm=mk('none'),hot=mk('saturate(3) contrast(1.08) brightness(1.08)');
     zoom.appendChild(gray);zoom.appendChild(hot);zoom.appendChild(norm);
     im.onload=function(){if(!el.parentNode)return;
-      bg.appendChild(zoom);el.className='photo';el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
+      if(!ZOOM)bg.appendChild(zoom);el.className='photo';el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
       var sv=el.querySelector('svg').getBoundingClientRect(),cx=sv.left+sv.width/2,cy=sv.top+sv.height/2;
       var W=innerWidth,H=innerHeight,R=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy)),band=75;   // R: the farthest screen corner from the logo
       // The colour wave: an organic, rounded but irregular front that keeps changing shape as it spreads out. It is the
@@ -239,7 +247,7 @@ window.__wfBlink=function(path,dur){
           m2.push('radial-gradient('+at+',#000 '+Math.max(0,rr-band*.15)+'px,rgba(0,0,0,.5) '+Math.max(0,rr+band*.3)+'px,transparent '+Math.max(1,rr+band*.75)+'px)');   // the saturated glow reaching just past it
         });
         norm.style.webkitMaskImage=norm.style.maskImage=m1.join(',');hot.style.webkitMaskImage=hot.style.maskImage=m2.join(',');};
-      paint(0);requestAnimationFrame(function(){bg.className='bg on';zoom.style.transform='scale('+(zOut?1:1.12)+')';});
+      paint(0);requestAnimationFrame(function(){bg.className='bg on';if(!ZOOM)zoom.style.transform='scale('+(1+RATE*30)+')';});
       // The wave spreads steadily with time over the loading time; the counter reads its progress, so both stay in step.
       // While live data is still coming it glides to a stop short of the edges, then carries on; every change of pace
       // is smoothed over about a quarter of a second, so it never stutters.
@@ -252,7 +260,7 @@ window.__wfBlink=function(path,dur){
         // in step with the counter: at n% the front has covered n% of the way to the farthest corner, and at 100% the
         // normal colour has just reached every corner (the shape's smallest lobe included)
         var q=Math.min(1,wave.p);paint(q*(R+band*1.5)/.94);
-        if(wave.p>.985&&ready&&tp>=1){wave.p=1;wave.done=true;norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
+        if(wave.p>.985&&ready&&tp>=1){wave.p=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
     var start=function(up){if(!up&&!im.src)im.src='assets/splash/'+ph[0];};
@@ -276,9 +284,9 @@ window.__wfBlink=function(path,dur){
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
-    if(!window.__wfUpdating&&((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done)&&pctDone)||Date.now()-t0>17000)){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
+    if(!window.__wfUpdating&&((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||(wave.done&&Date.now()-wave.at>=500))&&pctDone)||Date.now()-t0>17000)){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
       // warm the next photo into the cache for the next cold start
-      try{var P2=window.__wfSplashPH(),n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%P2.length;(new Image()).src='assets/splash/'+P2[n][0];}catch(e){}},soft?450:350);return;}
+      try{var P2=window.__wfSplashPH(),n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%P2.length;(new Image()).src='assets/splash/'+P2[n][0];}catch(e){}},soft?850:350);return;}
     setTimeout(tick,80);
   })();
 })();
