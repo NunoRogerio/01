@@ -189,11 +189,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 163px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
-  <header class="fade" data-pull="down" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 38px 12px">
+  <header class="fade" data-pull="down" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 32px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-        <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
+      <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
+        <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px">{{scope.title}}</span>
       </span>
       <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
     </button>
@@ -273,8 +273,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section role="dialog" data-swipe="up" data-swipe-key="sc" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 32px; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 24px 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px; flex-shrink: 0">
       <button type="button" class="opt" data-swipe-go="1" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-        <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-          <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{scope.title}}</span>
+        <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
+          <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px">{{scope.title}}</span>
         </span>
         <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
       </button>
