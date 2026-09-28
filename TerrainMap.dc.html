@@ -90,8 +90,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <path d="{{bf.front}}" fill="none" stroke="#E8590C" stroke-opacity="0.95" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#D9480F;#FF7A1A;#D9480F" dur="2.4s" repeatCount="indefinite"></animate></path>
       </sc-for>
       <sc-if value="{{isSpread}}" hint-placeholder-val="{{ false }}">
-        <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3 6" vector-effect="non-scaling-stroke"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.2s" repeatCount="indefinite"></animate></path>
-        <path d="{{route}}" fill="none" stroke="#0079A6" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 7" vector-effect="non-scaling-stroke" style="opacity: {{routeOp}}"><animate attributeName="stroke-dashoffset" values="18;0" dur="0.9s" repeatCount="indefinite"></animate></path>
+        <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="{{lw.w12}}" stroke-linecap="round" stroke-dasharray="{{lw.d36}}"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="1.2s" repeatCount="indefinite"></animate></path>
+        <path d="{{route}}" fill="none" stroke="#0079A6" stroke-width="{{lw.w16}}" stroke-linecap="round" stroke-dasharray="{{lw.d27}}" style="opacity: {{routeOp}}"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="0.9s" repeatCount="indefinite"></animate></path>
         <sc-if value="{{fakeSpread}}" hint-placeholder-val="{{ true }}">
         <g transform="translate({{fdx}} {{fdy}})">
         <ellipse cx="540" cy="340" rx="112" ry="52" transform="rotate(-35 540 340)" fill="#E86A00" fill-opacity="{{r3.fill}}" stroke="#E86A00" stroke-opacity="{{r3.stroke}}" stroke-width="{{r3.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
@@ -109,13 +109,13 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       </sc-if>
       <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
         <sc-for list="{{camLines}}" as="ln" hint-placeholder-count="3">
-          <path d="{{ln.d}}" fill="none" stroke="#0079A6" stroke-width="1.3" stroke-dasharray="3 6" stroke-linecap="round" vector-effect="non-scaling-stroke" style="opacity: 0.85"><animate attributeName="stroke-dashoffset" values="18;0" dur="1.2s" repeatCount="indefinite"></animate></path>
+          <path d="{{ln.d}}" fill="none" stroke="#0079A6" stroke-width="{{lw.w13}}" stroke-dasharray="{{lw.d36}}" stroke-linecap="round" style="opacity: 0.85"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="1.2s" repeatCount="indefinite"></animate></path>
         </sc-for>
         <circle cx="{{pin.x}}" cy="{{pin.y}}" r="9" fill="#E86A00" fill-opacity="0.1" stroke="#E86A00" stroke-width="1.2" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></circle>
       </sc-if>
       <sc-for list="{{routeLines}}" as="rl" hint-placeholder-count="0">
-        <path d="{{rl.d}}" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" style="opacity: 0.9"></path>
-        <path d="{{rl.d}}" fill="none" stroke="#0057D9" stroke-width="3.5" stroke-dasharray="7 5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+        <path d="{{rl.d}}" fill="none" stroke="#FFFFFF" stroke-width="{{lw.w70}}" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.9"></path>
+        <path d="{{rl.d}}" fill="none" stroke="#0057D9" stroke-width="{{lw.w35}}" stroke-dasharray="{{lw.d75}}" stroke-linecap="round" stroke-linejoin="round"></path>
       </sc-for>
     </svg>
   </div>
@@ -1102,6 +1102,8 @@ class Component extends DCLogic {
       isRisk, isSpread: mode === 'spread', isPin,
       pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g && window.__wfConfC ? window.__wfConfC(g.conf) : g ? (g.conf > 75 ? '#7A3FE0' : g.conf >= 50 ? '#0A6FDB' : '#48484A') : '#E86A00'; })(),
       pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
+      lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w70: +(7 * k).toFixed(5),
+        d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
       routeLines: this.recMode() ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
       camLines: isPin ? (Array.isArray(p.cams) ? p.cams : []).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
       camMarks: isPin ? (Array.isArray(p.cams) ? p.cams : []).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Evidence source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
