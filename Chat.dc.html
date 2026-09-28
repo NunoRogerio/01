@@ -358,12 +358,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
         </button>
       </section>
-      <sc-if value="{{sim.can}}" hint-placeholder-val="{{ true }}">
-        <div style="display: flex; flex-direction: column; gap: 8px">
-          <button type="button" class="chbtn" onClick="{{sim.go}}" style="height: 52px; border: 0; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{sim.label}}</button>
-          <span style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{sim.note}}</span>
-        </div>
-      </sc-if>
       <p style="display: {{sum.noteD}}; margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{sum.note}}</p>
     </div>
   </sc-if>
