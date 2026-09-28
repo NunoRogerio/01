@@ -275,7 +275,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; margin-top: {{panelMt}}; background: #F2F2F7; border-radius: 0; box-shadow: {{panelSh}}; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
       <!-- The current conclusion, in its own card: verdict and status on the left, the likelihood KPI on the right -->
-      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px; border-radius: 14px; background: #FFFFFF">
+      <div style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px">
         <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0">
           <h2 id="ai" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
           <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
@@ -284,6 +285,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span class="kpi" style="color: {{ringC}}">{{cur.conf}}%</span>
           <span style="font-size: 15px; line-height: 19px; color: #545458; white-space: nowrap">Likelihood</span>
         </span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 0 16px; padding: 12px 0 8px; border-top: 1px solid rgba(60,60,67,0.12); font-size: 17px; line-height: 22px; color: #3C3C43">
+        <span style="display: {{locD}}">{{locTxt}}</span>
+        <button type="button" class="btn" onClick="{{openMap}}" style="height: 36px; margin: 0 0 0 -12px; padding: 0 12px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500">View on map</button>
+      </div>
       </div>
     </section>
 
@@ -296,9 +302,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <ul class="wf-snap" style="display: flex; flex-direction: column; flex: 0 1 auto; min-height: 96px; margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; list-style: none; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
-          <li style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 12px 16px {{r.padB}}; border-top: {{r.sep}}; font-size: 17px; line-height: 22px; color: {{r.color}}">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="{{r.icon}}"></path></svg>
-            <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0">{{r.t}}<button type="button" class="btn" onClick="{{openMap}}" style="display: {{r.mapD}}; height: 36px; margin: 0 0 0 -12px; padding: 0 12px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500">View on map</button></span>
+          <li style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 12px 16px; border-top: {{r.sep}}; font-size: 17px; line-height: 22px; color: {{r.color}}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="{{r.icon}}"></path></svg>{{r.t}}
           </li>
         </sc-for>
       </ul>
@@ -631,10 +636,11 @@ class Component extends DCLogic {
       const time = d && !isNaN(d) ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
       const day = d && !isNaN(d) ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) : '';
       const ll = Math.abs(L.lat).toFixed(4) + '° ' + (L.lat >= 0 ? 'N' : 'S') + ' · ' + Math.abs(L.lon).toFixed(4) + '° ' + (L.lon >= 0 ? 'E' : 'W');
-      const reasons = [...(L.near ? [[L.near + (c.co ? ', ' + c.co : ''), true]] : []), ['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
+      const loc = [L.near ? L.near + (c.co ? ', ' + c.co : '') : (c.co || ''), L.ll || ''].filter(Boolean).join(' · ');
+      const reasons = [['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
         [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
         ['Not yet confirmed on the ground', false]];
-      return { id: c.id, place: c.place, ll: L.ll || '', reg: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
+      return { id: c.id, place: c.place, ll: L.ll || '', loc, reg: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
         agree: c.agree, srcList: c.srcList, src: c.src, st: c.st || '', drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y + 12, zoom: 2.6, fsZoom: 2.6,   // pin sits a little above centre, leaving room for its label
         coords: 'Heat is inside the dashed circle · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
     };
@@ -763,8 +769,9 @@ class Component extends DCLogic {
       cur, tab, box: boxFor(tab, 390, 248, true, 0),
       tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#FFFFFF' : '#98989F', pick: () => this.setState({ tab: t.id }) })),
       nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
-      // The location row carries the coordinates and the map button (the first row; live candidates start with where the heat is)
-      reasons: cur.reasons.map(([t, ok], i) => ({ t: i === 0 && cur.ll ? t + ' · ' + cur.ll : t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', mapD: i === 0 ? 'flex' : 'none', padB: i === 0 ? '8px' : '12px' })),
+      // Location is not evidence: it sits in the conclusion card with the map button
+      locTxt: cur.loc || cur.coords || '', locD: (cur.loc || cur.coords) ? 'block' : 'none',
+      reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: cur.conf > 75 ? '#7A3FE0' : cur.conf >= 50 ? '#0A66CC' : '#48484A', ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
