@@ -148,7 +148,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.title}}" sub="{{m.body}}" action="{{m.link}}" credit="0" style="margin-top: 8px; cursor: pointer"></wf-trophy>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
-          <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: {{m.ring}}">
+          <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden">
             <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px">
               <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="20" height="20" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
               <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
@@ -606,7 +606,7 @@ class Component extends DCLogic {
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           hasLink: !!m.link || toSheet, link: toSheet ? L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios') : T(m.link), href: toSheet ? '#' : inc.href,
-          goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : inc.go, ring: m.req && !m.done ? 'inset 0 0 0 1.5px rgba(184,54,10,0.4)' : 'none' });
+          goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }
     });
