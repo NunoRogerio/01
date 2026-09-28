@@ -932,7 +932,12 @@
   // Chats left without a team (their station lookup failed or found nothing) get one now: stations, coordinators and,
   // for a fire already under way, their crews; a closed fire's summary is counted again with them.
   function heal() {
-    var d = load(); Object.keys(d.chats).forEach(function (k) { var c0 = d.chats[k]; if (!c0 || c0.dismissed || (c0.people && c0.people.length)) return;
+    var d = load(), fixed = false;
+    // A closed fire with a team but no forces on record: its crews are estimated from the team
+    Object.keys(d.chats).forEach(function (k) { var c = d.chats[k]; if (!c || c.dismissed || !c.closed || !(c.people && c.people.length) || !(c.stations && c.stations.length) || (c.forces && c.forces.length) || c.stage < 2) return;
+      c.forces = c.stations.slice(0, c.people.length).map(function (st0, i) { return forceFor(c, i, i < 2 ? 'released' : 'standby'); }); c.estF = true; c.sum = stats(c); fixed = true; });
+    if (fixed) { save(); emit(); }
+    Object.keys(d.chats).forEach(function (k) { var c0 = d.chats[k]; if (!c0 || c0.dismissed || (c0.people && c0.people.length)) return;
       stationsFor(c0.st, c0.lat, c0.lon, function (S) { var dd = load(), c = dd.chats[k]; if (!c || (c.people && c.people.length) || !S.length) return;
         c.stations = S.slice(0, 3); c.reserve = S[3] || null;
         var nm = pickNames(c, c.stations.length, 'coord');
