@@ -177,7 +177,7 @@ window.__wfBlink=function(path,dur){
     '#wf-load.hand svg{filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))}'+
     '#wf-load.hand .name{letter-spacing:.02em;text-shadow:0 1px 10px rgba(0,0,0,.45)}'+
     '#wf-load.hand .sub{display:grid;color:#FFFFFF;text-shadow:0 1px 8px rgba(0,0,0,.5)}#wf-load.hand .sub>span{grid-area:1/1;transition:opacity .45s cubic-bezier(.4,0,.2,1)}'+
-    '#wf-load.hand .pct{position:absolute;left:0;right:0;top:50%;margin:0;transform:translateY(-50%);text-align:center;font-size:102px;line-height:1}'+
+    '#wf-load.hand .pct{position:absolute;left:0;right:0;top:50%;margin:0;transform:translateY(-50%);text-align:center;font-size:143px;line-height:1}'+
     '#wf-load.hand .cap{bottom:auto;color:rgba(255,255,255,.72);transition:none}'+
     '#wf-load.hand .shade{background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)}';
   document.head.appendChild(st);
