@@ -191,11 +191,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h1 style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{hd.c}}">{{hd.title}}</h1>
       <span title="{{hd.sub}}" style="font-size: 15px; font-weight: 400; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span>
       <span role="timer" aria-label="{{hd.detAria}}" style="display: {{hd.tagD}}; align-self: flex-start; align-items: center; gap: 4px; height: 28px; margin-top: 8px; padding: 0 12px; border-radius: 999px; background: rgba(232,106,0,0.14); color: #A34800; font-size: 15px; white-space: nowrap; font-variant-numeric: tabular-nums"><span class="dot" style="width: 5.6px; height: 5.6px; margin-right: 3px"></span><span>{{hd.pre}}</span> <span data-tl-since="{{hd.t0}}">{{hd.el}}</span><span style="display: {{hd.postD}}"> ago</span></span>
-    </span>
-    <span role="status" aria-label="{{activeAria}}" style="display: {{hd.pillD}}; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
+      <span role="status" aria-label="{{activeAria}}" style="display: {{hd.pillD}}; align-items: center; gap: 7px; height: 28px; align-self: flex-start; margin: 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; max-width: 100%; font-variant-numeric: tabular-nums">
       <span class="dot" style="width: 5.6px; height: 5.6px; display: {{pillDot}}"></span>{{pillTxt}}
     </span>
-    <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 0 4px 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 6px; border: 2px solid #F2F2F7; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 12px; font-weight: 600; line-height: 16px; text-align: center">{{chat.n}}</span></a>
+    </span>
+        <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 0 4px 0 0; border-radius: 50%; background: #D7F41A; color: #1C1C1E; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 6px; border: 2px solid #F2F2F7; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 12px; font-weight: 600; line-height: 16px; text-align: center">{{chat.n}}</span></a>
   </header>
   </div>
 
@@ -345,21 +345,18 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div class="wf-glass" aria-hidden="true" onClick="{{focusTap}}" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{focusOp}}; pointer-events: {{focusPE}}; transition: opacity .45s ease"></div>
-  <section role="dialog" data-pull="toggle" aria-labelledby="sentTitle" aria-hidden="{{sentHidden}}" class="sheet blade" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; height: {{sentH}}; transition: {{sbTr}}; box-sizing: border-box; padding: 0 0 30px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{sentY}})">
+  <section role="dialog" data-pull="toggle" aria-labelledby="sentTitle" aria-hidden="{{sentHidden}}" class="sheet blade" data-sb="1" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; overflow: hidden; height: {{sentH}}; transition: {{sbTr}}; box-sizing: border-box; padding: 0 0 30px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{sentY}})">
     <button type="button" onPointerDown="{{sb.down}}" onPointerMove="{{sb.move}}" onPointerUp="{{sb.up}}" onPointerCancel="{{sb.cancel}}" onKeyDown="{{sb.key}}" data-pull-go="key" data-noswipe="1" aria-expanded="{{sentUpStr}}" aria-label="{{sentUpLabel}}" style="align-self: stretch; display: flex; align-items: flex-start; justify-content: center; box-sizing: border-box; height: 53px; flex-shrink: 0; margin: 0; padding: 8px 0 0; border: 0; border-radius: 28px 28px 0 0; background: transparent; cursor: grab; touch-action: none">
       <span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     </button>
-    <div style="display: flex; align-items: center; gap: 0; padding: 12px 16px 0 0">
-      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: {{sentIcC}}; flex-shrink: 0">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{sentIc}}"></path></svg>
-      </span>
+    <div style="display: flex; align-items: center; gap: 0; flex-shrink: 0; padding: 12px 16px 0">
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
         <h2 id="sentTitle" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; color: {{sentTitleC}}">{{sentTitle}}</h2>
         <span style="font-size: 15px; line-height: 16px; color: #545458">{{fireId}} · {{sentSub}}{{unitsTxt}}</span>
       </span>
     </div>
     <!-- A fire being fought: every published count in one horizontal row (personnel, crews, ground vehicles, aircraft…) -->
-    <div class="wf-hscroll" role="list" aria-label="Forces on scene" style="display: {{kpiRowD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
+    <div class="wf-hscroll" data-sb-kpi="1" role="list" aria-label="Forces on scene" style="display: {{kpiRowD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
       <sc-for list="{{kpiRow}}" as="k" hint-placeholder-count="4">
         <div role="listitem" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1 0 {{k.w}}; min-width: 0; padding: 0 4px; border-left: {{k.sep}}; text-align: center">
           <span class="kpi" style="color: {{k.c}}; white-space: nowrap">{{k.v}}</span>
@@ -368,7 +365,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </div>
     <!-- The two figures only show when the source publishes them (no empty dashes) -->
-    <div style="display: {{kpiD}}; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px 0">
+    <div data-sb-kpi2="1" style="display: {{kpiD}}; flex-shrink: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px 0">
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span class="lbl">{{k1L}}</span>
         <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi" style="color: {{k1C}}">{{k1V}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k1Sub}}</span></span>
@@ -419,8 +416,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </ul>
     <!-- This fire's incident chat: the last message and what is unread; opens the conversation that led to this state -->
-    <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="display: {{chat.rowD}}; align-items: center; gap: 12px; margin: 12px 16px 0; padding: 12px 16px; border-radius: 14px; background: #FFFFFF; color: #000000; text-decoration: none">
-      <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></span>
+    <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="display: {{chat.rowD}}; align-items: center; gap: 12px; margin: 12px 16px 0; padding: 12px 16px; border-radius: 14px; background: #D7F41A; color: #1C1C1E; color: #000000; text-decoration: none">
+      <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(28,28,30,0.1); color: #1C1C1E"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></span>
       <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
         <span style="display: flex; align-items: baseline; gap: 8px"><span style="flex-grow: 1; font-size: 17px; font-weight: 600; line-height: 22px">{{chat.title}}</span><span style="font-size: 13px; line-height: 16px; color: {{chat.timeC}}; white-space: nowrap">{{chat.time}}</span></span>
         <span style="display: flex; align-items: center; gap: 8px"><span style="flex-grow: 1; min-width: 0; font-size: 15px; line-height: 19px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{chat.last}}</span><span style="display: {{chat.badgeD}}; min-width: 22px; height: 22px; box-sizing: border-box; padding: 0 7px; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 13px; font-weight: 600; line-height: 22px; text-align: center">{{chat.n}}</span></span>
@@ -576,7 +573,11 @@ class Component extends DCLogic {
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
-  componentDidUpdate() { this.wfHdrMeasure(); }
+  componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); }
+  // The forces blade, lowered, shows its title and the KPIs only; the rest comes up with a swipe up
+  wfSbMeasure() { try { const b = document.querySelector('[data-sb]'); if (!b) return; const k = [].slice.call(b.querySelectorAll('[data-sb-kpi], [data-sb-kpi2]')).filter((n) => n.offsetParent !== null).pop() || b.querySelector('#sentTitle');
+      const h = Math.round(k.getBoundingClientRect().bottom - b.getBoundingClientRect().top) / ((b.getBoundingClientRect().width / b.offsetWidth) || 1) + 30;
+      if (h > 120 && Math.abs(h - (this._sbMin || 0)) > 2) { this._sbMin = h; this.forceUpdate(); } } catch (e) {} }
   componentDidMount() { try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} setTimeout(() => this.wfHdrMeasure(), 0); this._actT = setInterval(() => this.forceUpdate(), 20000);
     // The current stage's elapsed time counts every second (only its text is updated).
     const tick = () => { try { document.querySelectorAll('[data-tl-since]').forEach((el) => { const t = +el.getAttribute('data-tl-since'); if (!t) { el.textContent = ''; return; } let x = Math.max(0, Math.floor((Date.now() - t) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60; const txt = d ? d + ' d ' + h + ' h' : h ? h + ' h ' + m + ' min' : m + ' min'; if (el.textContent !== txt) el.textContent = txt; }); } catch (e) {} };
@@ -1182,7 +1183,7 @@ class Component extends DCLogic {
           : { title: fv ? fv.place : 'North ridge', c: '#000000', sub: 'Fire ' + fireId, tagD: 'none', pillD: 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
-      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: (s.sentUp ? 700 : 440) - (s.sbDy || 0) + 'px', sb: this.wfBlade(!!s.sentUp, (up) => this.setState({ sentUp: up })), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
+      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: (s.sentUp ? 700 : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sb: this.wfBlade(!!s.sentUp, (up) => this.setState({ sentUp: up })), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdrB: this._hdrB || 170,
       chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null, rowD: 'none', title: '', time: '', timeC: '#545458', last: '' };
         const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
