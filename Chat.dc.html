@@ -13,12 +13,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=2">
 <link rel="icon" href="icon-192.png?v=2">
-<script src="fit.js?v=26"></script>
+<script src="fit.js?v=27"></script>
 <script src="avatar.js?v=6"></script>
-<script src="prefs.js?v=8"></script>
-<script src="i18n.js?v=30"></script>
-<script src="live.js?v=25"></script>
-<script src="chat.js?v=12"></script>
+<script src="prefs.js?v=9"></script>
+<script src="i18n.js?v=31"></script>
+<script src="live.js?v=26"></script>
+<script src="chat.js?v=13"></script>
+<script src="trophy.js?v=1"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -36,7 +37,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 @keyframes chView{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}.chview{animation:chView .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes chGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}.chbar{transform-origin:left center;animation:chGrow .8s cubic-bezier(.2,.8,.2,1)}
 @keyframes chPulse{0%,100%{opacity:1}50%{opacity:.55}}.chnow{animation:chPulse 1.6s ease-in-out infinite}
-@keyframes chSpin{0%{transform:rotateY(0)}14%{transform:rotateY(360deg)}100%{transform:rotateY(360deg)}}.chtrophy>svg{animation:chSpin 8s cubic-bezier(.45,0,.25,1) 1.2s infinite;backface-visibility:visible}
 @keyframes chShine{0%{transform:scale(.6) rotate(-8deg);opacity:0}60%{transform:scale(1.08) rotate(3deg);opacity:1}100%{transform:none;opacity:1}}.chtrophy{animation:chShine .9s cubic-bezier(.2,.8,.2,1) both}
 .chx{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
 </style>
@@ -144,16 +144,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isWin}}" hint-placeholder-val="{{ false }}">
-          <button type="button" class="chmsg chrow wf-fhost" data-sparks="1" onClick="{{m.go}}" style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 8px; padding: 16px 16px 16px; border: 0; border-radius: 20px; background: #1E2B22; color: #FFFFFF; font: inherit; text-align: center; cursor: pointer">
-            <span class="wf-forest" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
-            <!-- Small logo, as on the login screen (yellow on the photo, soft shadows) -->
-        <span aria-hidden="true" style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #D7F41A; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; line-height: 20px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)"><svg width="15" height="18" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35))"><path fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch</span>
-            <span aria-hidden="true" class="chtrophy" style="display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #D7F41A"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
-            <span style="font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{m.tag}} · {{m.time}}</span>
-            <span style="font-size: 22px; font-weight: 600; line-height: 28px; color: #D7F41A; text-shadow: 0 1px 12px rgba(0,0,0,0.45)">{{m.title}}</span>
-            <span style="font-size: 15px; line-height: 20px; color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{m.body}}</span>
-            <span style="display: flex; align-items: center; justify-content: center; width: 100%; height: 44px; margin-top: 8px; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600">{{m.link}}</span>
-          </button>
+          <!-- The trophy card: one widget for every resolved card (trophy.js) -->
+          <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.title}}" sub="{{m.body}}" action="{{m.link}}" credit="0" style="margin-top: 8px; cursor: pointer"></wf-trophy>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
           <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: {{m.ring}}">
@@ -309,16 +301,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </div>
     </header>
     <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
-      <section class="wf-fhost" data-sparks="1" style="display: flex; flex-shrink: 0; flex-direction: column; align-items: center; gap: 8px; padding: 16px 16px 16px; border-radius: 20px; background: #1E2B22; text-align: center">
-        <span class="wf-forest" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
-        <!-- Small logo, as on the login screen (yellow on the photo, soft shadows) -->
-        <span aria-hidden="true" style="display: flex; align-items: center; gap: 6px; margin-bottom: 16px; color: #D7F41A; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; line-height: 20px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)"><svg width="15" height="18" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35))"><path fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch</span>
-        <span aria-hidden="true" class="chtrophy" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #D7F41A; box-shadow: 0 8px 24px rgba(0,0,0,0.35)"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
-        <span style="margin-top: 8px; font-size: 15px; line-height: 18px; color: rgba(255,255,255,0.9); font-weight: 600; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{sum.kicker}}</span>
-        <span style="font-size: 30px; font-weight: 700; line-height: 34px; letter-spacing: 0.01em; color: #D7F41A; text-wrap: balance; text-shadow: 0 1px 12px rgba(0,0,0,0.45)">{{sum.headline}}</span>
-        <span style="font-size: 15px; line-height: 20px; color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">{{sum.closedAt}}</span>
-        <span class="wf-credit" style="position: relative; display: grid; margin-top: 12px; font-size: 12px; line-height: 14px; color: rgba(255,255,255,0.72)"><span>Photo: Mari Potter / Unsplash</span><span>Photo: Ivan Dimitrov / Unsplash</span><span>Photo: Olena Bohovyk / Unsplash</span></span>
-      </section>
+      <!-- The trophy card: one widget for every resolved card (trophy.js) -->
+      <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.headline}}" sub="{{sum.closedAt}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
       <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
         <sc-for list="{{sum.kpis}}" as="k" hint-placeholder-count="4">
           <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
@@ -411,42 +395,6 @@ class Component extends DCLogic {
     this.setState({ view: k ? 'chat' : 'list', key: k, fromList: false, fromRes: false, draft: '', stack: [], sheet: false });
   }
   componentWillUnmount() { try { window.removeEventListener('wf-chat', this._sync); window.removeEventListener('wf-sync', this._sync); } catch (e) {} clearInterval(this._t); }
-  // Fireworks in hi-vis yellow over the forest photo: sparks leave the trophy's circle at full opacity and fade to nothing
-  // as they reach the photo's edges. A 5 s show, repeated every 10 s, starting straight away.
-  sparks() {
-    document.querySelectorAll('[data-sparks]').forEach((host) => {
-      if (host.__sp) return;
-      const cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
-      cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;border-radius:inherit';
-      host.appendChild(cv);
-      const sp = host.__sp = { cv, parts: [], t0: performance.now() };
-      const burst = () => {
-        const R = host.getBoundingClientRect(), tr = host.querySelector('.chtrophy'), T = tr ? tr.getBoundingClientRect() : null; if (!R.width) return;
-        const cx = T ? T.left + T.width / 2 - R.left : R.width / 2, cy = T ? T.top + T.height / 2 - R.top : R.height / 2, r0 = T ? T.width / 2 : 30;
-        for (let i = 0; i < 46; i++) {
-          const a = Math.random() * Math.PI * 2, dx = Math.cos(a), dy = Math.sin(a);
-          // distance from the circle's edge to the photo's edge along this direction
-          const tx = dx > 0 ? (R.width - cx) / dx : dx < 0 ? -cx / dx : 1e9, ty = dy > 0 ? (R.height - cy) / dy : dy < 0 ? -cy / dy : 1e9;
-          sp.parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx, dy, d: Math.max(10, Math.min(tx, ty) - r0), born: performance.now(), life: 1500 + Math.random() * 900, r: 1.4 + Math.random() * 1.8 });
-        }
-      };
-      const show = () => { burst(); setTimeout(burst, 1100); setTimeout(burst, 2200); };   // three bursts, all faded by 5 s
-      show(); sp.iv = setInterval(() => { if (!document.body.contains(host)) { clearInterval(sp.iv); return; } show(); }, 10000);
-      const draw = () => {
-        if (!document.body.contains(host)) return;
-        const R = host.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, W = Math.round(R.width * dpr), H = Math.round(R.height * dpr);
-        if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-        const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, R.width, R.height);
-        const now = performance.now();
-        sp.parts = sp.parts.filter((q) => now - q.born < q.life);
-        sp.parts.forEach((q) => { const t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 2), x = q.x0 + q.dx * q.d * e, y = q.y0 + q.dy * q.d * e;
-          g.globalAlpha = Math.max(0, 1 - e); g.fillStyle = '#D7F41A'; g.shadowColor = 'rgba(215,244,26,0.8)'; g.shadowBlur = 6;
-          g.beginPath(); g.arc(x, y, q.r, 0, Math.PI * 2); g.fill(); });
-        requestAnimationFrame(draw);
-      };
-      requestAnimationFrame(draw);
-    });
-  }
   // Button rows: side by side when every button fits on one line; otherwise all of them stack, each at full width.
   fitRows() {
     document.querySelectorAll('[data-fitrow]').forEach((r) => {
@@ -457,7 +405,7 @@ class Component extends DCLogic {
     });
   }
   componentDidUpdate() {
-    this.fitRows(); this.sparks();
+    this.fitRows();
     const s = this.state || {}, C = window.__wfChat;
     if (s.view === 'chat' && C && s.key) {
       const c = C.get(s.key);
@@ -633,7 +581,7 @@ class Component extends DCLogic {
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
-        items.push({ isWin: true, time, tag: B ? L('Drill complete', 'Simulação concluída') : T(m.tag), title: L('Resolved in ', 'Resolvido em ') + C.dur(Z.res), body: (Z.est ? '~' : '') + Z.people + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + Z.veh + ' ' + L('vehicles', 'veículos') + ' · ' + (Z.us ? Z.acres + ' acres' : String(Z.ha).replace('.', PTL ? ',' : '.') + ' ha'), link: L('See the summary', 'Ver o resumo'), go: openSummary });
+        items.push({ isWin: true, time, kick: (B ? L('Drill complete', 'Simulação concluída') : T(m.tag)) + ' · ' + time, tag: B ? L('Drill complete', 'Simulação concluída') : T(m.tag), title: L('Resolved in ', 'Resolvido em ') + C.dur(Z.res), body: (Z.est ? '~' : '') + Z.people + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + Z.veh + ' ' + L('vehicles', 'veículos') + ' · ' + (Z.us ? Z.acres + ' acres' : String(Z.ha).replace('.', PTL ? ',' : '.') + ' ha'), link: L('See the summary', 'Ver o resumo'), go: openSummary });
         prevFrom = null; return;
       }
       if (m.kind === 'card') {
