@@ -7,7 +7,7 @@
 // - the small Forest Fire Watch logo on top, as on the login screen (yellow on the photo, soft shadows, no blink)
 // - the trophy in its yellow circle, turning a full circle on its vertical axis every 8 s
 // - yellow fireworks: sparks leave the trophy's circle at full opacity and fade out at the photo's edges;
-//   a 5 s show every 10 s, starting straight away
+//   three random bursts during each turn of the trophy (every 8 s), no two bursts alike
 // - action: an optional full-width button label; a tap anywhere on the card reaches the page's own onClick
 (function () {
   if (window.customElements && customElements.get('wf-trophy')) return;
@@ -59,7 +59,7 @@
     }
     this.fill(); this.startSparks();
   };
-  Trophy.prototype.disconnectedCallback = function () { clearInterval(this._iv); this._iv = 0; this._run = false; };
+  Trophy.prototype.disconnectedCallback = function () { this._run = false; };
   Trophy.prototype.attributeChangedCallback = function () { if (this._root) this.fill(); };
   Trophy.prototype.fill = function () {
     var r = this._root, self = this;
@@ -70,17 +70,31 @@
   Trophy.prototype.startSparks = function () {
     if (this._run) return; this._run = true;
     var self = this, parts = [];
+    // Every burst is different: its own shape, particle count, reach, speed, rotation and curl, and each spark its own
+    // size (radius 2 px up to 3.2 px, the largest before), so no two bursts look the same.
+    var rnd = function (a, b) { return a + Math.random() * (b - a); }, last = '';
     var burst = function () {
       var R = self._card.getBoundingClientRect(), T = self._cup.getBoundingClientRect(); if (!R.width) return;
       var cx = T.left + T.width / 2 - R.left, cy = T.top + T.height / 2 - R.top, r0 = T.width / 2, now = performance.now();
-      for (var i = 0; i < 46; i++) {
-        var a = Math.random() * Math.PI * 2, dx = Math.cos(a), dy = Math.sin(a);
+      var shapes = ['scatter', 'ring', 'rings', 'spiral', 'fan'].filter(function (k) { return k !== last; }), shape = shapes[Math.floor(Math.random() * shapes.length)]; last = shape;
+      var n = Math.round(rnd(60, 78)), rot = rnd(0, Math.PI * 2), reach = rnd(0.7, 1), life = rnd(1300, 2000), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
+      var fanDir = rnd(0, Math.PI * 2), fanW = rnd(Math.PI * 0.9, Math.PI * 1.5);
+      for (var i = 0; i < n; i++) {
+        var a = shape === 'ring' || shape === 'spiral' ? rot + i / n * Math.PI * 2 + rnd(-0.06, 0.06)
+          : shape === 'rings' ? rot + (i % Math.ceil(n / 2)) / Math.ceil(n / 2) * Math.PI * 2 + (i % 2) * 0.12
+          : shape === 'fan' ? fanDir + rnd(-fanW / 2, fanW / 2) : Math.random() * Math.PI * 2;
+        var dx = Math.cos(a), dy = Math.sin(a);
         var tx = dx > 0 ? (R.width - cx) / dx : dx < 0 ? -cx / dx : 1e9, ty = dy > 0 ? (R.height - cy) / dy : dy < 0 ? -cy / dy : 1e9;   // to the photo's edge
-        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: Math.max(10, Math.min(tx, ty) - r0), born: now, life: 1500 + Math.random() * 900, r: 1.4 + Math.random() * 1.8 });
+        var edge = Math.max(10, Math.min(tx, ty) - r0), k = shape === 'rings' ? (i < n / 2 ? 1 : rnd(0.5, 0.65)) : shape === 'scatter' || shape === 'fan' ? rnd(0.55, 1) : rnd(0.92, 1);
+        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge * reach * k, curl: curl * rnd(0.7, 1.3), born: now + rnd(0, 90), life: life * rnd(0.8, 1.2), r: rnd(2, 3.2) });
       }
     };
-    var show = function () { burst(); setTimeout(burst, 1100); setTimeout(burst, 2200); };   // three bursts, all faded out within 5 s
-    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { setTimeout(show, 300); this._iv = setInterval(show, 10000); }
+    // The show runs while the trophy turns: three bursts at random moments inside each 1.1 s turn
+    var show = function () { burst(); setTimeout(burst, rnd(280, 480)); setTimeout(burst, rnd(620, 950)); };
+    if (!this._lis && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      this._lis = true; var sv = this._cup.querySelector('svg'), onTurn = function (e) { if (e.animationName === 'spin' && self._run) show(); };
+      sv.addEventListener('animationstart', onTurn); sv.addEventListener('animationiteration', onTurn);
+    }
     var draw = function () {
       if (!self._run) return;
       var cv = self._cv, R = self._card.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, W = Math.round(R.width * dpr), H = Math.round(R.height * dpr);
@@ -88,9 +102,10 @@
       var g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, R.width, R.height);
       var now = performance.now();
       parts = parts.filter(function (q) { return now - q.born < q.life; });
+      var live = parts.filter(function (q) { return now >= q.born; });
       g.fillStyle = '#D7F41A'; g.shadowColor = 'rgba(215,244,26,0.8)'; g.shadowBlur = 6;
-      parts.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 2);
-        g.globalAlpha = Math.max(0, 1 - e); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e, q.y0 + q.dy * q.d * e, q.r, 0, Math.PI * 2); g.fill(); });
+      live.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 2), w = q.curl * e * e;   // curl: a sideways drift
+        g.globalAlpha = Math.max(0, 1 - e); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
       requestAnimationFrame(draw);
     };
     requestAnimationFrame(draw);
