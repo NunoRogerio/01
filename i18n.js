@@ -39,7 +39,7 @@
     // candidate screen
     'AI validation':'Validação por IA','AI likelihood':'Probabilidade IA','Likelihood':'Probabilidade','Evidence':'Evidências','Unverified':'Por verificar','Being checked':'Em verificação','Verifying':'Em verificação',
     'Strong heat signal':'Sinal térmico forte','Heat anomaly':'Anomalia térmica','Weak heat signal':'Sinal térmico fraco','Smoke plume likely':'Coluna de fumo provável','Possible smoke':'Possível fumo','Possible fire start':'Possível início de incêndio',
-    'Not yet confirmed on the ground':'Ainda não confirmado no terreno','One detection':'Uma deteção','Estimated ignition point':'Ponto de ignição estimado','Heat is inside the dashed circle · ±375 m':'O calor está dentro do círculo tracejado · ±375 m',
+    'Not yet confirmed on the ground':'Ainda não confirmado no terreno','One detection':'Uma deteção','Estimated ignition point':'Ponto de ignição estimado','Incident chat':'Conversa do incidente','You and the crew coordinators of the stations on this fire':'Você e os coordenadores de equipa dos quartéis neste incêndio','Fire resolved':'Incêndio resolvido','Heat is inside the dashed circle · ±375 m':'O calor está dentro do círculo tracejado · ±375 m',
     'Confirm fire':'Confirmar incêndio','Verify by drone':'Enviar drone','Dismiss':'Descartar','Dismiss ignition':'Descartar ignição','Go back':'Voltar','Confirm this fire?':'Confirmar este incêndio?','Dismiss this candidate?':'Descartar este candidato?',
     'Confirm and size response':'Confirmar e dimensionar resposta','False alarm':'Falso alarme','Controlled burn':'Queima controlada','Satellite detection point':'Ponto de deteção por satélite',
     "You're declaring":'Está a declarar','a real ignition, based on the evidence you reviewed:':'uma ignição real, com base nas evidências que reviu:','will be closed and removed from the map.':'será fechado e retirado do mapa.',
@@ -92,6 +92,7 @@
     [/^([\d.,]+) ignition candidates? and ([\d.,]+) fires?$/,function(m,a,b){return a+' '+pl(a,'candidato','candidatos')+' a ignição e '+b+' '+pl(b,'incêndio','incêndios');}],
     [/^(Sees )?([\d.,]+) (counties|districts|states)$/,function(m,s,n,u){return (s?'Vê ':'')+n+' '+({counties:'condados',districts:'distritos',states:'estados'})[u];}],
     [/^Search ([\d.,]+) (countries|districts|counties|states)$/,function(m,n,u){return 'Pesquisar '+n+' '+({countries:'países',districts:'distritos',counties:'condados',states:'estados'})[u];}],
+    [/^Estimated · ~([\d.,\s]+) ha$/,'Estimada · ~$1 ha'],
     [/^([\d.,]+) sources?$/,function(m,n){return n+' '+pl(n,'fonte','fontes');}],
     [/^Show ([\d.,]+) more · ([\d.,]+) left$/,'Mostrar mais $1 · faltam $2'],
     [/^([\d.,]+(?:\.\d+)?) km (north|south|east|west|northeast|northwest|southeast|southwest) of (.+)$/,function(m,n,d,p){return n+' km a '+DIR[d]+' de '+p;}],

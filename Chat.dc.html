@@ -183,9 +183,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               </ul>
             </sc-if>
             <sc-if value="{{m.hasActions}}" hint-placeholder-val="{{ false }}">
-              <div style="display: grid; grid-template-columns: {{m.actCols}}; gap: 8px; padding: 0 16px 16px">
+              <div data-fitrow="1" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px">
                 <sc-for list="{{m.actions}}" as="a" hint-placeholder-count="2">
-                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="height: 44px; border: 0; border-radius: 10px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 17px; font-weight: {{a.w}}; opacity: {{a.op}}; cursor: {{a.cur}}; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{a.chk}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{a.label}}</button>
+                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="flex: 1 1 0; min-width: max-content; height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 17px; font-weight: {{a.w}}; white-space: nowrap; opacity: {{a.op}}; cursor: {{a.cur}}; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{a.chk}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{a.label}}</button>
                 </sc-for>
               </div>
             </sc-if>
@@ -214,9 +214,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </sc-if>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
-      <div class="chscroll" style="display: {{actD}}; gap: 8px; overflow-x: auto; padding: 0 16px">
+      <div data-fitrow="1" style="display: {{actD}}; flex-wrap: wrap; gap: 8px; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
-          <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; border: 0; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
+          <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="flex: 1 1 auto; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
@@ -400,13 +400,23 @@ class Component extends DCLogic {
     this._sync = () => this.forceUpdate();
     try { window.addEventListener('wf-chat', this._sync); window.addEventListener('wf-sync', this._sync); } catch (e) {}
     this._t = setInterval(() => this.forceUpdate(), 1000);
-    this._stick = true;
+    this._stick = true; this._fit = () => this.fitRows(); try { window.addEventListener('resize', this._fit); } catch (e) {}
     try { sessionStorage.removeItem('wf-chat-return'); } catch (e) {}
     const k = window.__wfChat ? window.__wfChat.current() : '';
     this.setState({ view: k ? 'chat' : 'list', key: k, fromList: false, draft: '', stack: [], sheet: false });
   }
   componentWillUnmount() { try { window.removeEventListener('wf-chat', this._sync); window.removeEventListener('wf-sync', this._sync); } catch (e) {} clearInterval(this._t); }
+  // Button rows: side by side when every button fits on one line; otherwise all of them stack, each at full width.
+  fitRows() {
+    document.querySelectorAll('[data-fitrow]').forEach((r) => {
+      const k = [...r.children].filter((b) => b.offsetParent !== null); if (k.length < 2) return;
+      r.style.flexDirection = 'row'; k.forEach((b) => { b.style.width = ''; });
+      const wraps = k.some((b) => b.offsetTop !== k[0].offsetTop);
+      if (wraps) { r.style.flexDirection = 'column'; k.forEach((b) => { b.style.width = '100%'; }); }
+    });
+  }
   componentDidUpdate() {
+    this.fitRows();
     const s = this.state || {}, C = window.__wfChat;
     if (s.view === 'chat' && C && s.key) {
       const c = C.get(s.key);
