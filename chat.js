@@ -405,19 +405,101 @@
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
     if (!c.dismissed && c.stage < 7 && c.people.length) {
+      var rules = function (c) {
       var it = intentOf(text), named = responder(c, text), n = c.people.length;
       var byTopic = { safety: 1, water: 2, homes: 1, wind: 0, eta: 0, need: 1, status: 0, order: 0, thanks: 0, other: c.beat % n };
       var who = named >= 0 ? named : Math.min(n - 1, byTopic[it] != null ? byTopic[it] : 0);
       var a = reply(c, who, it, text); c.beat++;
       say(c, who, a[0], a[1], 2000 + (c.beat % 3) * 700, vary(c, 1, 6, 'b' + c.beat));
-      // A second voice chimes in on questions everyone has a view on
       if (named < 0 && n > 1 && (it === 'status' || it === 'safety') && c.stage >= 2 && c.stage <= 5) {
         var w2 = (who + 1) % n, b2 = reply(c, w2, it, text);
         if (it === 'status') b2 = c.stage === 2 ? ['Right behind them, same ETA.', 'Logo atrás, mesma hora de chegada.'] : ['Same on our side: ' + (c.stage >= 4 ? 'flank quiet.' : 'north flank still active, we are holding it.'), 'Do nosso lado igual: ' + (c.stage >= 4 ? 'flanco calmo.' : 'flanco norte ainda ativo, estamos a segurá-lo.')];
         say(c, w2, b2[0], b2[1], 5200, vary(c, 1, 4, 'c' + c.beat));
       }
+      };
+      if (aiKey()) aiReply(c, text, rules); else rules(c);
     }
     c.updated = Date.now(); c.seenAt = Date.now(); c.idleAt = Date.now(); save(); emit();
+  }
+
+
+  // ---- Claude role play --------------------------------------------------------------------------------------------
+  // With an Anthropic API key saved in Preferences (kept only on this phone), the crew coordinators' answers and their
+  // unprompted progress updates are written by Claude, in character, from the whole picture of the fire. Without a key,
+  // or if a call fails, the in-app replies above take over, so the chat never stalls.
+  var AIK = 'wf-ai-key', AIS = 'wf-ai-status', MODELS = ['claude-sonnet-5', 'claude-haiku-4-5-20251001'];
+  function aiKey() { try { return localStorage.getItem(AIK) || ''; } catch (e) { return ''; } }
+  function aiStatus(st) { if (st) { try { localStorage.setItem(AIS, JSON.stringify(st)); } catch (e) {} try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} return st; } try { return JSON.parse(localStorage.getItem(AIS) || 'null'); } catch (e) { return null; } }
+  function aiCall(system, user, maxTok, cb, mi) {
+    var k = aiKey(); mi = mi || 0; if (!k) return cb(new Error('No API key'));
+    fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: MODELS[mi], max_tokens: maxTok || 600, system: system, messages: [{ role: 'user', content: user }] }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, code: r.status, j: j }; }); })
+      .then(function (x) {
+        if (!x.ok) { if ((x.code === 404 || x.code === 400) && mi + 1 < MODELS.length && /model/i.test(JSON.stringify(x.j))) return aiCall(system, user, maxTok, cb, mi + 1); throw new Error((x.j.error && x.j.error.message) || ('HTTP ' + x.code)); }
+        var t = (x.j.content || []).map(function (b) { return b.text || ''; }).join('');
+        aiStatus({ ok: true, at: Date.now(), model: MODELS[mi] }); cb(null, t);
+      })
+      .catch(function (e) { aiStatus({ ok: false, at: Date.now(), err: String(e && e.message || e) }); cb(e); });
+  }
+  function parseJSON(t) { var a = String(t).indexOf('{'), b = String(t).lastIndexOf('}'); if (a < 0 || b < a) return null; try { return JSON.parse(t.slice(a, b + 1)); } catch (e) { return null; } }
+  var VOICES = ['a veteran with 25 years on the line: terse radio style, calm, practical, no small talk',
+    'careful and safety-first: thinks about crew welfare, escape routes, residents and risk',
+    'younger and upbeat: energetic, quick on the tools and the water, keen to get it done'];
+  function aiBrief(c) {
+    var us = isUS(c), S = stats(c), pt = PT(), H = c.hist || [];
+    var tl = H.map(function (h, i) { var nx = H[i + 1]; return STAGES[h.s].en + ' from ' + hhmm(h.vt) + (nx ? ' for ' + dur(nx.vt - h.vt) : ' (current, ' + dur(vnow(c) - h.vt) + ' so far)'); }).join('; ');
+    var team = c.people.map(function (p, i) { var f = (c.forces || []).find(function (x) { return x.si === i; });
+      return '#' + i + ' ' + p.name + ', crew coordinator of ' + p.org + (c.stations[i] ? ' (' + kmTxt(c.stations[i].km) + ' away, ~' + c.stations[i].min + ' min drive)' : '') +
+        (f ? ', crew: ' + f.crew.join(', ') + ', vehicles: ' + f.veh.join(', ') + ', status: ' + f.st : ', not dispatched yet') + '. Voice: ' + VOICES[i % 3] + '.'; }).join('\n');
+    var tr = c.msgs.slice(-28).map(function (m) {
+      var at = '[' + hhmm(m.vt || m.t) + '] ';
+      if (m.kind === 'msg') return at + (m.from === 'me' ? 'FIRE OWNER' : (c.people[m.from] || {}).name || '?') + ': ' + (pt ? m.pt || m.en : m.en);
+      if (m.kind === 'sys') return at + 'EVENT: ' + m.en;
+      if (m.kind === 'card') return at + 'CARD: ' + [m.tag && m.tag.en, m.title && m.title.en, m.body && m.body.en].filter(Boolean).join(' · ');
+      return '';
+    }).filter(Boolean).join('\n');
+    return 'Incident: ' + (c.kind === 'cand' && c.stage === 0 ? 'ignition candidate' : 'wildfire') + ' near ' + c.place + (c.reg ? ', ' + c.reg : '') + ' (' + (us ? 'United States: use miles/acres only if natural, crews say "engine", "brush", "hose lay"' : 'use km and hectares') + ').\n' +
+      'Current stage: ' + STAGES[c.stage].en + '. Fire clock now: ' + hhmm(vnow(c)) + ', ' + dur(vnow(c) - since(c)) + ' since the first detection.\n' +
+      'Stage timeline: ' + tl + '.\n' +
+      'Burnt area now: about ' + areaTxt(c) + '. Wind from the south-west, about 18 km/h gusting 30; the head runs north-east; homes about 1 km north-east.\n' +
+      'Air support: ' + (c.air ? c.air.name + ' (' + c.air.st + ')' : c.flags.airNo ? 'declined by the fire owner for now' : 'none') + '. Evacuation: ' + (c.evac ? c.evac.people + ' residents moved out' : 'none ordered') + '.\n' +
+      'Team (answer only as these people; index in #):\n' + team + '\n\nRecent chat, oldest first:\n' + tr;
+  }
+  var AI_SYS = 'You role-play the crew coordinators of fire stations in a wildfire incident chat. This is a realistic training simulation inside a fire command app; the person writing to you is the fire owner (incident commander) who makes all decisions. ' +
+    'Stay in character: each coordinator has their own voice (given in the brief). Write like real fireground radio traffic on a phone chat: short, specific, 1 to 3 sentences, no emojis, no markdown. ' +
+    'Be consistent with the brief: the stage, the forces and where they are, the time elapsed, the burnt area, air support and evacuation. Describe fire behaviour, terrain, water, crew welfare and needs plausibly for this stage. ' +
+    'Never change the incident stage, never declare the fire held, resolved or closed on your own, and never invent new stations, aircraft or people. You may ask the fire owner for decisions or resources. ' +
+    'If the fire owner names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
+    'Answer with JSON only, no prose around it: {"replies":[{"who":<team index>,"text":"<message>","minutes":<minutes of fire time before this message, 1 to 15>}]} with one reply, or two when a second coordinator genuinely adds something.';
+  function aiSys() { return AI_SYS.replace('LANGUAGE', PT() ? 'European Portuguese (pt-PT), fireground vocabulary used by Portuguese bombeiros' : 'English'); }
+  function aiDeliver(key, txt, fallback) {
+    var c = load().chats[key]; if (!c) return; c.pending = null;
+    var js = parseJSON(txt), R = js && Array.isArray(js.replies) ? js.replies : null;
+    if (!R || !R.length) { fallback(c); save(); emit(); return; }
+    R.slice(0, 2).forEach(function (r, i) {
+      var who = Math.max(0, Math.min(c.people.length - 1, parseInt(r.who, 10) || 0)), t = String(r.text || '').trim().slice(0, 400);
+      if (!t) return;
+      say(c, who, t, t, 400 + i * 2600, Math.max(1, Math.min(15, parseInt(r.minutes, 10) || 3)));
+    });
+    c.updated = Date.now(); save(); emit();
+  }
+  function aiReply(c, text, fallback) {
+    var key = c.key, guess = responder(c, text); c.pending = { who: guess >= 0 ? guess : 0, at: Date.now() };
+    aiCall(aiSys(), aiBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now as the right coordinator(s).', 500, function (err, txt) {
+      if (err) { var c2 = load().chats[key]; if (c2) { c2.pending = null; fallback(c2); save(); emit(); } return; }
+      aiDeliver(key, txt, fallback);
+    });
+  }
+  function aiUpdate(c, fallback) {
+    var key = c.key; c.pending = { who: 0, at: Date.now() };
+    aiCall(aiSys(), aiBrief(c) + '\n\nThe fire owner has been quiet for a while. Write ONE unprompted progress update from the coordinator best placed to report, describing how the fire and the work evolved since the last message, as fits the current stage. Use minutes between 8 and 40 for a stage with crews working, up to 180 under surveillance.', 400, function (err, txt) {
+      var c2 = load().chats[key]; if (!c2) return;
+      if (err) { c2.pending = null; fallback(c2); save(); emit(); return; }
+      var js = parseJSON(txt); if (js && js.replies) js.replies = js.replies.slice(0, 1).map(function (r) { r.minutes = Math.max(5, Math.min(c2.stage === 6 ? 240 : 45, parseInt(r.minutes, 10) || 15)); return r; });
+      aiDeliver(key, js ? JSON.stringify(js) : txt, fallback);
+    });
   }
 
   // Unprompted progress updates while a stage runs: the coordinators report as the fire evolves
@@ -433,13 +515,15 @@
         [0, function (c) { return ['Morning check: no rekindles. Ready to close when you are.', 'Verificação da manhã: sem reacendimentos. Prontos a encerrar quando quiser.']; }, 420]]
   };
   function idle(c, now) {
-    if (c.closed || c.dismissed || c.queue.length) return false;
+    if (c.pending && now - c.pending.at > 45000) c.pending = null;
+    if (c.closed || c.dismissed || c.queue.length || c.pending) return false;
     var L0 = PROGRESS[c.stage]; if (!L0) return false;
     var last = Math.max(c.idleAt || 0, (c.msgs[c.msgs.length - 1] || {}).t || 0);
     if (now - last < 22000) return false;
     var done = (c.prog = c.prog || {})[c.stage] || 0; if (done >= L0.length) return false;
-    var p = L0[done], who = lead(c, p[0]), a = p[1](c); c.prog[c.stage] = done + 1; c.idleAt = now;
-    say(c, who, a[0], a[1], 1200, p[2]);
+    var p = L0[done]; c.prog[c.stage] = done + 1; c.idleAt = now;
+    var scripted = function (cc) { var a = p[1](cc); say(cc, lead(cc, p[0]), a[0], a[1], 1200, p[2]); };
+    if (aiKey()) aiUpdate(c, scripted); else scripted(c);
     return true;
   }
 
@@ -548,7 +632,7 @@
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
   function unread(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
-  function typing(c) { var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
+  function typing(c) { if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
 
   // Building the incident descriptor from a screen's candidate or fire object
   function xyToLL(x, y) { return { lat: 34.19 - (y - 662) / 2829, lon: (x - 518) / 2345 - 118.13 }; }
@@ -574,6 +658,9 @@
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { c.seenAt = Date.now(); save(); emit(); } },
     send: send, act: act,
+    ai: { key: aiKey, status: function () { return aiStatus(); },
+      set: function (k, cb) { k = String(k || '').trim(); try { if (k) localStorage.setItem(AIK, k); else { localStorage.removeItem(AIK); localStorage.removeItem(AIS); } } catch (e) {} emit();
+        if (k) aiCall('Reply with the single word: ready', 'Ready?', 5, function (err) { if (cb) cb(err); }); else if (cb) cb(null); } },
     // The system calls you when a candidate is detected in your area: one chat is started for the most likely one
     autoStart: function (inc) { var db = load(); if (db.auto || !inc) return; db.auto = true; save(); create(inc); },
     reset: function () { DB = { chats: {} }; save(); emit(); }

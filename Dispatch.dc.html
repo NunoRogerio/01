@@ -17,7 +17,7 @@
 <script src="prefs.js?v=5"></script>
 <script src="i18n.js?v=30"></script>
 <script src="live.js?v=23"></script>
-<script src="chat.js?v=2"></script>
+<script src="chat.js?v=3"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -354,6 +354,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <h2 id="sentTitle" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px; color: {{sentTitleC}}">{{sentTitle}}</h2>
         <span style="font-size: 15px; line-height: 16px; color: #545458">{{fireId}} · {{sentSub}}{{unitsTxt}}</span>
       </span>
+    </div>
+    <!-- A fire being fought: every published count in one horizontal row (personnel, crews, ground vehicles, aircraft…) -->
+    <div class="wf-hscroll" role="list" aria-label="Forces on scene" style="display: {{kpiRowD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
+      <sc-for list="{{kpiRow}}" as="k" hint-placeholder-count="4">
+        <div role="listitem" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1 0 {{k.w}}; min-width: 0; padding: 0 4px; border-left: {{k.sep}}; text-align: center">
+          <span class="kpi" style="color: {{k.c}}; white-space: nowrap">{{k.v}}</span>
+          <span style="font-size: 15px; line-height: 19px; color: #545458">{{k.l}}</span>
+        </div>
+      </sc-for>
     </div>
     <!-- The two figures only show when the source publishes them (no empty dashes) -->
     <div style="display: {{kpiD}}; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px 0">
@@ -1005,7 +1014,7 @@ class Component extends DCLogic {
     deployed.forEach((d) => { if (d.tl) return; if (!d.bar) d.bar = d.c; d.item = true; if (!d.g) d.g = 'res'; d.barD = Number(d.w) > 0 ? 'block' : 'none'; });
     // Fighting a fire: personnel and the second figure are already the two numbers at the top, so they are not listed again;
     // the rest of what is on scene stays, without an 'On scene' heading (the title already says it).
-    if (RO && RU) { const shown = ['Personnel', RU[1] ? RU[1][0] : '']; for (let i = deployed.length - 1; i >= 0; i--) { const d = deployed[i]; if (d.item && d.g === 'res') { if (shown.indexOf(d.label) >= 0) deployed.splice(i, 1); else d.from = ''; } } }
+    if (RO && RU) { const shown = RU.map((r) => r[0]); for (let i = deployed.length - 1; i >= 0; i--) { const d = deployed[i]; if (d.item && d.g === 'res') { if (shown.indexOf(d.label) >= 0) deployed.splice(i, 1); else d.from = ''; } } }
     // Group titles, so it is clear what each block is: the fire itself, what is on scene, and stations nearby
     // (only the nearest by distance; which corporations actually sent crews is not published).
     if (RO) {
@@ -1151,7 +1160,9 @@ class Component extends DCLogic {
       stNone: !!(stDraft && !stDraft.length), stApplyOp: stDraft && !stDraft.length ? 0.4 : 1,   // Apply waits for at least one station
       stApply: () => (stDraft && !stDraft.length) ? null : this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null, stPick: true }),
       stCancel: () => this.setState({ open: false, stDraft: null }),
-      kpiD: K && String(K.k1V) === '—' && String(K.k2V) === '—' ? 'none' : 'grid',
+      kpiD: (RO && RU && RU.length) || (K && String(K.k1V) === '—' && String(K.k2V) === '—') ? 'none' : 'grid',
+      kpiRowD: RO && RU && RU.length ? 'flex' : 'none',
+      kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0] === 'Ground vehicles' ? 'Ground vehicles' : r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),

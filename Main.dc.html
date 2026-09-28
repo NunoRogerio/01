@@ -18,7 +18,7 @@
 <script src="prefs.js?v=5"></script>
 <script src="i18n.js?v=30"></script>
 <script src="live.js?v=23"></script>
-<script src="chat.js?v=2"></script>
+<script src="chat.js?v=3"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -413,6 +413,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
       </sc-for>
+      <!-- Role play: the crew coordinators in the incident chats answer through Claude with the person's own API key -->
+      <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-radius: 14px; background: #FFFFFF">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ai.title}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{ai.sub}}</span></span>
+          <span style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 26px; padding: 0 10px; border-radius: 999px; background: {{ai.pillBg}}; color: {{ai.pillFg}}; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: currentColor"></span>{{ai.pill}}</span>
+        </div>
+        <label style="display: flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{ai.ph}}</span><input type="password" autocomplete="off" spellcheck="false" value="{{ai.draft}}" onInput="{{ai.onInput}}" placeholder="{{ai.ph}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
+        <div style="display: grid; grid-template-columns: {{ai.cols}}; gap: 8px">
+          <button type="button" class="opt" onClick="{{ai.save}}" style="height: 44px; border: 0; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{ai.saveTxt}}</button>
+          <button type="button" class="opt" onClick="{{ai.remove}}" style="display: {{ai.rmD}}; height: 44px; border: 0; border-radius: 10px; background: rgba(118,118,128,0.12); color: #B3001B; font: inherit; font-size: 17px; font-weight: 500; cursor: pointer">{{ai.rmTxt}}</button>
+        </div>
+        <span style="font-size: 13px; line-height: 18px; color: {{ai.noteC}}">{{ai.note}}</span>
+      </div>
       <!-- Not linked yet -->
       <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
         <button type="button" class="opt" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1">Connect data sources</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button>
@@ -624,6 +637,21 @@ class Component extends DCLogic {
       pfY: pf ? '0%' : '-104%', pfDur: boot ? '0s' : pf ? '.55s' : '.45s', pfEase: pf ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)',
       pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
       pfInOp: pf ? 1 : 0, pfInY: pf ? '0px' : '-12px', pfInDelay: boot ? '0s' : pf ? '.15s' : '0s', pfXRot: s.pfSpin ? '90deg' : '0deg',
+      ai: (() => { const A = window.__wfChat && window.__wfChat.ai, has = !!(A && A.key()), st = A ? A.status() : null, pt = lang === 'pt', T = (en, p) => (pt ? p : en);
+        const bad = has && st && !st.ok, busy = !!s.aiBusy;
+        return { title: T('Role-play with Claude', 'Encenação com o Claude'),
+          sub: T('Crew coordinators in the incident chats answer in character, written by Claude from the state of the fire.', 'Os coordenadores de equipa nas conversas respondem em personagem, escritos pelo Claude a partir do estado do incêndio.'),
+          pill: busy ? T('Checking', 'A verificar') : bad ? T('Error', 'Erro') : has ? T('On', 'Ligado') : T('Off', 'Desligado'),
+          pillBg: busy ? 'rgba(118,118,128,0.14)' : bad ? 'rgba(215,0,21,0.10)' : has ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)', pillFg: busy ? '#48484A' : bad ? '#B3001B' : has ? '#1E7A34' : '#48484A',
+          ph: has ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('Anthropic API key (sk-ant-…)', 'Chave da API Anthropic (sk-ant-…)'), draft: s.aiDraft || '',
+          onInput: (e) => this.setState({ aiDraft: e.target.value }),
+          saveTxt: has ? T('Replace key', 'Substituir chave') : T('Save and test', 'Guardar e testar'), rmTxt: T('Remove', 'Remover'), rmD: has ? 'block' : 'none', cols: has ? '1fr 1fr' : '1fr',
+          save: () => { const k = (s.aiDraft || '').trim(); if (!A || !k) return; this.setState({ aiBusy: true, aiDraft: '' }); A.set(k, () => this.setState({ aiBusy: false })); },
+          remove: () => { if (A) A.set(''); this.setState({ aiDraft: '' }); },
+          note: bad ? T('Last call failed: ', 'A última chamada falhou: ') + st.err + T('. The in-app replies are used meanwhile.', '. Entretanto são usadas as respostas da aplicação.')
+            : has && st && st.ok ? T('Working · last reply ', 'A funcionar · última resposta ') + new Date(st.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + ' · ' + st.model + T('. Calls are billed to your Anthropic account. The key stays on this phone only.', '. As chamadas são cobradas na sua conta Anthropic. A chave fica apenas neste telemóvel.')
+            : T('Get a key at console.anthropic.com. Calls are billed to your Anthropic account; the key stays on this phone only. Without it, the in-app replies are used.', 'Obtenha uma chave em console.anthropic.com. As chamadas são cobradas na sua conta Anthropic; a chave fica apenas neste telemóvel. Sem ela, são usadas as respostas da aplicação.'),
+          noteC: bad ? '#B3001B' : '#545458' }; })(),
       openPrefs: () => this.setState({ pf: true, pfSpin: false }),
       closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); }, 280); },
       pfGroups: [
