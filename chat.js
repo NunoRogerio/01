@@ -110,13 +110,20 @@
     var cc = ccOf(st);
     var done = function (rows) {
       var kx = 111.32 * Math.cos(lat * Math.PI / 180);
-      var near = rows.map(function (r) { return { ck: r[1] + r[0], name: r[4] || 'Fire station', km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
-        .filter(function (q) { return q.km < 80 && !/aeroporto|airport|base aérea/i.test(q.name); })
-        .sort(function (a, b) { return a.km - b.km; }).slice(0, 4);
+      var all = rows.map(function (r) { return { ck: r[1] + r[0], name: r[4] || 'Fire station', km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
+        .filter(function (q) { return isFinite(q.km) && !/aeroporto|airport|base aérea/i.test(q.name); })
+        .sort(function (a, b) { return a.km - b.km; });
+      // Every fire gets a team: the nearest stations within 80 km, else the nearest ones at all (up to 250 km)
+      var near = all.filter(function (q) { return q.km < 80; }); if (near.length < 3) near = all.filter(function (q) { return q.km < 250; });
+      near = near.slice(0, 4);
+      if (!near.length) {   // no station data for this place: local stations named after the area, marked as such
+        var nm0 = (cc === 'pt' || cc === 'br') ? ['Bombeiros Voluntários', 'Bombeiros Municipais', 'Corpo de Bombeiros'] : ['Fire Station 1', 'Fire Station 2', 'Fire Station 3'];
+        near = nm0.map(function (n, i) { return { ck: 'loc' + i, name: n, km: 6 + i * 7, local: true }; });
+      }
       cb(near.map(function (q) { var min = Math.round(q.km * 1.3 / 50 * 60) + 3; return { ck: q.ck, name: q.name, short: shortStation(q.name), km: q.km, min: min }; }));
     };
     if (SF[cc]) return done(SF[cc]);
-    fetch('data/stations-' + cc + '.json').then(function (r) { return r.json(); }).then(function (js) { SF[cc] = js.s || []; done(SF[cc]); }).catch(function () { SF[cc] = []; done([]); });
+    fetch('data/stations-' + cc + '.json').then(function (r) { return r.json(); }).then(function (js) { SF[cc] = js.s || []; done(SF[cc]); }).catch(function () { done([]); });   // a failed load is not remembered: the next chat tries again
   }
   function kmTxt(km) { return km < 10 ? km.toFixed(1) + ' km' : Math.round(km) + ' km'; }
 
@@ -347,8 +354,11 @@
     save();
     // Same stations and the same crew coordinators as the real incident
     var wait = function () { var d = load().chats[c.key]; if (!d) return; if (!d.people.length) return setTimeout(wait, 150);
-      d.stations = src.stations.slice(0, 3); d.reserve = src.reserve || d.reserve; d.used = {};
-      d.people = src.people.slice(0, d.stations.length).map(function (p) { d.used[p.name] = 1; return { name: p.name, code: p.code, org: p.org, kind: 'lead' }; });
+      // The same stations and coordinators as the real fire; if the real fire has no team on record, the drill keeps its own
+      if (src.people && src.people.length && src.stations && src.stations.length) {
+        d.stations = src.stations.slice(0, 3); d.reserve = src.reserve || d.reserve; d.used = {};
+        d.people = src.people.slice(0, d.stations.length).map(function (p) { d.used[p.name] = 1; return { name: p.name, code: p.code, org: p.org, kind: 'lead' }; });
+      }
       (src.forces || []).forEach(function (f) { f.crew.forEach(function (x) { d.used[x] = 1; }); });
       d.msgs.concat(d.queue.map(function (q) { return q.m; })).forEach(function (m) { if (m.kind === 'sys' && /^Called you/.test(m.en)) { var names = d.people.map(function (p) { return p.org; }).join(', '); m.en = 'Training drill against the resolved fire of ' + new Date(S.end).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' · called you (fire owner) and the crew coordinators of ' + names; m.pt = 'Simulação contra o incêndio resolvido de ' + new Date(S.end).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' }) + ' · chamados: você (responsável) e os coordenadores de equipa de ' + names; } });
       save(); emit(); };
@@ -834,7 +844,7 @@
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
     return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
-      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.length; }, 0), air: c.air ? 1 : 0, stations: F.length };
+      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.length; }, 0), air: c.air ? 1 : 0, stations: F.length, est: !!c.estF };
   }
   function loadAch() { try { return JSON.parse(localStorage.getItem(ACH) || '{}') || {}; } catch (e) { return {}; } }
   function award(c) {
@@ -919,4 +929,19 @@
   };
   tick();
   if (role) setTimeout(seedPast, 400);   // two past fires per profile, already resolved, for the Resolved tab
+  // Chats left without a team (their station lookup failed or found nothing) get one now: stations, coordinators and,
+  // for a fire already under way, their crews; a closed fire's summary is counted again with them.
+  function heal() {
+    var d = load(); Object.keys(d.chats).forEach(function (k) { var c0 = d.chats[k]; if (!c0 || c0.dismissed || (c0.people && c0.people.length)) return;
+      stationsFor(c0.st, c0.lat, c0.lon, function (S) { var dd = load(), c = dd.chats[k]; if (!c || (c.people && c.people.length) || !S.length) return;
+        c.stations = S.slice(0, 3); c.reserve = S[3] || null;
+        var nm = pickNames(c, c.stations.length, 'coord');
+        c.people = c.stations.map(function (s, i) { return { name: nm[i], code: initials(nm[i]), org: s.short, kind: 'lead' }; });
+        if (c.stage >= 2) { c.flags.dispatched = true;
+          c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); }); }
+        c.estF = true;   // forces estimated afterwards (shown with ~)
+        if (c.closed) c.sum = stats(c);
+        save(); emit(); }); });
+  }
+  if (role) setTimeout(heal, 900);
 })();
