@@ -535,11 +535,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span>Total</span><span style="color: #000000; font-weight: 600; font-variant-numeric: tabular-nums">{{unitTotal}} units · first on scene {{firstEta}} min</span>
     </p>
     </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; padding: 0 16px; flex-shrink: 0">
-      <button type="button" class="btn" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; background-color: {{sugBg}}; border-color: {{sugBd}}; color: #1E7A34; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; padding: 0 16px; flex-shrink: 0">
+      <button type="button" class="btn wf-sec" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
         Suggested
       </button>
-      <button type="button" class="btn" onClick="{{cfgDone}}" style="height: 48px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600">
+      <a href="Chat.dc.html" class="btn" onClick="{{startChat}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; height: 48px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none">
+        Start chat
+      </a>
+      <button type="button" class="btn wf-ter" onClick="{{cfgDone}}" style="grid-column: 1 / -1; height: 48px; font-size: 17px; font-weight: 600">
         Done
       </button>
     </div>
@@ -1159,8 +1162,12 @@ class Component extends DCLogic {
           done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU, PER);
             // Came from an incident chat: the orders are posted there and you go back to the conversation
             let back = ''; try { back = sessionStorage.getItem('wf-chat-return') || ''; } catch (e) {}
+            const ORDS = SP.map((d) => ({ id: d.id, name: d.name, eta: d.eta, units: d.n.map((x, t) => ({ n: x, label: meta[t].name })).filter((u) => u.n > 0) }));
+            // Sent from here without going through the chat: the fire's chat gets the orders all the same (now if it is
+            // open, or when it is first opened), so the team has already received them there.
+            if (!back && window.__wfChat && fv) { try { window.__wfChat.pend(window.__wfChat.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ORDS); } catch (e) {} }
             if (back && window.__wfChat) {
-              window.__wfChat.dispatched(back, SP.map((d) => ({ id: d.id, name: d.name, eta: d.eta, units: d.n.map((x, t) => ({ n: x, label: meta[t].name })).filter((u) => u.n > 0) })));
+              window.__wfChat.dispatched(back, ORDS);
               try { sessionStorage.removeItem('wf-chat-return'); sessionStorage.setItem('wf-chat-open', back); } catch (e) {}
               try { window.location.href = 'Chat.dc.html'; } catch (e) {} return; }
             this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
@@ -1213,6 +1220,8 @@ class Component extends DCLogic {
         : { flying: true, idle: false, status: 'On route · 3 min to scene', sub: 'Live video and thermal on arrival', fg: '#0079A6', bg: 'rgba(0,121,166,0.05)', bd: 'rgba(0,121,166,0.22)' },
       launchDrone: () => this.setState({ droneOff: false }), recallDrone: () => this.setState({ droneOff: true }),
       openCfg: (e) => !s.stPick ? null : this.setState({ cfg: true, ogC: measure(e, s.ogC || { t: 602, b: 662 }) }), resetCfg: () => { if (!isRecCfg) this.setState({ per: null, cfPick: true }); }, cfgDone: () => this.setState({ open: false, cfg: false, cfPick: true }),
+      // Start chat: the configuration is kept and the fire's chat opens; orders sent later still reach the chat
+      startChat: () => { this.setState({ open: false, cfg: false, cfPick: true }); try { const C = window.__wfChat; if (C && fv) { C.open(C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null })); } } catch (e) {} },
       sugDis: isRecCfg ? 'true' : 'false', sugOp: isRecCfg ? 0.4 : 1, sugCur: isRecCfg ? 'default' : 'pointer', sugPE: isRecCfg ? 'none' : 'auto',
       sugBg: isRecCfg ? 'rgba(60,60,67,0.033)' : 'rgba(52,199,89,0.12)', sugBd: isRecCfg ? 'rgba(60,60,67,0.088)' : 'rgba(52,199,89,0.45)',
       sugAria: isRecCfg ? 'Suggested forces already selected' : 'Reset to the suggested forces',

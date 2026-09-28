@@ -195,7 +195,9 @@
         c.flags.dispatched = true;
         c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); });
       }
-      if (c.kind === 'fire' && c.startMs) backfill(c); else start(c);
+      var kept = d.sent && d.sent[k]; if (kept) delete d.sent[k];
+      if (c.kind === 'fire' && c.startMs && !kept) backfill(c); else start(c);
+      if (kept && c.stage <= 1) dispatched(k, kept, 2400);
       if (c.past) closePast(c);
       save(); emit();
     });
@@ -223,7 +225,7 @@
       kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#0A66CC' } : null, link: { en: 'View candidate', pt: 'Ver candidato' } });
     if (s === 1) return Object.assign(base, { tag: { en: 'Ignition confirmed', pt: 'Ignição confirmada' }, title: { en: 'Active fire · ' + c.place, pt: 'Incêndio ativo · ' + c.place },
       body: { en: 'Nearest stations, by straight-line distance and estimated drive time', pt: 'Quartéis mais próximos, por distância em linha reta e tempo estimado' },
-      rows: st.map(function (x, i) { return { a: x.short, b: kmTxt(x.km) + ' · ~' + x.min + ' min', r: { en: 'Awaiting', pt: 'A aguardar' }, rc: '#545458', i: i }; }),
+      rows: st.map(function (x, i) { return { a: x.short, b: kmTxt(x.km) + ' · ~' + x.min + ' min', r: { en: 'Awaiting', pt: 'A aguardar' }, rc: '#545458', i: i }; }).map(function (r, i, R) { if (c.sentIdx && i === R.length - 1) sentRows(c, R); return r; }),
       link: { en: 'View fire', pt: 'Ver incêndio' } });
     if (s === 2) return Object.assign(base, { title: { en: 'Crews en route', pt: 'Meios a caminho' },
       body: { en: 'First on the fire line in about ' + (st[0] ? st[0].min : 15) + ' min', pt: 'Primeiros na linha de fogo em cerca de ' + (st[0] ? st[0].min : 15) + ' min' }, fire: true });
@@ -388,6 +390,7 @@
   function entry(c, s, d) {
     var P = c.people; d = d || 0;
     if (s === 1) {
+      if (c.flags.dispatched) return;   // orders already sent from the dispatch screen
       if (P[0]) say(c, 0, 'Ready to go on your order.', 'Prontos para sair à sua ordem.', d + 3500, 1);
       if (P[1]) say(c, 1, 'Available now.', 'Disponíveis agora.', d + 6500, 1);
       if (P[2]) say(c, 2, 'We can send one crew, the second stays for cover.', 'Podemos enviar uma equipa, a segunda fica de prevenção.', d + 9500, 2);
@@ -417,7 +420,7 @@
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
     if (s === 0) { A.push({ key: 'confirm', en: 'Confirm fire', pt: 'Confirmar incêndio', primary: true }); if (!c.flags.drone) A.push({ key: 'drone', en: 'Verify by drone', pt: 'Verificar por drone' }); A.push({ key: 'dismiss', en: 'Dismiss', pt: 'Descartar' }); }
-    if (s === 1) { A.push({ key: 'dispatch', en: 'Configure dispatch orders', pt: 'Configurar ordens de despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
+    if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch orders', pt: 'Configurar ordens de despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air) A.push({ key: 'next', en: 'Move to Being resolved', pt: 'Passar a Em resolução', primary: true }); }
     if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Deploy another station', pt: 'Empenhar outro quartel' });
@@ -583,11 +586,14 @@
   }
 
   // Orders configured on the fire's dispatch screen: the chat records what was actually sent, the chosen stations'
-  // crews go en route (a station not yet in the chat joins with its coordinator), and the fire moves on.
-  function dispatched(key, orders) {
-    var c = load().chats[key]; if (!c || c.dismissed || c.stage > 1) return;
+  // crews go en route (a station not yet in the chat joins with its coordinator), and the fire moves on. Works whether
+  // the dispatch screen was opened from the chat or not: orders sent before the chat existed are kept (pend) and posted
+  // when it is first opened, so the team has already received them there. delay: ms before the beats start.
+  function dispatched(key, orders, delay) {
+    var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
     orders = (orders || []).filter(function (o) { return o && o.name && o.id !== 'air'; });
     if (!orders.length) return;
+    var d = delay || 0;
     var norm = function (t) { return String(t || '').toLowerCase().replace(/[^a-z0-9à-ÿ]+/g, ' ').trim(); };
     var sent = [];
     orders.forEach(function (o) {
@@ -596,20 +602,33 @@
         c.stations.push({ name: o.name, short: shortStation(o.name), km: o.km || 5, min: o.eta || 10 });
         i = c.stations.length - 1; var nm = pickNames(c, 1, 'd' + i)[0];
         c.people.push({ name: nm, code: initials(nm), org: shortStation(o.name), kind: 'lead' });
-        sys(c, nm + ', crew coordinator of ' + shortStation(o.name) + ', joined', nm + ', coordenador de equipa de ' + shortStation(o.name) + ', entrou na conversa', 300, 0);
+        sys(c, nm + ', crew coordinator of ' + shortStation(o.name) + ', joined', nm + ', coordenador de equipa de ' + shortStation(o.name) + ', entrou na conversa', d + 300, 0);
       }
       var f = (c.forces || []).find(function (x) { return x.si === i; }) || (function () { var ff = forceFor(c, i, 'enroute'); c.forces = (c.forces || []).concat([ff]); return ff; })();
       f.st = 'enroute'; if (o.units && o.units.length) f.veh = o.units.map(function (u) { return u.n + ' × ' + u.label; });
       sent.push({ i: i, txt: c.stations[i].short + (o.units && o.units.length ? ' (' + o.units.map(function (u) { return u.n + ' ' + u.label.toLowerCase(); }).join(', ') + ')' : '') });
     });
     (c.forces || []).forEach(function (f) { if (!sent.some(function (x) { return x.i === f.si; }) && f.st !== 'enroute') f.st = 'standby'; });
-    c.flags.dispatched = true;
-    mine(c, 'Dispatch orders sent: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.', 'Ordens de despacho enviadas: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.');
-    var cm = c.msgs.filter(function (x) { return x.kind === 'card' && x.stage === 1; }).pop();
-    if (cm && cm.rows) cm.rows.forEach(function (r, i) { var on = sent.some(function (x) { return x.i === i; }); r.r = on ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = on ? '#1E7A34' : '#875800'; });
-    say(c, sent[0].i < c.people.length ? sent[0].i : 0, 'Order received. Rolling now.', 'Ordem recebida. A sair agora.', 1500, 1);
-    setStage(c, 2, 3000, 2);
+    c.flags.dispatched = true; c.sentIdx = sent.map(function (x) { return x.i; });
+    // Confirmed outside the chat (alert or drone screen): the chat catches up with the confirmation first
+    if (c.stage === 0) {
+      push(c, { kind: 'msg', from: 'me', en: 'Confirming the fire.', pt: 'Confirmo o incêndio.' }, d, 1);
+      setStage(c, 1, d + 600, 1); d += 1600;
+    }
+    var en = 'Dispatch orders sent: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.', pt = 'Ordens de despacho enviadas: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.';
+    if (d) push(c, { kind: 'msg', from: 'me', en: en, pt: pt }, d, 1); else mine(c, en, pt);
+    // The stage card lists the stations: those that got an order are marked dispatched, the others on standby
+    c.msgs.concat(c.queue.map(function (q) { return q.m; })).forEach(function (m) { if (m.kind === 'card' && m.stage === 1 && m.rows) sentRows(c, m.rows); });
+    say(c, sent[0].i < c.people.length ? sent[0].i : 0, 'Order received. Rolling now.', 'Ordem recebida. A sair agora.', d + 1500, 1);
+    setStage(c, 2, d + 3000, 2);
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
+  }
+  function sentRows(c, rows) { rows.forEach(function (r, i) { var on = (c.sentIdx || []).indexOf(i) >= 0; r.r = on ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = on ? '#1E7A34' : '#875800'; }); }
+  // Orders sent from the dispatch screen for a fire whose chat is not open yet: kept until the chat is created
+  function pend(inc, orders) {
+    var db = load(), k = keyOf(inc);
+    if (db.chats[k]) { dispatched(k, orders); return; }
+    db.sent = db.sent || {}; db.sent[k] = orders; save();
   }
 
   function send(key, text) {
@@ -918,7 +937,7 @@
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { c.seenAt = Date.now(); save(); emit(); } },
-    send: send, act: act, dispatched: dispatched, simulate: simulate,
+    send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
       setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
       set: function (k, cb) { k = String(k || '').trim(); try { if (k) localStorage.setItem(AIK, k); else { localStorage.removeItem(AIK); localStorage.removeItem(AIS); } } catch (e) {} emit();
