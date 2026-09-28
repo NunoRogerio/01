@@ -169,7 +169,17 @@ window.__wfBlink=function(path,dur){
     '#wf-load.photo .cap{opacity:1}'+
     /* the loading counter, 0% to 100% */
     '#wf-load .pct{margin-top:-6px;font:600 51px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#8E8E93}'+
-    '#wf-load.photo .pct{color:#D7F41A;text-shadow:0 1px 8px rgba(0,0,0,.5)}';
+    '#wf-load.photo .pct{color:#D7F41A;text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
+    /* after log in (hand): the sign-in screen's own layout carries on. Logo, name and line of text stay exactly where and
+       as big as they were, the line changes to 'Loading live data', the counter takes the fields' place at the centre */
+    '#wf-load.hand{display:block}#wf-load.hand .in{position:absolute;inset:0;display:block;opacity:1;animation:none}'+
+    '#wf-load.hand .in>svg,#wf-load.hand .name,#wf-load.hand .sub,#wf-load.hand .cap{position:absolute;margin:0;box-sizing:border-box;text-align:center;white-space:nowrap}'+
+    '#wf-load.hand svg{filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))}'+
+    '#wf-load.hand .name{letter-spacing:.02em;text-shadow:0 1px 10px rgba(0,0,0,.45)}'+
+    '#wf-load.hand .sub{display:grid;color:#FFFFFF;text-shadow:0 1px 8px rgba(0,0,0,.5)}#wf-load.hand .sub>span{grid-area:1/1;transition:opacity .45s cubic-bezier(.4,0,.2,1)}'+
+    '#wf-load.hand .pct{position:absolute;left:0;right:0;top:50%;margin:0;transform:translateY(-50%);text-align:center;font-size:102px;line-height:1}'+
+    '#wf-load.hand .cap{bottom:auto;color:rgba(255,255,255,.72);transition:none}'+
+    '#wf-load.hand .shade{background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)}';
   document.head.appendChild(st);
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
   // Screens with a forest photo behind them start on its dark green, never on the light surface (no flash before the photo)
@@ -188,12 +198,25 @@ window.__wfBlink=function(path,dur){
   var handS=function(h){return h?h.s+RATE*Math.max(0,Date.now()-h.t)/1000:1;};
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
   // The black-and-white forest, as the loading screen starts: used by the sign-in screen to hand over without a gap.
-  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:grayscale(1) brightness('+(0.92*(ph[3]||1)).toFixed(2)+')';return d;};
+  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:saturate(.25) brightness('+(0.8*(ph[3]||1)).toFixed(2)+')';return d;};   // slightly dimmer, most colour gone
+  // Places the loading screen's logo, name, line of text and credit exactly where sign in had them (lay, measured there)
+  var LOADTXT='Loading live data';
+  var handLayout=function(o,lay,first){if(!lay)return false;o.classList.add('hand');
+    var put=function(n,r){if(!n||!r)return;n.style.left=r[0]+'px';n.style.top=r[1]+'px';n.style.width=r[2]+'px';n.style.height=r[3]+'px';if(r[4]){n.style.fontSize=r[4]+'px';n.style.lineHeight=r[3]+'px';}};
+    put(o.querySelector('.in>svg'),lay.logo);put(o.querySelector('.name'),lay.name);put(o.querySelector('.cap'),lay.cred);
+    var sb=o.querySelector('.sub');if(sb&&lay.sub){put(sb,lay.sub);sb.innerHTML='';var a=document.createElement('span'),b=document.createElement('span');a.textContent=lay.sub[5]||'';b.textContent=LOADTXT;
+      if(first){b.style.opacity='0';sb.appendChild(a);sb.appendChild(b);setTimeout(function(){a.style.opacity='0';b.style.opacity='1';},60);}   // the line changes softly
+      else{sb.appendChild(b);}}
+    var cp=o.querySelector('.cap');if(cp&&lay.cred)cp.textContent=lay.cred[5]||'';
+    return true;};
+  var LAY=null;try{LAY=JSON.parse(sessionStorage.getItem('wf-soft-layout')||'null');}catch(e){}
   window.__wfSoftOut=function(){
     var H0=window.__wfSoftPhoto||null;if(H0){try{sessionStorage.setItem('wf-soft-photo',JSON.stringify(H0));}catch(e){}}
-    var o=document.createElement('div');o.id='wf-load';o.className='photo';o.innerHTML=TPL;o.style.opacity='0';o.style.transition='opacity .4s cubic-bezier(.4,0,.2,1)';
+    var L0=window.__wfSoftLayout||null;if(L0){try{sessionStorage.setItem('wf-soft-layout',JSON.stringify(L0));}catch(e){}}
+    var o=document.createElement('div');o.id='wf-load';o.className='photo';o.innerHTML=TPL;o.style.opacity='0';o.style.transition='opacity .5s cubic-bezier(.4,0,.2,1)';
     var ph=handPH(H0)||PH[nxt],b=o.querySelector('.bg'),s0=handS(H0),z0=document.createElement('div');z0.style.cssText='position:absolute;inset:0;transform:scale('+s0+');transition:transform 30s linear';z0.appendChild(grayLayer(ph));b.appendChild(z0);b.style.transition='none';b.className='bg on';b.style.transform='none';requestAnimationFrame(function(){z0.style.transform='scale('+(s0+RATE*30)+')';});
     o.querySelector('.in').style.animation='none';o.querySelector('.in').style.opacity='1';o.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
+    if(handLayout(o,L0,true)){var pc0=o.querySelector('.pct');if(pc0)pc0.textContent='0%';}
     document.body.appendChild(o);requestAnimationFrame(function(){requestAnimationFrame(function(){o.style.opacity='1';});});
   };
   var soft=false;try{soft=sessionStorage.getItem('wf-soft')==='1';sessionStorage.removeItem('wf-soft');}catch(e){}
@@ -202,7 +225,9 @@ window.__wfBlink=function(path,dur){
   var ZOOM=null,PHS=soft?handPH(HAND):null;try{sessionStorage.removeItem('wf-soft-photo');}catch(e){}
   if(soft){try{var ph0=PHS||PH[nxt],b0=el.querySelector('.bg'),s1=handS(HAND);ZOOM=document.createElement('div');ZOOM.style.cssText='position:absolute;inset:0;transform:scale('+s1+');transition:transform 30s linear;will-change:transform';
     ZOOM.appendChild(grayLayer(ph0));b0.appendChild(ZOOM);b0.style.transition='none';b0.className='bg on';b0.style.transform='none';el.className='photo';requestAnimationFrame(function(){ZOOM.style.transform='scale('+(s1+RATE*30)+')';});
-    var in0=el.querySelector('.in');in0.style.animation='none';in0.style.opacity='1';el.querySelector('.cap').textContent=ph0[1]+' · Photo: '+ph0[2]+' / Unsplash';}catch(e){}}
+    var in0=el.querySelector('.in');in0.style.animation='none';in0.style.opacity='1';el.querySelector('.cap').textContent=ph0[1]+' · Photo: '+ph0[2]+' / Unsplash';
+    handLayout(el,LAY,false);try{sessionStorage.removeItem('wf-soft-layout');}catch(e){}
+    try{document.documentElement.style.background='#1E2B22';}catch(e){}}catch(e){}}
   var t0=Date.now(),minMs=0;
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
@@ -226,11 +251,12 @@ window.__wfBlink=function(path,dur){
     var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+(ph[3]<1?f.replace('none','')+' brightness('+ph[3]+')':f);return d;};
     // one steady zoom-in for the whole loading screen (after log in it is the one already running, carried on from sign in)
     var zoom=ZOOM||document.createElement('div');if(!ZOOM)zoom.style.cssText='position:absolute;inset:0;transform:scale(1);transition:transform 30s linear;will-change:transform';
-    var gray=mk('grayscale(1) brightness(.92)'),norm=mk('none'),hot=mk('saturate(1.6) contrast(1.03) brightness(1.03)');
+    var gray=mk('saturate(.25) brightness(.8)'),norm=mk('none'),hot=mk('saturate(1.6) contrast(1.03) brightness(1.03)');
     zoom.appendChild(gray);zoom.appendChild(hot);zoom.appendChild(norm);
     im.onload=function(){if(!el.parentNode)return;
       if(!ZOOM)bg.appendChild(zoom);el.className='photo';el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
       var sv=el.querySelector('svg').getBoundingClientRect(),cx=sv.left+sv.width/2,cy=sv.top+sv.height/2;
+      if(el.classList.contains('hand')){cx=innerWidth/2;cy=innerHeight/2;}   // after log in: from the centre, behind the counter
       var W=innerWidth,H=innerHeight,R=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy)),band=75;   // R: the farthest screen corner from the logo
       // The colour wave: an organic, rounded but irregular front that keeps changing shape as it spreads out. It is the
       // union of a few soft discs whose centres drift around the logo and whose radii breathe; the saturated band at the
@@ -284,7 +310,7 @@ window.__wfBlink=function(path,dur){
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
-    if(!window.__wfUpdating&&((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||(wave.done&&Date.now()-wave.at>=500))&&pctDone)||Date.now()-t0>17000)){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
+    if(!window.__wfUpdating&&((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||(wave.done&&Date.now()-wave.at>=500))&&pctDone)||Date.now()-t0>17000)){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();if(soft){try{document.documentElement.style.background='';}catch(e){}}
       // warm the next photo into the cache for the next cold start
       try{var P2=window.__wfSplashPH(),n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%P2.length;(new Image()).src='assets/splash/'+P2[n][0];}catch(e){}},soft?850:350);return;}
     setTimeout(tick,80);
