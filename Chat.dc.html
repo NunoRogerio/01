@@ -293,7 +293,8 @@ class Component extends DCLogic {
     return {
       isList: false, isChat: true, t, items, team, who, whoD: whoI >= 0 ? 'flex' : 'none',
       c: { place: c.place, sub: [c.reg, staff ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
-        st: T(S), stC: S.c, elapsed: C.dur(Date.now() - since), summary, bar, icon: ic.icon, iconFill: ic.fill, iconStroke: ic.stroke,
+        st: T(S), stC: S.c, elapsed: (() => { let x = Math.max(0, Math.floor((Date.now() - since) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60, p = (n) => String(n).padStart(2, '0');
+          return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(sec) + ' s' : m ? m + ' min ' + p(sec) + ' s' : sec + ' s'; })(),   // live, ticks every second summary, bar, icon: ic.icon, iconFill: ic.fill, iconStroke: ic.stroke,
         href: inc.href, goInc: inc.go, pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
       acts, actD: acts.length ? 'flex' : 'none', ended: !!c.closed && !c.dismissed ? false : false,
