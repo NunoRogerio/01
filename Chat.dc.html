@@ -17,7 +17,7 @@
 <script src="prefs.js?v=5"></script>
 <script src="i18n.js?v=30"></script>
 <script src="live.js?v=23"></script>
-<script src="chat.js?v=1"></script>
+<script src="chat.js?v=2"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -27,11 +27,16 @@
 <helmet>
 <style>
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-.chrow{transition:background-color .15s ease}.chrow:active{background-color:#E5E5EA}
+.chrow{transition:background-color .15s ease,filter .15s ease}.chrow:active{filter:brightness(.94)}
 .chbtn{transition:opacity .15s ease}.chbtn:active{opacity:.6}
 .chscroll{scrollbar-width:none}.chscroll::-webkit-scrollbar{display:none}
 @keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}
 @keyframes chDot{0%,80%,100%{opacity:.25}40%{opacity:1}}.chdot{animation:chDot 1.2s infinite}
+@keyframes chView{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}.chview{animation:chView .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes chGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}.chbar{transform-origin:left center;animation:chGrow .8s cubic-bezier(.2,.8,.2,1)}
+@keyframes chPulse{0%,100%{opacity:1}50%{opacity:.55}}.chnow{animation:chPulse 1.6s ease-in-out infinite}
+@keyframes chShine{0%{transform:scale(.6) rotate(-8deg);opacity:0}60%{transform:scale(1.08) rotate(3deg);opacity:1}100%{transform:none;opacity:1}}.chtrophy{animation:chShine .9s cubic-bezier(.2,.8,.2,1) both}
+.chx{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
@@ -45,15 +50,20 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="font-size: 15px; line-height: 18px; color: #545458">{{listSub}}</div>
       </div>
     </header>
+    <div role="tablist" aria-label="{{t.chats}}" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; flex-shrink: 0; height: 36px; margin: 0 16px 16px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
+      <span aria-hidden="true" style="position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 8px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); transform: translateX({{tabX}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"></span>
+      <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
+        <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="position: relative; border: 0; background: transparent; color: #000000; font: inherit; font-size: 15px; font-weight: {{tb.w}}; cursor: pointer">{{tb.label}}</button>
+      </sc-for>
+    </div>
     <div class="chscroll" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 24px 8px; font-size: 17px; line-height: 22px; color: #545458; text-align: center">{{t.none}}</p></sc-if>
       <sc-for list="{{groups}}" as="g" hint-placeholder-count="1">
-        <h2 style="margin: {{g.mt}} 0 0; padding: 0 4px; font-size: 15px; font-weight: 600; line-height: 18px; color: #545458">{{g.title}}</h2>
         <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF; overflow: hidden">
           <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="2">
             <li style="border-top: {{r.sep}}">
               <a href="Chat.dc.html" class="chrow" onClick="{{r.go}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; padding: 12px 16px; color: #000000; text-decoration: none">
-                <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.iconBg}}"><svg width="18" height="18" viewBox="0 0 14 14"><path d="{{r.icon}}" fill="{{r.iconFill}}" stroke="{{r.iconStroke}}" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+                <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.ic.bg}}"><svg width="22" height="22" viewBox="0 0 24 24"><path d="{{r.ic.d}}" fill="{{r.ic.fill}}" stroke="{{r.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: {{r.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.place}}</span>
                 <span style="font-size: 15px; line-height: 18px; color: {{r.timeC}}; font-variant-numeric: tabular-nums">{{r.time}}</span>
                 <span style="min-width: 0; font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="color: {{r.stC}}">{{r.st}}</span> · {{r.last}}</span>
@@ -70,37 +80,43 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== One chat ===== -->
   <sc-if value="{{isChat}}" hint-placeholder-val="{{ false }}">
     <div style="display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.06)">
-      <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 8px 12px">
+      <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 12px 12px">
         <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h1 style="margin: 0; font-size: 19px; font-weight: 600; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h1>
           <div style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
         </div>
       </header>
-      <!-- Who is in this chat: fixed with the state, tap a person for their name and role -->
-      <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 16px 12px">
-        <div role="list" aria-label="{{t.team}}" class="chscroll" style="display: flex; gap: 8px; overflow-x: auto; margin: -4px; padding: 4px">
-          <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
-            <button type="button" role="listitem" class="chbtn" onClick="{{p.pick}}" aria-label="{{p.aria}}" aria-pressed="{{p.on}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font: inherit; font-size: 13px; font-weight: 600; box-shadow: {{p.ring}}; overflow: hidden; cursor: pointer; transition: box-shadow .2s ease">{{p.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></button>
-          </sc-for>
-        </div>
-        <div aria-live="polite" style="display: {{whoD}}; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 12px; background: #FFFFFF">
-          <span style="font-size: 15px; font-weight: 600; line-height: 20px">{{who.name}}</span>
-          <span style="font-size: 13px; line-height: 16px; color: #545458">{{who.role}}</span>
-        </div>
+      <!-- The team: you, the fire owner, and the crew coordinator of each station. Tap a person for their profile. -->
+      <div role="list" aria-label="{{t.team}}" class="chscroll" style="display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px">
+        <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
+          <button type="button" role="listitem" class="chrow" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; max-width: 264px; height: 52px; padding: 0 14px 0 6px; border: 0; border-radius: 999px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 13px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+            <span style="display: flex; flex-direction: column; gap: 0; min-width: 0">
+              <span style="font-size: 15px; font-weight: 600; line-height: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
+              <span style="font-size: 13px; line-height: 16px; color: {{p.roleC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.role}}</span>
+            </span>
+          </button>
+        </sc-for>
       </div>
-      <!-- The current state stays pinned while the conversation scrolls; tap it to open the incident -->
-      <a href="{{c.href}}" class="chrow" onClick="{{c.goInc}}" aria-label="{{c.pinAria}}" style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF; color: #000000; text-decoration: none">
-        <span style="display: flex; align-items: center; gap: 8px">
-          <svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0"><path d="{{c.icon}}" fill="{{c.iconFill}}" stroke="{{c.iconStroke}}" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"></path></svg>
-          <span style="flex-grow: 1; min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: {{c.stC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+      <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
+      <button type="button" class="chrow" onClick="{{openSheet}}" aria-haspopup="dialog" aria-label="{{c.pinAria}}" style="display: flex; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
+        <span style="display: flex; align-items: center; gap: 12px; width: 100%">
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: {{c.stC}}; transition: background-color .6s ease"><svg width="26" height="26" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="#FFFFFF" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+            <span style="font-size: 19px; font-weight: 600; line-height: 24px; color: {{c.stC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
+            <span style="font-size: 15px; line-height: 18px; color: #3C3C43; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.summary}}</span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
-        <span style="display: flex; align-items: baseline; gap: 8px; font-size: 15px; line-height: 18px; color: #545458"><span style="flex-grow: 1; min-width: 0">{{c.summary}}</span><span style="flex-shrink: 0; font-variant-numeric: tabular-nums">{{c.elapsed}}</span></span>
-        <span aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px">
+        <span aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; width: 100%">
           <sc-for list="{{c.bar}}" as="b" hint-placeholder-count="8"><span style="height: 4px; border-radius: 999px; background: {{b.c}}; transition: background-color .4s ease"></span></sc-for>
         </span>
-      </a>
+        <span style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%">
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; line-height: 16px; color: #3C3C43">{{c.lblL}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.inStage}}</span></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; text-align: right"><span style="font-size: 13px; line-height: 16px; color: #3C3C43">{{c.lblR}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.elapsed}}</span></span>
+        </span>
+      </button>
     </div>
 
     <div class="chscroll" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
@@ -111,7 +127,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
-            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.avBg}}; font-size: 13px; font-weight: 600; visibility: {{m.avVis}}">{{m.code}}</span>
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 12px; font-weight: 600; visibility: {{m.avVis}}">{{m.code}}</span>
             <div style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: #FFFFFF">
               <span style="display: {{m.nameD}}; font-size: 13px; line-height: 16px; color: #545458">{{m.name}}</span>
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
@@ -125,10 +141,20 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: rgba(255,255,255,0.72); font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
         </sc-if>
+        <sc-if value="{{m.isWin}}" hint-placeholder-val="{{ false }}">
+          <button type="button" class="chmsg chrow" onClick="{{m.go}}" style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 8px; padding: 24px 16px 16px; border: 0; border-radius: 20px; background: linear-gradient(160deg, #FFF6D6 0%, #E4F3E8 100%); color: #000000; font: inherit; text-align: center; cursor: pointer">
+            <span aria-hidden="true" class="chtrophy" style="display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #D7F41A"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
+            <span style="font-size: 13px; line-height: 16px; color: #1E7A34">{{m.tag}} · {{m.time}}</span>
+            <span style="font-size: 22px; font-weight: 600; line-height: 28px">{{m.title}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{m.body}}</span>
+            <span style="display: flex; align-items: center; justify-content: center; width: 100%; height: 44px; margin-top: 8px; border-radius: 10px; background: #1C1C1E; color: #FFFFFF; font-size: 17px; font-weight: 600">{{m.link}}</span>
+          </button>
+        </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
           <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: {{m.ring}}">
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 12px 16px">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px">
+              <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="20" height="20" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
                 <span style="font-size: 13px; line-height: 16px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
                 <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{m.title}}</span>
                 <span style="display: {{m.bodyD}}; font-size: 15px; line-height: 20px; color: #545458">{{m.body}}</span>
@@ -172,6 +198,18 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </sc-if>
     </div>
 
+    <sc-if value="{{isHist}}" hint-placeholder-val="{{ false }}">
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 12px 16px 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
+      <span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{t.hist}}</span>
+      <div role="tablist" aria-label="{{t.hist}}" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; height: 36px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
+        <span aria-hidden="true" style="position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 8px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); transform: translateX({{hTabX}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"></span>
+        <sc-for list="{{hTabs}}" as="tb" hint-placeholder-count="2">
+          <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="position: relative; border: 0; background: transparent; color: #000000; font: inherit; font-size: 15px; font-weight: {{tb.w}}; cursor: pointer">{{tb.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
       <div class="chscroll" style="display: {{actD}}; gap: 8px; overflow-x: auto; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
@@ -179,9 +217,173 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-for>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
-        <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid rgba(60,60,67,0.18)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" placeholder="{{t.msg}}" disabled="{{ended}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
+        <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid rgba(60,60,67,0.18)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
         <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
       </div>
+    </div>
+    </sc-if>
+
+    <!-- ===== Fire card: drops from the state card, stops 32px above the bottom, glass over the chat ===== -->
+    <div onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
+    <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: 32px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
+      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px">
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
+          <h2 style="margin: 0; font-size: 19px; font-weight: 600; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h2>
+          <span style="font-size: 15px; line-height: 18px; color: #545458">{{t.fireCardSub}}</span>
+        </div>
+        <button type="button" class="chbtn" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg class="chx" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{sh.xRot}})"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+      </header>
+      <div class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 24px">
+        <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+          <!-- Time in each stage -->
+          <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
+            <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
+              <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; opacity: {{r.op}}">
+                <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: {{r.bg}}"><svg width="16" height="16" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+                <span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}} <span style="color: #545458">{{r.at}}</span></span>
+                <span class="{{r.nowCls}}" style="font-size: 15px; font-weight: {{r.w}}; line-height: 20px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
+                <span style="grid-column: 2 / span 2; height: 8px; border-radius: 999px; background: rgba(118,118,128,0.10); overflow: hidden"><span class="chbar" style="display: block; width: {{r.pct}}; height: 100%; border-radius: 999px; background: {{r.c}}"></span></span>
+              </div>
+            </sc-for>
+          </section>
+          <!-- Spread projection -->
+          <section aria-label="{{t.proj}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
+            <div style="display: flex; flex-direction: column; gap: 2px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.proj}}</h3><span style="font-size: 15px; line-height: 18px; color: #545458">{{t.projSub}}</span></div>
+
+            <a href="Dispatch.dc.html" class="chbtn" onClick="{{goFire}}" style="display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 10px; background: rgba(118,118,128,0.12); color: #0062CC; font-size: 17px; font-weight: 500; text-decoration: none">{{t.openFire}}</a>
+          </section>
+          <!-- Forces involved -->
+          <section aria-label="{{t.forces}}" style="display: flex; flex-direction: column; gap: 12px">
+            <h3 style="margin: 0; padding: 0 4px; font-size: 17px; font-weight: 600; line-height: 22px">{{t.forces}}</h3>
+            <sc-if value="{{noForces}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 14px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noForces}}</p></sc-if>
+            <sc-if value="{{hasForces}}" hint-placeholder-val="{{ true }}">
+              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 16px; border-radius: 14px; background: #FFFFFF">
+                <sc-for list="{{fk}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 30px; font-weight: 600; line-height: 34px; font-variant-numeric: tabular-nums">{{k.v}}</span><span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
+              </div>
+              <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
+                <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
+                  <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 16px 8px">
+                    <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{f.station}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{f.veh}}</span></div>
+                    <span style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 26px; padding: 0 10px; border-radius: 999px; background: {{f.pillBg}}; color: {{f.pillFg}}; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: currentColor"></span>{{f.stTxt}}</span>
+                  </div>
+                  <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
+                    <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+                      <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600">{{p.code}}</span>
+                      <span style="flex-grow: 1; min-width: 0; font-size: 15px; font-weight: {{p.w}}; line-height: 20px">{{p.name}}</span>
+                      <span style="font-size: 13px; line-height: 16px; color: #545458">{{p.role}}</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+                    </button>
+                  </sc-for>
+                </article>
+              </sc-for>
+              <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF">
+                  <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{x.sub}}</span></div>
+                  <span style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 26px; padding: 0 10px; border-radius: 999px; background: {{x.pillBg}}; color: {{x.pillFg}}; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: currentColor"></span>{{x.stTxt}}</span>
+                </div>
+              </sc-for>
+            </sc-if>
+          </section>
+          <p style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{t.demo}}</p>
+        </sc-if>
+      </div>
+      <button type="button" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="display: flex; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></button>
+    </section>
+  </sc-if>
+
+  <!-- ===== Resolution summary ===== -->
+  <sc-if value="{{isSummary}}" hint-placeholder-val="{{ false }}">
+    <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 12px 12px; flex-shrink: 0">
+      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
+      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
+        <h1 style="margin: 0; font-size: 19px; font-weight: 600; line-height: 24px">{{t.sumTitle}}</h1>
+        <div style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
+      </div>
+    </header>
+    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+      <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 16px 24px; border-radius: 20px; background: linear-gradient(160deg, #FFF6D6 0%, #E4F3E8 100%); text-align: center">
+        <span aria-hidden="true" class="chtrophy" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: #D7F41A; box-shadow: 0 8px 24px rgba(135,160,0,0.35)"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
+        <span style="margin-top: 8px; font-size: 15px; line-height: 18px; color: #1E7A34; font-weight: 600">{{sum.kicker}}</span>
+        <span style="font-size: 26px; font-weight: 700; line-height: 32px; letter-spacing: -0.01em; text-wrap: balance">{{sum.headline}}</span>
+        <span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{sum.closedAt}}</span>
+      </section>
+      <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{sum.kpis}}" as="k" hint-placeholder-count="4">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
+            <span style="font-size: 26px; font-weight: 600; line-height: 32px; color: {{k.c}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span>
+            <span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span>
+          </div>
+        </sc-for>
+      </section>
+      <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.timeline}}</h2><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
+        <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
+          <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; opacity: {{r.op}}">
+            <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: {{r.bg}}"><svg width="16" height="16" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+            <span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}} <span style="color: #545458">{{r.at}}</span></span>
+            <span style="font-size: 15px; font-weight: {{r.w}}; line-height: 20px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
+            <span style="grid-column: 2 / span 2; height: 8px; border-radius: 999px; background: rgba(118,118,128,0.10); overflow: hidden"><span class="chbar" style="display: block; width: {{r.pct}}; height: 100%; border-radius: 999px; background: {{r.c}}"></span></span>
+          </div>
+        </sc-for>
+      </section>
+      <section style="display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 15px; line-height: 18px; color: #545458">{{sum.forcesSub}}</span></div>
+        <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
+          <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
+            <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px 8px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{f.station}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{f.veh}}</span></div>
+            <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
+              <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+                <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; font-size: 12px; font-weight: 600">{{p.code}}</span>
+                <span style="flex-grow: 1; min-width: 0; font-size: 15px; font-weight: {{p.w}}; line-height: 20px">{{p.name}}</span>
+                <span style="font-size: 13px; line-height: 16px; color: #545458">{{p.role}}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+              </button>
+            </sc-for>
+          </article>
+        </sc-for>
+        <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
+          <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{x.sub}}</span></div>
+        </sc-for>
+        <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 13px; font-weight: 600; overflow: hidden">{{sum.me.code}}<span style="position: absolute; inset: 0; background-image: {{sum.me.photo}}; background-size: cover; background-position: center"></span></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{sum.me.name}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{t.owner}}</span></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+        </button>
+      </section>
+      <p style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{t.simNote}}</p>
+    </div>
+  </sc-if>
+
+  <!-- ===== A firefighter's profile and achievements ===== -->
+  <sc-if value="{{isPerson}}" hint-placeholder-val="{{ false }}">
+    <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 12px; flex-shrink: 0">
+      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
+    </header>
+    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+      <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+        <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 88px; height: 88px; border-radius: 50%; background: #E5E5EA; font-size: 28px; font-weight: 600; overflow: hidden">{{pp.code}}<span style="position: absolute; inset: 0; background-image: {{pp.photo}}; background-size: cover; background-position: center"></span></span>
+        <h1 style="margin: 8px 0 0; font-size: 22px; font-weight: 600; line-height: 28px">{{pp.name}}</h1>
+        <span style="font-size: 15px; line-height: 18px; color: #545458">{{pp.role}}</span>
+      </section>
+      <section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
+        <sc-for list="{{pp.kpis}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 26px; font-weight: 600; line-height: 32px; font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span><span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
+      </section>
+      <section style="display: flex; flex-direction: column; gap: 8px">
+        <h2 style="margin: 0; padding: 0 4px; font-size: 17px; font-weight: 600; line-height: 22px">{{t.ach}}</h2>
+        <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 14px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
+        <sc-for list="{{pp.ach}}" as="a" hint-placeholder-count="2">
+          <article style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF">
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #D7F41A"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-size: 13px; line-height: 16px; color: #1E7A34">{{a.kicker}}</span>
+              <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{a.place}}</span>
+              <span style="font-size: 15px; line-height: 20px; color: #545458">{{a.line}}</span>
+            </span>
+          </article>
+        </sc-for>
+      </section>
+      <p style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{t.simNote}}</p>
     </div>
   </sc-if>
 </div>
@@ -194,7 +396,7 @@ class Component extends DCLogic {
     this._t = setInterval(() => this.forceUpdate(), 1000);
     this._stick = true;
     const k = window.__wfChat ? window.__wfChat.current() : '';
-    this.setState({ view: k ? 'chat' : 'list', key: k, fromList: false, draft: '' });
+    this.setState({ view: k ? 'chat' : 'list', key: k, fromList: false, draft: '', stack: [], sheet: false });
   }
   componentWillUnmount() { try { window.removeEventListener('wf-chat', this._sync); window.removeEventListener('wf-sync', this._sync); } catch (e) {} clearInterval(this._t); }
   componentDidUpdate() {
@@ -202,107 +404,197 @@ class Component extends DCLogic {
     if (s.view === 'chat' && C && s.key) {
       const c = C.get(s.key);
       if (c && C.unread(c) > 0 && document.visibilityState !== 'hidden') C.seen(s.key);
+      // Declared resolved: the chat gives way to the resolution summary; back from it lands on the Resolved tab
+      const win = c && c.closed && !c.dismissed && c.msgs.find((m) => m.summary);
+      if (win && Date.now() - win.t < 8000 && !(this._auto || (this._auto = {}))[c.key]) {
+        this._auto[c.key] = true;
+        setTimeout(() => this.setState({ view: 'summary', sheet: false, stack: [{ view: 'list', tab: 'resolved' }] }), 1800);
+      }
       const el = this._sc, n = c ? c.msgs.length : 0;
       if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { if (this._stick) el.scrollTop = el.scrollHeight; this._n = n; this._typ = !!(c && C.typing(c)); }
     }
   }
+  // Views inside this screen stack up, so every back returns to the one you came from
+  go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person }]), view, sheet: false, ...(extra || {}) }); }
   renderVals() {
     const s = this.state || {}, C = window.__wfChat;
     const L = (en, pt) => (C ? C.L(en, pt) : en);
     const T = (o) => (o ? L(o.en, o.pt) : '');
+    const PTL = L('en', 'pt') === 'pt';
     const t = { back: L('Back', 'Voltar'), chats: L('Incident chats', 'Conversas de incidentes'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
-      msg: L('Message', 'Mensagem'), send: L('Send', 'Enviar'), team: L('People in this chat', 'Pessoas nesta conversa'), demo: L('Demonstration: the team members and their messages are scripted. Stations and incidents are real.', 'Demonstração: os membros das equipas e as mensagens são simulados. Os quartéis e os incidentes são reais.') };
-    const TRI = 'M2.6 3H11.4L7 11Z', CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z', CHK = 'M3.5 7.4 6 9.8l4.6-5.3';
-    const iconOf = (c) => { const S = C.stageOf(c); return c.dismissed || c.stage === 7 ? { icon: CHK, fill: 'none', stroke: '#636366', bg: 'rgba(120,120,128,0.12)' } : c.stage === 0 ? { icon: TRI, fill: '#0A6FDB', stroke: 'none', bg: 'rgba(10,111,219,0.12)' } : { icon: CIR, fill: 'rgba(255,59,48,0.45)', stroke: '#8E0A12', bg: 'rgba(255,59,48,0.12)' }; };
+      msg: L('Message', 'Mensagem'), send: L('Send', 'Enviar'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
+      inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
+      fireCard: L('Fire card', 'Cartão do incêndio'), fireCardSub: L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios'),
+      tl: L('Time in each stage', 'Tempo em cada fase'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
+      proj: L('Spread projection', 'Projeção da propagação'), projSub: L('On the fire detail: where the fire can go in the next hours, with the nearest stations', 'No detalhe do incêndio: para onde o fogo pode ir nas próximas horas, com os quartéis mais próximos'), openFire: L('View', 'Ver'),
+      forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
+      won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), wonBy: L('The forces that won', 'Os meios que venceram'), owner: L('Fire owner', 'Responsável pelo incêndio'),
+      ach: L('Achievements', 'Conquistas'), noAch: L('No resolved fires yet. Achievements appear here when a fire this person worked on is closed.', 'Ainda sem incêndios resolvidos. As conquistas aparecem aqui quando um incêndio em que esta pessoa trabalhou é encerrado.'),
+      demo: L('Simulation: crew coordinators, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: os coordenadores de equipa, as respostas, os veículos e os tempos são encenados. Os quartéis e os incidentes são reais.'),
+      simNote: L('Simulation: people, times, area and population figures come from the role-played scenario, not from live data.', 'Simulação: pessoas, tempos, área e população vêm do cenário encenado, não de dados em direto.') };
+    const ic = { trophy: C ? C.ICON.trophy : '' };
+    if (!C) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, groups: [], noChats: true, listSub: '' };
+    const iconFor = (S) => ({ d: C.ICON[S.icon], c: S.c, bg: S.bg, fill: S.icon === 'cand' ? S.c : 'none', fillW: S.icon === 'cand' ? '#FFFFFF' : 'none' });
     const ago = (tm) => { const m = Math.round((Date.now() - tm) / 60000); if (m < 1) return L('now', 'agora'); if (m < 60) return L(m + ' min ago', 'há ' + m + ' min'); const d = new Date(tm), n = new Date(); return d.toDateString() === n.toDateString() ? C.hhmm(tm) : d.toLocaleDateString(L('en-GB', 'pt-PT'), { day: 'numeric', month: 'short' }); };
-    const incOf = (c) => {
-      if (c.kind === 'cand' && c.stage === 0 || c.dismissed) return { href: 'Alert.dc.html', go: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: c.incId }); try { sessionStorage.setItem('wf-focus', c.incId); } catch (e) {} } };
-      const id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, note = c.kind === 'cand' ? 'Confirmed from ' + c.incId : c.note;
-      return { href: 'Dispatch.dc.html', go: () => { const v = { id, place: c.place, note, x: c.x, y: c.y, det: c.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
-    };
-    if (!C) return { isList: true, isChat: false, t, groups: [], noChats: true, listSub: '' };
+    const dayTxt = (tm) => new Date(tm).toLocaleDateString(L('en-GB', 'pt-PT'), { weekday: 'short', day: 'numeric', month: 'short' });
+    const whenTxt = (tm) => dayTxt(tm) + ', ' + C.hhmm(tm);
+    const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
+    const photo = (p) => (p && p.photo ? 'url("' + p.photo + '")' : 'none');
+    const openPerson = (name) => () => this.go('person', { person: name });
+
+    // ----- a firefighter's profile -----
+    if (s.view === 'person' && s.person) {
+      const P = C.person(s.person), A = P.ach || [];
+      const resTot = A.reduce((a, r) => a + (r.res || 0), 0), popTot = A.reduce((a, r) => a + (r.pop || 0), 0);
+      return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, pop: this.popFn(),
+        pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? L('Fire owner', 'Responsável pelo incêndio') + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
+          kpis: [{ v: String(A.length), l: L('Fires resolved', 'Incêndios resolvidos') }, { v: A.length ? C.dur(resTot).replace(/ \d+ min$/, '') : '0', l: L('On incidents', 'Em incidentes') }, { v: String(popTot), l: L('People protected', 'Pessoas protegidas') }],
+          none: !A.length, ach: A.map((r) => ({ kicker: L('Fire resolved', 'Incêndio resolvido') + ' · ' + dayTxt(r.vt), place: r.place + (r.reg ? ', ' + r.reg : ''),
+            line: L(r.roleEn, r.rolePt) + (r.station ? ' · ' + r.station : '') + ' · ' + L('resolved in ', 'resolvido em ') + C.dur(r.res) + ' · ' + (r.us ? r.acres + ' acres' : String(r.ha).replace('.', PTL ? ',' : '.') + ' ha') })) } };
+    }
 
     // ----- list -----
-    if (s.view !== 'chat') {
+    if (s.view !== 'chat' && s.view !== 'summary') {
       const all = C.list();
-      const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c), ic = iconOf(c);
+      const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);
         const who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? L('You', 'Você') : (c.people[lm.from] || {}).name || '') : '';
-        const txt = lm ? (lm.kind === 'card' ? T(lm.title) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
+        const txt = lm ? (lm.kind === 'card' ? (lm.summary ? L('Fire resolved', 'Incêndio resolvido') : T(lm.title)) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
         return { place: c.place, st: T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: u > 9 ? '9+' : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
-          icon: ic.icon, iconFill: ic.fill, iconStroke: ic.stroke, iconBg: ic.bg, sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
-          go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, draft: '', who: null }); } }; };
+          ic: iconFor(S), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
+          go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, draft: '', stack: [], sheet: false }); } }; };
       const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };
       const open = all.filter((c) => !c.closed).sort((a, b) => (C.unread(b) ? 1 : 0) - (C.unread(a) ? 1 : 0) || lastT(b) - lastT(a));
       const done = all.filter((c) => c.closed).sort((a, b) => lastT(b) - lastT(a));
-      const groups = [];
-      if (open.length) groups.push({ title: L('Open', 'Abertas'), mt: '0', rows: open.map(row) });
-      if (done.length) groups.push({ title: L('Closed', 'Encerradas'), mt: '16px', rows: done.map(row) });
+      const tab = s.tab === 'resolved' ? 'resolved' : 'open', shown = tab === 'resolved' ? done : open;
+      const groups = shown.length ? [{ title: '', mt: '0', rows: shown.map(row) }] : [];
+      const tabs = [['open', L('Open', 'Abertas') + (open.length ? ' · ' + open.length : '')], ['resolved', L('Resolved', 'Resolvidas') + (done.length ? ' · ' + done.length : '')]]
+        .map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ tab: k }); } }));
       const tu = C.totalUnread();
-      return { isList: true, isChat: false, t, groups, noChats: !all.length,
-        listSub: open.length + ' ' + L(open.length === 1 ? 'open' : 'open', open.length === 1 ? 'aberta' : 'abertas') + (tu ? ' · ' + tu + ' ' + L('unread', tu === 1 ? 'por ler' : 'por ler') : '') };
+      return { isList: true, isChat: false, isSummary: false, isPerson: false, t: { ...t, none: tab === 'resolved' ? L('No resolved fires yet. When a fire is closed its chat moves here, with every movement and decision.', 'Ainda sem incêndios resolvidos. Quando um incêndio é encerrado, a conversa passa para aqui, com todos os movimentos e decisões.') : t.none }, ic, groups, noChats: !shown.length, tabs, tabX: tab === 'resolved' ? '100%' : '0',
+        listSub: open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tu ? ' · ' + tu + ' ' + L('unread', 'por ler') : '') };
+    }
+
+    const c = C.get(s.key);
+    if (!c) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, groups: [], noChats: true, listSub: '' };
+    const S = C.stageOf(c), us = C.isUS(c), vn = C.vnow(c), t0 = C.since(c);
+
+    // Time in each stage (also the timeline of the resolution summary)
+    const D = C.stageDurs(c), maxMs = Math.max(1, ...D.map((d) => d.ms));
+    const tl = C.STAGES.slice(0, c.dismissed ? 1 : 8).map((St, i) => { const d = D.find((x) => x.s === i), I = iconFor(St);
+      return { name: T(St), d: I.d, c: St.c, bg: St.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', dur: d ? (d.cur ? C.clock(d.ms) : i === 7 ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d ? '#000000' : '#8E8E93',
+        pct: d && i < 7 ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '' }; });
+    const tlTotal = L('Total ', 'Total ') + C.dur(vn - t0);
+
+    // Forces
+    const stTxt = { standby: [L('Standby', 'Prevenção'), 'rgba(135,88,0,0.12)', '#875800'], enroute: [L('En route', 'A caminho'), 'rgba(184,54,10,0.12)', '#B8360A'], onscene: [L('On scene', 'No local'), 'rgba(179,20,27,0.10)', '#B3141B'],
+      watch: [L('On watch', 'Em vigilância'), 'rgba(0,112,122,0.12)', '#00707A'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
+    const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby');
+    const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby;
+      const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
+      return { station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
+        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '1px solid rgba(60,60,67,0.08)' : '1px solid rgba(60,60,67,0.12)', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
+    const extras = [];
+    if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2] }); }
+    if (c.evac) extras.push({ name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
+    const live = FF.filter((f) => f.st !== 'standby');
+    const fk = [{ v: String(live.reduce((a, f) => a + 1 + f.crew.length, 0)), l: L('People', 'Pessoas') }, { v: String(live.reduce((a, f) => a + f.veh.length, 0)), l: L('Vehicles', 'Veículos') }, { v: String(c.air ? 1 : 0), l: L('Aircraft', 'Meios aéreos') }];
+
+    // ----- resolution summary -----
+    if (s.view === 'summary') {
+      const Z = c.sum || C.stats(c);
+      const area = Z.us ? { v: String(Z.acres), u: 'acres' } : { v: String(Z.ha).replace('.', PTL ? ',' : '.'), u: 'ha' };
+      return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, pop: this.popFn(), tl, tlTotal, forces, extras,
+        sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: L('Fire resolved', 'Incêndio resolvido'), headline: c.place, closedAt: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
+          kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Time to response', 'Tempo de resposta'), c: '#B3141B' }, { v: C.dur(Z.res), l: L('Time to resolution', 'Tempo até à resolução'), c: '#1E7A34' },
+            { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800' }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC' }],
+          forcesSub: Z.people + ' ' + L('people', 'pessoas') + ' · ' + Z.veh + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
+          me: { name: me.name, code: me.code, photo: photo(me) }, goOwner: openPerson(me.name) } };
     }
 
     // ----- one chat -----
-    const c = C.get(s.key);
-    if (!c) return { isList: true, isChat: false, t, groups: [], noChats: true, listSub: '' };
-    const S = C.stageOf(c), ic = iconOf(c), inc = incOf(c);
-    const since = c.det && c.kind === 'cand' ? c.det : c.started;
-    const summary = c.dismissed ? L('No fire on the ground · teams released', 'Sem incêndio no terreno · equipas libertadas')
+    const inc = (() => {
+      if (c.kind === 'cand' && c.stage === 0 || c.dismissed) return { href: 'Alert.dc.html', go: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: c.incId }); try { sessionStorage.setItem('wf-focus', c.incId); } catch (e) {} } };
+      const id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, note = c.kind === 'cand' ? 'Confirmed from ' + c.incId : c.note;
+      return { href: 'Dispatch.dc.html', go: () => { const v = { id, place: c.place, note, x: c.x, y: c.y, det: c.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
+    })();
+    const openSummary = () => this.go('summary');
+    const openSheet = () => { if (c.stage === 7 && !c.dismissed) { openSummary(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ sheet: true }); };
+    const summary = c.dismissed ? L('No fire on the ground · crews released', 'Sem incêndio no terreno · equipas libertadas')
       : c.stage === 0 ? (c.conf ? c.conf + '% ' + L('likelihood', 'de probabilidade') + ' · ' : '') + (c.src || '')
       : c.stage === 1 ? (c.flags.dispatched ? L('Dispatch orders sent', 'Ordens de despacho enviadas') : L('Awaiting your dispatch order', 'A aguardar a sua ordem de despacho'))
       : c.stage === 2 ? L('Crews en route', 'Meios a caminho')
-      : c.stage === 3 ? L('Crews on the fire line', 'Equipas na linha de fogo') + (c.flags.air ? L(' · air support', ' · meio aéreo') : '') + (c.flags.evac ? L(' · evacuation in progress', ' · evacuação em curso') : '')
-      : c.stage === 7 ? L('Closed · ', 'Encerrado · ') + C.dur((C.lastMsg(c) || { t: Date.now() }).t - since) + L(' from the first detection', ' desde a primeira deteção')
+      : c.stage === 3 ? L('Crews on the fire line', 'Equipas na linha de fogo') + (c.flags.air ? L(' · air support', ' · meio aéreo') : '') + (c.flags.evac ? L(' · evacuation', ' · evacuação') : '')
+      : c.stage === 7 ? L('Tap for the resolution summary', 'Toque para ver o resumo da resolução')
       : T((c.msgs.filter((m) => m.kind === 'card' && m.stage === c.stage).pop() || {}).title);
-    const bar = Array.from({ length: 8 }, (_, i) => ({ c: c.dismissed ? '#D1D1D6' : i <= c.stage ? S.c : '#E5E5EA' }));
-    const staff = c.people.length;
+    const bar = Array.from({ length: 8 }, (_, i) => ({ c: c.dismissed ? 'rgba(60,60,67,0.18)' : i <= c.stage ? S.c : 'rgba(60,60,67,0.12)' }));
+    const cur = D[D.length - 1];
     let prevFrom = null, prevDay = '';
     const today = new Date().toDateString();
     const items = [];
+    const onlyDec = c.closed && s.hTab === 'dec';
     c.msgs.forEach((m) => {
-      const d = new Date(m.t).toDateString();
-      if (d !== prevDay) { items.push({ isDay: true, day: d === today ? L('Today', 'Hoje') : new Date(m.t).toLocaleDateString(L('en-GB', 'pt-PT'), { weekday: 'short', day: 'numeric', month: 'short' }) }); prevDay = d; prevFrom = null; }
-      const time = C.hhmm(m.t);
+      if (onlyDec && !(m.kind === 'card' || (m.kind === 'msg' && m.from === 'me'))) return;
+      const vt = m.vt || m.t, d = new Date(vt).toDateString();
+      if (d !== prevDay) { items.push({ isDay: true, day: d === today ? L('Today', 'Hoje') : dayTxt(vt) }); prevDay = d; prevFrom = null; }
+      const time = C.hhmm(vt);
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, avVis: 'visible', avBg: p.kind === 'ops' ? 'rgba(255,214,10,0.45)' : p.kind === 'drone' ? 'rgba(10,111,219,0.16)' : '#E5E5EA', gap: same ? '0' : '4px' });
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, avVis: 'visible', gap: same ? '0' : '4px' });
         prevFrom = m.from; return; }
+      if (m.kind === 'card' && m.summary) {
+        const Z = c.sum || C.stats(c);
+        items.push({ isWin: true, time, tag: T(m.tag), title: L('Resolved in ', 'Resolvido em ') + C.dur(Z.res), body: Z.people + ' ' + L('people', 'pessoas') + ' · ' + Z.veh + ' ' + L('vehicles', 'veículos') + ' · ' + (Z.us ? Z.acres + ' acres' : String(Z.ha).replace('.', PTL ? ',' : '.') + ' ha'), link: L('See the summary', 'Ver o resumo'), go: openSummary });
+        prevFrom = null; return;
+      }
       if (m.kind === 'card') {
+        const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
         const acts = (m.actions || []).map((a) => ({ label: L(a.en, a.pt), dis: !!m.done || c.closed, op: m.done && m.done !== a.key ? 0.4 : 1,
           bg: a.primary ? '#D7F41A' : 'rgba(118,118,128,0.12)', fg: a.primary ? '#1C1C1E' : '#0062CC', w: a.primary ? 600 : 500, go: () => { if (m.done) return; this._stick = true; C.act(c.key, a.key, m.id); } }));
+        const toSheet = !!m.fire && !c.closed;
         items.push({ isCard: true, time, tag: T(m.tag), tagC: m.tagC || '#545458', title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
+          icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? m.kpi.c : '#000000',
           hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: r.rc, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && !c.closed, actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
-          hasLink: !!m.link, link: T(m.link), href: inc.href, goInc: inc.go, ring: m.req && !m.done ? 'inset 0 0 0 1.5px rgba(184,74,0,0.4)' : 'none' });
+          hasLink: !!m.link || toSheet, link: toSheet ? L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios') : T(m.link), href: toSheet ? '#' : inc.href,
+          goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : inc.go, ring: m.req && !m.done ? 'inset 0 0 0 1.5px rgba(184,54,10,0.4)' : 'none' });
         prevFrom = null;
       }
     });
-    const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
-    const roleOf = (p) => p.kind === 'drone' ? L('Drone team', 'Equipa de drone') : p.kind === 'ops' ? p.org : L('Team lead · ', 'Chefe de equipa · ') + p.org;
-    const ppl = [{ code: me.code, name: me.name + L(' (you)', ' (você)'), role: L('Coordinator', 'Coordenação') + (me.title ? ' · ' + me.title : ''), photo: me.photo ? 'url("' + me.photo + '")' : 'none', bg: '#E5E5EA' }]
-      .concat(c.people.map((p) => ({ code: p.code, name: p.name, role: roleOf(p), photo: 'none', bg: p.kind === 'ops' ? 'rgba(255,214,10,0.45)' : p.kind === 'drone' ? 'rgba(10,111,219,0.16)' : '#E5E5EA' })));
-    const whoI = s.who == null ? -1 : s.who;
-    const team = ppl.map((p, i) => ({ ...p, on: whoI === i ? 'true' : 'false', ring: whoI === i ? '0 0 0 2px #F2F2F7, 0 0 0 4px #1C1C1E' : 'none', aria: p.name + ', ' + p.role, pick: () => this.setState({ who: whoI === i ? null : i }) }));
-    const who = ppl[whoI] || { name: '', role: '' };
+    // The team: you, the fire owner, then the crew coordinator of each station
+    const team = [{ name: me.name, role: L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: '0 0 0 2px #FFFFFF, 0 0 0 4px #D7F41A', roleC: '#1E7A34' }]
+      .concat(c.people.map((p) => ({ name: p.name, role: L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: 'none', bg: '#FFF6D6', ring: 'none', roleC: '#545458' })))
+      .map((p) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name) }));
     const ty = C.typing(c);
     const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), bg: a.primary ? '#D7F41A' : a.danger ? 'rgba(215,0,21,0.10)' : 'rgba(118,118,128,0.12)', fg: a.primary ? '#1C1C1E' : a.danger ? '#B3001B' : '#0062CC', w: a.primary ? 600 : 400, go: () => { this._stick = true; C.act(c.key, a.key); } }));
     const send = () => { const v = (this.state || {}).draft || ''; if (!v.trim()) return; this._stick = true; C.send(c.key, v); this.setState({ draft: '' }); };
+    const endT = c.closed ? (c.closedVt || vn) : vn;
+    const sh = !!s.sheet;
+    const firePt = { x: c.x, y: c.y, id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, st: c.st, zoom: 2.2 };
     return {
-      isList: false, isChat: true, t, items, team, who, whoD: whoI >= 0 ? 'flex' : 'none',
-      c: { place: c.place, sub: [c.reg, staff ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
-        st: T(S), stC: S.c, elapsed: (() => { let x = Math.max(0, Math.floor((Date.now() - since) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60, p = (n) => String(n).padStart(2, '0');
-          return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(sec) + ' s' : m ? m + ' min ' + p(sec) + ' s' : sec + ' s'; })(),   // live, ticks every second summary, bar, icon: ic.icon, iconFill: ic.fill, iconStroke: ic.stroke,
-        href: inc.href, goInc: inc.go, pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
+      isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, items, team, tl, tlTotal, forces, extras, fk,
+      isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
+      hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
+      noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
+      sh: { y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
+      openSheet, closeSheet: () => this.setState({ sheet: false }), goFire: inc.go,
+      c: { place: c.place, sub: [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
+        st: T(S), stC: S.c, bg: S.bg, ic: iconFor(S), summary, bar,
+        elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),
+        lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,
+        pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
-      acts, actD: acts.length ? 'flex' : 'none', ended: !!c.closed && !c.dismissed ? false : false,
+      acts, actD: acts.length ? 'flex' : 'none',
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? '#D7F41A' : '#E5E5EA',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
       setScroll: (el) => { this._sc = el; }, onScroll: (e) => { const el = e.currentTarget; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
-      back: (e) => { if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false }); } }
+      back: (e) => { if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false, sheet: false, tab: c.closed ? 'resolved' : (this.state || {}).tab }); } }
     };
+  }
+  popFn() {
+    return (e) => { if (e && e.preventDefault) e.preventDefault(); const st = (this.state || {}).stack || []; const prev = st[st.length - 1] || { view: 'chat' }; this.setState({ view: prev.view, person: prev.person, stack: st.slice(0, -1), ...(prev.tab ? { tab: prev.tab, key: prev.view === 'list' ? '' : (this.state || {}).key } : {}) }); if (prev.view === 'list') { try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} } this._n = -1; };
   }
 }
 </script>

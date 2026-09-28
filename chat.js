@@ -1,37 +1,83 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
-// Incident chats (demonstration). One chat per incident gathers the coordinator (you) and the team leads of the
-// nearest fire stations. The system posts a card at every change of state; scripted team members answer your messages
-// and your actions with realistic delays, so a fire can be followed from ignition candidate to closed.
-// Chats are kept on this phone, per signed-in profile. Stations are real (OpenStreetMap); people and their messages are
-// a scripted demonstration.
+// Incident chats (demonstration). One chat per incident gathers you, the fire owner, and the crew coordinator of each
+// fire station involved. The system posts a card at every change of state; scripted coordinators answer your messages
+// and your actions in character (each with their own voice, reading what you wrote and the state of the fire), and
+// report progress on their own as the fire evolves, so it can be followed from ignition candidate to closed.
+// Simulated clock: replies arrive in seconds but are stamped minutes later, and a change of state jumps the fire's
+// clock by the hours or days such a stage plausibly takes, so the timeline of the fire reads like a real one.
+// Chats are kept on this phone, per signed-in profile. Stations are real (OpenStreetMap); people, vehicles, times and
+// the figures of the resolution summary are a scripted demonstration.
 (function () {
   if (window.__wfChat) return;
   var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {}
-  var KEY = 'wf-chats-' + (role || 'anon');
+  var KEY = 'wf-chats2-' + (role || 'anon'), ACH = 'wf-achv';
   var PT = function () { return window.__wfLang === 'pt'; };
   var L = function (en, pt) { return PT() && pt ? pt : en; };
+  var MIN = 60000;
 
-  // ---- stages (ANEPC vocabulary) --------------------------------------------------------------------------------
+  // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
   var STAGES = [
-    { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#0A66CC', icon: 'tri' },
-    { en: 'Dispatched · 1st alert', pt: 'Despacho de 1.º alerta', c: '#B84A00', icon: 'fire' },
-    { en: 'Ongoing', pt: 'Em curso', c: '#B84A00', icon: 'live' },
-    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B84A00', icon: 'live' },
-    { en: 'Being resolved', pt: 'Em resolução', c: '#7A5600', icon: 'fire' },
-    { en: 'Concluding', pt: 'Em conclusão', c: '#1E7A34', icon: 'fire' },
-    { en: 'Under surveillance', pt: 'Vigilância', c: '#00707A', icon: 'fire' },
-    { en: 'Closed', pt: 'Encerrada', c: '#636366', icon: 'done' }
+    { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#0A66CC', bg: '#E7F0FB', icon: 'cand' },
+    { en: 'Dispatched · 1st alert', pt: 'Despacho de 1.º alerta', c: '#9A4A00', bg: '#FCEFE3', icon: 'alert' },
+    { en: 'Ongoing', pt: 'Em curso', c: '#B8360A', bg: '#FCE9E1', icon: 'route' },
+    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3141B', bg: '#FBE7E7', icon: 'flame' },
+    { en: 'Being resolved', pt: 'Em resolução', c: '#875800', bg: '#FAF0DA', icon: 'shield' },
+    { en: 'Concluding', pt: 'Em conclusão', c: '#1E7A34', bg: '#E4F3E8', icon: 'drop' },
+    { en: 'Under surveillance', pt: 'Vigilância', c: '#00707A', bg: '#DFF1F2', icon: 'eye' },
+    { en: 'Closed', pt: 'Encerrada', c: '#3A3A3C', bg: '#ECECEF', icon: 'done' }
   ];
-  var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#636366', icon: 'done' };
+  var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#545458', bg: '#ECECEF', icon: 'x' };
+  // 24-unit stroke icons (the candidate triangle is filled, like its map legend)
+  var ICON = {
+    cand: 'M4 5.5h16L12 19.5Z',
+    alert: 'M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z M10 20.5a2 2 0 0 0 4 0',
+    route: 'M2.5 7h11v9.5h-11Z M13.5 10h4l3 3.2v3.3h-7 M5.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0 M15.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
+    flame: 'M12 2.8c1.2 3.6 5.2 5.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.6 1.4-3.8 2-5.2c.9 1.5 1.5 2 2.5 2.1c-.1-2.6-.4-4.6.7-7.3Z',
+    shield: 'M12 3l7 2.8v5.4c0 4.4-3 7.9-7 9.8c-4-1.9-7-5.4-7-9.8V5.8Z M9 12l2.2 2.2L15.3 10',
+    drop: 'M12 3.2c3.1 4 6.2 7.3 6.2 10.8a6.2 6.2 0 0 1-12.4 0c0-3.5 3.1-6.8 6.2-10.8Z M9.2 14.6a2.9 2.9 0 0 0 2.6 2.6',
+    eye: 'M2.5 12s3.5-6.5 9.5-6.5s9.5 6.5 9.5 6.5s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z M12 9.2a2.8 2.8 0 1 0 0 5.6a2.8 2.8 0 1 0 0-5.6Z',
+    done: 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18Z M8 12.3l2.8 2.8l5.3-5.6',
+    x: 'M7 7l10 10M17 7L7 17',
+    trophy: 'M8 3.5h8v5.5a4 4 0 0 1-8 0Z M8 5.5H4.5v1.2A3.3 3.3 0 0 0 8 10 M16 5.5h3.5v1.2A3.3 3.3 0 0 1 16 10 M12 13v3.5 M8 20.5h8 M9.5 16.5h5v4h-5Z'
+  };
   function stageOf(ch) { return ch.dismissed ? DISMISSED : STAGES[ch.stage] || STAGES[0]; }
   // ANEPC status code -> chat stage
   function stageFromCode(sc) { sc = Number(sc) || 0; return sc >= 10 ? 7 : sc === 9 ? 6 : sc === 8 ? 5 : sc === 7 ? 4 : sc === 6 ? 3 : sc === 5 ? 2 : sc >= 3 ? 1 : 2; }
 
   // ---- people ---------------------------------------------------------------------------------------------------
-  var NAMES = ['João Matos', 'Ana Sousa', 'Pedro Lopes', 'Marta Ribeiro', 'Rui Carvalho', 'Inês Duarte', 'Tiago Ferreira', 'Sofia Martins', 'Nuno Almeida', 'Carla Neves'];
-  function initials(n) { return n.split(' ').map(function (w) { return w.charAt(0); }).slice(0, 2).join('').toUpperCase(); }
+  var NAMES = {
+    pt: ['João Matos', 'Ana Sousa', 'Pedro Lopes', 'Marta Ribeiro', 'Rui Carvalho', 'Inês Duarte', 'Tiago Ferreira', 'Sofia Martins', 'Nuno Almeida', 'Carla Neves',
+      'Miguel Costa', 'Beatriz Santos', 'André Pereira', 'Rita Gomes', 'Luís Rodrigues', 'Catarina Silva', 'Hugo Fernandes', 'Joana Pinto', 'Ricardo Oliveira', 'Mariana Teixeira',
+      'Bruno Correia', 'Filipa Moreira', 'Diogo Cardoso', 'Helena Rocha', 'Paulo Mendes', 'Vera Castro', 'Sérgio Batista', 'Patrícia Lima'],
+    us: ['Mike Delgado', 'Sarah Kim', 'James Carter', 'Maria Lopez', 'David Nguyen', 'Emily Ross', 'Chris Walker', 'Ana Ramirez', "Kevin O'Brien", 'Laura Chen',
+      'Daniel Brooks', 'Jessica Patel', 'Ryan Mitchell', 'Olivia Grant', 'Marcus Hill', 'Rachel Adams', 'Tom Alvarez', 'Nicole Baker', 'Steve Park', 'Hannah Cole',
+      'Jorge Medina', 'Megan Price', 'Eric Foster', 'Lisa Wong', 'Brian Hayes', 'Amy Torres', 'Carlos Reyes', 'Kate Sullivan']
+,
+    br: ['Lucas Oliveira', 'Juliana Souza', 'Rafael Santos', 'Fernanda Lima', 'Gabriel Costa', 'Camila Rodrigues', 'Thiago Almeida', 'Larissa Pereira', 'Mateus Carvalho', 'Aline Gomes',
+      'Felipe Barbosa', 'Bianca Ribeiro', 'Gustavo Araújo', 'Letícia Martins', 'Leonardo Rocha', 'Patrícia Dias', 'Vinícius Moreira', 'Natália Cardoso', 'Eduardo Teixeira', 'Priscila Nunes'],
+    es: ['Javier García', 'Lucía Fernández', 'Carlos Martínez', 'María López', 'Alejandro Sánchez', 'Carmen Gómez', 'Pablo Ruiz', 'Elena Díaz', 'Sergio Moreno', 'Laura Jiménez',
+      'Diego Álvarez', 'Ana Romero', 'Miguel Torres', 'Marta Navarro', 'Raúl Domínguez', 'Sara Gil', 'Andrés Vázquez', 'Paula Castro', 'Jorge Ramos', 'Isabel Ortega'],
+    fr: ['Julien Martin', 'Camille Bernard', 'Nicolas Dubois', 'Claire Thomas', 'Antoine Robert', 'Julie Richard', 'Mathieu Petit', 'Émilie Durand', 'Thomas Leroy', 'Sophie Moreau',
+      'Pierre Simon', 'Laura Laurent', 'Romain Lefebvre', 'Manon Michel', 'Hugo Garcia', 'Léa Roux', 'Maxime Fournier', 'Chloé Girard', 'Alexandre Bonnet', 'Sarah Mercier'],
+    it: ['Marco Rossi', 'Giulia Russo', 'Luca Ferrari', 'Francesca Esposito', 'Andrea Bianchi', 'Chiara Romano', 'Matteo Colombo', 'Sara Ricci', 'Alessandro Marino', 'Elena Greco',
+      'Davide Bruno', 'Martina Gallo', 'Simone Conti', 'Valentina De Luca', 'Federico Costa', 'Alessia Giordano', 'Stefano Mancini', 'Laura Rizzo', 'Giorgio Lombardi', 'Anna Moretti'],
+    de: ['Lukas Müller', 'Anna Schmidt', 'Jonas Schneider', 'Lena Fischer', 'Felix Weber', 'Laura Meyer', 'Tobias Wagner', 'Julia Becker', 'Maximilian Schulz', 'Sarah Hoffmann',
+      'Florian Koch', 'Katharina Bauer', 'Stefan Richter', 'Lisa Klein', 'Michael Wolf', 'Hannah Schröder', 'Daniel Neumann', 'Marie Schwarz', 'Jan Zimmermann', 'Sophie Braun'],
+    el: ['Giorgos Papadopoulos', 'Maria Georgiou', 'Nikos Pappas', 'Eleni Nikolaou', 'Dimitris Vlachos', 'Katerina Oikonomou', 'Kostas Ioannou', 'Sofia Karagianni', 'Yannis Alexiou', 'Despina Makri',
+      'Panagiotis Christou', 'Anna Dimitriou', 'Vasilis Petrou', 'Ioanna Antoniou', 'Christos Konstantinou', 'Georgia Stathopoulou', 'Thanasis Kyriakou', 'Eirini Zervou', 'Stavros Lambrou', 'Vicky Economou']
+  };
+  function initials(n) { return n.split(' ').filter(Boolean).map(function (w) { return w.charAt(0); }).slice(0, 2).join('').toUpperCase(); }
   function hash(s) { var h = 0; s = String(s); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
-  function shortStation(n) { return String(n || '').replace(/^Bombeiros Volunt[aá]rios (de |da |do |das |dos )?/i, 'BV ').replace(/^Associação Humanitária dos /i, ''); }
+  function shortStation(n) {
+    return String(n || '').replace(/^Bombeiros Volunt[aá]rios (de |da |do |das |dos )?/i, 'BV ').replace(/^Associação Humanitária dos /i, '')
+      .replace(/Los Angeles County Fire Department/i, 'LACoFD').replace(/Los Angeles Fire Department/i, 'LAFD').replace(/\bFire Station\b/i, 'Station').replace(/\s+/g, ' ').trim();
+  }
+  function ccOf(st) { return st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : 'pt'; }
+  function isUS(c) { return ccOf(c.st) === 'us'; }
+  // Team members carry names from the fire's country
+  var LANG = { PT: 'pt', BRA: 'br', AMZ: 'br', ESP: 'es', MEX: 'es', ARG: 'es', CHL: 'es', COL: 'es', PER: 'es', BOL: 'es', ECU: 'es', VEN: 'es', URY: 'es', PRY: 'es', CRI: 'es', GTM: 'es', HND: 'es', NIC: 'es', PAN: 'es', SLV: 'es', CUB: 'es', DOM: 'es', AND: 'es',
+    FRA: 'fr', BEL: 'fr', LUX: 'fr', MCO: 'fr', HTI: 'fr', ITA: 'it', SMR: 'it', VAT: 'it', DEU: 'de', AUT: 'de', CHE: 'de', LIE: 'de', GRC: 'el', CYP: 'el' };
+  function langOf(c) { return LANG[c.st] || 'us'; }   // US, Canada, UK, Ireland and the rest: English names
 
   // ---- storage --------------------------------------------------------------------------------------------------
   var DB = null;
@@ -42,10 +88,16 @@
 
   function keyOf(inc) { var id = String(inc.id || ''); if (/^F-/.test(id)) return 'c:' + id.slice(2); return (inc.kind === 'cand' ? 'c:' : 'f:') + id; }
 
+  // ---- the fire's clock -----------------------------------------------------------------------------------------
+  function vnow(c) { return c.closedVt || (c.vNow + (Date.now() - c.vAt)); }
+  function jump(c, ms) { c.vNow = vnow(c) + (ms || 0); c.vAt = Date.now(); }
+  function since(c) { return c.hist && c.hist.length ? c.hist[0].vt : c.vNow; }
+  function vary(c, a, b, salt) { return a + hash(c.key + (salt || '')) % Math.max(1, b - a + 1); }   // minutes, stable per chat
+
   // ---- stations near the incident ---------------------------------------------------------------------------------
   var SF = {};
   function stationsFor(st, lat, lon, cb) {
-    var cc = st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : 'pt';
+    var cc = ccOf(st);
     var done = function (rows) {
       var kx = 111.32 * Math.cos(lat * Math.PI / 180);
       var near = rows.map(function (r) { return { name: r[4] || 'Fire station', km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
@@ -58,6 +110,28 @@
   }
   function kmTxt(km) { return km < 10 ? km.toFixed(1) + ' km' : Math.round(km) + ' km'; }
 
+  // ---- forces: one crew per station, led by the station's crew coordinator ------------------------------------------
+  function pickNames(c, n, salt) {
+    var pool = NAMES[langOf(c)] || NAMES.us, used = c.used || (c.used = {}), out = [], i = hash(c.key + salt);
+    while (out.length < n) { var nm = pool[i % pool.length]; i += 7; if (!used[nm]) { used[nm] = 1; out.push(nm); } if (out.length + Object.keys(used).length > pool.length * 2) break; }
+    return out;
+  }
+  function vehiclesFor(c, s, i) {
+    var num = (String(s.name).match(/(\d{1,3})\b/) || [])[1] || String(10 + hash(s.name) % 80);
+    var k = 1 + hash(s.name) % 6, lg = langOf(c);
+    if (lg === 'pt') return i === 0 ? ['VFCI 0' + k, 'VLCI 01'] : i === 1 ? ['VFCI 0' + k] : ['VTTF 0' + k];
+    if (lg === 'br') return i === 0 ? ['ABTF-0' + k, 'UR-01'] : i === 1 ? ['ABTF-0' + k] : ['AT-0' + k];
+    if (lg === 'es') return i === 0 ? ['BRP 0' + k, 'BFP 01'] : i === 1 ? ['BRP 0' + k] : ['Nodriza 0' + k];
+    if (lg === 'fr') return i === 0 ? ['CCF 0' + k, 'VLHR 01'] : i === 1 ? ['CCF 0' + k] : ['CCGC 0' + k];
+    return i === 0 ? ['Engine ' + num, 'Brush Patrol ' + num] : i === 1 ? ['Engine ' + num] : ['Water Tender ' + num];
+  }
+  function forceFor(c, si, st) {
+    var s = c.stations[si], P = c.people[si];
+    var crew = pickNames(c, si === 0 ? 4 : si === 1 ? 4 : 3, 'crew' + si);
+    return { si: si, station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: vehiclesFor(c, s, si), st: st || 'standby' };
+  }
+  function setForces(c, from, to) { (c.forces || []).forEach(function (f) { if (!from || from.indexOf(f.st) >= 0) f.st = to; }); }
+
   // ---- creating a chat --------------------------------------------------------------------------------------------
   function create(inc) {
     var db = load(), k = keyOf(inc);
@@ -66,63 +140,78 @@
     var stage = inc.kind === 'cand' ? 0 : stageFromCode(inc.sc);
     var ch = { key: k, kind: inc.kind, incId: inc.id, place: inc.place || '', reg: inc.reg || '', st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0,
       x: inc.x, y: inc.y, note: inc.note || '', conf: inc.conf || null, src: inc.src || '', det: inc.det || null,
-      stage: stage, startStage: stage, started: now, people: [], stations: [], msgs: [], queue: [], seenAt: 0, beat: 0, flags: {}, closed: false, dismissed: false, updated: now };
+      stage: stage, startStage: stage, started: now, vNow: now, vAt: now, hist: [], people: [], stations: [], forces: [], air: null, evac: null,
+      msgs: [], queue: [], seenAt: 0, beat: 0, flags: {}, closed: false, dismissed: false, updated: now };
+    // The fire's history before this chat opened: a candidate starts at its detection; a fire already in progress gets
+    // plausible earlier stages, so its timeline is complete from the first detection.
+    if (stage === 0) ch.hist.push({ s: 0, vt: Math.min(now, inc.det || now) });
+    else {
+      var back = [8, 3, 20, 150, 240, 300, 600], t = now - vary(ch, 12, 40, 'cur') * MIN, H = [{ s: stage, vt: t }];
+      for (var s = stage - 1; s >= 0; s--) { t -= (back[s] + hash(k + s) % Math.max(2, back[s])) * MIN; H.unshift({ s: s, vt: t }); }
+      ch.hist = H;
+    }
     db.chats[k] = ch; save();
     stationsFor(ch.st, ch.lat, ch.lon, function (S) {
       var d = load(), c = d.chats[k]; if (!c) return;
-      var h = hash(k), used = {};
       c.stations = S.slice(0, 3);
       c.reserve = S[3] || null;
-      c.people = c.stations.map(function (s, i) { var n = NAMES[(h + i * 3) % NAMES.length]; while (used[n]) n = NAMES[(NAMES.indexOf(n) + 1) % NAMES.length]; used[n] = 1; return { name: n, code: initials(n), org: s.short, kind: 'lead' }; });
+      var nm = pickNames(c, c.stations.length, 'coord');
+      c.people = c.stations.map(function (s, i) { return { name: nm[i], code: initials(nm[i]), org: s.short, kind: 'lead' }; });
+      if (c.stage >= 2) {   // a fire already in progress: the first two stations are working it
+        c.flags.dispatched = true;
+        c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); });
+      }
       save(); start(c);
     });
     return ch;
   }
 
   // ---- messages -----------------------------------------------------------------------------------------------------
+  // delay: real milliseconds until it appears; adv: minutes the fire's clock moves on before it (plausible time stamps)
   var mid = 0;
   function newId() { mid++; return Date.now().toString(36) + mid; }
-  function push(c, m, delay) { m.id = newId(); c.queue.push({ due: Date.now() + (delay || 0), m: m }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
-  function sys(c, en, pt, delay) { push(c, { kind: 'sys', en: en, pt: pt }, delay); }
-  function say(c, who, en, pt, delay) { push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay); }
-  function card(c, obj, delay) { obj.kind = 'card'; push(c, obj, delay); }
-  function setStage(c, s, delay) { push(c, { kind: 'stage', stage: s }, delay); }
+  function push(c, m, delay, adv) { m.id = newId(); m.adv = adv == null ? 0 : adv; c.queue.push({ due: Date.now() + (delay || 0), m: m }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
+  function sys(c, en, pt, delay, adv) { push(c, { kind: 'sys', en: en, pt: pt }, delay, adv == null ? 1 : adv); }
+  function say(c, who, en, pt, delay, adv) { push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
+  function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
+  function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0); }
   function lead(c, i) { return Math.min(i, Math.max(0, c.people.length - 1)); }
+  function mine(c, en, pt) { c.msgs.push({ id: newId(), kind: 'msg', from: 'me', en: en, pt: pt, t: Date.now(), vt: vnow(c) }); }
 
   // Scripted beats ---------------------------------------------------------------------------------------------------
   function stageCard(c, s) {
-    var S = STAGES[s], st = c.stations, P = c.people;
+    var S = STAGES[s], st = c.stations;
     var base = { tag: { en: S.en, pt: S.pt }, tagC: S.c, stage: s };
     if (s === 0) return Object.assign(base, { tag: { en: 'Ignition detected', pt: 'Ignição detetada' }, title: { en: 'Heat anomaly', pt: 'Anomalia térmica' },
       body: { en: (c.src || 'Satellite') + (c.det ? ' · ' + hhmm(c.det) : ''), pt: (c.src || 'Satélite').replace('Satellite', 'Satélite') + (c.det ? ' · ' + hhmm(c.det) : '') },
-      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#0A66CC' } : null, link: { en: 'Open candidate', pt: 'Abrir candidato' } });
+      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#0A66CC' } : null, link: { en: 'View candidate', pt: 'Ver candidato' } });
     if (s === 1) return Object.assign(base, { tag: { en: 'Ignition confirmed', pt: 'Ignição confirmada' }, title: { en: 'Active fire · ' + c.place, pt: 'Incêndio ativo · ' + c.place },
       body: { en: 'Nearest stations, by straight-line distance and estimated drive time', pt: 'Quartéis mais próximos, por distância em linha reta e tempo estimado' },
       rows: st.map(function (x, i) { return { a: x.short, b: kmTxt(x.km) + ' · ~' + x.min + ' min', r: { en: 'Awaiting', pt: 'A aguardar' }, rc: '#545458', i: i }; }),
-      link: { en: 'Open fire', pt: 'Abrir incêndio' } });
+      link: { en: 'View fire', pt: 'Ver incêndio' } });
     if (s === 2) return Object.assign(base, { title: { en: 'Crews en route', pt: 'Meios a caminho' },
-      body: { en: 'First on the fire line in about ' + (st[0] ? st[0].min : 15) + ' min', pt: 'Primeiros na linha de fogo em cerca de ' + (st[0] ? st[0].min : 15) + ' min' }, link: { en: 'Open fire', pt: 'Abrir incêndio' } });
+      body: { en: 'First on the fire line in about ' + (st[0] ? st[0].min : 15) + ' min', pt: 'Primeiros na linha de fogo em cerca de ' + (st[0] ? st[0].min : 15) + ' min' }, fire: true });
     if (s === 3) return Object.assign(base, { title: { en: 'Crews on the fire line', pt: 'Equipas na linha de fogo' },
-      body: { en: 'Forces, weather and projection on the fire screen', pt: 'Meios, meteorologia e projeção no ecrã do incêndio' }, link: { en: 'Forces, weather and projection', pt: 'Meios, meteorologia e projeção' } });
-    if (s === 4) return Object.assign(base, { title: { en: 'Head held · working the flanks', pt: 'Cabeça dominada · a trabalhar os flancos' }, body: { en: 'No further spread reported', pt: 'Sem progressão reportada' }, link: { en: 'Open fire', pt: 'Abrir incêndio' } });
-    if (s === 5) return Object.assign(base, { title: { en: 'Perimeter held · mop-up', pt: 'Perímetro dominado · rescaldo' }, body: { en: 'Crews putting out hotspots along the edge', pt: 'Equipas a extinguir pontos quentes no perímetro' }, link: { en: 'Open fire', pt: 'Abrir incêndio' } });
-    if (s === 6) return Object.assign(base, { title: { en: 'Under surveillance', pt: 'Em vigilância' }, body: { en: 'One crew watching for rekindles', pt: 'Uma equipa em vigilância a reacendimentos' }, link: { en: 'Open fire', pt: 'Abrir incêndio' } });
-    return Object.assign(base, { title: { en: 'Fire closed', pt: 'Incêndio encerrado' }, body: { en: 'Closed ' + dur(Date.now() - c.started) + ' after this chat opened', pt: 'Encerrado ' + dur(Date.now() - c.started) + ' depois de abrir esta conversa' } });
+      body: { en: 'Forces, time in each stage and the spread projection are on the fire card', pt: 'Meios, tempo em cada fase e projeção da propagação no cartão do incêndio' }, fire: true });
+    if (s === 4) return Object.assign(base, { title: { en: 'Head held · working the flanks', pt: 'Cabeça dominada · a trabalhar os flancos' }, body: { en: 'No further spread reported', pt: 'Sem progressão reportada' }, fire: true });
+    if (s === 5) return Object.assign(base, { title: { en: 'Perimeter held · mop-up', pt: 'Perímetro dominado · rescaldo' }, body: { en: 'Crews putting out hotspots along the edge', pt: 'Equipas a extinguir pontos quentes no perímetro' }, fire: true });
+    if (s === 6) return Object.assign(base, { title: { en: 'Under surveillance', pt: 'Em vigilância' }, body: { en: 'One crew watching for rekindles, the others released', pt: 'Uma equipa em vigilância a reacendimentos, as outras libertadas' }, fire: true });
+    return Object.assign(base, { title: { en: 'Fire closed', pt: 'Incêndio encerrado' }, body: { en: 'Resolved ' + dur(vnow(c) - since(c)) + ' after the first detection', pt: 'Resolvido ' + dur(vnow(c) - since(c)) + ' depois da primeira deteção' } });
   }
 
   function start(c) {
     var P = c.people, n = P.length;
     var names = P.map(function (p) { return p.org; }).join(', ');
     if (c.kind === 'cand') {
-      card(c, stageCard(c, 0), 300);
-      sys(c, 'Called you (coordinator) and the team leads of ' + (names || 'the nearest stations'), 'Chamados: você (coordenação) e os chefes de equipa de ' + (names || 'os quartéis mais próximos'), 900);
-      if (n > 0) say(c, 0, 'Seen. We have a crew of 5 and one fire engine ready at ' + P[0].org + '.', 'Visto. Temos uma equipa de 5 e um veículo prontos em ' + P[0].org + '.', 4500);
-      if (n > 1) say(c, 1, 'Available in about 10 min, finishing another call.', 'Disponíveis dentro de 10 min, a terminar outra ocorrência.', 9000);
-      if (n > 2) say(c, 2, 'We can see smoke from the station, towards the north-east.', 'Vemos fumo do quartel, para nordeste.', 15000);
+      card(c, stageCard(c, 0), 300, 0);
+      sys(c, 'Called you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 900, 1);
+      if (n > 0) say(c, 0, 'Seen. We have a crew of 5 and ' + (isUS(c) ? 'an engine' : 'one fire engine') + ' ready at ' + P[0].org + '.', 'Visto. Temos uma equipa de 5 e um veículo prontos em ' + P[0].org + '.', 4500, 2);
+      if (n > 1) say(c, 1, 'Available in about 10 min, finishing another call.', 'Disponíveis dentro de 10 min, a terminar outra ocorrência.', 9000, 3);
+      if (n > 2) say(c, 2, 'We can see smoke from the station, towards the north-east.', 'Vemos fumo do quartel, para nordeste.', 15000, 4);
     } else {
       var s = c.stage;
-      sys(c, 'Chat opened for this fire · you and the team leads of ' + (names || 'the nearest stations'), 'Conversa aberta para este incêndio · você e os chefes de equipa de ' + (names || 'os quartéis mais próximos'), 300);
-      card(c, stageCard(c, s), 900);
+      sys(c, 'Chat opened for this fire · you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Conversa aberta para este incêndio · você (responsável) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 300, 0);
+      card(c, stageCard(c, s), 900, 0);
       entry(c, s, 2500);
     }
     save(); emit();
@@ -132,42 +221,31 @@
   function entry(c, s, d) {
     var P = c.people; d = d || 0;
     if (s === 1) {
-      if (P[0]) say(c, 0, 'Ready to go on your order.', 'Prontos para sair à sua ordem.', d + 3500);
-      if (P[1]) say(c, 1, 'Available now.', 'Disponíveis agora.', d + 6500);
-      if (P[2]) say(c, 2, 'We can send one crew, the second stays for cover.', 'Podemos enviar uma equipa, a segunda fica de prevenção.', d + 9500);
+      if (P[0]) say(c, 0, 'Ready to go on your order.', 'Prontos para sair à sua ordem.', d + 3500, 1);
+      if (P[1]) say(c, 1, 'Available now.', 'Disponíveis agora.', d + 6500, 1);
+      if (P[2]) say(c, 2, 'We can send one crew, the second stays for cover.', 'Podemos enviar uma equipa, a segunda fica de prevenção.', d + 9500, 2);
     } else if (s === 2) {
-      if (P[0]) say(c, 0, 'Leaving now. ETA ' + (c.stations[0] ? c.stations[0].min : 15) + ' min.', 'A sair. Chegada prevista em ' + (c.stations[0] ? c.stations[0].min : 15) + ' min.', d + 3000);
-      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000);
-      c.flags.autoArrive = true;
-      setStage(c, 3, d + 16000);
+      var eta = c.stations[0] ? c.stations[0].min : 15;
+      if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 3000, 1);
+      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000, 2);
+      setStage(c, 3, d + 16000, Math.max(4, eta - 3));
     } else if (s === 3) {
-      if (P[0]) say(c, 0, 'On scene. Fire in pine and eucalyptus, head running north-east with the wind.', 'No local. Fogo em pinhal e eucaliptal, cabeça a progredir para nordeste com o vento.', d + 3000);
-      if (P[1]) say(c, 1, 'Houses about 1 km north-east. We need air support to hold the head before it gets there.', 'Casas a cerca de 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça antes de lá chegar.', d + 8000);
-      card(c, { req: 'air', tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Team lead'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Chefe de equipa') }, tagC: '#B84A00',
-        title: { en: 'Air support', pt: 'Meio aéreo' }, body: { en: 'One helicopter to hold the head before it reaches the houses', pt: 'Um helicóptero para segurar a cabeça antes de chegar às casas' },
-        actions: [{ key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }, { key: 'declineAir', en: 'Not now', pt: 'Agora não' }] }, d + 9500);
+      if (P[0]) say(c, 0, 'On scene. Fire in ' + (isUS(c) ? 'chaparral and dry grass' : 'pine and eucalyptus') + ', head running north-east with the wind.', 'No local. Fogo em ' + (isUS(c) ? 'chaparral e erva seca' : 'pinhal e eucaliptal') + ', cabeça a progredir para nordeste com o vento.', d + 3000, 3);
+      if (P[1]) say(c, 1, 'Homes about 1 km north-east. We need air support to hold the head before it gets there.', 'Casas a cerca de 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça antes de lá chegar.', d + 8000, 6);
+      card(c, { req: 'air', tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Crew coordinator'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Coordenador de equipa') }, tagC: '#B8360A',
+        title: { en: 'Air support', pt: 'Meio aéreo' }, body: { en: 'One helicopter to hold the head before it reaches the homes', pt: 'Um helicóptero para segurar a cabeça antes de chegar às casas' },
+        actions: [{ key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }, { key: 'declineAir', en: 'Not now', pt: 'Agora não' }] }, d + 9500, 0);
     } else if (s === 4) {
-      if (P[0]) say(c, 0, 'Head is held. Working both flanks, no spread for 20 min.', 'Cabeça dominada. A trabalhar os dois flancos, sem progressão há 20 min.', d + 3000);
+      if (P[0]) say(c, 0, 'Head is held. Working both flanks, no spread for 20 min.', 'Cabeça dominada. A trabalhar os dois flancos, sem progressão há 20 min.', d + 3000, 4);
     } else if (s === 5) {
-      if (P[1]) say(c, 1, 'Perimeter held. Starting mop-up along the edge.', 'Perímetro dominado. A iniciar o rescaldo no perímetro.', d + 3000);
+      if (P[1]) say(c, lead(c, 1), 'Perimeter held. Starting mop-up along the edge.', 'Perímetro dominado. A iniciar o rescaldo no perímetro.', d + 3000, 5);
     } else if (s === 6) {
-      if (P[0]) say(c, 0, 'One crew stays on watch. Thermal camera shows no hotspots.', 'Fica uma equipa em vigilância. A câmara térmica não mostra pontos quentes.', d + 3000);
+      if (P[0]) say(c, 0, 'We stay on watch. Thermal camera shows no hotspots.', 'Ficamos em vigilância. A câmara térmica não mostra pontos quentes.', d + 3000, 8);
+      if (P[1]) say(c, 1, 'Released and heading back to the station.', 'Libertados, a regressar ao quartel.', d + 6000, 3);
     }
   }
 
-  // Answers to the coordinator's free messages, per stage (they cycle)
-  var REPLIES = {
-    0: [[0, 'Copy. Standing by for your decision.', 'Entendido. Aguardamos a sua decisão.'], [2, 'Smoke is getting thicker, looks like it is growing.', 'O fumo está a ficar mais denso, parece estar a crescer.'], [1, 'Crew ready here too.', 'Equipa pronta aqui também.']],
-    1: [[0, 'Copy. Waiting for the dispatch order.', 'Entendido. A aguardar a ordem de despacho.'], [1, 'Understood.', 'Compreendido.']],
-    2: [[0, 'Copy. 5 min out.', 'Entendido. A 5 min.'], [1, 'Road is clear, no delays.', 'Estrada livre, sem atrasos.']],
-    3: [[0, 'Copy. Holding the south flank.', 'Entendido. A segurar o flanco sul.'], [1, 'Wind picking up from the south-west.', 'O vento está a aumentar de sudoeste.'], [2, 'Water supply is fine for now.', 'Abastecimento de água sem problemas por agora.']],
-    4: [[0, 'Copy. Flanks almost closed.', 'Entendido. Flancos quase fechados.'], [1, 'No new spot fires.', 'Sem novos focos secundários.']],
-    5: [[1, 'Copy. Mop-up going well.', 'Entendido. Rescaldo a correr bem.'], [0, 'A few hotspots near the road, on it.', 'Alguns pontos quentes junto à estrada, estamos a tratar.']],
-    6: [[0, 'Copy. All quiet.', 'Entendido. Tudo calmo.']],
-    7: [[0, 'Thanks everyone. Good work.', 'Obrigado a todos. Bom trabalho.']]
-  };
-
-  // Quick actions for the coordinator, per stage
+  // Quick actions for the fire owner, per stage
   function actions(c) {
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
@@ -181,83 +259,188 @@
     return A;
   }
 
+  // How long each stage plausibly lasts before the fire owner moves it on (minutes)
+  function stageSpan(c, to) {
+    return to === 4 ? vary(c, 85, 170, 's4') : to === 5 ? vary(c, 150, 330, 's5') : to === 6 ? vary(c, 180, 420, 's6') : to === 7 ? vary(c, 840, 1560, 's7') : 1;
+  }
+
   function act(key, a, msgId) {
     var c = load().chats[key]; if (!c) return;
-    var P = c.people;
+    var P = c.people, us = isUS(c);
     if (msgId) { var m = c.msgs.find(function (x) { return x.id === msgId; }); if (m) m.done = a; }
-    var me = function (en, pt) { c.msgs.push({ id: newId(), kind: 'msg', from: 'me', en: en, pt: pt, t: Date.now() }); };
+    var me = function (en, pt) { mine(c, en, pt); };
     if (a === 'confirm') {
       me('Confirming the fire.', 'Confirmo o incêndio.');
       markConfirmed(c);
-      setStage(c, 1, 600);
+      setStage(c, 1, 600, 1);
     } else if (a === 'drone') {
       c.flags.drone = true; me('Sending the drone to check before I confirm.', 'Vou enviar o drone para verificar antes de confirmar.');
-      c.people.push({ name: 'Carla Neves', code: 'CN', org: L('Drone team', 'Equipa de drone'), kind: 'drone' });
-      var di = c.people.length - 1;
-      sys(c, 'Carla Neves (drone team) joined', 'Carla Neves (equipa de drone) entrou na conversa', 800);
-      say(c, di, 'Drone D-5 taking off, about 6 min to the point.', 'Drone D-5 a descolar, cerca de 6 min até ao ponto.', 3500);
-      card(c, { tag: { en: 'Drone D-5 · on site', pt: 'Drone D-5 · no local' }, tagC: '#0A66CC', title: { en: 'Smoke and open flame seen', pt: 'Fumo e chama visíveis' }, body: { en: 'Thermal image shows an active fire front of about 80 m', pt: 'A imagem térmica mostra uma frente ativa de cerca de 80 m' }, link: { en: 'Open candidate', pt: 'Abrir candidato' } }, 11000);
-      say(c, di, 'It is a real fire. I recommend confirming.', 'É um incêndio real. Recomendo confirmar.', 13000);
+      sys(c, 'Drone D-5 taking off · about 6 min to the point', 'Drone D-5 a descolar · cerca de 6 min até ao ponto', 1500, 1);
+      card(c, { tag: { en: 'Drone D-5 · on site', pt: 'Drone D-5 · no local' }, tagC: '#0A66CC', title: { en: 'Smoke and open flame seen', pt: 'Fumo e chama visíveis' }, body: { en: 'Thermal image shows an active fire front of about 80 m', pt: 'A imagem térmica mostra uma frente ativa de cerca de 80 m' }, link: { en: 'View candidate', pt: 'Ver candidato' } }, 8000, 6);
+      say(c, lead(c, 0), 'That matches what we see. It is a real fire.', 'Confirma o que vemos. É um incêndio real.', 11000, 1);
     } else if (a === 'dismiss') {
       me('Dismissing this candidate: no fire on the ground.', 'Descarto este candidato: sem incêndio no terreno.');
-      markDismissed(c); c.dismissed = true; c.closed = true;
-      sys(c, 'Candidate dismissed · the teams are released', 'Candidato descartado · equipas libertadas', 600);
+      markDismissed(c); c.dismissed = true; c.closed = true; c.closedVt = vnow(c);
+      sys(c, 'Candidate dismissed · the crews are released', 'Candidato descartado · equipas libertadas', 600, 0);
     } else if (a === 'dispatch') {
       me('Dispatch: ' + c.stations.slice(0, 2).map(function (s) { return s.short; }).join(' and ') + ' go. ' + (c.stations[2] ? c.stations[2].short + ' on standby.' : ''),
         'Despacho: ' + c.stations.slice(0, 2).map(function (s) { return s.short; }).join(' e ') + ' avançam. ' + (c.stations[2] ? c.stations[2].short + ' de prevenção.' : ''));
       c.flags.dispatched = true;
+      c.forces = c.stations.map(function (s, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
+      c.forces.forEach(function (f) { f.st = f.si < 2 || f.extra ? 'enroute' : 'standby'; });
       var cm = c.msgs.filter(function (x) { return x.kind === 'card' && x.stage === 1; }).pop();
-      if (cm && cm.rows) cm.rows.forEach(function (r, i) { r.r = i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = i < 2 ? '#1E7A34' : '#7A5600'; });
-      setStage(c, 2, 1500);
+      if (cm && cm.rows) cm.rows.forEach(function (r, i) { r.r = i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = i < 2 ? '#1E7A34' : '#875800'; });
+      setStage(c, 2, 1500, 2);
     } else if (a === 'more') {
       c.flags.more = true; var r = c.reserve; me('Calling ' + r.short + ' as well.', 'Chamo também ' + r.short + '.');
-      var n = NAMES[(hash(c.key) + 7) % NAMES.length]; c.people.push({ name: n, code: initials(n), org: r.short, kind: 'lead' }); c.stations.push(r);
-      sys(c, n + ' (' + r.short + ') joined', n + ' (' + r.short + ') entrou na conversa', 900);
-      say(c, c.people.length - 1, 'Available, ' + kmTxt(r.km) + ' away.', 'Disponíveis, a ' + kmTxt(r.km) + '.', 4000);
+      var n = pickNames(c, 1, 'more')[0]; c.people.push({ name: n, code: initials(n), org: r.short, kind: 'lead' }); c.stations.push(r);
+      var f = forceFor(c, c.stations.length - 1, 'standby'); f.extra = true; c.forces.push(f);
+      sys(c, n + ', crew coordinator of ' + r.short + ', joined', n + ', coordenador de equipa de ' + r.short + ', entrou na conversa', 900, 1);
+      say(c, c.people.length - 1, 'Available, ' + kmTxt(r.km) + ' away.', 'Disponíveis, a ' + kmTxt(r.km) + '.', 4000, 2);
     } else if (a === 'update') {
       me('Update, please.', 'Ponto de situação, por favor.');
-      if (P[0]) say(c, 0, 'Almost there, smoke column clearly visible.', 'Quase a chegar, coluna de fumo bem visível.', 2500);
+      if (P[0]) say(c, 0, 'Almost there, smoke column clearly visible.', 'Quase a chegar, coluna de fumo bem visível.', 2500, 2);
     } else if (a === 'approveAir') {
       if (c.flags.air) return; c.flags.air = true;
       me('Air support approved.', 'Meio aéreo aprovado.');
-      c.people.push({ name: 'CDOS Leiria', code: 'CD', org: L('Air operations', 'Operações aéreas'), kind: 'ops' });
-      var oi = c.people.length - 1;
-      sys(c, 'Air operations joined', 'Operações aéreas entrou na conversa', 700);
-      say(c, oi, 'Helicopter assigned, about 12 min to the fire.', 'Helicóptero atribuído, cerca de 12 min até ao incêndio.', 3500);
-      say(c, oi, 'Helicopter on scene. First water drops on the head.', 'Helicóptero no local. Primeiras descargas na cabeça.', 13000);
-      if (P[0]) say(c, 0, 'That did it. The head is slowing down.', 'Resultou. A cabeça está a abrandar.', 18000);
+      var heli = us ? 'Helicopter 15' : 'Helicóptero H-21';
+      c.air = { name: heli, kind: us ? 'Firefighting helicopter · LAFD Air Operations' : 'Helicóptero de ataque inicial · Força Aérea', st: 'assigned' };
+      sys(c, 'Air operations assigned ' + heli + ' · about 12 min to the fire', 'As operações aéreas atribuíram o ' + heli + ' · cerca de 12 min até ao incêndio', 1200, 3);
+      push(c, { kind: 'air', st: 'onscene' }, 7000, 12);
+      sys(c, heli + ' on scene · first water drops on the head', heli + ' no local · primeiras descargas na cabeça', 7200, 0);
+      if (P[0]) say(c, 0, 'That did it. The head is slowing down.', 'Resultou. A cabeça está a abrandar.', 12000, 9);
     } else if (a === 'declineAir') {
       c.flags.airNo = true; me('Not yet. Hold with ground crews for now.', 'Ainda não. Segurem com meios terrestres por agora.');
-      if (P[1]) say(c, 1, 'Understood. We will try, but it is spreading fast.', 'Compreendido. Vamos tentar, mas está a progredir rápido.', 3000);
+      if (P[1]) say(c, 1, 'Understood. We will try, but it is spreading fast.', 'Compreendido. Vamos tentar, mas está a progredir rápido.', 3000, 3);
     } else if (a === 'evac') {
-      c.flags.evac = true; me('Evacuation order for the houses north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.');
-      card(c, { tag: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, tagC: '#B3001B', title: { en: 'Houses north-east of the fire', pt: 'Casas a nordeste do incêndio' }, body: { en: 'Sent to civil protection and the local police', pt: 'Enviada à proteção civil e às forças de segurança locais' } }, 800);
-      c.people.push({ name: 'GNR', code: 'GN', org: L('Local police', 'Forças de segurança'), kind: 'ops' });
-      say(c, c.people.length - 1, 'Received. Moving residents to the parish hall.', 'Recebido. A encaminhar os moradores para a junta de freguesia.', 5000);
+      c.flags.evac = true; me('Evacuation order for the homes north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.');
+      c.evac = { people: 60 + hash(c.key + 'ev') % 180 };
+      card(c, { tag: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, tagC: '#B3001B', title: { en: 'Homes north-east of the fire', pt: 'Casas a nordeste do incêndio' }, body: { en: 'Sent to civil protection and ' + (us ? "the sheriff's department" : 'the local police'), pt: 'Enviada à proteção civil e às forças de segurança locais' } }, 800, 1);
+      sys(c, us ? "Sheriff's deputies moving " + c.evac.people + ' residents to the evacuation center' : 'Local police (GNR) moving ' + c.evac.people + ' residents to the parish hall', us ? 'Xerifes a encaminhar ' + c.evac.people + ' moradores para o centro de evacuação' : 'GNR a encaminhar ' + c.evac.people + ' moradores para a junta de freguesia', 5000, 14);
     } else if (a === 'drone3') {
       c.flags.drone3 = true; me('Send a drone over the head to read the fire behaviour.', 'Enviem um drone sobre a cabeça para ler o comportamento do fogo.');
-      say(c, lead(c, 0), 'Drone footage: the head is running upslope, spotting up to 50 m ahead.', 'Imagens do drone: a cabeça sobe a encosta, com projeções até 50 m à frente.', 7000);
+      card(c, { tag: { en: 'Drone D-5 · over the head', pt: 'Drone D-5 · sobre a cabeça' }, tagC: '#0A66CC', title: { en: 'Running upslope', pt: 'A subir a encosta' }, body: { en: 'Spotting up to 50 m ahead of the head', pt: 'Projeções até 50 m à frente da cabeça' }, fire: true }, 6000, 8);
     } else if (a === 'next') {
-      var nx = c.stage + 1; me('Moving the fire to ' + STAGES[nx].en + '.', 'Passo o incêndio a ' + STAGES[nx].pt + '.');
-      setStage(c, nx, 800);
+      var nx = c.stage + 1;
+      jump(c, stageSpan(c, nx) * MIN);   // the hours this stage took, before you move it on
+      me('Moving the fire to ' + STAGES[nx].en + '.', 'Passo o incêndio a ' + STAGES[nx].pt + '.');
+      setStage(c, nx, 800, 0);
     } else if (a === 'closeCheck') {
       c.flags.closeCard = true;
       card(c, { close: true, tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close the fire', pt: 'Encerrar o incêndio' },
         checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.flags.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.flags.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
-        actions: [{ key: 'close', en: 'Declare fire closed', pt: 'Declarar incêndio encerrado', primary: true }] }, 400);
+        actions: [{ key: 'close', en: 'Declare fire closed', pt: 'Declarar incêndio encerrado', primary: true }] }, 400, 0);
     } else if (a === 'close') {
+      jump(c, stageSpan(c, 7) * MIN);
       me('Declaring the fire closed. Thank you all.', 'Declaro o incêndio encerrado. Obrigado a todos.');
-      setStage(c, 7, 800);
+      setStage(c, 7, 800, 0);
     }
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); tick();
   }
 
+  // ---- role play: each crew coordinator answers in their own voice, from what you wrote and where the fire is ----------
+  // 0: veteran, terse radio style · 1: careful, safety first · 2: younger, upbeat. Answers read the fire's state
+  // (stage, area, air support, evacuation, time on scene), so they stay plausible as the fire evolves.
+  var VOICE = [
+    { ack: ['Copy.', 'Entendido.'], ok: ['Copy that.', 'Recebido.'] },
+    { ack: ['Understood.', 'Compreendido.'], ok: ['Understood, will do.', 'Compreendido, vamos fazer isso.'] },
+    { ack: ['On it!', 'Já estamos nisso!'], ok: ['Sure thing, on it.', 'Certo, já está.'] }
+  ];
+  var INTENTS = [
+    ['thanks', /\b(thank|thanks|good job|great work|well done)|obrigad|bom trabalho|parab[eé]ns/i],
+    ['safety', /\b(safe|safety|injur|hurt|crew ok|everyone ok|fatigue|tired|rest)|segur|ferid|cansa|descans/i],
+    ['eta', /\b(eta|arriv|how long|when will|how far)|chegada|quanto tempo|quando chegam|a que dist/i],
+    ['wind', /\b(wind|weather|humidity|temperature|gust)|vento|meteo|humidade|temperatura|rajada/i],
+    ['water', /\b(water|hydrant|tanker|tender|refill|foam)|[aá]gua|hidrante|abastec|autotanque/i],
+    ['homes', /\b(house|home|homes|evac|residents|people|road)|casa|evacua|morador|popula|estrada/i],
+    ['need', /\b(need|resources|reinforce|backup|more crews|support)|precis|meios|refor[cç]o|apoio/i],
+    ['order', /\b(hold|flank|attack|defend|protect|move to|go to|cut|line|anchor|focus)|segur|flanco|atac|defend|protej|avanc|linha|cort/i],
+    ['status', /\b(update|status|situation|how is|how's|progress|report|sitrep|what do you see)|ponto de situa|situa[cç][aã]o|como est|progress|relat|o que v[eê]/i]
+  ];
+  function intentOf(t) { for (var i = 0; i < INTENTS.length; i++) if (INTENTS[i][1].test(t)) return INTENTS[i][0]; return 'other'; }
+  function areaNow(c) {   // hectares burning, growing until the head is held
+    var S = stats(c), H = c.hist || [], on = H.find(function (h) { return h.s === 3; }), held = H.find(function (h) { return h.s === 4; });
+    if (c.stage < 3 || !on) return Math.max(0.3, Math.round(S.ha * 0.08 * 10) / 10);
+    if (held) return S.ha;
+    var f = Math.min(0.95, 0.25 + (vnow(c) - on.vt) / (150 * MIN));
+    return Math.round(S.ha * f * 10) / 10;
+  }
+  function areaTxt(c, pt) { var ha = areaNow(c); return isUS(c) ? Math.round(ha * 2.471) + ' acres' : String(ha).replace('.', pt ? ',' : '.') + ' ha'; }
+  function onSceneFor(c) { var H = c.hist || [], on = H.find(function (h) { return h.s === 3; }); return on ? dur(vnow(c) - on.vt) : ''; }
+  function reply(c, who, it, text) {
+    var s = c.stage, V = VOICE[who % 3], us = isUS(c), P = c.people, eta = c.stations[who] ? c.stations[who].min : 15;
+    var dir = ['north-east', 'nordeste'], wind = ['south-west, about 18 km/h with gusts to 30', 'sudoeste, cerca de 18 km/h com rajadas de 30'];
+    var r = function (en, pt) { return [V.ack[0] + ' ' + en, V.ack[1] + ' ' + pt]; };
+    if (it === 'thanks') return s >= 6 ? ['Thank you. It was a good team effort out here.', 'Obrigado. Foi um bom trabalho de equipa aqui.'] : [V.ok[0] + ' Appreciated, we keep pushing.', V.ok[1] + ' Obrigado, continuamos.'];
+    if (it === 'safety') return s < 2 ? r('Crew is rested and ready to go.', 'Equipa descansada e pronta para sair.') : s < 6
+      ? r('All ' + (c.forces[who] ? c.forces[who].crew.length + 1 : 5) + ' of us accounted for, no injuries. Rotating on the hose line every 40 min.', 'Os ' + (c.forces[who] ? c.forces[who].crew.length + 1 : 5) + ' contabilizados, sem feridos. Rodamos na linha de mangueira a cada 40 min.')
+      : r('Everyone is fine and back or heading back to the station.', 'Todos bem, já no quartel ou a regressar.');
+    if (it === 'eta') return s < 2 ? r('We are ' + eta + ' min away once you give the order.', 'Estamos a ' + eta + ' min assim que der a ordem.') : s === 2 ? r('About ' + Math.max(2, eta - 6) + ' min to the fire line.', 'Cerca de ' + Math.max(2, eta - 6) + ' min até à linha de fogo.') : r('We are already on scene, ' + onSceneFor(c) + ' now.', 'Já estamos no local, há ' + onSceneFor(c) + '.');
+    if (it === 'wind') return r('Wind from the ' + wind[0] + '. Humidity dropping in the afternoon, that is what drives the head ' + dir[0] + '.', 'Vento de ' + wind[1] + '. A humidade desce à tarde, é isso que empurra a cabeça para ' + dir[1] + '.');
+    if (it === 'water') return s < 3 ? r('Tanks full, ' + (us ? 'hydrants mapped along the road' : 'pontos de água identificados') + '.', 'Tanques cheios, pontos de água identificados.') : r((s >= 5 ? 'Plenty for the mop-up.' : 'Half a tank left, ' + (us ? 'the water tender' : 'o autotanque') + ' refills us in 15 min.'), (s >= 5 ? 'Chega bem para o rescaldo.' : 'Meio tanque, o autotanque reabastece-nos em 15 min.'));
+    if (it === 'homes') return c.evac ? r(c.evac.people + ' residents moved out, the homes to the ' + dir[0] + ' are being protected.', c.evac.people + ' moradores retirados, as casas a ' + dir[1] + ' estão a ser protegidas.')
+      : s >= 4 ? r('No homes at risk any more.', 'Já não há casas em risco.') : r('Homes about 1 km ' + dir[0] + '. If the head is not held in the next hour I would evacuate.', 'Casas a cerca de 1 km a ' + dir[1] + '. Se a cabeça não for dominada na próxima hora, eu evacuaria.');
+    if (it === 'need') return s === 3 && !c.flags.air ? r('Air support would make the difference on the head.', 'Um meio aéreo faria a diferença na cabeça.') : s >= 5 ? r('We are fine with what we have for the mop-up.', 'Estamos bem com o que temos para o rescaldo.') : r('We are holding with what we have, will shout if that changes.', 'Estamos a aguentar com o que temos, avisamos se mudar.');
+    if (it === 'order') { var q = String(text).trim().replace(/[.!]+$/, ''); return [V.ok[0] + ' "' + q + '". Moving now.', V.ok[1] + ' "' + q + '". A avançar.']; }
+    if (it === 'status') {
+      if (s === 0) return r('Smoke column still visible from here, drifting ' + dir[0] + '.', 'Coluna de fumo ainda visível daqui, a derivar para ' + dir[1] + '.');
+      if (s === 1) return r('Crew kitted up and waiting for your dispatch order.', 'Equipa equipada, à espera da sua ordem de despacho.');
+      if (s === 2) return r('En route, ' + Math.max(2, eta - 6) + ' min out, smoke clearly visible ahead.', 'A caminho, a ' + Math.max(2, eta - 6) + ' min, fumo bem visível à frente.');
+      if (s === 3) return r('About ' + areaTxt(c) + ' burnt so far. Head running ' + dir[0] + ', we are anchored on the south flank.' + (c.air && c.air.st === 'onscene' ? ' The helicopter is slowing it.' : ''), 'Cerca de ' + areaTxt(c, 1) + ' ardidos até agora. Cabeça a correr para ' + dir[1] + ', estamos ancorados no flanco sul.' + (c.air && c.air.st === 'onscene' ? ' O helicóptero está a abrandá-la.' : ''));
+      if (s === 4) return r('Head held at ' + areaTxt(c) + '. Closing the flanks, maybe two hours to go.', 'Cabeça dominada com ' + areaTxt(c, 1) + '. A fechar os flancos, talvez mais duas horas.');
+      if (s === 5) return r('Perimeter secure. Hotspots only in the ' + (us ? 'brush' : 'mato') + ' near the road.', 'Perímetro seguro. Só pontos quentes no mato junto à estrada.');
+      if (s === 6) return r('Quiet. Thermal camera shows nothing above ambient.', 'Calmo. A câmara térmica não mostra nada acima da temperatura ambiente.');
+      return ['All done here. Crew back at the station.', 'Tudo terminado. Equipa de volta ao quartel.'];
+    }
+    // anything else: acknowledge in context
+    return s < 2 ? [V.ok[0] + ' Standing by for your decision.', V.ok[1] + ' A aguardar a sua decisão.'] : s < 6 ? [V.ok[0] + ' We will factor that in on the line.', V.ok[1] + ' Vamos ter isso em conta na linha.'] : [V.ok[0], V.ok[1]];
+  }
+  // Who answers: whoever you name (by first name or station), else whoever that topic belongs to
+  function responder(c, t) {
+    var P = c.people, low = String(t).toLowerCase();
+    for (var i = 0; i < P.length; i++) { var fn = P[i].name.split(' ')[0].toLowerCase(); if (low.indexOf(fn) >= 0 || (P[i].org && low.indexOf(P[i].org.toLowerCase()) >= 0)) return i; }
+    return -1;
+  }
   function send(key, text) {
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
-    c.msgs.push({ id: newId(), kind: 'msg', from: 'me', en: String(text).trim(), pt: String(text).trim(), t: Date.now() });
-    var R = REPLIES[c.stage] || [];
-    if (R.length && !c.dismissed) { var r = R[c.beat % R.length]; c.beat++; if (c.people[r[0]]) say(c, r[0], r[1], r[2], 2500 + (c.beat % 3) * 900); }
-    c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
+    text = String(text).trim(); mine(c, text, text);
+    if (!c.dismissed && c.stage < 7 && c.people.length) {
+      var it = intentOf(text), named = responder(c, text), n = c.people.length;
+      var byTopic = { safety: 1, water: 2, homes: 1, wind: 0, eta: 0, need: 1, status: 0, order: 0, thanks: 0, other: c.beat % n };
+      var who = named >= 0 ? named : Math.min(n - 1, byTopic[it] != null ? byTopic[it] : 0);
+      var a = reply(c, who, it, text); c.beat++;
+      say(c, who, a[0], a[1], 2000 + (c.beat % 3) * 700, vary(c, 1, 6, 'b' + c.beat));
+      // A second voice chimes in on questions everyone has a view on
+      if (named < 0 && n > 1 && (it === 'status' || it === 'safety') && c.stage >= 2 && c.stage <= 5) {
+        var w2 = (who + 1) % n, b2 = reply(c, w2, it, text);
+        if (it === 'status') b2 = c.stage === 2 ? ['Right behind them, same ETA.', 'Logo atrás, mesma hora de chegada.'] : ['Same on our side: ' + (c.stage >= 4 ? 'flank quiet.' : 'north flank still active, we are holding it.'), 'Do nosso lado igual: ' + (c.stage >= 4 ? 'flanco calmo.' : 'flanco norte ainda ativo, estamos a segurá-lo.')];
+        say(c, w2, b2[0], b2[1], 5200, vary(c, 1, 4, 'c' + c.beat));
+      }
+    }
+    c.updated = Date.now(); c.seenAt = Date.now(); c.idleAt = Date.now(); save(); emit();
+  }
+
+  // Unprompted progress updates while a stage runs: the coordinators report as the fire evolves
+  var PROGRESS = {
+    3: [[1, function (c) { return ['Spot fire 30 m ahead of the head, we have it.', 'Foco secundário 30 m à frente da cabeça, está controlado.']; }, 12],
+        [0, function (c) { return ['About ' + areaTxt(c) + ' now. ' + (c.air && c.air.st === 'onscene' ? 'The drops are working, the head is losing strength.' : 'Still moving ' + 'north-east, we need to hold it before the ridge.'), 'Cerca de ' + areaTxt(c, 1) + ' agora. ' + (c.air && c.air.st === 'onscene' ? 'As descargas estão a resultar, a cabeça está a perder força.' : 'Continua para nordeste, temos de a segurar antes da cumeada.')]; }, 18],
+        [2, function (c) { return ['Refilled from the ' + (isUS(c) ? 'water tender' : 'autotanque') + ', back on the line.', 'Reabastecemos no autotanque, de volta à linha.']; }, 15]],
+    4: [[0, function (c) { return ['South flank closed. Working the north one.', 'Flanco sul fechado. A trabalhar o norte.']; }, 35],
+        [1, function (c) { return ['Crew rotation done, everyone hydrated.', 'Rotação de equipas feita, todos hidratados.']; }, 40]],
+    5: [[1, function (c) { return ['Two hotspots left along the road, soaking them now.', 'Faltam dois pontos quentes junto à estrada, a encharcar agora.']; }, 60],
+        [0, function (c) { return ['Perimeter walked end to end, nothing smoking.', 'Perímetro percorrido de ponta a ponta, nada a fumegar.']; }, 75]],
+    6: [[0, function (c) { return ['Night round done. All cold.', 'Ronda noturna feita. Tudo frio.']; }, 240],
+        [0, function (c) { return ['Morning check: no rekindles. Ready to close when you are.', 'Verificação da manhã: sem reacendimentos. Prontos a encerrar quando quiser.']; }, 420]]
+  };
+  function idle(c, now) {
+    if (c.closed || c.dismissed || c.queue.length) return false;
+    var L0 = PROGRESS[c.stage]; if (!L0) return false;
+    var last = Math.max(c.idleAt || 0, (c.msgs[c.msgs.length - 1] || {}).t || 0);
+    if (now - last < 22000) return false;
+    var done = (c.prog = c.prog || {})[c.stage] || 0; if (done >= L0.length) return false;
+    var p = L0[done], who = lead(c, p[0]), a = p[1](c); c.prog[c.stage] = done + 1; c.idleAt = now;
+    say(c, who, a[0], a[1], 1200, p[2]);
+    return true;
   }
 
   // Confirm / dismiss also update the incident itself, so the map and lists follow the chat
@@ -272,30 +455,97 @@
     d[c.incId] = true; try { sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
   }
 
+  // ---- a change of state moves the forces with it ---------------------------------------------------------------------
+  function onStage(c, s) {
+    if (s === 2) setForces(c, ['standby'], 'standby');
+    if (s === 3) setForces(c, ['enroute'], 'onscene');
+    if (s === 5 && c.air) c.air.st = 'released';
+    if (s === 6) { var first = true; (c.forces || []).forEach(function (f) { if (f.st === 'onscene' && first) { f.st = 'watch'; first = false; } else if (f.st !== 'standby') f.st = 'released'; }); }
+    if (s === 7) { setForces(c, null, 'released'); if (c.air) c.air.st = 'released'; c.closedVt = vnow(c); c.sum = stats(c); award(c); }
+  }
+
   // ---- the clock: due messages arrive, on whichever screen is open --------------------------------------------------
   function tick() {
     var db = load(), now = Date.now(), changed = false;
     Object.keys(db.chats).forEach(function (k) {
       var c = db.chats[k];
       while (c.queue.length && c.queue[0].due <= now) {
-        var q = c.queue.shift(), m = q.m; m.t = q.due;
+        var q = c.queue.shift(), m = q.m;
+        if (c.closed && m.kind !== 'msg' && m.kind !== 'sys') { if (!(m.kind === 'card' && m.summary)) continue; }
+        if (m.adv && !c.closedVt) jump(c, m.adv * MIN);
+        m.t = q.due; m.vt = vnow(c); delete m.adv;
         if (m.kind === 'stage') {
           if (c.dismissed) continue;
-          c.stage = m.stage; if (c.stage === 7) c.closed = true;
-          var sc = stageCard(c, c.stage); sc.id = newId(); sc.kind = 'card'; sc.t = q.due; c.msgs.push(sc);
+          c.stage = m.stage; c.hist.push({ s: m.stage, vt: m.vt });
+          onStage(c, c.stage);
+          if (c.stage === 7) c.closed = true;
+          var sc = stageCard(c, c.stage); sc.id = newId(); sc.kind = 'card'; sc.t = q.due; sc.vt = m.vt; c.msgs.push(sc);
           if (c.stage < 7) entry(c, c.stage, 0);
-          if (c.stage === 7 && c.people[0]) say(c, 0, 'Thanks everyone. Good work.', 'Obrigado a todos. Bom trabalho.', 2500);
-        } else c.msgs.push(m);
+          else {
+            if (c.people[0]) say(c, 0, 'Thanks everyone. Good work.', 'Obrigado a todos. Bom trabalho.', 2500, 1);
+            push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#1E7A34' }, 4000, 0);
+          }
+        } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
+        else c.msgs.push(m);
         c.updated = q.due; changed = true;
       }
+      if (idle(c, now)) changed = true;
     });
     if (changed) { save(); emit(); }
   }
   setInterval(tick, 700);
 
+  // ---- resolution: stats, and the achievement that goes into each firefighter's profile ---------------------------------
+  function stageDurs(c) {
+    var H = c.hist || [], end = vnow(c);
+    return H.map(function (h, i) { return { s: h.s, vt: h.vt, ms: Math.max(0, (H[i + 1] ? H[i + 1].vt : end) - h.vt), cur: !H[i + 1] && !c.closed }; });
+  }
+  function stats(c) {
+    var H = c.hist || [], at = function (s) { var x = H.find(function (h) { return h.s === s; }); return x ? x.vt : null; };
+    var t0 = since(c), end = vnow(c), h = hash(c.key);
+    var ha = Math.round((2.5 + h % 23 + (c.flags.airNo ? 12 : 0) + (c.flags.evac ? 5 : 0) + (h % 10) / 10) * 10) / 10;
+    var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
+    return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
+      ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
+      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.length; }, 0), air: c.air ? 1 : 0, stations: F.length };
+  }
+  function loadAch() { try { return JSON.parse(localStorage.getItem(ACH) || '{}') || {}; } catch (e) { return {}; } }
+  function award(c) {
+    var A = loadAch(), S = c.sum, me = (window.__wfPrefs && window.__wfPrefs.person) || { name: 'You' };
+    var rec = function (name, roleEn, rolePt, station) {
+      var list = A[name] || (A[name] = []);
+      if (list.some(function (r) { return r.key === c.key; })) return;
+      list.push({ key: c.key, place: c.place, reg: c.reg, vt: S.end, res: S.res, resp: S.resp, ha: S.ha, acres: S.acres, us: S.us, pop: S.pop, roleEn: roleEn, rolePt: rolePt, station: station || '' });
+    };
+    rec(me.name, 'Fire owner', 'Responsável pelo incêndio', '');
+    (c.forces || []).filter(function (f) { return f.st !== 'standby'; }).forEach(function (f) {
+      if (f.coord) rec(f.coord, 'Crew coordinator', 'Coordenador de equipa', f.station);
+      f.crew.forEach(function (n) { rec(n, 'Firefighter', 'Bombeiro', f.station); });
+    });
+    try { localStorage.setItem(ACH, JSON.stringify(A)); } catch (e) {}
+  }
+  // Who a person is: their role and station, from the chats and their achievements
+  function person(name) {
+    var me = (window.__wfPrefs && window.__wfPrefs.person) || {};
+    var A = (loadAch()[name] || []).slice().sort(function (a, b) { return b.vt - a.vt; });
+    if (me.name && name === me.name) return { name: name, code: me.code || initials(name), photo: me.photo || '', roleEn: 'Fire owner', rolePt: 'Responsável pelo incêndio', station: me.title || '', ach: A, me: true };
+    var db = load(), out = null;
+    Object.keys(db.chats).some(function (k) {
+      return (db.chats[k].forces || []).concat(db.chats[k].people.map(function (p) { return { coord: p.name, station: p.org, crew: [] }; })).some(function (f) {
+        if (f.coord === name) { out = { roleEn: 'Crew coordinator', rolePt: 'Coordenador de equipa', station: f.station }; return true; }
+        if (f.crew.indexOf(name) >= 0) { out = { roleEn: 'Firefighter', rolePt: 'Bombeiro', station: f.station }; return true; }
+        return false;
+      });
+    });
+    if (!out && A[0]) out = { roleEn: A[0].roleEn, rolePt: A[0].rolePt, station: A[0].station };
+    return Object.assign({ name: name, code: initials(name), photo: '', roleEn: 'Firefighter', rolePt: 'Bombeiro', station: '', ach: A }, out || {}, { ach: A });
+  }
+
   // ---- helpers for the screens ----------------------------------------------------------------------------------------
   function hhmm(t) { var d = new Date(t); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
-  function dur(ms) { var m = Math.max(1, Math.round(ms / 60000)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; }
+  function dur(ms) { var m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + ' min'; if (m < 1440) return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; return Math.floor(m / 1440) + ' d ' + Math.floor((m % 1440) / 60) + ' h'; }
+  function clock(ms) { var x = Math.max(0, Math.floor(ms / 1000)); var d = Math.floor(x / 86400); x %= 86400; var h = Math.floor(x / 3600); x %= 3600; var m = Math.floor(x / 60), s = x % 60, p = function (n) { return String(n).padStart(2, '0'); };
+    return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
   function unread(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
   function typing(c) { var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
@@ -313,7 +563,8 @@
   }
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
-    STAGES: STAGES, L: L, hhmm: hhmm, dur: dur, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,
+    STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,
+    vnow: vnow, since: since, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },

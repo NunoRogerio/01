@@ -308,7 +308,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <sc-if value="{{pop.hasView}}" hint-placeholder-val="{{ true }}">
         <a href="{{pop.href}}" onClick="{{pop.go}}" style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none">View</a>
       </sc-if>
-      <a href="Chat.dc.html" onClick="{{pop.chat}}" style="flex: 1 1 0; display: {{pop.chatD}}; align-items: center; justify-content: center; height: 44px; border-radius: 10px; background: rgba(118,118,128,0.12); color: #0062CC; font-size: 17px; font-weight: 500; text-decoration: none">Chat</a>
+      <a href="Chat.dc.html" onClick="{{pop.chat}}" aria-label="Chat about this incident" style="flex: 0 0 44px; display: {{pop.chatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></a>
     </div>
   </div>
   </sc-if>
@@ -379,7 +379,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
     <div style="flex-shrink: 0; display: flex; gap: 8px; padding: {{fcRowPad}}">
       <a href="Dispatch.dc.html" onClick="{{fc.go}}" style="flex: 1 1 auto; width: 100%; display: {{fcGoD}}; align-items: center; justify-content: center; height: 44px; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none">{{fc.goLabel}}</a>
-      <a href="Chat.dc.html" onClick="{{fc.chat}}" style="flex: 1 1 0; display: {{fc.chatD}}; align-items: center; justify-content: center; height: 44px; border-radius: 10px; background: rgba(118,118,128,0.12); color: #0062CC; font-size: 17px; font-weight: 500; text-decoration: none">Chat</a>
+      <a href="Chat.dc.html" onClick="{{fc.chat}}" aria-label="Chat about this incident" style="flex: 0 0 44px; display: {{fc.chatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></a>
     </div>
   </div>
   </sc-if>
@@ -1421,7 +1421,7 @@ class Component extends DCLogic {
       hasAreas: !!(I.areas && I.areas.length), areasTxt: I.areas && I.areas.length ? I.areas.slice(0, 3).map((a) => a.replace(/\s*\((REGULARIZADA|HOMOLOGADA|DECLARADA|DELIMITADA|EM ESTUDO)\)/i, '')).join(' · ') + (I.nAreas > 3 ? ' +' + (I.nAreas - 3) : '') : '', forcesNote: 'Resource numbers not published for this fire',
       hasArea: I.ha != null, areaTxt, areaSub, areaSubD: areaSub ? 'inline' : 'none',
       freshC, freshTxt: upd ? 'Updated ' + clockT(upd) + ' · ' + agoTxt : 'Update time not published', srcTxt: I.src,
-      goLabel: 'Open fire',
+      goLabel: 'View',
       w: Math.min(358, this.W() - 32), left: Math.round((this.W() - Math.min(358, this.W() - 32)) / 2), top: Math.round((top0 + bot0) / 2), maxH: Math.round(bot0 - top0),
       go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); }
     };
