@@ -55,6 +55,7 @@ a{color:#006A91}a:hover{color:#006A91}
 .ghost{background:rgba(60,60,67,0.05);color:#000000;border-color:rgba(60,60,67,0.088)}
 .ghost:hover{background:rgba(60,60,67,0.099);border-color:rgba(60,60,67,0.22);color:#000000}
 .round{border-radius:50%}
+@keyframes wfBell{0%,100%{transform:rotate(0)}15%{transform:rotate(12deg)}30%{transform:rotate(-10deg)}45%{transform:rotate(6deg)}60%{transform:rotate(-3deg)}75%{transform:rotate(1deg)}}
 .chip{transition:background-color .25s ease,border-color .25s ease,color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
 .chip:hover{transform:translateY(-1px)}
 .chip:active{transform:scale(.96)}
@@ -194,6 +195,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
     </button>
     <span aria-hidden="true" style="flex: 1 1 auto"></span>
+    <button type="button" class="opt" onClick="{{nt.open}}" aria-haspopup="dialog" aria-expanded="{{nt.str}}" aria-label="{{nt.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform-origin: 50% 15%; animation: {{nt.ring}}"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{nt.badgeD}}; position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 6px; border: 2px solid #F2F2F7; border-radius: 999px; background: #D70015; color: #FFFFFF; font-size: 12px; font-weight: 600; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums">{{nt.unread}}</span></button>
     <button type="button" class="opt avbtn" onClick="{{openPrefs}}" aria-haspopup="dialog" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 8px; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
     <span aria-hidden="true" style="position: absolute; left: 50%; bottom: 8px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); pointer-events: none"></span>
   </header>
@@ -252,6 +254,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
       </button>
       <span aria-hidden="true" style="flex: 1 1 auto"></span>
+      <button type="button" class="opt" onClick="{{nt.open}}" aria-haspopup="dialog" aria-expanded="{{nt.str}}" aria-label="{{nt.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform-origin: 50% 15%; animation: {{nt.ring}}"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{nt.badgeD}}; position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 6px; border: 2px solid #F2F2F7; border-radius: 999px; background: #D70015; color: #FFFFFF; font-size: 12px; font-weight: 600; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums">{{nt.unread}}</span></button>
       <button type="button" class="opt avbtn" onClick="{{openPrefs}}" aria-haspopup="dialog" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 8px; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; padding: 4px 16px 24px; opacity: {{scInOp}}; transform: translateY({{scInY}}); transition: opacity .3s ease {{scInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{scInDelay}}">
@@ -322,6 +325,36 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hScope.down}}" onPointerMove="{{hScope.move}}" onPointerUp="{{hScope.up}}" onPointerCancel="{{hScope.cancel}}" onKeyDown="{{hScope.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 28px; padding-bottom: 12px; flex-shrink: 0; cursor: grab; touch-action: none; margin-bottom: 12px"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
   <!-- (Grabbers sit 8px from their blade's edge; when that edge is the bottom of the screen they sit 24px above it, clear of the iOS home indicator.) -->
+  <!-- Notifications: grow down out of the top blade; close with the X (a gentle quarter turn) or by tapping outside -->
+  <div class="scrim" onClick="{{nt.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 34; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{nt.op}}; pointer-events: {{nt.pe}}; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="ntTitle" aria-hidden="{{nt.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 56px; max-height: calc(100% - 136px); z-index: 35; display: flex; flex-direction: column; box-sizing: border-box; padding-left: {{padL}}px; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{nt.clip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{nt.clip}} 0 round 0 0 28px 28px); visibility: {{nt.vis}}; pointer-events: {{nt.pe}}; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{nt.visDelay}}">
+    <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px; flex-shrink: 0">
+      <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px">
+        <h2 id="ntTitle" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">Notifications</h2>
+        <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{nt.sub}}</span>
+      </span>
+      <button type="button" class="opt" onClick="{{nt.close}}" aria-label="Close notifications" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{nt.xRot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <div class="wf-snap" style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 16px 24px; opacity: {{nt.inOp}}; transform: translateY({{nt.inY}}); transition: opacity .3s ease {{nt.inDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{nt.inDelay}}">
+      <sc-if value="{{nt.none}}" hint-placeholder-val="{{ false }}"><span style="padding: 16px 4px; font-size: 17px; color: #545458">No updates in this area yet.</span></sc-if>
+      <ul style="display: {{nt.listD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF; overflow: hidden">
+        <sc-for list="{{nt.items}}" as="n" hint-placeholder-count="5">
+          <li style="border-top: {{n.sep}}">
+            <a href="{{n.href}}" class="sqrow" data-sel="false" onPointerDown="{{n.pick}}" onClick="{{n.pick}}" aria-label="{{n.aria}}" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: start; gap: 2px 12px; padding: 12px 16px; color: #000000; text-decoration: none">
+              <svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true" style="grid-row: 1 / span 2; margin: 3px 0 0 2px"><path d="{{n.icon}}" fill="{{n.fill}}" stroke="{{n.stroke}}" stroke-width="1.3" stroke-linejoin="round"></path></svg>
+              <span style="min-width: 0; font-size: 17px; font-weight: {{n.w}}; line-height: 22px">{{n.title}}</span>
+              <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; line-height: 22px; color: #545458; white-space: nowrap"><span aria-hidden="true" style="display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: #0071E3"></span>{{n.age}}</span>
+              <span style="grid-column: 2 / span 2; min-width: 0; font-size: 15px; line-height: 20px; color: #545458">{{n.text}}</span>
+            </a>
+          </li>
+        </sc-for>
+      </ul>
+      <span style="display: {{nt.listD}}; padding: 8px 4px 0; font-size: 13px; line-height: 18px; color: #545458">{{nt.note}}</span>
+    </div>
+  </section>
+
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
   <section role="dialog" aria-modal="true" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 0; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{pfY}}); visibility: {{pfVis}}; pointer-events: {{pfPE}}; transition: transform {{pfDur}} {{pfEase}}, visibility 0s linear {{pfVisDelay}}">
     <h2 id="pfTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Preferences</h2>
@@ -615,6 +648,46 @@ class Component extends DCLogic {
   wfSetFocus(id) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: id }); try { window.sessionStorage.setItem('wf-focus', id); } catch (e) {} }
   // Screen layout: portrait phones use the full width; landscape and big screens (tablet, TV) keep the
   // panels in a phone-width column on the left, with the map filling the rest of the screen.
+  // Notifications for the chosen area. Ignition detections and fire states come from the live data; the station
+  // updates (crews returning, stations available) are illustrative until a dispatch feed exists.
+  wfNotes(CANDS, FIRES, scope, listFocus) {
+    const s = this.state || {}, open = !!s.ntOpen, now = Date.now();
+    const T0 = window.__wfNtT0 || (window.__wfNtT0 = now);
+    let seen = 0; try { seen = +window.sessionStorage.getItem('wf-nt-seen') || 0; } catch (e) {} seen = Math.max(seen, (window.__wfMem || {}).ntSeen || 0);
+    const TRI = 'M2.6 3H11.4L7 11Z', CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z', SQ = 'M2.5 2.5H11.5V11.5H2.5Z';
+    const confC = (c) => (window.__wfConfC ? window.__wfConfC(c) : '#0A6FDB');
+    const ageTxt = (ms) => { const m = Math.max(1, Math.round((now - ms) / 60000)); return m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' d'; };
+    const goFire = (f) => () => { this.wfListFlag(true); this.wfSetFireView(f); };
+    const out = [];
+    const cs = CANDS.slice().sort((a, b) => b.conf - a.conf);
+    if (cs[0]) out.push({ t: T0 - 3 * 60000, kind: 'ign', title: 'New ignition detection', text: cs[0].place + ' · ' + cs[0].conf + '% likelihood · ' + (cs[0].srcList || cs[0].src || ''), href: 'Alert.dc.html', pick: listFocus(cs[0].id), c: confC(cs[0].conf) });
+    const fireSt = FIRES.filter((f) => f.info && f.info.stEn);
+    if (fireSt[0]) { const f = fireSt[0]; out.push({ t: T0 - 11 * 60000, kind: 'fire', title: f.place + ' is now ' + String(f.info.stEn).toLowerCase(), text: 'State changed' + (f.info.st && f.info.st !== f.info.stEn ? ' to ' + f.info.st : '') + ' · ' + (f.info.src || ''), href: 'Dispatch.dc.html', pick: goFire(f) }); }
+    if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', title: 'Likelihood rose to ' + cs[1].conf + '%', text: cs[1].place + ' · another satellite pass agrees', href: 'Alert.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
+    if (FIRES[1]) out.push({ t: T0 - 26 * 60000, kind: 'st', title: 'Crews returning to base', text: 'Leaving ' + FIRES[1].place + ' · back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(FIRES[1]) });
+    if (FIRES[2]) out.push({ t: T0 - 47 * 60000, kind: 'st', title: 'Station available again', text: 'Crews released from ' + FIRES[2].place + ' can take new dispatches', href: 'Dispatch.dc.html', pick: goFire(FIRES[2]) });
+    if (fireSt[1]) { const f = fireSt[1]; out.push({ t: T0 - 72 * 60000, kind: 'fire', title: f.place + ' is now ' + String(f.info.stEn).toLowerCase(), text: 'State changed' + (f.info.st && f.info.st !== f.info.stEn ? ' to ' + f.info.st : '') + ' · ' + (f.info.src || ''), href: 'Dispatch.dc.html', pick: goFire(f) }); }
+    const unread = out.filter((n) => n.t > seen).length;
+    const items = out.map((n, i) => {
+      const un = n.t > seen;
+      const ic = n.kind === 'ign' ? [TRI, n.c, 'rgba(0,0,0,0.25)'] : n.kind === 'fire' ? [CIR, 'rgba(255,59,48,0.45)', '#8E0A12'] : [SQ, '#1E7A34', '#FFFFFF'];
+      return { title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
+        sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t) + ' ago',
+        pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
+    });
+    const where = (scope && scope.title) || 'this area';
+    return {
+      items, none: items.length === 0, listD: items.length ? 'flex' : 'none', sub: 'Latest updates in ' + where, unread: unread > 9 ? '9+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
+      ring: unread && !open ? 'wfBell 1.4s cubic-bezier(.3,.9,.3,1) .6s 1' : 'none',
+      note: 'Station updates are examples until a dispatch feed is connected.',
+      aria: unread ? 'Notifications, ' + unread + ' unread' : 'Notifications', str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
+      op: open ? 1 : 0, pe: open ? 'auto' : 'none', clip: open ? '0px' : 'calc(100% - 77px)', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '.55s',
+      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg',
+      open: () => { this.setState({ ntOpen: true, scOpen: false }); },
+      close: () => { if (this._ntT) return; this.wfNtSeen(now); this.setState({ ntSpin: true }); this._ntT = setTimeout(() => { this._ntT = null; this.setState({ ntOpen: false, ntSpin: false }); }, 260); }
+    };
+  }
+  wfNtSeen(t) { window.__wfMem = Object.assign(window.__wfMem || {}, { ntSeen: t }); try { window.sessionStorage.setItem('wf-nt-seen', String(t)); } catch (e) {} }
   wfLayout() {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
@@ -738,6 +811,7 @@ class Component extends DCLogic {
       aria: 'Active fire ' + f.place + (geoOf(f) ? ', ' + geoOf(f) : '') + ', ' + f.id + ', ' + f.note + '. Open forces dispatched', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
     })));
     return {
+      nt: this.wfNotes(CANDS, FIRES, scope, listFocus),
       scope, rows, allState, inCounties: !!brObj || atUS, inStates: !brObj, rowPadL: '40px', homeReset: () => this.wfDemoReset(), homeTick: s.homeTick || 0, sort: { name: sortCol('name'), cands: sortCol('cands'), fires: sortCol('fires') }, gridCols: 'minmax(0, 1fr) 102px 64px ' + (rows.some((r) => r.end) ? '28px' : '0px'), showSearch: (!!brObj && brObj.counties.length > 10) || atCountries, searchPh: atCountries ? 'Search ' + CTRY.length + ' countries' : 'Search ' + (brObj ? brObj.n : 0) + unitOf(brObj), q: s.q || '', hasQ: !!(s.q || ''), noMatch: q.length > 0 && rows.length === 0, noMatchTxt: 'No ' + (atCountries ? 'countries' : brObj ? unitOf(brObj).trim() : 'states') + ' match “' + q + '”', onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }), crumb: brObj ? 'United States › ' + brObj.name : 'United States',
       panelTitle: brObj ? brObj.name : atCountries ? 'Choose a country' : 'United States', colName: brObj ? (brObj.id === 'PT' ? 'District' : brObj.id === 'AMZ' || brObj.id === 'BRA' ? 'State' : brObj.country === 'US' ? 'County' : 'Region') : atCountries ? 'Country' : 'State',
       hScope: this.wfHandle('sc', 'up', () => this.setState({ scOpen: false })), scDy: this.wfDrag('sc').y, scDyT: this.wfDrag('sc').t,
