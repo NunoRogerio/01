@@ -5,3 +5,6 @@ leaf-6.webp|photo-1598516334061-9c4f1e43a4b2|Sameer Meshram|Yellow and red leave
 flower-1.webp|photo-1603353139254-70e25b77b8f2|Olga Kozachenko|Yellow and purple flower, macro
 forest-4.webp|photo-1759681770982-313332e7f42c|Kristaps Ungurs|Dense autumn forest from above
 forest-5.webp|photo-1599940824399-b87987ceb72a|Olena Bohovyk|Pine forest from above
+forest-6.webp|photo-1498925008800-019c7d59d903|John O'Nolan|Forest canopy from above
+forest-7.webp|photo-1510694853838-e4a8c978f518|shayd johnson|Tall conifers from above
+forest-8.webp|photo-1558022103-603c34ab10ce|Adam Vradenburg|Dense forest from above
