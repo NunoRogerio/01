@@ -903,7 +903,7 @@ class Component extends DCLogic {
         ...m, n,
         availText: a === 0 ? 'None available' : (n >= a ? 'All ' + a + ' assigned' : (a - n) + ' of ' + a + ' still free'),
         availColor: n >= a ? '#7A5600' : '#1E7A34',
-        nColor: n === Math.min(REC[i], a) ? '#1E7A34' : '#0071E3',
+        nColor: '#000000',
         bg: n > 0 ? 'rgba(60,60,67,0.044)' : 'rgba(60,60,67,0.017)',
         bd: n > 0 ? 'rgba(60,60,67,0.11)' : 'rgba(60,60,67,0.055)',
         less: () => { if (!lessDis) setCount(i, -1); }, more: () => { if (!moreDis) setCount(i, 1); },
@@ -1124,7 +1124,7 @@ class Component extends DCLogic {
         const row = (key, i, m, n, cap, rec) => { const lessDis = n <= 0, moreDis = n >= cap;
           return { name: m.name, icon: m.icon, ic: key === 'air' ? '#0079A6' : '#000000', n,
             availText: realSt ? (key === 'air' ? m.from : '') : cap === 0 ? 'None available' : n >= cap ? 'All ' + cap + ' assigned' : (cap - n) + ' of ' + cap + ' free',
-            availColor: !realSt && n >= cap ? '#7A5600' : '#545458', avD: realSt && key !== 'air' ? 'none' : 'block', nColor: n === rec ? '#1E7A34' : '#0071E3',
+            availColor: !realSt && n >= cap ? '#7A5600' : '#545458', avD: realSt && key !== 'air' ? 'none' : 'block', nColor: '#000000',
             less: () => { if (!lessDis) setP(key, i, n - 1); }, more: () => { if (!moreDis) setP(key, i, n + 1); },
             lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1,
             lessLabel: 'Fewer ' + m.name.toLowerCase() + ', ' + n + ' selected', moreLabel: 'More ' + m.name.toLowerCase() + ', ' + n + ' selected' }; };

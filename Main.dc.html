@@ -846,11 +846,12 @@ class Component extends DCLogic {
     const atCountries = browse === '@', atUS = !brObj && !atCountries;
     const selCountry = stObj.country === 'US' ? 'US' : stObj.id === 'AMZ' ? 'BRA' : stObj.id;
     const CHEV = 'm9 6 6 6-6 6', TICK = 'm5 12 5 5 9-10';
-    const likeC = (c) => (window.__wfConfTxt ? window.__wfConfTxt(c) : '#0A66CC'), FIREC = '#B84A00';
+    // Counts stay dark grey: colour on numbers is only for an ignition's likelihood percentage
+    const NUMC = '#3C3C43';
     const num = (v) => ({ v, c: v > 0 ? '#000000' : '#8E8E93' });
     const rowOf = (o, selected, pick, sub, drill) => { const dis = !selected && !o.live && (o.cands || 0) + (o.fires || 0) === 0; return {
       name: o.name, sub, subD: sub ? 'block' : 'none', ...selSty(selected), dis, disA: dis ? 'true' : 'false', ...(dis ? { fg: '#AEAEB2', subC: '#C7C7CC' } : {}),
-      fires: o.fires, firesC: dis ? '#AEAEB2' : (o.fires > 0 ? FIREC : '#545458'), cands: o.cands, candsC: dis ? '#AEAEB2' : (o.cands > 0 ? likeC(o.top || 0) : '#545458'),
+      fires: o.fires, firesC: dis ? '#AEAEB2' : NUMC, cands: o.cands, candsC: dis ? '#AEAEB2' : NUMC,
       bd: selected ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: selected ? 'rgba(0,122,255,0.14)' : '#FFFFFF',
       end: drill ? CHEV : '', endC: selected ? '#C7C7CC' : '#C4C4C7', endW: 2,
       aria: o.name + ', ' + o.fires + ' active fires, ' + o.cands + ' ignition candidates' + (drill ? (o.drillLbl || '. Show counties') : (selected ? ', selected' : '')),
@@ -895,10 +896,10 @@ class Component extends DCLogic {
       const F = SC.W.fires.filter((f) => f.info && inA && inA(f, 'AMZ') && !f.info.resolved), D = F.filter((f) => f.info.deforFire), ha = D.reduce((a, f) => a + (f.info.ha || 0), 0);
       return { on: F.length > 0, n: D.length.toLocaleString(), ha: Math.round(ha).toLocaleString(), line: D.length + ' of ' + F.length + ' active fires in the Legal Amazon burn mostly on land cleared in recent years, the clearing-then-burning pattern that turns forest into pasture and cropland.' }; })();
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
-    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: brObj.fires > 0 ? FIREC : '#545458', candsC: brObj.cands > 0 ? likeC(brObj.top || 0) : '#545458',
+    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: NUMC, candsC: NUMC,
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
       aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' ignition candidates',
-      pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + ' states', ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: t.fires > 0 ? FIREC : '#545458', candsC: t.cands > 0 ? likeC(t.top || 0) : '#545458',
+      pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + ' states', ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: NUMC, candsC: NUMC,
       bd: on ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: on ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: on ? 1 : 0, aria: 'United States, ' + t.fires + ' active fires, ' + t.cands + ' ignition candidates. Show the whole country',
       pick: () => { this.wfSetScope({ st: 'US', co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false }; })() : { dis: true, name: '', nCounties: 0, nLbl: '', risk: 0, riskC: '', fires: 0, cands: 0, firesC: '', candsC: '', bd: '', bg: '', tick: 0, aria: '', pick: null };
     const M = N + NF;
