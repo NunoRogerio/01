@@ -184,7 +184,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{m.hasActions}}" hint-placeholder-val="{{ false }}">
               <div style="display: grid; grid-template-columns: {{m.actCols}}; gap: 8px; padding: 0 16px 16px">
                 <sc-for list="{{m.actions}}" as="a" hint-placeholder-count="2">
-                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="height: 44px; border: 0; border-radius: 10px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 17px; font-weight: {{a.w}}; opacity: {{a.op}}; cursor: pointer">{{a.label}}</button>
+                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="height: 44px; border: 0; border-radius: 10px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 17px; font-weight: {{a.w}}; opacity: {{a.op}}; cursor: {{a.cur}}">{{a.label}}</button>
                 </sc-for>
               </div>
             </sc-if>
@@ -590,15 +590,21 @@ class Component extends DCLogic {
       }
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
-        const acts = (m.actions || []).map((a) => ({ label: L(a.en, a.pt), dis: !!m.done || c.closed, op: m.done && m.done !== a.key ? 0.4 : 1,
-          cls: a.primary ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? '#D7F41A' : '#2C2C2E', fg: a.primary ? '#1C1C1E' : '#D7F41A', w: a.primary ? 600 : 500, go: () => { if (m.done) return; run(a.key, m.id); } }));
+        // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
+        const PAST = { approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'] };
+        const acts = (m.actions || []).filter((a) => !m.done || m.done === a.key).map((a) => {
+          const done = !!m.done, P = PAST[a.key];
+          return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer',
+            cls: done ? '' : a.primary ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? '#D7F41A' : '#2C2C2E', fg: a.primary ? '#1C1C1E' : '#D7F41A', w: a.primary ? 600 : 500,
+            go: () => { if (m.done) return; run(a.key, m.id); } };
+        });
         const toSheet = !!m.fire && !c.closed;
         items.push({ isCard: true, time, tag: T(m.tag), tagC: I ? I.c : DK && m.tagC ? lite(m.tagC, 0.45) : (m.tagC || '#545458'), title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? m.kpi.c : '#000000',
           hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: r.rc, crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
-          hasActions: acts.length > 0 && !c.closed, actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
+          hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           hasLink: !!m.link || toSheet, link: toSheet ? L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios') : T(m.link), href: toSheet ? '#' : inc.href,
           goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : inc.go, ring: m.req && !m.done ? 'inset 0 0 0 1.5px rgba(184,54,10,0.4)' : 'none' });
         prevFrom = null;
