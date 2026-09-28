@@ -1,0 +1,29 @@
+name: Station crests
+# Crests and logos of the fire stations of California and Portugal, from Wikidata / Wikimedia Commons.
+# Weekly after the station snapshot, and whenever the script changes.
+on:
+  schedule:
+    - cron: '47 4 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/crests.py', '.github/workflows/crests.yml']
+permissions:
+  contents: write
+concurrency:
+  group: crests
+  cancel-in-progress: false
+jobs:
+  crests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find crests
+        run: python3 scripts/crests.py
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/crests.json 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "Update station crests" && git pull --rebase -q && git push)
