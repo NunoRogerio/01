@@ -29,7 +29,10 @@
     // body: jacket or shirt, collar, reflective bands
     o.push('<path d="M3 64 C5 52 15 47 32 47 C49 47 59 52 61 64 Z" fill="' + K.jacket + '"/>');
     o.push('<rect x="27" y="41" width="10" height="8" rx="3" fill="' + sd + '"/>');
-    o.push('<path d="M22 48 L32 56 L42 48 L38 46 L32 51 L26 46 Z" fill="' + K.collar + '"/>');
+    // turnout coat: stand-up collar, zip and storm flap (not a sailor's V)
+    o.push('<path d="M19.5 50.5 C23 46.2 41 46.2 44.5 50.5 L43 53.2 C39 50.4 25 50.4 21 53.2 Z" fill="' + K.collar + '"/>');
+    o.push('<rect x="30.4" y="52" width="3.2" height="12" fill="' + shade(K.jacket, 0.82) + '"/><rect x="31.7" y="52" width="0.6" height="12" fill="' + shade(K.jacket, 0.6) + '"/>');
+    if (K.goggles) o.push('<path d="M17 52 L26.5 60.5 M47 52 L37.5 60.5" stroke="#2B2B2D" stroke-width="2.4" stroke-linecap="round"/><rect x="23.5" y="58" width="6" height="6" rx="1" fill="#2B2B2D"/><rect x="45.5" y="50.5" width="3.2" height="5.5" rx="1" fill="#1C1C1E"/>');
     if (K.stripe) { o.push('<path d="M5.5 58 C12 55.5 20 54.8 32 54.8 C44 54.8 52 55.5 58.5 58 L59.4 61 C52 58.6 44 58 32 58 C20 58 12 58.6 4.6 61 Z" fill="' + K.stripe + '"/>');
       if (K.stripe2) o.push('<path d="M5 60.2 C12 58.2 20 57.6 32 57.6 C44 57.6 52 58.2 59 60.2 L59.3 61 C52 59 44 58.4 32 58.4 C20 58.4 12 59 4.7 61 Z" fill="' + K.stripe2 + '"/>'); }
     o.push('<rect x="41" y="52" width="6" height="5" rx="1" fill="' + K.badge + '"/>');
@@ -50,10 +53,13 @@
     if (p.glasses) o.push('<g fill="none" stroke="' + p.glasses + '" stroke-width="1.2"><circle cx="27.6" cy="33" r="3.6"/><circle cx="36.4" cy="33" r="3.6"/><path d="M31.2 33 L32.8 33 M24 32.4 L21.4 31.6 M40 32.4 L42.6 31.6"/></g>');
     // helmet: dome, brim, front badge, wildland goggles
     o.push('<path d="M17.5 28 C17.5 13.5 46.5 13.5 46.5 28 Z" fill="' + hel + '"/>');
-    o.push('<path d="M29.5 15.2 C30.5 14.8 33.5 14.8 34.5 15.2 L34.5 27.6 L29.5 27.6 Z" fill="' + shade(hel, 0.9) + '"/>');
+    o.push('<path d="M29.8 13.6 C30.8 12.4 33.2 12.4 34.2 13.6 L34.8 27.6 L29.2 27.6 Z" fill="' + shade(hel, 0.84) + '"/><path d="M31 14 L33 14 L33.3 27 L30.7 27 Z" fill="' + shade(hel, 1.08) + '" opacity="0.6"/>');
     o.push('<ellipse cx="32" cy="28.2" rx="17.6" ry="3.2" fill="' + shade(hel, 0.86) + '"/>');
     if (K.goggles) o.push('<rect x="20" y="22.6" width="24" height="3.4" rx="1.7" fill="#3A3A3C"/><rect x="24.5" y="21.8" width="6" height="5" rx="2" fill="#7FA6B8"/><rect x="33.5" y="21.8" width="6" height="5" rx="2" fill="#7FA6B8"/>');
-    else o.push('<path d="M29 19.5 L32 18 L35 19.5 L35 23.5 L32 25.2 L29 23.5 Z" fill="' + K.badge + '"/>');
+    else { o.push('<path d="M20.5 24 C22 19.8 42 19.8 43.5 24 L43 26.6 C38 24.8 26 24.8 21 26.6 Z" fill="#CFE3EE" opacity="0.75" stroke="' + shade(hel, 0.7) + '" stroke-width="0.6"/>');   // raised face visor
+      o.push('<path d="M29.6 17.6 L32 16.4 L34.4 17.6 L34.4 20.6 L32 22 L29.6 20.6 Z" fill="' + K.badge + '"/>'); }
+    // chin strap
+    o.push('<path d="M20.6 29.5 C21.4 38.5 25.6 45 32 46.3 C38.4 45 42.6 38.5 43.4 29.5" fill="none" stroke="#2B2B2D" stroke-width="1" opacity="0.85"/>');
     o.push('</svg>');
     return 'data:image/svg+xml,' + encodeURIComponent(o.join(''));
   }
