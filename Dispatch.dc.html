@@ -313,7 +313,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </section>
 
   <div class="scrim" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{scrimOp}}; pointer-events: {{scrimPE}}"></div>
-  <section role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="{{stHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: {{hdrB}}px 0 28px; background: #F2F2F7; clip-path: {{stClip}}; -webkit-clip-path: {{stClip}}; visibility: {{stVis}}; pointer-events: {{stPE}}; translate: 0 {{stDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{stVisDelay}}, translate {{stDyT}} ease">
+  <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{stScrimOp}}; pointer-events: none; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="{{stHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: {{hdrB}}px 0 32px; background: #F2F2F7; clip-path: {{stClip}}; -webkit-clip-path: {{stClip}}; visibility: {{stVis}}; pointer-events: {{stPE}}; translate: 0 {{stDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{stVisDelay}}, translate {{stDyT}} ease">
     <h2 id="sheetTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Choose a station</h2>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 0; opacity: {{stInOp}}; transform: translateY({{stInY}}); transition: opacity .3s ease {{stInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{stInDelay}}">
     <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) 88px 64px; align-items: end; gap: 4px 12px; flex-shrink: 0; padding: 16px 16px 8px 16px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 14px; font-weight: 400; line-height: 15px; color: #545458">
@@ -334,7 +335,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="btn ghost" onClick="{{stCancel}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
       <button type="button" class="btn" onClick="{{stApply}}" disabled="{{stNone}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600; opacity: {{stApplyOp}}; transition: opacity .2s ease">Apply</button>
     </div>
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hSt.down}}" onPointerMove="{{hSt.move}}" onPointerUp="{{hSt.up}}" onPointerCancel="{{hSt.cancel}}" onKeyDown="{{hSt.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 28px; padding-bottom: 12px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 8px 0 -16px"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
+    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hSt.down}}" onPointerMove="{{hSt.move}}" onPointerUp="{{hSt.up}}" onPointerCancel="{{hSt.cancel}}" onKeyDown="{{hSt.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 8px 0 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
 
 
@@ -412,7 +413,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </a>
     </div>
   </section>
-  <section role="dialog" aria-modal="true" aria-labelledby="cfgTitle" aria-hidden="{{cfHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: {{hdrB}}px 0 28px; background: #F2F2F7; clip-path: {{cfClip}}; -webkit-clip-path: {{cfClip}}; visibility: {{cfVis}}; pointer-events: {{cfPE}}; translate: 0 {{cfDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{cfVisDelay}}, translate {{cfDyT}} ease">
+  <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{cfScrimOp}}; pointer-events: none; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="cfgTitle" aria-hidden="{{cfHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: {{hdrB}}px 0 32px; background: #F2F2F7; clip-path: {{cfClip}}; -webkit-clip-path: {{cfClip}}; visibility: {{cfVis}}; pointer-events: {{cfPE}}; translate: 0 {{cfDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{cfVisDelay}}, translate {{cfDyT}} ease">
     <h2 id="cfgTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Configure dispatch</h2>
     <div style="flex-shrink: 0; padding-top: 8px; transform: translateY({{cfRepY}}); transition: transform .55s cubic-bezier(.2,.8,.2,1)">
         <button type="button" class="sqrow sqtop" onClick="{{closeSheet}}" aria-label="Close configuration" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
@@ -521,7 +523,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         Done
       </button>
     </div>
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hCf.down}}" onPointerMove="{{hCf.move}}" onPointerUp="{{hCf.up}}" onPointerCancel="{{hCf.cancel}}" onKeyDown="{{hCf.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 28px; padding-bottom: 12px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 8px 0 -16px"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
+    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hCf.down}}" onPointerMove="{{hCf.move}}" onPointerUp="{{hCf.up}}" onPointerCancel="{{hCf.cancel}}" onKeyDown="{{hCf.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 8px 0 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
 
 </div>
@@ -837,7 +839,7 @@ class Component extends DCLogic {
     };
     const open = !!s.open;
     const measure = (e, fb) => { try { const el = e && e.currentTarget; const root = el && el.closest && el.closest('[data-wfroot]'); if (el && root) { const r = el.getBoundingClientRect(), R = root.getBoundingClientRect(); const k = R.height / 844 || 1; return { t: Math.round((r.top - R.top) / k), b: Math.round((r.bottom - R.top) / k) }; } } catch (x) {} return fb; };
-    const panelVals = (k, on, og) => ({ [k + 'Hidden']: on ? 'false' : 'true', [k + 'Clip']: on ? 'inset(0px 0px 0px 0px round 0px)' : 'inset(' + og.t + 'px 0px ' + Math.max(0, 844 - og.b) + 'px 0px round 0px)', [k + 'Vis']: on ? 'visible' : 'hidden', [k + 'VisDelay']: on ? '0s' : '.55s', [k + 'PE']: on ? 'auto' : 'none', [k + 'RepY']: on ? '0px' : (og.t - 64) + 'px', [k + 'InOp']: on ? 1 : 0, [k + 'InY']: on ? '0px' : '-16px', [k + 'InDelay']: on ? '.2s' : '0s' });
+    const panelVals = (k, on, og) => ({ [k + 'Hidden']: on ? 'false' : 'true', [k + 'Clip']: on ? 'inset(0px 0px 32px 0px round 0px 0px 28px 28px)' : 'inset(' + og.t + 'px 0px ' + Math.max(32, 844 - og.b) + 'px 0px round 0px)', [k + 'Vis']: on ? 'visible' : 'hidden', [k + 'ScrimOp']: on ? 1 : 0, [k + 'VisDelay']: on ? '0s' : '.55s', [k + 'PE']: on ? 'auto' : 'none', [k + 'RepY']: on ? '0px' : (og.t - 64) + 'px', [k + 'InOp']: on ? 1 : 0, [k + 'InY']: on ? '0px' : '-16px', [k + 'InDelay']: on ? '.2s' : '0s' });
     const cfg = !!s.cfg;
     const REC = { 1: [1, 2, 0, 0, 0, 0], 2: [2, 3, 1, 1, 0, 1], 3: [4, 5, 2, 2, 1, 2] }[hzK];
     const tenders = { st7: 0, st5: 3, st2: 2, st9: 2, st1: 3 };
