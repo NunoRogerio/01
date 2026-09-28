@@ -733,7 +733,7 @@ class Component extends DCLogic {
         pick: listFocus(c.id)
       };
     }).concat(FIRES.map((f, j) => ({
-      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: 'Active', valC: '#B84A00', nameW: 400, iconPath: FLAME, sub: (geoOf(f) || f.id) + ' · ' + f.note, conf: '',
+      place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: 'Active', valC: '#B84A00', nameW: 400, iconPath: FLAME, sub: (geoOf(f) || f.id) + ' · ' + (/^Confirmed from /.test(f.note || '') ? 'Confirmed from a satellite detection' : f.note), conf: '',
       bg: 'rgba(232,106,0,0.16)', bd: 'rgba(232,106,0,0.45)', ...anim(N + j),
       aria: 'Active fire ' + f.place + (geoOf(f) ? ', ' + geoOf(f) : '') + ', ' + f.id + ', ' + f.note + '. Open forces dispatched', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
     })));
