@@ -18,8 +18,8 @@
 <script src="prefs.js?v=10"></script>
 <script src="i18n.js?v=31"></script>
 <script src="live.js?v=26"></script>
-<script src="chat.js?v=13"></script>
-<script src="trophy.js?v=1"></script>
+<script src="chat.js?v=14"></script>
+<script src="trophy.js?v=2"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -496,10 +496,10 @@ class Component extends DCLogic {
     // A station's colour is its crest's predominant colour (the palette only when a crest has none)
     const colOfOrg = (org) => { const k = C.crest(c, org).color; if (k) return k; const i = c.people.findIndex((p) => p.org === org); return SCOL[(i < 0 ? 0 : i) % SCOL.length]; };
     const colOf = (i) => (c.people[i] ? colOfOrg(c.people[i].org) : SCOL[i % SCOL.length]), ME_C = '#D7F41A';
-    // Photo outlines and the matching bubble outlines: the person's colour at 50%
+    // Photo outlines: the person's colour at 50%
     const half = (col) => 'rgba(' + hx(col) + ',0.5)';
     const ring = (col) => '0 0 0 2px ' + (DK ? '#1E1E20' : '#FFFFFF') + ', 0 0 0 4px ' + half(col);
-    const line = (col) => 'inset 0 0 0 2px ' + half(col);
+    const line = (col) => 'inset 0 0 0 2px rgba(' + hx(col) + ',0.12)';   // bubble and chip outlines: 12%, lighter than the photo rings
     const tint = (col) => 'linear-gradient(rgba(' + hx(col) + ',' + (DK ? 0.18 : 0.1) + '), rgba(' + hx(col) + ',' + (DK ? 0.18 : 0.1) + ')), ' + (DK ? '#2C2C2E' : '#FFFFFF');
     const pic = (name) => { const u = C.photo(c, name); return u ? 'url("' + u + '")' : 'none'; };
 
