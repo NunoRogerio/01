@@ -32,7 +32,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .chrow{transition:background-color .15s ease,filter .15s ease}.chrow:active{filter:brightness(.94)}
 .chbtn{transition:opacity .15s ease}.chbtn:active{opacity:.6}
 .chscroll{scrollbar-width:none}.chscroll>*{flex-shrink:0}.chscroll::-webkit-scrollbar{display:none}
-@keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}@keyframes chFade{from{opacity:0}to{opacity:1}}.chfade{animation:chFade .4s ease-out}@keyframes chBub{from{opacity:0;transform:scale(.72)}60%{opacity:1}to{opacity:1;transform:none}}.chbubL,.chbubR{animation:chBub .55s cubic-bezier(.22,.9,.3,1) both}.chbubL{transform-origin:0 100%}.chbubR{transform-origin:100% 100%}@media (prefers-reduced-motion:reduce){.chbubL,.chbubR,.chfade{animation:none}}
 @keyframes chDot{0%,80%,100%{opacity:.25}40%{opacity:1}}.chdot{animation:chDot 1.2s infinite}
 @keyframes chView{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}.chview{animation:chView .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes chGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}.chbar{transform-origin:left center;animation:chGrow .8s cubic-bezier(.2,.8,.2,1)}
@@ -128,9 +128,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <div class="chmsg" style="align-self: center; max-width: 300px; font-size: 13px; line-height: 18px; color: #545458; text-align: center">{{m.text}} · {{m.time}}</div>
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
-          <div class="chmsg" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
+          <div class="chfade" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
             <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 12px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}; visibility: {{m.avVis}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
-            <div style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
+            <div class="chbubL" style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}; box-shadow: {{m.bubLine}}">
               <span style="display: {{m.nameD}}; font-size: 13px; line-height: 16px; color: #545458">{{m.name}}</span>
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
               <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
@@ -138,7 +138,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chmsg" style="align-self: flex-end; display: flex; flex-direction: column; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: {{meBub}}; color: #000000">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: {{meBub}}; box-shadow: {{meLine}}; color: #000000">
             <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
             <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
@@ -211,7 +211,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
       <div data-fitrow="1" style="display: {{actD}}; flex-wrap: wrap; gap: 8px; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
-          <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="flex: 1 1 auto; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
+          <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="flex: 1 1 auto; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: {{a.bg}}; box-shadow: {{a.line}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
@@ -496,7 +496,10 @@ class Component extends DCLogic {
     // A station's colour is its crest's predominant colour (the palette only when a crest has none)
     const colOfOrg = (org) => { const k = C.crest(c, org).color; if (k) return k; const i = c.people.findIndex((p) => p.org === org); return SCOL[(i < 0 ? 0 : i) % SCOL.length]; };
     const colOf = (i) => (c.people[i] ? colOfOrg(c.people[i].org) : SCOL[i % SCOL.length]), ME_C = '#D7F41A';
-    const ring = (col) => '0 0 0 2px ' + (DK ? '#1E1E20' : '#FFFFFF') + ', 0 0 0 4px ' + col;
+    // Photo outlines and the matching bubble outlines: the person's colour at 50%
+    const half = (col) => 'rgba(' + hx(col) + ',0.5)';
+    const ring = (col) => '0 0 0 2px ' + (DK ? '#1E1E20' : '#FFFFFF') + ', 0 0 0 4px ' + half(col);
+    const line = (col) => 'inset 0 0 0 2px ' + half(col);
     const tint = (col) => 'linear-gradient(rgba(' + hx(col) + ',' + (DK ? 0.18 : 0.1) + '), rgba(' + hx(col) + ',' + (DK ? 0.18 : 0.1) + ')), ' + (DK ? '#2C2C2E' : '#FFFFFF');
     const pic = (name) => { const u = C.photo(c, name); return u ? 'url("' + u + '")' : 'none'; };
 
@@ -577,7 +580,7 @@ class Component extends DCLogic {
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), avVis: 'visible', gap: same ? '0' : '4px' });
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: same ? '0' : '4px' });
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
@@ -607,18 +610,18 @@ class Component extends DCLogic {
       }
     });
     // The team: you, the fire owner, then the crew coordinator of each station
-    const team = [{ name: me.name, role: L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: '0 0 0 2px #FFFFFF, 0 0 0 4px #D7F41A', roleC: '#1E7A34' }]
+    const team = [{ name: me.name, role: L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#1E7A34' }]
       .concat(c.people.map((p, i) => ({ name: p.name, role: L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
       .map((p) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name) }));
     const ty = C.typing(c);
-    const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), cls: a.primary || a.danger ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? '#D7F41A' : a.danger ? 'rgba(215,0,21,0.10)' : '#2C2C2E', fg: a.primary ? '#1C1C1E' : a.danger ? '#B3001B' : '#D7F41A', w: a.primary ? 600 : 400, go: () => run(a.key) }));
+    const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), cls: 'chbtn', bg: tint(ME_C), line: line(ME_C), fg: '#000000', w: a.primary ? 600 : 400, go: () => run(a.key) }));
     const send = () => { const v = (this.state || {}).draft || ''; if (!v.trim()) return; this._stick = true; C.send(c.key, v); this.setState({ draft: '' }); };
     const endT = c.closed ? (c.closedVt || vn) : vn;
     const sh = !!s.sheet;
     const firePt = { x: c.x, y: c.y, id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, st: c.st, zoom: 2.2 };
     return {
       isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, items, team, tl, tlTotal, forces, extras, fk,
-      meBub: tint(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
+      meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
       sh: { y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
