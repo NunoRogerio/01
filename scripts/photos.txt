@@ -4,11 +4,5 @@ leaf-1.webp|photo-1591943466271-dcfeedd9e58e|Tony Sebastian|Green leaf with wate
 leaf-6.webp|photo-1598516334061-9c4f1e43a4b2|Sameer Meshram|Yellow and red leaves
 flower-1.webp|photo-1603353139254-70e25b77b8f2|Olga Kozachenko|Yellow and purple flower, macro
 flower-3.webp|photo-1442277282747-62e04545a48a|Aaron Burden|Pink flower, macro
-flower-6.webp|photo-1695556647000-43fbd81456a1|Alexandra|Water drop on a purple flower
 forest-4.webp|photo-1759681770982-313332e7f42c|Kristaps Ungurs|Dense autumn forest from above
 forest-5.webp|photo-1599940824399-b87987ceb72a|Olena Bohovyk|Pine forest from above
-village-5.webp|photo-1707212216690-bf13dfd7399c|Éole Wind|Small village in the countryside from above
-village-4.webp|photo-1776584324215-7a551a3cbe02|jason hu|Village among green fields from above
-village-1.webp|photo-1784714968184-28b03b0aa02e|Ammar Sabanovic|Rural village and fields from above
-village-3.webp|photo-1716639057064-4cb0e6677750|konrad dobosz|Small town among mountains from above
-village-2.webp|photo-1777719812735-e3aadb261f13|Mira Romanescu|Village in a green valley

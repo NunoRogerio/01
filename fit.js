@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 // Nature photos, one list for the whole app (loading screen, sign in, alert header, chat header, trophy cards, forest
-// headers), in three groups of five (Unsplash): forests from above, macros of flowers and leaves, country villages from
-// above. Photos are shown one group at a time in turn (never two of the same group in a row), and the photo from each
+// headers), in two groups (Unsplash): forests from above, and macros of flowers and leaves. Photos are shown one group
+// at a time in turn (never two of the same group in a row), and the photo from each
 // group is picked at random; every page gets a new random order. b dims a bright photo so white text keeps its contrast.
 (function(){
   var L=[
@@ -12,15 +12,9 @@
     {f:"forest-5.webp",g:'forest',by:"Olena Bohovyk",alt:"Pine forest from above",b:1},
     {f:"flower-1.webp",g:'macro',by:"Olga Kozachenko",alt:"Yellow and purple flower, macro",b:0.53},
     {f:"flower-3.webp",g:'macro',by:"Aaron Burden",alt:"Pink flower, macro",b:0.64},
-    {f:"flower-6.webp",g:'macro',by:"Alexandra",alt:"Water drop on a purple flower",b:1},
     {f:"leaf-1.webp",g:'macro',by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1},
-    {f:"leaf-6.webp",g:'macro',by:"Sameer Meshram",alt:"Yellow and red leaves",b:0.73},
-    {f:"village-1.webp",g:'village',by:"Ammar Sabanovic",alt:"Rural village and fields from above",b:0.65},
-    {f:"village-2.webp",g:'village',by:"Mira Romanescu",alt:"Village in a green valley",b:0.8},
-    {f:"village-3.webp",g:'village',by:"konrad dobosz",alt:"Small town among mountains from above",b:1},
-    {f:"village-4.webp",g:'village',by:"jason hu",alt:"Village among green fields from above",b:0.76},
-    {f:"village-5.webp",g:'village',by:"Éole Wind",alt:"Small village in the countryside from above",b:0.75}];
-  var G=['forest','macro','village'];
+    {f:"leaf-6.webp",g:'macro',by:"Sameer Meshram",alt:"Yellow and red leaves",b:0.73}];
+  var G=['forest','macro'].filter(function(g){return L.some(function(p){return p.g===g;});});
   var sh=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;};
   // A random order that takes one photo from each group in turn (the groups in a random order too)
   var mix=function(){var gs=sh(G),by={},out=[],k=0;gs.forEach(function(g){by[g]=sh(L.filter(function(p){return p.g===g;}));});

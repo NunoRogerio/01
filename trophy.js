@@ -16,20 +16,21 @@
   var TROPHY = 'M8 3.5h8v5.5a4 4 0 0 1-8 0Z M8 5.5H4.5v1.2A3.3 3.3 0 0 0 8 10 M16 5.5h3.5v1.2A3.3 3.3 0 0 1 16 10 M12 13v3.5 M8 20.5h8 M9.5 16.5h5v4h-5Z';
   // Nature photos (fit.js): each card starts with one random photo from each group (forest, macro, village), and each
   // layer takes a new random photo of its group every time it comes round again (while hidden), so the groups take
-  // turns and the photos never repeat in a fixed order. The middle layer zooms out.
+  // turns and the photos never repeat in a fixed order. Every other layer zooms out.
   var POOL = function () { return window.__wfPhotoList || [{ f: 'forest-1.webp', by: 'Mari Potter', b: 1 }, { f: 'forest-2.webp', by: 'Ivan Dimitrov', b: 1 }, { f: 'forest-3.webp', by: 'Olena Bohovyk', b: 1 }]; };
-  var pick3 = function () { var a = window.__wfPhotoMix ? window.__wfPhotoMix() : POOL().slice(); while (a.length < 3) a = a.concat(a); return a.slice(0, 3); };   // one photo from each group
+  var pick3 = function () { var a = window.__wfPhotoMix ? window.__wfPhotoMix() : POOL().slice(); while (a.length < 4) a = a.concat(a); return a.slice(0, 4); };   // four layers, the groups taking turns
   var bgOf = function (p) { return 'background-image:url(assets/splash/' + p.f + ');filter:' + (p.b < 1 ? 'brightness(' + p.b + ')' : 'none'); };
   var CSS =
     ':host{display:block}' +
     '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:center;font:inherit;cursor:inherit}' +
     '.forest{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}' +
-    '.forest i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:o 33s linear infinite,zi 33s linear infinite}' +
-    '.forest i.out{animation-name:o,zo}' +
-    '.forest b{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
-    '@keyframes o{0%{opacity:0}4.8%{opacity:1}33.3%{opacity:1}38.2%{opacity:0}100%{opacity:0}}' +
-    '@keyframes zi{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,.1,.3,1)}38%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
-    '@keyframes zo{0%{transform:scale(1.3);animation-timing-function:cubic-bezier(.3,.1,.3,1)}38%{transform:scale(1)}100%{transform:scale(1)}}' +
+    '.forest i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:f 44s linear infinite,zi 44s linear infinite}' +
+    '.forest i.out{animation-name:f,zo}' +
+    '.forest b{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
+    '@keyframes f{0%{opacity:1;z-index:1}25%{opacity:1;z-index:2;animation-timing-function:cubic-bezier(.45,0,.55,1)}34.09%{opacity:0;z-index:2}34.2%{opacity:0;z-index:0}100%{opacity:0;z-index:0}}' +
+    '@keyframes o{0%{opacity:0}9.09%{opacity:1}25%{opacity:1}34.09%{opacity:0}100%{opacity:0}}' +
+    '@keyframes zi{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,.1,.3,1)}35%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
+    '@keyframes zo{0%{transform:scale(1.3);animation-timing-function:cubic-bezier(.3,.1,.3,1)}35%{transform:scale(1)}100%{transform:scale(1)}}' +
     'canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}' +
     '.logo{display:flex;align-items:center;gap:6px;margin-bottom:8px;color:#D7F41A;font-size:15px;font-weight:600;letter-spacing:.02em;line-height:20px;text-shadow:0 1px 10px rgba(0,0,0,.45)}' +
     '.logo svg{flex-shrink:0;display:block;overflow:visible;filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))}' +
@@ -42,7 +43,7 @@
     '.sub{font-size:15px;line-height:20px;color:#FFFFFF;text-shadow:0 1px 8px rgba(0,0,0,.5)}' +
     '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:44px;margin-top:8px;border-radius:10px;background:#D7F41A;color:#1C1C1E;font-size:17px;font-weight:600}' +
     '.credit{position:relative;display:grid;margin-top:12px;font-size:12px;line-height:14px;color:rgba(255,255,255,.72)}' +
-    '.credit span{grid-area:1/1;opacity:0;animation:o 33s linear infinite}' +
+    '.credit span{grid-area:1/1;opacity:0;animation:o 44s linear infinite}' +
     '[hidden]{display:none!important}' +
     '@media (prefers-reduced-motion:reduce){.forest i,.cup svg,.credit span{animation:none}.forest i:first-child,.credit span:first-child{opacity:1}}';
 
@@ -55,7 +56,7 @@
     if (!this._root) {
       var r = this._root = this.attachShadow({ mode: 'open' }), PH;
       r.innerHTML = '<style>' + CSS + '</style><div class="card">' +
-        '<span class="forest" aria-hidden="true">' + (PH = pick3()).map(function (p, i) { return '<i class="' + (i === 1 ? 'out' : '') + '" style="' + bgOf(p) + ';animation-delay:' + (i * 11) + 's"></i>'; }).join('') + '<b></b></span>' +
+        '<span class="forest" aria-hidden="true">' + (PH = pick3()).map(function (p, i) { return '<i class="' + (i % 2 ? 'out' : '') + '" style="' + bgOf(p) + ';animation-delay:' + (i * 11) + 's"></i>'; }).join('') + '<b></b></span>' +
         '<canvas aria-hidden="true"></canvas>' +
         '<span class="logo" aria-hidden="true"><svg width="15" height="18" viewBox="3.4 5 17.2 20.9"><path fill="currentColor" fill-rule="evenodd" d="' + LOGO + '"/><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Forest Fire Watch</span>' +
         '<span class="cup" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="' + TROPHY + '"/></svg></span>' +
@@ -64,10 +65,11 @@
       this._cv = r.querySelector('canvas'); this._cup = r.querySelector('.cup'); this._card = r.querySelector('.card');
       // A layer that has just faded out comes round again with a new photo, not one on screen or about to show
       var layers = [].slice.call(r.querySelectorAll('.forest i')), credits = [].slice.call(r.querySelectorAll('.credit span')), shown = PH.map(function (p) { return p.f; }), groups = PH.map(function (p) { return p.g; });
+      var ahead = function (i) { var p = window.__wfPhotoOther ? window.__wfPhotoOther(shown, groups[i]) : null; if (p) (new Image()).src = 'assets/splash/' + p.f; return p; }, nextP = layers.map(function (el, i) { return ahead(i); });
       layers.forEach(function (el, i) { el.addEventListener('animationiteration', function (e) {
-        if (e.animationName !== 'o' || !window.__wfPhotoOther) return;
-        var p = window.__wfPhotoOther(shown, groups[i]); shown[i] = p.f; el.style.backgroundImage = 'url(assets/splash/' + p.f + ')'; el.style.filter = p.b < 1 ? 'brightness(' + p.b + ')' : 'none';
-        if (credits[i]) credits[i].textContent = 'Photo: ' + p.by + ' / Unsplash'; (new Image()).src = 'assets/splash/' + p.f; }); });
+        if (e.animationName !== 'f' || !nextP[i]) return;
+        var p = nextP[i]; shown[i] = p.f; el.style.backgroundImage = 'url(assets/splash/' + p.f + ')'; el.style.filter = p.b < 1 ? 'brightness(' + p.b + ')' : 'none';
+        if (credits[i]) credits[i].textContent = 'Photo: ' + p.by + ' / Unsplash'; nextP[i] = ahead(i); }); });
     }
     this.fill(); this.startSparks();
   };
