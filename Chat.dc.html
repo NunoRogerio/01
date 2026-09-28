@@ -77,6 +77,18 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <div style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
         </div>
       </header>
+      <!-- Who is in this chat: fixed with the state, tap a person for their name and role -->
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 16px 12px">
+        <div role="list" aria-label="{{t.team}}" class="chscroll" style="display: flex; gap: 8px; overflow-x: auto; margin: -4px; padding: 4px">
+          <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
+            <button type="button" role="listitem" class="chbtn" onClick="{{p.pick}}" aria-label="{{p.aria}}" aria-pressed="{{p.on}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font: inherit; font-size: 13px; font-weight: 600; box-shadow: {{p.ring}}; overflow: hidden; cursor: pointer; transition: box-shadow .2s ease">{{p.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></button>
+          </sc-for>
+        </div>
+        <div aria-live="polite" style="display: {{whoD}}; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 12px; background: #FFFFFF">
+          <span style="font-size: 15px; font-weight: 600; line-height: 20px">{{who.name}}</span>
+          <span style="font-size: 13px; line-height: 16px; color: #545458">{{who.role}}</span>
+        </div>
+      </div>
       <!-- The current state stays pinned while the conversation scrolls; tap it to open the incident -->
       <a href="{{c.href}}" class="chrow" onClick="{{c.goInc}}" aria-label="{{c.pinAria}}" style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF; color: #000000; text-decoration: none">
         <span style="display: flex; align-items: center; gap: 8px">
@@ -199,7 +211,7 @@ class Component extends DCLogic {
     const L = (en, pt) => (C ? C.L(en, pt) : en);
     const T = (o) => (o ? L(o.en, o.pt) : '');
     const t = { back: L('Back', 'Voltar'), chats: L('Incident chats', 'Conversas de incidentes'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
-      msg: L('Message', 'Mensagem'), send: L('Send', 'Enviar'), demo: L('Demonstration: the team members and their messages are scripted. Stations and incidents are real.', 'Demonstração: os membros das equipas e as mensagens são simulados. Os quartéis e os incidentes são reais.') };
+      msg: L('Message', 'Mensagem'), send: L('Send', 'Enviar'), team: L('People in this chat', 'Pessoas nesta conversa'), demo: L('Demonstration: the team members and their messages are scripted. Stations and incidents are real.', 'Demonstração: os membros das equipas e as mensagens são simulados. Os quartéis e os incidentes são reais.') };
     const TRI = 'M2.6 3H11.4L7 11Z', CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z', CHK = 'M3.5 7.4 6 9.8l4.6-5.3';
     const iconOf = (c) => { const S = C.stageOf(c); return c.dismissed || c.stage === 7 ? { icon: CHK, fill: 'none', stroke: '#636366', bg: 'rgba(120,120,128,0.12)' } : c.stage === 0 ? { icon: TRI, fill: '#0A6FDB', stroke: 'none', bg: 'rgba(10,111,219,0.12)' } : { icon: CIR, fill: 'rgba(255,59,48,0.45)', stroke: '#8E0A12', bg: 'rgba(255,59,48,0.12)' }; };
     const ago = (tm) => { const m = Math.round((Date.now() - tm) / 60000); if (m < 1) return L('now', 'agora'); if (m < 60) return m + ' min'; const d = new Date(tm), n = new Date(); return d.toDateString() === n.toDateString() ? C.hhmm(tm) : d.toLocaleDateString(L('en-GB', 'pt-PT'), { day: 'numeric', month: 'short' }); };
@@ -218,7 +230,7 @@ class Component extends DCLogic {
         const txt = lm ? (lm.kind === 'card' ? T(lm.title) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
         return { place: c.place, st: T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: u > 9 ? '9+' : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
           icon: ic.icon, iconFill: ic.fill, iconStroke: ic.stroke, iconBg: ic.bg, sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
-          go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, draft: '' }); } }; };
+          go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, draft: '', who: null }); } }; };
       const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };
       const open = all.filter((c) => !c.closed).sort((a, b) => (C.unread(b) ? 1 : 0) - (C.unread(a) ? 1 : 0) || lastT(b) - lastT(a));
       const done = all.filter((c) => c.closed).sort((a, b) => lastT(b) - lastT(a));
@@ -268,12 +280,19 @@ class Component extends DCLogic {
         prevFrom = null;
       }
     });
+    const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
+    const roleOf = (p) => p.kind === 'drone' ? L('Drone team', 'Equipa de drone') : p.kind === 'ops' ? p.org : L('Team lead · ', 'Chefe de equipa · ') + p.org;
+    const ppl = [{ code: me.code, name: me.name + L(' (you)', ' (você)'), role: L('Coordinator', 'Coordenação') + (me.title ? ' · ' + me.title : ''), photo: me.photo ? 'url("' + me.photo + '")' : 'none', bg: '#E5E5EA' }]
+      .concat(c.people.map((p) => ({ code: p.code, name: p.name, role: roleOf(p), photo: 'none', bg: p.kind === 'ops' ? 'rgba(255,214,10,0.45)' : p.kind === 'drone' ? 'rgba(10,111,219,0.16)' : '#E5E5EA' })));
+    const whoI = s.who == null ? -1 : s.who;
+    const team = ppl.map((p, i) => ({ ...p, on: whoI === i ? 'true' : 'false', ring: whoI === i ? '0 0 0 2px #F2F2F7, 0 0 0 4px #1C1C1E' : 'none', aria: p.name + ', ' + p.role, pick: () => this.setState({ who: whoI === i ? null : i }) }));
+    const who = ppl[whoI] || { name: '', role: '' };
     const ty = C.typing(c);
     const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), bg: a.primary ? '#D7F41A' : a.danger ? 'rgba(215,0,21,0.10)' : 'rgba(118,118,128,0.12)', fg: a.primary ? '#1C1C1E' : a.danger ? '#B3001B' : '#0062CC', w: a.primary ? 600 : 400, go: () => { this._stick = true; C.act(c.key, a.key); } }));
     const send = () => { const v = (this.state || {}).draft || ''; if (!v.trim()) return; this._stick = true; C.send(c.key, v); this.setState({ draft: '' }); };
     return {
-      isList: false, isChat: true, t, items,
-      c: { place: c.place, sub: [c.reg, staff ? staff + 1 + ' ' + L('people', 'pessoas') : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
+      isList: false, isChat: true, t, items, team, who, whoD: whoI >= 0 ? 'flex' : 'none',
+      c: { place: c.place, sub: [c.reg, staff ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: S.c, elapsed: C.dur(Date.now() - since), summary, bar, icon: ic.icon, iconFill: ic.fill, iconStroke: ic.stroke,
         href: inc.href, goInc: inc.go, pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
