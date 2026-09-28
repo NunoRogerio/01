@@ -17,6 +17,7 @@
 <script src="prefs.js?v=5"></script>
 <script src="i18n.js?v=30"></script>
 <script src="live.js?v=23"></script>
+<script src="chat.js?v=1"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -136,9 +137,9 @@ a{color:#0062CC}a:hover{color:#004FA3}
 .btn:active,.chip:active,.opt:active,.card:active,.navi:active,.fsbtn:active,.mbtn:active{opacity:.5;transform:none!important;transition:opacity .06s}
 .btn .go,a.card:hover .go,.btn:hover .go{transform:none!important}
 .btn:hover .spin{transform:none}
-.primary,.primary.green{background:#0071E3;color:#FFFFFF;animation:none!important;padding:0 20px!important;justify-content:center;gap:8px;box-shadow:none}
-.primary:hover,.primary.green:hover{background:#0077ED;color:#FFFFFF;box-shadow:none}
-.primary.green{background:#248A3D}.primary.green:hover{background:#1F7F37}
+.primary{background:#D7F41A;color:#1C1C1E;}.primary,.primary.green{animation:none!important;padding:0 20px!important;justify-content:center;gap:8px;box-shadow:none}
+.primary:hover{background:#C9E60F;color:#1C1C1E;box-shadow:none}.primary.green:hover{box-shadow:none}
+.primary.green{background:#D7F41A;color:#1C1C1E}.primary.green:hover{background:#C9E60F}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
 .ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
@@ -193,6 +194,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span role="status" aria-label="{{activeAria}}" style="display: {{hd.pillD}}; align-items: center; gap: 7px; height: 28px; margin: 4px 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums">
       <span class="dot" style="width: 5.6px; height: 5.6px; display: {{pillDot}}"></span>{{pillTxt}}
     </span>
+    <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 0 4px 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 6px; border: 2px solid #F2F2F7; border-radius: 999px; background: #D70015; color: #FFFFFF; font-size: 12px; font-weight: 600; line-height: 16px; text-align: center">{{chat.n}}</span></a>
   </header>
   </div>
 
@@ -333,7 +335,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; flex-shrink: 0; padding: 12px 16px 4px">
       <button type="button" class="btn ghost" onClick="{{stCancel}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <button type="button" class="btn" onClick="{{stApply}}" disabled="{{stNone}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600; opacity: {{stApplyOp}}; transition: opacity .2s ease">Apply</button>
+      <button type="button" class="btn" onClick="{{stApply}}" disabled="{{stNone}}" style="height: 48px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600; opacity: {{stApplyOp}}; transition: opacity .2s ease">Apply</button>
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hSt.down}}" onPointerMove="{{hSt.move}}" onPointerUp="{{hSt.up}}" onPointerCancel="{{hSt.cancel}}" onKeyDown="{{hSt.key}}" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 8px 0 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
@@ -408,7 +410,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="btn ghost" onClick="{{undoSend}}" aria-haspopup="dialog" style="display: {{adjD}}; height: 48px; font-size: 17px; font-weight: 500">
         {{undoLabel}}
       </button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{navMap}}" onClick="{{navMap}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600">
+      <a href="Main.dc.html" class="btn" onPointerDown="{{navMap}}" onClick="{{navMap}}" style="height: 48px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600">
         Done
       </a>
     </div>
@@ -519,7 +521,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="btn" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; background-color: {{sugBg}}; border-color: {{sugBd}}; color: #1E7A34; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
         Suggested
       </button>
-      <button type="button" class="btn" onClick="{{cfgDone}}" style="height: 48px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 600">
+      <button type="button" class="btn" onClick="{{cfgDone}}" style="height: 48px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600">
         Done
       </button>
     </div>
@@ -554,7 +556,7 @@ class Component extends DCLogic {
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
   componentDidUpdate() { this.wfHdrMeasure(); }
-  componentDidMount() { setTimeout(() => this.wfHdrMeasure(), 0); this._actT = setInterval(() => this.forceUpdate(), 20000);
+  componentDidMount() { try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} setTimeout(() => this.wfHdrMeasure(), 0); this._actT = setInterval(() => this.forceUpdate(), 20000);
     // The current stage's elapsed time counts every second (only its text is updated).
     const tick = () => { try { document.querySelectorAll('[data-tl-since]').forEach((el) => { const t = +el.getAttribute('data-tl-since'); if (!t) { el.textContent = ''; return; } let x = Math.max(0, Math.floor((Date.now() - t) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60; const txt = d ? d + ' d ' + h + ' h' : h ? h + ' h ' + m + ' min' : m + ' min'; if (el.textContent !== txt) el.textContent = txt; }); } catch (e) {} };
     this._tlT = setInterval(tick, 1000); setTimeout(tick, 50); if (!this.wfTakeFireView()) this.wfRestoreFire(); this._wfSync = () => { if (!this.wfTakeFireView()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted) { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0, reinforce: false, open: false, cfg: false, stPick: false, cfPick: false, stations: null, counts: null, per: null, exp: null }); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
@@ -1142,6 +1144,9 @@ class Component extends DCLogic {
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: (s.sentUp ? 700 : 440) - (s.sbDy || 0) + 'px', sb: this.wfBlade(!!s.sentUp, (up) => this.setState({ sentUp: up })), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdrB: this._hdrB || 170,
+      chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null };
+        const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
+        return { badgeD: u ? 'block' : 'none', n: String(u), aria: ex ? 'Open this fire\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this fire', open: () => C.open(inc) }; })(),
       crewNote: chosenList.some((d) => d.real) ? 'Crew availability not published' : '',   // real stations: said once, above the list
       stNone: !!(stDraft && !stDraft.length), stApplyOp: stDraft && !stDraft.length ? 0.4 : 1,   // Apply waits for at least one station
       stApply: () => (stDraft && !stDraft.length) ? null : this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null, stPick: true }),

@@ -169,7 +169,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
       </div>
       <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px">
         <a href="SimSetup.dc.html" style="display: flex; align-items: center; justify-content: center; height: 50px; border-radius: 10px; background: rgba(118,118,128,0.14); color: #0062CC; font-size: 18px; font-weight: 600; text-decoration: none">Change setup</a>
-        <button type="button" onClick="{{restart}}" style="height: 50px; border: 0; border-radius: 10px; background: #0071E3; color: #FFFFFF; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer">Play again</button>
+        <button type="button" onClick="{{restart}}" style="height: 50px; border: 0; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer">Play again</button>
       </div>
     </section>
   </sc-if>
@@ -499,7 +499,7 @@ class Component extends DCLogic {
       return { name: cardSt.name, fill: cardSt.fill, left: Math.round(Math.max(6, Math.min(366 - 262, sx - 128))), top: Math.round(above ? sy - 22 : sy + 24), ty: above ? '-100%' : '0',
         sub: coming.length ? 'Getting ready: ' + coming.join(', ') : 'Deploy a unit; it appears here when ready. Then select it and tap where to go.',
         rows: cardSt.kinds.map((k) => { const TT = T[k], left = cardSt.pool[k];
-          return { name: TT.name, icon: TT.icon, sub: left ? left + ' available · ready in ' + TT.turnout + ' min' : 'None left here', dis: !left || G.over, bg: left ? '#0071E3' : 'rgba(118,118,128,0.12)', fg: left ? '#FFFFFF' : '#8E8E93',
+          return { name: TT.name, icon: TT.icon, sub: left ? left + ' available · ready in ' + TT.turnout + ' min' : 'None left here', dis: !left || G.over, bg: left ? '#D7F41A' : 'rgba(118,118,128,0.12)', fg: left ? '#1C1C1E' : '#8E8E93',
             aria: 'Deploy ' + TT.name.toLowerCase() + ' from ' + cardSt.name + ', ' + left + ' available', deploy: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.deploy(G.card, k); } }; }) }; })()
       : { name: '', fill: '', left: 0, top: 0, ty: '0', sub: '', rows: [] };
     const selV = sel ? (() => { const TT = T[sel.type];
