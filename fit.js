@@ -78,7 +78,7 @@
   check();
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check();});
 })();
-// Loading screen: the logo's flame catching fire on a loop, the name underneath, until the screen has
+// Loading screen: the logo in hi-vis yellow, still (no animation), the name underneath, until the screen has
 // drawn and (on the data screens) the live fires and satellite candidates are in. Never shows empty states.
 (function(){
   var needsData=/(Main|Alert|Drone|Dispatch|Station)\.dc\.html/.test(location.pathname)||/\/$/.test(location.pathname);
@@ -90,7 +90,6 @@
     '@keyframes wfin{to{opacity:1}}'+
     '@keyframes wfburn{0%,12%{opacity:0}45%,62%{opacity:1}100%{opacity:0}}'+
     '@keyframes wfsweep{from{background-position:120% 0}to{background-position:-120% 0}}'+
-    '#wf-load .fire{animation:wfburn 1.8s ease-in-out infinite}'+
     '#wf-load .name{font:600 20px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:.02em;'+
       'background:linear-gradient(90deg,#8E8E93 0%,#8E8E93 40%,#E8590C 50%,#8E8E93 60%,#8E8E93 100%);background-size:250% 100%;'+
       '-webkit-background-clip:text;background-clip:text;color:transparent;animation:wfsweep 1.8s linear infinite}'+
@@ -111,9 +110,8 @@
   document.head.appendChild(st);
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
   var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
-    '<defs><radialGradient id="wfLoadFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"/><stop offset="0.35" stop-color="#FFA41B"/><stop offset="0.7" stop-color="#FF5A1F"/><stop offset="1" stop-color="#D7263D"/></radialGradient></defs>'+
-    '<path class="base" fill="#8E8E93" fill-rule="evenodd" d="'+F+'"/><path class="fire" fill="url(#wfLoadFire)" fill-rule="evenodd" d="'+F+'"/>'+
-    '<path class="ground" d="'+G+'" fill="none" stroke="#8E8E93" stroke-width="1.1" stroke-linecap="round"/></svg>'+
+    '<path class="base" fill="#D7F41A" fill-rule="evenodd" d="'+F+'"/>'+
+    '<path class="ground" d="'+G+'" fill="none" stroke="#D7F41A" stroke-width="1.1" stroke-linecap="round"/></svg>'+
     '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span><span class="pct">0%</span></div><div class="cap"></div>';
   el.innerHTML=TPL;
   (document.body||document.documentElement).appendChild(el);
