@@ -130,7 +130,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
           <div class="chfade" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
             <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 12px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}; visibility: {{m.avVis}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
-            <div class="chbubL" style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}; box-shadow: {{m.bubLine}}">
+            <div class="chbubL" style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
               <span style="display: {{m.nameD}}; font-size: 13px; line-height: 16px; color: #545458">{{m.name}}</span>
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
               <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
@@ -138,7 +138,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: {{meBub}}; box-shadow: {{meLine}}; color: #000000">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: {{meBub}}; color: #000000">
             <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
             <span style="align-self: flex-end; font-size: 12px; line-height: 14px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
