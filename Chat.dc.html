@@ -17,7 +17,7 @@
 <script src="prefs.js?v=7"></script>
 <script src="i18n.js?v=30"></script>
 <script src="live.js?v=25"></script>
-<script src="chat.js?v=8"></script>
+<script src="chat.js?v=9"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -73,7 +73,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
         </ul>
       </sc-for>
-      <p style="margin: 16px 4px 0; font-size: 13px; line-height: 18px; color: #545458">{{t.demo}}</p>
+      <p style="margin: 16px 4px 0; font-size: 13px; line-height: 18px; color: #545458">{{listNote}}</p>
     </div>
   </sc-if>
 
@@ -200,7 +200,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
     <sc-if value="{{isHist}}" hint-placeholder-val="{{ false }}">
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 12px 16px 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{t.hist}}</span>
+      <sc-if value="{{sim.can}}" hint-placeholder-val="{{ true }}"><button type="button" class="chbtn" onClick="{{sim.go}}" style="height: 48px; border: 0; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{sim.label}}</button></sc-if>
+      <span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{histTxt}}</span>
       <div role="tablist" aria-label="{{t.hist}}" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; height: 36px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
         <span aria-hidden="true" style="position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 8px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); transform: translateX({{hTabX}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"></span>
         <sc-for list="{{hTabs}}" as="tb" hint-placeholder-count="2">
@@ -311,13 +312,14 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
         <sc-for list="{{sum.kpis}}" as="k" hint-placeholder-count="4">
           <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
-            <span style="font-size: 26px; font-weight: 600; line-height: 32px; color: {{k.c}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span>
+            <span style="font-size: 24px; font-weight: 600; line-height: 30px; letter-spacing: -0.01em; color: {{k.c}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span>
             <span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span>
+            <span style="display: {{k.cmpD}}; font-size: 13px; font-weight: 600; line-height: 16px; color: {{k.cmpC}}; text-align: center">{{k.cmp}}</span>
           </div>
         </sc-for>
       </section>
       <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.timeline}}</h2><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap">{{t.timeline}}</h2><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap">{{tlTotal}}</span></div>
         <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
           <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; opacity: {{r.op}}">
             <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: {{r.bg}}"><svg width="16" height="16" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
@@ -351,7 +353,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
         </button>
       </section>
-      <p style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{t.simNote}}</p>
+      <sc-if value="{{sim.can}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <button type="button" class="chbtn" onClick="{{sim.go}}" style="height: 52px; border: 0; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{sim.label}}</button>
+          <span style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{sim.note}}</span>
+        </div>
+      </sc-if>
+      <p style="display: {{sum.noteD}}; margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{sum.note}}</p>
     </div>
   </sc-if>
 
@@ -383,7 +391,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </article>
         </sc-for>
       </section>
-      <p style="margin: 0 4px; font-size: 13px; line-height: 18px; color: #545458">{{t.simNote}}</p>
     </div>
   </sc-if>
 </div>
@@ -429,7 +436,7 @@ class Component extends DCLogic {
       tl: L('Time in each stage', 'Tempo em cada fase'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
       proj: L('Spread projection', 'Projeção da propagação'), projSub: L('On the fire detail: where the fire can go in the next hours, with the nearest stations', 'No detalhe do incêndio: para onde o fogo pode ir nas próximas horas, com os quartéis mais próximos'), openFire: L('View', 'Ver'),
       forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
-      won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), wonBy: L('The forces that won', 'Os meios que venceram'), owner: L('Fire owner', 'Responsável pelo incêndio'),
+      won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), histDrill: L('Drill finished · your movements and decisions', 'Simulação terminada · os seus movimentos e decisões'), wonBy: L('The forces that won', 'Os meios que venceram'), owner: L('Fire owner', 'Responsável pelo incêndio'),
       ach: L('Achievements', 'Conquistas'), noAch: L('No resolved fires yet. Achievements appear here when a fire this person worked on is closed.', 'Ainda sem incêndios resolvidos. As conquistas aparecem aqui quando um incêndio em que esta pessoa trabalhou é encerrado.'),
       demo: L('Simulation: crew coordinators, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: os coordenadores de equipa, as respostas, os veículos e os tempos são encenados. Os quartéis e os incidentes são reais.'),
       simNote: L('Simulation: people, times, area and population figures come from the role-played scenario, not from live data.', 'Simulação: pessoas, tempos, área e população vêm do cenário encenado, não de dados em direto.') };
@@ -465,7 +472,7 @@ class Component extends DCLogic {
       const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);
         const who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? L('You', 'Você') : (c.people[lm.from] || {}).name || '') : '';
         const txt = lm ? (lm.kind === 'card' ? (lm.summary ? L('Fire resolved', 'Incêndio resolvido') : T(lm.title)) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
-        return { place: c.place, st: T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: u > 9 ? '9+' : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
+        return { place: (c.drill ? L('Drill · ', 'Simulação · ') : '') + c.place, st: T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: u > 9 ? '9+' : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
           ic: iconFor(S), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
           go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, draft: '', stack: [], sheet: false }); } }; };
       const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };
@@ -476,7 +483,7 @@ class Component extends DCLogic {
       const tabs = [['open', L('Open', 'Abertas') + (open.length ? ' · ' + open.length : '')], ['resolved', L('Resolved', 'Resolvidas') + (done.length ? ' · ' + done.length : '')]]
         .map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ tab: k }); } }));
       const tu = C.totalUnread();
-      return { isList: true, isChat: false, isSummary: false, isPerson: false, winBg, t: { ...t, none: tab === 'resolved' ? L('No resolved fires yet. When a fire is closed its chat moves here, with every movement and decision.', 'Ainda sem incêndios resolvidos. Quando um incêndio é encerrado, a conversa passa para aqui, com todos os movimentos e decisões.') : t.none }, ic, groups, noChats: !shown.length, tabs, tabX: tab === 'resolved' ? '100%' : '0',
+      return { isList: true, isChat: false, isSummary: false, isPerson: false, listNote: tab === 'resolved' ? L('Resolved fires are the benchmarks for training: open one and tap Simulate to replay it from ignition and try to beat its time to resolution and area burnt.', 'Os incêndios resolvidos são as referências para o treino: abra um e toque em Simular para o repetir desde a ignição e tentar bater o tempo até à resolução e a área ardida.') : t.demo, winBg, t: { ...t, none: tab === 'resolved' ? L('No resolved fires yet. When a fire is closed its chat moves here, with every movement and decision.', 'Ainda sem incêndios resolvidos. Quando um incêndio é encerrado, a conversa passa para aqui, com todos os movimentos e decisões.') : t.none }, ic, groups, noChats: !shown.length, tabs, tabX: tab === 'resolved' ? '100%' : '0',
         listSub: open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tu ? ' · ' + tu + ' ' + L('unread', 'por ler') : '') };
     }
 
@@ -508,14 +515,24 @@ class Component extends DCLogic {
     const RR = c.realRes, EE = (RR && RR.estF) || {}, fk = RR ? [{ v: (EE.man ? '~' : '') + RR.man, l: L('Personnel', 'Operacionais') }, { v: (EE.terrain ? '~' : '') + RR.terrain, l: L('Ground vehicles', 'Meios terrestres') }, { v: (EE.aerial ? '~' : '') + RR.aerial, l: L('Aircraft', 'Meios aéreos') }]
       : [{ v: String(live.reduce((a, f) => a + 1 + f.crew.length, 0)), l: L('People', 'Pessoas') }, { v: String(live.reduce((a, f) => a + f.veh.length, 0)), l: L('Vehicles', 'Veículos') }, { v: String(c.air ? 1 : 0), l: L('Aircraft', 'Meios aéreos') }];
 
+    // Simulate: replay a resolved fire (or try a drill again) from its ignition, against the real outcome
+    const srcKey = c.drill ? c.drill.from : c.key, B = c.drill || null;
+    const sim = { can: !!c.closed && !c.dismissed && !!C.get(srcKey), label: c.drill ? L('Try again', 'Tentar de novo') : L('Simulate this fire', 'Simular este incêndio'),
+      note: L('Replays this fire from its ignition with the same stations and crew coordinators. Your decisions set the outcome, compared with the real one at the end.', 'Repete este incêndio desde a ignição, com os mesmos quartéis e coordenadores. As suas decisões definem o resultado, comparado no fim com o real.'),
+      go: () => { const k = C.simulate(srcKey); if (!k) return; try { sessionStorage.setItem('wf-chat-open', k); if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: k, fromList: true, stack: [], sheet: false, hTab: 'all' }); } };
+    const cmp = (mine, real, better, fmt, time) => { if (!B || mine == null || real == null) return { cmp: '', cmpD: 'none', cmpC: '#545458' }; const d = mine - real, good = better === 'less' ? d <= 0 : d >= 0;
+      const w = time ? (d < 0 ? L('faster', 'mais rápido') : L('slower', 'mais lento')) : (d < 0 ? L('less', 'menos') : L('more', 'mais'));
+      return { cmp: Math.abs(d) < 1e-6 ? L('Same as the real fire', 'Igual ao real') : fmt(Math.abs(d)) + ' ' + w + L(' than the real fire', ' que o real'), cmpD: 'block', cmpC: good ? '#1E7A34' : '#B3141B' }; };
+    const benchTxt = B ? L('Real fire: resolved in ', 'Incêndio real: resolvido em ') + C.dur(B.res) + ' · ' + (B.us ? B.acres + ' acres' : String(B.ha).replace('.', PTL ? ',' : '.') + ' ha') : '';
     // ----- resolution summary -----
     if (s.view === 'summary') {
       const Z = c.sum || C.stats(c);
       const area = Z.us ? { v: String(Z.acres), u: 'acres' } : { v: String(Z.ha).replace('.', PTL ? ',' : '.'), u: 'ha' };
-      return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, winBg, pop: this.popFn(), tl, tlTotal, forces, extras,
-        sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: L('Fire resolved', 'Incêndio resolvido'), headline: c.place, closedAt: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
-          kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Time to response', 'Tempo de resposta'), c: '#B3141B' }, { v: C.dur(Z.res), l: L('Time to resolution', 'Tempo até à resolução'), c: '#1E7A34' },
-            { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800' }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC' }],
+      return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, winBg, pop: this.popFn(), tl, tlTotal, forces, extras, sim,
+        sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: B ? L('Drill complete', 'Simulação concluída') : L('Fire resolved', 'Incêndio resolvido'), headline: c.place, closedAt: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
+          note: B ? L('Training drill against the real fire of ', 'Simulação contra o incêndio real de ') + dayTxt(B.t) + L('. Crew replies are role-played, and drills do not go into firefighters’ profiles.', '. As respostas das equipas são encenadas e as simulações não entram nos perfis dos bombeiros.') : '', noteD: B ? 'block' : 'none',
+          kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Time to response', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Time to resolution', 'Tempo até à resolução'), c: '#1E7A34', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
+            { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800', ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC', cmp: '', cmpD: 'none', cmpC: '#545458' }],
           forcesSub: Z.people + ' ' + L('people', 'pessoas') + ' · ' + Z.veh + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
           me: { name: me.name, code: me.code, photo: photo(me) }, goOwner: openPerson(me.name) } };
     }
@@ -555,7 +572,7 @@ class Component extends DCLogic {
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
-        items.push({ isWin: true, time, tag: T(m.tag), title: L('Resolved in ', 'Resolvido em ') + C.dur(Z.res), body: Z.people + ' ' + L('people', 'pessoas') + ' · ' + Z.veh + ' ' + L('vehicles', 'veículos') + ' · ' + (Z.us ? Z.acres + ' acres' : String(Z.ha).replace('.', PTL ? ',' : '.') + ' ha'), link: L('See the summary', 'Ver o resumo'), go: openSummary });
+        items.push({ isWin: true, time, tag: B ? L('Drill complete', 'Simulação concluída') : T(m.tag), title: L('Resolved in ', 'Resolvido em ') + C.dur(Z.res), body: Z.people + ' ' + L('people', 'pessoas') + ' · ' + Z.veh + ' ' + L('vehicles', 'veículos') + ' · ' + (Z.us ? Z.acres + ' acres' : String(Z.ha).replace('.', PTL ? ',' : '.') + ' ha'), link: L('See the summary', 'Ver o resumo'), go: openSummary });
         prevFrom = null; return;
       }
       if (m.kind === 'card') {
@@ -586,12 +603,12 @@ class Component extends DCLogic {
     const firePt = { x: c.x, y: c.y, id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, st: c.st, zoom: 2.2 };
     return {
       isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, winBg, items, team, tl, tlTotal, forces, extras, fk,
-      isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
+      sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
       sh: { y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
       openSheet, closeSheet: () => this.setState({ sheet: false }), goFire: inc.go,
-      c: { place: c.place, sub: [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
+      c: { place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,

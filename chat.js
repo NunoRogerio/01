@@ -330,9 +330,30 @@
     var now = Date.now();
     (PAST[role] || PAST.admin).forEach(function (f, i) {
       create({ kind: 'fire', id: 'SIM-' + (role || 'x') + '-' + i, place: f.place, reg: f.reg, st: f.st, lat: f.lat, lon: f.lon, sc: 10, past: true, air: f.air, evac: f.evac, ha: f.ha,
-        x: Math.round((f.lon + 118.13) * 2345 + 518), y: Math.round((34.19 - f.lat) * 2829 + 662), note: 'Closed · simulation',
+        x: Math.round((f.lon + 118.13) * 2345 + 518), y: Math.round((34.19 - f.lat) * 2829 + 662), note: '',
         startMs: now - f.d0 * DAY, curMs: now - f.d1 * DAY });
     });
+  }
+
+
+  // ---- training drill: replay a resolved fire from its ignition and try to beat it ---------------------------------------
+  function simulate(key) {
+    var src = load().chats[key]; if (!src || !src.closed || src.dismissed) return null;
+    var S = src.sum || stats(src), n = (load().drills = (load().drills || 0) + 1);
+    var inc = { kind: 'cand', id: 'DRILL-' + n + '-' + String(src.incId).slice(-8), place: src.place, reg: src.reg, st: src.st, lat: src.lat, lon: src.lon, x: src.x, y: src.y,
+      conf: 72, src: 'Satellite VIIRS NOAA-21', det: Date.now() - 4 * MIN };
+    var c = create(inc);
+    c.drill = { from: key, res: S.res, ha: S.ha, acres: S.acres, resp: S.resp, us: S.us, t: S.end, place: src.place };
+    save();
+    // Same stations and the same crew coordinators as the real incident
+    var wait = function () { var d = load().chats[c.key]; if (!d) return; if (!d.people.length) return setTimeout(wait, 150);
+      d.stations = src.stations.slice(0, 3); d.reserve = src.reserve || d.reserve; d.used = {};
+      d.people = src.people.slice(0, d.stations.length).map(function (p) { d.used[p.name] = 1; return { name: p.name, code: p.code, org: p.org, kind: 'lead' }; });
+      (src.forces || []).forEach(function (f) { f.crew.forEach(function (x) { d.used[x] = 1; }); });
+      d.msgs.concat(d.queue.map(function (q) { return q.m; })).forEach(function (m) { if (m.kind === 'sys' && /^Called you/.test(m.en)) { var names = d.people.map(function (p) { return p.org; }).join(', '); m.en = 'Training drill against the resolved fire of ' + new Date(S.end).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' · called you (fire owner) and the crew coordinators of ' + names; m.pt = 'Simulação contra o incêndio resolvido de ' + new Date(S.end).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' }) + ' · chamados: você (responsável) e os coordenadores de equipa de ' + names; } });
+      save(); emit(); };
+    setTimeout(wait, 150);
+    return c.key;
   }
 
   function start(c) {
@@ -396,8 +417,14 @@
   }
 
   // How long each stage plausibly lasts before the fire owner moves it on (minutes)
+  function drillF(c) {   // a training drill: your decisions speed the fire up or slow it down
+    if (!c.drill) return 1;
+    var f = 1, n = (c.forces || []).filter(function (x) { return x.st !== 'standby'; }).length;
+    if (c.flags.air) f *= 0.8; if (c.flags.airNo) f *= 1.25; if (n >= 3) f *= 0.9; if (c.flags.drone3) f *= 0.95;
+    return f;
+  }
   function stageSpan(c, to) {
-    return to === 4 ? vary(c, 85, 170, 's4') : to === 5 ? vary(c, 150, 330, 's5') : to === 6 ? vary(c, 180, 420, 's6') : to === 7 ? vary(c, 840, 1560, 's7') : 1;
+    return drillF(c) * (to === 4 ? vary(c, 85, 170, 's4') : to === 5 ? vary(c, 150, 330, 's5') : to === 6 ? vary(c, 180, 420, 's6') : to === 7 ? vary(c, 840, 1560, 's7') : 1);
   }
 
   function act(key, a, msgId) {
@@ -757,7 +784,8 @@
   function stats(c) {
     var H = c.hist || [], at = function (s) { var x = H.find(function (h) { return h.s === s; }); return x ? x.vt : null; };
     var t0 = since(c), end = vnow(c), h = hash(c.key);
-    var ha = c.realHa || Math.round((2.5 + h % 23 + (c.flags.airNo ? 12 : 0) + (c.flags.evac ? 5 : 0) + (h % 10) / 10) * 10) / 10;
+    var ha = c.drill && c.drill.ha ? Math.round(c.drill.ha * Math.min(2.2, Math.max(0.45, Math.pow(((at(3) != null ? at(3) - since(c) : 0) || c.drill.resp || 1) / (c.drill.resp || 1), 0.7))) * (c.flags.air ? 0.85 : c.flags.airNo ? 1.3 : 1.1) * 10) / 10
+      : c.realHa || Math.round((2.5 + h % 23 + (c.flags.airNo ? 12 : 0) + (c.flags.evac ? 5 : 0) + (h % 10) / 10) * 10) / 10;
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
     return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
@@ -765,6 +793,7 @@
   }
   function loadAch() { try { return JSON.parse(localStorage.getItem(ACH) || '{}') || {}; } catch (e) { return {}; } }
   function award(c) {
+    if (c.drill) return;   // training drills do not go into firefighters' profiles
     var A = loadAch(), S = c.sum, me = (window.__wfPrefs && window.__wfPrefs.person) || { name: 'You' };
     var rec = function (name, roleEn, rolePt, station) {
       var list = A[name] || (A[name] = []);
@@ -830,7 +859,7 @@
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { c.seenAt = Date.now(); save(); emit(); } },
-    send: send, act: act, dispatched: dispatched,
+    send: send, act: act, dispatched: dispatched, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
       setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
       set: function (k, cb) { k = String(k || '').trim(); try { if (k) localStorage.setItem(AIK, k); else { localStorage.removeItem(AIK); localStorage.removeItem(AIS); } } catch (e) {} emit();
