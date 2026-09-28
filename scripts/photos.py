@@ -1,5 +1,5 @@
 # Downloads the nature photos listed in scripts/photos.txt into assets/splash as WebP (1080 px, via Unsplash's
-# image service) and writes data/photos.json with the ones that arrived, so the app lists only real files.
+# image service). The app's photo list lives in fit.js; add a photo there once it has arrived.
 import json, os, urllib.request
 out, ok = 'assets/splash', []
 for line in open('scripts/photos.txt', encoding='utf-8'):
@@ -16,5 +16,4 @@ for line in open('scripts/photos.txt', encoding='utf-8'):
             else: print('skip', f, ct, len(data))
         except Exception as e: print('fail', f, e)
     if os.path.exists(path): ok.append({'f': f, 'by': by, 'alt': alt, 'kb': os.path.getsize(path) // 1024})
-json.dump(ok, open('data/photos.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(len(ok), 'photos')

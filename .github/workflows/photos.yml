@@ -23,5 +23,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/splash data/photos.json
+          git add assets/splash
           git diff --cached --quiet || (git commit -m "Add nature photos" && git pull --rebase -q && git push)
