@@ -305,3 +305,42 @@ window.__wfBlink=function(path,dur){
   // coming back (from the phone's cache): screens refresh their live state
   addEventListener('pageshow',function(ev){if(ev.persisted){try{dispatchEvent(new Event('wf-sync'));}catch(x){}}});
 })();
+
+// Whole-blade swipe: a blade marked data-swipe="up" (a sheet that drops from the top) or "down" (one that rises from the
+// bottom) follows the finger from anywhere on it, not only its grabber, and a swipe of 60 px (or a quick flick) closes it
+// by tapping its own close control ([data-swipe-go]). Taps are untouched. A list inside only hands the gesture to the blade
+// once it can scroll no further that way, so scrolling works as before. The page can show the drag itself through
+// window.__wfSwipeDrag(key, dy); otherwise the blade is moved directly.
+(function(){
+  var S=null;
+  function scroller(t,root){for(var n=t;n&&n!==root;n=n.parentElement){var cs=getComputedStyle(n);if(/(auto|scroll)/.test(cs.overflowY)&&n.scrollHeight>n.clientHeight+1)return n;}return null;}
+  function paint(el,dy){var k=el.getAttribute('data-swipe-key');if(k&&window.__wfSwipeDrag)window.__wfSwipeDrag(k,dy);else el.style.translate='0 '+dy+'px';}
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1)return;var t=e.target,el=t&&t.closest&&t.closest('[data-swipe]');if(!el)return;
+    if(t.closest('.wf-grab,input,textarea,select,[data-noswipe]'))return;   // the grabber keeps its own drag; fields keep theirs
+    var p=e.touches[0];S={el:el,dir:el.getAttribute('data-swipe'),x:p.clientX,y:p.clientY,t:performance.now(),sc:scroller(t,el),on:false,dy:0,k:1};
+    try{var r=el.closest('[data-wfroot]');if(r)S.k=r.getBoundingClientRect().width/((window.__wfVP||{}).w||390)||1;}catch(x){}
+  },{passive:true,capture:true});
+  document.addEventListener('touchmove',function(e){
+    if(!S)return;var p=e.touches[0],dx=p.clientX-S.x,dy=p.clientY-S.y;
+    if(!S.on){
+      if(Math.abs(dy)<10&&Math.abs(dx)<10)return;
+      if(Math.abs(dx)>Math.abs(dy)){S=null;return;}                      // sideways: a chip row or a map, not the blade
+      var closing=S.dir==='up'?dy<0:dy>0;if(!closing){S=null;return;}
+      var sc=S.sc;if(sc){var atEnd=S.dir==='up'?sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1:sc.scrollTop<=0;if(!atEnd){S=null;return;}}
+      S.on=true;S.y=p.clientY;dy=0;
+    }
+    e.preventDefault();
+    dy=(p.clientY-S.y)/S.k;dy=S.dir==='up'?Math.min(0,dy):Math.max(0,dy);S.dy=dy;paint(S.el,dy);
+  },{passive:false,capture:true});
+  function end(){
+    if(!S)return;var s=S;S=null;if(!s.on)return;
+    var v=Math.abs(s.dy)/Math.max(1,performance.now()-s.t);
+    paint(s.el,0);if(!(s.el.getAttribute('data-swipe-key')&&window.__wfSwipeDrag))s.el.style.translate='';
+    var g=(Math.abs(s.dy)>60||(Math.abs(s.dy)>20&&v>0.5))?s.el.querySelector('[data-swipe-go]'):null;
+    // a drag is not a tap: swallow the click that may follow (but not the blade's own close)
+    var stop=function(ev){if(g&&ev.target===g)return;ev.stopPropagation();ev.preventDefault();};document.addEventListener('click',stop,true);setTimeout(function(){document.removeEventListener('click',stop,true);},350);
+    if(g)setTimeout(function(){g.click();},0);
+  }
+  document.addEventListener('touchend',end,{capture:true});document.addEventListener('touchcancel',end,{capture:true});
+})();
