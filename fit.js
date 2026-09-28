@@ -244,10 +244,11 @@ window.__wfBlink=function(path,dur){
       (function step(now){
         if(!el.parentNode)return;
         // the wave runs over the minimum time; while live data is still coming it slows and waits short of the edges
-        var tp=Math.min(1,(now-t1)/dur),ready=haveData()&&drawn(),goal=ready?tp:Math.min(tp,.82);
-        wave.p+=(goal-wave.p)*.25;
+        // the wave follows the counter from 0% to 100%, smoothed so its slow steady spread never jumps with the counter
+        var tp=Math.min(1,(now-t1)/dur),ready=haveData()&&drawn(),goal=pctEl?pv/100:(ready?tp:Math.min(tp,.82));
+        wave.p+=(goal-wave.p)*.06;
         var q=wave.p,e=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;paint(e*(R*1.08+band*1.6));   // ease in and out
-        if(wave.p>.995&&ready&&tp>=1){wave.done=true;norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
+        if(wave.p>.97&&ready&&(pctEl?pv>=100:tp>=1)){wave.done=true;norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
     var start=function(up){if(!up&&!im.src)im.src='assets/splash/'+ph[0];};
@@ -261,7 +262,7 @@ window.__wfBlink=function(path,dur){
   (function count(){
     if(!el.parentNode||!pctEl)return;
     var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
-    if(!ready||(wave&&!wave.done&&goal>=100))goal=Math.min(goal,ready?99:90);
+    if(!ready)goal=Math.min(goal,90);   // the wave follows the counter, so the counter no longer waits for it
     // counts in jumps of 2 to 5, about every 1/28 of the loading time, never past where loading has got to
     if(pv<goal){pv=Math.min(goal>=100?100:Math.floor(goal),pv+2+Math.floor(Math.random()*4));}
     if(goal>=100&&pv>=98)pv=100;
