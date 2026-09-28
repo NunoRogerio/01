@@ -934,11 +934,11 @@ class Component extends DCLogic {
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
+      ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
-      ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#7A3FE0', 'rgba(0,0,0,0.25)'],
       ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M2.5 2.5H11.5V11.5H2.5Z', '#1E7A34', '#FFFFFF']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
