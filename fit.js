@@ -1,4 +1,13 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
+// The logo's eye blinks: the upper lid (curve through y=12) comes down to the lower one and both meet near y=17.4, then open.
+window.__wfBlink=function(path,dur){
+  if(!path||path.__blinking)return;path.__blinking=true;dur=dur||360;
+  var d0=path.getAttribute('d'),t0=null,ease=function(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;};
+  var eye=function(k){var up=12+(17.3-12)*k,lo=19.6+(17.6-19.6)*k;return 'M8.2 15.8Q12 '+up.toFixed(2)+' 15.8 15.8Q12 '+lo.toFixed(2)+' 8.2 15.8Z';};
+  var base=d0.replace(/M8\.2 15\.8Q.*$/,'');
+  (function step(ts){if(t0===null)t0=ts;var x=Math.min(1,(ts-t0)/dur),k=x<.45?ease(x/.45):1-ease((x-.45)/.55);
+    path.setAttribute('d',base+eye(k));if(x<1)requestAnimationFrame(step);else{path.setAttribute('d',d0);path.__blinking=false;}})(performance.now());
+};
 // Scale the 390×844 phone screen to fill whatever phone opens it.
 // The designs keep a blank strip at the top for the status bar. The phone already reserves its own
 // status bar (Safari and the home-screen app), so that strip is cropped here: the app then fills the
@@ -83,9 +92,10 @@
 (function(){
   var needsData=/(Main|Alert|Drone|Dispatch|Station)\.dc\.html/.test(location.pathname)||/\/$/.test(location.pathname);
   var F='M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z',G='M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8';
-  // One blink on cue (not on a loop): the upper lid comes down to the lower one and opens again, about a third of a second
-  var BLINK='<animate class="wfblink" attributeName="d" dur="0.36s" begin="indefinite" fill="remove" keyTimes="0;0.45;1" values="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 17.3 15.8 15.8Q12 17.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"></animate>';
-  function blink(root){try{var a=(root||document).querySelectorAll('#wf-load .wfblink');for(var j=0;j<a.length;j++)a[j].beginElement();}catch(e){}}
+  // One blink on cue: the upper lid comes down to the lower one and opens again (about a third of a second). Drawn frame by
+  // frame in script, which every phone shows (iPhone Safari does not reliably animate an SVG path's shape by itself).
+  var BLINK='';
+  function blink(root){try{var a=(root||document).querySelectorAll('#wf-load path.base');for(var j=0;j<a.length;j++)window.__wfBlink(a[j]);}catch(e){}}
   var st=document.createElement('style');
   st.textContent='@view-transition{navigation:auto}#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
     '#wf-load.out{opacity:0;pointer-events:none}'+
