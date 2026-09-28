@@ -283,7 +283,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF">
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px">
         <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0">
-          <h2 id="ai" style="margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 28px">{{cur.verdict}}</h2>
+          <h2 id="ai" style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{cur.verdict}}</h2>
           <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
         </span>
         <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0">
@@ -340,7 +340,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="pop" style="display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.18); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.4) inset">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
       </span>
-      <h2 style="margin: 16px 0 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 24px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
+      <h2 style="margin: 16px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
       <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
       <a href="Main.dc.html" class="btn" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px; margin-top: 24px; border: 0; border-radius: 10px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset; color: #000000; font-size: 17px; font-weight: 600; text-decoration: none">
         Back to the map
@@ -360,7 +360,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="scrim" onClick="{{closeDz}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{dzOp}}; pointer-events: {{dzPE}}"></div>
   <section class="sheet" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; padding: 8px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}}); transition-duration: {{dzT}}">
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hDz.down}}" onPointerMove="{{hDz.move}}" onPointerUp="{{hDz.up}}" onPointerCancel="{{hDz.cancel}}" onKeyDown="{{hDz.key}}" style="display: flex; justify-content: center; height: 53px; margin: -8px -20px 0; padding-top: 8px; box-sizing: border-box; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
-    <h2 id="dzTitle" style="margin: 0 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
+    <h2 id="dzTitle" style="margin: 0 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.01em">Dismiss this candidate?</h2>
     <p id="dzBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
       <button type="button" class="btn ghost" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
