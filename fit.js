@@ -377,19 +377,31 @@ window.__wfBlink=function(path,dur){
   addEventListener('pageshow',function(ev){if(ev.persisted){try{dispatchEvent(new Event('wf-sync'));}catch(x){}}});
 })();
 
-// Whole-blade swipe: a blade marked data-swipe="up" (a sheet that drops from the top) or "down" (one that rises from the
-// bottom) follows the finger from anywhere on it, not only its grabber, and a swipe of 60 px (or a quick flick) closes it
-// by tapping its own close control ([data-swipe-go]). Taps are untouched. A list inside only hands the gesture to the blade
-// once it can scroll no further that way, so scrolling works as before. The page can show the drag itself through
-// window.__wfSwipeDrag(key, dy); otherwise the blade is moved directly.
+// Whole-blade swipe, on every blade of the app:
+// - an open blade marked data-swipe="up" (a sheet that drops from the top) or "down" (one that rises from the bottom)
+//   follows the finger from anywhere on it, not only its grabber, and a swipe of 60 px (or a quick flick) closes it
+//   through its own close control ([data-swipe-go], else its grabber);
+// - a collapsed blade marked data-pull="down" or "up" opens with a 22 px drag in that direction from anywhere on it
+//   (through its [data-pull-go] control);
+// - a blade marked data-pull="toggle" (raises and lowers, its [data-pull-go] control says aria-expanded) is raised by a
+//   swipe up and lowered by a swipe down, from anywhere on it.
+// Taps are untouched. A list inside only hands the gesture to the blade once it can scroll no further that way, so
+// scrolling works as before. The page can show the drag itself through window.__wfSwipeDrag(key, dy); otherwise the
+// blade is moved directly and settles back smoothly.
 (function(){
   var S=null;
-  function scroller(t,root){for(var n=t;n&&n!==root;n=n.parentElement){var cs=getComputedStyle(n);if(/(auto|scroll)/.test(cs.overflowY)&&n.scrollHeight>n.clientHeight+1)return n;}return null;}
-  function paint(el,dy){var k=el.getAttribute('data-swipe-key');if(k&&window.__wfSwipeDrag)window.__wfSwipeDrag(k,dy);else el.style.translate='0 '+dy+'px';}
+  function scroller(t,root){for(var n=t;n;n=n.parentElement){var cs=getComputedStyle(n);if(/(auto|scroll)/.test(cs.overflowY)&&n.scrollHeight>n.clientHeight+1)return n;if(n===root)break;}return null;}
+  function own(el){return !(el.getAttribute('data-swipe-key')&&window.__wfSwipeDrag);}
+  function paint(el,dy){var k=el.getAttribute('data-swipe-key');if(!own(el))window.__wfSwipeDrag(k,dy);else el.style.translate='0 '+dy+'px';}
+  function press(g){if(!g)return;if(g.matches('button,a,[data-swipe-go],[data-pull-go]')&&!g.matches('.wf-grab,[data-pull-go=key]')){g.click();return;}
+    try{g.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));}catch(x){}}   // a grabber closes on Enter
+  function haptic(){try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}}
   document.addEventListener('touchstart',function(e){
-    if(e.touches.length!==1)return;var t=e.target,el=t&&t.closest&&t.closest('[data-swipe]');if(!el)return;
+    if(e.touches.length!==1)return;var t=e.target;if(!t||!t.closest)return;
     if(t.closest('.wf-grab,input,textarea,select,[data-noswipe]'))return;   // the grabber keeps its own drag; fields keep theirs
-    var p=e.touches[0];S={el:el,dir:el.getAttribute('data-swipe'),x:p.clientX,y:p.clientY,t:performance.now(),sc:scroller(t,el),on:false,dy:0,k:1};
+    var el=t.closest('[data-swipe],[data-pull]');if(!el)return;
+    var mode=el.hasAttribute('data-swipe')?'close':'pull',p=e.touches[0];
+    S={el:el,mode:mode,dir:el.getAttribute(mode==='close'?'data-swipe':'data-pull'),x:p.clientX,y:p.clientY,t:performance.now(),sc:scroller(t,el),on:false,dy:0,k:1,fired:false};
     try{var r=el.closest('[data-wfroot]');if(r)S.k=r.getBoundingClientRect().width/((window.__wfVP||{}).w||390)||1;}catch(x){}
   },{passive:true,capture:true});
   document.addEventListener('touchmove',function(e){
@@ -397,21 +409,34 @@ window.__wfBlink=function(path,dur){
     if(!S.on){
       if(Math.abs(dy)<10&&Math.abs(dx)<10)return;
       if(Math.abs(dx)>Math.abs(dy)){S=null;return;}                      // sideways: a chip row or a map, not the blade
-      var closing=S.dir==='up'?dy<0:dy>0;if(!closing){S=null;return;}
-      var sc=S.sc;if(sc){var atEnd=S.dir==='up'?sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1:sc.scrollTop<=0;if(!atEnd){S=null;return;}}
-      S.on=true;S.y=p.clientY;dy=0;
+      var sc=S.sc;
+      if(S.mode==='pull'){
+        var g0=S.el.querySelector('[data-pull-go]')||S.el,ex=g0.getAttribute('aria-expanded')==='true';
+        var want=S.dir==='toggle'?(dy<0?!ex:ex):(S.dir==='down'?dy>0:dy<0);if(!want){S=null;return;}
+        if(sc){var atE=dy>0?sc.scrollTop<=0:sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if(!atE){S=null;return;}}
+      }else{
+        var closing=S.dir==='up'?dy<0:dy>0;if(!closing){S=null;return;}
+        if(sc){var atEnd=S.dir==='up'?sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1:sc.scrollTop<=0;if(!atEnd){S=null;return;}}
+      }
+      S.on=true;S.y=p.clientY;S.sdy=dy>0?1:-1;dy=0;
+      if(S.mode==='close'&&own(S.el)){S.tr=S.el.style.transition||'';}
     }
     e.preventDefault();
-    dy=(p.clientY-S.y)/S.k;dy=S.dir==='up'?Math.min(0,dy):Math.max(0,dy);S.dy=dy;paint(S.el,dy);
+    dy=(p.clientY-S.y)/S.k;
+    if(S.mode==='pull'){if(!S.fired&&Math.abs(dy)>22&&(dy>0?1:-1)===S.sdy){S.fired=true;haptic();press(S.el.querySelector('[data-pull-go]'));}return;}
+    dy=S.dir==='up'?Math.min(0,dy):Math.max(0,dy);S.dy=dy;paint(S.el,dy);
   },{passive:false,capture:true});
+  function swallow(g){var stop=function(ev){if(g&&ev.target===g)return;ev.stopPropagation();ev.preventDefault();};document.addEventListener('click',stop,true);setTimeout(function(){document.removeEventListener('click',stop,true);},350);}
   function end(){
     if(!S)return;var s=S;S=null;if(!s.on)return;
-    var v=Math.abs(s.dy)/Math.max(1,performance.now()-s.t);
-    paint(s.el,0);if(!(s.el.getAttribute('data-swipe-key')&&window.__wfSwipeDrag))s.el.style.translate='';
-    var g=(Math.abs(s.dy)>60||(Math.abs(s.dy)>20&&v>0.5))?s.el.querySelector('[data-swipe-go]'):null;
-    // a drag is not a tap: swallow the click that may follow (but not the blade's own close)
-    var stop=function(ev){if(g&&ev.target===g)return;ev.stopPropagation();ev.preventDefault();};document.addEventListener('click',stop,true);setTimeout(function(){document.removeEventListener('click',stop,true);},350);
-    if(g)setTimeout(function(){g.click();},0);
+    if(s.mode==='pull'){swallow(null);return;}
+    var v=Math.abs(s.dy)/Math.max(1,performance.now()-s.t),go=Math.abs(s.dy)>60||(Math.abs(s.dy)>20&&v>0.5);
+    var g=go?(s.el.querySelector('[data-swipe-go]')||s.el.querySelector('.wf-grab')||s.el.querySelector('[role=button][aria-label^="Close"]')):null;
+    if(!own(s.el))paint(s.el,0);
+    else if(g){setTimeout(function(){s.el.style.translate='';},700);}   // closing: it leaves from where the finger let go
+    else{var el=s.el;el.style.transition=(s.tr?s.tr+', ':'')+'translate .35s cubic-bezier(.2,.8,.2,1)';el.style.translate='';setTimeout(function(){el.style.transition=s.tr;},400);}   // not far enough: settles back
+    swallow(g);
+    if(g){haptic();setTimeout(function(){press(g);},0);}
   }
   document.addEventListener('touchend',end,{capture:true});document.addEventListener('touchcancel',end,{capture:true});
 })();

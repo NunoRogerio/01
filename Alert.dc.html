@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=2">
 <link rel="icon" href="icon-192.png?v=2">
-<script src="fit.js?v=44"></script>
+<script src="fit.js?v=45"></script>
 <script src="avatar.js?v=6"></script>
 <script src="prefs.js?v=11"></script>
 <script src="i18n.js?v=31"></script>
@@ -196,7 +196,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div class="wf-glass scrim" onClick="{{ddClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 5; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{ddOp}}; pointer-events: {{ddPE}}"></div>
-  <div class="wf-snap" data-wf-dd="1" role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: {{ddTop}}px; bottom: 32px; border-radius: 0 0 28px 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.14); z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 16px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
+  <div class="wf-snap" data-wf-dd="1" data-swipe="up" role="listbox" aria-label="Other ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: {{ddTop}}px; bottom: 32px; border-radius: 0 0 28px 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.14); z-index: 5; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding: 16px 0 4px; overflow-y: auto; scrollbar-width: none; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path .5s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
     <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; padding: 0 16px 8px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; font-weight: 400; line-height: 18px; color: #545458">
       <span style="font-weight: 600">Other ignition candidates</span>
       <span style="text-align: right">Likelihood</span>
@@ -358,7 +358,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div class="scrim" onClick="{{closeDz}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{dzOp}}; pointer-events: {{dzPE}}"></div>
-  <section class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; padding: 8px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}}); transition-duration: {{dzT}}">
+  <section class="sheet" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; padding: 8px 20px 34px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}}); transition-duration: {{dzT}}">
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hDz.down}}" onPointerMove="{{hDz.move}}" onPointerUp="{{hDz.up}}" onPointerCancel="{{hDz.cancel}}" onKeyDown="{{hDz.key}}" style="display: flex; justify-content: center; height: 53px; margin: -8px -20px 0; padding-top: 8px; box-sizing: border-box; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
     <h2 id="dzTitle" style="margin: 0 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Dismiss this candidate?</h2>
     <p id="dzBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
