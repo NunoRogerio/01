@@ -104,14 +104,17 @@
     '#wf-load.photo .sub{color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
     '#wf-load.photo .base{fill:#D7F41A}#wf-load.photo .ground{stroke:#D7F41A}#wf-load.photo svg{filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}'+
     '#wf-load .cap{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));text-align:center;font:400 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:rgba(255,255,255,.8);opacity:0;transition:opacity .7s ease .3s}'+
-    '#wf-load.photo .cap{opacity:1}';
+    '#wf-load.photo .cap{opacity:1}'+
+    /* the loading counter, 0% to 100% */
+    '#wf-load .pct{margin-top:-14px;font:600 17px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#8E8E93}'+
+    '#wf-load.photo .pct{color:#D7F41A;text-shadow:0 1px 8px rgba(0,0,0,.5)}';
   document.head.appendChild(st);
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
   var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
     '<defs><radialGradient id="wfLoadFire" cx="0.5" cy="0.85" r="0.75"><stop offset="0" stop-color="#FFE066"/><stop offset="0.35" stop-color="#FFA41B"/><stop offset="0.7" stop-color="#FF5A1F"/><stop offset="1" stop-color="#D7263D"/></radialGradient></defs>'+
     '<path class="base" fill="#8E8E93" fill-rule="evenodd" d="'+F+'"/><path class="fire" fill="url(#wfLoadFire)" fill-rule="evenodd" d="'+F+'"/>'+
     '<path class="ground" d="'+G+'" fill="none" stroke="#8E8E93" stroke-width="1.1" stroke-linecap="round"/></svg>'+
-    '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span></div><div class="cap"></div>';
+    '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span><span class="pct">0%</span></div><div class="cap"></div>';
   el.innerHTML=TPL;
   (document.body||document.documentElement).appendChild(el);
   var PH=[['forest-1.webp','Forest canopy from above','Mari Potter'],['forest-2.webp','Conifer forest from above','Ivan Dimitrov'],['forest-3.webp','Dense canopy from above','Olena Bohovyk']];
@@ -133,13 +136,13 @@
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
   var cold=false;try{cold=!sessionStorage.getItem('wf-cold');sessionStorage.setItem('wf-cold','1');}catch(e){}
-  if(soft)minMs=Math.max(minMs,4000);   // right after log in: the loading screen stays at least 4 s
+  if(soft)minMs=Math.max(minMs,6000);   // right after log in: the loading screen stays at least 6 s
   // Cold start and log in: a forest photo, slowly zooming in, starts in black and white. A wave of colour spreads out
   // from the logo to the screen edges: at its front the photo is more saturated than normal, easing back to normal
   // behind it. When the whole screen is at normal colour, loading is done.
   var wave=null;
   if(cold||soft){
-    if(!soft)minMs=Math.max(minMs,2600);
+    if(!soft)minMs=Math.max(minMs,4600);
     var ph=PH[nxt],im=new Image(),bg=el.querySelector('.bg');
     var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+f;return d;};
     var zoom=document.createElement('div');zoom.style.cssText='position:absolute;inset:0;transform:scale(1);transition:transform 9s cubic-bezier(.2,.6,.3,1);will-change:transform';
@@ -169,10 +172,20 @@
     im.src='assets/splash/'+ph[0];
     try{localStorage.setItem('wf-splash-i',String((nxt+1)%PH.length));}catch(e){}
   }
+  // The counter runs 0% to 100% over the loading time; it waits at 90% while live data is still coming,
+  // then finishes, and the screen only fades once it reads 100%.
+  var pctEl=el.querySelector('.pct'),pv=0,pctDone=false;
+  (function count(){
+    if(!el.parentNode)return;
+    var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
+    if(!ready||(wave&&!wave.done&&goal>=100))goal=Math.min(goal,ready?99:90);
+    pv+=(goal-pv)*.18;if(goal>=100&&pv>99.4)pv=100;
+    var n=Math.floor(pv);if(pctEl)pctEl.textContent=n+'%';
+    pctDone=n>=100;requestAnimationFrame(count);})();
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
-    if((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done))||Date.now()-t0>15000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
+    if((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done)&&pctDone)||Date.now()-t0>17000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
       // warm the next photo into the cache for the next cold start
       try{var n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;(new Image()).src='assets/splash/'+PH[n][0];}catch(e){}},soft?950:350);return;}
     setTimeout(tick,80);
