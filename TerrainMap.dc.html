@@ -414,7 +414,7 @@ class Component extends DCLogic {
     if (!window.__wfLiveMap) { this._onSync = () => { if (window.__wfLiveMap) this.forceUpdate(); }; try { window.addEventListener('wf-sync', this._onSync); } catch (e) {} }
     this._onPopSync = () => { if ((this.state || {}).pop) this.forceUpdate(); }; try { window.addEventListener('wf-sync', this._onPopSync); } catch (e) {}
     this.pts = {};
-    this.setEl = (el) => {
+    this.setEl = (el) => { if (el) el.__wfMap = this;
       if (el && el !== this.el) {
         if (this.el) this.el.removeEventListener('wheel', this.onWheel);
         this.el = el;
@@ -549,7 +549,8 @@ class Component extends DCLogic {
     this.unitTick();
     const p = this.props;
     const sig = (q) => [q.focusX, q.focusY, q.zoom, q.scopeSt, q.scopeCo, q.pinId, (Array.isArray(q.ignitions) ? q.ignitions.map((g) => g.id).join(',') : '')].join('|');
-    if (sig(prev) !== sig(p)) {
+    const selfPick = this._selfPick && Date.now() < this._selfPick.until && this._selfPick.k === (p.scopeSt || '') + '|' + (p.scopeCo || '');
+    if (sig(prev) !== sig(p) && !selfPick) {
       this._animUntil = Date.now() + 700;
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
@@ -1002,7 +1003,49 @@ class Component extends DCLogic {
   }
   zMin() { return window.__wfLiveMap ? 0.0005 : Math.max(0.008, (this.base().s || 0.05) * 0.46); }
   zMax() { return Math.max(window.__wfLiveMap ? 24 : 1, this.base().s || 1); }
+  // Navigating by the map: 2 s after the map comes to rest, the region filling at least 80% of the visible map becomes
+  // the selection (a county or district if one alone fills it; when several share the screen, their state or country).
+  regionCheck() {
+    const p = this.props; if (typeof p.onRegion !== 'function' || !window.__wfLiveMap || (p.mode && p.mode !== 'risk')) return;
+    const v = this.view(), W = this.W(), H = this.H(), w = this.win();
+    const V = [v.cx + (w.l - W / 2) / v.s, v.cy + (w.t - H / 2) / v.s, v.cx + (W - w.r - W / 2) / v.s, v.cy + (w.b - H / 2) / v.s];
+    const va = (V[2] - V[0]) * (V[3] - V[1]); if (!(va > 0)) return;
+    const cover = (b) => { if (!b) return 0; const x = Math.min(V[2], Math.max(b[0], b[2])) - Math.max(V[0], Math.min(b[0], b[2])), y = Math.min(V[3], Math.max(b[1], b[3])) - Math.max(V[1], Math.min(b[1], b[3])); return x > 0 && y > 0 ? (x * y) / va : 0; };
+    const G = this.geo(), lock = p.lockSt || '';
+    const cs = Object.keys(G.counties).filter((k) => (!lock || k.indexOf(lock + '|') === 0) && k.indexOf('AMZ|') !== 0 && cover(G.counties[k].box) >= 0.8);
+    // A state or country is measured by its counties or districts (far islands left out: the Azores, the Canaries),
+    // which follows its real shape far better than one box: how much of the screen it fills, and how much of it is on screen.
+    if (!this._stParts) { const byS = {}; Object.keys(G.counties).forEach((k) => { const i = k.indexOf('|'); (byS[k.slice(0, i)] = byS[k.slice(0, i)] || []).push(G.counties[k].box); });
+      Object.keys(byS).forEach((st) => { const L = byS[st], cx = L.map((b) => (b[0] + b[2]) / 2).sort((x, y) => x - y), cy = L.map((b) => (b[1] + b[3]) / 2).sort((x, y) => x - y);
+        const mx = cx[cx.length >> 1], my = cy[cy.length >> 1], d = (b) => Math.hypot((b[0] + b[2]) / 2 - mx, (b[1] + b[3]) / 2 - my), md = L.map(d).sort((x, y) => x - y)[L.length >> 1] || 1;
+        byS[st] = L.filter((b) => d(b) <= 3 * md + 1); }); this._stParts = byS; }
+    const meas = (k) => { const L = this._stParts[k]; if (!L || !L.length) { const b = G.states[k].box; return { c: cover(b), f: fill(b) }; }
+      let on = 0, all = 0; L.forEach((b) => { const a = Math.abs((b[2] - b[0]) * (b[3] - b[1])); all += a; on += cover(b) * va; }); return { c: Math.min(1, on / va), f: all > 0 ? on / all : 0 }; };
+    const ss = Object.keys(G.states).filter((k) => k !== 'AMZ' && k !== 'US' && (!lock || k === lock)).map((k) => ({ k, ...meas(k) })).filter((m) => m.c >= 0.8 || m.f >= 0.8);
+    // Boxes are rectangles, so neighbours overlap: among several, the one whose centre is on screen wins; if that is still
+    // not a single one, the parent is chosen. States and countries (their outlines are rough boxes, Spain's reaches the Canaries):
+    // the one that best matches the screen — filling most of it while being mostly on it — so Portugal wins over Spain's box.
+    const inV = (c) => c && c[0] >= V[0] && c[0] <= V[2] && c[1] >= V[1] && c[1] <= V[3];
+    const fill = (b) => { const a = Math.abs((b[2] - b[0]) * (b[3] - b[1])); return a > 0 ? cover(b) * va / a : 0; };
+    let pick = null;
+    const one = (k) => { const i = k.indexOf('|'); return { st: k.slice(0, i), co: k.slice(i + 1) }; };
+    if (cs.length === 1) pick = one(cs[0]);
+    else if (cs.length > 1) { const cc = cs.filter((k) => inV(G.counties[k].c)); const pa = cs.map((k) => k.slice(0, k.indexOf('|')));
+      if (cc.length === 1) pick = one(cc[0]); else if (pa.every((x) => x === pa[0])) pick = { st: pa[0], co: null }; }
+    if (!pick && ss.length) {
+      const full = ss.filter((m) => m.f >= 0.8), isUS = (k) => /^[A-Z]{2}$/.test(k) && k !== 'PT';
+      const r = ss.map((m) => ({ k: m.k, f: m.c * m.f })).sort((x, y) => y.f - x.f);   // how well the region and the screen match
+      if (full.length >= 2 && !lock && full.every((m) => isUS(m.k))) pick = { st: 'US', co: null };   // several whole US states on screen: the United States
+      else if (r.length === 1 || r[0].f >= 1.5 * r[1].f) pick = { st: r[0].k, co: null };
+      else if (!lock && ss.every((m) => isUS(m.k))) pick = { st: 'US', co: null };
+    }
+    if (!pick) return;
+    const k = pick.st + '|' + (pick.co || ''); if (k === (p.scopeSt || '') + '|' + (p.scopeCo || '')) return;
+    this._selfPick = { k, until: Date.now() + 2500 };
+    p.onRegion(pick.st, pick.co);
+  }
   setView(cx, cy, s) {
+    clearTimeout(this._rgT); this._rgT = setTimeout(() => this.regionCheck(), 2000);
     // Remember the view right away: touch events can arrive faster than the screen updates, and each pinch step
     // must build on the last one (not on a view that has not been drawn yet), so the zoom follows the fingers smoothly.
     const v = this.clampView(cx, cy, s); this._pv = Object.assign({}, this._pv || {}, v); this.setState(v);
