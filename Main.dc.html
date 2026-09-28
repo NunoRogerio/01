@@ -81,6 +81,7 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#545458}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
+.sqsearch::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 .opt.avbtn{border-radius:50%!important}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
 .opt:hover{transform:translateY(-1px);background-color:rgba(60,60,67,0.055)}
@@ -335,7 +336,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="text-align: right; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.candsC}}">{{r.cands}}</span>
           <span style="text-align: right; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.firesC}}">{{r.fires}}</span>
           <span style="display: flex; justify-content: center; margin-left: -4px; color: {{r.subC}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{r.endW}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.end}}"></path></svg></span>
-          <span style="display: {{r.subD}}; grid-column: 1; min-width: 0; line-height: 16px; font-size: 15px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
+          <span style="display: {{r.subD}}; grid-column: 1 / span 3; min-width: 0; line-height: 16px; font-size: 15px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
           </button>
       </sc-for>
       <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span style="padding: 20px 40px; font-size: 17px; color: #545458">{{noMatchTxt}}</span></sc-if>
@@ -865,9 +866,30 @@ class Component extends DCLogic {
       ? CTRY.filter((c) => !q || c.name.toLowerCase().indexOf(q) >= 0).sort((a, b) => ((b.live ? 1 : 0) - (a.live ? 1 : 0)) || cmp(a, b)).map((c) => rowOf({ ...c, drillLbl: c.id === 'US' ? '. Show states' : c.id === 'PT' ? '. Show districts' : '. Show regions' }, selCountry === c.id, c.live ? () => this.wfSlide('fwd', () => this.setState({ scBrowse: c.id === 'US' ? null : c.id, q: '' })) : null, c.live ? c.n + c.unit : c.cont + ' · No live feed yet', c.live))
       : usD.filter((d) => !q || d.name.toLowerCase().indexOf(q) >= 0).sort(cmp).map((d) => rowOf(d, selState === d.id, () => this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })), d.n + ' counties', true));
     if (brObj && brObj.id === 'BRA' && !q) { const A = DATA.find((d) => d.id === 'AMZ'); if (A) rows.unshift({ ...rowOf({ ...A, drillLbl: '. Show its 9 states' }, selState === 'AMZ', () => this.wfSlide('fwd', () => this.setState({ scBrowse: 'AMZ', q: '' })), A.n + ' states', true), nameW: 600 }); }
+    // Global search: from the 3rd letter, the search looks everywhere (countries, states and regions, counties and districts),
+    // whatever level the list is on, so any destination is one tap away. Accents are ignored (braga = Braga, evora = Évora).
+    const fold = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const gq = fold(q), GLOBAL = !lock && gq.length >= 3;
+    if (GLOBAL) {
+      const cName = (d) => d.country === 'US' ? 'United States' : d.id === 'AMZ' ? 'Brazil' : ((CTRY.find((c) => c.id === d.id) || {}).name || '');
+      const hit = (n) => { const f = fold(n), i = f.indexOf(gq); return i < 0 ? -1 : (i === 0 ? 0 : (f[i - 1] === ' ' || f[i - 1] === '-') ? 1 : 2); };
+      const G = [];
+      CTRY.forEach((c) => { const h = hit(c.name); if (h < 0) return;
+        G.push({ h, lv: 0, row: rowOf({ ...c, drillLbl: '. Show its areas' }, selCountry === c.id, c.live ? () => this.wfSlide('fwd', () => this.setState({ scBrowse: c.id === 'US' ? null : c.id, q: '' })) : null, c.live ? 'Country · ' + c.n + c.unit : 'Country · No live feed yet', c.live) }); });
+      DATA.forEach((d) => {
+        if (!CTRY.some((c) => c.id === d.id)) { const h = hit(d.name); if (h >= 0)
+          G.push({ h, lv: 1, row: rowOf({ ...d, drillLbl: '. Show its ' + unitOf(d).trim() }, selState === d.id, () => this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })), cName(d) + ' · ' + d.n + unitOf(d), true) }); }
+        d.counties.forEach((c) => { const h = hit(c.name); if (h < 0) return;
+          const where = d.name === cName(d) ? d.name : d.name + ', ' + cName(d);
+          G.push({ h, lv: 2, row: rowOf(c, selState === d.id && selCounty === c.name, () => { this.wfSetScope({ st: d.id, co: c.name }); this.wfListFlag(false); this.setState({ scOpen: false, list: false, scBrowse: undefined, q: '' }); }, where, false) }); });
+      });
+      const live = (r) => (r.dis ? 0 : 1) + ((r.cands || 0) + (r.fires || 0) > 0 ? 1 : 0);   // places with fires or candidates first
+      G.sort((a, b) => (Math.min(a.h, 1) - Math.min(b.h, 1)) || (live(b.row) - live(a.row)) || (a.lv - b.lv) || a.row.name.localeCompare(b.row.name));
+      rows.length = 0; G.slice(0, 60).forEach((g) => rows.push(g.row));
+    }
     const allSel = !!brObj && selState === brObj.id && !selCounty;
     // Amazon: fires burning mostly on recently cleared land (INPE land cover) next to Forests & Finance's findings
-    const ff = (() => { if (!brObj || brObj.id !== 'AMZ') return { on: false }; const inA = window.__wfInArea;
+    const ff = (() => { if (GLOBAL || !brObj || brObj.id !== 'AMZ') return { on: false }; const inA = window.__wfInArea;
       const F = SC.W.fires.filter((f) => f.info && inA && inA(f, 'AMZ') && !f.info.resolved), D = F.filter((f) => f.info.deforFire), ha = D.reduce((a, f) => a + (f.info.ha || 0), 0);
       return { on: F.length > 0, n: D.length.toLocaleString(), ha: Math.round(ha).toLocaleString(), line: D.length + ' of ' + F.length + ' active fires in the Legal Amazon burn mostly on land cleared in recent years, the clearing-then-burning pattern that turns forest into pasture and cropland.' }; })();
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
@@ -922,7 +944,7 @@ class Component extends DCLogic {
         // The system calls the coordinator when a candidate appears in the area: a chat starts for the most likely one
         const top = CANDS.slice().sort((a, b) => b.conf - a.conf)[0]; if (top && window.__wfLiveMap) C.autoStart(C.incCand(top));
         const u = C.totalUnread(); return { badgeD: u ? 'block' : 'none', n: u > 9 ? '9+' : String(u), aria: u ? 'Incident chats, ' + u + ' unread' : 'Incident chats', open: () => C.openList() }; })(),
-      scope, rows, allState, inCounties: !!brObj || atUS, inStates: !brObj, rowPadL: '40px', homeReset: () => this.wfDemoReset(), homeTick: s.homeTick || 0, sort: { name: sortCol('name'), cands: sortCol('cands'), fires: sortCol('fires') }, gridCols: 'minmax(0, 1fr) 102px 64px ' + (rows.some((r) => r.end) ? '28px' : '0px'), showSearch: (!!brObj && brObj.counties.length > 10) || atCountries, searchPh: atCountries ? 'Search ' + CTRY.length + ' countries' : 'Search ' + (brObj ? brObj.n : 0) + unitOf(brObj), q: s.q || '', hasQ: !!(s.q || ''), noMatch: q.length > 0 && rows.length === 0, noMatchTxt: 'No ' + (atCountries ? 'countries' : brObj ? unitOf(brObj).trim() : 'states') + ' match “' + q + '”', onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }), crumb: brObj ? 'United States › ' + brObj.name : 'United States',
+      scope, rows, allState, inCounties: !GLOBAL && (!!brObj || atUS), inStates: !brObj, rowPadL: '40px', homeReset: () => this.wfDemoReset(), homeTick: s.homeTick || 0, sort: { name: sortCol('name'), cands: sortCol('cands'), fires: sortCol('fires') }, gridCols: 'minmax(0, 1fr) 102px 64px ' + (rows.some((r) => r.end) ? '28px' : '0px'), showSearch: !lock || (!!brObj && brObj.counties.length > 10) || atCountries, searchPh: !lock ? 'Search any country, region or place' : atCountries ? 'Search ' + CTRY.length + ' countries' : 'Search ' + (brObj ? brObj.n : 0) + unitOf(brObj), q: s.q || '', hasQ: !!(s.q || ''), noMatch: q.length > 0 && rows.length === 0, noMatchTxt: GLOBAL ? 'No places match “' + q + '”' : 'No ' + (atCountries ? 'countries' : brObj ? unitOf(brObj).trim() : 'states') + ' match “' + q + '”', onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }), crumb: brObj ? 'United States › ' + brObj.name : 'United States',
       panelTitle: brObj ? brObj.name : atCountries ? 'Choose a country' : 'United States', colName: brObj ? (brObj.id === 'PT' ? 'District' : brObj.id === 'AMZ' || brObj.id === 'BRA' ? 'State' : brObj.country === 'US' ? 'County' : 'Region') : atCountries ? 'Country' : 'State',
       hScope: this.wfHandle('sc', 'up', () => this.setState({ scOpen: false })), scDy: this.wfDrag('sc').y, scDyT: this.wfDrag('sc').t,
       hList: this.wfHandle('li', 'down', () => { this.wfListFlag(false); this.setState({ list: false }); }), liDy: this.wfDrag('li').y, liDyT: this.wfDrag('li').t,
