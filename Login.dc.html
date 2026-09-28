@@ -296,7 +296,7 @@ class Component extends DCLogic {
         try { window.sessionStorage.setItem('wf-soft', '1'); } catch (x) {}
         this.setState({ leaving: true });
         try { if (window.__wfSoftOut) window.__wfSoftOut(); } catch (x) {}   // the loading screen takes over right here, then carries on in the app
-        setTimeout(() => { window.location.href = 'Main.dc.html'; }, 800);
+        setTimeout(() => { window.location.href = 'Main.dc.html'; }, 400);
         try { window.localStorage.setItem('wf-role', sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
         window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[0], scope: null });
       }

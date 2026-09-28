@@ -122,14 +122,14 @@
   // The black-and-white forest, as the loading screen starts: used by the sign-in screen to hand over without a gap.
   var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:grayscale(1) brightness(.92)';return d;};
   window.__wfSoftOut=function(){
-    var o=document.createElement('div');o.id='wf-load';o.className='photo';o.innerHTML=TPL;o.style.opacity='0';o.style.transition='opacity .7s cubic-bezier(.4,0,.2,1)';
+    var o=document.createElement('div');o.id='wf-load';o.className='photo';o.innerHTML=TPL;o.style.opacity='0';o.style.transition='opacity .4s cubic-bezier(.4,0,.2,1)';
     var ph=PH[nxt],b=o.querySelector('.bg');b.appendChild(grayLayer(ph));b.style.transition='none';b.className='bg on';b.style.transform='scale(1)';
     o.querySelector('.in').style.animation='none';o.querySelector('.in').style.opacity='1';o.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
     document.body.appendChild(o);requestAnimationFrame(function(){requestAnimationFrame(function(){o.style.opacity='1';});});
   };
   var soft=false;try{soft=sessionStorage.getItem('wf-soft')==='1';sessionStorage.removeItem('wf-soft');}catch(e){}
-  if(soft){var ss=document.createElement('style');ss.textContent='#wf-load{transition:opacity .9s cubic-bezier(.4,0,.2,1)}#wf-load .in{animation-duration:.8s;animation-delay:.5s}'+
-    '#dc-root{opacity:0;transform:scale(1.012);transition:opacity 1s cubic-bezier(.4,0,.2,1),transform 1.3s cubic-bezier(.2,.8,.2,1)}html.wf-in #dc-root{opacity:1;transform:none}';document.head.appendChild(ss);}
+  if(soft){var ss=document.createElement('style');ss.textContent='#wf-load{transition:opacity .4s cubic-bezier(.4,0,.2,1)}#wf-load .in{animation-duration:.8s;animation-delay:.5s}'+
+    '#dc-root{opacity:0;transform:scale(1.012);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}html.wf-in #dc-root{opacity:1;transform:none}';document.head.appendChild(ss);}
   if(soft){try{var ph0=PH[nxt],b0=el.querySelector('.bg');b0.appendChild(grayLayer(ph0));b0.style.transition='none';b0.className='bg on';b0.style.transform='scale(1)';el.className='photo';
     var in0=el.querySelector('.in');in0.style.animation='none';in0.style.opacity='1';el.querySelector('.cap').textContent=ph0[1]+' · Photo: '+ph0[2]+' / Unsplash';}catch(e){}}
   var t0=Date.now(),minMs=0;
@@ -139,7 +139,7 @@
   // The loading screen (logo, 'Loading live data', counter) shows only on opening the app and right after log in.
   // Moving between screens inside the app shows no loading: just a plain surface until the screen has drawn.
   if(!cold&&!soft){el.innerHTML='';el.style.transition='opacity .2s ease';}
-  if(soft)minMs=Math.max(minMs,6000);   // right after log in: the loading screen stays at least 6 s
+  if(soft)minMs=Math.max(minMs,5000);   // right after log in: the loading screen stays at least 5 s
   // Cold start and log in: a forest photo, slowly zooming in, starts in black and white. A wave of colour spreads out
   // from the logo to the screen edges: at its front the photo is more saturated than normal, easing back to normal
   // behind it. When the whole screen is at normal colour, loading is done.
@@ -182,15 +182,17 @@
     if(!el.parentNode||!pctEl)return;
     var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
     if(!ready||(wave&&!wave.done&&goal>=100))goal=Math.min(goal,ready?99:90);
-    pv+=(goal-pv)*.18;if(goal>=100&&pv>99.4)pv=100;
-    var n=Math.floor(pv);if(pctEl)pctEl.textContent=n+'%';
-    pctDone=n>=100;requestAnimationFrame(count);})();
+    // counts in jumps of 2 to 5, about every 1/28 of the loading time, never past where loading has got to
+    if(pv<goal){pv=Math.min(goal>=100?100:Math.floor(goal),pv+2+Math.floor(Math.random()*4));}
+    if(goal>=100&&pv>=98)pv=100;
+    pctEl.textContent=pv+'%';pctDone=pv>=100;
+    setTimeout(count,pv>=100?60:Math.max(90,span/28));})();
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
   (function tick(){
     if((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done)&&pctDone)||Date.now()-t0>17000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
       // warm the next photo into the cache for the next cold start
-      try{var n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;(new Image()).src='assets/splash/'+PH[n][0];}catch(e){}},soft?950:350);return;}
+      try{var n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;(new Image()).src='assets/splash/'+PH[n][0];}catch(e){}},soft?450:350);return;}
     setTimeout(tick,80);
   })();
 })();
