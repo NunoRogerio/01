@@ -219,16 +219,16 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
       <span class="tipwrap" tabindex="0" aria-label="{{om.aria}}" style="position: absolute; left: {{om.left}}px; top: {{om.top}}px; width: 28px; height: 28px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: {{mvI}}">
-        <svg width="16" height="15" viewBox="0 0 16 15" aria-hidden="true" style="overflow: visible; scale: 1.1; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><polygon points="1,1.5 15,1.5 8,13.5" fill="{{om.c}}" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"></polygon></svg>
+        <svg width="16" height="15" viewBox="0 0 16 15" aria-hidden="true" style="overflow: visible; scale: 2.2; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><polygon points="1,1.5 15,1.5 8,13.5" fill="{{om.c}}" stroke="#3A3A3C" stroke-width="0.7" stroke-linejoin="round"></polygon></svg>
         <span class="{{om.tip}}" role="tooltip"><b>{{om.tt}}</b>{{om.td}}</span>
       </span>
     </sc-for>
     <sc-for list="{{ignMarks}}" as="ig" hint-placeholder-count="2">
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mvI}}">
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
-          <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 1.1">
-            <g transform="translate(48 47.5)"><polygon points="-9.5,-5.5 9.5,-5.5 0,11" fill="none" stroke="{{ig.c}}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
-            <polygon points="38.5,42 57.5,42 48,58.5" fill="{{ig.c}}" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35))"></polygon>
+          <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 1.1; overflow: visible">
+            <g transform="translate(48 47.5)"><polygon points="-19,-11 19,-11 0,22" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
+            <polygon points="29,36.5 67,36.5 48,69.5" fill="{{ig.c}}" stroke="#3A3A3C" stroke-width="1.6" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35))"></polygon>
           </svg>
           <span class="igpill" role="tooltip">
             <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 10px; white-space: nowrap">
@@ -239,14 +239,14 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
-          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 1.1">
-            <g transform="translate(32 32.7)"><polygon points="-8,-5.7 8,-5.7 0,8.3" fill="none" stroke="{{ig.c}}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
-            <polygon points="24,27 40,27 32,41" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
+          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 1.1; overflow: visible">
+            <g transform="translate(32 32.7)"><polygon points="-16,-10.3 16,-10.3 0,17.7" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
+            <polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
           </svg>
           </sc-if>
           <sc-if value="{{ig.still}}" hint-placeholder-val="{{ false }}">
-          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 1.1">
-            <polygon points="24,27 40,27 32,41" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round"></polygon>
+          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 1.1; overflow: visible">
+            <polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="1.5" stroke-linejoin="round"></polygon>
           </svg>
           </sc-if>
           <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
@@ -262,7 +262,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1">
           <circle cx="20" cy="20" r="8" fill="none" stroke="{{pinC}}" stroke-width="1.5" style="display: {{pinTriD}}"><animate attributeName="r" values="8;19" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
           <circle cx="20" cy="20" r="8" fill="none" stroke="#D70015" stroke-width="1.5" style="display: {{pinCirD}}"><animate attributeName="r" values="8;19" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
-          <polygon points="10.5,12.5 29.5,12.5 20,28.5" fill="{{pinC}}" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" style="display: {{pinTriD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
+          <polygon points="1,4.5 39,4.5 20,36.5" fill="{{pinC}}" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round" style="display: {{pinTriD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
           <circle cx="20" cy="20" r="7.5" fill="rgba(255,59,48,0.45)" stroke="#8E0A12" stroke-width="1.6" style="display: {{pinCirD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></circle>
         </svg>
         </sc-if>
@@ -986,7 +986,7 @@ class Component extends DCLogic {
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
-      ['cands', 'Ignition candidates', 'M2.6 3H11.4L7 11Z', '#0A6FDB', 'rgba(0,0,0,0.25)'],
+      ['cands', 'Ignition candidates', 'M1 1.5H13L7 12.5Z', '#D7F41A', '#3A3A3C'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
@@ -1194,7 +1194,7 @@ class Component extends DCLogic {
       pct: Math.round(s / (this.base().s || 1) * 100) + '%',
       kmPx: Math.round(100 * s),
       isRisk, isSpread: mode === 'spread', isPin,
-      pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g && window.__wfConfC ? window.__wfConfC(g.conf) : g ? '#0A6FDB' : '#E86A00'; })(),
+      pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g ? '#D7F41A' : '#E86A00'; })(),
       pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinTriD: p.mode === 'spread' ? 'none' : 'inline', pinCirD: p.mode === 'spread' ? 'inline' : 'none', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w25: +(2.5 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w50: +(5 * k).toFixed(5), w70: +(7 * k).toFixed(5), o12: +(12 * k).toFixed(5) + ';0',
         d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
@@ -1367,7 +1367,7 @@ class Component extends DCLogic {
           })
         };
       })(),
-      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: window.__wfConfC ? window.__wfConfC(g.conf) : '#0A6FDB', aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
+      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: '#D7F41A', aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
       fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
@@ -1400,9 +1400,9 @@ class Component extends DCLogic {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
         const sel = g.id === selId;
         const hi = g.conf >= 70, mid = g.conf >= 50;
-        const c = window.__wfConfC ? window.__wfConfC(g.conf) : '#0A6FDB';
+        const c = '#D7F41A';   // candidates: the app's hi-vis yellow with a dark rim
         return withTip(at(g.x, g.y, {
-          c, rim: hi ? '#FFFFFF' : (mid ? '#FFFFFF' : '#FFFFFF'), r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
+          c, rim: '#3A3A3C', r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
           pulse: !MANY && !sel, still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
           aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent',
           pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
