@@ -1,0 +1,39 @@
+# Candidate firefighter portraits (Pexels / Unsplash licence) for the chat and demo-profile photos.
+# file|url|photographer
+p01.jpg|https://images.pexels.com/photos/20609577/pexels-photo-20609577.jpeg|nandofreitasr
+p02.jpg|https://images.pexels.com/photos/13682168/pexels-photo-13682168.jpeg|Ahmad Shalbaf
+p03.jpg|https://images.pexels.com/photos/5965214/pexels-photo-5965214.jpeg|Anna Shvets
+p04.jpg|https://images.pexels.com/photos/20316405/pexels-photo-20316405.jpeg|Vadym Alyekseyenko
+p05.jpg|https://images.pexels.com/photos/6547471/pexels-photo-6547471.jpeg|Neron Photos
+p06.jpg|https://images.pexels.com/photos/6547873/pexels-photo-6547873.jpeg|Neron Photos
+p07.jpg|https://images.pexels.com/photos/19487947/pexels-photo-19487947.jpeg|Mirada Robot
+p08.jpg|https://images.pexels.com/photos/13682129/pexels-photo-13682129.jpeg|Ahmad Shalbaf
+p09.jpg|https://images.pexels.com/photos/5964971/pexels-photo-5964971.jpeg|Anna Shvets
+p10.jpg|https://images.pexels.com/photos/20319045/pexels-photo-20319045.jpeg|Vadym Alyekseyenko
+p11.jpg|https://images.pexels.com/photos/13682195/pexels-photo-13682195.jpeg|Ahmad Shalbaf
+p12.jpg|https://images.pexels.com/photos/30788263/pexels-photo-30788263.jpeg|Leon Films
+p13.jpg|https://images.pexels.com/photos/38172850/pexels-photo-38172850.jpeg|Pexels user 2150381842
+p14.jpg|https://images.pexels.com/photos/5965111/pexels-photo-5965111.jpeg|Anna Shvets
+p15.jpg|https://images.pexels.com/photos/5965218/pexels-photo-5965218.jpeg|Anna Shvets
+p16.jpg|https://images.pexels.com/photos/5964742/pexels-photo-5964742.jpeg|Anna Shvets
+p17.jpg|https://images.pexels.com/photos/30788287/pexels-photo-30788287.jpeg|Leon Films
+p18.jpg|https://images.pexels.com/photos/7155813/pexels-photo-7155813.jpeg|Gustavo Fring
+p19.jpg|https://images.pexels.com/photos/6547483/pexels-photo-6547483.jpeg|Neron Photos
+p20.jpg|https://images.pexels.com/photos/7179617/pexels-photo-7179617.jpeg|Bwalya Marcel Ngosa
+p21.jpg|https://images.pexels.com/photos/19487942/pexels-photo-19487942.jpeg|Mirada Robot
+p22.jpg|https://images.pexels.com/photos/162540/career-firefighter-relaxing-job-162540.jpeg|Pixabay
+p23.jpg|https://images.pexels.com/photos/29379358/pexels-photo-29379358.jpeg|Rebornfilmes
+p24.jpg|https://images.pexels.com/photos/32852793/pexels-photo-32852793.jpeg|Rebornfilmes
+p25.jpg|https://images.pexels.com/photos/16737198/pexels-photo-16737198.png|Fabricio Rivera
+p26.jpg|https://images.pexels.com/photos/30788307/pexels-photo-30788307.jpeg|Leon Films
+p27.jpg|https://images.pexels.com/photos/8215955/pexels-photo-8215955.jpeg|Ezequiel Guerrero
+p28.jpg|https://images.pexels.com/photos/34136293/pexels-photo-34136293.jpeg|Franco Monsalvo
+p29.jpg|https://images.pexels.com/photos/34136287/pexels-photo-34136287.jpeg|Franco Monsalvo
+p30.jpg|https://images.pexels.com/photos/5965019/pexels-photo-5965019.jpeg|Anna Shvets
+p31.jpg|https://images.pexels.com/photos/34136256/pexels-photo-34136256.jpeg|Franco Monsalvo
+p32.jpg|https://images.pexels.com/photos/19487945/pexels-photo-19487945.jpeg|Mirada Robot
+u01.jpg|https://images.unsplash.com/photo-1606613817012-6c4efabd5e2e|Logan Weaver
+u02.jpg|https://images.unsplash.com/photo-1630163516144-924d9f3b1031|Richard Goff
+u03.jpg|https://images.unsplash.com/photo-1614771327015-38e3d0b66b1b|Logan Weaver
+u04.jpg|https://images.unsplash.com/photo-1584033376655-760c4de3f483|Look Studio
+u05.jpg|https://images.unsplash.com/photo-1713689824343-77d2f99e19b8|Look Studio
