@@ -108,7 +108,7 @@
       mid = w.length > 1 ? (w[0][0] + w[1][0]) : (w[0] || n).slice(0, 2);
     } else {
       var ag = n.replace(/\b(fire\s+)?station\b.*$/i, '').replace(/[^A-Za-zÀ-ÿ\s-]/g, '').trim();
-      var ini = ag.split(/[\s-]+/).filter(function (x) { return x && !/^(of|and|the|de|la|county's)$/i.test(x); }).map(function (x) { return x[0]; }).join('').toUpperCase();
+      var ini = ag.split(/[\s-]+/).filter(function (x) { return x && !/^(of|and|the|de|la|county's)$/i.test(x); }).map(function (x) { return /^[A-Z]{2,}$/.test(x) ? x : x[0]; }).join('').toUpperCase();
       if (!ini) ini = 'FS';
       top = ini.length > 5 ? ini.slice(0, 5) : ini; mid = num || ini.slice(0, 2); if (num) num = '';
     }
