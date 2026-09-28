@@ -209,14 +209,14 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </sc-if>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
+        <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid rgba(60,60,67,0.18)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
+        <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
+      </div>
       <div data-fitrow="1" style="display: {{actD}}; flex-wrap: wrap; gap: 8px; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
           <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="flex: 1 1 auto; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: {{a.bg}}; box-shadow: {{a.line}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
-        <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid rgba(60,60,67,0.18)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
-        <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
       </div>
     </div>
     </sc-if>
