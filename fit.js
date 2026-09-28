@@ -10,14 +10,23 @@
     {f:"forest-3.webp",g:'forest',by:"Olena Bohovyk",alt:"Dense canopy from above",b:1},
     {f:"forest-4.webp",g:'forest',by:"Kristaps Ungurs",alt:"Dense autumn forest from above",b:1},
     {f:"forest-5.webp",g:'forest',by:"Olena Bohovyk",alt:"Pine forest from above",b:1},
+    {f:"forest-6.webp",g:'forest',by:"John O'Nolan",alt:"Forest canopy from above",b:0.9},
+    {f:"forest-7.webp",g:'forest',by:"shayd johnson",alt:"Tall conifers from above",b:1},
+    {f:"forest-8.webp",g:'forest',by:"Adam Vradenburg",alt:"Dense forest from above",b:1},
     {f:"flower-1.webp",g:'macro',by:"Olga Kozachenko",alt:"Yellow and purple flower, macro",b:0.53},
-    {f:"leaf-1.webp",g:'macro',by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1},
-    {f:"leaf-6.webp",g:'macro',by:"Sameer Meshram",alt:"Yellow and red leaves",b:0.73}];
+    {f:"leaf-1.webp",g:'macro',by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1}];
   var G=['forest','macro'].filter(function(g){return L.some(function(p){return p.g===g;});});
   var sh=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;};
-  // A random order that takes one photo from each group in turn (the groups in a random order too)
-  var mix=function(){var gs=sh(G),by={},out=[],k=0;gs.forEach(function(g){by[g]=sh(L.filter(function(p){return p.g===g;}));});
-    while(out.length<L.length){var g=gs[k%gs.length];if(by[g].length)out.push(by[g].shift());k++;}return out;};
+  // A random order that spreads the groups evenly through it (a smaller group comes round at even intervals, never two
+  // of the same group in a row while the other still has photos); the photo taken from a group is random
+  var mix=function(){var by={},tot={},got={},out=[],prev='';G.forEach(function(g){by[g]=sh(L.filter(function(p){return p.g===g;}));tot[g]=by[g].length;got[g]=0;});
+    var jit={};G.forEach(function(g){jit[g]=Math.random()*.5;});
+    while(out.length<L.length){var c=G.filter(function(g){return by[g].length;}),alt=c.filter(function(g){return g!==prev;});
+      var pool=c.filter(function(g){return (got[g]+jit[g])/tot[g]<=Math.min.apply(null,c.map(function(h){return (got[h]+jit[h])/tot[h];}))+1e-9;});
+      var g=pool.find(function(x){return x!==prev;})||pool[0];
+      if(g===prev&&alt.length&&by[g].length<tot[g]*.5)g=alt[0];
+      out.push(by[g].shift());got[g]++;prev=g;}
+    return out;};
   var last='';try{last=sessionStorage.getItem('wf-photo-first')||'';}catch(e){}
   var P=mix();if(P.length>1&&P[0].f===last)P=P.slice(1).concat(P.slice(0,1));   // a new screen does not open on the photo the last one opened on
   try{sessionStorage.setItem('wf-photo-first',P[0].f);}catch(e){}
