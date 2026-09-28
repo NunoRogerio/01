@@ -68,7 +68,8 @@
     o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
     o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
-    o.push('.stepb,.ghost{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#404043!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
+    o.push(':root{--wf-sec-bg:#48484A;--wf-ghost-bg:rgba(215,244,26,0.16);--wf-ghost-fg:#E3F27A}');
+    o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#404043!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
     o.push('image[href*="tile.openstreetmap"]{filter:url(#wfNightTiles)}');
@@ -90,11 +91,16 @@
     document.body.appendChild(d);
   }
 
+  // Button colours, one definition for the whole app: secondary = dark grey with the hi-vis yellow label;
+  // ghost = dark grey label on the yellow at 20%. (Primary stays hi-vis yellow with dark text.)
+  var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:#D7F41A;--wf-ghost-bg:rgba(215,244,26,0.2);--wf-ghost-fg:#3A3A3C}' +
+    '.wf-sec,.ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
+    '.wf-ghost{background:var(--wf-ghost-bg)!important;color:var(--wf-ghost-fg)!important;border-color:transparent!important}';
   function apply() {
     var theme = get('theme', 'light'), size = get('text', 'normal');
     var el = document.getElementById('wf-prefs');
     if (!el) { el = document.createElement('style'); el.id = 'wf-prefs'; (document.head || document.documentElement).appendChild(el); }
-    el.textContent = (theme === 'dark' ? darkCss() : '') + '\n' + fontCss(size);
+    el.textContent = BTN + '\n' + (theme === 'dark' ? darkCss() : '') + '\n' + fontCss(size);
     var root = document.documentElement;
     root.classList.toggle('wf-dark', theme === 'dark');
     root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';

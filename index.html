@@ -8,6 +8,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Fire Watch</title>
-<meta http-equiv="refresh" content="0; url=Main.dc.html">
-<script>location.replace('Main.dc.html')</script>
+<script>
+// An invite link from the administrator (…/#invite=…) switches on Claude role-play on this phone: its Anthropic key is
+// saved here, then the app opens as usual.
+try { var m = /#invite=([A-Za-z0-9_-]+)/.exec(location.hash);
+  if (m) { var j = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/')))));
+    if (j && j.k) { localStorage.setItem('wf-ai-key', j.k); localStorage.setItem('wf-invited-by', j.by || ''); localStorage.removeItem('wf-ai-status'); } } } catch (e) {}
+location.replace('Main.dc.html');
+</script>
 </head><body style="background:#F2F2F7"></body></html>

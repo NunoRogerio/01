@@ -10,7 +10,7 @@
 (function () {
   if (window.__wfChat) return;
   var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {}
-  var KEY = 'wf-chats2-' + (role || 'anon'), ACH = 'wf-achv';
+  var KEY = 'wf-chats3-' + (role || 'anon'), ACH = 'wf-achv';
   var PT = function () { return window.__wfLang === 'pt'; };
   var L = function (en, pt) { return PT() && pt ? pt : en; };
   var MIN = 60000;
@@ -144,8 +144,22 @@
       msgs: [], queue: [], seenAt: 0, beat: 0, flags: {}, closed: false, dismissed: false, updated: now };
     // The fire's history before this chat opened: a candidate starts at its detection; a fire already in progress gets
     // plausible earlier stages, so its timeline is complete from the first detection.
+    if (+inc.ha > 0) ch.realHa = +inc.ha;
+    if (inc.res && inc.res.man != null) ch.realRes = { man: +inc.res.man || 0, terrain: +inc.res.terrain || 0, aerial: +inc.res.aerial || 0 };
     if (stage === 0) ch.hist.push({ s: 0, vt: Math.min(now, inc.det || now) });
-    else {
+    else if (inc.startMs && inc.startMs < now - 20 * MIN) {
+      // A fire already in progress: its history runs from the real start time. Detection, confirmation and the drive
+      // take minutes; the rest of the time is shared between the later stages as such fires usually spend it.
+      ch.startMs = inc.startMs;
+      var cur = inc.curMs && inc.curMs > inc.startMs + 40 * MIN && inc.curMs < now ? inc.curMs : null;   // the official time of the current state
+      var D = ((cur || now) - inc.startMs) / MIN, fixed = [8, 3, 18], wts = [0, 0, 0, 150, 240, 300, 600], du = [];
+      for (var q = 0; q <= stage; q++) du.push(q < 3 ? fixed[q] + hash(k + q) % 4 : wts[q] * (0.7 + (hash(k + q) % 60) / 100));
+      var sF = 0, sW = 0; du.forEach(function (d, q) { if (q < 3) sF += d; else sW += d; });
+      if (stage < 3 || D < sF * 1.5) du = du.map(function (d) { return d * D / (sF + sW); });
+      else du = du.map(function (d, q) { return q < 3 ? d : d * (D - sF) / sW; });
+      if (cur) { var pr = du.slice(0, stage), sp = pr.reduce(function (a, d) { return a + d; }, 0) || 1; du = pr.map(function (d) { return d * D / sp; }).concat([0]); }
+      var tt = inc.startMs; ch.hist = du.map(function (d, q) { var h = { s: q, vt: tt }; tt += d * MIN; return h; });
+    } else {
       var back = [8, 3, 20, 150, 240, 300, 600], t = now - vary(ch, 12, 40, 'cur') * MIN, H = [{ s: stage, vt: t }];
       for (var s = stage - 1; s >= 0; s--) { t -= (back[s] + hash(k + s) % Math.max(2, back[s])) * MIN; H.unshift({ s: s, vt: t }); }
       ch.hist = H;
@@ -161,7 +175,8 @@
         c.flags.dispatched = true;
         c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); });
       }
-      save(); start(c);
+      if (c.kind === 'fire' && c.startMs) backfill(c); else start(c);
+      save(); emit();
     });
     return ch;
   }
@@ -197,6 +212,71 @@
     if (s === 5) return Object.assign(base, { title: { en: 'Perimeter held · mop-up', pt: 'Perímetro dominado · rescaldo' }, body: { en: 'Crews putting out hotspots along the edge', pt: 'Equipas a extinguir pontos quentes no perímetro' }, fire: true });
     if (s === 6) return Object.assign(base, { title: { en: 'Under surveillance', pt: 'Em vigilância' }, body: { en: 'One crew watching for rekindles, the others released', pt: 'Uma equipa em vigilância a reacendimentos, as outras libertadas' }, fire: true });
     return Object.assign(base, { title: { en: 'Fire closed', pt: 'Incêndio encerrado' }, body: { en: 'Resolved ' + dur(vnow(c) - since(c)) + ' after the first detection', pt: 'Resolvido ' + dur(vnow(c) - since(c)) + ' depois da primeira deteção' } });
+  }
+
+
+  // ---- a fire already in progress: the conversation that led here ----------------------------------------------------
+  // Written once when its chat is first opened: the report, your confirmation and dispatch orders, the crews' arrival
+  // and their updates through each stage, stamped along the fire's real timeline, ending in its current state.
+  var LONG = {
+    3: [[0, 'Night shift took over the line. Crews rotated, fresh engine from the second station.', 'O turno da noite assumiu a linha. Equipas rodadas, veículo fresco do segundo quartel.'],
+        [1, 'Morning briefing done. Wind picks up after 11:00, we reinforce the north flank before then.', 'Briefing da manhã feito. O vento aumenta depois das 11:00, reforçamos o flanco norte antes disso.'],
+        [2, 'Dozer line finished on the east side. Holding.', 'Linha de máquina concluída a nascente. A segurar.']],
+    4: [[1, 'Night quiet on the flanks. Two crews resting, one on patrol.', 'Noite calma nos flancos. Duas equipas a descansar, uma em patrulha.']],
+    6: [[0, 'Second day of watch. Nothing on the thermal camera.', 'Segundo dia de vigilância. Nada na câmara térmica.']]
+  };
+  function backfill(c) {
+    var now = Date.now(), s = c.stage, P = c.people, H = c.hist, us = isUS(c);
+    var at = function (q) { var h = H.find(function (x) { return x.s === q; }); return h ? h.vt : null; };
+    var end = function (q) { var h = H.find(function (x) { return x.s === q + 1; }); return h ? h.vt : now - 4 * MIN; };
+    var add = function (m, vt) { m.id = newId(); m.t = now - 1000; m.vt = Math.min(vt, now - 2 * MIN); c.msgs.push(m); };
+    var who = function (i) { return Math.min(i, P.length - 1); };
+    var msg = function (i, en, pt, vt) { if (P.length) add({ kind: 'msg', from: who(i), en: en, pt: pt }, vt); };
+    var me = function (en, pt, vt) { add({ kind: 'msg', from: 'me', en: en, pt: pt }, vt); };
+    var cardAt = function (q, vt) { var m = stageCard(c, q); m.kind = 'card'; add(m, vt); return m; };
+    var names = P.map(function (p) { return p.org; }).join(', ');
+    // Detection
+    var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Fire reported', pt: 'Incêndio reportado' }; c0.title = { en: c.place, pt: c.place };
+    c0.body = { en: c.note || 'Reported to the command centre', pt: c.note || 'Reportado ao comando' }; c0.kpi = null; delete c0.link; add(c0, at(0));
+    add({ kind: 'sys', en: 'Called you (fire owner) and the crew coordinators of ' + names, pt: 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa de ' + names }, at(0) + MIN);
+    msg(0, 'Seen. Crew of 5 and ' + (us ? 'an engine' : 'one fire engine') + ' ready at ' + (P[0] || {}).org + '.', 'Visto. Equipa de 5 e um veículo prontos em ' + (P[0] || {}).org + '.', at(0) + 3 * MIN);
+    if (P[2]) msg(2, 'Smoke visible from the station, looks like it is growing.', 'Fumo visível do quartel, parece estar a crescer.', at(0) + 5 * MIN);
+    if (s >= 1) {
+      me('Confirming the fire.', 'Confirmo o incêndio.', at(1));
+      var c1 = cardAt(1, at(1) + 20000);
+      if (c1.rows) c1.rows.forEach(function (r, i) { r.r = s >= 2 ? (i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }) : r.r; r.rc = s >= 2 ? (i < 2 ? '#1E7A34' : '#875800') : r.rc; });
+      msg(1, 'Available now.', 'Disponíveis agora.', at(1) + MIN);
+    }
+    if (s >= 2) {
+      var st2 = c.stations.slice(0, 2).map(function (x) { return x.short; });
+      me('Dispatch: ' + st2.join(' and ') + ' go.' + (c.stations[2] ? ' ' + c.stations[2].short + ' on standby.' : ''), 'Despacho: ' + st2.join(' e ') + ' avançam.' + (c.stations[2] ? ' ' + c.stations[2].short + ' de prevenção.' : ''), at(2) - 30000);
+      cardAt(2, at(2));
+      msg(0, 'Leaving now. ETA ' + (c.stations[0] ? c.stations[0].min : 15) + ' min.', 'A sair. Chegada prevista em ' + (c.stations[0] ? c.stations[0].min : 15) + ' min.', at(2) + MIN);
+    }
+    // From the crews' arrival on, updates spread through each stage (more of them the longer it lasted)
+    var through = function (q, lines) {
+      var a = at(q), b = end(q), used = 0;
+      lines.forEach(function (L0, i) { var vt = a + (b - a) * (i + 1) / (lines.length + 1); if (vt < now - 5 * MIN) { msg(L0[0], L0[1], L0[2], vt); used++; } });
+      return used;
+    };
+    var fromProg = function (q) { return (PROGRESS[q] || []).map(function (p) { var a = p[1](c); return [p[0], a[0], a[1]]; }); };
+    for (var q = 3; q <= s && q < 7; q++) {
+      if (q >= 4) me('Moving the fire to ' + STAGES[q].en + '.', 'Passo o incêndio a ' + STAGES[q].pt + '.', at(q) - 30000);
+      cardAt(q, at(q));
+      if (q === 3) {
+        msg(0, 'On scene. Fire in ' + (us ? 'chaparral and dry grass' : 'pine and eucalyptus') + ', head running with the wind.', 'No local. Fogo em ' + (us ? 'chaparral e erva seca' : 'pinhal e eucaliptal') + ', cabeça a progredir com o vento.', at(3) + 3 * MIN);
+        me('Anchor on the road, protect the homes first, then work the head.', 'Ancorem na estrada, protejam primeiro as casas e depois ataquem a cabeça.', at(3) + 6 * MIN);
+        msg(1, 'Copy. Homes covered, starting on the flanks.', 'Entendido. Casas protegidas, a começar pelos flancos.', at(3) + 9 * MIN);
+      }
+      if (q === 4) msg(0, 'Head is held. Working both flanks.', 'Cabeça dominada. A trabalhar os dois flancos.', at(4) + 4 * MIN);
+      if (q === 5) msg(1, 'Perimeter held. Mop-up along the edge.', 'Perímetro dominado. Rescaldo no perímetro.', at(5) + 5 * MIN);
+      if (q === 6) { msg(0, 'We stay on watch. Others released.', 'Ficamos em vigilância. Os outros foram libertados.', at(6) + 8 * MIN); }
+      var lines = fromProg(q), long = (end(q) - at(q)) > 10 * 60 * MIN ? (LONG[q] || []) : [];
+      var used = through(q, q === s ? lines.slice(0, 1).concat(long) : lines.concat(long));
+      if (q === s) { c.prog = c.prog || {}; c.prog[q] = Math.min(1, used); }
+    }
+    c.msgs.sort(function (a, b) { return a.vt - b.vt; });
+    c.seenAt = now; c.updated = now; c.vNow = now; c.vAt = now;
   }
 
   function start(c) {
@@ -359,6 +439,7 @@
   ];
   function intentOf(t) { for (var i = 0; i < INTENTS.length; i++) if (INTENTS[i][1].test(t)) return INTENTS[i][0]; return 'other'; }
   function areaNow(c) {   // hectares burning, growing until the head is held
+    if (c.realHa) return c.realHa;   // the published burnt area
     var S = stats(c), H = c.hist || [], on = H.find(function (h) { return h.s === 3; }), held = H.find(function (h) { return h.s === 4; });
     if (c.stage < 3 || !on) return Math.max(0.3, Math.round(S.ha * 0.08 * 10) / 10);
     if (held) return S.ha;
@@ -587,7 +668,7 @@
   function stats(c) {
     var H = c.hist || [], at = function (s) { var x = H.find(function (h) { return h.s === s; }); return x ? x.vt : null; };
     var t0 = since(c), end = vnow(c), h = hash(c.key);
-    var ha = Math.round((2.5 + h % 23 + (c.flags.airNo ? 12 : 0) + (c.flags.evac ? 5 : 0) + (h % 10) / 10) * 10) / 10;
+    var ha = c.realHa || Math.round((2.5 + h % 23 + (c.flags.airNo ? 12 : 0) + (c.flags.evac ? 5 : 0) + (h % 10) / 10) * 10) / 10;
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
     return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
@@ -643,7 +724,9 @@
   function incFire(f) {
     var ll = xyToLL(f.x, f.y), I = f.info || {};
     var sc = /^F-/.test(f.id || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);   // just confirmed from a candidate: 1st alert
-    return { kind: 'fire', id: f.id, place: f.place, reg: f.co || '', st: f.st || '', lat: ll.lat, lon: ll.lon, note: f.note || '', sc: sc, x: f.x, y: f.y, det: f.det || null };
+    if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6;   // fought for hours: crews are on scene
+    var src = I.src ? (I.stEn || 'Active') + ' · ' + I.src : '';
+    return { kind: 'fire', id: f.id, place: f.place, reg: f.co || '', st: f.st || '', lat: ll.lat, lon: ll.lon, note: src || f.note || '', sc: sc, x: f.x, y: f.y, det: f.det || null, startMs: I.startMs || null, curMs: I.heldMs || null, ha: I.ha || null, res: f.res || null };
   }
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
