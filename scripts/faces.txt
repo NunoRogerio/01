@@ -37,3 +37,7 @@ u02.jpg|https://images.unsplash.com/photo-1630163516144-924d9f3b1031|Richard Gof
 u03.jpg|https://images.unsplash.com/photo-1614771327015-38e3d0b66b1b|Logan Weaver
 u04.jpg|https://images.unsplash.com/photo-1584033376655-760c4de3f483|Look Studio
 u05.jpg|https://images.unsplash.com/photo-1713689824343-77d2f99e19b8|Look Studio
+p33.jpg|https://images.pexels.com/photos/39123998/pexels-photo-39123998.jpeg|Josias Salinas
+p34.jpg|https://images.pexels.com/photos/39123999/pexels-photo-39123999.jpeg|Josias Salinas
+p35.jpg|https://images.pexels.com/photos/34136291/pexels-photo-34136291.jpeg|Franco Monsalvo
+p36.jpg|https://images.pexels.com/photos/34136295/pexels-photo-34136295.jpeg|Franco Monsalvo
