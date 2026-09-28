@@ -96,7 +96,23 @@
   var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:#D7F41A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
-    ':root .wf-thumb{background:#FFFFFF!important}';   // switch thumbs stay white in both themes
+    ':root .wf-thumb{background:#FFFFFF!important}' +
+    // Forest headers, one definition for the whole app: the aerial forest photos zoom in slowly as on the login screen.
+    // .wf-fhost goes on the header; inside it <span class="wf-forest"><i></i><i></i><i></i><b></b></span> cycles the three photos
+    // (a new one every 8 s, cross-fading); <span class="wf-forest one"><i style="background-image:…"></i><b></b></span> zooms a single photo.
+    '.wf-fhost{position:relative;isolation:isolate;overflow:hidden}' +
+    '.wf-forest{position:absolute;inset:0;z-index:-1;overflow:hidden;background:#1E2B22;pointer-events:none;border-radius:inherit}' +
+    '.wf-forest>i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);will-change:transform,opacity;animation:wfKenO 24s linear infinite,wfKenS 24s linear infinite}' +
+    '.wf-forest>i:nth-of-type(1){background-image:url(assets/splash/forest-1.webp)}' +
+    '.wf-forest>i:nth-of-type(2){background-image:url(assets/splash/forest-2.webp);animation-delay:8s,8s}' +
+    '.wf-forest>i:nth-of-type(3){background-image:url(assets/splash/forest-3.webp);animation-delay:16s,16s}' +
+    '.wf-forest.one>i{opacity:1;animation:wfKenOne 9.6s cubic-bezier(.3,.1,.3,1) infinite alternate}' +
+    '.wf-forest>b{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.14) 32%,rgba(0,0,0,0.30) 64%,rgba(0,0,0,0.58) 100%)}' +
+    '.wf-forest.one>b{background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
+    '@keyframes wfKenO{0%{opacity:0}6.7%{opacity:1}33.3%{opacity:1}40%{opacity:0}100%{opacity:0}}' +
+    '@keyframes wfKenS{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,.1,.3,1)}40%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
+    '@keyframes wfKenOne{from{transform:scale(1)}to{transform:scale(1.3)}}' +
+    '@media (prefers-reduced-motion:reduce){.wf-forest>i{animation:none!important}.wf-forest>i:nth-of-type(1){opacity:1}}';   // switch thumbs stay white in both themes
   function apply() {
     var theme = get('theme', 'light'), size = get('text', 'normal');
     var el = document.getElementById('wf-prefs');
