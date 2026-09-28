@@ -83,8 +83,9 @@
 (function(){
   var needsData=/(Main|Alert|Drone|Dispatch|Station)\.dc\.html/.test(location.pathname)||/\/$/.test(location.pathname);
   var F='M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z',G='M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8';
-  // The eye blinks every 8 s: the upper lid comes down to the lower one and opens again
-  var BLINK='<animate attributeName="d" dur="8s" begin="1.5s" repeatCount="indefinite" keyTimes="0;0.955;0.972;0.992;1" values="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 17.3 15.8 15.8Q12 17.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" calcMode="spline" keySplines="0 0 1 1;.4 0 .6 1;.4 0 .6 1;0 0 1 1"></animate>';
+  // One blink on cue (not on a loop): the upper lid comes down to the lower one and opens again, about a third of a second
+  var BLINK='<animate class="wfblink" attributeName="d" dur="0.36s" begin="indefinite" fill="remove" keyTimes="0;0.45;1" values="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 17.3 15.8 15.8Q12 17.6 8.2 15.8Z;M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"></animate>';
+  function blink(root){try{var a=(root||document).querySelectorAll('#wf-load .wfblink');for(var j=0;j<a.length;j++)a[j].beginElement();}catch(e){}}
   var st=document.createElement('style');
   st.textContent='@view-transition{navigation:auto}#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
     '#wf-load.out{opacity:0;pointer-events:none}'+
@@ -139,6 +140,8 @@
   // The loading screen (logo, 'Loading live data', counter) shows only on opening the app and right after log in.
   // Moving between screens inside the app shows no loading: just a plain surface until the screen has drawn.
   if(!cold&&!soft){el.innerHTML='';el.style.transition='opacity .2s ease';}
+  // Opening the app: just the logo and its animation (no 'Loading live data', no counter); the counter stays for log in.
+  if(cold&&!soft){var sb=el.querySelector('.sub'),pc=el.querySelector('.pct');if(sb)sb.remove();if(pc)pc.remove();}
   if(soft)minMs=Math.max(minMs,5000);   // right after log in: the loading screen stays at least 5 s
   // Cold start and log in: a forest photo, slowly zooming in, starts in black and white. A wave of colour spreads out
   // from the logo to the screen edges: at its front the photo is more saturated than normal, easing back to normal
@@ -177,7 +180,8 @@
   }
   // The counter runs 0% to 100% over the loading time; it waits at 90% while live data is still coming,
   // then finishes, and the screen only fades once it reads 100%.
-  var pctEl=el.querySelector('.pct'),pv=0,pctDone=!pctEl;   // no counter between screens: nothing to wait for
+  var pctEl=el.querySelector('.pct'),pv=0,pctDone=!pctEl,blinked65=false;
+  if(cold&&!soft)setTimeout(function(){blink(el);},Math.max(300,minMs-1500));   // opening the app: one blink 1.5 s before it hands over   // no counter between screens: nothing to wait for
   (function count(){
     if(!el.parentNode||!pctEl)return;
     var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
@@ -185,7 +189,7 @@
     // counts in jumps of 2 to 5, about every 1/28 of the loading time, never past where loading has got to
     if(pv<goal){pv=Math.min(goal>=100?100:Math.floor(goal),pv+2+Math.floor(Math.random()*4));}
     if(goal>=100&&pv>=98)pv=100;
-    pctEl.textContent=pv+'%';pctDone=pv>=100;
+    pctEl.textContent=pv+'%';pctDone=pv>=100;if(pv>=65&&!blinked65){blinked65=true;blink(el);}
     setTimeout(count,pv>=100?60:Math.max(90,span/28));})();
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
