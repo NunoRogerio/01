@@ -82,8 +82,12 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <path d="{{geo.selCounty}}" fill="#E86A00" fill-opacity="0.06" stroke="#E86A00" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="7 5" vector-effect="non-scaling-stroke"></path>
     </svg>
     <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
+      <g opacity="0.34">
       <sc-for list="{{burns}}" as="bn" hint-placeholder-count="0">
-        <path d="{{bn.area}}" fill="#3A3A3C" fill-opacity="0.34" stroke="#1C1C1E" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+        <path d="{{bn.area}}" fill="#3A3A3C" stroke="#1C1C1E" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      </sc-for>
+      </g>
+      <sc-for list="{{burns}}" as="bn" hint-placeholder-count="0">
         <path d="{{bn.front}}" fill="none" stroke="#E8590C" stroke-opacity="0.95" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       </sc-for>
       <sc-for list="{{burnFx}}" as="bf" hint-placeholder-count="0">
@@ -785,6 +789,36 @@ class Component extends DCLogic {
     cy = Math.min(B[3] + off, Math.max(B[1] + off, cy));
     return { cx, cy, s };
   }
+  // Real heat areas for the live map: the VIIRS detections (375 m pixels) near the visible fires, clustered by
+  // proximity so fires that have grown together show as one area, each cluster outlined by its convex hull.
+  heatAreas(FIRES_V) {
+    const C = window.__wfLiveCands || [];
+    const key = FIRES_V.map((g) => g.id).join(',') + '|' + C.length;
+    if (this._haK === key) return this._ha;
+    const G = this.geo(), pts = [];
+    FIRES_V.forEach((g) => {
+      const la = 34.19 - (g.y - 662) / 2829, lo = (g.x - 518) / 2345 - 118.13;
+      C.forEach((c) => { const m = c[9]; if (!m || Math.abs(m.lat - la) > 0.08 || Math.abs(m.lon - lo) > 0.1) return;
+        const km = Math.hypot((m.lat - la) * 111.32, (m.lon - lo) * 111.32 * Math.cos(la * Math.PI / 180)); if (km > 6) return;
+        const q = G.P(m.lat, m.lon); if (!pts.some((r) => Math.abs(r[0] - q[0]) < 0.5 && Math.abs(r[1] - q[1]) < 0.5)) pts.push([q[0], q[1], m.lat]); });
+    });
+    // single-link clusters: detections within ~1.5 km belong to the same fire area
+    const par = pts.map((_, i) => i), find = (i) => (par[i] === i ? i : (par[i] = find(par[i])));
+    const LIM = 1500 / 111320 * 2829;
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) if (Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]) < LIM) par[find(i)] = find(j);
+    const groups = {}; pts.forEach((q, i) => { (groups[find(i)] = groups[find(i)] || []).push(q); });
+    const hull = (P) => { P = P.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); if (P.length < 3) return P; const x = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+      const lo = []; P.forEach((q) => { while (lo.length >= 2 && x(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); });
+      const up = []; P.slice().reverse().forEach((q) => { while (up.length >= 2 && x(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); });
+      return lo.slice(0, -1).concat(up.slice(0, -1)); };
+    const out = Object.values(groups).map((g) => {
+      const hy = 187.5 / 111320 * 2829, hx = 187.5 / (111320 * Math.cos((g[0][2] || 40) * Math.PI / 180)) * 2345, sq = [];
+      g.forEach((q) => { sq.push([q[0] - hx, q[1] - hy], [q[0] + hx, q[1] - hy], [q[0] + hx, q[1] + hy], [q[0] - hx, q[1] + hy]); });
+      const H = hull(sq);
+      return { area: 'M' + H.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' L') + ' Z', front: '', pts: H, bb: [Math.min(...H.map((q) => q[0])), Math.min(...H.map((q) => q[1])), Math.max(...H.map((q) => q[0])), Math.max(...H.map((q) => q[1]))] };
+    });
+    this._haK = key; this._ha = out; return out;
+  }
   fireBurn(g) {
     const FB = window.__wfBurnMemo || (window.__wfBurnMemo = new Map()), mk = (g && g.id) + '|' + (g && g.x) + '|' + (g && g.y) + '|' + (g && g.note);
     const hit = FB.get(mk); if (hit) return hit;
@@ -1284,7 +1318,7 @@ class Component extends DCLogic {
       fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
-        const small = MANY || x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
+        const small = MANY || !!window.__wfLiveMap || x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
         const zone = small
           ? { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' }
           : { zl: +x0.toFixed(1), zt: +y0.toFixed(1), zw: +(x1 - x0).toFixed(1), zh: +(y1 - y0).toFixed(1), rad: '0', flameD: 'none', clip: "path('M" + sp.map((q) => (q[0] - x0).toFixed(1) + ' ' + (q[1] - y0).toFixed(1)).join(' L') + " Z')" };
@@ -1293,8 +1327,8 @@ class Component extends DCLogic {
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
-      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; }) : [],
-      burnFx: !MANY && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
+      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? (window.__wfLiveMap ? this.heatAreas(FIRES_V) : FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; })) : [],
+      burnFx: !MANY && !window.__wfLiveMap && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
