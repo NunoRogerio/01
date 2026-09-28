@@ -14,6 +14,8 @@
 try { var m = /#invite=([A-Za-z0-9_-]+)/.exec(location.hash);
   if (m) { var j = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/')))));
     if (j && j.k) { localStorage.setItem('wf-ai-key', j.k); localStorage.setItem('wf-invited-by', j.by || ''); localStorage.removeItem('wf-ai-status'); } } } catch (e) {}
-location.replace('Main.dc.html');
+// Straight to the right first screen: sign in when nobody is signed in (no detour through the incidents screen)
+var signed = ''; try { signed = localStorage.getItem('wf-role') || ''; } catch (e) {}
+location.replace(signed ? 'Main.dc.html' : 'Login.dc.html');
 </script>
-</head><body style="background:#F2F2F7"></body></html>
+</head><body style="background:#1E2B22"></body></html>

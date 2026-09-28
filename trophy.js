@@ -23,7 +23,7 @@
   var CSS =
     ':host{display:block}' +
     '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:center;font:inherit;cursor:inherit}' +
-    '.forest{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}' +
+    '.forest{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 1.2s cubic-bezier(.4,0,.2,1)}.forest.on{opacity:1}' +
     '.forest i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:f 52s linear infinite,zi 52s linear infinite}' +
     '.forest i.out{animation-name:f,zo}' +
     '.forest b{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
@@ -45,7 +45,7 @@
     '.credit{position:relative;display:grid;margin-top:12px;font-size:12px;line-height:14px;color:rgba(255,255,255,.72)}' +
     '.credit span{grid-area:1/1;opacity:0;animation:o 52s linear infinite}' +
     '[hidden]{display:none!important}' +
-    '@media (prefers-reduced-motion:reduce){.forest i,.cup svg,.credit span{animation:none}.forest i:first-child,.credit span:first-child{opacity:1}}';
+    '@media (prefers-reduced-motion:reduce){.forest{transition:none}.forest i,.cup svg,.credit span{animation:none}.forest i:first-child,.credit span:first-child{opacity:1}}';
 
   function Trophy() { return Reflect.construct(HTMLElement, [], Trophy); }
   Trophy.prototype = Object.create(HTMLElement.prototype);
@@ -65,6 +65,10 @@
       this._cv = r.querySelector('canvas'); this._cup = r.querySelector('.cup'); this._card = r.querySelector('.card');
       // A layer that has just faded out comes round again with a new photo, not one on screen or about to show
       var layers = [].slice.call(r.querySelectorAll('.forest i')), credits = [].slice.call(r.querySelectorAll('.credit span')), shown = PH.map(function (p) { return p.f; }), groups = PH.map(function (p) { return p.g; });
+      // The photos show only once the first is decoded, fading in whole over the card's dark green (no flash)
+      var fr = r.querySelector('.forest'), im0 = new Image(), on0 = function () { fr.classList.add('on'); }; im0.src = 'assets/splash/' + PH[0].f;
+      PH.slice(1).forEach(function (p) { (new Image()).src = 'assets/splash/' + p.f; });
+      (im0.decode ? im0.decode() : Promise.reject()).then(on0, function () { if (im0.complete) on0(); else im0.onload = im0.onerror = on0; });
       var ahead = function (i) { var p = window.__wfPhotoOther ? window.__wfPhotoOther(shown, groups[i]) : null; if (p) (new Image()).src = 'assets/splash/' + p.f; return p; }, nextP = layers.map(function (el, i) { return ahead(i); });
       layers.forEach(function (el, i) { el.addEventListener('animationiteration', function (e) {
         if (e.animationName !== 'f' || !nextP[i]) return;

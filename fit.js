@@ -127,7 +127,7 @@ window.__wfBlink=function(path,dur){
       var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
       // Screens loaded inside other screens (the map) and the scripts keep their plain address, so refresh
       // the phone's copy of every file first; otherwise the new page could still run an old map.
-      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js'];
+      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js','index.html'];
       // The new page opens as this one would have: the opening loading screen, or the one after log in, plays there once
       var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');if(window.__wfSoftPage)sessionStorage.setItem('wf-soft','1');}catch(e){}location.replace(u);};
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
@@ -172,6 +172,8 @@ window.__wfBlink=function(path,dur){
     '#wf-load.photo .pct{color:#D7F41A;text-shadow:0 1px 8px rgba(0,0,0,.5)}';
   document.head.appendChild(st);
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+  // Screens with a forest photo behind them start on its dark green, never on the light surface (no flash before the photo)
+  if(/Login\.dc\.html/.test(location.pathname)||/\/(01\/)?(index\.html)?$/.test(location.pathname)){el.style.background='#1E2B22';try{document.documentElement.style.background='#1E2B22';}catch(e){}}
   var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
     '<path class="base" fill="#D7F41A" fill-rule="evenodd" d="'+F+'">'+BLINK+'</path>'+
     '<path class="ground" d="'+G+'" fill="none" stroke="#D7F41A" stroke-width="1.1" stroke-linecap="round"/></svg>'+
