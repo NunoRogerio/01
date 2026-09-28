@@ -1,4 +1,28 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
+// Nature photos, one list for the whole app (loading screen, sign in, alert header, chat header, trophy cards, forest
+// headers): aerial forests, macros of leaves and flowers, forest lakes from above (Unsplash). Every page gets them in a
+// new random order; b dims a bright photo so white text on it keeps its contrast.
+(function(){
+  var L=[{f:"forest-1.webp",by:"Mari Potter",alt:"Forest canopy from above",b:1},{f:"forest-2.webp",by:"Ivan Dimitrov",alt:"Conifer forest from above",b:1},{f:"forest-3.webp",by:"Olena Bohovyk",alt:"Dense canopy from above",b:1},{f:"leaf-1.webp",by:"Tony Sebastian",alt:"Green leaf with water droplets",b:1},{f:"leaf-2.webp",by:"Yoksel Zok",alt:"Green leaf, macro",b:0.61},{f:"leaf-3.webp",by:"Clay Banks",alt:"Green leaf with drops of water",b:1},{f:"leaf-4.webp",by:"David Clode",alt:"Green leaf, close up",b:1},{f:"leaf-5.webp",by:"Pedro Vit",alt:"Green leaf, close up",b:1},{f:"leaf-6.webp",by:"Sameer Meshram",alt:"Yellow and red leaves",b:0.73},{f:"flower-1.webp",by:"Olga Kozachenko",alt:"Yellow and purple flower, macro",b:0.53},{f:"flower-2.webp",by:"Klara Kulikova",alt:"Pink and white flower, close up",b:0.54},{f:"flower-3.webp",by:"Aaron Burden",alt:"Pink flower, macro",b:0.64},{f:"flower-4.webp",by:"Christian Buehner",alt:"Yellow flower, close up",b:0.52},{f:"flower-5.webp",by:"v2osk",alt:"Yellow clustered flower, close up",b:0.7},{f:"flower-6.webp",by:"Alexandra",alt:"Water drop on a purple flower",b:1},{f:"lake-1.webp",by:"Gabriel Mihalcea",alt:"Lake among trees from above",b:0.92},{f:"lake-2.webp",by:"Gabriel Mihalcea",alt:"Lake surrounded by trees from above",b:0.85},{f:"lake-3.webp",by:"Kristīne Kozaka",alt:"Lake surrounded by forest",b:1},{f:"lake-4.webp",by:"John Murphey",alt:"Small island in a forest lake",b:1}];
+  var sh=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;};
+  var last='';try{last=sessionStorage.getItem('wf-photo-first')||'';}catch(e){}
+  var P=sh(L);if(P.length>1&&P[0].f===last)P.push(P.shift());   // a new screen does not open on the photo the last one opened on
+  try{sessionStorage.setItem('wf-photo-first',P[0].f);}catch(e){}
+  window.__wfPhotoList=L;window.__wfPhotos=P;window.__wfShuffle=sh;
+  window.__wfPhotoUrl=function(p){return 'assets/splash/'+p.f;};
+  window.__wfPhotoFilter=function(p){return p.b<1?'brightness('+p.b+')':'none';};
+  window.__wfPhotoCredit=function(p){return 'Photo: '+p.by+' / Unsplash';};
+  // A random next photo, different from the ones given (for cycling layers)
+  window.__wfPhotoOther=function(not){var c=L.filter(function(p){return (not||[]).indexOf(p.f)<0;});return c[Math.floor(Math.random()*c.length)]||L[0];};
+  // Loading screen: its own order kept across launches, so each launch shows a different photo until all have shown
+  window.__wfSplashPH=function(){var p=null;try{p=JSON.parse(localStorage.getItem('wf-splash-perm')||'null');}catch(e){}
+    var ok=p&&p.length===L.length&&p.every(function(f){return L.some(function(q){return q.f===f;});});
+    if(!ok){p=sh(L).map(function(q){return q.f;});try{localStorage.setItem('wf-splash-perm',JSON.stringify(p));localStorage.setItem('wf-splash-i','0');}catch(e){}}
+    return p.map(function(f){var q=L.find(function(x){return x.f===f;});return [q.f,q.alt,q.by,q.b];});};
+  window.__wfSplashNext=function(i){var n=L.length;if(i+1<n){try{localStorage.setItem('wf-splash-i',String(i+1));}catch(e){}return;}
+    var p=sh(L).map(function(q){return q.f;}),cur=(window.__wfSplashPH()[i]||[])[0];if(p[0]===cur)p.push(p.shift());
+    try{localStorage.setItem('wf-splash-perm',JSON.stringify(p));localStorage.setItem('wf-splash-i','0');}catch(e){}};
+})();
 // The logo's eye blinks: the upper lid (curve through y=12) comes down to the lower one and both meet near y=17.4, then open.
 window.__wfBlink=function(path,dur){
   if(!path||path.__blinking)return;path.__blinking=true;dur=dur||360;
@@ -79,7 +103,7 @@ window.__wfBlink=function(path,dur){
       var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
       // Screens loaded inside other screens (the map) and the scripts keep their plain address, so refresh
       // the phone's copy of every file first; otherwise the new page could still run an old map.
-      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html'];
+      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','Report.dc.html','ReportSent.dc.html','SimSetup.dc.html','SimPlay.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js'];
       var go=function(){location.replace(u);};
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
     }).catch(function(){});
@@ -128,10 +152,10 @@ window.__wfBlink=function(path,dur){
     '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span><span class="pct">0%</span></div><div class="cap"></div>';
   el.innerHTML=TPL;
   (document.body||document.documentElement).appendChild(el);
-  var PH=[['forest-1.webp','Forest canopy from above','Mari Potter'],['forest-2.webp','Conifer forest from above','Ivan Dimitrov'],['forest-3.webp','Dense canopy from above','Olena Bohovyk']];
+  var PH=window.__wfSplashPH();
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
   // The black-and-white forest, as the loading screen starts: used by the sign-in screen to hand over without a gap.
-  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:grayscale(1) brightness(.92)';return d;};
+  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:grayscale(1) brightness('+(0.92*(ph[3]||1)).toFixed(2)+')';return d;};
   window.__wfSoftOut=function(){
     var o=document.createElement('div');o.id='wf-load';o.className='photo';o.innerHTML=TPL;o.style.opacity='0';o.style.transition='opacity .4s cubic-bezier(.4,0,.2,1)';
     var ph=PH[nxt],b=o.querySelector('.bg');b.appendChild(grayLayer(ph));b.style.transition='none';b.className='bg on';b.style.transform='scale(1)';
@@ -160,8 +184,8 @@ window.__wfBlink=function(path,dur){
   if(cold||soft){
     if(!soft)minMs=Math.max(minMs,4600);
     var ph=PH[nxt],im=new Image(),bg=el.querySelector('.bg');
-    var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+f;return d;};
-    var zoom=document.createElement('div');var zOut=nxt===1;   // forest-2 zooms out, the others zoom in
+    var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+(ph[3]<1?f.replace('none','')+' brightness('+ph[3]+')':f);return d;};
+    var zoom=document.createElement('div');var zOut=nxt%2===1;   // every other launch zooms out, the others zoom in
     zoom.style.cssText='position:absolute;inset:0;transform:scale('+(zOut?1.12:1)+');transition:transform 12s cubic-bezier(.2,.6,.3,1);will-change:transform';
     var gray=mk('grayscale(1) brightness(.92)'),norm=mk('none'),hot=mk('saturate(3) contrast(1.08) brightness(1.08)');
     zoom.appendChild(gray);zoom.appendChild(norm);zoom.appendChild(hot);
@@ -187,7 +211,7 @@ window.__wfBlink=function(path,dur){
         requestAnimationFrame(step);})(t1);
     };
     im.src='assets/splash/'+ph[0];
-    try{localStorage.setItem('wf-splash-i',String((nxt+1)%PH.length));}catch(e){}
+    window.__wfSplashNext(nxt);
   }
   // The counter runs 0% to 100% over the loading time; it waits at 90% while live data is still coming,
   // then finishes, and the screen only fades once it reads 100%.
@@ -207,7 +231,7 @@ window.__wfBlink=function(path,dur){
   (function tick(){
     if((drawn()&&haveData()&&Date.now()-t0>=minMs&&(!wave||wave.done)&&pctDone)||Date.now()-t0>17000){el.className+=' out';if(soft)document.documentElement.classList.add('wf-in');setTimeout(function(){el.remove();
       // warm the next photo into the cache for the next cold start
-      try{var n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;(new Image()).src='assets/splash/'+PH[n][0];}catch(e){}},soft?450:350);return;}
+      try{var P2=window.__wfSplashPH(),n=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%P2.length;(new Image()).src='assets/splash/'+P2[n][0];}catch(e){}},soft?450:350);return;}
     setTimeout(tick,80);
   })();
 })();

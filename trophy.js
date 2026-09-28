@@ -3,7 +3,8 @@
 // resolution summary). Change it here and every trophy card changes.
 //   <wf-trophy kicker="Fire resolved · 07:06" headline="Resolved in 2 d 14 h" sub="~10 people · ~3 vehicles"
 //              action="See the summary" credit="1"></wf-trophy>
-// - forest photos cycling like the login screen (two zoom in, one zooms out), the credit following the photo
+// - nature photos (forests, leaves, flowers, forest lakes) in random order, cycling like the login screen (two zoom in,
+//   one zooms out), the credit following the photo
 // - the small Forest Fire Watch logo on top, as on the login screen (yellow on the photo, soft shadows, no blink)
 // - the trophy in its yellow circle, turning a full circle on its vertical axis every 8 s
 // - yellow fireworks: sparks leave the trophy's circle at full opacity and fade out at the photo's edges;
@@ -13,7 +14,11 @@
   if (window.customElements && customElements.get('wf-trophy')) return;
   var LOGO = 'M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z';
   var TROPHY = 'M8 3.5h8v5.5a4 4 0 0 1-8 0Z M8 5.5H4.5v1.2A3.3 3.3 0 0 0 8 10 M16 5.5h3.5v1.2A3.3 3.3 0 0 1 16 10 M12 13v3.5 M8 20.5h8 M9.5 16.5h5v4h-5Z';
-  var PH = [['forest-1.webp', 'Mari Potter', 0], ['forest-2.webp', 'Ivan Dimitrov', 1], ['forest-3.webp', 'Olena Bohovyk', 0]];   // 1 = zooms out
+  // Nature photos (fit.js): each card starts with three at random, and each layer takes a new random photo every time it
+  // comes round again (while hidden), so the sequence never repeats in a fixed order. The middle layer zooms out.
+  var POOL = function () { return window.__wfPhotoList || [{ f: 'forest-1.webp', by: 'Mari Potter', b: 1 }, { f: 'forest-2.webp', by: 'Ivan Dimitrov', b: 1 }, { f: 'forest-3.webp', by: 'Olena Bohovyk', b: 1 }]; };
+  var pick3 = function () { var L = POOL(), a = window.__wfShuffle ? window.__wfShuffle(L) : L.slice(); while (a.length < 3) a = a.concat(a); return a.slice(0, 3); };
+  var bgOf = function (p) { return 'background-image:url(assets/splash/' + p.f + ');filter:' + (p.b < 1 ? 'brightness(' + p.b + ')' : 'none'); };
   var CSS =
     ':host{display:block}' +
     '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:center;font:inherit;cursor:inherit}' +
@@ -47,15 +52,21 @@
 
   Trophy.prototype.connectedCallback = function () {
     if (!this._root) {
-      var r = this._root = this.attachShadow({ mode: 'open' });
+      var r = this._root = this.attachShadow({ mode: 'open' }), PH;
       r.innerHTML = '<style>' + CSS + '</style><div class="card">' +
-        '<span class="forest" aria-hidden="true">' + PH.map(function (p, i) { return '<i class="' + (p[2] ? 'out' : '') + '" style="background-image:url(assets/splash/' + p[0] + ');animation-delay:' + (i * 11) + 's"></i>'; }).join('') + '<b></b></span>' +
+        '<span class="forest" aria-hidden="true">' + (PH = pick3()).map(function (p, i) { return '<i class="' + (i === 1 ? 'out' : '') + '" style="' + bgOf(p) + ';animation-delay:' + (i * 11) + 's"></i>'; }).join('') + '<b></b></span>' +
         '<canvas aria-hidden="true"></canvas>' +
         '<span class="logo" aria-hidden="true"><svg width="15" height="18" viewBox="3.4 5 17.2 20.9"><path fill="currentColor" fill-rule="evenodd" d="' + LOGO + '"/><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Forest Fire Watch</span>' +
         '<span class="cup" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="' + TROPHY + '"/></svg></span>' +
         '<span class="kicker"></span><span class="headline"></span><span class="sub"></span><span class="act"></span>' +
-        '<span class="credit">' + PH.map(function (p, i) { return '<span style="animation-delay:' + (i * 11) + 's">Photo: ' + p[1] + ' / Unsplash</span>'; }).join('') + '</span></div>';
+        '<span class="credit">' + PH.map(function (p, i) { return '<span style="animation-delay:' + (i * 11) + 's">Photo: ' + p.by + ' / Unsplash</span>'; }).join('') + '</span></div>';
       this._cv = r.querySelector('canvas'); this._cup = r.querySelector('.cup'); this._card = r.querySelector('.card');
+      // A layer that has just faded out comes round again with a new photo, not one on screen or about to show
+      var layers = [].slice.call(r.querySelectorAll('.forest i')), credits = [].slice.call(r.querySelectorAll('.credit span')), shown = PH.map(function (p) { return p.f; });
+      layers.forEach(function (el, i) { el.addEventListener('animationiteration', function (e) {
+        if (e.animationName !== 'o' || !window.__wfPhotoOther) return;
+        var p = window.__wfPhotoOther(shown); shown[i] = p.f; el.style.backgroundImage = 'url(assets/splash/' + p.f + ')'; el.style.filter = p.b < 1 ? 'brightness(' + p.b + ')' : 'none';
+        if (credits[i]) credits[i].textContent = 'Photo: ' + p.by + ' / Unsplash'; (new Image()).src = 'assets/splash/' + p.f; }); });
     }
     this.fill(); this.startSparks();
   };

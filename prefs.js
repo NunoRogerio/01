@@ -93,6 +93,8 @@
 
   // Button colours, one definition for the whole app: secondary = dark grey with the hi-vis yellow label;
   // tertiary (subtle) = the yellow at 10% with dark text by day and light text at night. (Primary stays hi-vis yellow.)
+  // Forest headers take three photos from this visit's random order of nature photos (fit.js)
+  var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
   var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:#D7F41A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
@@ -112,9 +114,9 @@
     '.wf-fhost{position:relative;isolation:isolate;overflow:hidden}' +
     '.wf-forest{position:absolute;inset:0;z-index:-1;overflow:hidden;background:#1E2B22;pointer-events:none;border-radius:inherit}' +
     '.wf-forest>i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);will-change:transform,opacity;animation:wfKenO 33s linear infinite,wfKenS 33s linear infinite}' +
-    '.wf-forest>i:nth-of-type(1){background-image:url(assets/splash/forest-1.webp)}' +
-    '.wf-forest>i:nth-of-type(2){background-image:url(assets/splash/forest-2.webp);animation-delay:11s,11s;animation-name:wfKenO,wfKenSo}' +
-    '.wf-forest>i:nth-of-type(3){background-image:url(assets/splash/forest-3.webp);animation-delay:22s,22s}' +
+    '.wf-forest>i:nth-of-type(1){background-image:url(assets/splash/' + WFP[0].f + ');filter:' + (WFP[0].b < 1 ? 'brightness(' + WFP[0].b + ')' : 'none') + '}' +
+    '.wf-forest>i:nth-of-type(2){background-image:url(assets/splash/' + WFP[1].f + ');filter:' + (WFP[1].b < 1 ? 'brightness(' + WFP[1].b + ')' : 'none') + ';animation-delay:11s,11s;animation-name:wfKenO,wfKenSo}' +
+    '.wf-forest>i:nth-of-type(3){background-image:url(assets/splash/' + WFP[2].f + ');filter:' + (WFP[2].b < 1 ? 'brightness(' + WFP[2].b + ')' : 'none') + ';animation-delay:22s,22s}' +
     '.wf-forest.one>i{opacity:1;animation:wfKenOne 12.6s cubic-bezier(.3,.1,.3,1) infinite alternate}' +
     // The photo credit under a cycling forest follows the photo on screen (same timing as the photos)
     '.wf-credit>span{grid-area:1/1;opacity:0;animation:wfKenO 33s linear infinite}.wf-credit>span:nth-child(2){animation-delay:11s}.wf-credit>span:nth-child(3){animation-delay:22s}' +

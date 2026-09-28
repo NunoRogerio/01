@@ -16,4 +16,3 @@ lake-1.webp|photo-1640958904329-ba496b8c7e0b|Gabriel Mihalcea|Lake among trees f
 lake-2.webp|photo-1640958906254-0beafc84520d|Gabriel Mihalcea|Lake surrounded by trees from above
 lake-3.webp|photo-1652946754662-5aa170e4b175|Kristīne Kozaka|Lake surrounded by forest
 lake-4.webp|photo-1696639457568-444001aa11b4|John Murphey|Small island in a forest lake
-lake-5.webp|photo-1504288978281-c214cad655ac|Leo Wieling|Lake with a bridge among trees from above
