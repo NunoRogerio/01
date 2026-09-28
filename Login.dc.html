@@ -64,9 +64,10 @@ a{color:#0062CC}a:hover{color:#004FA3}
       </div>
       <div style="height: 0.5px; margin-left: 16px; background: rgba(60,60,67,0.29)"></div>
       <!-- With a profile chosen: 'Password:' sits 8px before the dots, lifted 2px so its lowercase letters centre on the dots -->
-      <label style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
+      <!-- Password stays disabled (faded, not tappable) until a username is chosen -->
+      <label aria-disabled="{{pwDis}}" style="display: flex; align-items: center; gap: 8px; padding: 0 16px; opacity: {{pwOp}}; pointer-events: {{pwPE}}; transition: opacity .3s ease">
         <span aria-hidden="true" style="display: {{goB}}; position: relative; top: -2px; flex-shrink: 0; font-size: 15px; line-height: 19px; color: #545458">Password:</span>
-        <input class="pw" type="password" readonly value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="flex-grow: 1; min-width: 0; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
+        <input class="pw" type="password" readonly disabled="{{pwDis}}" value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="flex-grow: 1; min-width: 0; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
       </label>
     </div>
   </form>
@@ -274,7 +275,7 @@ class Component extends DCLogic {
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
       xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
       dOp: s.phase === 'out' ? 0 : 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
-      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#545458', userFs: sel ? '17px' : '19px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none',
+      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#545458', userFs: sel ? '17px' : '19px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: sel ? 'false' : 'true', pwOp: sel ? 1 : 0.4, pwPE: sel ? 'auto' : 'none',
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
       selPhoto: sel ? 'url("' + (uni(sel[0], sel[3]) || sel[8]) + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
