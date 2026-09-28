@@ -112,6 +112,8 @@
     '.wf-forest>i:nth-of-type(2){background-image:url(assets/splash/forest-2.webp);animation-delay:11s,11s;animation-name:wfKenO,wfKenSo}' +
     '.wf-forest>i:nth-of-type(3){background-image:url(assets/splash/forest-3.webp);animation-delay:22s,22s}' +
     '.wf-forest.one>i{opacity:1;animation:wfKenOne 12.6s cubic-bezier(.3,.1,.3,1) infinite alternate}' +
+    // The photo credit under a cycling forest follows the photo on screen (same timing as the photos)
+    '.wf-credit>span{grid-area:1/1;opacity:0;animation:wfKenO 33s linear infinite}.wf-credit>span:nth-child(2){animation-delay:11s}.wf-credit>span:nth-child(3){animation-delay:22s}' +
     '.wf-forest>b{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.14) 32%,rgba(0,0,0,0.30) 64%,rgba(0,0,0,0.58) 100%)}' +
     '.wf-forest.one>b{background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
     '@keyframes wfKenO{0%{opacity:0}4.8%{opacity:1}33.3%{opacity:1}38.2%{opacity:0}100%{opacity:0}}' +
