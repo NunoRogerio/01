@@ -1457,7 +1457,7 @@ class Component extends DCLogic {
     // and fires, the primary lime on stations. SVG units: candidates are drawn at 0.77 scale, stations at 20px for 24 units.
     const PS = (this.state || {}).pop, on = (kind, key) => !!PS && PS.kind === kind && PS.key === key;
     (OUT.fireMarks || []).forEach((m, i) => { const k = m._g ? m._g.id : i, o = on('fire', k); m.sel = sel('fire', k); m.bdW = o ? 4 : 0; });
-    (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 0; m.bdW2 = o ? 10.4 : 0; m.po = o ? 'stroke' : 'normal'; });
+    (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 5.2; m.bdW2 = o ? 10.4 : 5.2; m.po = o ? 'stroke' : 'normal'; });
     (OUT.stations || []).forEach((m, i) => { const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? (window.__wfY || '#E5FF00') : 'none'; m.bdW = o ? 9.6 : 0; });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
