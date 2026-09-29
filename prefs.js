@@ -227,5 +227,26 @@
     var togGo = function () { document.querySelectorAll('.sw26k,.wf-thumb').forEach(function (n) { n.__wfT = n.style.transform; }); togMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true }); };
     if (document.body) togGo(); else document.addEventListener('DOMContentLoaded', togGo);
   }
+  // Scrolling panels: while there is more below, the last 32px fade out into the panel (a hint that it scrolls);
+  // at the very end the fade goes away. One rule for every scrolling list or panel in the app.
+  var FSEL = '[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap,[data-wf-fadetop]';
+  function fadeOne(el) {
+    if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
+    if (!el.__wfMaskOwn) return;
+    var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY), more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1;
+    var top = +el.getAttribute('data-wf-fadetop') || 0, parts = [];
+    if (!top && !more) { if (el.__wfM) { el.style.maskImage = el.style.webkitMaskImage = ''; el.__wfM = ''; el.__wfMaskOwn = undefined; } return; }
+    var m = 'linear-gradient(to bottom, ' + (top ? 'transparent 0, #000 ' + top + 'px, ' : '#000 0, ') + (more ? '#000 calc(100% - 32px), transparent 100%)' : '#000 100%)');
+    if (m !== el.__wfM) { el.style.webkitMaskImage = m; el.style.maskImage = m; el.__wfM = m; }
+  }
+  var fq = false;
+  function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; document.querySelectorAll(FSEL).forEach(fadeOne); }); }
+  window.__wfFade = fadeAll;
+  document.addEventListener('scroll', function (e) { var t = e.target; if (t && t.nodeType === 1 && t.matches && t.matches(FSEL)) fadeOne(t); }, true);
+  window.addEventListener('resize', fadeAll);
+  if (window.MutationObserver) { var fMo = new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var n = ms[i].target; if (n && n.nodeType === 1 && (n.__wfM !== undefined && ms[i].attributeName === 'style')) continue; fadeAll(); return; } });
+    var fGo = function () { fadeAll(); fMo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'aria-hidden', 'aria-expanded'] }); };
+    if (document.body) fGo(); else document.addEventListener('DOMContentLoaded', fGo); }
+  setInterval(fadeAll, 1000);   // content that grows by animation (drawers opening) is caught within a second
   apply();
 })();
