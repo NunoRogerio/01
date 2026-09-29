@@ -386,10 +386,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
   <section role="dialog" data-swipe="up" data-swipe-key="pf" aria-modal="true" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 32px; z-index: 40; overflow: hidden; border-radius: 0 0 28px 28px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{pfY}}); translate: 0 {{pfDy}}px; visibility: {{pfVis}}; pointer-events: {{pfPE}}; transition: transform {{pfDur}} {{pfEase}}, visibility 0s linear {{pfVisDelay}}">
     <h2 id="pfTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Preferences</h2>
-    <div class="wf-snap" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 0 16px 0; opacity: {{pfInOp}}; transform: translateY({{pfInY}}); transition: opacity .3s ease {{pfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pfInDelay}}">
+    <div class="wf-snap" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 0 16px 0; opacity: {{pfInOp}}; transform: translateY({{pfInY}}); transition: opacity .3s ease {{pfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pfInDelay}}">
       <!-- Top row: the small brand (symbol and name, medium grey) on the left, aligned with the close button on the right;
            then 40px of space and the profile card at full width -->
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; margin-bottom: -8px">
         <span aria-hidden="true" style="display: flex; align-items: center; gap: 8px; min-width: 0; color: #636366; font-size: 17px; font-weight: 600; letter-spacing: 0.02em; line-height: 22px; white-space: nowrap">
           <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
         </span>
@@ -413,10 +413,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
         <div role="radiogroup" aria-label="{{g.label}}" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
           <span aria-hidden="true" style="margin-left: 4px; font-size: 17px; font-weight: 600; line-height: 22px; color: #545458">{{g.label}}</span>
-          <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 36px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
-            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 2px; bottom: 2px; left: 2px; width: {{g.thumbW}}; border-radius: 8px; background: #FFFFFF; transform: translateX({{g.thumbX}}); transition: transform .4s cubic-bezier(.3,.9,.25,1)"></span>
+          <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 10px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
+            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; border-radius: 999px; background: #D7F41A; transform: translateX({{g.thumbX}}); transition: transform .4s cubic-bezier(.3,.9,.25,1)"></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
-              <button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 8px; background: transparent; color: #000000; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
+              <button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: #1C1C1E; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
             </sc-for>
           </div>
         </div>
@@ -672,7 +672,7 @@ class Component extends DCLogic {
     const theme = P ? P.get('theme') : (s.theme || 'light'), text = P ? P.get('text') : (s.text || 'normal'), lang = window.__wfLang || 'en';
     const setPref = (k, v) => { if (P) P.set(k, v); this.setState({ [k]: v }); };
     const group = (label, cur, opts, pick) => { const i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
-      label, cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 4px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
+      label, cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 20px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
       opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, pick: () => { if (o[0] !== cur) pick(o[0]); } })) }; };
     return {
       me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
@@ -742,9 +742,9 @@ class Component extends DCLogic {
       openPrefs: () => this.setState({ pf: true, pfSpin: false }),
       closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); }, 280); },
       pfGroups: [
-        group('Language', lang, me.lang === 'pt' ? [['pt', 'Português'], ['en', 'English']] : [['en', 'English']], (l) => { try { window.sessionStorage.setItem('wf-prefs-open', '1'); } catch (e) {} if (window.__wfSetLang) window.__wfSetLang(l); }),
+        group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', 'JP']], (l) => { try { window.sessionStorage.setItem('wf-prefs-open', '1'); } catch (e) {} if (window.__wfSetLang) window.__wfSetLang(l); }),
         group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
-        group('Text size', text, [['condensed', 'Condensed'], ['normal', 'Normal'], ['comfortable', 'Comfortable']], (v) => setPref('text', v))
+        group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v))
       ]
     };
   }

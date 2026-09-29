@@ -196,7 +196,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg>
     </button>
     <div role="group" aria-label="Camera" style="position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 220px; height: 44px; padding: 4px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: #D7F41A; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
       <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"></path></svg>Thermal
       </button>
@@ -317,7 +317,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </button>
       <div style="position: absolute; left: 0; right: 0; bottom: 34px; height: 44px">
     <div role="group" aria-label="Camera" style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 220px; height: 44px; padding: 4px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: #D7F41A; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
       <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"></path></svg>Thermal
       </button>
@@ -508,7 +508,7 @@ class Component extends DCLogic {
     const isThermal = s.mode === 'thermal';
     const seg = (m, active) => ({
       pressed: active ? 'true' : 'false',
-      fg: active ? '#FFFFFF' : '#98989F',
+      fg: active ? '#1C1C1E' : '#E5E5EA',
       pick: () => this.setState({ mode: m })
     });
     const AL = this.wfScoped().cands.length;

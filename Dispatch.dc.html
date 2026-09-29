@@ -204,7 +204,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: relative; z-index: 2; width: 390px; height: {{mapGap}}px; margin-top: 4px; flex-shrink: 0; pointer-events: none; transition: height .5s cubic-bezier(.2,.8,.2,1)">
     <div role="group" aria-label="Projection horizon" style="position: absolute; left: 16px; top: {{hzTop}}px; pointer-events: auto; transition: top .5s cubic-bezier(.2,.8,.2,1); display: {{hzShow}}; grid-template-columns: {{hzCols}}; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: #F2F2F7; border: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
       
-      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 54px; height: 36px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.026), 0 3px 1px rgba(0,0,0,0.009); box-sizing: border-box"></span>
+      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 54px; height: 36px; border-radius: 999px; background: #D7F41A; box-shadow: 0 3px 8px rgba(0,0,0,0.026), 0 3px 1px rgba(0,0,0,0.009); box-sizing: border-box"></span>
       <sc-for list="{{horizons}}" as="hz" hint-placeholder-count="3">
         <button type="button" class="chip" aria-pressed="{{hz.pressed}}" onClick="{{hz.pick}}" style="position: relative; border: 0; border-radius: 999px; background: transparent; color: {{hz.fg}}; font: 600 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">{{hz.label}}</button>
       </sc-for>

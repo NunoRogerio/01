@@ -268,7 +268,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="position: absolute; left: 16px; top: 146px; font-size: 13px; color: #98989F">{{tab.meta}}</span>
       </sc-if>
       <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-        <span class="seg" aria-hidden="true" style="position: absolute; top: 2px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+        <span class="seg" aria-hidden="true" style="position: absolute; top: 2px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #D7F41A; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
           <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}
@@ -395,7 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
       <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 34px; display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 44px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-        <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #636366; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+        <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #D7F41A; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
           <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}
@@ -787,7 +787,7 @@ class Component extends DCLogic {
         pick: () => this.setState({ ci: i, focusId: null, tab: null })
       })),
       cur, tab, box: boxFor(tab, 390, 248, true, 0),
-      tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#FFFFFF' : '#98989F', pick: () => this.setState({ tab: t.id }) })),
+      tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#1C1C1E' : '#E5E5EA', pick: () => this.setState({ tab: t.id }) })),
       nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
       // Location is not evidence: it sits in the conclusion card with the map button
       locTxt: cur.loc || cur.coords || '', ...(() => { const G = cur.ll || ((/-?[\d.]+° ?[NS][ ·]+-?[\d.]+° ?[EW]/.exec(cur.coords || cur.loc || '') || [])[0] || '');
