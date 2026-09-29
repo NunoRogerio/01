@@ -54,9 +54,9 @@ window.__wfRegionUp = function (st, co) {
     (fc.features||[]).forEach(function(f){
       var p=f.properties||{},g=f.geometry;if(!g||!g.coordinates)return;
       var st=String(p.POOState||'').replace(/^US-/,'');if(!/^[A-Z]{2}$/.test(st))return;
-      var pc=p.PercentContained;if(pc!=null&&pc>=100)return;
+      var pc=p.PercentContained;
       // Keep the map to what is actually burning: skip fires already controlled or contained, 90%+ contained, or under 10 acres.
-      if(p.ControlDateTime||p.ContainmentDateTime||p.FireOutDateTime)return;if(pc!=null&&pc>=90)return;if(p.IncidentSize!=null&&p.IncidentSize<10)return;
+      var fin=!!(p.ControlDateTime||p.ContainmentDateTime||p.FireOutDateTime)||(pc!=null&&pc>=100);if(!fin&&pc!=null&&pc>=90)return;if(fin&&!(p.ModifiedOnDateTime_dt&&Date.now()-p.ModifiedOnDateTime_dt<7*864e5))return;if(p.IncidentSize!=null&&p.IncidentSize<10)return;
       var ac=p.IncidentSize!=null?Math.round(p.IncidentSize).toLocaleString('en-US')+' ac':'';
       var note=(pc!=null?'Contained '+Math.round(pc)+'%':(p.FireDiscoveryDateTime?'Reported '+ago(p.FireDiscoveryDateTime):'Active'))+(ac?' · '+ac:'');
       var xy=toXY(g.coordinates[1],g.coordinates[0]);

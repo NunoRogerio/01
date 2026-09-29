@@ -16,8 +16,8 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=69"></script>
-<script src="i18n.js?v=42"></script>
-<script src="live.js?v=28"></script>
+<script src="i18n.js?v=43"></script>
+<script src="live.js?v=29"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -221,7 +221,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
-      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="10.25" fill="#E8590C"></circle><circle cx="14" cy="14" r="12.25" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle></svg></button>
+      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="10.25" fill="{{fm.fill}}"></circle><circle cx="14" cy="14" r="12.25" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle></svg></button>
       <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
@@ -318,7 +318,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <span style="display: block; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkLbl}}</span>
         <span class="wf-like-xs" style="display: block; margin-top: -3px; white-space: nowrap; --wf-fs: {{pop.fkFs}}px">{{pop.fkNum}}</span>
         <span style="display: {{pop.fkSubD}}; margin-top: -2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkSub}}</span>
-        <span role="status" style="display: inline-flex; align-items: center; max-width: 100%; box-sizing: border-box; height: 28px; margin-top: 16px; padding: 0 12px; border-radius: 999px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><b style="font-weight: 700">{{pop.fkTag}}</b></span>
+        <span role="status" style="display: inline-flex; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 16px; padding: 4px 12px; border-radius: 16px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; line-height: 20px; font-weight: 400"><b style="font-weight: 700">{{pop.fkTag}}</b></span>
         <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.fkName}}</b>
         <span class="wf-dot" style="display: {{pop.fkRegD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkReg}}</span>
       </div>
@@ -928,7 +928,7 @@ class Component extends DCLogic {
   }
   // Map legend: which layers are shown (shared by every map while the app is open).
   layers() {
-    const d = { fires: true, cands: true, stations: true, burn: true, active: true, held: true };
+    const d = { fires: true, resolved: true, cands: true, stations: true, burn: true, active: true, held: true };
     let v = window.__wfLayers;
     if (!v) { try { v = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
     const out = Object.assign(d, v || {});
@@ -948,6 +948,7 @@ class Component extends DCLogic {
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, '#E8590C', 'none'],
+      ['resolved', 'Resolved fires', CIR, '#A23E08', 'none'],
       ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M7 2.4 11.6 6.4V11.6H2.4V6.4Z', '#3A3A3C', 'none']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
@@ -1328,7 +1329,7 @@ class Component extends DCLogic {
         };
       })(),
       otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: (window.__wfY || '#E5FF00'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
-      fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
+      fireMarks: (LY.fires || LY.resolved) && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.filter((g) => (g.info && g.info.resolved) ? LY.resolved : LY.fires).map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
         const small = MANY || !!window.__wfLiveMap || x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
@@ -1336,14 +1337,14 @@ class Component extends DCLogic {
           ? { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' }
           : { zl: +x0.toFixed(1), zt: +y0.toFixed(1), zw: +(x1 - x0).toFixed(1), zh: +(y1 - y0).toFixed(1), rad: '0', flameD: 'none', clip: "path('M" + sp.map((q) => (q[0] - x0).toFixed(1) + ' ' + (q[1] - y0).toFixed(1)).join(' L') + " Z')" };
         const anc = small ? { left: +ox.toFixed(1), top: +(oy - 14).toFixed(1) } : { left: +((x0 + x1) / 2).toFixed(1), top: +y0.toFixed(1) };
-        return withTip({ ...anc, ...zone, pulseD: MANY ? 'none' : 'inline', _g: g, aria: 'Active fire ' + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, det: g.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, 'Active fire · ' + g.place, (/^Confirmed from /.test(g.note || '') ? 'Confirmed from a satellite detection' : (g.note || g.id)) + '.\nTap to see forces dispatched.');
+        return withTip({ ...anc, ...zone, pulseD: MANY ? 'none' : 'inline', _g: g, fill: (g.info && g.info.resolved) ? '#A23E08' : '#E8590C', aria: ((g.info && g.info.resolved) ? 'Resolved fire ' : 'Active fire ') + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, det: g.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, ((g.info && g.info.resolved) ? 'Resolved fire · ' : 'Active fire · ') + g.place, (/^Confirmed from /.test(g.note || '') ? 'Confirmed from a satellite detection' : (g.note || g.id)) + '.\nTap to see forces dispatched.');
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
       burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? (window.__wfLiveMap ? this.heatAreas(FIRES_V) : FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; })) : [],
       burnFx: !MANY && !window.__wfLiveMap && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
-        const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
+        const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
         const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0, TT = hasT ? (inT ? 50 : 62) : 0;   // pin: the legend sits inside the title box, under its text
         return { legend, legOn: legend.length > 0, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle, mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : 54, legIn: inT ? 21 : 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
