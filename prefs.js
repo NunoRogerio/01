@@ -178,9 +178,9 @@
   };
 
   // ---- Switchers (segmented multi-buttons): one shared motion for every one in the app ----
-  // On a new choice the yellow first grows 8px above and below, then glides to the option, and snaps back to its height
+  // On a new choice the yellow first grows 6px above and below, then glides to the option, and snaps back to its height
   // on arrival. Any thumb with class .seg or .segthumb gets it (for .segthumb the yellow is its .segblob child).
-  var SEG = { grow: 8, lead: 140, total: 620 };
+  var SEG = { grow: 6, lead: 140, total: 620 };
   window.__wfSeg = SEG;
   function segGrow(th) {
     var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 60 / SEG.total;
