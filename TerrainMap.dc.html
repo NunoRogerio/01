@@ -214,7 +214,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
-      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg width="21" height="21" viewBox="0 0 14 14" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 3.5px; top: 3.5px; overflow: visible; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="rgba(255,59,48,0.45)" stroke="#8E0A12" stroke-width="1.3" stroke-linejoin="round"></path></svg></button>
+      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><circle cx="14" cy="14" r="10.25" fill="#E8590C" stroke="#3A3A3C" stroke-width="1.5"></circle></svg></button>
       <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
@@ -256,14 +256,14 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <sc-if value="{{noLink}}" hint-placeholder-val="{{ false }}">
       <span class="tipwrap" tabindex="0" style="position: absolute; z-index: 24; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
         <sc-if value="{{pinSt}}" hint-placeholder-val="{{ false }}">
-          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><rect x="12" y="12" width="16" height="16" rx="3" fill="#248A3D" stroke="#FFFFFF" stroke-width="2" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35))"></rect></svg>
+          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><rect x="13" y="13" width="14" height="14" rx="3.5" fill="#2B4C7E" stroke="#FFFFFF" stroke-width="2" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35))"></rect></svg>
         </sc-if>
         <sc-if value="{{pinFire}}" hint-placeholder-val="{{ true }}">
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1">
           <circle cx="20" cy="20" r="{{pinTriR}}" fill="none" stroke="{{pinC}}" stroke-width="1.5" style="display: {{pinTriD}}"><animate attributeName="r" values="{{pinTriAnim}}" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
-          <circle cx="20" cy="20" r="8" fill="none" stroke="#D70015" stroke-width="1.5" style="display: {{pinCirD}}"><animate attributeName="r" values="8;19" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
+          <circle cx="20" cy="20" r="10" fill="none" stroke="#E8590C" stroke-width="1.5" style="display: {{pinCirD}}"><animate attributeName="r" values="10;21" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
           <polygon points="{{pinTriPts}}" fill="{{pinC}}" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round" style="display: {{pinTriD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
-          <circle cx="20" cy="20" r="7.5" fill="rgba(255,59,48,0.45)" stroke="#8E0A12" stroke-width="1.6" style="display: {{pinCirD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></circle>
+          <circle cx="20" cy="20" r="9.3" fill="#E8590C" stroke="#3A3A3C" stroke-width="1.4" style="display: {{pinCirD}}; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></circle>
         </svg>
         </sc-if>
         <span class="{{fire.tip}}" role="tooltip"><b>{{fire.tt}}</b>{{fire.td}}</span>
@@ -990,8 +990,8 @@ class Component extends DCLogic {
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
-      ['fires', 'Active fires', CIR, 'rgba(255,59,48,0.45)', '#8E0A12'],
-      ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M2.5 2.5H11.5V11.5H2.5Z', '#1E7A34', '#FFFFFF']
+      ['fires', 'Active fires', CIR, '#E8590C', '#3A3A3C'],
+      ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M3 4.5Q3 3 4.5 3H9.5Q11 3 11 4.5V9.5Q11 11 9.5 11H4.5Q3 11 3 9.5Z', '#2B4C7E', '#FFFFFF']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
@@ -1114,10 +1114,10 @@ class Component extends DCLogic {
     const stations = ST.map(([id, code, x, y, busy, nm, avail]) => {
       const on = !isRisk && id === selId;
       const o = at(x, y - 10, {
-        label: on && p.stationLabel ? p.stationLabel : code, icon: 'M12 3.2 21.6 20H2.4Z', fill: on ? '#FFFFFF' : '#1E7A34',
+        label: on && p.stationLabel ? p.stationLabel : code, icon: 'M12 3.2 21.6 20H2.4Z', fill: on ? '#FFFFFF' : '#2B4C7E',
         bg: on ? 'rgba(0,113,227,0.95)' : 'rgba(255,255,255,0.78)',
         bd: on ? 'rgba(120,180,255,0.9)' : 'rgba(60,60,67,0.132)',
-        fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#1E7A34',
+        fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#2B4C7E',
         op: (!isRisk && busy) ? 0.5 : 1
       });
       return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch.' : '.'));
@@ -1139,7 +1139,7 @@ class Component extends DCLogic {
         const st = { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4] || '', lat: la, lon: lo, tags: r[5] ? { operator: r[5] } : {}, x: xy[0], y: xy[1], kmX, kmY, partial: true };
         const nk = NEAR.get(V[j]), near = nk != null, RT = near ? this.routeOf({ i: V[j] }) : null, rOk = !!(RT && !RT.fail);
         const kmT = (k) => (k < 10 ? k.toFixed(1) : String(Math.round(k))) + ' km';
-        out.push(withTip(at(xy[0], xy[1] + 4, { label: near ? (rOk ? kmT(RT.km) + ' · ' + RT.min + ' min' : '~' + kmT(nk * 1.35) + ' · ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min') : '', icon: 'M5 5H19V19H5Z', fill: '#1E7A34', bg: near ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near ? 'rgba(30,122,52,0.55)' : 'transparent', fg: near ? '#1E7A34' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+        out.push(withTip(at(xy[0], xy[1] + 4, { label: near ? (rOk ? kmT(RT.km) + ' · ' + RT.min + ' min' : '~' + kmT(nk * 1.35) + ' · ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min') : '', icon: 'M6 8.5Q6 6 8.5 6H15.5Q18 6 18 8.5V15.5Q18 18 15.5 18H8.5Q6 18 6 15.5Z', fill: '#2B4C7E', bg: near ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near ? 'rgba(43,76,126,0.5)' : 'transparent', fg: near ? '#2B4C7E' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
           pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), r[4] || 'Fire station', [r[5] || 'Location from OpenStreetMap'].concat(near ? [rOk ? 'By road ' + kmT(RT.km) + ' · about ' + RT.min + ' min drive to the ' + (p.mode === 'pin' ? 'ignition point' : 'fire') : RT && RT.fail ? 'About ' + kmT(nk * 1.35) + ' by road, ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min (estimate: ' + kmT(nk) + ' in a straight line; the road router did not answer)' : kmT(nk) + ' in a straight line · finding the road route…'] : []).join('\n')));
       }
       return out;
@@ -1152,7 +1152,7 @@ class Component extends DCLogic {
       const phone = t.phone || t['contact:phone'] || '';
       const td = [t.operator, addr, phone].filter(Boolean).join('\n') || 'Location from OpenStreetMap';
       const st = { id, type: ty || 'node', name: nm || t.official_name || '', lat: la, lon: lo, tags: t, x: xy[0], y: xy[1], kmX, kmY };
-      return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M5 5H19V19H5Z', fill: '#1E7A34', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+      return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M6 8.5Q6 6 8.5 6H15.5Q18 6 18 8.5V15.5Q18 18 15.5 18H8.5Q6 18 6 15.5Z', fill: '#2B4C7E', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
         pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), nm || 'Fire station', td);
     }).filter(onScreen).filter((o) => { const f = this.inScopeFn(); return !f || !o._st || f(o._st.x, o._st.y); }) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
