@@ -131,6 +131,8 @@
     // On a card the band is the top row, edge to edge, with the round X at its end
     '.wf-qual.top{min-height:56px;padding:8px 8px 8px 16px;border-radius:14px 14px 0 0}.wf-qual.top>span{flex-grow:1;min-width:0;overflow:hidden;text-overflow:ellipsis}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
+    // The small version of the likelihood KPI (map tooltip panels): same look, smaller
+    ':root .wf-like.wf-like-s{font-size:64px!important;line-height:.95!important}' +
     // The glass overlay behind panels, one definition for the whole app: a slightly dark frosted layer, so the panel's edge
     // reads clearly against what is underneath. Change it here and every overlay changes.
     ':root{--wf-glass-bg:rgba(60,60,67,0.24);--wf-glass-blur:blur(10px) saturate(120%)}' +

@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=56"></script>
+<script src="prefs.js?v=57"></script>
 <script src="i18n.js?v=40"></script>
 <script src="live.js?v=27"></script>
 
@@ -294,24 +294,31 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
-  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: 240px; box-sizing: border-box; padding: 16px 16px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
-    <div style="display: flex; align-items: flex-start; gap: 8px">
-    <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
+  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: 256px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
+    <!-- Ignition candidate: what it is (qualifier band, edge to edge, with the round X); the place; the level above it;
+         the likelihood as the small version of the detail screen's KPI, centred -->
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
-      <b style="display: block; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">Ignition candidate</b>
-      <span style="display: block; margin-top: 2px; font-size: 15px; line-height: 19px; color: #3C3C43">{{pop.place}}</span>
-      <span style="display: flex; align-items: baseline; gap: 6px; margin-top: 8px"><span style="font-size: 28px; font-weight: 700; line-height: 32px; color: {{pop.pctC}}; font-variant-numeric: tabular-nums">{{pop.pct}}</span><span style="font-size: 15px; color: #545458">likelihood</span></span>
-      <span style="display: block; margin-top: 4px; font-size: 15px; line-height: 19px; color: #3C3C43">{{pop.src}}</span>
-      <span style="display: block; margin-top: 2px; font-size: 13px; line-height: 16px; color: #545458">{{pop.sub}}</span>
+      <div class="wf-qual top" style="border-radius: 28px 28px 0 0"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1.5H13L7 12.5Z" fill="{{pop.igC}}" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span>Ignition candidate</span>
+      <button type="button" onClick="{{popClose}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{popXRot}}); transition: transform .3s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div>
+      <div style="display: flex; flex-direction: column; padding: 16px 16px 0">
+        <b style="display: block; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{pop.place}}</b>
+        <span class="wf-dot" style="display: {{pop.regD}}; margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
+      </div>
+      <span role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; padding: 16px 16px 0">
+        <span class="wf-like wf-like-s">{{pop.pct}}</span>
+        <span style="margin-top: 2px; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap">Likelihood</span>
+      </span>
     </sc-if>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; align-items: flex-start; gap: 8px">
+    <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
       <b style="display: block; font-size: 16px; font-weight: 600; line-height: 18px; color: #000000">{{pop.tt}}</b>
       <span style="display: block; margin-top: 2px; font-size: 15px; line-height: 17px; color: #3C3C43; white-space: pre-line">{{pop.td}}</span>
-    </sc-if>
-    </span>
+        </span>
       <button type="button" onClick="{{popClose}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; margin: -4px -6px 0 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{popXRot}}); transition: transform .3s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
     </div>
-    <div style="display: {{pop.viewD}}; gap: 8px; margin-top: 12px">
+    </sc-if>
+    <div style="display: {{pop.viewD}}; gap: 8px; margin-top: 16px; padding: {{pop.btnPad}}">
       <sc-if value="{{pop.hasView}}" hint-placeholder-val="{{ true }}">
         <a href="{{pop.href}}" onClick="{{pop.go}}" class="wf-b wf-pri" style="flex: 1 1 0; display: flex; align-items: center; justify-content: center">View</a>
       </sc-if>
@@ -320,7 +327,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   </sc-if>
   <sc-if value="{{hasFc}}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); --wf-dy: {{fc.dy}}; width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
+  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); --wf-dy: {{fc.dy}}; width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 28px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
     <div style="flex-shrink: 0; padding: 16px 16px 12px">
       <div style="display: flex; align-items: flex-start; gap: 8px">
       <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
@@ -1412,7 +1419,7 @@ class Component extends DCLogic {
         const c = (window.__wfY || '#E5FF00');   // candidates: the app's hi-vis yellow with a dark rim
         return withTip(at(g.x, g.y, {
           c, rim: '#3A3A3C', r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
-          pulse: !MANY && !sel, still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,
+          pulse: !MANY && !sel, still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf, reg: window.__wfRegion ? window.__wfRegion(g.st, g.co) : (g.reg || ''),
           aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent',
           pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
         }), g.place + ' · ' + g.id, g.conf + '% likelihood · ' + g.src + '.\nTap to review.');
@@ -1526,7 +1533,7 @@ class Component extends DCLogic {
     OUT.hasPop = true;
     // Placement: above the marker if it fits, else below; if neither fits fully, the side with more room, kept on screen.
     // Sideways it follows the marker but always stays 16px from the nearest screen edge.
-    const PW = 240, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
+    const PW = 256, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
     // 24px between the panel and the marker's edge (half the marker's height from its centre, plus 24)
     // (the candidate triangle points down: its top edge is 9px above its centre, its tip 17px below; fires and stations ~10px)
     const GU = 24 + (P.kind === 'ign' ? 9 : 10), GD = 24 + (P.kind === 'ign' ? 17 : 10);
@@ -1535,8 +1542,8 @@ class Component extends DCLogic {
     const pTop = Math.round(Math.max(topLim, Math.min(botLim - PH, goUp ? y - GU - PH : y + GD))), pLeft = Math.round(Math.max(16, Math.min(W - PW - 16, x - PW / 2)));
     requestAnimationFrame(() => { try { const el = document.querySelector('[data-wf-pop]'); const h = el ? el.offsetHeight : 0; if (h && Math.abs(h - (this._popH || 0)) > 1) { this._popH = h; this.setState({ popHV: h }); } } catch (e) {} });
     OUT.pop = { tt: m.tt || '', td: strip(m.td), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
-      from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 14px)' : 'inset(calc(100% - 60px) 0 0 0 round 14px)',   // starts as the 60px band nearest the marker, then unfolds
-      ...chatFor(chatInc), isIgn: P.kind === 'ign', notIgn: P.kind !== 'ign', place: m.place || '', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
+      from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 28px)' : 'inset(calc(100% - 60px) 0 0 0 round 28px)',   // starts as the 60px band nearest the marker, then unfolds
+      ...chatFor(chatInc), isIgn: P.kind === 'ign', notIgn: P.kind !== 'ign', pad: P.kind === 'ign' ? '0' : '16px 16px 12px', btnPad: P.kind === 'ign' ? '0 16px 16px' : '0', regD: m.reg ? 'block' : 'none', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', place: m.place || '', reg: m.reg || '', igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
       hasView: !noView && (P.kind !== 'st' || !!m._st), viewD: !noView && (P.kind !== 'st' || !!m._st) ? 'flex' : 'none', href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
     return OUT;
   }
