@@ -1523,9 +1523,12 @@ class Component extends DCLogic {
     // Placement: above the marker if it fits, else below; if neither fits fully, the side with more room, kept on screen.
     // Sideways it follows the marker but always stays 16px from the nearest screen edge.
     const PW = 240, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
-    const PH = this._popH || (P.kind === 'ign' ? 236 : 150), up = y - 22 - topLim, dn = botLim - (y + 26);
+    // 24px between the panel and the marker's edge (half the marker's height from its centre, plus 24)
+    // (the candidate triangle points down: its top edge is 9px above its centre, its tip 17px below; fires and stations ~10px)
+    const GU = 24 + (P.kind === 'ign' ? 9 : 10), GD = 24 + (P.kind === 'ign' ? 17 : 10);
+    const PH = this._popH || (P.kind === 'ign' ? 236 : 150), up = y - GU - topLim, dn = botLim - (y + GD);
     const goUp = up >= PH ? true : dn >= PH ? false : up >= dn;
-    const pTop = Math.round(Math.max(topLim, Math.min(botLim - PH, goUp ? y - 22 - PH : y + 26))), pLeft = Math.round(Math.max(16, Math.min(W - PW - 16, x - PW / 2)));
+    const pTop = Math.round(Math.max(topLim, Math.min(botLim - PH, goUp ? y - GU - PH : y + GD))), pLeft = Math.round(Math.max(16, Math.min(W - PW - 16, x - PW / 2)));
     requestAnimationFrame(() => { try { const el = document.querySelector('[data-wf-pop]'); const h = el ? el.offsetHeight : 0; if (h && Math.abs(h - (this._popH || 0)) > 1) { this._popH = h; this.setState({ popHV: h }); } } catch (e) {} });
     OUT.pop = { tt: m.tt || '', td: strip(m.td), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
       from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 14px)' : 'inset(calc(100% - 60px) 0 0 0 round 14px)',   // starts as the 60px band nearest the marker, then unfolds
