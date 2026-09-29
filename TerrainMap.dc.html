@@ -36,7 +36,7 @@ body{margin:0}
 .tipwrap:hover,.tipwrap:focus-visible{z-index:40}
 .igname{display:inline-flex;align-items:center;gap:8px;max-width:240px;overflow:hidden;white-space:nowrap;transition:max-width .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease,margin-left .25s cubic-bezier(.2,.8,.2,1)}
 .igsel:hover .igname,.igsel:focus-visible .igname{max-width:0;opacity:0;margin-left:-8px;transition:max-width .25s cubic-bezier(.2,.8,.2,1) .22s,opacity .12s ease .22s,margin-left .25s cubic-bezier(.2,.8,.2,1) .22s}
-@keyframes wfUnfold{from{clip-path:var(--wf-from);opacity:.4}to{clip-path:var(--wf-to);opacity:1}}.wfpop{animation:wfUnfold .42s cubic-bezier(.2,.8,.2,1) both;transition:clip-path .26s cubic-bezier(.4,0,.8,.4),opacity .26s ease}.wfpop.wfpop-out{clip-path:var(--wf-from)!important;opacity:.4;animation:none}
+@keyframes wfFadeIn{from{opacity:0}to{opacity:1}}.wfpop{animation:wfFadeIn .25s ease both;transition:opacity .25s ease}.wfpop.wfpop-out{opacity:0;animation:none}
 @keyframes igin{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
 
 /* iOS layer */
@@ -290,7 +290,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
-  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-from: {{pop.from}}; --wf-to: inset(0 round 14px); clip-path: inset(0 round 14px); width: 240px; box-sizing: border-box; padding: 16px 16px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
+  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; width: 240px; box-sizing: border-box; padding: 16px 16px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
     <div style="display: flex; align-items: flex-start; gap: 8px">
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
@@ -316,7 +316,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   </sc-if>
   <sc-if value="{{hasFc}}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); --wf-from: {{fc.from}}; --wf-to: inset(0 round 18px); clip-path: inset(0 round 18px); width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
+  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
     <div style="flex-shrink: 0; padding: 16px 16px 12px">
       <div style="display: flex; align-items: flex-start; gap: 8px">
       <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
