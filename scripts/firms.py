@@ -45,7 +45,7 @@ def ne(name):
 
 
 JA = {}   # English name -> Japanese (Natural Earth name_ja, GeoNames alternate names in Japanese) for data/names-ja.json
-KANA = lambda t: any('\u3040' <= ch <= '\u30ff' or '\u4e00' <= ch <= '\u9fff' for ch in t)
+KANA = lambda t: any('\u30a0' <= ch <= '\u30ff' for ch in t)   # katakana: Japanese, not a Chinese name in kanji
 GEONAMES = 'https://download.geonames.org/export/dump/cities1000.zip'   # every place with 1,000+ people (CC BY 4.0)
 
 

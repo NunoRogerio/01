@@ -63,7 +63,7 @@
     o.push('[style*="text-shadow: rgb(255, 255, 255)"]{text-shadow:0 0 2px #000,0 0 6px #000!important}');   // map labels and credit: dark halo
     // The screens' own style sheets
     o.push('html,body{background:#1E1E20!important;color:#E8E8ED}a{color:#409CFF}');
-    o.push('.segthumb{background:#D7F41A!important}.segopt[aria-checked=true]{color:#1C1C1E!important}.segopt[aria-checked=false]{color:#D1D1D6!important}');   // the accent is the same hi-vis yellow in both themes
+    o.push('.segblob{background:#D7F41A!important}.segopt[aria-checked=true]{color:#1C1C1E!important}.segopt[aria-checked=false]{color:#D1D1D6!important}');   // the accent is the same hi-vis yellow in both themes
     o.push('.wf-qual{background:#3A3A3C!important;color:#E8E8ED!important}');
     o.push('.sheet{background:#262629!important}.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder{color:#AEAEB2!important}');
     o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
@@ -171,7 +171,12 @@
     role: role,
     person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'Access to all features · ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
-    set: function (k, v) { try { localStorage.setItem(key(k), v); } catch (e) {} apply(); }
+    set: function (k, v) {
+      // A new text size grows or shrinks the text smoothly instead of jumping (every size and line height eases for a moment)
+      if (k === 'text') { var r = document.documentElement, st = document.getElementById('wf-tx-anim');
+        if (!st) { st = document.createElement('style'); st.id = 'wf-tx-anim'; st.textContent = 'html.wf-tx-anim *{transition:font-size .45s cubic-bezier(.4,0,.2,1),line-height .45s cubic-bezier(.4,0,.2,1)!important}'; (document.head || r).appendChild(st); }
+        r.classList.add('wf-tx-anim'); clearTimeout(window.__wfTxT); window.__wfTxT = setTimeout(function () { r.classList.remove('wf-tx-anim'); }, 700); }
+      try { localStorage.setItem(key(k), v); } catch (e) {} apply(); }
   };
   apply();
 })();
