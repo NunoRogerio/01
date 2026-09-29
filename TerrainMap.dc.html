@@ -746,6 +746,13 @@ class Component extends DCLogic {
     cx = Math.min(B[2], Math.max(B[0], cx));
     const off = (H / 2 - w.c) / s;
     cy = Math.min(B[3] + off, Math.max(B[1] + off, cy));
+    // Zoomed out past the area's own view, the map can't be dragged up or down into empty space: the vertical play shrinks
+    // with the zoom and is gone at the zoom-out limit (the area stays centred in the clear part of the map)
+    const b = this.base(), zm = this.zMin();
+    if (b && b.s && s < b.s) {
+      const t = Math.max(0, Math.min(1, (s - zm) / Math.max(1e-9, b.s - zm))), mid = b.cy - (H / 2 - w.c) / b.s, slack = t * w.h / s;   // at the area's view: one screen of play; at the limit: none
+      const vis = cy - off; cy = Math.min(mid + slack, Math.max(mid - slack, vis)) + off;
+    }
     return { cx, cy, s };
   }
   // Real heat areas for the live map: the VIIRS detections (375 m pixels) near the visible fires, clustered by
