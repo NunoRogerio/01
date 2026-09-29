@@ -906,9 +906,9 @@ class Component extends DCLogic {
     const rows = brObj
       ? coList.sort(cmp).map((c) => rowOf(c, selState === brObj.id && selCounty === c.name, () => { this.wfSetScope({ st: brObj.id, co: c.name }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, '', false))
       : atCountries
-      ? CTRY.filter((c) => !q || c.name.toLowerCase().indexOf(q) >= 0).sort((a, b) => ((b.live ? 1 : 0) - (a.live ? 1 : 0)) || cmp(a, b)).map((c) => rowOf({ ...c, drillLbl: c.id === 'US' ? '. Show states' : c.id === 'PT' ? '. Show districts' : '. Show regions' }, selCountry === c.id, c.live ? () => this.wfSlide('fwd', () => this.setState({ scBrowse: c.id === 'US' ? null : c.id, q: '' })) : null, c.live ? c.n + c.unit : c.cont + ' · No live feed yet', c.live))
-      : usD.filter((d) => !q || d.name.toLowerCase().indexOf(q) >= 0).sort(cmp).map((d) => rowOf(d, selState === d.id, () => this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })), d.n + ' counties', true));
-    if (brObj && brObj.id === 'BRA' && !q) { const A = DATA.find((d) => d.id === 'AMZ'); if (A) rows.unshift({ ...rowOf({ ...A, drillLbl: '. Show its 9 states' }, selState === 'AMZ', () => this.wfSlide('fwd', () => this.setState({ scBrowse: 'AMZ', q: '' })), A.n + ' states', true), nameW: 600 }); }
+      ? CTRY.filter((c) => !q || c.name.toLowerCase().indexOf(q) >= 0).sort((a, b) => ((b.live ? 1 : 0) - (a.live ? 1 : 0)) || cmp(a, b)).map((c) => rowOf({ ...c, drillLbl: c.id === 'US' ? '. Show states' : c.id === 'PT' ? '. Show districts' : '. Show regions' }, selCountry === c.id, c.live ? () => { this.wfSetScope({ st: c.id, co: null }); this.wfSlide('fwd', () => this.setState({ scBrowse: c.id === 'US' ? null : c.id, q: '' })); } : null, c.live ? c.n + c.unit : c.cont + ' · No live feed yet', c.live))
+      : usD.filter((d) => !q || d.name.toLowerCase().indexOf(q) >= 0).sort(cmp).map((d) => rowOf(d, selState === d.id, () => { this.wfSetScope({ st: d.id, co: null }); this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })); }, d.n + ' counties', true));
+    if (brObj && brObj.id === 'BRA' && !q) { const A = DATA.find((d) => d.id === 'AMZ'); if (A) rows.unshift({ ...rowOf({ ...A, drillLbl: '. Show its 9 states' }, selState === 'AMZ', () => { this.wfSetScope({ st: 'AMZ', co: null }); this.wfSlide('fwd', () => this.setState({ scBrowse: 'AMZ', q: '' })); }, A.n + ' states', true), nameW: 600 }); }
     // Global search: from the 3rd letter, the search looks everywhere (countries, states and regions, counties and districts),
     // whatever level the list is on, so any destination is one tap away. Accents are ignored (braga = Braga, evora = Évora).
     const fold = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -918,10 +918,10 @@ class Component extends DCLogic {
       const hit = (n) => { const f = fold(n), i = f.indexOf(gq); return i < 0 ? -1 : (i === 0 ? 0 : (f[i - 1] === ' ' || f[i - 1] === '-') ? 1 : 2); };
       const G = [];
       CTRY.forEach((c) => { const h = hit(c.name); if (h < 0) return;
-        G.push({ h, lv: 0, row: rowOf({ ...c, drillLbl: '. Show its areas' }, selCountry === c.id, c.live ? () => this.wfSlide('fwd', () => this.setState({ scBrowse: c.id === 'US' ? null : c.id, q: '' })) : null, c.live ? 'Country · ' + c.n + c.unit : 'Country · No live feed yet', c.live) }); });
+        G.push({ h, lv: 0, row: rowOf({ ...c, drillLbl: '. Show its areas' }, selCountry === c.id, c.live ? () => { this.wfSetScope({ st: c.id, co: null }); this.wfSlide('fwd', () => this.setState({ scBrowse: c.id === 'US' ? null : c.id, q: '' })); } : null, c.live ? 'Country · ' + c.n + c.unit : 'Country · No live feed yet', c.live) }); });
       DATA.forEach((d) => {
         if (!CTRY.some((c) => c.id === d.id)) { const h = hit(d.name); if (h >= 0)
-          G.push({ h, lv: 1, row: rowOf({ ...d, drillLbl: '. Show its ' + unitOf(d).trim() }, selState === d.id, () => this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })), cName(d) + ' · ' + d.n + unitOf(d), true) }); }
+          G.push({ h, lv: 1, row: rowOf({ ...d, drillLbl: '. Show its ' + unitOf(d).trim() }, selState === d.id, () => { this.wfSetScope({ st: d.id, co: null }); this.wfSlide('fwd', () => this.setState({ scBrowse: d.id, q: '' })); }, cName(d) + ' · ' + d.n + unitOf(d), true) }); }
         d.counties.forEach((c) => { const h = hit(c.name); if (h < 0) return;
           const where = d.name === cName(d) ? d.name : d.name + ', ' + cName(d);
           G.push({ h, lv: 2, row: rowOf(c, selState === d.id && selCounty === c.name, () => { this.wfSetScope({ st: d.id, co: c.name }); this.wfListFlag(false); this.setState({ scOpen: false, list: false, scBrowse: undefined, q: '' }); }, where, false) }); });
