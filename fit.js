@@ -389,7 +389,9 @@ window.__wfBlink=function(path,dur){
   function haptic(){
     try{if(navigator.vibrate&&navigator.vibrate(8))return;}catch(e){}
     var a=document.activeElement;
-    try{if(!hap){hap=document.createElement('label');hap.id='wf-hap';hap.setAttribute('aria-hidden','true');var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;hap.appendChild(c);document.body.appendChild(hap);}hap.click();}catch(e){}
+    // iPhone (iOS 18+): a web page can only buzz through the system's own switch control. A fresh hidden switch is made,
+    // clicked inside the tap and removed at once, the way that is known to work (reusing one element is ignored by iOS).
+    try{var l=document.createElement('label');l.id='wf-hap';l.setAttribute('aria-hidden','true');l.style.display='none';var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;l.appendChild(c);(document.head||document.body).appendChild(l);l.click();l.remove();}catch(e){}
     try{if(isField(a)&&document.activeElement!==a)a.focus({preventScroll:true});}catch(e){}
   }
   // Haptic timed to land later (a toggle thumb clicking into place). Android: one vibration pattern started inside the tap
