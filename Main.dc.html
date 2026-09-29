@@ -693,7 +693,7 @@ class Component extends DCLogic {
       cs: (() => { const o = !!s.chatSet, pt = lang === 'pt';
         return { title: pt ? 'Definições das conversas' : 'Chat settings', str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
-          toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o }); } }; })(),
+          toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o, dsOpen: false }); } }; })(),   // one drawer open at a time
       // The data sources the app reads, with when this phone last loaded each (from the live-data cache)
       ds: (() => { const o = !!s.dsOpen, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         let c = {}; try { c = JSON.parse(localStorage.getItem('wf-live-fires-v15') || 'null') || {}; } catch (e) {}
@@ -714,7 +714,7 @@ class Component extends DCLogic {
           addTxt: T('Add data source', 'Adicionar fonte de dados'), noteD: s.dsAddTried ? 'block' : 'none',
           note: T('Adding your own sources is not available in this prototype yet.', 'Adicionar as suas próprias fontes ainda não está disponível neste protótipo.'),
           add: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsAddTried: true }); },
-          toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsOpen: !o }); } }; })(),
+          toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsOpen: !o, chatSet: false }); } }; })(),   // one drawer open at a time
       ai: (() => { const A = window.__wfChat && window.__wfChat.ai, has = !!(A && A.key()), st = A ? A.status() : null, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         const bad = has && st && !st.ok, busy = !!s.aiBusy, on = !!(A && A.on());
         return { title: T('Role-play with Claude', 'Encenação com o Claude'),
