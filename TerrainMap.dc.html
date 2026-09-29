@@ -948,7 +948,7 @@ class Component extends DCLogic {
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, '#E8590C', 'none'],
-      ['resolved', 'Resolved fires', CIR, '#A23E08', 'none'],
+      ['resolved', 'Resolved fires', CIR, '#5A2305', 'none'],
       ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M7 2.4 11.6 6.4V11.6H2.4V6.4Z', '#3A3A3C', 'none']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
@@ -1337,7 +1337,7 @@ class Component extends DCLogic {
           ? { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' }
           : { zl: +x0.toFixed(1), zt: +y0.toFixed(1), zw: +(x1 - x0).toFixed(1), zh: +(y1 - y0).toFixed(1), rad: '0', flameD: 'none', clip: "path('M" + sp.map((q) => (q[0] - x0).toFixed(1) + ' ' + (q[1] - y0).toFixed(1)).join(' L') + " Z')" };
         const anc = small ? { left: +ox.toFixed(1), top: +(oy - 14).toFixed(1) } : { left: +((x0 + x1) / 2).toFixed(1), top: +y0.toFixed(1) };
-        return withTip({ ...anc, ...zone, pulseD: MANY ? 'none' : 'inline', _g: g, fill: (g.info && g.info.resolved) ? '#A23E08' : '#E8590C', aria: ((g.info && g.info.resolved) ? 'Resolved fire ' : 'Active fire ') + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, det: g.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, ((g.info && g.info.resolved) ? 'Resolved fire · ' : 'Active fire · ') + g.place, (/^Confirmed from /.test(g.note || '') ? 'Confirmed from a satellite detection' : (g.note || g.id)) + '.\nTap to see forces dispatched.');
+        return withTip({ ...anc, ...zone, pulseD: MANY ? 'none' : 'inline', _g: g, fill: (g.info && g.info.resolved) ? '#5A2305' : '#E8590C', aria: ((g.info && g.info.resolved) ? 'Resolved fire ' : 'Active fire ') + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, det: g.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, ((g.info && g.info.resolved) ? 'Resolved fire · ' : 'Active fire · ') + g.place, (/^Confirmed from /.test(g.note || '') ? 'Confirmed from a satellite detection' : (g.note || g.id)) + '.\nTap to see forces dispatched.');
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
