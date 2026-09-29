@@ -95,18 +95,29 @@
   // Button colours, one definition for the whole app: secondary = dark grey with the hi-vis yellow label;
   // tertiary (subtle) = the yellow at 10% with dark text by day and light text at night. (Primary stays hi-vis yellow.)
   // Forest headers take three photos from this visit's random order of nature photos (fit.js)
+  // Big KPI size for a row of n numbers across width px: as big as the longest number allows, capped by how many share the row
+  window.__wfKpiPx = function (vals, n, width) {
+    n = Math.max(1, n || 1); var w = (width || 358) / n - 8, len = Math.max.apply(null, (vals || ['0']).map(function (v) { return String(v).length || 1; }));
+    var cap = n === 1 ? 96 : n === 2 ? 88 : n === 3 ? 68 : 52;
+    return Math.max(28, Math.min(cap, Math.floor(w / (len * 0.6)))) + 'px';
+  };
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
   var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:#D7F41A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     // One button: every text button in the app is 48px tall, 17px semibold, one corner radius; roles are primary, secondary, tertiary
-    ':root .btn:not(.round):not(.wf-cmp),:root .wf-b{height:48px!important;min-height:48px;box-sizing:border-box;border-radius:10px!important;font-size:17px!important;font-weight:600!important;line-height:22px!important;padding-top:0!important;padding-bottom:0!important;text-decoration:none}' +
+    ':root .btn:not(.round):not(.wf-cmp),:root .wf-b{height:48px!important;min-height:48px;box-sizing:border-box;border-radius:999px!important;font-size:17px!important;font-weight:600!important;line-height:22px!important;padding-top:0!important;padding-bottom:0!important;text-decoration:none}' +
     ':root .wf-pri,:root .btn.primary{background:#D7F41A!important;color:#1C1C1E!important;-webkit-text-fill-color:#1C1C1E;border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
     ':root .wf-danger{background:rgba(255,59,48,0.14)!important;color:#B0001A!important;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
     // Big KPI numbers across the app (forces, resolution summary, profiles): dark grey, one size
-    '.wf-big{color:#3A3A3C!important;font-size:44px!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
+    // Rows of 2 or 3 KPIs go as big as their numbers allow: each row sets --k from window.__wfKpiPx (below)
+    '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
+    // Qualifier band (what an item is: ignition detection, active fire, fire station): not a button. Full width, square
+    // corners, the map marker's colour, the marker itself before the label. One definition for the whole app.
+    '.wf-qual{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:0;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
+    '.wf-qual svg{flex-shrink:0;scale:1.1}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
     // The glass overlay behind panels, one definition for the whole app: a slightly dark frosted layer, so the panel's edge
     // reads clearly against what is underneath. Change it here and every overlay changes.

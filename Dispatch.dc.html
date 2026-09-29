@@ -189,7 +189,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding: 4px 8px">
       <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{hd.c}}">{{hd.title}}</h1>
-      <span title="{{hd.sub}}" style="font-size: 15px; font-weight: 400; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span>
+      <span title="{{hd.sub}}" style="margin-top: 2px; font-size: 17px; font-weight: 400; line-height: 22px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span>
+      <!-- What it is: the qualifier band, as on the ignition candidate card, in the map marker's deep orange -->
+      <span class="wf-qual" style="margin-top: 12px; margin-right: -52px; background: #E8590C; color: #1C1C1E"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C" stroke="#3A3A3C" stroke-width="1.3"></path></svg>{{hd.kind}}</span>
       <span role="timer" aria-label="{{hd.detAria}}" style="display: {{hd.tagD}}; align-self: flex-start; align-items: center; gap: 4px; height: 28px; margin-top: 8px; padding: 0 12px; border-radius: 999px; background: rgba(232,106,0,0.14); color: #A34800; font-size: 15px; white-space: nowrap; font-variant-numeric: tabular-nums"><span class="dot" style="width: 5.6px; height: 5.6px; margin-right: 3px"></span><span>{{hd.pre}}</span> <span data-tl-since="{{hd.t0}}">{{hd.el}}</span><span style="display: {{hd.postD}}"> ago</span></span>
       <span role="status" aria-label="{{activeAria}}" style="display: {{hd.pillD}}; align-items: center; gap: 7px; height: 28px; align-self: flex-start; margin: 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; max-width: 100%; font-variant-numeric: tabular-nums">
       {{pillTxt}}
@@ -353,7 +355,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
     </div>
     <!-- A fire being fought: every published count in one horizontal row (personnel, crews, ground vehicles, aircraft…) -->
-    <div class="wf-hscroll" data-sb-kpi="1" role="list" aria-label="Forces on scene" style="display: {{kpiRowD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
+    <div class="wf-hscroll" data-sb-kpi="1" role="list" aria-label="Forces on scene" style="--k: {{kpiPx}}; display: {{kpiRowD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
       <sc-for list="{{kpiRow}}" as="k" hint-placeholder-count="4">
         <div role="listitem" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1 0 {{k.w}}; min-width: 0; padding: 0 4px; border-left: {{k.sep}}; text-align: center">
           <span class="kpi wf-big" style="white-space: nowrap">{{k.v}}</span>
@@ -362,7 +364,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </div>
     <!-- The two figures only show when the source publishes them (no empty dashes) -->
-    <div data-sb-kpi2="1" style="display: {{kpiD}}; flex-shrink: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px 0">
+    <div data-sb-kpi2="1" style="--k: {{kpi2Px}}; display: {{kpiD}}; flex-shrink: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px 0">
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span class="lbl">{{k1L}}</span>
         <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k1V}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k1Sub}}</span></span>
@@ -768,6 +770,7 @@ class Component extends DCLogic {
     const areas = { 1: '7', 2: '30', 3: '77' };
     const pkgs = { 1: '1 crew · 2 tenders, suggested for +1h', 2: '2 crews · 3 tenders · 1 helicopter, suggested for +2h', 3: '4 crews · 5 tenders · 2 helicopters, suggested for +3h' };
     const fv = s.fv || null;
+    const HD = Math.max(0, (this._hdrB || 170) - 116);   // the header grew with the region line and qualifier band: the map's clip follows it
     const FIRE = fv ? [fv.x, fv.y] : [610, 290];
     const fireId = fv ? fv.id : 'F-0924-03';
     const frow = fv ? (this.wfWorld().fires.find((f) => f.id === fv.id) || null) : null;
@@ -1172,8 +1175,9 @@ class Component extends DCLogic {
       hd: (() => { const ign = !!(fv && /^Confirmed from /.test(fv.note || '')); const sec = Math.floor(Math.max(0, actMin) * 60), dd = Math.floor(sec / 86400), hh = Math.floor((sec % 86400) / 3600), mm = Math.floor((sec % 3600) / 60), ss = sec % 60;
         const p2 = (n) => String(n).padStart(2, '0'), el = (dd ? dd + ' d ' + hh + ' h' : hh ? hh + ' h ' + mm + ' min' : mm + ' min');
         const pt = /^pt/i.test(document.documentElement.lang || ''), t0 = Math.round(Date.now() - Math.max(0, actMin) * 60000);
-        return ign ? { title: fv.place, c: '#000000', sub: 'Confirmed active fire', tagD: 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
-          : { title: fv ? fv.place : 'North ridge', c: '#000000', sub: 'Fire ' + fireId, tagD: 'none', pillD: 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
+        const reg = frow && window.__wfRegion ? window.__wfRegion(frow.st, frow.co) : '';
+        return ign ? { title: fv.place, c: '#000000', sub: reg || 'Confirmed from a satellite detection', kind: 'Active fire', tagD: 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
+          : { title: fv ? fv.place : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held fire' : 'Active fire', tagD: 'none', pillD: 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: (s.sentUp ? 700 : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sb: this.wfBlade(!!s.sentUp, (up) => this.setState({ sentUp: up })), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
@@ -1191,13 +1195,15 @@ class Component extends DCLogic {
       stCancel: () => this.setState({ open: false, stDraft: null }),
       kpiD: (RO && RU && RU.length) || (K && String(K.k1V) === '—' && String(K.k2V) === '—') ? 'none' : 'grid',
       kpiRowD: RO && RU && RU.length ? 'flex' : 'none',
+      kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
       kpiRow: RO && RU ? RU.map((r, i) => ({ v: (fres && fres.estF && fres.estF[{ Personnel: 'man', 'Ground vehicles': 'terrain', Aircraft: 'aerial' }[r[0]]] ? '~' : '') + Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),
       // KPI numbers share one size; the words go centred under the number ('Contained 30%' -> '30%' over 'contained').
       ...(() => { const v1s = String(K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : '')).replace(/^\s*·?\s*/, ''), v2 = String(K ? K.k2V : maxEta), s2 = String(K ? K.k2S : ' min · ' + clock(maxEta)).replace(/^\s*·?\s*/, '');
-        const m = /^(\D*?)\s*(\d+%)$/.exec(v2); return { k1Sub: v1s, k2Val: m && m[1] ? m[2] : v2, k2Sub: m && m[1] ? m[1].toLowerCase() : s2 }; })(),
+        const m = /^(\D*?)\s*(\d+%)$/.exec(v2), k2Val = m && m[1] ? m[2] : v2; return { k1Sub: v1s, k2Val, k2Sub: m && m[1] ? m[1].toLowerCase() : s2,
+          kpi2Px: window.__wfKpiPx ? window.__wfKpiPx([K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k2Val], 2) : '44px' }; })(),
       sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (fres && fres.est ? fres.src : fres && fres.src ? 'Reported by ' + fres.src : fv.place) : 'Orders from this app') : 'Orders from this app', undoLabel: 'Reinforce',
       focusOp: (sent && !s.full && s.sentUp) ? 1 : 0, focusPE: (sent && !s.full) ? 'auto' : 'none',
       focusTap: () => this.setState(s.sentUp ? { sentUp: false } : { full: true, open: false, cfg: false }),   // blurred map: lower a raised panel, else open the map full screen
@@ -1223,7 +1229,7 @@ class Component extends DCLogic {
       cfgAria: 'Configure dispatch: ' + fmt(counts),
       mapW: 390, mapH: 844, no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : (sent ? 450 : 38),
       full: !!s.full, toggleFull: () => { const st = this.state || {}; this.setState({ full: !st.full, open: false, cfg: false }); },
-      tipSafe: s.full ? 70 : (sent ? 186 : 192), clipT: s.full ? 0 : 128, clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? 412 : 458), ctrlTop: sent ? 266 : 243, hzTop: s.full ? -68 : (sent ? 12 : 16),
+      tipSafe: s.full ? 70 : (sent ? 186 : 192) + HD, clipT: s.full ? 0 : 128 + HD, clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? 412 : 458), ctrlTop: (sent ? 266 : 243) + HD, hzTop: s.full ? -68 : (sent ? 12 : 16),
       downPE: (s.full || sent) ? 'none' : 'auto',
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: (s.full || sent) ? '560px' : '0px', navY: (s.full || sent) ? '140px' : '0px', downOp: (s.full || sent) ? 0 : 1,
       chevRot: open ? '180deg' : '0deg', sheetOpenStr: open ? 'true' : 'false', stationAria: sel.title + ', first on the fire line in ' + sum + ' minutes. Choose stations', crewsSel: freeSel + ' free crew' + (freeSel === 1 ? '' : 's'),

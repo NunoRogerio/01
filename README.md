@@ -8,7 +8,6 @@ Open the site on a phone and use **Add to Home Screen** for a full-screen app.
 
 - Sign in (`Login.dc.html`): pick a demo profile. Each role only sees its own area.
 - Coordinator flow: Incidents → Ignition candidate → Drone verification → Dispatch
-- Citizen reporter: `Report.dc.html` → `ReportSent.dc.html`
 - Incident chats (`Chat.dc.html`, `chat.js`): one chat per candidate or fire with the coordinator and the nearest stations' team leads; a scripted demonstration follows the incident from ignition candidate to closed
 
 Prototype only: not for real emergency decisions.

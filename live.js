@@ -5,7 +5,25 @@
 //  - Ignition candidates: NASA FIRMS VIIRS satellite hotspots for Europe + the Americas (data/hotspots.json),
 //    with every country's regions in data/regions.json; both written by the FIRMS GitHub Action
 // Replaces the design's sample fires, and the sample ignition candidates once satellite data exists.
-window.__wfLiveMap = true;   // tells the map to use live web-map tiles
+window.__wfLiveMap = true;
+// The level above a place, for the line under an item's name: county and state in the US, district in Portugal,
+// else region and country (from the regions file). One definition for candidates, fires and stations.
+// The region at a point (stations carry only coordinates): the smallest region box that holds it
+window.__wfRegionAt = function (lat, lon) {
+  var B = window.__wfGeoBoxes || {}, best = null, area = 1e9;
+  Object.keys(B).forEach(function (k) { if (k.indexOf('|') < 0 || k.indexOf('AMZ|') === 0) return; var b = B[k]; if (!b || lon < b[0] || lon > b[2] || lat < b[1] || lat > b[3]) return;
+    var a = (b[2] - b[0]) * (b[3] - b[1]); if (a < area) { area = a; best = k; } });
+  if (!best) return ''; var i = best.indexOf('|'); return window.__wfRegion(best.slice(0, i), best.slice(i + 1));
+};
+window.__wfRegion = function (st, co) {
+  st = st || ''; co = co || '';
+  var g = (window.__wfGeoStates || []).find(function (x) { return x[0] === st; });
+  var name = g ? g[1] : ({ PT: 'Portugal', CA: 'California', AZ: 'Arizona', OR: 'Oregon', NV: 'Nevada', NM: 'New Mexico', WA: 'Washington', ID: 'Idaho', CO: 'Colorado', UT: 'Utah', MT: 'Montana', BRA: 'Brazil', CAN: 'Canada' })[st] || st;
+  if (!co) return name; if (co === name) return co;
+  if (st === 'PT') return /^(Açores|Madeira)$/.test(co) ? co + ', Portugal' : co + ' District, Portugal';
+  if ((g ? g[4] : (st.length === 2 ? 'US' : '')) === 'US') return co + (st === 'LA' ? ' Parish' : st === 'AK' ? '' : ' County') + ', ' + name;
+  return co + ', ' + name;
+};   // tells the map to use live web-map tiles
 (function(){
   var US_URL='https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Incident_Locations_Current/FeatureServer/0/query';
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
