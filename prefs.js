@@ -103,7 +103,8 @@
     return Math.max(28, Math.min(cap, Math.floor(w / (len * 0.6)))) + 'px';
   };
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
-  var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:var(--wf-y);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.07);--wf-ter-fg:#3A3A3C}' +
+  var BTN = '.seg{transition:left .42s cubic-bezier(.4,0,.2,1) .14s,width .42s cubic-bezier(.4,0,.2,1) .14s!important}' +
+    ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:var(--wf-y);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.07);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     // One button: every text button in the app is 48px tall, 17px semibold, one corner radius; roles are primary, secondary, tertiary
@@ -175,5 +176,39 @@
       // Applied at once, like the language: no animation on the text size (the switcher's yellow has already landed)
       try { localStorage.setItem(key(k), v); } catch (e) {} apply(); }
   };
+
+  // ---- Switchers (segmented multi-buttons): one shared motion for every one in the app ----
+  // On a new choice the yellow first grows 8px above and below, then glides to the option, and snaps back to its height
+  // on arrival. Any thumb with class .seg or .segthumb gets it (for .segthumb the yellow is its .segblob child).
+  var SEG = { grow: 8, lead: 140, total: 620 };
+  window.__wfSeg = SEG;
+  function segGrow(th) {
+    var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 60 / SEG.total;
+    if (!h || !el.animate) return;
+    try { if (el.__wfSegA) el.__wfSegA.cancel(); } catch (x) {}
+    el.__wfSegA = el.animate([
+      { top: t + 'px', height: h + 'px', easing: 'cubic-bezier(.2,.8,.2,1)' },
+      { top: (t - g) + 'px', height: (h + 2 * g) + 'px', offset: k },
+      { top: (t - g) + 'px', height: (h + 2 * g) + 'px', offset: e, easing: 'ease-out' },
+      { top: t + 'px', height: h + 'px' }
+    ], { duration: SEG.total });
+  }
+  function segPos(th) { return th.style.left + '|' + th.style.transform; }
+  function segWatch(root) {
+    var list = root.querySelectorAll ? root.querySelectorAll('.seg,.segthumb') : [];
+    for (var i = 0; i < list.length; i++) if (list[i].__wfSegP === undefined) list[i].__wfSegP = segPos(list[i]);
+  }
+  if (window.MutationObserver) {
+    var segMo = new MutationObserver(function (ms) {
+      ms.forEach(function (m) {
+        var n = m.target;
+        if (m.type === 'attributes' && n.classList && (n.classList.contains('seg') || n.classList.contains('segthumb'))) {
+          var p = segPos(n); if (n.__wfSegP !== undefined && p !== n.__wfSegP && n.isConnected) segGrow(n); n.__wfSegP = p;
+        } else if (m.type === 'childList') { m.addedNodes.forEach(function (a) { if (a.nodeType === 1) { segWatch(a); if (a.classList && (a.classList.contains('seg') || a.classList.contains('segthumb'))) a.__wfSegP = segPos(a); } }); }
+      });
+    });
+    var segGo = function () { segWatch(document); segMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true, childList: true }); };
+    if (document.body) segGo(); else document.addEventListener('DOMContentLoaded', segGo);
+  }
   apply();
 })();
