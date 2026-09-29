@@ -434,12 +434,15 @@ window.__wfBlink=function(path,dur){
 //   (through its [data-pull-go] control);
 // - a blade marked data-pull="toggle" (raises and lowers, its [data-pull-go] control says aria-expanded) is raised by a
 //   swipe up and lowered by a swipe down, from anywhere on it.
-// Taps are untouched. A list inside only hands the gesture to the blade once it can scroll no further that way, so
-// scrolling works as before. The page can show the drag itself through window.__wfSwipeDrag(key, dy); otherwise the
+// Taps are untouched. Rule: the whole-surface swipe only applies to blades with no internal scroll. A blade whose
+// content scrolls (a list, a long panel) is swiped by its grabber only, so scrolling up and down never closes it. The page can show the drag itself through window.__wfSwipeDrag(key, dy); otherwise the
 // blade is moved directly and settles back smoothly.
 (function(){
   var S=null;
   function scroller(t,root){for(var n=t;n;n=n.parentElement){var cs=getComputedStyle(n);if(/(auto|scroll)/.test(cs.overflowY)&&n.scrollHeight>n.clientHeight+1)return n;if(n===root)break;}return null;}
+  var SCR='[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],[style*="overflow: scroll"],.wf-snap';
+  function scrolls(n){var cs=getComputedStyle(n);return /(auto|scroll)/.test(cs.overflowY)&&n.scrollHeight>n.clientHeight+1;}
+  function inner(el){var l=el.querySelectorAll(SCR);for(var i=0;i<l.length;i++)if(scrolls(l[i]))return true;return false;}   // any content that scrolls right now
   function own(el){return !(el.getAttribute('data-swipe-key')&&window.__wfSwipeDrag);}
   function paint(el,dy){var k=el.getAttribute('data-swipe-key');if(!own(el))window.__wfSwipeDrag(k,dy);else el.style.translate='0 '+dy+'px';}
   function press(g){if(!g)return;if(g.matches('button,a,[data-swipe-go],[data-pull-go]')&&!g.matches('.wf-grab,[data-pull-go=key]')){g.click();return;}
@@ -449,6 +452,7 @@ window.__wfBlink=function(path,dur){
     if(e.touches.length!==1)return;var t=e.target;if(!t||!t.closest)return;
     if(t.closest('.wf-grab,input,textarea,select,[data-noswipe]'))return;   // the grabber keeps its own drag; fields keep theirs
     var el=t.closest('[data-swipe],[data-pull]');if(!el)return;
+    if(scroller(t,el)||inner(el))return;   // scrolling content: the grabber alone swipes this blade
     var mode=el.hasAttribute('data-swipe')?'close':'pull',p=e.touches[0];
     S={el:el,mode:mode,dir:el.getAttribute(mode==='close'?'data-swipe':'data-pull'),x:p.clientX,y:p.clientY,t:performance.now(),sc:scroller(t,el),on:false,dy:0,k:1,fired:false};
     try{var r=el.closest('[data-wfroot]');if(r)S.k=r.getBoundingClientRect().width/((window.__wfVP||{}).w||390)||1;}catch(x){}
