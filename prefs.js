@@ -225,7 +225,7 @@
   var FSEL = '[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap,[data-wf-fadetop]';
   // The fade is laid over the content in the colour of what it sits on (e.g. a white card), so the text fades out
   // while the card and the panel keep crisp edges. 48px + 60% = 77px tall.
-  var FH = 77;
+  var FH = 85;   // 77px + 10%
   // The colour of the list's own container under that point: the outermost box inside the scroller that has a background
   // (the card), never a button, field or pill inside it; between cards, the panel's colour.
   function solid(c) { return c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c); }
@@ -251,8 +251,10 @@
     var b = bgAt(el, r.left + r.width / 2, r.bottom - 6), br = b.n.getBoundingClientRect();
     var L = Math.max(r.left, br.left), R = Math.min(r.right, br.right); if (b.n === el || b.n.contains(el)) { L = r.left; R = r.right; }
     var col = b.c, clear = col.replace(/^rgba?\(([^,]+),([^,]+),([^,)]+).*$/, 'rgba($1,$2,$3,0)');
-    ov.style.left = ((L - pr.left) / k) + 'px'; ov.style.width = ((R - L) / k) + 'px'; ov.style.top = ((r.bottom - pr.top) / k - FH) + 'px';
-    ov.style.background = 'linear-gradient(to bottom, ' + clear + ', ' + col + ')'; ov.style.opacity = '1';
+    // fully solid over the last 8px and snapped to whole pixels, so no sliver of content (a divider, a text edge) peeks under it
+    var bot = Math.ceil((r.bottom - pr.top) / k);
+    ov.style.left = Math.floor((L - pr.left) / k) + 'px'; ov.style.width = Math.ceil((R - L) / k) + 'px'; ov.style.top = (bot - FH) + 'px'; ov.style.height = FH + 'px';
+    ov.style.background = 'linear-gradient(to bottom, ' + clear + ' 0, ' + col + ' calc(100% - 8px), ' + col + ' 100%)'; ov.style.opacity = '1';
   }
   var fq = false;
   function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; document.querySelectorAll(FSEL).forEach(fadeOne); }); }
