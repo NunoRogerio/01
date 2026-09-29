@@ -1417,7 +1417,7 @@ class Component extends DCLogic {
     // The one number that leads: the burned area (real data only; '–' when the source gives none), with the time active as its annotation
     const kpiNum = I.ha == null ? '–' : u.area === 'ha' ? Math.round(I.ha).toLocaleString() : Math.round(I.ha / 0.4047).toLocaleString(), kpiUnit = I.ha == null ? '' : u.area === 'ha' ? 'ha' : 'acres';
     const kpiT = held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve.' : I.startMs ? 'Started ' + clock(I.startMs) + '.' : 'Start time not published.') : I.startMs ? 'Active for ' + D(now - I.startMs) + '.' : 'Start time not published.';
-    const kpiSub = I.ha == null ? 'Burned area not published.' : kpiUnit, kpiTT = held ? (held.took != null ? D(held.took) : '') : I.startMs ? D(now - I.startMs) : '';
+    const kpiSub = I.ha == null ? 'Burned area not published.' : (kpiUnit === 'ha' ? 'Hectares' : 'Acres'), kpiTT = held ? (held.took != null ? D(held.took) : '') : I.startMs ? D(now - I.startMs) : '';
     const hEst = 250 + time.length * 26 + (held ? 60 : 0) + (fz.length ? 58 : 20) + (I.ha != null ? 26 : 0);
     const win = this.win(), H = this.H(), top0 = Math.max(win.t, 8) + 8, bot0 = Math.min(win.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 8;
     const above = (y - top0) > (bot0 - y);
