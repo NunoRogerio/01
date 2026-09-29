@@ -410,12 +410,7 @@ class Component extends DCLogic {
     if (s.view === 'chat' && C && s.key) {
       const c = C.get(s.key);
       if (c && C.unread(c) > 0 && document.visibilityState !== 'hidden') C.seen(s.key);
-      // Declared resolved: the chat gives way to the resolution summary; back from it lands on the Resolved tab
-      const win = c && c.closed && !c.dismissed && c.msgs.find((m) => m.summary);
-      if (win && Date.now() - win.t < 8000 && !(this._auto || (this._auto = {}))[c.key]) {
-        this._auto[c.key] = true;
-        setTimeout(() => this.setState({ view: 'summary', sheet: false, stack: [{ view: 'list', tab: 'resolved' }] }), 1800);
-      }
+      // Declared resolved: the chat stays; the resolution summary opens only from the trophy card or the state card
       const el = this._sc, n = c ? c.msgs.length : 0;
       if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { if (this._stick) el.scrollTop = el.scrollHeight; this._n = n; this._typ = !!(c && C.typing(c)); }
     }
