@@ -16,7 +16,7 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=78"></script>
-<script src="i18n.js?v=50"></script>
+<script src="i18n.js?v=51"></script>
 <script src="live.js?v=30"></script>
 <script src="chat.js?v=18"></script>
 
@@ -1000,7 +1000,7 @@ class Component extends DCLogic {
         const sc = I.sc || 5, P = [['Em curso', [3, 4, 5, 6], 'hot'], ['Em resolução', [7], 'amber'], ['Em conclusão', [8], 'ok'], ['Vigilância', [9], 'watch'], ['Encerrada', [10, 11, 12], 'off']];
         cur = Math.max(0, P.findIndex((q) => q[1].indexOf(sc) >= 0));
         st = P.map((q, i) => ({ name: q[0], c: C[q[2]], t: i === 0 ? t0 : (i === cur ? (I.updMs || null) : null) }));
-        if (cur > 0) note = 'ANEPC gives only the time of the latest change: the counter runs from that update';
+        if (cur > 0) note = 'Counted from the latest ANEPC update';
       } else if (frow.st === 'BRA') {
         st = [{ name: 'Ativo', c: C.hot, t: t0 }, { name: 'Em observação', c: C.watch, t: I.resolved ? I.updMs : null }]; cur = I.resolved ? 1 : 0;
       } else {
