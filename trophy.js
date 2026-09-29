@@ -91,13 +91,13 @@
     // One burst per turn of the trophy: sparks are released from the moment it starts turning until it stops (the turn is
     // 14% of the 8 s spin), and each one flies on, slowly, right to the photo's edge, fading out as it gets there,
     // whether or not the trophy is still turning. Every burst is different: its own shape, spark count, speed, sweep, curl and rhythm,
-    // and each spark its own size (radius 2 px up to 4.5 px), so no two bursts look the same.
+    // and each spark its own size (radius 1.2 px up to 2.25 px), so no two bursts look the same.
     var rnd = function (a, b) { return a + Math.random() * (b - a); }, last = '', TURN = 8000 * 0.14;
     var show = function () {
       var R = self._card.getBoundingClientRect(), T = self._cup.getBoundingClientRect(); if (!R.width) return;
       var cx = T.left + T.width / 2 - R.left, cy = T.top + T.height / 2 - R.top, r0 = T.width / 2, t0 = performance.now();
       var shapes = ['scatter', 'ring', 'rings', 'spiral', 'fan'].filter(function (k) { return k !== last; }), shape = shapes[Math.floor(Math.random() * shapes.length)]; last = shape;
-      var n = Math.round(rnd(256, 308)), rot = rnd(0, Math.PI * 2), life = rnd(3800, 4600), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
+      var n = Math.round(rnd(220, 265)), rot = rnd(0, Math.PI * 2), life = rnd(3800, 4600), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
       var sweep = (Math.random() < 0.5 ? -1 : 1) * rnd(0.5, 2) * Math.PI * 2, fanDir = rnd(0, Math.PI * 2), fanW = rnd(Math.PI * 0.9, Math.PI * 1.5);
       var pulses = Math.floor(rnd(0, 4)), depth = rnd(0.3, 0.8), ph = rnd(0, Math.PI * 2);   // the stream's rhythm: steady, or in 1 to 3 swells
       var ring = Math.round(rnd(14, 26));   // sparks per ring for the ring shapes
@@ -113,7 +113,7 @@
         var dx = Math.cos(a), dy = Math.sin(a);
         var tx = dx > 0 ? (R.width - cx) / dx : dx < 0 ? -cx / dx : 1e9, ty = dy > 0 ? (R.height - cy) / dy : dy < 0 ? -cy / dy : 1e9;   // to the photo's edge
         var edge = Math.max(10, Math.min(tx, ty) - r0), k = shape === 'rings' ? (Math.floor(i / ring) % 2 ? rnd(0.72, 0.8) : 1) : shape === 'scatter' || shape === 'fan' ? rnd(0.75, 1) : rnd(0.92, 1);   // speed: some sparks trail behind
-        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge + 6, curl: curl * rnd(0.7, 1.3), born: t0 + u * TURN, life: life / k * rnd(0.85, 1.15), r: rnd(2, 4.5) });   // every spark travels right to the photo's edge; k only changes its speed
+        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge, fade: Math.max(4, edge - 2), curl: curl * rnd(0.7, 1.3), born: t0 + u * TURN, life: life / k * rnd(0.85, 1.15), r: rnd(1.2, 2.25) });   // every spark travels right to the photo's edge; k only changes its speed
       }
     };
     if (!this._lis && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
@@ -131,7 +131,7 @@
 
       g.fillStyle = '#D7F41A';   // crisp vector dots: no glow, no blur
       live.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 3), w = q.curl * e * e;   // curl: a sideways drift
-        g.globalAlpha = t < 0.45 ? 1 : Math.max(0, 1 - (t - 0.45) / 0.55); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
+        g.globalAlpha = Math.max(0, 1 - q.d * e / q.fade); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
       g.globalAlpha = 1;
       requestAnimationFrame(draw);
     };
