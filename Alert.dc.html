@@ -176,7 +176,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 8px 12px">
         <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Ignition candidates</h1>
       <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onClick="{{navBack}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: {{backC}}; text-decoration: none">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
+        <svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
       </a>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
         <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
@@ -207,7 +207,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <button type="button" role="option" aria-selected="false" class="sqrow" data-sel="false" onClick="{{dr.pick}}" aria-label="{{dr.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 2px 8px; width: 100%; min-height: 60px; padding: 8px 16px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
           <span style="min-width: 0; line-height: 20px; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.place}}</span>
           <span style="text-align: right; font-size: 17px; line-height: 20px; font-variant-numeric: tabular-nums; color: {{dr.c}}">{{dr.conf}}%</span>
-          <span style="grid-row: 1 / span 2; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
+          <span style="grid-row: 1 / span 2; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
           <span style="grid-column: 1 / span 2; min-width: 0; line-height: 22px; font-size: 17px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.sub}}</span>
         </button>
       </div>
@@ -284,7 +284,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- The place and a close X on top; the likelihood, big, at the centre; the verdict and its status on one row; then
            where it is, with the map and the drone as two quiet buttons -->
       <!-- Top row: what it is (the qualifier band, light grey, edge to edge, the map marker in its own colour) and the round X -->
-      <div class="wf-qual top"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1.5H13L7 12.5Z" style="fill: var(--wf-y)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span>Ignition detection</span><a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{navBack}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a></div>
+      <div class="wf-qual top"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1.5H13L7 12.5Z" style="fill: var(--wf-y)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span>Ignition detection</span><a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{navBack}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a></div>
       <div style="display: flex; flex-direction: column; padding: 16px 16px 0">
         <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{curRow.place}}</h2>
         <span style="margin-top: 2px; font-size: 17px; line-height: 22px; color: #000000">{{region}}</span>
@@ -357,7 +357,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
     <div class="pop" role="status" style="position: absolute; left: 50%; top: 132px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: rgba(255,255,255,0.94); border: 1px solid rgba(60,60,67,0.11); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 30px -10px rgba(0,0,0,0.176); white-space: nowrap; font-size: 15px">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>{{toastText}}
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>{{toastText}}
       <button type="button" class="btn wf-ter wf-cmp" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #0062CC; font-size: 17px; font-weight: 600">Undo</button>
     </div>
   </sc-if>
@@ -391,7 +391,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </span>
       </sc-if>
       <button type="button" class="fsbtn" aria-label="Exit full screen" onClick="{{closeFull}}" style="position: absolute; right: 16px; top: 56px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
       <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 34px; display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 44px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: var(--wf-y); box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
