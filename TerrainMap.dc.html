@@ -294,6 +294,16 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-for>
   </div>
   </sc-if>
+  <sc-if value="{{wxOn}}" hint-placeholder-val="{{ false }}">
+  <!-- Weather at the map centre, in the legend's containers, under the legend -->
+  <div role="group" aria-label="Weather at the map centre" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{legL}}px; right: {{legR}}px; top: {{wxTop}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; pointer-events: auto">
+    <sc-for list="{{wx}}" as="w" hint-placeholder-count="3">
+      <span role="img" aria-label="{{w.aria}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: #3C3C43; font-size: 15px; line-height: 32px; white-space: nowrap; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{w.rot}}deg)"><path d="{{w.d}}"></path></svg>{{w.txt}}
+      </span>
+    </sc-for>
+  </div>
+  </sc-if>
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
   <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: {{pop.w}}px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
@@ -945,6 +955,36 @@ class Component extends DCLogic {
     try { window.sessionStorage.setItem('wf-layers', JSON.stringify(v)); } catch (e) {}
     this.forceUpdate();
   }
+  // Weather at the centre of the map, in legend-style containers under the legend: only once the map covers less than
+  // ~100 km across (a district or county, or closer), where one reading means something. Real data (Open-Meteo, current
+  // conditions), fetched after the map settles; nothing is shown when it isn't available.
+  wxRow(inLegendBox) {
+    const off = { wxOn: false, wx: [] };
+    if (!window.__wfLiveMap || inLegendBox || this.props.noWeather) return off;
+    const v = this.view(), W = this.W(), H = this.H(), w = this.win();
+    const x0 = v.cx + (w.l - W / 2) / v.s, x1 = v.cx + (W - w.r - W / 2) / v.s, yc = v.cy + (w.c - H / 2) / v.s, xc = (x0 + x1) / 2;
+    const lat = 34.19 - (yc - 662) / 2829, lon = (xc - 518) / 2345 - 118.13;
+    const km = (x1 - x0) / 2345 * 111.32 * Math.cos(lat * Math.PI / 180);
+    if (!(km > 0 && km < 100) || Math.abs(lat) > 85) return off;
+    const key = lat.toFixed(1) + ',' + lon.toFixed(1), C = window.__wfWx || (window.__wfWx = {}), d = C[key];
+    if (d === undefined) {
+      clearTimeout(this._wxT);
+      this._wxT = setTimeout(() => { if (C[key] !== undefined) return; C[key] = null;
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(2) + '&longitude=' + lon.toFixed(2) + '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto')
+          .then((r) => r.ok ? r.json() : null).then((j) => { const c = j && j.current; C[key] = c && c.temperature_2m != null ? c : false; this.forceUpdate(); })
+          .catch(() => { C[key] = false; }); }, 700);
+      return off;
+    }
+    if (!d) return off;
+    const us = lon < -50 && lat > 15, T = us ? Math.round(d.temperature_2m * 9 / 5 + 32) + ' °F' : Math.round(d.temperature_2m) + ' °C';
+    const WS = us ? Math.round(d.wind_speed_10m / 1.609) + ' mph' : Math.round(d.wind_speed_10m) + ' km/h';
+    const DIRS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'], from = DIRS[Math.round(((d.wind_direction_10m || 0) % 360) / 45) % 8];
+    const I = { t: 'M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z', h: 'M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5Z', w: 'M12 20V5M6.5 10.5 12 5l5.5 5.5' };
+    return { wxOn: true, wx: [
+      { d: I.t, rot: 0, txt: T, aria: 'Temperature ' + T },
+      { d: I.h, rot: 0, txt: Math.round(d.relative_humidity_2m) + '%', aria: 'Humidity ' + Math.round(d.relative_humidity_2m) + '%' },
+      { d: I.w, rot: ((d.wind_direction_10m || 0) + 180) % 360, txt: WS + ' ' + from, aria: 'Wind ' + WS + ' from ' + from }] };
+  }
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
@@ -1352,8 +1392,9 @@ class Component extends DCLogic {
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
         const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0, TT = hasT ? (inT ? 50 : 62) : 0;   // pin: the legend sits inside the title box, under its text
-        return { legend, legOn: legend.length > 0, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle, mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : 54, legIn: inT ? 21 : 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
-          legGap: inT ? '16px' : '6px', legPad: inT ? '0' : '0 12px 0 10px', legBg: inT ? 'transparent' : 'rgba(242,242,247,0.94)', legSh: inT ? 'none' : '0 2px 10px rgba(0,0,0,0.10)', ttlTop: Math.round(Math.max(52, this.win().t) + 14), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 14 + TT + (Number(p.legendOffset) || 0)),
+        const WX = this.wxRow(inT);
+        return { ...WX, legend, legOn: legend.length > 0, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle, mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : 54, legIn: inT ? 21 : 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
+          legGap: inT ? '16px' : '6px', legPad: inT ? '0' : '0 12px 0 10px', legBg: inT ? 'transparent' : 'rgba(242,242,247,0.94)', legSh: inT ? 'none' : '0 2px 10px rgba(0,0,0,0.10)', ttlTop: Math.round(Math.max(52, this.win().t) + 14), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 14 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 14 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? 40 : 0),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;
