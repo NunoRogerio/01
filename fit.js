@@ -378,7 +378,7 @@ window.__wfBlink=function(path,dur){
   var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],label,summary,.opt,.sqrow';
   var st=document.createElement('style');
   st.textContent='#wf-fx{position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:99998}'+
-    '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.09);transform:scale(0);opacity:1;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .42s ease}'+
+    '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.0855);transform:scale(0);opacity:1;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .42s ease}'+
     '#wf-hap{position:fixed;left:-99px;top:-99px;width:1px;height:1px;opacity:0;pointer-events:none}';
   document.head.appendChild(st);
   var box=null,dot=null,sx=0,sy=0,live=false,hap=null;
@@ -398,7 +398,7 @@ window.__wfBlink=function(path,dur){
   function hapticAt(ms){try{if(navigator.vibrate&&navigator.vibrate([0,ms,12]))return;}catch(e){}haptic();}
   window.__wfHapticAt=hapticAt;
   window.__wfHaptic=haptic;   // shared: other parts of the app can give the same tap (e.g. a toggle clicking into place)
-  function fade(fast){if(!box)return;var b=box,d=dot;box=dot=null;d.style.transition='transform .5s cubic-bezier(.2,.8,.2,1),opacity '+(fast?'.14s':'.42s')+' ease';d.style.opacity='0';setTimeout(function(){b.remove();},fast?180:500);}
+  function fade(fast){if(!box)return;var b=box,d=dot;box=dot=null;d.style.transition='transform .5s cubic-bezier(.4,0,.2,1),opacity '+(fast?'.14s':'.42s')+' ease';d.style.opacity='0';setTimeout(function(){b.remove();},fast?180:500);}
   document.addEventListener('pointerdown',function(e){
     var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;
     if(t.closest('[role=application]')&&!t.closest('[role=group]'))return;          // map panning stays clean
@@ -408,7 +408,7 @@ window.__wfBlink=function(path,dur){
     box=document.createElement('div');box.id='wf-fx';
     box.style.cssText='left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;border-radius:'+(parseFloat(cs.borderTopLeftRadius)||0)*k+'px';
     var x=e.clientX-r.left,y=e.clientY-r.top,R=Math.hypot(Math.max(x,r.width-x),Math.max(y,r.height-y));
-    dot=document.createElement('i');dot.style.cssText='left:'+(x-R)+'px;top:'+(y-R)+'px;width:'+2*R+'px;height:'+2*R+'px';
+    dot=document.createElement('i');dot.style.cssText='left:'+(x-R)+'px;top:'+(y-R)+'px;width:'+2*R+'px;height:'+2*R+'px;transform:scale('+Math.min(1,24/Math.max(R,1))+')';   // starts as a 48px circle under the finger, then grows to cover the element
     box.appendChild(dot);document.body.appendChild(box);sx=e.clientX;sy=e.clientY;live=true;
     requestAnimationFrame(function(){if(dot)dot.style.transform='scale(1)';});
   },{capture:true,passive:true});
