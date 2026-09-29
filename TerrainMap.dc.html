@@ -1465,7 +1465,7 @@ class Component extends DCLogic {
     const PS = (this.state || {}).pop, on = (kind, key) => !!PS && PS.kind === kind && PS.key === key;
     (OUT.fireMarks || []).forEach((m, i) => { const k = m._g ? m._g.id : i, o = on('fire', k); m.sel = sel('fire', k); m.bdW = o ? 4 : 0; });
     (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 0; m.bdW2 = o ? 10.4 : 0; m.po = o ? 'stroke' : 'normal'; });
-    (OUT.stations || []).forEach((m, i) => { const o = on('st', i); m.sel = sel('st', i); m.bdC = o ? (window.__wfY || '#E5FF00') : 'none'; m.bdW = o ? 9.6 : 0; });
+    (OUT.stations || []).forEach((m, i) => { const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? (window.__wfY || '#E5FF00') : 'none'; m.bdW = o ? 9.6 : 0; });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
     OUT.popXRot = (this.state || {}).popSpin ? '90deg' : '0deg';
@@ -1473,7 +1473,7 @@ class Component extends DCLogic {
     OUT.hasPop = false; OUT.pop = { chatD: 'none', chat: null, tt: '', td: '', left: 0, top: 0, ty: '0', hasView: false, viewD: 'none', href: '', go: null, isIgn: false, notIgn: true };
     OUT.hasFc = false; OUT.fc = { time: [], forces: [], chatD: 'none', chat: null };
     if (!P) return OUT;
-    const L = { fire: OUT.fireMarks, ign: OUT.ignMarks, st: OUT.stations }[P.kind] || [], m = L.find((q) => (q._g && q._g.id === P.key) || q._id === P.key) || (typeof P.key === 'number' ? L[P.key] : null);
+    const L = { fire: OUT.fireMarks, ign: OUT.ignMarks, st: OUT.stations }[P.kind] || [], m = L.find((q) => (q._g && q._g.id === P.key) || q._id === P.key || (P.kind === 'st' && (q._st ? q._st.id : q.tt) === P.key)) || (typeof P.key === 'number' ? L[P.key] : null);
     if (!m) return OUT;
     const W = this.W(), H = this.H(), x = Number(m.left) || 0, y = Number(m.top) || 0, above = y > 230;
     { const V = this.win(), vb = Math.min(V.b, H - Math.max(0, Number(this.props.padBottom) || 0));   // the marker panned off screen: its panel closes
