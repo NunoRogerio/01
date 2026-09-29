@@ -301,12 +301,12 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <div style="display: flex; padding: 12px 12px 0">
         <span style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; min-width: 0; text-align: center">
           <b class="wf-title-xs" style="display: block">{{pop.place}}</b>
-          <span class="wf-dot" style="display: {{pop.regD}}; margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
+          <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
         </span>
       </div>
       <span role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; padding: 8px 12px 0">
         <span class="wf-like-xs">{{pop.pct}}</span>
-        <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap">Likelihood</span>
+        <span style="margin-top: -5px; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap">Likelihood</span>
       </span>
     </sc-if>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
