@@ -154,8 +154,8 @@
   window.__wfFacePick = function (team, g, taken) { var T = FACES[team]; if (!T) return null; var pool = T[g === 'f' ? 'f' : 'm'], free = pool.filter(function (k) { return (taken || []).indexOf(k) < 0; });
     var c = free.length ? free : pool; return c[Math.floor(Math.random() * c.length)]; };
   window.__wfFaceUrl = furl;
-  var STAFF = { 'Nuno Rogerio': 1, 'Susana Vasconcellos': 1 };   // the app's own team keep their illustrated portraits
-  var DEMO = { 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3' };   // the demo profiles' own photos
+  var STAFF = { 'Nuno Rogerio': 1, 'Susana Vasconcellos': 1 };   // the app's own team: a photo from DEMO below, else the illustrated portrait
+  var DEMO = { 'Nuno Rogerio': 'pt-m2', 'Susana Vasconcellos': 'pt-f1', 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3' };   // the demo profiles' own photos
   var CACHE = {};
   // kit: 'pt' | 'anepc' | 'us' | 'calfire' | 'nv' | 'br'; chief: a coordinator or commander (helmet by rank)
   window.__wfAvatar = function (name, kit, chief) {
