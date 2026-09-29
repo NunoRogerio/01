@@ -220,7 +220,7 @@
     var segGo = function () { segWatch(document); segMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true, childList: true }); };
     if (document.body) segGo(); else document.addEventListener('DOMContentLoaded', segGo);
   }
-  // Scrolling panels: while there is more below, the last 32px fade out into the panel (a hint that it scrolls);
+  // Scrolling panels: while there is more below, the last 48px fade out into the panel (a hint that it scrolls);
   // at the very end the fade goes away. One rule for every scrolling list or panel in the app.
   var FSEL = '[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap,[data-wf-fadetop]';
   function fadeOne(el) {
@@ -229,7 +229,7 @@
     var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY), more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1;
     var top = +el.getAttribute('data-wf-fadetop') || 0, parts = [];
     if (!top && !more) { if (el.__wfM) { el.style.maskImage = el.style.webkitMaskImage = ''; el.__wfM = ''; el.__wfMaskOwn = undefined; } return; }
-    var m = 'linear-gradient(to bottom, ' + (top ? 'transparent 0, #000 ' + top + 'px, ' : '#000 0, ') + (more ? '#000 calc(100% - 32px), transparent 100%)' : '#000 100%)');
+    var m = 'linear-gradient(to bottom, ' + (top ? 'transparent 0, #000 ' + top + 'px, ' : '#000 0, ') + (more ? '#000 calc(100% - 48px), transparent 100%)' : '#000 100%)');
     if (m !== el.__wfM) { el.style.webkitMaskImage = m; el.style.maskImage = m; el.__wfM = m; }
   }
   var fq = false;
