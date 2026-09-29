@@ -263,7 +263,7 @@
     // fully solid over the last 8px and snapped to whole pixels, so no sliver of content (a divider, a text edge) peeks under it
     var bot = Math.ceil((r.bottom - pr.top) / k), topY = Math.floor((r.top - pr.top) / k);
     ov.style.left = Math.floor((L - pr.left) / k) + 'px'; ov.style.width = Math.ceil((R - L) / k) + 'px'; ov.style.top = (side === 'top' ? topY : bot - FH) + 'px'; ov.style.height = FH + 'px';
-    ov.style.background = 'linear-gradient(to ' + (side === 'top' ? 'top' : 'bottom') + ', ' + clear + ' 0, ' + col + ' calc(100% - 8px), ' + col + ' 100%)'; ov.style.opacity = '1';
+    ov.style.background = 'linear-gradient(to ' + (side === 'top' ? 'top' : 'bottom') + ', ' + clear + ' 0, ' + col + ' calc(100% - 8px), ' + col + ' 100%)'; ov.style.opacity = '0.8';   // 20% lighter
   }
   var fq = false;
   function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; document.querySelectorAll(FSEL).forEach(fadeOne); }); }
