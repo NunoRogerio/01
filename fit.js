@@ -4,6 +4,8 @@
 // rgba(var(--wf-y-rgb), a) for tints, and window.__wfY where a real colour value is needed (SVG fills, canvas).
 (function(){
   var US={ca:1,nv:1};
+  // Toggle tracks when on: the primary colour 4% darker, so the white thumb reads clearly on it (one definition for every toggle)
+  window.__wfTogY=function(){var h=(window.__wfY||'#E5FF00').replace('#','');var c=function(i){var v=Math.round(parseInt(h.substr(i,2),16)*0.96);return ('0'+v.toString(16)).slice(-2);};return '#'+c(0)+c(2)+c(4);};
   window.__wfSetY=function(role){var us=!!US[role||''];window.__wfY=us?'#CCFF00':'#E5FF00';
     var d=document.documentElement.style;d.setProperty('--wf-y',window.__wfY);d.setProperty('--wf-y-rgb',us?'204,255,0':'229,255,0');};
   var r='';try{r=localStorage.getItem('wf-role')||'';}catch(e){}

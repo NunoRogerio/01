@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=3">
 <link rel="icon" href="icon-192.png?v=3">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=64"></script>
+<script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=55"></script>
 <script src="i18n.js?v=39"></script>
@@ -755,7 +755,7 @@ class Component extends DCLogic {
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26]
         ].map(([name, what, t, still, day, key]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
           return { name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
-          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfY || '#E5FF00') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
+          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
@@ -806,7 +806,7 @@ class Component extends DCLogic {
           sub: T('Crew coordinators in the incident chats answer in character, written by Claude from the state of the fire.', 'Os coordenadores de equipa nas conversas respondem em personagem, escritos pelo Claude a partir do estado do incêndio.'),
           pill: busy ? T('Checking', 'A verificar') : bad ? T('Error', 'Erro') : has ? T('On', 'Ligado') : T('Off', 'Desligado'),
           pillBg: busy ? 'rgba(118,118,128,0.14)' : bad ? 'rgba(215,0,21,0.10)' : has ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)', pillFg: busy ? '#48484A' : bad ? '#B3001B' : has ? '#1E7A34' : '#48484A',
-          onStr: on ? 'true' : 'false', swBg: on ? (window.__wfY || '#E5FF00') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: has ? 1 : 0.4,
+          onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: has ? 1 : 0.4,
           toggle: () => { if (!A || !has) return; this.setState({ aiAsk: on ? 'off' : 'on' }); },   // opens the confirmation (the tap vibrates as usual)   // asks first (avoids mis-taps)
           ph: rep ? T('Paste the new key (sk-ant-…)', 'Cole a nova chave (sk-ant-…)') : has ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('Anthropic API key (sk-ant-…)', 'Chave da API Anthropic (sk-ant-…)'), draft: s.aiDraft || '', okD: has && !rep && !(s.aiDraft || '') ? 'flex' : 'none',
           onInput: (e) => this.setState({ aiDraft: e.target.value }),
