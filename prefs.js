@@ -245,27 +245,31 @@
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
     if (!el.__wfMaskOwn) return;
     var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY), more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1 && el.offsetParent;
-    var top = +el.getAttribute('data-wf-fadetop') || 0;
-    var m = top ? 'linear-gradient(to bottom, transparent 0, #000 ' + top + 'px, #000 100%)' : '';
-    if (m !== (el.__wfM || '')) { el.style.webkitMaskImage = m; el.style.maskImage = m; el.__wfM = m; }
-    var ov = el.__wfFadeEl, par = el.parentElement;
+    if (el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = ''; }
+    el.__wfM = '';
+    var par = el.parentElement, less = sc && el.scrollTop > 1 && el.offsetParent;   // content scrolled away above: fade at the top too
     if (!el.offsetParent) el.__wfCol = null;   // measured again next time the panel opens
-    if (!more || !par) { if (ov) ov.style.opacity = '0'; return; }
-    if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease;height:' + FH + 'px'; el.__wfFadeEl = ov; }
+    fadeEdge(el, par, 'top', less);
+    fadeEdge(el, par, 'bottom', more);
+  }
+  function fadeEdge(el, par, side, on) {
+    var key = side === 'top' ? '__wfFadeTop' : '__wfFadeEl', ov = el[key];
+    if (!on || !par) { if (ov) ov.style.opacity = '0'; return; }
+    if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease;height:' + FH + 'px'; el[key] = ov; }
     if (ov.parentElement !== par) { if (getComputedStyle(par).position === 'static') par.style.position = 'relative'; par.appendChild(ov); }
     var r = el.getBoundingClientRect(), pr = par.getBoundingClientRect(), k = pr.width / (par.offsetWidth || pr.width) || 1;
     var F = fadeCol(el), L = F.l == null ? r.left : Math.max(r.left, F.l), R = F.r == null ? r.right : Math.min(r.right, F.r);
     var col = F.c, clear = col.replace(/^rgba?\(([^,]+),([^,]+),([^,)]+).*$/, 'rgba($1,$2,$3,0)');
     // fully solid over the last 8px and snapped to whole pixels, so no sliver of content (a divider, a text edge) peeks under it
-    var bot = Math.ceil((r.bottom - pr.top) / k);
-    ov.style.left = Math.floor((L - pr.left) / k) + 'px'; ov.style.width = Math.ceil((R - L) / k) + 'px'; ov.style.top = (bot - FH) + 'px'; ov.style.height = FH + 'px';
-    ov.style.background = 'linear-gradient(to bottom, ' + clear + ' 0, ' + col + ' calc(100% - 8px), ' + col + ' 100%)'; ov.style.opacity = '1';
+    var bot = Math.ceil((r.bottom - pr.top) / k), topY = Math.floor((r.top - pr.top) / k);
+    ov.style.left = Math.floor((L - pr.left) / k) + 'px'; ov.style.width = Math.ceil((R - L) / k) + 'px'; ov.style.top = (side === 'top' ? topY : bot - FH) + 'px'; ov.style.height = FH + 'px';
+    ov.style.background = 'linear-gradient(to ' + (side === 'top' ? 'top' : 'bottom') + ', ' + clear + ' 0, ' + col + ' calc(100% - 8px), ' + col + ' 100%)'; ov.style.opacity = '1';
   }
   var fq = false;
   function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; document.querySelectorAll(FSEL).forEach(fadeOne); }); }
   window.__wfFade = fadeAll;
   document.addEventListener('scroll', function (e) { var t = e.target; if (t && t.nodeType === 1 && t.matches && t.matches(FSEL)) fadeOne(t); }, true);
-  setInterval(function () { document.querySelectorAll(FSEL).forEach(function (el) { if (el.__wfFadeEl) fadeOne(el); }); }, 250);   // follows panels while they slide
+  setInterval(function () { document.querySelectorAll(FSEL).forEach(function (el) { if (el.__wfFadeEl || el.__wfFadeTop) fadeOne(el); }); }, 250);   // follows panels while they slide
   window.addEventListener('resize', fadeAll);
   if (window.MutationObserver) { var fMo = new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var n = ms[i].target; if (n && n.nodeType === 1 && ((n.__wfM !== undefined && ms[i].attributeName === 'style') || n.__wfOv)) continue;
       if (ms[i].type === 'childList' && ms[i].addedNodes.length === 1 && ms[i].addedNodes[0].__wfOv) continue; fadeAll(); return; } });
