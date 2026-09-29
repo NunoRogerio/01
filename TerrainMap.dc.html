@@ -295,19 +295,19 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
   <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: {{pop.w}}px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
-    <!-- Ignition candidate (the selected marker already says what it is; no X: a tap on the marker or the map closes it): the place; the level above it;
-         the likelihood as the XS version of the detail screen's KPI, centred -->
+    <!-- Ignition candidate (the selected marker already says what it is; no X: a tap on the marker or the map closes it):
+         the likelihood on top ('Likelihood' above the XS KPI), then the place and the level above it, centred; then View -->
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
-      <div style="display: flex; padding: 12px 12px 0">
+      <span role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; padding: 12px 12px 0">
+        <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap">Likelihood</span>
+        <span class="wf-like-xs" style="margin-top: -3px">{{pop.pct}}</span>
+      </span>
+      <div style="display: flex; padding: 8px 12px 0">
         <span style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; min-width: 0; text-align: center">
           <b class="wf-title-xs" style="display: block">{{pop.place}}</b>
           <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
         </span>
       </div>
-      <span role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; padding: 8px 12px 0">
-        <span class="wf-like-xs">{{pop.pct}}</span>
-        <span style="margin-top: -2px; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap">Likelihood</span>
-      </span>
     </sc-if>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
     <div style="display: flex; align-items: flex-start; gap: 8px">
