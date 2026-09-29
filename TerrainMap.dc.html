@@ -315,9 +315,9 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
         <span class="wf-like-xs" style="display: block; white-space: nowrap; --wf-fs: {{pop.fkFs}}px">{{pop.fkNum}}</span>
         <span style="display: block; margin-top: -2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkSub}}</span>
+        <span role="status" style="display: inline-flex; align-items: center; max-width: 100%; box-sizing: border-box; height: 28px; margin-top: 16px; padding: 0 12px; border-radius: 999px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="margin-right: 4px">{{pop.fkTagT}}</span><b style="font-weight: 700">{{pop.fkTag}}</b></span>
         <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.fkName}}</b>
         <span class="wf-dot" style="display: {{pop.fkRegD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkReg}}</span>
-        <span role="status" style="display: inline-flex; align-items: center; max-width: 100%; box-sizing: border-box; height: 28px; margin-top: 16px; padding: 0 12px; border-radius: 999px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pop.fkTagT}}<b style="font-weight: 700">{{pop.fkTag}}</b></span>
       </div>
     </sc-if>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
@@ -1417,7 +1417,7 @@ class Component extends DCLogic {
     // The one number that leads: the burned area (real data only; '–' when the source gives none), with the time active as its annotation
     const kpiNum = I.ha == null ? '–' : u.area === 'ha' ? Math.round(I.ha).toLocaleString() : Math.round(I.ha / 0.4047).toLocaleString(), kpiUnit = I.ha == null ? '' : u.area === 'ha' ? 'ha' : 'acres';
     const kpiT = held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve.' : I.startMs ? 'Started ' + clock(I.startMs) + '.' : 'Start time not published.') : I.startMs ? 'Active for ' + D(now - I.startMs) + '.' : 'Start time not published.';
-    const kpiSub = I.ha == null ? 'Burned area not published.' : kpiUnit, kpiTT = held ? (held.took != null ? D(held.took) + ' ' : '') : I.startMs ? D(now - I.startMs) + ' ' : '';
+    const kpiSub = I.ha == null ? 'Burned area not published.' : kpiUnit, kpiTT = held ? (held.took != null ? D(held.took) : '') : I.startMs ? D(now - I.startMs) : '';
     const hEst = 250 + time.length * 26 + (held ? 60 : 0) + (fz.length ? 58 : 20) + (I.ha != null ? 26 : 0);
     const win = this.win(), H = this.H(), top0 = Math.max(win.t, 8) + 8, bot0 = Math.min(win.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 8;
     const above = (y - top0) > (bot0 - y);
