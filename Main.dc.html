@@ -468,8 +468,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </div>
             <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
               <sc-for list="{{ds.items}}" as="d" hint-placeholder-count="7">
-                <li style="display: flex; flex-direction: column; gap: 2px; margin: 0 16px; padding: 12px 0; border-top: 1px solid rgba(60,60,67,0.12)">
-                  <span style="font-size: 17px; line-height: 22px; color: #000000">{{d.name}}</span>
+                <!-- Rows: the name in bold, dividers edge to edge -->
+                <li style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+                  <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
                   <span style="font-size: 17px; line-height: 22px; color: #545458">{{d.sub}}</span>
                 </li>
               </sc-for>
@@ -702,6 +703,7 @@ class Component extends DCLogic {
       ds: (() => { const o = !!s.dsOpen, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         let c = {}; try { c = JSON.parse(localStorage.getItem('wf-live-fires-v15') || 'null') || {}; } catch (e) {}
         const ago = (t) => { if (!t) return T('Not loaded on this phone yet', 'Ainda não carregado neste telemóvel'); const m = Math.max(0, Math.round((Date.now() - t) / 60000));
+          if (lang === 'ja') return '読み込み: ' + (m < 1 ? 'たった今' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前');   // Japanese units
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         const items = [
           ['NASA FIRMS', T('Satellite heat detections (VIIRS) · Europe and the Americas', 'Deteções de calor por satélite (VIIRS) · Europa e Américas'), c.tSat],
