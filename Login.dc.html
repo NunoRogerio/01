@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="i18n.js?v=39"></script>
+<script src="i18n.js?v=40"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -294,7 +294,7 @@ class Component extends DCLogic {
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
       selPhoto: sel ? 'url("' + (uni(sel[0], sel[3]) || sel[8]) + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
-      selAccess: sel ? 'Access to all features · ' + ({ design: 'All regions', admin: 'All regions', pt: 'Portugal region only', ca: 'California region only', nv: 'Nevada region only', amz: 'Amazônia Legal region only' })[sel[0]] : '',   // mini card: organisation, then access on a row of its own
+      selAccess: sel ? 'All features. ' + ({ design: 'All regions', admin: 'All regions', pt: 'Portugal region only', ca: 'California region only', nv: 'Nevada region only', amz: 'Amazônia Legal region only' })[sel[0]] : '',   // mini card: organisation, then access on a row of its own
       goD: sel ? 'flex' : 'none', offD: sel ? 'none' : 'flex',
       profiles: P.map(([id, code, user, name, role, org, area, sum, photo0], i) => { const photo = uni(id, name) || photo0; return ({
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), feats: ({})[id] || 'All features enabled', sum, photoBg: photo ? 'url("' + photo + '")' : 'none',

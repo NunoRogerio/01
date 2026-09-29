@@ -181,7 +181,7 @@
   var who = PEOPLE[role] || null;
   window.__wfPrefs = {
     role: role,
-    person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'Access to all features · ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
+    person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'All features. ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) {
       // Applied at once, like the language: no animation on the text size (the switcher's yellow has already landed)

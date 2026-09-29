@@ -16,8 +16,8 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=55"></script>
-<script src="i18n.js?v=39"></script>
+<script src="prefs.js?v=56"></script>
+<script src="i18n.js?v=40"></script>
 <script src="live.js?v=27"></script>
 <script src="chat.js?v=17"></script>
 
@@ -483,7 +483,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
                   <!-- Text styles: title (bold), description (grey), annotation (smaller, mid grey) -->
                   <!-- Annotation line: when it was last loaded (bold), then when it was added -->
-                  <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73"><b style="display: {{d.loadedD}}; font-weight: 600">{{d.loaded}}<span style="font-weight: 400"> · </span></b><span style="white-space: nowrap">{{d.added}}</span></span>
+                  <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73"><b style="display: {{d.loadedD}}; font-weight: 600">{{d.loaded}}<span style="font-weight: 400">. </span></b><span style="white-space: nowrap">{{d.added}}</span></span>
                   </span>
                   <!-- Show or hide this source's data (asks first); the map and place names have no switch -->
                   <button type="button" role="switch" class="wf-tog" aria-checked="{{d.onStr}}" aria-label="{{d.name}}" aria-disabled="{{d.lockStr}}" onClick="{{d.toggle}}" style="display: {{d.togD}}; position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{d.swBg}}; opacity: {{d.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{d.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
@@ -713,7 +713,7 @@ class Component extends DCLogic {
     // Switching language reloads the app; the panel stays open through it (only its X closes it).
     if (this._pfBoot === undefined) { let f = false; try { f = window.sessionStorage.getItem('wf-prefs-open') === '1'; window.sessionStorage.removeItem('wf-prefs-open'); } catch (e) {} this._pfBoot = f; }
     const s = this.state || {}, P = window.__wfPrefs, boot = this._pfBoot && s.pf === undefined, pf = s.pf === undefined ? !!this._pfBoot : !!s.pf;
-    const me = (P && P.person) || { code: 'NR', name: 'Nuno Rogerio', title: 'Platform administrator', org: 'Forest Fire Watch', access: 'Access to all features · All regions', photo: '', lang: 'en' };
+    const me = (P && P.person) || { code: 'NR', name: 'Nuno Rogerio', title: 'Platform administrator', org: 'Forest Fire Watch', access: 'All features. All regions', photo: '', lang: 'en' };
     const theme = P ? P.get('theme') : (s.theme || 'light'), text = P ? P.get('text') : (s.text || 'normal'), lang = window.__wfLang || 'en';
     const setPref = (k, v) => { if (P) P.set(k, v); this.setState({ [k]: v }); };
     // Segmented controls: the yellow slides to the new option first; the choice is applied once it has arrived, so the
@@ -746,11 +746,11 @@ class Component extends DCLogic {
           if (pt && m < 1) return 'Carregado agora';
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         const items = [
-          ['NASA FIRMS', T('Satellite heat detections (VIIRS) · Europe and the Americas', 'Deteções de calor por satélite (VIIRS) · Europa e Américas'), c.tSat, false, 26, 'SAT'],
-          ['NIFC · WFIGS', T('Wildfire incidents · United States', 'Incêndios florestais · Estados Unidos'), c.tUS, false, 26, 'US'],
-          ['Fogos.pt · ANEPC', T('Rural fire occurrences · Portugal', 'Ocorrências de incêndios rurais · Portugal'), c.tPT, false, 26, 'PT'],
-          ['INPE · Programa Queimadas', T('Fire events · Brazil', 'Eventos de fogo · Brasil'), c.tBR, false, 27, 'BR'],
-          ['BC Wildfire Service', T('Wildfires · British Columbia', 'Incêndios florestais · Colúmbia Britânica'), c.tCAN, false, 26, 'CAN'],
+          ['NASA FIRMS', T('Satellite heat detections (VIIRS). Europe and the Americas', 'Deteções de calor por satélite (VIIRS). Europa e Américas'), c.tSat, false, 26, 'SAT'],
+          ['NIFC · WFIGS', T('Wildfire incidents. United States', 'Incêndios florestais. Estados Unidos'), c.tUS, false, 26, 'US'],
+          ['Fogos.pt · ANEPC', T('Rural fire occurrences. Portugal', 'Ocorrências de incêndios rurais. Portugal'), c.tPT, false, 26, 'PT'],
+          ['INPE · Programa Queimadas', T('Fire events. Brazil', 'Eventos de fogo. Brasil'), c.tBR, false, 27, 'BR'],
+          ['BC Wildfire Service', T('Wildfires. British Columbia', 'Incêndios florestais. Colúmbia Britânica'), c.tCAN, false, 26, 'CAN'],
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27],
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26]
         ].map(([name, what, t, still, day, key]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
@@ -818,7 +818,7 @@ class Component extends DCLogic {
           remove: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (rep) { this.setState({ aiRep: false, aiDraft: '' }); return; } this.setState({ aiAsk: 'rm' }); },
           note: has && !on ? T('Switched off: the key stays saved and the in-app replies are used. Switch on to role-play with Claude again.', 'Desligado: a chave fica guardada e são usadas as respostas da aplicação. Ligue para voltar à encenação com o Claude.') : bad ? T('Last call failed: ', 'A última chamada falhou: ') + st.err + T('. The in-app replies are used meanwhile.', '. Entretanto são usadas as respostas da aplicação.')
             : has && !st && (() => { try { return localStorage.getItem('wf-invited-by'); } catch (e) { return ''; } })() ? T('Invited by ', 'Convidado por ') + localStorage.getItem('wf-invited-by') + T('. Role-play is switched on; the first reply confirms it works.', '. A encenação está ligada; a primeira resposta confirma que funciona.')
-            : has && st && st.ok ? T('Working · last reply ', 'A funcionar · última resposta ') + new Date(st.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + ' · ' + st.model + T('. Calls are billed to your Anthropic account. The key stays on this phone only.', '. As chamadas são cobradas na sua conta Anthropic. A chave fica apenas neste telemóvel.')
+            : has && st && st.ok ? T('Working. Last reply ', 'A funcionar. Última resposta ') + new Date(st.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + '. ' + st.model + T('. Calls are billed to your Anthropic account. The key stays on this phone only.', '. As chamadas são cobradas na sua conta Anthropic. A chave fica apenas neste telemóvel.')
             : T('Get a key at console.anthropic.com. Calls are billed to your Anthropic account; the key stays on this phone only. Without it, the in-app replies are used.', 'Obtenha uma chave em console.anthropic.com. As chamadas são cobradas na sua conta Anthropic; a chave fica apenas neste telemóvel. Sem ela, são usadas as respostas da aplicação.'),
           noteC: bad ? '#B3001B' : '#6E6E73' }; })(),
       inv: (() => { const A = window.__wfChat && window.__wfChat.ai, key = A ? A.key() : '', pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), admin = this.wfRole() === 'admin';
