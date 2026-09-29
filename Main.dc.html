@@ -896,7 +896,7 @@ class Component extends DCLogic {
     const unread = out.filter((n) => n.t > seen).length;
     const items = out.map((n, i) => {
       const un = n.t > seen;
-      const ic = n.kind === 'ign' ? [TRI, n.c, 'rgba(0,0,0,0.25)'] : n.kind === 'fire' ? [CIR, '#E8590C', '#3A3A3C'] : [SQ, '#3A3A3C', '#FFFFFF'];
+      const ic = n.kind === 'ign' ? [TRI, n.c, 'rgba(0,0,0,0.25)'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, '#3A3A3C', 'none'];
       return { title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
