@@ -109,6 +109,7 @@
     // dialogs: a floating panel 48px above the bottom, 24px inside, the panel shadow plus a soft primary light from underneath
     'html .wf-dlg{left:0!important;right:0!important;bottom:var(--wf-safe-b)!important;padding:24px!important;border-radius:var(--wf-panel-r)!important;box-shadow:0 -10px 315px 14px rgba(var(--wf-y-rgb),.495),0 -90px 160px rgba(var(--wf-y-rgb),.3),var(--wf-panel-sh)!important;transition-property:transform,box-shadow,translate!important;transition-duration:.5s,.45s,.5s!important}' +
     'html .wf-dlg[aria-hidden="true"]{translate:0 calc(var(--wf-safe-b) + 24px)!important;box-shadow:0 -10px 315px 14px rgba(var(--wf-y-rgb),0),0 -90px 160px rgba(var(--wf-y-rgb),0),0 8px 40px rgba(0,0,0,0)!important}' +
+    '.wf-tog,.sw26{box-shadow:inset 0 1px 3px rgba(0,0,0,.22),inset 0 0 0 .5px rgba(0,0,0,.06)!important}' +   // toggle track: a soft inner shadow, one rule for every toggle
     '.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}' +
     // dialogs: 24px around the content, plus 48px clear of the home indicator
     '.seg{transition:left .42s cubic-bezier(.4,0,.2,1) .14s,width .42s cubic-bezier(.4,0,.2,1) .14s!important}' +
