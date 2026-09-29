@@ -11,15 +11,15 @@
 <meta name="apple-mobile-web-app-title" content="Fire Watch">
 <meta name="theme-color" content="#F2F2F7">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png?v=2">
-<link rel="icon" href="icon-192.png?v=2">
-<script src="fit.js?v=51"></script>
-<script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=18"></script>
+<link rel="apple-touch-icon" href="icon-180.png?v=3">
+<link rel="icon" href="icon-192.png?v=3">
+<script src="fit.js?v=52"></script>
+<script src="avatar.js?v=8"></script>
+<script src="prefs.js?v=19"></script>
 <script src="i18n.js?v=33"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
-<script src="trophy.js?v=13"></script>
+<script src="trophy.js?v=14"></script>
 
 <title>Incident chats</title>
 <script src="./support.js"></script>
@@ -69,7 +69,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 <span style="min-width: 0; font-size: 17px; font-weight: {{r.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.place}}</span>
                 <span style="font-size: 15px; line-height: 18px; color: {{r.timeC}}; font-variant-numeric: tabular-nums">{{r.time}}</span>
                 <span style="min-width: 0; font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="color: {{r.stC}}">{{r.st}}</span> · {{r.last}}</span>
-                <span style="justify-self: end; display: {{r.badgeD}}; min-width: 22px; height: 22px; box-sizing: border-box; padding: 0 7px; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 13px; font-weight: 600; line-height: 22px; text-align: center">{{r.unread}}</span>
+                <span style="justify-self: end; display: {{r.badgeD}}; min-width: 22px; height: 22px; box-sizing: border-box; padding: 0 7px; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 13px; font-weight: 600; line-height: 22px; text-align: center">{{r.unread}}</span>
               </a>
             </li>
           </sc-for>
@@ -370,7 +370,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 14px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
         <sc-for list="{{pp.ach}}" as="a" hint-placeholder-count="2">
           <article style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF">
-            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #D7F41A"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
             <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
               <span style="font-size: 13px; line-height: 16px; color: #1E7A34">{{a.kicker}}</span>
               <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{a.place}}</span>
@@ -494,7 +494,7 @@ class Component extends DCLogic {
     const hx = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',');
     // A station's colour is its crest's predominant colour (the palette only when a crest has none)
     const colOfOrg = (org) => { const k = C.crest(c, org).color; if (k) return k; const i = c.people.findIndex((p) => p.org === org); return SCOL[(i < 0 ? 0 : i) % SCOL.length]; };
-    const colOf = (i) => (c.people[i] ? colOfOrg(c.people[i].org) : SCOL[i % SCOL.length]), ME_C = '#D7F41A';
+    const colOf = (i) => (c.people[i] ? colOfOrg(c.people[i].org) : SCOL[i % SCOL.length]), ME_C = (window.__wfY || '#E5FF00');
     // Photo outlines: the person's colour at 50%
     const half = (col) => 'rgba(' + hx(col) + ',0.5)';
     const ring = (col) => '0 0 0 2px ' + (DK ? '#1E1E20' : '#FFFFFF') + ', 0 0 0 4px ' + half(col);
@@ -594,13 +594,13 @@ class Component extends DCLogic {
         const acts = (m.actions || []).filter((a) => !m.done || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
-            cls: done ? '' : a.primary ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? '#D7F41A' : '#2C2C2E', fg: a.primary ? '#1C1C1E' : '#D7F41A', w: a.primary ? 600 : 500,
+            cls: done ? '' : a.primary ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? (window.__wfY || '#E5FF00') : '#2C2C2E', fg: a.primary ? '#1C1C1E' : (window.__wfY || '#E5FF00'), w: a.primary ? 600 : 500,
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;
         items.push({ isCard: true, time, tag: T(m.tag), tagC: I ? I.c : DK && m.tagC ? lite(m.tagC, 0.45) : (m.tagC || '#545458'), title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
-          hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (/%$/.test(m.kpi.v) ? '#D7F41A' : m.kpi.c) : '#000000', kpiCls: m.kpi && /%$/.test(m.kpi.v) ? 'wf-like' : '', kpiFs: m.kpi && /%$/.test(m.kpi.v) ? '60px' : '30px', kpiLh: m.kpi && /%$/.test(m.kpi.v) ? '64px' : '32px', kpiWrap: m.kpi && /%$/.test(m.kpi.v) ? 'wrap' : 'nowrap', kpiBasis: m.kpi && /%$/.test(m.kpi.v) ? '100%' : 'auto', kpiPad: m.kpi && /%$/.test(m.kpi.v) ? '8px 0 4px' : '0',
+          hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (/%$/.test(m.kpi.v) ? (window.__wfY || '#E5FF00') : m.kpi.c) : '#000000', kpiCls: m.kpi && /%$/.test(m.kpi.v) ? 'wf-like' : '', kpiFs: m.kpi && /%$/.test(m.kpi.v) ? '60px' : '30px', kpiLh: m.kpi && /%$/.test(m.kpi.v) ? '64px' : '32px', kpiWrap: m.kpi && /%$/.test(m.kpi.v) ? 'wrap' : 'nowrap', kpiBasis: m.kpi && /%$/.test(m.kpi.v) ? '100%' : 'auto', kpiPad: m.kpi && /%$/.test(m.kpi.v) ? '8px 0 4px' : '0',
           hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: r.rc, crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
@@ -633,7 +633,7 @@ class Component extends DCLogic {
         pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
       acts, actD: acts.length ? 'flex' : 'none',
-      draft: s.draft || '', sendBg: (s.draft || '').trim() ? '#D7F41A' : '#E5E5EA',
+      draft: s.draft || '', sendBg: (s.draft || '').trim() ? (window.__wfY || '#E5FF00') : '#E5E5EA',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
       setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
       back: (e) => { if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false, sheet: false, tab: c.closed ? 'resolved' : (this.state || {}).tab }); } }

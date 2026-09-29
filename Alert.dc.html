@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Fire Watch">
 <meta name="theme-color" content="#F2F2F7">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png?v=2">
-<link rel="icon" href="icon-192.png?v=2">
-<script src="fit.js?v=51"></script>
-<script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=18"></script>
+<link rel="apple-touch-icon" href="icon-180.png?v=3">
+<link rel="icon" href="icon-192.png?v=3">
+<script src="fit.js?v=52"></script>
+<script src="avatar.js?v=8"></script>
+<script src="prefs.js?v=19"></script>
 <script src="i18n.js?v=33"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -135,9 +135,9 @@ a{color:#0062CC}a:hover{color:#004FA3}
 .btn:active,.chip:active,.opt:active,.card:active,.navi:active,.fsbtn:active,.mbtn:active{opacity:.5;transform:none!important;transition:opacity .06s}
 .btn .go,a.card:hover .go,.btn:hover .go{transform:none!important}
 .btn:hover .spin{transform:none}
-.primary{background:#D7F41A;color:#1C1C1E;}.primary,.primary.green{animation:none!important;padding:0 20px!important;justify-content:center;gap:8px;box-shadow:none}
+.primary{background:var(--wf-y);color:#1C1C1E;}.primary,.primary.green{animation:none!important;padding:0 20px!important;justify-content:center;gap:8px;box-shadow:none}
 .primary:hover{background:#C9E60F;color:#1C1C1E;box-shadow:none}.primary.green:hover{box-shadow:none}
-.primary.green{background:#D7F41A;color:#1C1C1E}.primary.green:hover{background:#C9E60F}
+.primary.green{background:var(--wf-y);color:#1C1C1E}.primary.green:hover{background:#C9E60F}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
 .ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
@@ -187,7 +187,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
       </sc-if>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
-        <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 4px 4px 0 8px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -7px; right: -7px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 14px; font-weight: 600; line-height: 20px; text-align: center">{{chat.n}}</span></a>
+        <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 4px 4px 0 8px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -7px; right: -7px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 600; line-height: 20px; text-align: center">{{chat.n}}</span></a>
       </sc-if>
       <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
         <span style="display: flex; flex-direction: column; padding: 4px 8px; color: #FFFFFF; text-shadow: 0 1px 10px rgba(0,0,0,0.45)"><span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">Ignition candidates</span><span style="font-size: 17px; line-height: 22px; color: rgba(255,255,255,0.85)">{{scopeName}}</span></span>
@@ -268,7 +268,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="position: absolute; left: 16px; top: 146px; font-size: 13px; color: #98989F">{{tab.meta}}</span>
       </sc-if>
       <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-        <span class="seg" aria-hidden="true" style="position: absolute; top: 2px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #D7F41A; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+        <span class="seg" aria-hidden="true" style="position: absolute; top: 2px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: var(--wf-y); box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
           <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}
@@ -284,7 +284,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- The place and a close X on top; the likelihood, big, at the centre; the verdict and its status on one row; then
            where it is, with the map and the drone as two quiet buttons -->
       <!-- Top row: what it is (the qualifier band, light grey, edge to edge, the map marker in its own colour) and the round X -->
-      <div class="wf-qual top"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1.5H13L7 12.5Z" fill="#D7F41A" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span>Ignition detection</span><a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{navBack}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a></div>
+      <div class="wf-qual top"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1.5H13L7 12.5Z" style="fill: var(--wf-y)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span>Ignition detection</span><a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{navBack}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a></div>
       <div style="display: flex; flex-direction: column; padding: 16px 16px 0">
         <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{curRow.place}}</h2>
         <span style="margin-top: 2px; font-size: 17px; line-height: 22px; color: #545458">{{region}}</span>
@@ -395,7 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
       <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 34px; display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 44px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-        <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: #D7F41A; box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+        <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: var(--wf-y); box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
           <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}

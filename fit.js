@@ -1,4 +1,14 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
+// Hi-vis accent, chosen by profile: the 3M yellow of firefighters' reflective stripes (#E5FF00) everywhere, and the
+// lime yellow of US fire services (#CCFF00) for the California and Nevada profiles. Screens use var(--wf-y) in CSS,
+// rgba(var(--wf-y-rgb), a) for tints, and window.__wfY where a real colour value is needed (SVG fills, canvas).
+(function(){
+  var US={ca:1,nv:1};
+  window.__wfSetY=function(role){var us=!!US[role||''];window.__wfY=us?'#CCFF00':'#E5FF00';
+    var d=document.documentElement.style;d.setProperty('--wf-y',window.__wfY);d.setProperty('--wf-y-rgb',us?'204,255,0':'229,255,0');};
+  var r='';try{r=localStorage.getItem('wf-role')||'';}catch(e){}
+  window.__wfSetY(r);
+})();
 // Nature photos, one list for the whole app (loading screen, sign in, alert header, chat header, trophy cards, forest
 // headers): forests from above (Unsplash), in a random order. Groups are kept for future sets: photos are shown one group
 // at a time in turn (never two of the same group in a row), and the photo from each
@@ -164,14 +174,14 @@ window.__wfBlink=function(path,dur){
     '#wf-load .bg.on{opacity:1;transform:scale(1)}'+
     '#wf-load .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.25) 60%,rgba(0,0,0,.62) 100%);opacity:0;transition:opacity .7s ease}'+
     '#wf-load.photo .shade{opacity:1}#wf-load .in{position:relative}'+
-    '#wf-load.photo .name{background:none;color:#D7F41A;animation:none;text-shadow:0 1px 12px rgba(0,0,0,.45)}'+
+    '#wf-load.photo .name{background:none;color:var(--wf-y);animation:none;text-shadow:0 1px 12px rgba(0,0,0,.45)}'+
     '#wf-load.photo .sub{color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
-    '#wf-load.photo .base{fill:#D7F41A}#wf-load.photo .ground{stroke:#D7F41A}#wf-load.photo svg{filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}'+
+    '#wf-load.photo .base{fill:var(--wf-y)}#wf-load.photo .ground{stroke:var(--wf-y)}#wf-load.photo svg{filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}'+
     '#wf-load .cap{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));text-align:center;font:400 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:rgba(255,255,255,.8);opacity:0;transition:opacity .7s ease .3s}'+
     '#wf-load.photo .cap{opacity:1}'+
     /* the loading counter, 0% to 100% */
     '#wf-load .pct{margin-top:-6px;font:600 51px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#8E8E93}'+
-    '#wf-load.photo .pct{color:#D7F41A;text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
+    '#wf-load.photo .pct{color:var(--wf-y);text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
     /* after log in (hand): the sign-in screen's own layout carries on. Logo, name and line of text stay exactly where and
        as big as they were, the line changes to 'Loading live data', the counter takes the fields' place at the centre */
     '#wf-load.hand{display:block}#wf-load.hand .in{position:absolute;inset:0;display:block;opacity:1;animation:none}'+
@@ -187,8 +197,8 @@ window.__wfBlink=function(path,dur){
   // Screens with a forest photo behind them start on its dark green, never on the light surface (no flash before the photo)
   if(/Login\.dc\.html/.test(location.pathname)||/\/(01\/)?(index\.html)?$/.test(location.pathname)){el.style.background='#1E2B22';try{document.documentElement.style.background='#1E2B22';}catch(e){}}
   var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
-    '<path class="base" fill="#D7F41A" fill-rule="evenodd" d="'+F+'">'+BLINK+'</path>'+
-    '<path class="ground" d="'+G+'" fill="none" stroke="#D7F41A" stroke-width="1.1" stroke-linecap="round"/></svg>'+
+    '<path class="base" style="fill: var(--wf-y)" fill-rule="evenodd" d="'+F+'">'+BLINK+'</path>'+
+    '<path class="ground" d="'+G+'" fill="none" stroke="'+(window.__wfY||'#E5FF00')+'" stroke-width="1.1" stroke-linecap="round"/></svg>'+
     '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span><span class="pct">0%</span></div><div class="cap"></div>';
   el.innerHTML=TPL;
   (document.body||document.documentElement).appendChild(el);

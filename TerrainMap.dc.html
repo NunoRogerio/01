@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Fire Watch">
 <meta name="theme-color" content="#F2F2F7">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png?v=2">
-<link rel="icon" href="icon-192.png?v=2">
-<script src="fit.js?v=51"></script>
-<script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=18"></script>
+<link rel="apple-touch-icon" href="icon-180.png?v=3">
+<link rel="icon" href="icon-192.png?v=3">
+<script src="fit.js?v=52"></script>
+<script src="avatar.js?v=8"></script>
+<script src="prefs.js?v=19"></script>
 <script src="i18n.js?v=33"></script>
 <script src="live.js?v=26"></script>
 
@@ -986,7 +986,7 @@ class Component extends DCLogic {
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
-      ['cands', 'Ignition candidates', 'M1 1.5H13L7 12.5Z', '#D7F41A', '#3A3A3C'],
+      ['cands', 'Ignition candidates', 'M1 1.5H13L7 12.5Z', (window.__wfY || '#E5FF00'), '#3A3A3C'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
@@ -1197,7 +1197,7 @@ class Component extends DCLogic {
       // An ignition candidate's pin is 30% smaller than a fire's estimated ignition point
       ...(() => { const cand = Array.isArray(p.ignitions) && p.ignitions.some((q) => q.id === p.pinId);
         return cand ? { pinTriPts: '6.7,9.15 33.3,9.15 20,31.55', pinTriR: 5.6, pinTriAnim: '5.6;13.3' } : { pinTriPts: '1,4.5 39,4.5 20,36.5', pinTriR: 8, pinTriAnim: '8;19' }; })(),
-      pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g ? '#D7F41A' : '#E86A00'; })(),
+      pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g ? (window.__wfY || '#E5FF00') : '#E86A00'; })(),
       pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinTriD: p.mode === 'spread' ? 'none' : 'inline', pinCirD: p.mode === 'spread' ? 'inline' : 'none', pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w25: +(2.5 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w50: +(5 * k).toFixed(5), w70: +(7 * k).toFixed(5), o12: +(12 * k).toFixed(5) + ';0',
         d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
@@ -1370,7 +1370,7 @@ class Component extends DCLogic {
           })
         };
       })(),
-      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: '#D7F41A', aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
+      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: (window.__wfY || '#E5FF00'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
       fireMarks: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => {
         const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
         let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
@@ -1403,7 +1403,7 @@ class Component extends DCLogic {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
         const sel = g.id === selId;
         const hi = g.conf >= 70, mid = g.conf >= 50;
-        const c = '#D7F41A';   // candidates: the app's hi-vis yellow with a dark rim
+        const c = (window.__wfY || '#E5FF00');   // candidates: the app's hi-vis yellow with a dark rim
         return withTip(at(g.x, g.y, {
           c, rim: '#3A3A3C', r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
           pulse: !MANY && !sel, still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf,

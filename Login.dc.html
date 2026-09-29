@@ -11,10 +11,10 @@
 <meta name="apple-mobile-web-app-title" content="Fire Watch">
 <meta name="theme-color" content="#F2F2F7">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png?v=2">
-<link rel="icon" href="icon-192.png?v=2">
-<script src="fit.js?v=51"></script>
-<script src="avatar.js?v=7"></script>
+<link rel="apple-touch-icon" href="icon-180.png?v=3">
+<link rel="icon" href="icon-192.png?v=3">
+<script src="fit.js?v=52"></script>
+<script src="avatar.js?v=8"></script>
 <script src="i18n.js?v=33"></script>
 
 <title>Log in</title>
@@ -43,8 +43,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
        The logo group is centred in the region above; the hint, log-in button and credits fill the one below. -->
   <div style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 0">
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0 16px">
-    <svg width="37" height="45" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35))"><path data-wf-eye="1" fill="#D7F41A" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#D7F41A" stroke-width="1.1" stroke-linecap="round"></path></svg>
-    <h1 style="margin: 16px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: #D7F41A; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
+    <svg width="37" height="45" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35))"><path data-wf-eye="1" style="fill: var(--wf-y)" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" style="stroke: var(--wf-y)" stroke-width="1.1" stroke-linecap="round"></path></svg>
+    <h1 style="margin: 16px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: var(--wf-y); text-shadow: 0 1px 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.5)">Log in to your account</p>
   </div>
   </div>
@@ -77,8 +77,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
   <div style="position: relative; z-index: 1; flex: 1 1 0; display: flex; flex-direction: column">
     <p style="display: {{offD}}; margin: 8px 16px 0; min-height: 36px; font-size: 15px; line-height: 18px; color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">{{hint}}</p>
 
-    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 16px 0 0; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none">Log in</a>
-    <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 16px 0 0; border: 1px solid rgba(215,244,26,0.14); border-radius: 999px; background: rgba(215,244,26,0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(215,244,26,0.38); -webkit-text-fill-color: rgba(215,244,26,0.38); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
+    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 16px 0 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none">Log in</a>
+    <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 16px 0 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">
     <p style="margin: 0; font-size: 15px; line-height: 18px; color: #FFFFFF">Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
@@ -325,6 +325,7 @@ class Component extends DCLogic {
             if (u) window.__wfSoftPhoto = { f: u[1], s: m ? parseFloat(m[1]) : 1, t: Date.now() }; } } catch (x) {}
         try { if (window.__wfSoftOut) window.__wfSoftOut(); } catch (x) {}   // the loading screen takes over right here, then carries on in the app
         setTimeout(() => { window.location.href = 'Main.dc.html'; }, 560);   // once the loading screen has faded in (0.5 s)
+        if (window.__wfSetY) window.__wfSetY(sel[0]);   // the signed-in profile's hi-vis colour, from the loading screen on
         try { window.localStorage.setItem('wf-role', sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
         window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[0], scope: null });
       }

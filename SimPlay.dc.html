@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-title" content="Fire Watch">
 <meta name="theme-color" content="#F2F2F7">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png?v=2">
-<link rel="icon" href="icon-192.png?v=2">
-<script src="fit.js?v=51"></script>
-<script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=18"></script>
+<link rel="apple-touch-icon" href="icon-180.png?v=3">
+<link rel="icon" href="icon-192.png?v=3">
+<script src="fit.js?v=52"></script>
+<script src="avatar.js?v=8"></script>
+<script src="prefs.js?v=19"></script>
 <script src="i18n.js?v=33"></script>
 
 <title>Fire Simulation</title>
@@ -500,7 +500,7 @@ class Component extends DCLogic {
       return { name: cardSt.name, fill: cardSt.fill, left: Math.round(Math.max(6, Math.min(366 - 262, sx - 128))), top: Math.round(above ? sy - 22 : sy + 24), ty: above ? '-100%' : '0',
         sub: coming.length ? 'Getting ready: ' + coming.join(', ') : 'Deploy a unit; it appears here when ready. Then select it and tap where to go.',
         rows: cardSt.kinds.map((k) => { const TT = T[k], left = cardSt.pool[k];
-          return { name: TT.name, icon: TT.icon, sub: left ? left + ' available · ready in ' + TT.turnout + ' min' : 'None left here', dis: !left || G.over, bg: left ? '#D7F41A' : 'rgba(118,118,128,0.12)', fg: left ? '#1C1C1E' : '#8E8E93',
+          return { name: TT.name, icon: TT.icon, sub: left ? left + ' available · ready in ' + TT.turnout + ' min' : 'None left here', dis: !left || G.over, bg: left ? (window.__wfY || '#E5FF00') : 'rgba(118,118,128,0.12)', fg: left ? '#1C1C1E' : '#8E8E93',
             aria: 'Deploy ' + TT.name.toLowerCase() + ' from ' + cardSt.name + ', ' + left + ' available', deploy: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.deploy(G.card, k); } }; }) }; })()
       : { name: '', fill: '', left: 0, top: 0, ty: '0', sub: '', rows: [] };
     const selV = sel ? (() => { const TT = T[sel.type];

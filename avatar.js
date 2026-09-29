@@ -7,7 +7,7 @@
   // Services: helmet, jacket or shirt, reflective stripes, collar, background
   var KIT = {
     // Portuguese volunteer and municipal firefighters (bombeiros): navy forest jacket with yellow and silver bands
-    pt: { jacket: '#1F2B45', stripe: '#D7F41A', stripe2: '#C9CED6', collar: '#172036', helmet: '#F2C200', chief: '#F4F4F2', bg: '#DCE3EE', badge: '#C8102E' },
+    pt: { jacket: '#1F2B45', stripe: (window.__wfY || '#E5FF00'), stripe2: '#C9CED6', collar: '#172036', helmet: '#F2C200', chief: '#F4F4F2', bg: '#DCE3EE', badge: '#C8102E' },
     // ANEPC command (national civil protection): navy with orange bands, white helmet
     anepc: { jacket: '#1B2440', stripe: '#F08A24', stripe2: '#C9CED6', collar: '#141B30', helmet: '#F4F4F2', chief: '#F4F4F2', bg: '#DCE3EE', badge: '#0A4DA2' },
     // US wildland crews (LAFD, LA County, CAL FIRE, Nevada Division of Forestry): yellow Nomex shirt, goggles on the helmet
@@ -100,7 +100,7 @@
   window.__wfCrests = null;
   try { fetch('data/crests.json').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (js) { window.__wfCrests = js.s || {}; try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} })
     .catch(function () { window.__wfCrests = {}; }); } catch (e) { window.__wfCrests = {}; }
-  var HER = [['#B0001A', '#F2C200'], ['#1F2B45', '#D7F41A'], ['#2E6B3A', '#F4F4F2'], ['#7A1F12', '#F2C200'], ['#0B4F8A', '#F4F4F2'], ['#4A2A6B', '#F2C200']];
+  var HER = [['#B0001A', '#F2C200'], ['#1F2B45', (window.__wfY || '#E5FF00')], ['#2E6B3A', '#F4F4F2'], ['#7A1F12', '#F2C200'], ['#0B4F8A', '#F4F4F2'], ['#4A2A6B', '#F2C200']];
   function hsh(t) { var h = 0; t = String(t || ''); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function normName(name) { return String(name || 'Fire station').trim().replace(/^BV\s+/, 'Bombeiros Voluntários de ').replace(/^BM\s+/, 'Bombeiros Municipais de ').replace(/^BS\s+/, 'Bombeiros Sapadores de '); }
