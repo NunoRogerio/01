@@ -271,13 +271,25 @@
     el.__wfCol = best ? { c: best, l: box[best].l, r: box[best].r, mixed: mixed } : { c: pc || 'rgb(242, 242, 247)', l: null, r: null, mixed: mixed };
     return el.__wfCol;
   }
+  function shown(el) {
+    var r = el.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    var x0 = Math.max(0, r.left), x1 = Math.min(W, r.right), y0 = Math.max(0, r.top), y1 = Math.min(H, r.bottom);
+    if (x1 - x0 < 8 || y1 - y0 < 8) return false;
+    for (var q = el; q && q.nodeType === 1; q = q.parentElement) { var cs = getComputedStyle(q); if (cs.visibility === 'hidden' || +cs.opacity < 0.05) return false; }
+    var pts = [[0.5, 0.5], [0.25, 0.3], [0.75, 0.7]];
+    for (var i = 0; i < pts.length; i++) { var h = document.elementFromPoint(x0 + (x1 - x0) * pts[i][0], y0 + (y1 - y0) * pts[i][1]); if (h && (h === el || el.contains(h))) return true; }
+    return false;
+  }
   function fadeOne(el) {
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
     if (!el.__wfMaskOwn) return;
     var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY), more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1 && el.offsetParent;
     if (el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = ''; }
     el.__wfM = '';
-    var par = el.parentElement, less = sc && el.scrollTop > 1 && el.offsetParent;   // content scrolled away above: fade at the top too
+    var par = el.parentElement, less = sc && el.scrollTop > 1 && el.offsetParent;
+    // A panel that is on the page but not what the viewer sees (slid off screen, under another view, faded out) gets no fade:
+    // its overlays would float over the view that is showing
+    if ((less || more) && !shown(el)) { less = more = false; }   // content scrolled away above: fade at the top too
     if (!el.offsetParent) el.__wfCol = null;   // measured again next time the panel opens
     var F0 = (less || more) ? fadeCol(el) : null;
     if (F0 && F0.mixed) {
@@ -291,7 +303,7 @@
   function fadeEdge(el, par, side, on) {
     var key = side === 'top' ? '__wfFadeTop' : '__wfFadeEl', ov = el[key];
     if (!on || !par) { if (ov) ov.style.opacity = '0'; return; }
-    if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease;height:' + FH + 'px'; el[key] = ov; }
+    if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.__wfOwn = el; OVS.push(ov); ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease;height:' + FH + 'px'; el[key] = ov; }
     if (ov.parentElement !== par) { if (getComputedStyle(par).position === 'static') par.style.position = 'relative'; par.appendChild(ov); }
     var r = el.getBoundingClientRect(), pr = par.getBoundingClientRect(), k = pr.width / (par.offsetWidth || pr.width) || 1;
     var F = fadeCol(el), L = F.l == null ? r.left : Math.max(r.left, F.l), R = F.r == null ? r.right : Math.min(r.right, F.r);
@@ -301,8 +313,12 @@
     ov.style.left = Math.floor((L - pr.left) / k) + 'px'; ov.style.width = Math.ceil((R - L) / k) + 'px'; ov.style.top = (side === 'top' ? topY : bot - FH) + 'px'; ov.style.height = FH + 'px';
     ov.style.background = 'linear-gradient(to ' + (side === 'top' ? 'top' : 'bottom') + ', ' + clear + ' 0, ' + col + ' calc(100% - 8px), ' + col + ' 100%)'; ov.style.opacity = '0.8';   // 20% lighter
   }
+  // Fades whose panel has left the page (a view swapped for another) go with it: no ghost fade over the next view
+  var OVS = [];
+  function sweep() { OVS = OVS.filter(function (ov) { var el = ov.__wfOwn; if (el && el.isConnected && el.parentElement === ov.parentElement && el.offsetParent) return true;
+    if (ov.parentElement) ov.parentElement.removeChild(ov); if (el) { if (el.__wfFadeEl === ov) el.__wfFadeEl = null; if (el.__wfFadeTop === ov) el.__wfFadeTop = null; } return false; }); }
   var fq = false;
-  function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; document.querySelectorAll(FSEL).forEach(fadeOne); }); }
+  function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; sweep(); document.querySelectorAll(FSEL).forEach(fadeOne); }); }
   window.__wfFade = fadeAll;
   document.addEventListener('scroll', function (e) { var t = e.target; if (t && t.nodeType === 1 && t.matches && t.matches(FSEL)) fadeOne(t); }, true);
   setInterval(function () { document.querySelectorAll(FSEL).forEach(function (el) { if (el.__wfFadeEl || el.__wfFadeTop) fadeOne(el); }); }, 250);   // follows panels while they slide
