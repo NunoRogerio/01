@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=27"></script>
+<script src="prefs.js?v=28"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -196,7 +196,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
         <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px">{{scope.title}}</span>
       </span>
-      <span style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
+      <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap">{{scope.parent}}</span>
     </button>
     <span aria-hidden="true" style="flex: 1 1 auto"></span>
     <a href="Chat.dc.html" class="opt" onClick="{{ch.open}}" aria-label="{{ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{ch.badgeD}}; position: absolute; top: -7px; right: -7px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 600; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{ch.n}}</span></a>
@@ -227,13 +227,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="text-align: right">Likelihood</span>
           <span></span>
         </div>
-        <sc-if value="{{noCands}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000">None in this area</span></sc-if>
+        <sc-if value="{{noCands}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000; line-height: 22px">None in this area</span></sc-if>
         <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 8px 16px; margin-bottom: 2px; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 20px; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
             <span style="text-align: right; font-size: 17px; line-height: 20px; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
             <span style="grid-row: 1 / span 2; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
-            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 18px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 22px; font-size: 17px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
         <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; margin-top: 16px; padding: 0 16px 8px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; line-height: 18px; color: #545458">
@@ -241,13 +241,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="text-align: right">State</span>
           <span></span>
         </div>
-        <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000">None in this area</span></sc-if>
+        <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000; line-height: 22px">None in this area</span></sc-if>
         <sc-for list="{{fireShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 8px 16px; margin-bottom: 2px; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 20px; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
             <span style="text-align: right; font-size: 15px; line-height: 20px; white-space: nowrap; color: {{it.valC}}">{{it.val}}</span>
             <span style="grid-row: 1 / span 2; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
-            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 18px; font-size: 15px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 22px; font-size: 17px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
         <button type="button" class="wf-b wf-sec" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; margin: 8px 16px 16px; border: 0; font: inherit; cursor: pointer">{{moreTxt}}</button>
@@ -277,7 +277,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
           <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px">{{scope.title}}</span>
         </span>
-        <span style="font-size: 15px; color: #545458; white-space: nowrap">{{scope.parent}}</span>
+        <span style="font-size: 17px; color: #000000; white-space: nowrap; line-height: 22px">{{scope.parent}}</span>
       </button>
       <span aria-hidden="true" style="flex: 1 1 auto"></span>
       <a href="Chat.dc.html" class="opt" onClick="{{ch.open}}" aria-label="{{ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{ch.badgeD}}; position: absolute; top: -7px; right: -7px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 600; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{ch.n}}</span></a>
@@ -318,7 +318,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <section aria-label="Deforestation and finance" style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; margin: 10px 16px 12px; padding: 14px 16px; border-radius: 14px; background: #FFFFFF">
           <span style="display: flex; flex-direction: column; gap: 2px">
             <b style="font-size: 17px; font-weight: 600; line-height: 22px">Fires on cleared land</b>
-            <span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{ff.line}}</span>
+            <span style="font-size: 17px; line-height: 22px; color: #000000">{{ff.line}}</span>
           </span>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
             <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.n}}</b><span style="font-size: 13px; color: #545458">deforestation fires</span></span>
@@ -341,7 +341,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="display: {{r.subD}}; grid-column: 1 / span 3; min-width: 0; line-height: 18px; font-size: 15px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
           </button>
       </sc-for>
-      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span class="wf-dot" style="padding: 20px 40px; font-size: 17px; color: #000000">{{noMatchTxt}}</span></sc-if>
+      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span class="wf-dot" style="padding: 20px 40px; font-size: 17px; color: #000000; line-height: 22px">{{noMatchTxt}}</span></sc-if>
     </div>
     <a href="SimSetup.dc.html" style="display: {{simD}}; align-items: center; gap: 12px; flex-shrink: 0; min-height: 52px; margin: 8px 0 0; padding: 4px 4px; border-top: 1px solid rgba(60,60,67,0.14); color: #000000; text-decoration: none">
       <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; background: #E86A00; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5Z"></path></svg></span>
@@ -365,7 +365,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </button>
     </div>
     <div class="wf-snap" style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 16px 0; opacity: {{nt.inOp}}; transform: translateY({{nt.inY}}); transition: opacity .3s ease {{nt.inDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{nt.inDelay}}">
-      <sc-if value="{{nt.none}}" hint-placeholder-val="{{ false }}"><span style="padding: 16px 4px; font-size: 17px; color: #000000">No updates in this area yet.</span></sc-if>
+      <sc-if value="{{nt.none}}" hint-placeholder-val="{{ false }}"><span style="padding: 16px 4px; font-size: 17px; color: #000000; line-height: 22px">No updates in this area yet.</span></sc-if>
       <ul style="display: {{nt.listD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF; overflow: hidden">
         <sc-for list="{{nt.items}}" as="n" hint-placeholder-count="5">
           <li style="border-top: {{n.sep}}">
@@ -373,7 +373,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true" style="grid-row: 1 / span 2; margin: 3px 0 0 2px"><path d="{{n.icon}}" fill="{{n.fill}}" stroke="{{n.stroke}}" stroke-width="1.3" stroke-linejoin="round"></path></svg>
               <span style="min-width: 0; font-size: 17px; font-weight: {{n.w}}; line-height: 22px">{{n.title}}</span>
               <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; line-height: 22px; color: #545458; white-space: nowrap"><span aria-hidden="true" style="display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: #0071E3"></span>{{n.age}}</span>
-              <span style="grid-column: 2 / span 2; min-width: 0; font-size: 15px; line-height: 20px; color: #545458">{{n.text}}</span>
+              <span style="grid-column: 2 / span 2; min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{n.text}}</span>
             </a>
           </li>
         </sc-for>

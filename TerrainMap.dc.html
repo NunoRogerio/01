@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=27"></script>
+<script src="prefs.js?v=28"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 
@@ -320,7 +320,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
       <b style="display: block; font-size: 20px; font-weight: 600; line-height: 25px; letter-spacing: -0.01em; color: {{fc.kindC}}">{{fc.kind}}</b>
       <span style="display: block; margin-top: 2px; font-size: 17px; font-weight: 600; line-height: 22px">{{fc.name}}</span>
-      <span style="display: block; margin-top: 2px; font-size: 15px; line-height: 17px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fc.sub}}</span>
+      <span style="display: block; margin-top: 2px; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fc.sub}}</span>
       </span>
       <button type="button" onClick="{{popClose}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; margin: -4px -6px 0 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{popXRot}}); transition: transform .3s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
       </div>
@@ -359,7 +359,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
           </sc-for>
         </div>
       </sc-if>
-      <sc-if value="{{fc.noForces}}" hint-placeholder-val="{{ false }}"><span style="display: block; font-size: 15px; line-height: 18px; color: #545458">{{fc.forcesNote}}</span></sc-if>
+      <sc-if value="{{fc.noForces}}" hint-placeholder-val="{{ false }}"><span style="display: block; font-size: 17px; line-height: 22px; color: #000000">{{fc.forcesNote}}</span></sc-if>
       <sc-if value="{{fc.hasArea}}" hint-placeholder-val="{{ false }}">
         <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0 0; font-size: 15px; line-height: 18px">
           <span style="color: #545458; white-space: nowrap">Burned area</span>

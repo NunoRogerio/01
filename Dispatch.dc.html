@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=27"></script>
+<script src="prefs.js?v=28"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -263,7 +263,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s; flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
       </span>
       <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">{{cfgSummary}}</span>
+      <span style="grid-column: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">{{cfgSummary}}</span>
     </button>
   </div>
 
@@ -367,11 +367,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div data-sb-kpi2="1" style="--k: {{kpi2Px}}; display: {{kpiD}}; flex-shrink: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px 0">
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span class="lbl">{{k1L}}</span>
-        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k1V}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k1Sub}}</span></span>
+        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k1V}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{k1Sub}}</span></span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; border-left: 1px solid rgba(60,60,67,0.14)">
         <span class="lbl">{{k2L}}</span>
-        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k2Val}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k2Sub}}</span></span>
+        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k2Val}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{k2Sub}}</span></span>
       </div>
     </div>
     <ul class="wf-snap" aria-label="{{listAria}}" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; margin: 16px 0 0; padding: 0; list-style: none; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
@@ -379,7 +379,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-if value="{{d.head}}" hint-placeholder-val="{{ false }}">
         <li role="presentation" style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 16px 16px 8px; box-sizing: border-box">
           <h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #000000">{{d.title}}</h3>
-          <span style="display: {{d.noteD}}; font-size: 15px; line-height: 18px; color: #545458">{{d.note}}</span>
+          <span style="display: {{d.noteD}}; font-size: 17px; line-height: 22px; color: #000000">{{d.note}}</span>
         </li>
         </sc-if>
         <sc-if value="{{d.tl}}" hint-placeholder-val="{{ false }}">
@@ -406,7 +406,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
           <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.label}}</span>
           <span style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap"><span style="font-weight: 400; color: #545458">{{d.pre}}</span>{{d.val}}<span style="font-weight: 400; color: #545458">{{d.post}}</span></span>
-          <span style="grid-column: 1 / -1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
+          <span style="grid-column: 1 / -1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
           <span style="grid-column: 1 / -1; position: relative; display: {{d.barD}}; height: 3px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.077); overflow: hidden">
             <span class="bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{d.w}}%; border-radius: 999px; background: {{d.bar}}"></span>
           </span>
@@ -434,7 +434,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
           </span>
           <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
+          <span style="grid-column: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
         </button>
     </div>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{cfInOp}}; transform: translateY({{cfInY}}); transition: opacity .3s ease {{cfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{cfInDelay}}">
@@ -510,7 +510,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}"><span class="dot" style="width: 5.6px; height: 5.6px"></span></sc-if>
           <sc-if value="{{drone.idle}}" hint-placeholder-val="{{ false }}"><span style="width: 5.6px; height: 5.6px; border-radius: 50%; background: currentColor; opacity: 0.6"></span></sc-if>{{drone.status}}
         </span>
-        <span style="font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
+        <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
       </span>
       <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}">
         <button type="button" class="btn wf-sec" onClick="{{recallDrone}}" style="padding: 0 16px; flex-shrink: 0">

@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=27"></script>
+<script src="prefs.js?v=28"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -86,7 +86,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h1 style="margin: 0; font-size: 28px; font-weight: 600; line-height: 34px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h1>
-          <div style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
+          <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
         </div>
       </header>
       <!-- The team: you, the fire owner, and the crew coordinator of each station. Tap a person for their profile. -->
@@ -107,7 +107,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: {{c.stC}}; transition: background-color .6s ease"><svg width="26" height="26" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="#FFFFFF" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 19px; font-weight: 600; line-height: 24px; color: {{c.stC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
-            <span style="font-size: 15px; line-height: 18px; color: #3C3C43; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.summary}}</span>
+            <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.summary}}</span>
           </span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m6 9 6 6 6-6"></path></svg>
         </span>
@@ -154,7 +154,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
                 <span style="font-size: 13px; line-height: 16px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
                 <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{m.title}}</span>
-                <span style="display: {{m.bodyD}}; font-size: 15px; line-height: 20px; color: #545458">{{m.body}}</span>
+                <span style="display: {{m.bodyD}}; font-size: 17px; line-height: 22px; color: #000000">{{m.body}}</span>
               </div>
               <sc-if value="{{m.hasKpi}}" hint-placeholder-val="{{ false }}">
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; flex-basis: {{m.kpiBasis}}; padding: {{m.kpiPad}}">
@@ -247,7 +247,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </section>
           <!-- Spread projection -->
           <section aria-label="{{t.proj}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
-            <div style="display: flex; flex-direction: column; gap: 2px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.proj}}</h3><span style="font-size: 15px; line-height: 18px; color: #545458">{{t.projSub}}</span></div>
+            <div style="display: flex; flex-direction: column; gap: 2px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.proj}}</h3><span style="font-size: 17px; line-height: 22px; color: #000000">{{t.projSub}}</span></div>
 
             <a href="Dispatch.dc.html" class="chbtn wf-b wf-sec" onClick="{{goFire}}" style="display: flex; align-items: center; justify-content: center">{{t.openFire}}</a>
           </section>
@@ -278,7 +278,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               </sc-for>
               <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF">
-                  <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{x.sub}}</span></div>
+                  <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{x.sub}}</span></div>
                   <span style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 26px; padding: 0 10px; border-radius: 999px; background: {{x.pillBg}}; color: {{x.pillFg}}; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: currentColor"></span>{{x.stTxt}}</span>
                 </div>
               </sc-for>
@@ -297,7 +297,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
       <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 28px; font-weight: 600; line-height: 34px">{{t.sumTitle}}</h1>
-        <div style="font-size: 15px; line-height: 18px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
+        <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
       </div>
     </header>
     <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
@@ -324,7 +324,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-for>
       </section>
       <section style="display: flex; flex-direction: column; gap: 16px">
-        <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 15px; line-height: 18px; color: #545458">{{sum.forcesSub}}</span></div>
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
           <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
             <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: transparent; color: #000000"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 20px; font-weight: 600; line-height: 24px">{{f.station}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{f.veh}}</span></div></div>
@@ -339,7 +339,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </article>
         </sc-for>
         <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
-          <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{x.sub}}</span></div>
+          <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{x.sub}}</span></div>
         </sc-for>
         <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 13px; font-weight: 600; overflow: hidden">{{sum.me.code}}<span style="position: absolute; inset: 0; background-image: {{sum.me.photo}}; background-size: cover; background-position: center"></span></span>
@@ -374,7 +374,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
               <span style="font-size: 13px; line-height: 16px; color: #1E7A34">{{a.kicker}}</span>
               <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{a.place}}</span>
-              <span style="font-size: 15px; line-height: 20px; color: #545458">{{a.line}}</span>
+              <span style="font-size: 17px; line-height: 22px; color: #000000">{{a.line}}</span>
             </span>
           </article>
         </sc-for>
