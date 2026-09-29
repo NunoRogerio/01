@@ -113,7 +113,12 @@
         var dx = Math.cos(a), dy = Math.sin(a);
         var tx = dx > 0 ? (R.width - cx) / dx : dx < 0 ? -cx / dx : 1e9, ty = dy > 0 ? (R.height - cy) / dy : dy < 0 ? -cy / dy : 1e9;   // to the photo's edge
         var edge = Math.max(10, Math.min(tx, ty) - r0), k = shape === 'rings' ? (Math.floor(i / ring) % 2 ? rnd(0.72, 0.8) : 1) : shape === 'scatter' || shape === 'fan' ? rnd(0.75, 1) : rnd(0.92, 1);   // speed: some sparks trail behind
-        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge, fade: Math.max(4, edge - 2), curl: curl * rnd(0.7, 1.3), born: t0 + u * TURN, life: life / k * rnd(0.85, 1.15), r: rnd(1.2, 2.25) });   // every spark travels right to the photo's edge; k only changes its speed
+        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge, fade: Math.max(4, edge - 2), mode: 0, bb: 0, curl: curl * rnd(0.7, 1.3), born: t0 + u * TURN, life: life / k * rnd(0.85, 1.15), r: rnd(1.2, 2.25) });   // every spark travels right to the photo's edge; k only changes its speed
+        (function (q) { var m = Math.random();   // chaos: every spark picks its own way to go
+          if (m < 0.25) { q.fade = q.d * rnd(0.35, 0.65); q.d = q.d * rnd(0.6, 1); }   // a quarter fade out early, about half way
+          else if (m < 0.35) { q.mode = 1; q.bb = [3, 4, 6][Math.floor(Math.random() * 3)]; q.life *= rnd(1.05, 1.25); }   // a tenth hit the edge, bounce back and fade within 3, 4 or 6 px
+          else { q.fade = Math.max(4, q.d - rnd(1, 3)); }   // the rest fade out evenly, gone about 2 px from the edge
+        })(parts[parts.length - 1]);
       }
     };
     if (!this._lis && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
@@ -131,7 +136,10 @@
 
       g.fillStyle = '#D7F41A';   // crisp vector dots: no glow, no blur
       live.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 3), w = q.curl * e * e;   // curl: a sideways drift
-        g.globalAlpha = Math.max(0, 1 - q.d * e / q.fade); g.beginPath(); g.arc(q.x0 + q.dx * q.d * e - q.dy * w, q.y0 + q.dy * q.d * e + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
+        var sd = q.d * e, al;
+        if (q.mode === 1) { var L = (q.d + q.bb) * e; sd = L <= q.d ? L : q.d - (L - q.d); al = L <= q.d ? 1 : Math.max(0, 1 - (L - q.d) / q.bb); }   // bounce off the edge
+        else al = Math.max(0, 1 - sd / q.fade);
+        g.globalAlpha = al; g.beginPath(); g.arc(q.x0 + q.dx * sd - q.dy * w, q.y0 + q.dy * sd + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
       g.globalAlpha = 1;
       requestAnimationFrame(draw);
     };
