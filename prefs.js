@@ -231,7 +231,9 @@
   // the most area among its outermost boxes, e.g. the white cards), else the panel's own colour. Measured once per opening.
   function solid(c) { return c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c); }
   function fadeCol(el) {
-    if (el.__wfCol) return el.__wfCol;
+    var th = document.documentElement.classList.contains('wf-dark');   // a theme change always measures the colour again
+    if (el.__wfCol && el.__wfColTh === th) return el.__wfCol;
+    el.__wfColTh = th;
     var area = {}, box = {}, walk = function (n, d) { for (var c = n.firstElementChild; c; c = c.nextElementSibling) {
       if (c.__wfOv) continue; var cs = getComputedStyle(c), bg = cs.backgroundColor;
       if (solid(bg)) { var r = c.getBoundingClientRect(), a = r.width * r.height; area[bg] = (area[bg] || 0) + a; var b = box[bg] || (box[bg] = { l: 1e9, r: -1e9 }); b.l = Math.min(b.l, r.left); b.r = Math.max(b.r, r.right); }
