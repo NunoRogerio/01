@@ -1511,11 +1511,11 @@ class Component extends DCLogic {
     OUT.mvS = SG.st === sS ? OUT.mvSt : 'background-color .3s, border-color .3s'; OUT.mvI = SG.ig === sI ? OUT.mv : 'none';
     SG.st = sS; SG.ig = sI;
     // The marker whose tooltip is open: a 4px border outside it (painted under the fill), dark grey on candidates
-    // and fires, white on stations. SVG units: candidates are drawn at 0.77 scale, stations at 20px for 24 units.
+    // and fires, the primary lime on stations. SVG units: candidates are drawn at 0.77 scale, stations at 20px for 24 units.
     const PS = (this.state || {}).pop, on = (kind, key) => !!PS && PS.kind === kind && PS.key === key;
     (OUT.fireMarks || []).forEach((m, i) => { const k = m._g ? m._g.id : i, o = on('fire', k); m.sel = sel('fire', k); m.r = o ? 6.25 : 10.25; m.bdW = o ? 8 : 0; });
     (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = o ? '#3A3A3C' : m.rim; m.bdW = o ? 10.4 : 2.1; m.bdW2 = o ? 10.4 : 2.3; m.po = o ? 'stroke' : 'normal'; });
-    (OUT.stations || []).forEach((m, i) => { const o = on('st', i); m.sel = sel('st', i); m.bdC = o ? '#FFFFFF' : 'none'; m.bdW = o ? 9.6 : 0; });
+    (OUT.stations || []).forEach((m, i) => { const o = on('st', i); m.sel = sel('st', i); m.bdC = o ? (window.__wfY || '#E5FF00') : 'none'; m.bdW = o ? 9.6 : 0; });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
     OUT.popXRot = (this.state || {}).popSpin ? '90deg' : '0deg';
