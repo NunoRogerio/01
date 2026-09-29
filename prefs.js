@@ -68,6 +68,7 @@
     o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
     o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
+    o.push('html:root .wf-big,html:root .wf-like{color:#E5E5EA!important}');   // big numbers stay readable at night
     o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#E8E8ED}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#404043!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
