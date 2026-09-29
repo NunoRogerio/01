@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=67"></script>
+<script src="prefs.js?v=68"></script>
 <script src="i18n.js?v=41"></script>
 <script src="live.js?v=28"></script>
 
@@ -310,10 +310,13 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       </div>
     </sc-if>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
-    <!-- Station tooltip (the selected marker already says what it is; no X): the name as Title XS, the route as annotation, centred -->
+    <!-- Station tooltip (the selected marker already says what it is; no X), centred: the location (name, the level above it), the
+         availability tag (busy or available; not published for map stations from OpenStreetMap), then View -->
     <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 8px">
       <b class="wf-title-xs" style="display: block">{{pop.tt}}</b>
-      <span style="display: block; margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: pre-line">{{pop.td}}</span>
+      <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
+      <span style="display: {{pop.tdD}}; margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: pre-line">{{pop.td}}</span>
+      <span role="status" style="display: {{pop.tagD}}; align-items: center; height: 28px; margin-top: 16px; padding: 0 12px; border-radius: 999px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; font-weight: 400; white-space: nowrap">{{pop.tagTxt}}</span>
     </div>
     </sc-if>
     <div style="display: {{pop.viewD}}; gap: 8px; margin-top: {{pop.btnMt}}; padding: {{pop.btnPad}}">
@@ -326,66 +329,15 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <sc-if value="{{hasFc}}" hint-placeholder-val="{{ false }}">
   <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); --wf-dy: {{fc.dy}}; width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 28px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
-    <div style="flex-shrink: 0; padding: 16px 16px 12px">
-      <!-- Fire tooltip (the selected marker already says it is a fire; no X: a tap on the marker or the map closes it):
-           the place as Title XS, the level above it as annotation, centred -->
-      <span style="display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0">
-        <b class="wf-title-xs" style="display: block">{{fc.name}}</b>
-        <span class="wf-dot" style="display: {{fc.subD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{fc.sub}}</span>
-      </span>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 12px">
-        <span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: {{fc.stBg}}; color: {{fc.stFg}}; font-size: 14px; font-weight: 600; white-space: nowrap">{{fc.stTxt}}<span style="font-weight: 400; opacity: 0.85">{{fc.stEn}}</span></span>
-        <sc-if value="{{fc.hasType}}" hint-placeholder-val="{{ true }}">
-          <span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(120,120,128,0.12); color: #3C3C43; font-size: 14px; font-weight: 600; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{fc.typeIcon}}"></path></svg>{{fc.typeTxt}}<span style="font-weight: 400; opacity: 0.8">{{fc.typeEn}}</span></span>
-        </sc-if>
-        <sc-if value="{{fc.deforFire}}" hint-placeholder-val="{{ false }}">
-          <span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(179,122,0,0.14); color: #7A5600; font-size: 13px; font-weight: 600; white-space: nowrap">Deforestation fire<span style="font-weight: 400; opacity: 0.85">{{fc.deforPct}}% cleared land</span></span>
-        </sc-if>
-      </div>
-    </div>
-    <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding-bottom: 2px">
-    <sc-if value="{{fc.held}}" hint-placeholder-val="{{ false }}">
-      <div style="display: flex; align-items: center; gap: 10px; margin: 0 16px 12px; padding: 10px 12px; border-radius: 12px; background: rgba(52,199,89,0.12); color: #1E7A34">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
-        <span style="display: flex; flex-direction: column; min-width: 0"><b style="font-size: 17px; font-weight: 600; line-height: 20px">{{fc.heldTitle}}</b><span style="font-size: 14px; line-height: 16px; color: #2E6B3D">{{fc.heldSub}}</span></span>
-      </div>
-    </sc-if>
-    <div style="margin: 0 16px; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="display: block; padding: 10px 0 4px; font-size: 14px; font-weight: 600; color: #545458">Time</span>
-      <sc-for list="{{fc.time}}" as="tr" hint-placeholder-count="3">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 15px; line-height: 18px">
-          <span style="color: #545458; white-space: nowrap">{{tr.k}}</span>
-          <span style="text-align: right; min-width: 0"><b style="font-weight: 600; font-variant-numeric: tabular-nums">{{tr.v}}</b><span style="display: {{tr.subD}}; font-size: 14px; color: #545458">{{tr.sub}}</span></span>
-        </div>
-      </sc-for>
-    </div>
-    <div style="margin: 8px 16px 0; border-top: 1px solid rgba(60,60,67,0.12)">
-      <span style="display: block; padding: 10px 0 6px; font-size: 14px; font-weight: 600; color: #545458">{{fc.gridTitle}}</span>
-      <sc-if value="{{fc.hasForces}}" hint-placeholder-val="{{ true }}">
-        <div style="display: grid; grid-template-columns: repeat({{fc.fCols}}, minmax(0, 1fr)); gap: 6px">
-          <sc-for list="{{fc.forces}}" as="fo" hint-placeholder-count="3">
-            <span style="display: flex; flex-direction: column; gap: 1px; padding: 8px 10px; border-radius: 10px; background: rgba(120,120,128,0.08)"><b style="font-size: 19px; font-weight: 600; line-height: 22px; font-variant-numeric: tabular-nums">{{fo.v}}</b><span style="font-size: 13px; line-height: 14px; color: #545458">{{fo.k}}</span></span>
-          </sc-for>
-        </div>
-      </sc-if>
-      <sc-if value="{{fc.noForces}}" hint-placeholder-val="{{ false }}"><span style="display: block; font-size: 17px; line-height: 22px; color: #000000">{{fc.forcesNote}}</span></sc-if>
-      <sc-if value="{{fc.hasArea}}" hint-placeholder-val="{{ false }}">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0 0; font-size: 15px; line-height: 18px">
-          <span style="color: #545458; white-space: nowrap">Burned area</span>
-          <span style="text-align: right; min-width: 0"><b style="font-weight: 600; font-variant-numeric: tabular-nums">{{fc.areaTxt}}</b><span style="display: {{fc.areaSubD}}; font-size: 14px; color: #545458">{{fc.areaSub}}</span></span>
-        </div>
-      </sc-if>
-      <sc-if value="{{fc.hasAreas}}" hint-placeholder-val="{{ false }}">
-        <div style="display: flex; flex-direction: column; gap: 2px; padding: 8px 0 0; font-size: 15px; line-height: 19px">
-          <span style="color: #545458">Protected areas and indigenous lands</span>
-          <b style="font-weight: 600">{{fc.areasTxt}}</b>
-        </div>
-      </sc-if>
-    </div>
-    </div>
-    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 8px; margin: 10px 16px 0; padding: 8px 10px; border-radius: 10px; background: rgba(120,120,128,0.08); font-size: 14px; line-height: 16px; color: #545458">
-      <span aria-hidden="true" style="width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: {{fc.freshC}}"></span>
-      <span style="min-width: 0"><b style="font-weight: 600; color: #3C3C43">{{fc.freshTxt}}</b></span>
+    <!-- Fire tooltip (the selected marker already says it is a fire; no X: a tap on the marker or the map closes it), all centred:
+         the burned area as the XS KPI with the time active as its annotation, then the place (Title XS) and the level above it,
+         then the status tag in the colours used on the fire screen -->
+    <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px 12px 0">
+      <span style="display: flex; align-items: baseline; justify-content: center; gap: 4px; max-width: 100%; white-space: nowrap"><span class="wf-like-xs" style="font-size: {{fc.kpiFs}}px !important">{{fc.kpiNum}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{fc.kpiUnit}}</span></span>
+      <span style="display: block; margin-top: -2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{fc.kpiSub}}</span>
+      <b class="wf-title-xs" style="display: block; margin-top: 16px">{{fc.name}}</b>
+      <span class="wf-dot" style="display: {{fc.subD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{fc.sub}}</span>
+      <span role="status" style="display: inline-flex; align-items: center; height: 28px; margin-top: 16px; padding: 0 12px; border-radius: 999px; background: {{fc.stBg}}; color: {{fc.stFg}}; font-size: 15px; font-weight: 400; white-space: nowrap">{{fc.stTxt}}</span>
     </div>
     <div style="flex-shrink: 0; display: flex; gap: 8px; padding: {{fcRowPad}}">
       <a href="Dispatch.dc.html" onClick="{{fc.go}}" class="wf-b wf-pri wf-h44" style="flex: 1 1 auto; width: 100%; display: {{fcGoD}}; align-items: center; justify-content: center">{{fc.goLabel}}</a>
@@ -1129,7 +1081,7 @@ class Component extends DCLogic {
         fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#FFFFFF',
         op: (!isRisk && busy) ? 0.5 : 1
       });
-      return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch.' : '.'));
+      return withTip({ ...o, stat: busy ? 'busy' : 'available' }, 'Fire station ' + code + ' ' + nm, avail + (on ? '. Selected for dispatch.' : '.'));
     }).filter((o) => !isPin).filter(onScreen);
     const SF = this.stationFile();
     const fileStations = SF ? (() => {
@@ -1469,13 +1421,18 @@ class Component extends DCLogic {
     const B = I.burn, areaSub = coverTxt ? '. ' + coverTxt.charAt(0).toUpperCase() + coverTxt.slice(1) : B ? '. ' + [['forest', B.forest], ['scrub', B.scrub], ['farm', B.farm]].filter((q) => q[1] >= 0.5).map((q) => Math.round(q[1]).toLocaleString() + ' ' + q[0]).join(', ') : '';
     const TYPE_ICON = { Scrubland: 'M4 20c2-5 4-7 8-7s6 2 8 7M8 13c0-3 1.8-5 4-5s4 2 4 5M12 8V4', 'Forest stand': 'M12 3 6 12h3l-4 6h14l-4-6h3ZM12 18v3', Agricultural: 'M4 20h16M7 20V10M12 20V7M17 20v-9M7 10l-2-2M12 7l2-2M17 11l2-2' };
     const beh = I.beh ? 'Behavior ' + I.beh.toLowerCase() : '';
+    // The one number that leads: the burned area (real data only; '–' when the source gives none), with the time active as its annotation
+    const kpiNum = I.ha == null ? '–' : u.area === 'ha' ? Math.round(I.ha).toLocaleString() : Math.round(I.ha / 0.4047).toLocaleString(), kpiUnit = I.ha == null ? '' : u.area === 'ha' ? 'ha' : 'acres';
+    const kpiT = held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve.' : I.startMs ? 'Started ' + clock(I.startMs) + '.' : 'Start time not published.') : I.startMs ? 'Active for ' + D(now - I.startMs) + '.' : 'Start time not published.';
+    const kpiSub = (I.ha == null ? 'Burned area not published. ' : '') + kpiT;
     const hEst = 250 + time.length * 26 + (held ? 60 : 0) + (fz.length ? 58 : 20) + (I.ha != null ? 26 : 0);
     const win = this.win(), H = this.H(), top0 = Math.max(win.t, 8) + 8, bot0 = Math.min(win.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 8;
     const above = (y - top0) > (bot0 - y);
     const maxH = Math.max(220, (above ? y - 22 - top0 : bot0 - (y + 26)) - 8);
     return {
       aria: (held ? 'Held fire, ' : 'Active fire, ') + g.place + ', ' + I.st + (I.stEn ? ' (' + I.stEn + ')' : ''), name: g.place, sub: ((window.__wfRegionUp && g.co) ? window.__wfRegionUp(g.st, g.co) : String(I.place || '').replace(/, [^,]+$/, '')), subD: (((window.__wfRegionUp && g.co) ? window.__wfRegionUp(g.st, g.co) : String(I.place || '').replace(/, [^,]+$/, ''))) ? 'block' : 'none',
-      stTxt: I.st, stEn: I.stEn && I.stEn !== I.st ? I.stEn : '', stBg: TONE[0], stFg: TONE[1],
+      stTxt: I.st || (held ? 'Held' : 'Active'), stEn: '', stBg: held ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', stFg: held ? '#1E7A34' : '#A34800',
+      kpiNum: kpiNum, kpiUnit: kpiUnit, kpiFs: kpiNum.length <= 3 ? 64 : kpiNum.length <= 4 ? 58 : kpiNum.length <= 5 ? 48 : kpiNum.length <= 6 ? 40 : 32, kpiSub: kpiSub,
       hasType: !!(I.type || beh), typeTxt: I.type || beh, typeEn: I.type && I.typeEn ? I.typeEn : '', typeIcon: TYPE_ICON[I.typeEn] || 'M12 21c4 0 6.5-2.7 6.5-6.3 0-3.8-3.3-6-4.4-9.7-2.2 1.6-3.6 3.8-3.6 6.2-1-.6-1.6-1.8-1.8-3C6.9 10 5.5 12.3 5.5 14.7 5.5 18.3 8 21 12 21Z',
       held: !!held, heldTitle: held ? (held.official ? 'Held. ' + held.label : 'Held. Edge fully contained') : '',
       heldSub: held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve' + (held.official && I.heldSrc === 'last status update' ? ' (to the last status update)' : '') : held.official ? (I.startMs && I.updMs && I.updMs > I.startMs ? 'About ' + D(I.updMs - I.startMs) + ' to resolve (estimate, to the last update)' : 'Resolution time not published') : 'Per the fire model; official state is ' + I.st) : '',
@@ -1485,7 +1442,7 @@ class Component extends DCLogic {
       hasArea: I.ha != null, areaTxt, areaSub, areaSubD: areaSub ? 'inline' : 'none',
       freshC, freshTxt: upd ? 'Updated ' + clockT(upd) + '. ' + agoTxt + '.' : 'Checked ' + clockT(window.__wfLiveAt || now) + '. No update time given.',
       goLabel: 'View',
-      w: Math.min(288, this.W() - 32), left: Math.round((this.W() - Math.min(288, this.W() - 32)) / 2), top: Math.round((top0 + bot0) / 2), maxH: Math.round(bot0 - top0),
+      w: Math.min(216, this.W() - 32), left: Math.round((this.W() - Math.min(216, this.W() - 32)) / 2), top: Math.round((top0 + bot0) / 2), maxH: Math.round(bot0 - top0),
       go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); }
     };
   }
@@ -1532,6 +1489,7 @@ class Component extends DCLogic {
     OUT.hasPop = true;
     // Placement: above the marker if it fits, else below; if neither fits fully, the side with more room, kept on screen.
     // Sideways it follows the marker but always stays 16px from the nearest screen edge.
+    const stReg = P.kind === 'st' && m._st && m._st.lat != null && window.__wfRegionAt ? String(window.__wfRegionAt(m._st.lat, m._st.lon) || '').replace(/, [^,]+$/, '') : '';
     const PW = P.kind === 'ign' ? 172 : 216, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
     // 24px between the panel and the marker's edge (half the marker's height from its centre, plus 24)
     // (the candidate triangle points down: its top edge is 9px above its centre, its tip 17px below; fires and stations ~10px)
@@ -1540,9 +1498,12 @@ class Component extends DCLogic {
     const goUp = up >= PH ? true : dn >= PH ? false : up >= dn;
     const pTop = Math.round(Math.max(topLim, Math.min(botLim - PH, goUp ? y - GU - PH : y + GD))), pLeft = Math.round(Math.max(16, Math.min(W - PW - 16, x - PW / 2)));
     requestAnimationFrame(() => { try { const el = document.querySelector('[data-wf-pop]'); const h = el ? el.offsetHeight : 0; if (h && Math.abs(h - (this._popH || 0)) > 1) { this._popH = h; this.setState({ popHV: h }); } } catch (e) {} });
-    OUT.pop = { tt: m.tt || '', td: (P.kind === 'st' ? strip(m.td).split('\n').slice(1).join('\n').replace(/ · /g, '. ').replace(/([^.])$/gm, '$1.') : strip(m.td)), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
+    OUT.pop = { tt: m.tt || '', td: P.kind === 'st' ? '' : strip(m.td), tdD: P.kind === 'st' ? 'none' : 'block',
+      ...(() => { if (P.kind !== 'st') return { tagD: 'none', tagTxt: '', tagBg: '', tagFg: '' };
+        const A = m.stat === 'busy' ? ['Busy', 'rgba(232,106,0,0.14)', '#A34800'] : m.stat === 'available' ? ['Available', 'rgba(52,199,89,0.14)', '#1E7A34'] : ['Availability not published', 'rgba(118,118,128,0.14)', '#48484A'];
+        return { tagD: 'inline-flex', tagTxt: A[0], tagBg: A[1], tagFg: A[2] }; })(), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
       from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 28px)' : 'inset(calc(100% - 60px) 0 0 0 round 28px)',   // starts as the 60px band nearest the marker, then unfolds
-      ...chatFor(chatInc), ...(P.kind === 'ign' ? { chatD: 'none' } : {}), isIgn: P.kind === 'ign', notIgn: P.kind !== 'ign', w: PW, pad: P.kind === 'ign' ? '0' : '16px 8px 8px', btnPad: P.kind === 'ign' ? '0 8px 8px' : '0', btnMt: '16px', btnCls: P.kind === 'ign' ? 'wf-b wf-pri wf-cond' : 'wf-b wf-pri wf-h44', chatS: P.kind === 'ign' ? '32px' : '44px', chatI: P.kind === 'ign' ? '17px' : '22px', regD: m.reg ? 'block' : 'none', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', place: m.place || '', reg: m.reg || '', igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
+      ...chatFor(chatInc), ...(P.kind === 'ign' ? { chatD: 'none' } : {}), isIgn: P.kind === 'ign', notIgn: P.kind !== 'ign', w: PW, pad: P.kind === 'ign' ? '0' : '16px 8px 8px', btnPad: P.kind === 'ign' ? '0 8px 8px' : '0', btnMt: '16px', btnCls: P.kind === 'ign' ? 'wf-b wf-pri wf-cond' : 'wf-b wf-pri wf-h44', chatS: P.kind === 'ign' ? '32px' : '44px', chatI: P.kind === 'ign' ? '17px' : '22px', regD: (P.kind === 'st' ? stReg : m.reg) ? 'block' : 'none', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', place: m.place || '', reg: P.kind === 'st' ? stReg : (m.reg || ''), igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
       hasView: !noView && (P.kind !== 'st' || !!m._st), viewD: !noView && (P.kind !== 'st' || !!m._st) ? 'flex' : 'none', href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
     return OUT;
   }
