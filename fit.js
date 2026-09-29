@@ -410,7 +410,9 @@ window.__wfBlink=function(path,dur){
   document.addEventListener('pointermove',function(e){if(live&&Math.hypot(e.clientX-sx,e.clientY-sy)>10){live=false;fade(true);}},{capture:true,passive:true});
   document.addEventListener('pointerup',function(){if(live){live=false;setTimeout(function(){fade(false);},120);}},{capture:true,passive:true});
   document.addEventListener('pointercancel',function(){live=false;fade(true);},{capture:true,passive:true});
-  document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;haptic();},{capture:true});
+  document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;
+    if(t.matches('[role=switch],[data-hap=late]'))return;   // toggles vibrate when the thumb lands, not on the tap (prefs.js)
+    haptic();},{capture:true});
 })();
 
 // Back, everywhere: every back control (data-wf-back) returns to the screen visited just before, as the phone's own
