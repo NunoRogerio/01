@@ -16,9 +16,9 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=69"></script>
-<script src="i18n.js?v=45"></script>
-<script src="live.js?v=29"></script>
-<script src="chat.js?v=17"></script>
+<script src="i18n.js?v=46"></script>
+<script src="live.js?v=30"></script>
+<script src="chat.js?v=18"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Incident chats</title>
@@ -556,7 +556,7 @@ class Component extends DCLogic {
       return { href: 'Dispatch.dc.html', go: () => { const v = { id, place: c.place, note, x: c.x, y: c.y, det: c.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     })();
     const openSummary = () => this.go('summary');
-    // 'Send dispatch orders' is configured on the fire's dispatch screen; sending there brings you back here
+    // 'Send orders' is configured on the fire's dispatch screen; sending there brings you back here
     const run = (key, id) => { if (key === 'dispatch') { try { sessionStorage.setItem('wf-chat-return', c.key); } catch (e) {} if (inc.go) inc.go(); window.location.href = 'Dispatch.dc.html'; return; } this._stick = true; C.act(c.key, key, id); };
     const openSheet = () => { if (c.stage === 7 && !c.dismissed) { openSummary(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ sheet: true }); };
     const summary = c.dismissed ? L('No fire on the ground · crews released', 'Sem incêndio no terreno · equipas libertadas')

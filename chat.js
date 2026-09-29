@@ -18,12 +18,12 @@
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
   var STAGES = [
     { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#0A66CC', bg: '#E7F0FB', icon: 'cand' },
-    { en: 'Dispatched · 1st alert', pt: 'Despacho de 1.º alerta', c: '#9A4A00', bg: '#FCEFE3', icon: 'alert' },
+    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#9A4A00', bg: '#FCEFE3', icon: 'alert' },
     { en: 'Ongoing', pt: 'Em curso', c: '#B8360A', bg: '#FCE9E1', icon: 'route' },
     { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3141B', bg: '#FBE7E7', icon: 'flame' },
-    { en: 'Being resolved', pt: 'Em resolução', c: '#875800', bg: '#FAF0DA', icon: 'shield' },
+    { en: 'Resolving', pt: 'Em resolução', c: '#875800', bg: '#FAF0DA', icon: 'shield' },
     { en: 'Concluding', pt: 'Em conclusão', c: '#1E7A34', bg: '#E4F3E8', icon: 'drop' },
-    { en: 'Under surveillance', pt: 'Vigilância', c: '#00707A', bg: '#DFF1F2', icon: 'eye' },
+    { en: 'Surveillance', pt: 'Vigilância', c: '#00707A', bg: '#DFF1F2', icon: 'eye' },
     { en: 'Closed', pt: 'Encerrada', c: '#3A3A3C', bg: '#ECECEF', icon: 'done' }
   ];
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#545458', bg: '#ECECEF', icon: 'x' };
@@ -234,7 +234,7 @@
       body: { en: 'Forces, time in each stage and the spread projection are on the fire card', pt: 'Meios, tempo em cada fase e projeção da propagação no cartão do incêndio' }, fire: true });
     if (s === 4) return Object.assign(base, { title: { en: 'Head held · working the flanks', pt: 'Cabeça dominada · a trabalhar os flancos' }, body: { en: 'No further spread reported', pt: 'Sem progressão reportada' }, fire: true });
     if (s === 5) return Object.assign(base, { title: { en: 'Perimeter held · mop-up', pt: 'Perímetro dominado · rescaldo' }, body: { en: 'Crews putting out hotspots along the edge', pt: 'Equipas a extinguir pontos quentes no perímetro' }, fire: true });
-    if (s === 6) return Object.assign(base, { title: { en: 'Under surveillance', pt: 'Em vigilância' }, body: { en: 'One crew watching for rekindles, the others released', pt: 'Uma equipa em vigilância a reacendimentos, as outras libertadas' }, fire: true });
+    if (s === 6) return Object.assign(base, { title: { en: 'Surveillance', pt: 'Vigilância' }, body: { en: 'One crew watching for rekindles, the others released', pt: 'Uma equipa em vigilância a reacendimentos, as outras libertadas' }, fire: true });
     return Object.assign(base, { title: { en: 'Fire closed', pt: 'Incêndio encerrado' }, body: { en: 'Resolved ' + dur(vnow(c) - since(c)) + ' after the first detection', pt: 'Resolvido ' + dur(vnow(c) - since(c)) + ' depois da primeira deteção' } });
   }
 
@@ -427,7 +427,7 @@
     if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Deploy another station', pt: 'Empenhar outro quartel' });
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     if (s === 4) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
-    if (s === 5) A.push({ key: 'next', en: 'Move to Under surveillance', pt: 'Passar a Vigilância', primary: true });
+    if (s === 5) A.push({ key: 'next', en: 'Move to surveillance', pt: 'Passar a Vigilância', primary: true });
     if (s === 6 && !c.flags.closeCard) A.push({ key: 'closeCheck', en: 'Close the fire', pt: 'Encerrar o incêndio', primary: true });
     return A;
   }

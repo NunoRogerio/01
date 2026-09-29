@@ -16,9 +16,9 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=69"></script>
-<script src="i18n.js?v=45"></script>
-<script src="live.js?v=29"></script>
-<script src="chat.js?v=17"></script>
+<script src="i18n.js?v=46"></script>
+<script src="live.js?v=30"></script>
+<script src="chat.js?v=18"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -201,7 +201,7 @@ class Component extends DCLogic {
         dir: 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, dirBg: phone ? '#2C2C2E' : (window.__wfY || '#E5FF00'), dirFg: phone ? (window.__wfY || '#E5FF00') : '#1C1C1E',
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
       rows, fires, noFires: !fires.length, noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
-      firesNote: 'Straight-line distance; drive time estimated at 50 km/h on roads.'
+      firesNote: 'Straight-line distance. Drive time at 50 km/h.'
     };
   }
 }

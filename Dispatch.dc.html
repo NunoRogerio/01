@@ -16,9 +16,9 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=69"></script>
-<script src="i18n.js?v=45"></script>
-<script src="live.js?v=29"></script>
-<script src="chat.js?v=17"></script>
+<script src="i18n.js?v=46"></script>
+<script src="live.js?v=30"></script>
+<script src="chat.js?v=18"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -976,13 +976,13 @@ class Component extends DCLogic {
       };
       if (HELD && (!M || M.failed)) { /* held: no model needed */ }
       else if (!M) rows.push(row('Fire model', 'Calculating…', 'Perimeter, weather, terrain and fuel are loading', '#545458'));
-      else if (M.failed) rows.push(row('Fire model', 'Unavailable', 'Weather or map services did not answer; try again later', '#545458'));
+      else if (M.failed) rows.push(row('Fire model', 'Unavailable', 'Weather or map services unavailable. Try again later', '#545458'));
       else {
         const S0 = M.snaps[0] || {}, Sh = M.snaps[hz] || S0, I = M.info || {};
         rows.push(M.assumed ? row('Perimeter', 'Estimated', (M.src.indexOf('ha reported') > 0 ? 'Drawn from the reported ' + M.src.replace(/^.*· /, '') : 'Drawn from a typical size for its state') + ' · no public polygon for this fire yet', '#875800') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
-        if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources are not published for this fire' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#1E7A34'));
+        if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources not published' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#1E7A34'));
         rows.push(row('Conditions', 'Wind ' + I.wind + ' km/h ' + I.from, I.temp + ' °C · humidity ' + I.rh + '% · fuel moisture ' + I.md + '% · slope ' + I.slope + '° · ' + I.fuel + ' · head ' + I.head + ' m/min', '#0079A6'));
       }
       rows.forEach((r) => { r.g = 'fire'; });
@@ -1097,7 +1097,7 @@ class Component extends DCLogic {
       navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
       horizons, hzNum: hz, spreadLbl: 'Spread T+' + hzK, need, area: areas[hzK],
       ...(() => { const u = this.wfUnits(); const ac = Number(areas[hzK]); const v = u.area === 'ha' ? (ac * 0.4047 < 10 ? (ac * 0.4047).toFixed(1) : String(Math.round(ac * 0.4047))) : String(ac); const un = u.area === 'ha' ? 'ha' : 'acres'; return { areaV: v, areaU: un, areaAria: 'Spread area ' + v + ' ' + un + '. Switch to ' + (u.area === 'ha' ? 'acres' : 'hectares'), toggleArea: () => this.wfToggleUnit('area') }; })(), pkg: pkgs[hzK],
-      segLeft: 3 + Math.max(0, HZS.indexOf(hz)) * 54, hzCols: 'repeat(' + HZS.length + ', 54px)', legOff: s.full ? 0 : 54, mapTtl: s.full && fv ? fv.place : '', mapSub: s.full && fv ? (/^Confirmed from /.test(fv.note || '') ? 'Confirmed active fire' : HELD ? 'Held · ' + fireId : 'Active fire · ' + fireId) : '', ctrlOff: s.full ? 52 : 0,
+      segLeft: 3 + Math.max(0, HZS.indexOf(hz)) * 54, hzCols: 'repeat(' + HZS.length + ', 54px)', legOff: s.full ? 0 : 54, mapTtl: s.full && fv ? fv.place : '', mapSub: s.full && fv ? (/^Confirmed from /.test(fv.note || '') ? 'Confirmed fire' : HELD ? 'Held · ' + fireId : 'Active fire · ' + fireId) : '', ctrlOff: s.full ? 52 : 0,
       sel, stations,
       view: (FMOD && FMOD.model && FMOD.model.snaps && FMOD.model.snaps[0]) ? (() => {
         // Open framing the fire's perimeter and its whole projected spread (the furthest horizon), so switching
@@ -1136,7 +1136,7 @@ class Component extends DCLogic {
       pk: (() => { const a = !!s.stPick, b = !!s.cfPick; return { stLblOp: a ? 1 : 0, stLblY: a ? '0px' : '30px', stPhOp: a ? 0 : 1, stPhY: a ? '-14px' : '0px', stFillOp: a ? 1 : 0, stAria: a ? sel.title + '. Change stations' : 'Step 1, select stations',
         cfLblOp: b ? 1 : 0, cfLblY: b ? '0px' : '30px', cfPhOp: b ? 0 : 1, cfPhY: b ? '-14px' : '0px', cfFillOp: b ? 1 : 0, cfAria: b ? 'Forces, ' + unitTotal + ' units. Change' : 'Step 2, configure dispatch',
         stCls: a ? 'prep' : 'prep nudge', cfCls: b || !a ? 'prep' : 'prep nudge', cfOp: a ? 1 : 0.45, cfDis: a ? 'false' : 'true', cfDelay: '450ms', sendDis: a && b ? 'false' : 'true', sendOp: a && b ? 1 : 0.4 }; })(),
-      sendLbl: chosenList.length > 1 ? 'Send dispatch orders' : 'Send dispatch order',
+      sendLbl: chosenList.length > 1 ? 'Send orders' : 'Send order',
       // Sending: one order per chosen station, each to that station's coordinator, confirmed in turn; Done shows the dispatch.
       sendAll: () => {
         if (this._sndT || !(s.stPick && s.cfPick)) return;
@@ -1148,11 +1148,11 @@ class Component extends DCLogic {
       snd: (() => {
         const SP = this.wfSplit(chosenList, counts, PER), on = !!s.sending, n = Math.max(1, SP.length), k = Math.min(n, s.sndN || 0), all = on && k >= n;
         return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
-          title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending dispatch orders' : 'Sending dispatch order'), titleC: all ? '#1E7A34' : '#000000',
+          title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: all ? '#1E7A34' : '#000000',
           sub: 'To station coordinators · ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: all ? '#34C759' : '#0062CC',
           rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, SCL = window.__wfStationCol || ['#34C759'], TNT = window.__wfTint || ((h, a) => 'rgba(52, 199, 89, ' + a + ')'); return { crest: crestOf(d), crestD: crestOf(d) ? 'block' : 'none', hdBg: d.id === 'air' ? 'rgba(0, 113, 227, 0.06)' : 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
             units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
-            state: sentO ? 'Order received by the coordinator' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
+            state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           redo: () => { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
@@ -1176,7 +1176,7 @@ class Component extends DCLogic {
         const p2 = (n) => String(n).padStart(2, '0'), el = (dd ? dd + ' d ' + hh + ' h' : hh ? hh + ' h ' + mm + ' min' : mm + ' min');
         const pt = /^pt/i.test(document.documentElement.lang || ''), t0 = Math.round(Date.now() - Math.max(0, actMin) * 60000);
         const reg = frow && window.__wfRegion ? window.__wfRegion(frow.st, frow.co) : '';
-        return ign ? { title: fv.place, c: '#000000', sub: reg || 'Confirmed from a satellite detection', kind: 'Active fire', tagD: 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
+        return ign ? { title: fv.place, c: '#000000', sub: reg || 'Confirmed by satellite', kind: 'Active fire', tagD: 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
           : { title: fv ? fv.place : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held fire' : 'Active fire', tagD: 'none', pillD: 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),

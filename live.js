@@ -43,8 +43,8 @@ window.__wfRegionUp = function (st, co) {
   function plain(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();}
   var DIST={};PT_DISTRICTS.forEach(function(d){DIST[plain(d)]=d;});
   // ANEPC occurrence states (Fogos.pt statusCode) -> English + tone for the state tag
-  var PT_STATE={3:['Despacho','Dispatched','warn'],4:['Despacho de 1º Alerta','First alert dispatched','warn'],5:['Em Curso','Ongoing','hot'],6:['Chegada ao TO','Crews arriving','warn'],
-    7:['Em Resolução','Being resolved','amber'],8:['Conclusão','Concluding','ok'],9:['Vigilância','Under surveillance','watch'],10:['Encerrada','Closed','off'],11:['Falso Alarme','False alarm','off'],12:['Falso Alerta','False alert','off']};
+  var PT_STATE={3:['Despacho','Dispatched','warn'],4:['Despacho de 1º Alerta','First alert','warn'],5:['Em Curso','Ongoing','hot'],6:['Chegada ao TO','Crews arriving','warn'],
+    7:['Em Resolução','Resolving','amber'],8:['Conclusão','Concluding','ok'],9:['Vigilância','Surveillance','watch'],10:['Encerrada','Closed','off'],11:['Falso Alarme','False alarm','off'],12:['Falso Alerta','False alarm','off']};
   // Fogos.pt / ANEPC fire types ("natureza")
   var PT_TYPE={'mato':'Scrubland','povoamento florestal':'Forest stand','agricola':'Agricultural','queimada':'Controlled burn','queima':'Debris burning','consolidacao de rescaldo':'Mop-up','incendio urbano':'Urban'};
   DIST['acores']='Açores';DIST['regiao autonoma dos acores']='Açores';DIST['madeira']='Madeira';DIST['regiao autonoma da madeira']='Madeira';
@@ -62,7 +62,7 @@ window.__wfRegionUp = function (st, co) {
       var xy=toXY(g.coordinates[1],g.coordinates[0]);
       var res=p.TotalIncidentPersonnel!=null?{man:p.TotalIncidentPersonnel,status:pc!=null?'Contained '+Math.round(pc)+'%':'',start:p.FireDiscoveryDateTime?new Date(p.FireDiscoveryDateTime).toLocaleDateString([], {day:'numeric',month:'short'}):'',src:'NIFC · WFIGS'}:null;
       // NIFC / CAL FIRE-style stages: Active (with % contained) -> Contained -> Controlled -> Out
-      var S=p.FireOutDateTime?['Out','Fire out','off']:p.ControlDateTime?['Controlled','Controlled','watch']:(p.ContainmentDateTime||(pc!=null&&pc>=100))?['Contained','Contained','ok']:['Active',pc?Math.round(pc)+'% contained':'Not contained',pc>=50?'amber':'hot'];
+      var S=p.FireOutDateTime?['Out','Out','off']:p.ControlDateTime?['Controlled','Controlled','watch']:(p.ContainmentDateTime||(pc!=null&&pc>=100))?['Contained','Contained','ok']:['Active',pc?Math.round(pc)+'% contained':'Not contained',pc>=50?'amber':'hot'];
       var info={src:'NIFC · WFIGS',st:S[0],stEn:S[1],tone:S[2],pc:pc!=null?Math.round(pc):null,beh:p.FireBehaviorGeneral||'',cause:p.FireCause||'',
         startMs:p.FireDiscoveryDateTime||null,updMs:p.ModifiedOnDateTime_dt||null,ac:p.IncidentSize!=null?Math.round(p.IncidentSize):null,ha:p.IncidentSize?+(p.IncidentSize*0.4047).toFixed(1):null,
         resolved:S[0]!=='Active',heldMs:p.ContainmentDateTime||p.ControlDateTime||p.FireOutDateTime||null,heldSrc:'containment report',tCont:p.ContainmentDateTime||null,tCtrl:p.ControlDateTime||null,tOut:p.FireOutDateTime||null,place:[p.POOCounty?p.POOCounty+' County':'',st].filter(Boolean).join(' · ')};
@@ -179,7 +179,7 @@ window.__wfRegionUp = function (st, co) {
   // Brazil: INPE Programa Queimadas fire events (satellite detections grouped into individual fires, hourly).
   // Outlines and fronts live in window.__wfBRGeo (saved in IndexedDB), the rows stay small.
   var BR_TYPE={'Incêndio':'Wildfire','Possível início de incêndio':'Possible fire start','Queimada':'Burning','Queima':'Burning','Fogo':'Fire'};
-  var BR_ST={'Ativo':['Active','hot'],'Observação':['Under observation','watch'],'Nova frente isolada':['New isolated front','warn']};
+  var BR_ST={'Ativo':['Active','hot'],'Observação':['Observation','watch'],'Nova frente isolada':['New front','warn']};
   function buildBR(js){
     var geo={},out=[];
     (js&&js.events||[]).forEach(function(e){

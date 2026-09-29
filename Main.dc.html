@@ -17,9 +17,9 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=69"></script>
-<script src="i18n.js?v=45"></script>
-<script src="live.js?v=29"></script>
-<script src="chat.js?v=17"></script>
+<script src="i18n.js?v=46"></script>
+<script src="live.js?v=30"></script>
+<script src="chat.js?v=18"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -904,10 +904,10 @@ class Component extends DCLogic {
     // One notification per place: two fires with the same name read as a duplicate
     const used = new Set(), pickF = (L) => { const f = L.find((q) => !used.has(q.place)); if (f) used.add(f.place); return f; };
     const fireSt = FIRES.filter((f) => f.info && f.info.stEn);
-    const stNote = (f) => ({ kind: 'fire', title: f.place + ' is now ' + String(f.info.stEn).toLowerCase(), text: 'State changed' + (f.info.st && f.info.st !== f.info.stEn ? ' to ' + f.info.st : '') + ' · ' + (f.info.src || ''), href: 'Dispatch.dc.html', pick: goFire(f) });
+    const stNote = (f) => ({ kind: 'fire', title: f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) });
     const fA = pickF(fireSt); if (fA) out.push({ t: T0 - 11 * 60000, ...stNote(fA) });
     if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', title: 'Likelihood rose to ' + cs[1].conf + '%', text: cs[1].place + ' · another satellite pass agrees', href: 'Alert.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
-    const fB = pickF(FIRES); if (fB) out.push({ t: T0 - 26 * 60000, kind: 'st', title: 'Crews returning to base', text: 'Leaving ' + fB.place + ' · back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(fB) });
+    const fB = pickF(FIRES); if (fB) out.push({ t: T0 - 26 * 60000, kind: 'st', title: 'Returning to base', text: 'Leaving ' + fB.place + ' · back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(fB) });
     const fC = pickF(FIRES); if (fC) out.push({ t: T0 - 47 * 60000, kind: 'st', title: 'Station available again', text: 'Crews released from ' + fC.place + ' can take new dispatches', href: 'Dispatch.dc.html', pick: goFire(fC) });
     const fD = pickF(fireSt); if (fD) out.push({ t: T0 - 72 * 60000, ...stNote(fD) });
     const unread = out.filter((n) => n.t > seen).length;
@@ -1076,7 +1076,7 @@ class Component extends DCLogic {
     const fState = (f) => { const I = f.info; if (!I || !I.stEn) return /^Confirmed from /.test(f.note || '') ? ['Confirmed', TONE.hot] : ['Active', TONE.hot]; return [I.stEn, TONE[I.tone] || TONE.hot]; };
     const fireList = FIRES.map((f, j) => ({ f, j, st: fState(f) })).sort((a, b) => a.st[1][1] - b.st[1][1]).map(({ f, j, st }) => ({
       place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: st[0], valC: st[1][0], nameW: 400, iconPath: FLAME,
-      sub: /^Confirmed from /.test(f.note || '') ? 'Confirmed from a satellite detection' : [geoOf(f)].concat(String(f.note || '').split(' · ').filter((x) => x && !(f.info && (x === f.info.st || x === f.info.stEn)))).filter(Boolean).join(' · '), conf: '',
+      sub: /^Confirmed from /.test(f.note || '') ? 'Confirmed by satellite' : [geoOf(f)].concat(String(f.note || '').split(' · ').filter((x) => x && !(f.info && (x === f.info.st || x === f.info.stEn)))).filter(Boolean).join(' · '), conf: '',
       bg: 'rgba(232,106,0,0.16)', bd: 'rgba(232,106,0,0.45)', ...anim(N + j),
       aria: 'Fire ' + f.place + ', ' + st[0] + (geoOf(f) ? ', ' + geoOf(f) : '') + '. Open', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
     }));

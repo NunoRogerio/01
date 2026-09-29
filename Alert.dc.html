@@ -16,9 +16,9 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=69"></script>
-<script src="i18n.js?v=45"></script>
-<script src="live.js?v=29"></script>
-<script src="chat.js?v=17"></script>
+<script src="i18n.js?v=46"></script>
+<script src="live.js?v=30"></script>
+<script src="chat.js?v=18"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -659,7 +659,7 @@ class Component extends DCLogic {
       const loc = [L.near || '', L.ll || ''].filter(Boolean).join(' · ');   // the region sits under the title
       const reasons = [['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
         [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
-        ['Not yet confirmed on the ground', false]];
+        ['Not confirmed on the ground', false]];
       return { id: c.id, place: c.place, ll: L.ll || '', loc, reg: c.co || '', co: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
         agree: c.agree, srcList: c.srcList, src: c.src, st: c.st || '', drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y + 12, zoom: 2.6, fsZoom: 2.6,   // pin sits a little above centre, leaving room for its label
         coords: 'Heat is inside the dashed circle · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
