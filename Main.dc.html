@@ -485,8 +485,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <!-- Annotation line: when it was last loaded (bold), then when it was added -->
                   <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73"><b style="display: {{d.loadedD}}; font-weight: 600">{{d.loaded}}<span style="font-weight: 400"> · </span></b><span style="white-space: nowrap">{{d.added}}</span></span>
                   </span>
-                  <!-- Show or hide this source's data (asks first); the map and place names cannot be switched off -->
-                  <button type="button" role="switch" class="wf-tog" aria-checked="{{d.onStr}}" aria-label="{{d.name}}" aria-disabled="{{d.lockStr}}" onClick="{{d.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{d.swBg}}; opacity: {{d.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 2px; left: 2px; width: 38px; height: 21px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.14), 0 0 0 0.5px rgba(0,0,0,0.04); transform: translateX({{d.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
+                  <!-- Show or hide this source's data (asks first); the map and place names have no switch -->
+                  <button type="button" role="switch" class="wf-tog" aria-checked="{{d.onStr}}" aria-label="{{d.name}}" aria-disabled="{{d.lockStr}}" onClick="{{d.toggle}}" style="display: {{d.togD}}; position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{d.swBg}}; opacity: {{d.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 2px; left: 2px; width: 38px; height: 21px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.14), 0 0 0 0.5px rgba(0,0,0,0.04); transform: translateX({{d.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
                 </li>
               </sc-for>
             </ul>
@@ -755,7 +755,7 @@ class Component extends DCLogic {
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26]
         ].map(([name, what, t, still, day, key]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
           return { name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
-          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfY || '#E5FF00') : 'rgba(120,120,128,0.24)', swX: on ? '22px' : '0px', swOp: lock ? 0.4 : 1,
+          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfY || '#E5FF00') : 'rgba(120,120,128,0.24)', swX: on ? '22px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
