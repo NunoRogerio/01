@@ -17,7 +17,7 @@
 <script src="fit.js?v=61"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=48"></script>
-<script src="i18n.js?v=36"></script>
+<script src="i18n.js?v=37"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
 
@@ -427,6 +427,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
       </sc-for>
+      <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
+      <span aria-hidden="true" style="margin: 0 0 -16px 4px; font-size: 15px; line-height: 20px; color: #6E6E73">Settings</span>
       <!-- Chat settings: a drawer row like Connect data sources; opens in place to the Claude key and the invite links -->
       <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
         <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{ai.pill}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
