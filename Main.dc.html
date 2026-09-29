@@ -574,6 +574,7 @@ class Component extends DCLogic {
   wfDemoReset() {
     // Logo on the incidents map: restart the whole demo (dismissed/confirmed candidates, scope, dispatches, map style…).
     try { const ks = []; for (let i = 0; i < window.sessionStorage.length; i++) { const k = window.sessionStorage.key(i); if (k && k.indexOf('wf-') === 0) ks.push(k); } ks.forEach((k) => window.sessionStorage.removeItem(k)); } catch (e) {}
+    try { window.localStorage.removeItem('wf-orders'); } catch (e) {}   // dispatches sent in the demo go too
     window.__wfMem = {}; window.__wfT0 = Date.now();
     this._navT = null;
     this.wfHomeReset();

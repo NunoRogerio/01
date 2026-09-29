@@ -461,6 +461,9 @@ class Component extends DCLogic {
   // the lists give it), so it never falls back to the design fire.
   wfConfirm(id) {
     const d = this.wfConfirmed(); if (!d[id]) { d[id] = Date.now(); this.wfSaveConfirmed(d); }
+    // A new confirmation starts a fresh dispatch: orders left over from an earlier round for the same fire id (e.g. after a
+    // demo reset brought the candidate back) must not open the fire on 'Dispatch orders sent' instead of configuring it
+    try { const o = JSON.parse(window.localStorage.getItem('wf-orders') || '{}') || {}; if (o['F-' + id]) { delete o['F-' + id]; window.localStorage.setItem('wf-orders', JSON.stringify(o)); } } catch (e) {}
     try {
       const W = this.wfWorld(), c = W.cands.find((q) => q.id === id); if (!c) return;
       const i = W.cands.filter((q) => d[q.id]).sort((a, b) => d[a.id] - d[b.id]).findIndex((q) => q.id === id);
