@@ -304,7 +304,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
       <div role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
         <span style="display: block; font-size: 15px; line-height: 20px; color: #6E6E73">Likelihood</span>
-        <span class="wf-like-xs" style="display: block; margin-top: -3px; white-space: nowrap">{{pop.pct}}</span>
+        <span class="wf-like-xs" style="display: block; margin-top: -3px; white-space: nowrap; --wf-fs: {{pop.pctFs}}px">{{pop.pct}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 8px">{{pop.place}}</b>
         <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
       </div>
@@ -1509,7 +1509,7 @@ class Component extends DCLogic {
         const A = nB > 0 ? [nB + (nB === 1 ? ' fire' : ' fires'), 'rgba(232,106,0,0.14)', '#A34800'] : ['Available', 'rgba(52,199,89,0.14)', '#1E7A34'];
         return { tagD: 'inline-flex', tagTxt: A[0], tagBg: A[1], tagFg: A[2] }; })(), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
       from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 28px)' : 'inset(calc(100% - 60px) 0 0 0 round 28px)',   // starts as the 60px band nearest the marker, then unfolds
-      ...chatFor(chatInc), chatD: 'none', isIgn: P.kind === 'ign', isFire: !!FD, notIgn: P.kind !== 'ign' && !FD, w: PW, pad: '0', btnPad: '0 8px 8px', btnMt: '16px', btnCls: 'wf-b wf-pri wf-cond', chatS: '32px', chatI: '17px', regD: (P.kind === 'st' ? stReg : m.reg) ? 'block' : 'none', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', place: m.place || '', reg: P.kind === 'st' ? stReg : (m.reg || ''), igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
+      ...chatFor(chatInc), chatD: 'none', isIgn: P.kind === 'ign', isFire: !!FD, notIgn: P.kind !== 'ign' && !FD, w: PW, pad: '0', btnPad: '0 8px 8px', btnMt: '16px', btnCls: 'wf-b wf-pri wf-cond', chatS: '32px', chatI: '17px', regD: (P.kind === 'st' ? stReg : m.reg) ? 'block' : 'none', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', place: m.place || '', reg: P.kind === 'st' ? stReg : (m.reg || ''), igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctFs: (this._kpiFs || {})[(m.conf != null ? m.conf : '') + '%'] || 64, pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
       ...(FD ? { fkNum: FD.kpiNum, fkUnit: FD.kpiUnit, fkFs: ((this._kpiFs || {})[FD.kpiNum] || FD.kpiFs), fkLbl: FD.kpiLbl, fkNumD: FD.kpiNumD, fkTagMt: FD.kpiTagMt, fkSub: FD.kpiSub, fkSubD: FD.kpiSubD, fkTagT: FD.kpiTT, fkName: FD.name, fkReg: FD.sub, fkRegD: FD.subD, fkTag: FD.stTxt, fkTagBg: FD.stBg, fkTagFg: FD.stFg } : { fkNum: '', fkUnit: '', fkFs: 40, fkLbl: '', fkNumD: 'none', fkTagMt: '8px', fkSub: '', fkSubD: 'none', fkTagT: '', fkName: '', fkReg: '', fkRegD: 'none', fkTag: '', fkTagBg: '', fkTagFg: '' }),
       hasView: !noView && (P.kind !== 'st' || !!m._st), viewD: !noView && (P.kind !== 'st' || !!m._st) ? 'flex' : 'none', href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
     return OUT;
