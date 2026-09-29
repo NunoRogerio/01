@@ -99,10 +99,10 @@
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
-    // A likelihood KPI: very big, in the app's yellow darkened just enough for 3:1 contrast on white (fixed size, whatever the text-size setting)
-    // Big KPI numbers across the app (forces, resolution summary, profiles): the same darkened yellow, one size
-    '.wf-big{color:#8A9E08!important;font-size:44px!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
-    '.wf-like{color:#8A9E08!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
+    // A likelihood KPI: very big, in the app's hi-vis yellow (fixed size, whatever the text-size setting)
+    // Big KPI numbers across the app (forces, resolution summary, profiles): the app's hi-vis yellow, one size
+    '.wf-big{color:#D7F41A!important;font-size:44px!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
+    '.wf-like{color:#D7F41A!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
     // The glass overlay behind panels, one definition for the whole app: a slightly dark frosted layer, so the panel's edge
     // reads clearly against what is underneath. Change it here and every overlay changes.
     ':root{--wf-glass-bg:rgba(60,60,67,0.24);--wf-glass-blur:blur(10px) saturate(120%)}' +
