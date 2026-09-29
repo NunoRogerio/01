@@ -392,6 +392,7 @@ window.__wfBlink=function(path,dur){
     try{if(!hap){hap=document.createElement('label');hap.id='wf-hap';hap.setAttribute('aria-hidden','true');var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;hap.appendChild(c);document.body.appendChild(hap);}hap.click();}catch(e){}
     try{if(isField(a)&&document.activeElement!==a)a.focus({preventScroll:true});}catch(e){}
   }
+  window.__wfHaptic=haptic;   // shared: other parts of the app can give the same tap (e.g. a toggle clicking into place)
   function fade(fast){if(!box)return;var b=box,d=dot;box=dot=null;d.style.transition='transform .42s cubic-bezier(.2,.8,.2,1),opacity '+(fast?'.12s':'.35s')+' ease';d.style.opacity='0';setTimeout(function(){b.remove();},fast?150:420);}
   document.addEventListener('pointerdown',function(e){
     var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;

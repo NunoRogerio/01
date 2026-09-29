@@ -109,6 +109,7 @@
     // dialogs: a floating panel 48px above the bottom, 24px inside, the panel shadow plus a soft primary light from underneath
     'html .wf-dlg{left:0!important;right:0!important;bottom:var(--wf-safe-b)!important;padding:24px!important;border-radius:var(--wf-panel-r)!important;box-shadow:0 -10px 315px 14px rgba(var(--wf-y-rgb),.495),0 -90px 160px rgba(var(--wf-y-rgb),.3),var(--wf-panel-sh)!important;transition-property:transform,box-shadow,translate!important;transition-duration:.5s,.45s,.5s!important}' +
     'html .wf-dlg[aria-hidden="true"]{translate:0 calc(var(--wf-safe-b) + 24px)!important;box-shadow:0 -10px 315px 14px rgba(var(--wf-y-rgb),0),0 -90px 160px rgba(var(--wf-y-rgb),0),0 8px 40px rgba(0,0,0,0)!important}' +
+    'html .sw26k,html .wf-thumb{transition:transform .3s cubic-bezier(.55,0,.35,1.5),width .2s ease,background-color .2s ease!important;transition:transform .3s linear(0,.04 15%,.16 30%,.4 48%,.78 64%,1.05 74%,.985 84%,1.005 92%,1),width .2s ease,background-color .2s ease!important}' +   // toggle thumb: speeds up, hits the end and clicks into place with a tiny rebound
     '.wf-tog,.sw26{box-shadow:inset 0 0 3px rgba(0,0,0,.2),inset 0 0 0 .5px rgba(0,0,0,.06)!important}' +   // toggle track: a soft inner shadow, one rule for every toggle
     '.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}' +
     // dialogs: 24px around the content, plus 48px clear of the home indicator
@@ -218,6 +219,13 @@
     });
     var segGo = function () { segWatch(document); segMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true, childList: true }); };
     if (document.body) segGo(); else document.addEventListener('DOMContentLoaded', segGo);
+  }
+  // Toggle thumbs: a small haptic tap at the moment the thumb clicks into place
+  if (window.MutationObserver) {
+    var togMo = new MutationObserver(function (ms) { ms.forEach(function (m) { var n = m.target; if (!n.classList || !(n.classList.contains('sw26k') || n.classList.contains('wf-thumb'))) return;
+      var t = n.style.transform; if (n.__wfT !== undefined && t !== n.__wfT && n.isConnected) setTimeout(function () { try { if (window.__wfHaptic) window.__wfHaptic(); } catch (x) {} }, 220); n.__wfT = t; }); });
+    var togGo = function () { document.querySelectorAll('.sw26k,.wf-thumb').forEach(function (n) { n.__wfT = n.style.transform; }); togMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true }); };
+    if (document.body) togGo(); else document.addEventListener('DOMContentLoaded', togGo);
   }
   apply();
 })();
