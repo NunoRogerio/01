@@ -837,8 +837,9 @@ class Component extends DCLogic {
           copy,
           note: !key ? T('Save your Anthropic key above first: the link carries it.', 'Guarde primeiro a sua chave Anthropic acima: a ligação leva-a consigo.')
             : T('The link carries your key: calls from invited phones use your credit. Send it privately, only to people you trust. To cut everyone off, replace the key in the Anthropic console.', 'A ligação leva a sua chave: as chamadas dos telemóveis convidados usam o seu crédito. Envie-a em privado, só a quem confia. Para cortar o acesso a todos, substitua a chave na consola Anthropic.') }; })(),
-      openPrefs: () => { const av = this.wfPfAvPos(); this.setState(av ? { pf: true, pfSpin: false, pfAvPos: av } : { pf: true, pfSpin: false }); clearTimeout(this._pfFixT); this._pfFixT = setTimeout(() => this.wfPfAvFix(), 620); },
-      closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); }, 280); },
+      openPrefs: () => { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {}   // user preferences always open at the top (lists and the area picker keep their place)
+        const av = this.wfPfAvPos(); this.setState(av ? { pf: true, pfSpin: false, pfAvPos: av } : { pf: true, pfSpin: false }); clearTimeout(this._pfFixT); this._pfFixT = setTimeout(() => this.wfPfAvFix(), 620); },
+      closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); setTimeout(() => { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {} }, 520); }, 280); },
       pfGroups: [
         group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', '日本']], (l) => { if (window.__wfSetLang) window.__wfSetLang(l); }),
         group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
