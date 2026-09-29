@@ -294,7 +294,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
-  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: 216px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
+  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: 216px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
     <!-- Ignition candidate: what it is (qualifier band, edge to edge, with the round X); the place; the level above it;
          the likelihood as the XS version of the detail screen's KPI, centred -->
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
@@ -327,7 +327,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   </sc-if>
   <sc-if value="{{hasFc}}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); --wf-dy: {{fc.dy}}; width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 28px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
+  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); --wf-dy: {{fc.dy}}; width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 28px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
     <div style="flex-shrink: 0; padding: 16px 16px 12px">
       <div style="display: flex; align-items: flex-start; gap: 8px">
       <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
