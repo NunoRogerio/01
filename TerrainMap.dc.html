@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=61"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=49"></script>
+<script src="prefs.js?v=50"></script>
 <script src="i18n.js?v=39"></script>
 <script src="live.js?v=27"></script>
 
@@ -44,6 +44,8 @@ body{margin:0}
 .mbtn:active{opacity:.6}
 /* Street tiles fade a little into the app's grey, so fires, candidates and stations stand out */
 image[href*="tile.openstreetmap"]{opacity:.72}
+/* Map markers (fires, candidates, stations, units, pins) at 72% opacity; their tooltip panels stay fully opaque */
+.tipwrap svg,.fzone>svg{opacity:.72}.tipwrap [role=tooltip] svg{opacity:1}
 
 .fzone{display:block;background:transparent;transition:background-color .15s ease;-webkit-tap-highlight-color:transparent}.fzone:hover,.fzone:focus-visible{background-color:rgba(255,59,48,0.14)}.fzone:hover+.fanchor>.tip,.fzone:focus-visible+.fanchor>.tip{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .18s ease .1s,transform .18s ease .1s,visibility 0s linear .1s}.fzone:hover+.fanchor>.tip.l,.fzone:hover+.fanchor>.tip.r,.fzone:focus-visible+.fanchor>.tip.l,.fzone:focus-visible+.fanchor>.tip.r{transform:translate(0,0)}
 .tip,.igmore>span{white-space:pre-line}

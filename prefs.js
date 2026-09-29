@@ -70,7 +70,7 @@
     o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
     o.push('html:root .wf-big,html:root .wf-like{color:#E5E5EA!important}');   // big numbers stay readable at night
-    o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(var(--wf-y-rgb), 0.084);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
+    o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(var(--wf-y-rgb), 0.092);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#404043!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
@@ -106,15 +106,13 @@
   var BTN = '.wf-dot::after{content:"."}html[lang=ja] .wf-dot::after{content:"\u3002"}' +   // full stop at the end of a normal-text or annotation block (outside the translated text)
     'html{--wf-panel-r:28px;--wf-panel-sh:0 8px 40px rgba(0,0,0,.14);--wf-safe-b:48px}' +   // shared panel: radius, shadow, 48px clear of the home indicator
     'html .wf-panel{bottom:var(--wf-safe-b)!important;border-radius:0 0 var(--wf-panel-r) var(--wf-panel-r)!important;box-shadow:var(--wf-panel-sh)!important}' +
-    // dialogs: a floating panel 48px above the bottom, 24px inside, the panel shadow plus a soft primary light from underneath
-    'html .wf-dlg{left:0!important;right:0!important;bottom:var(--wf-safe-b)!important;padding:24px 24px 32px!important;border-radius:0!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
-    // the soft primary light only rises above the dialog, so the panel's own shadow below it stays clean
-    'html .wf-dlg::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:420px;pointer-events:none;background:radial-gradient(120% 100% at 50% 100%,rgba(var(--wf-y-rgb),.5) 0,rgba(var(--wf-y-rgb),.22) 40%,rgba(var(--wf-y-rgb),0) 75%);transition:opacity .45s ease}' +
-    'html .wf-dlg[aria-hidden="true"]{translate:0 calc(var(--wf-safe-b) + 24px)!important;box-shadow:none!important}html .wf-dlg[aria-hidden="true"]::before{opacity:0}' +
+    // dialogs: a panel that runs to the bottom edge, 24px inside, with its buttons kept 48px clear of the home indicator; no light around it
+    'html .wf-dlg{left:0!important;right:0!important;bottom:0!important;padding:24px 24px calc(32px + var(--wf-safe-b))!important;border-radius:0!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
+    'html .wf-dlg[aria-hidden="true"]{translate:0 24px!important;box-shadow:none!important}' +
     '.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}' +
     // dialogs: 24px around the content, plus 48px clear of the home indicator
     '.seg{transition:left .42s cubic-bezier(.4,0,.2,1) .14s,width .42s cubic-bezier(.4,0,.2,1) .14s!important}' +
-    ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:var(--wf-y);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.084);--wf-ter-fg:#3A3A3C}' +
+    ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:var(--wf-y);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.092);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     /* Subtle button (.wf-ter, formerly tertiary): full width inside its container with 16px padding all round */ ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     // One button: every text button in the app is 48px tall, 17px semibold, one corner radius; roles are primary, secondary, tertiary
