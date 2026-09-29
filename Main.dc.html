@@ -401,8 +401,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 12px 16px 16px; border-radius: 14px; background: #FFFFFF">
         <div style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
-        <span data-wf-langfit="1" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-          <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{me.name}}</span>
+        <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
+          <!-- Title, then one normal-text block (22px lines, no extra gap between them), as in the data source rows -->
+          <span style="margin-bottom: 2px; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{me.name}}</span>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.title}}</span>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.access}}</span>
