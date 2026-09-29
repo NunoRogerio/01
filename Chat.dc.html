@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=13"></script>
-<script src="i18n.js?v=31"></script>
+<script src="prefs.js?v=14"></script>
+<script src="i18n.js?v=32"></script>
 <script src="live.js?v=26"></script>
-<script src="chat.js?v=15"></script>
+<script src="chat.js?v=16"></script>
 <script src="trophy.js?v=11"></script>
 
 <title>Incident chats</title>
@@ -257,7 +257,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{noForces}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 14px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noForces}}</p></sc-if>
             <sc-if value="{{hasForces}}" hint-placeholder-val="{{ true }}">
               <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 16px; border-radius: 14px; background: #FFFFFF">
-                <sc-for list="{{fk}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 30px; font-weight: 600; line-height: 34px; font-variant-numeric: tabular-nums">{{k.v}}</span><span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
+                <sc-for list="{{fk}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="wf-big" style=" font-variant-numeric: tabular-nums">{{k.v}}</span><span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
               </div>
               <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
                 <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
@@ -306,7 +306,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
         <sc-for list="{{sum.kpis}}" as="k" hint-placeholder-count="4">
           <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
-            <span style="font-size: 24px; font-weight: 600; line-height: 30px; letter-spacing: -0.01em; color: {{k.c}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span>
+            <span class="wf-big" style="font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span>
             <span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span>
             <span style="display: {{k.cmpD}}; font-size: 13px; font-weight: 600; line-height: 16px; color: {{k.cmpC}}; text-align: center">{{k.cmp}}</span>
           </div>
@@ -363,7 +363,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <span style="font-size: 17px; line-height: 22px; color: #545458">{{pp.role}}</span>
       </section>
       <section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
-        <sc-for list="{{pp.kpis}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 26px; font-weight: 600; line-height: 32px; font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span><span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
+        <sc-for list="{{pp.kpis}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="wf-big" style=" font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span><span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
       </section>
       <section style="display: flex; flex-direction: column; gap: 8px">
         <h2 style="margin: 0; padding: 0 4px; font-size: 17px; font-weight: 600; line-height: 22px">{{t.ach}}</h2>

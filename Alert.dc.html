@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=13"></script>
-<script src="i18n.js?v=31"></script>
+<script src="prefs.js?v=14"></script>
+<script src="i18n.js?v=32"></script>
 <script src="live.js?v=26"></script>
-<script src="chat.js?v=15"></script>
+<script src="chat.js?v=16"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -277,7 +277,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
     </figure>
 
-    <div style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; margin-top: {{panelMt}}; background: #F2F2F7; border-radius: 0; box-shadow: {{panelSh}}; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+    <div class="wf-snap" style="position: relative; z-index: 3; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; margin-top: {{panelMt}}; background: #F2F2F7; border-radius: 0; box-shadow: {{panelSh}}; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
       <!-- The current conclusion, in its own card: verdict and status on the left, the likelihood KPI on the right -->
       <div style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF">
@@ -287,9 +287,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{cur.verdict}}</h2>
           <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
         </span>
-        <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 0 8px">
+        <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 0; padding: 4px 0 8px">
           <span class="wf-like">{{cur.conf}}%</span>
-          <span style="font-size: 17px; line-height: 22px; color: #545458; white-space: nowrap">Likelihood</span>
+          <span style="margin-top: -4px; font-size: 17px; line-height: 22px; color: #545458; white-space: nowrap">Confidence level</span>
         </span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 0 16px; padding: 12px 0 8px; border-top: 1px solid rgba(60,60,67,0.12); font-size: 17px; line-height: 22px; color: #3C3C43">
@@ -299,14 +299,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
     </section>
 
-    <section class="rise" aria-label="Evidence" style="display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; padding: 16px 16px 0; animation-delay: 220ms">
+    <section class="rise" aria-label="Evidence" style="display: flex; flex-direction: column; flex: none; padding: 16px 16px 0; animation-delay: 220ms">
       <!-- Heading with its source count -->
       <div style="display: flex; align-items: center; gap: 16px; margin: 0 0 8px 4px">
         <span style="display: flex; align-items: baseline; gap: 6px; min-width: 0; font-size: 15px; color: #545458; white-space: nowrap">
           <h2 style="margin: 0; font-size: 15px; font-weight: 600; color: #545458">Evidence</h2><span aria-hidden="true">·</span><span>{{cur.agree}}</span>
         </span>
       </div>
-      <ul class="wf-snap" style="display: flex; flex-direction: column; flex: 0 1 auto; min-height: 96px; margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; list-style: none; border-radius: 14px; background: #FFFFFF">
+      <ul style="display: flex; flex-direction: column; flex: none; margin: 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
           <li style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 12px 16px; border-top: {{r.sep}}; font-size: 17px; line-height: 22px; color: {{r.color}}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.stroke}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="{{r.icon}}"></path></svg>{{r.t}}
@@ -787,7 +787,7 @@ class Component extends DCLogic {
       // Location is not evidence: it sits in the conclusion card with the map button
       locTxt: cur.loc || cur.coords || '', locD: (cur.loc || cur.coords) ? 'block' : 'none',
       reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
-      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent likelihood',
+      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent confidence level',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
       mapIgn: [cur].map((c) => ({ id: c.id, x: c.x, y: c.y, place: c.place, conf: c.conf, src: c.src })),   // only this candidate and its suggested stations

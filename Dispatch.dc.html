@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=13"></script>
-<script src="i18n.js?v=31"></script>
+<script src="prefs.js?v=14"></script>
+<script src="i18n.js?v=32"></script>
 <script src="live.js?v=26"></script>
-<script src="chat.js?v=15"></script>
+<script src="chat.js?v=16"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -359,7 +359,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div class="wf-hscroll" data-sb-kpi="1" role="list" aria-label="Forces on scene" style="display: {{kpiRowD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
       <sc-for list="{{kpiRow}}" as="k" hint-placeholder-count="4">
         <div role="listitem" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1 0 {{k.w}}; min-width: 0; padding: 0 4px; border-left: {{k.sep}}; text-align: center">
-          <span class="kpi" style="color: {{k.c}}; white-space: nowrap">{{k.v}}</span>
+          <span class="kpi wf-big" style="white-space: nowrap">{{k.v}}</span>
           <span style="font-size: 15px; line-height: 19px; color: #545458">{{k.l}}</span>
         </div>
       </sc-for>
@@ -368,11 +368,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div data-sb-kpi2="1" style="display: {{kpiD}}; flex-shrink: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px 16px 0">
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span class="lbl">{{k1L}}</span>
-        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi" style="color: {{k1C}}">{{k1V}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k1Sub}}</span></span>
+        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k1V}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k1Sub}}</span></span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; border-left: 1px solid rgba(60,60,67,0.14)">
         <span class="lbl">{{k2L}}</span>
-        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi">{{k2Val}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k2Sub}}</span></span>
+        <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k2Val}}</span><span style="font-size: 15px; line-height: 19px; color: #545458">{{k2Sub}}</span></span>
       </div>
     </div>
     <ul class="wf-snap" aria-label="{{listAria}}" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; margin: 16px 0 0; padding: 0; list-style: none; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
