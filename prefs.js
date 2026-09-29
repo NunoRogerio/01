@@ -103,7 +103,8 @@
     return Math.max(28, Math.min(cap, Math.floor(w / (len * 0.6)))) + 'px';
   };
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
-  var BTN = '.wf-dlg{padding:24px 24px 72px!important;border-radius:32px 32px 0 0}.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}' +   // dialogs: 24px around the content, plus 48px clear of the home indicator
+  var BTN = '.wf-dot::after{content:"."}html[lang=ja] .wf-dot::after{content:"\u3002"}' +   // full stop at the end of a normal-text or annotation block (outside the translated text)
+    '.wf-dlg{padding:24px 24px 72px!important;border-radius:32px 32px 0 0}.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}' +   // dialogs: 24px around the content, plus 48px clear of the home indicator
     '.seg{transition:left .42s cubic-bezier(.4,0,.2,1) .14s,width .42s cubic-bezier(.4,0,.2,1) .14s!important}' +
     ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:var(--wf-y);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.07);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +

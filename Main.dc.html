@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=26"></script>
+<script src="prefs.js?v=27"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -341,7 +341,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="display: {{r.subD}}; grid-column: 1 / span 3; min-width: 0; line-height: 18px; font-size: 15px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
           </button>
       </sc-for>
-      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span style="padding: 20px 40px; font-size: 17px; color: #000000">{{noMatchTxt}}</span></sc-if>
+      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><span class="wf-dot" style="padding: 20px 40px; font-size: 17px; color: #000000">{{noMatchTxt}}</span></sc-if>
     </div>
     <a href="SimSetup.dc.html" style="display: {{simD}}; align-items: center; gap: 12px; flex-shrink: 0; min-height: 52px; margin: 8px 0 0; padding: 4px 4px; border-top: 1px solid rgba(60,60,67,0.14); color: #000000; text-decoration: none">
       <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; background: #E86A00; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5Z"></path></svg></span>
@@ -405,8 +405,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <!-- Title, then one normal-text block (22px lines, no extra gap between them), as in the data source rows -->
           <span style="margin-bottom: 2px; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{me.name}}</span>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.title}}</span>
-          <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
-          <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.access}}</span>
+          <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
+          <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{me.access}}</span>
         </span>
       </div>
         <!-- Sign out belongs with the profile -->
@@ -473,9 +473,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <!-- Rows: the name in bold, dividers edge to edge -->
                 <li style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.12)">
                   <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
-                  <span style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
+                  <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
                   <!-- Text styles: title (bold), description (grey), annotation (smaller, mid grey) -->
-                  <span style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{d.added}}</span>
+                  <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{d.added}}</span>
                 </li>
               </sc-for>
             </ul>
