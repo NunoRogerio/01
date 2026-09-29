@@ -226,10 +226,14 @@
   // The fade is laid over the content in the colour of what it sits on (e.g. a white card), so the text fades out
   // while the card and the panel keep crisp edges. 48px + 60% = 77px tall.
   var FH = 77;
+  // The colour of the list's own container under that point: the outermost box inside the scroller that has a background
+  // (the card), never a button, field or pill inside it; between cards, the panel's colour.
+  function solid(c) { return c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c); }
   function bgAt(el, x, y) {
-    var n = document.elementFromPoint(x, y);
-    while (n && n !== el.parentElement) { var c = getComputedStyle(n).backgroundColor; if (c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c)) return { c: c, n: n }; n = n.parentElement; }
-    var q = el.parentElement; while (q) { var c2 = getComputedStyle(q).backgroundColor; if (c2 && c2 !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c2)) return { c: c2, n: q }; q = q.parentElement; }
+    var n = document.elementFromPoint(x, y), best = null;
+    while (n && n !== el && el.contains(n)) { var c = getComputedStyle(n).backgroundColor; if (solid(c)) best = { c: c, n: n }; n = n.parentElement; }
+    if (best) return best;
+    var q = el; while (q) { var c2 = getComputedStyle(q).backgroundColor; if (solid(c2)) return { c: c2, n: q }; q = q.parentElement; }
     return { c: 'rgb(242, 242, 247)', n: el };
   }
   function fadeOne(el) {
