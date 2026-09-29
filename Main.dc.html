@@ -17,7 +17,7 @@
 <script src="fit.js?v=61"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=49"></script>
-<script src="i18n.js?v=38"></script>
+<script src="i18n.js?v=39"></script>
 <script src="live.js?v=27"></script>
 <script src="chat.js?v=17"></script>
 
@@ -464,7 +464,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
       </div>
-      <span class="wf-label" aria-hidden="true" style="margin: 0 0 -16px 4px; font-size: 15px; line-height: 20px; color: #6E6E73">Current data sources</span>
+      <span class="wf-label" aria-hidden="true" style="margin: 0 0 -16px 4px; font-size: 15px; line-height: 20px; color: #6E6E73">Connected data sources</span>
       <!-- Connect data sources: a drawer like Chat settings; Add data source on top, then the sources the app reads -->
       <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
         <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 17px; color: #545458">{{ds.count}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
@@ -760,7 +760,7 @@ class Component extends DCLogic {
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
             return lang === 'ja' ? (yr ? '2026年' : '') + '9月' + day + '日に追加' : pt ? 'Adicionada a ' + day + ' set' + yr : 'Added ' + day + ' Sep' + yr; })() }; });
-        return { title: T('Connect data sources', 'Ligar fontes de dados'), count: String(items.length), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
+        return { title: T('Manage data sources', 'Gerir fontes de dados'), count: String(items.length), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           addTxt: T('Add data source', 'Adicionar fonte de dados'), noteD: s.dsAddTried ? 'block' : 'none',
