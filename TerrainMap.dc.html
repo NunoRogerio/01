@@ -295,15 +295,14 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
   <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: 216px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
-    <!-- Ignition candidate (the selected marker already says what it is): the place and the round X; the level above it;
+    <!-- Ignition candidate (the selected marker already says what it is; no X: a tap on the marker or the map closes it): the place; the level above it;
          the likelihood as the XS version of the detail screen's KPI, centred -->
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
-      <div style="display: flex; align-items: flex-start; gap: 8px; padding: 12px 12px 0">
+      <div style="display: flex; padding: 12px 12px 0">
         <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
           <b style="display: block; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{pop.place}}</b>
           <span class="wf-dot" style="display: {{pop.regD}}; margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
         </span>
-        <button type="button" onClick="{{popClose}}" aria-label="Close" style="margin: -4px -4px 0 0; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="17.5" height="17.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{popXRot}}); transition: transform .3s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
       </div>
       <span role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; padding: 8px 12px 0">
         <span class="wf-like-xs">{{pop.pct}}</span>
@@ -501,7 +500,7 @@ class Component extends DCLogic {
       const tp = this._tap; this._tap = null;
       const p = this.props, full = p.isFull === true || p.isFull === 'true';
       if (tp && tp.bg && !this._pinched && performance.now() - tp.t < 450 && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) <= 8) {
-        if ((this.state || {}).pop) this.setState({ pop: null, popSpin: false });
+        if ((this.state || {}).pop) { if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); }
         else if (typeof p.onBgTap === 'function' && !full) p.onBgTap();
       }
     };
@@ -1498,7 +1497,7 @@ class Component extends DCLogic {
   withPop(OUT) {
     const noView = String(this.props.noView) === 'true';   // candidate screen: cards inform only, no jump to another fire or station
     const P = (this.state || {}).pop, strip = (t) => String(t || '').replace(/\n?Tap to [^\n]*\.?$/, '').trim();
-    const closePop = () => { if (this._popT) return; this.setState({ popSpin: true }); this._popT = setTimeout(() => { this._popT = null; this.setState({ pop: null, popSpin: false }); }, 260); };
+    const closePop = this._closePop = () => { if (this._popT) return; this.setState({ popSpin: true }); this._popT = setTimeout(() => { this._popT = null; this.setState({ pop: null, popSpin: false }); }, 260); };
     // Tapping the same marker again closes its tooltip panel; another marker opens its own (unfolding again from it)
     const sel = (kind, key) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault();
       const cur = (this.state || {}).pop; if (cur && cur.kind === kind && cur.key === key) { closePop(); return; }
