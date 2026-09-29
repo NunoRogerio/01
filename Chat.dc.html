@@ -213,9 +213,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid rgba(60,60,67,0.18)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
         <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
       </div>
-      <div data-fitrow="1" style="display: {{actD}}; flex-wrap: wrap; gap: 8px; padding: 0 16px">
+      <div class="chscroll" style="display: {{actD}}; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
-          <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="flex: 1 1 auto; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: {{a.bg}}; box-shadow: {{a.line}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
+          <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="flex: 0 0 auto; height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.bg}}; box-shadow: {{a.line}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
       </div>
     </div>
@@ -404,6 +404,8 @@ class Component extends DCLogic {
       if (wraps) { r.style.flexDirection = 'column'; k.forEach((b) => { b.style.width = '100%'; }); }
     });
   }
+  // Keep the newest message fully above the input while you are reading the end; after the layout settles too
+  pin() { const el = this._sc; if (!el || !this._stick) return; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; }); }
   componentDidUpdate() {
     this.fitRows();
     const s = this.state || {}, C = window.__wfChat;
@@ -412,7 +414,7 @@ class Component extends DCLogic {
       if (c && C.unread(c) > 0 && document.visibilityState !== 'hidden') C.seen(s.key);
       // Declared resolved: the chat stays; the resolution summary opens only from the trophy card or the state card
       const el = this._sc, n = c ? c.msgs.length : 0;
-      if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { if (this._stick) el.scrollTop = el.scrollHeight; this._n = n; this._typ = !!(c && C.typing(c)); }
+      if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { this.pin(); this._n = n; this._typ = !!(c && C.typing(c)); }
     }
   }
   // Views inside this screen stack up, so every back returns to the one you came from
@@ -631,7 +633,7 @@ class Component extends DCLogic {
       acts, actD: acts.length ? 'flex' : 'none',
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? '#D7F41A' : '#E5E5EA',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
-      setScroll: (el) => { this._sc = el; }, onScroll: (e) => { const el = e.currentTarget; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
+      setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
       back: (e) => { if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false, sheet: false, tab: c.closed ? 'resolved' : (this.state || {}).tab }); } }
     };
   }
