@@ -1429,7 +1429,7 @@ class Component extends DCLogic {
     return {
       aria: (held ? 'Held fire, ' : 'Active fire, ') + g.place + ', ' + I.st + (I.stEn ? ' (' + I.stEn + ')' : ''), name: g.place, sub: ((window.__wfRegionUp && g.co) ? window.__wfRegionUp(g.st, g.co) : String(I.place || '').replace(/, [^,]+$/, '')), subD: (((window.__wfRegionUp && g.co) ? window.__wfRegionUp(g.st, g.co) : String(I.place || '').replace(/, [^,]+$/, ''))) ? 'block' : 'none',
       stTxt: I.stEn || I.st || (held ? 'Held' : 'Active'), stEn: '', stBg: tn[1], stFg: tn[0],
-      kpiNum: kpiNum, kpiLbl: kpiLbl, kpiFs: Math.max(20, Math.min(64, Math.floor(152 / ((kpiNum.replace(/[ ,.]/g, '').length * 0.62 + (kpiNum.split(' ').length - 1) * 0.28) || 1)))), kpiSub: kpiSub, kpiSubD: kpiSub ? 'block' : 'none', kpiTT: kpiTT,
+      kpiNum: kpiNum, kpiLbl: kpiLbl, kpiFs: Math.max(20, Math.min(64, Math.floor(160 / ((kpiNum.replace(/[ ,.]/g, '').length * 0.62 + (kpiNum.split(' ').length - 1) * 0.28) || 1)))), kpiSub: kpiSub, kpiSubD: kpiSub ? 'block' : 'none', kpiTT: kpiTT,
       hasType: !!(I.type || beh), typeTxt: I.type || beh, typeEn: I.type && I.typeEn ? I.typeEn : '', typeIcon: TYPE_ICON[I.typeEn] || 'M12 21c4 0 6.5-2.7 6.5-6.3 0-3.8-3.3-6-4.4-9.7-2.2 1.6-3.6 3.8-3.6 6.2-1-.6-1.6-1.8-1.8-3C6.9 10 5.5 12.3 5.5 14.7 5.5 18.3 8 21 12 21Z',
       held: !!held, heldTitle: held ? (held.official ? 'Held. ' + held.label : 'Held. Edge fully contained') : '',
       heldSub: held ? (held.took != null ? 'Took ' + D(held.took) + ' to resolve' + (held.official && I.heldSrc === 'last status update' ? ' (to the last status update)' : '') : held.official ? (I.startMs && I.updMs && I.updMs > I.startMs ? 'About ' + D(I.updMs - I.startMs) + ' to resolve (estimate, to the last update)' : 'Resolution time not published') : 'Per the fire model; official state is ' + I.st) : '',
@@ -1487,7 +1487,7 @@ class Component extends DCLogic {
     // Placement: above the marker if it fits, else below; if neither fits fully, the side with more room, kept on screen.
     // Sideways it follows the marker but always stays 16px from the nearest screen edge.
     const stReg = P.kind === 'st' && m._st && m._st.lat != null && window.__wfRegionAt ? String(window.__wfRegionAt(m._st.lat, m._st.lon) || '').replace(/, [^,]+$/, '') : '';
-    const PW = 172, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
+    const PW = 180, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
     // 24px between the panel and the selected marker's outer edge (its 4px border included). Where that edge sits relative to the anchor:
     // fire circle: anchor is its top, 28px marker + 4px ring; candidate: centre, triangle 7.4px above and 14.2px below plus the ring; station: the pill's bottom, house icon 13px above it
     const EU = P.kind === 'ign' ? -11.4 : P.kind === 'st' ? -23 : (m.flameD === 'block' ? -0.25 : 0), ED = P.kind === 'ign' ? 18.2 : P.kind === 'st' ? -3 : (m.flameD === 'block' ? 28.25 : 10);
