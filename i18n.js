@@ -230,7 +230,9 @@
       out=t;}
     if(cache.size>8000)cache.clear();cache.set(k,out);return rewrap(s,out);
   }
-  function rewrap(orig,out){var a=orig.match(/^\s*/)[0],b=orig.match(/\s*$/)[0];return a+out+b;}
+  // No middle dots between topics anywhere in the app: every ' · ' shown on screen becomes a full stop (。 in Japanese)
+  function nodots(t){return String(t).indexOf('·')<0?t:t.replace(/\s*·\s*$/,lang==='ja'?'。':'.').replace(/^\s*·\s*/,lang==='ja'?'。':'. ').replace(/\.?\s+·\s+/g,lang==='ja'?'。':'. ').replace(/([.] )([a-zà-ÿ])/g,function(m,a,b){return a+b.toUpperCase();});}
+  function rewrap(orig,out){var a=orig.match(/^\s*/)[0],b=orig.match(/\s*$/)[0];out=nodots(out);if(/^[.。]/.test(out))a='';return a+out+b;}
   var done=new WeakMap(),ORIG=new WeakMap(),ORA=new WeakMap();
   function node(n,again){
     if(n.nodeType===3){var p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName))return;var v=n.nodeValue;if(!again&&done.get(n)===v)return;

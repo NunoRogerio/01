@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=72"></script>
-<script src="i18n.js?v=48"></script>
+<script src="prefs.js?v=73"></script>
+<script src="i18n.js?v=49"></script>
 <script src="live.js?v=30"></script>
 <script src="chat.js?v=18"></script>
 
@@ -195,14 +195,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <button type="button" class="fsbtn" aria-label="View full screen" onClick="{{openFull}}" style="position: absolute; right: 12px; top: 40px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg>
     </button>
-    <div role="group" aria-label="Camera" style="position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 220px; height: 44px; padding: 4px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: var(--wf-y); box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
-      <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"></path></svg>Thermal
-      </button>
-      <button type="button" class="chip" aria-pressed="{{visual.pressed}}" onClick="{{visual.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{visual.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>Visual
-      </button>
+    <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); width: 240px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
+      <button type="button" class="segopt" aria-pressed="{{thermal.pressed}}" aria-selected="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="color: {{thermal.fg}}; font-size: 17px">Thermal</button>
+      <button type="button" class="segopt" aria-pressed="{{visual.pressed}}" aria-selected="{{visual.pressed}}" onClick="{{visual.pick}}" style="color: {{visual.fg}}; font-size: 17px">Visual</button>
     </div>
   </figure>
 
@@ -315,14 +311,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
       <div style="position: absolute; left: 0; right: 0; bottom: 34px; height: 44px">
-    <div role="group" aria-label="Camera" style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 220px; height: 44px; padding: 4px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-      <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: 105px; height: 36px; border-radius: 999px; background: var(--wf-y); box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
-      <button type="button" class="chip" aria-pressed="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{thermal.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"></path></svg>Thermal
-      </button>
-      <button type="button" class="chip" aria-pressed="{{visual.pressed}}" onClick="{{visual.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 999px; background: transparent; color: {{visual.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>Visual
-      </button>
+    <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 240px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
+      <button type="button" class="segopt" aria-pressed="{{thermal.pressed}}" aria-selected="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="color: {{thermal.fg}}; font-size: 17px">Thermal</button>
+      <button type="button" class="segopt" aria-pressed="{{visual.pressed}}" aria-selected="{{visual.pressed}}" onClick="{{visual.pick}}" style="color: {{visual.fg}}; font-size: 17px">Visual</button>
     </div>
       </div>
     </div>
@@ -571,7 +563,7 @@ class Component extends DCLogic {
       thermalOp: isThermal ? 1 : 0,
       visualOp: isThermal ? 0 : 1,
       thermal: seg('thermal', isThermal), visual: seg('visual', !isThermal),
-      segLeft: isThermal ? 3 : 110
+      segLeft: isThermal ? 3 : 110, segX: isThermal ? '0%' : '100%'
     };
   }
 }

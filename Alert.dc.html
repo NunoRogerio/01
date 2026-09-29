@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=72"></script>
-<script src="i18n.js?v=48"></script>
+<script src="prefs.js?v=73"></script>
+<script src="i18n.js?v=49"></script>
 <script src="live.js?v=30"></script>
 <script src="chat.js?v=18"></script>
 
@@ -267,12 +267,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </span>
         <span style="position: absolute; left: 16px; top: 146px; font-size: 13px; color: #98989F">{{tab.meta}}</span>
       </sc-if>
-      <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 42px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-        <span class="seg" aria-hidden="true" style="position: absolute; top: 2px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: var(--wf-y); box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+      <div role="tablist" aria-label="Evidence" class="wf-seg" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: {{tabsD}}; width: 300px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+        <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / {{nTabs}}); transform: translateX({{segX}})"><span class="segblob"></span></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
-          <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}
-          </button>
+          <button type="button" role="tab" class="segopt" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="color: {{tb.fg}}; font-size: 17px">{{tb.label}}</button>
         </sc-for>
       </div>
     </figure>
@@ -393,12 +391,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="fsbtn" aria-label="Exit full screen" onClick="{{closeFull}}" style="position: absolute; right: 16px; top: 56px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
-      <div role="tablist" aria-label="Evidence" style="position: absolute; left: 16px; bottom: 34px; display: {{tabsD}}; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); width: 300px; height: 44px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-        <span class="seg" aria-hidden="true" style="position: absolute; top: 3px; left: {{segLeft}}px; width: {{segW}}px; height: 36px; border-radius: 999px; background: var(--wf-y); box-shadow: 0 3px 8px rgba(0,0,0,0.12)"></span>
+      <div role="tablist" aria-label="Evidence" class="wf-seg" style="position: absolute; left: 16px; bottom: 34px; display: {{tabsD}}; width: 300px; background: rgba(0,0,0,0.66); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+        <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / {{nTabs}}); transform: translateX({{segX}})"><span class="segblob"></span></span>
         <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
-          <button type="button" role="tab" class="chip" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 999px; background: transparent; color: {{tb.fg}}; font: 500 15px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tb.icon}}"></path></svg>{{tb.label}}
-          </button>
+          <button type="button" role="tab" class="segopt" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="color: {{tb.fg}}; font-size: 17px">{{tb.label}}</button>
         </sc-for>
       </div>
     </div>
@@ -790,7 +786,7 @@ class Component extends DCLogic {
       })),
       cur, tab, box: boxFor(tab, 390, 248, true, 0),
       tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#1C1C1E' : '#E5E5EA', pick: () => this.setState({ tab: t.id }) })),
-      nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
+      nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW), segX: (tIdx * 100) + '%',
       // Location is not evidence: it sits in the conclusion card with the map button
       locTxt: cur.loc || cur.coords || '', ...(() => { const G = cur.ll || ((/-?[\d.]+° ?[NS][ ·]+-?[\d.]+° ?[EW]/.exec(cur.coords || cur.loc || '') || [])[0] || '');
         const place = String(cur.loc || cur.coords || '').split(' · ').filter((x) => x && x !== G && !G.includes(x)).join(' · ');

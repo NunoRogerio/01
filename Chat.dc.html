@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=72"></script>
-<script src="i18n.js?v=48"></script>
+<script src="prefs.js?v=73"></script>
+<script src="i18n.js?v=49"></script>
 <script src="live.js?v=30"></script>
 <script src="chat.js?v=18"></script>
 <script src="trophy.js?v=14"></script>
@@ -52,10 +52,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="font-size: 17px; line-height: 22px; color: #000000">{{listSub}}</div>
       </div>
     </header>
-    <div role="tablist" aria-label="{{t.chats}}" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; flex-shrink: 0; height: 36px; margin: 0 16px 16px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
-      <span aria-hidden="true" style="position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 8px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); transform: translateX({{tabX}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"></span>
+    <div role="tablist" aria-label="{{t.chats}}" class="wf-seg" style="flex-shrink: 0; margin: 0 16px 16px">
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{tabX}})"><span class="segblob"></span></span>
       <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
-        <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="position: relative; border: 0; background: transparent; color: #000000; font: inherit; font-size: 15px; font-weight: {{tb.w}}; cursor: pointer">{{tb.label}}</button>
+        <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
       </sc-for>
     </div>
     <div class="chscroll" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
@@ -199,12 +199,12 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 12px 16px 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
       <sc-if value="{{sim.can}}" hint-placeholder-val="{{ true }}"><button type="button" class="chbtn wf-b wf-pri" onClick="{{sim.go}}" style="border: 0; font: inherit; cursor: pointer">{{sim.label}}</button></sc-if>
       <span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{histTxt}}</span>
-      <div role="tablist" aria-label="{{t.hist}}" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; height: 36px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
-        <span aria-hidden="true" style="position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 8px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); transform: translateX({{hTabX}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"></span>
-        <sc-for list="{{hTabs}}" as="tb" hint-placeholder-count="2">
-          <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="position: relative; border: 0; background: transparent; color: #000000; font: inherit; font-size: 15px; font-weight: {{tb.w}}; cursor: pointer">{{tb.label}}</button>
-        </sc-for>
-      </div>
+      <div role="tablist" aria-label="{{t.hist}}" class="wf-seg" style="">
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{hTabX}})"><span class="segblob"></span></span>
+      <sc-for list="{{hTabs}}" as="tb" hint-placeholder-count="2">
+        <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
+      </sc-for>
+    </div>
     </div>
     </sc-if>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
@@ -479,11 +479,11 @@ class Component extends DCLogic {
       const done = all.filter((c) => c.closed).sort((a, b) => lastT(b) - lastT(a));
       const tab = s.tab === 'resolved' ? 'resolved' : 'open', shown = tab === 'resolved' ? done : open;
       const groups = shown.length ? [{ title: '', mt: '0', rows: shown.map(row) }] : [];
-      const tabs = [['open', L('Open', 'Abertas') + (open.length ? ' · ' + open.length : '')], ['resolved', L('Resolved', 'Resolvidas') + (done.length ? ' · ' + done.length : '')]]
+      const tabs = [['open', L('Open', 'Abertas') + (open.length ? ' ' + open.length : '')], ['resolved', L('Resolved', 'Resolvidas') + (done.length ? ' ' + done.length : '')]]
         .map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ tab: k }); } }));
       const tu = C.totalUnread();
       return { isList: true, isChat: false, isSummary: false, isPerson: false, listNote: tab === 'resolved' ? L('Resolved fires are the benchmarks for training: open one and tap Simulate to replay it from ignition and try to beat its time to resolution and area burnt.', 'Os incêndios resolvidos são as referências para o treino: abra um e toque em Simular para o repetir desde a ignição e tentar bater o tempo até à resolução e a área ardida.') : t.demo, winBg, t: { ...t, none: tab === 'resolved' ? L('No resolved fires yet. When a fire is closed its chat moves here, with every movement and decision.', 'Ainda sem incêndios resolvidos. Quando um incêndio é encerrado, a conversa passa para aqui, com todos os movimentos e decisões.') : t.none }, ic, groups, noChats: !shown.length, tabs, tabX: tab === 'resolved' ? '100%' : '0',
-        listSub: open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tu ? ' · ' + tu + ' ' + L('unread', 'por ler') : '') };
+        listSub: open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tu ? '. ' + tu + ' ' + L('unread', 'por ler') : '') + '.' };
     }
 
     const c = C.get(s.key);
