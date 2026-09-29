@@ -49,7 +49,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <a href="Main.dc.html" data-wf-back="1" class="chbtn" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
       <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{t.chats}}</h1>
-        <div style="font-size: 17px; line-height: 22px; color: #545458">{{listSub}}</div>
+        <div style="font-size: 17px; line-height: 22px; color: #000000">{{listSub}}</div>
       </div>
     </header>
     <div role="tablist" aria-label="{{t.chats}}" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; flex-shrink: 0; height: 36px; margin: 0 16px 16px; padding: 2px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)">
@@ -59,7 +59,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </sc-for>
     </div>
     <div class="chscroll" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
-      <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 24px 8px; font-size: 17px; line-height: 22px; color: #545458; text-align: center">{{t.none}}</p></sc-if>
+      <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 24px 8px; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{t.none}}</p></sc-if>
       <sc-for list="{{groups}}" as="g" hint-placeholder-count="1">
         <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 14px; background: #FFFFFF; overflow: hidden">
           <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="2">
@@ -227,7 +227,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px">
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h2 style="margin: 0; font-size: 28px; font-weight: 600; line-height: 34px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h2>
-          <span style="font-size: 17px; line-height: 22px; color: #545458">{{t.fireCardSub}}</span>
+          <span style="font-size: 17px; line-height: 22px; color: #000000">{{t.fireCardSub}}</span>
         </div>
         <button type="button" class="chbtn" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg class="chx" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{sh.xRot}})"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
       </header>
@@ -360,7 +360,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 88px; height: 88px; border-radius: 50%; background: #E5E5EA; font-size: 28px; font-weight: 600; overflow: hidden">{{pp.code}}<span style="position: absolute; inset: 0; background-image: {{pp.photo}}; background-size: cover; background-position: center"></span></span>
         <h1 style="margin: 8px 0 0; font-size: 28px; font-weight: 600; line-height: 34px">{{pp.name}}</h1>
-        <span style="font-size: 17px; line-height: 22px; color: #545458">{{pp.role}}</span>
+        <span style="font-size: 17px; line-height: 22px; color: #000000">{{pp.role}}</span>
       </section>
       <section style="--k: {{pp.kPx}}; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{pp.kpis}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="wf-big" style=" font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span><span style="font-size: 13px; line-height: 16px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
