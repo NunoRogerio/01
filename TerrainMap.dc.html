@@ -1488,9 +1488,10 @@ class Component extends DCLogic {
     // Sideways it follows the marker but always stays 16px from the nearest screen edge.
     const stReg = P.kind === 'st' && m._st && m._st.lat != null && window.__wfRegionAt ? String(window.__wfRegionAt(m._st.lat, m._st.lon) || '').replace(/, [^,]+$/, '') : '';
     const PW = (P.kind === 'ign' || FD) ? 172 : 216, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
-    // 24px between the panel and the marker's edge (half the marker's height from its centre, plus 24)
-    // (the candidate triangle points down: its top edge is 9px above its centre, its tip 17px below; fires and stations ~10px)
-    const GU = 24 + (P.kind === 'ign' ? 9 : 10), GD = 24 + (P.kind === 'ign' ? 17 : 10);
+    // 24px between the panel and the selected marker's outer edge (its 4px border included). Where that edge sits relative to the anchor:
+    // fire circle: anchor is its top, 28px marker + 4px ring; candidate: centre, triangle 7.4px above and 14.2px below plus the ring; station: the pill's bottom, house icon 13px above it
+    const EU = P.kind === 'ign' ? -11.4 : P.kind === 'st' ? -23 : (m.flameD === 'block' ? -0.25 : 0), ED = P.kind === 'ign' ? 18.2 : P.kind === 'st' ? -3 : (m.flameD === 'block' ? 28.25 : 10);
+    const GU = 24 - EU, GD = 24 + ED;
     const PH = this._popH || (P.kind === 'ign' ? 236 : FD ? 250 : 150), up = y - GU - topLim, dn = botLim - (y + GD);
     const goUp = up >= PH ? true : dn >= PH ? false : up >= dn;
     const pTop = Math.round(Math.max(topLim, Math.min(botLim - PH, goUp ? y - GU - PH : y + GD))), pLeft = Math.round(Math.max(16, Math.min(W - PW - 16, x - PW / 2)));
