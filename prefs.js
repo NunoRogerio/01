@@ -174,7 +174,7 @@
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) {
       // Applied at once, like the language: no animation on the text size (the switcher's yellow has already landed)
-      try { localStorage.setItem(key(k), v); } catch (e) {} apply(); }
+      try { localStorage.setItem(key(k), v); } catch (e) {} apply(); try { window.dispatchEvent(new Event('wf-prefs')); } catch (e) {} }
   };
 
   // ---- Switchers (segmented multi-buttons): one shared motion for every one in the app ----

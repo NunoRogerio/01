@@ -240,7 +240,7 @@
     var c=n.firstChild;while(c){node(c,again);c=c.nextSibling;}
   }
   var queued=false,pend=new Set();
-  function flush(){queued=false;var list=Array.from(pend);pend.clear();list.forEach(function(n){if(n.isConnected)node(n);});}
+  function flush(){queued=false;var list=Array.from(pend);pend.clear();list.forEach(function(n){if(n.isConnected)node(n);});if(document.querySelector('[data-wf-langfit]'))lfAll();}
   function start(){
     node(document.body);
     new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='characterData')pend.add(m.target);else if(m.type==='attributes')pend.add(m.target);else m.addedNodes.forEach(function(a){pend.add(a);});});
@@ -248,6 +248,26 @@
     try{TITLE=document.title;document.title=tr(TITLE);}catch(e){}
   }
   var TITLE='';
+  // Translate a text into a given language without switching the page (used to measure every language)
+  window.__wfTrIn=function(s,l){if(l===lang)return tr(s);var L=lang,keep=new Map(cache),out=s;lang=l;sets(l);cache.clear();
+    try{out=tr(s);}finally{lang=L;window.__wfLang=L;sets(L);cache.clear();keep.forEach(function(v,k){cache.set(k,v);});}return out;};
+  // Reserve the tallest language: an element marked data-wf-langfit keeps the height of its longest translation
+  // (EN, PT or JP), so switching language only swaps the words and nothing below it moves.
+  var LF=0,lfKey=new WeakMap();
+  function lfWalk(n,f){if(n.nodeType===3){f(n);return;}var c=n.firstChild;while(c){lfWalk(c,f);c=c.nextSibling;}}
+  function lfFit(el){var w=el.offsetWidth;if(!w)return;var src=[];lfWalk(el,function(t){src.push(ORIG.get(t)||t.nodeValue);});
+    var key=w+'|'+getComputedStyle(el.firstElementChild||el).fontSize+'|'+src.join('\u0001');if(lfKey.get(el)===key)return;lfKey.set(el,key);
+    var c=el.cloneNode(true);c.removeAttribute('data-wf-langfit');c.removeAttribute('data-wf-lf');
+    c.style.cssText+=';position:absolute;left:-9999px;top:0;visibility:hidden;width:'+w+'px;min-height:0;height:auto;flex:none';
+    var dst=[];lfWalk(c,function(t){dst.push(t);});el.parentNode.appendChild(c);var max=0;
+    ['en','pt','ja'].forEach(function(l){dst.forEach(function(t,i){t.nodeValue=window.__wfTrIn(src[i],l);});max=Math.max(max,c.offsetHeight);});
+    c.remove();
+    var id=el.getAttribute('data-wf-lf');if(!id){id=String(++LF);el.setAttribute('data-wf-lf',id);}
+    var st=document.getElementById('wf-lf-'+id);if(!st){st=document.createElement('style');st.id='wf-lf-'+id;document.head.appendChild(st);}
+    st.textContent='[data-wf-lf="'+id+'"]{min-height:'+max+'px!important}';}
+  var lfQ=false;function lfAll(){if(lfQ)return;lfQ=true;requestAnimationFrame(function(){lfQ=false;document.querySelectorAll('[data-wf-langfit]').forEach(lfFit);});}
+  window.__wfLangFit=lfAll;
+  try{window.addEventListener('resize',lfAll);window.addEventListener('wf-lang',lfAll);window.addEventListener('wf-prefs',lfAll);}catch(e){}
   // Japanese place names can arrive after the first pass (data files, live data): translate the page again then
   window.__wfJaRefresh=function(){if(lang!=='ja'||!document.body)return;cache.clear();node(document.body,true);};
   try{window.addEventListener('wf-sync',function(){if(lang==='ja')setTimeout(window.__wfJaRefresh,50);});}catch(e){}
