@@ -466,7 +466,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
             <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-top: 1px solid rgba(60,60,67,0.12)">
               <button type="button" class="opt wf-b wf-pri" onClick="{{ds.add}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{ds.addTxt}}</button>
-              <span style="display: {{ds.noteD}}; font-size: 17px; line-height: 22px; color: #000000">{{ds.note}}</span>
+              <span style="display: {{ds.noteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.note}}</span>
             </div>
             <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
               <sc-for list="{{ds.items}}" as="d" hint-placeholder-count="7">
