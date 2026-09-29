@@ -36,7 +36,7 @@ body{margin:0}
 .tipwrap:hover,.tipwrap:focus-visible{z-index:40}
 .igname{display:inline-flex;align-items:center;gap:8px;max-width:240px;overflow:hidden;white-space:nowrap;transition:max-width .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease,margin-left .25s cubic-bezier(.2,.8,.2,1)}
 .igsel:hover .igname,.igsel:focus-visible .igname{max-width:0;opacity:0;margin-left:-8px;transition:max-width .25s cubic-bezier(.2,.8,.2,1) .22s,opacity .12s ease .22s,margin-left .25s cubic-bezier(.2,.8,.2,1) .22s}
-@keyframes wfFadeIn{from{opacity:0}to{opacity:1}}.wfpop{animation:wfFadeIn .25s ease both;transition:opacity .25s ease}.wfpop.wfpop-out{opacity:0;animation:none}
+@keyframes wfFadeIn{from{opacity:0;translate:0 var(--wf-dy,0)}to{opacity:1;translate:0 0}}.wfpop{animation:wfFadeIn .28s cubic-bezier(.2,.8,.2,1) both;transition:opacity .25s ease,translate .25s cubic-bezier(.4,0,.8,.4)}.wfpop.wfpop-out{opacity:0;translate:0 var(--wf-dy,0);animation:none}
 @keyframes igin{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
 
 /* iOS layer */
@@ -290,7 +290,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
-  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; width: 240px; box-sizing: border-box; padding: 16px 16px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
+  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: 240px; box-sizing: border-box; padding: 16px 16px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
     <div style="display: flex; align-items: flex-start; gap: 8px">
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
@@ -316,7 +316,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   </sc-if>
   <sc-if value="{{hasFc}}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
+  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); --wf-dy: {{fc.dy}}; width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
     <div style="flex-shrink: 0; padding: 16px 16px 12px">
       <div style="display: flex; align-items: flex-start; gap: 8px">
       <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
@@ -1512,11 +1512,13 @@ class Component extends DCLogic {
     const L = { fire: OUT.fireMarks, ign: OUT.ignMarks, st: OUT.stations }[P.kind] || [], m = L.find((q) => (q._g && q._g.id === P.key) || q._id === P.key) || (typeof P.key === 'number' ? L[P.key] : null);
     if (!m) return OUT;
     const W = this.W(), H = this.H(), x = Number(m.left) || 0, y = Number(m.top) || 0, above = y > 230;
+    { const V = this.win(), vb = Math.min(V.b, H - Math.max(0, Number(this.props.padBottom) || 0));   // the marker panned off screen: its panel closes
+      if ((x < V.l || x > W - V.r || y < V.t || y > vb) && !this._popT) setTimeout(closePop, 0); }
     const g = P.kind === 'fire' ? (m._g || null) : null;
     const CHT = window.__wfChat, chatFor = (inc) => (CHT && inc ? { chatD: 'flex', chat: () => { CHT.open(inc); } } : { chatD: 'none', chat: null });
     const ignObj = P.kind === 'ign' ? (Array.isArray(this.props.ignitions) ? this.props.ignitions.find((q) => q.id === (m._id || P.key)) : null) : null;
     const chatInc = !CHT ? null : g ? CHT.incFire(g) : ignObj ? CHT.incCand(ignObj) : null;
-    if (g && g.info) { OUT.hasFc = true; OUT.fc = Object.assign(this.fireCard(g, m, x, y), chatFor(chatInc)); { const d = Math.round(y - OUT.fc.top); OUT.fc.from = 'inset(max(0px, calc(50% + ' + (d - 30) + 'px)) 0 max(0px, calc(50% - ' + (d + 30) + 'px)) 0 round 18px)'; } return OUT; }   // opens as a 60px band level with the marker
+    if (g && g.info) { OUT.hasFc = true; OUT.fc = Object.assign(this.fireCard(g, m, x, y), chatFor(chatInc)); OUT.fc.dy = (y < OUT.fc.top ? -10 : 10) + 'px'; { const d = Math.round(y - OUT.fc.top); OUT.fc.from = 'inset(max(0px, calc(50% + ' + (d - 30) + 'px)) 0 max(0px, calc(50% - ' + (d + 30) + 'px)) 0 round 18px)'; } return OUT; }   // opens as a 60px band level with the marker
     OUT.hasPop = true;
     // Placement: above the marker if it fits, else below; if neither fits fully, the side with more room, kept on screen.
     // Sideways it follows the marker but always stays 16px from the nearest screen edge.
@@ -1525,7 +1527,7 @@ class Component extends DCLogic {
     const goUp = up >= PH ? true : dn >= PH ? false : up >= dn;
     const pTop = Math.round(Math.max(topLim, Math.min(botLim - PH, goUp ? y - 22 - PH : y + 26))), pLeft = Math.round(Math.max(16, Math.min(W - PW - 16, x - PW / 2)));
     requestAnimationFrame(() => { try { const el = document.querySelector('[data-wf-pop]'); const h = el ? el.offsetHeight : 0; if (h && Math.abs(h - (this._popH || 0)) > 1) { this._popH = h; this.setState({ popHV: h }); } } catch (e) {} });
-    OUT.pop = { tt: m.tt || '', td: strip(m.td), left: pLeft, top: pTop,
+    OUT.pop = { tt: m.tt || '', td: strip(m.td), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
       from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 14px)' : 'inset(calc(100% - 60px) 0 0 0 round 14px)',   // starts as the 60px band nearest the marker, then unfolds
       ...chatFor(chatInc), isIgn: P.kind === 'ign', notIgn: P.kind !== 'ign', place: m.place || '', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
       hasView: !noView && (P.kind !== 'st' || !!m._st), viewD: !noView && (P.kind !== 'st' || !!m._st) ? 'flex' : 'none', href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
