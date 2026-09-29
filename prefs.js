@@ -280,25 +280,19 @@
     for (var i = 0; i < pts.length; i++) { var h = document.elementFromPoint(x0 + (x1 - x0) * pts[i][0], y0 + (y1 - y0) * pts[i][1]); if (h && (h === el || el.contains(h))) return true; }
     return false;
   }
+  // The scroll fade (sfumatto): when a panel has content hidden above or below, the content itself fades out near that
+  // edge, so the eye reads "there is more". Nothing hidden on a side, no fade on that side; a panel that doesn't scroll
+  // never fades. It is a mask on the scrolling panel, so the panel's own background shows through: the right colour in
+  // every theme and on every surface (white cards, grey panels, photos), with nothing laid on top that could go astray.
   function fadeOne(el) {
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
     if (!el.__wfMaskOwn) return;
-    var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY), more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1 && el.offsetParent;
-    if (el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = ''; }
-    el.__wfM = '';
-    var par = el.parentElement, less = sc && el.scrollTop > 1 && el.offsetParent;
-    // A panel that is on the page but not what the viewer sees (slid off screen, under another view, faded out) gets no fade:
-    // its overlays would float over the view that is showing
-    if ((less || more) && !shown(el)) { less = more = false; }   // content scrolled away above: fade at the top too
-    if (!el.offsetParent) el.__wfCol = null;   // measured again next time the panel opens
-    var F0 = (less || more) ? fadeCol(el) : null;
-    if (F0 && F0.mixed) {
-      fadeEdge(el, par, 'top', false); fadeEdge(el, par, 'bottom', false);
-      var g = 'linear-gradient(to bottom, ' + (less ? 'transparent 0, #000 ' + FH + 'px' : '#000 0') + ', ' + (more ? '#000 calc(100% - ' + FH + 'px), transparent 100%' : '#000 100%') + ')';
-      el.style.webkitMaskImage = el.style.maskImage = g; el.__wfM = g; return;
-    }
-    fadeEdge(el, par, 'top', less);
-    fadeEdge(el, par, 'bottom', more);
+    if (el.__wfFadeEl || el.__wfFadeTop) { fadeEdge(el, el.parentElement, 'top', false); fadeEdge(el, el.parentElement, 'bottom', false); }   // overlays of the old fade
+    var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY) && !!el.offsetParent;
+    var more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1, less = sc && el.scrollTop > 1;
+    var h = Math.round(Math.min(FH, el.clientHeight * 0.3));
+    var g = !(less || more) ? '' : 'linear-gradient(to bottom, ' + (less ? 'transparent 0, #000 ' + h + 'px' : '#000 0') + ', ' + (more ? '#000 calc(100% - ' + h + 'px), transparent 100%' : '#000 100%') + ')';
+    if (g !== el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = g; el.__wfM = g; }
   }
   function fadeEdge(el, par, side, on) {
     var key = side === 'top' ? '__wfFadeTop' : '__wfFadeEl', ov = el[key];
