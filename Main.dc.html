@@ -486,6 +486,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- The profile picture stays where it is in the top bar while the panel slides down underneath it; open, it gains a
        4px ring in the primary colour and closes the panel -->
   <button type="button" class="opt avbtn" onClick="{{closePrefs}}" aria-label="Close preferences" aria-hidden="{{pfHidden}}" style="position: absolute; top: {{pfAv.top}}px; left: {{pfAv.left}}px; z-index: 41; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer; opacity: {{pfAv.op}}; pointer-events: {{pfPE}}; transition: opacity 0s linear {{pfAv.delay}}">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span><span aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 4px var(--wf-y); pointer-events: none; opacity: {{pfAv.ring}}; transition: opacity .3s ease"></span></button>
+  <!-- Confirm role-play changes and key removal (no grabber: it is not expandable; Cancel or a tap outside closes it) -->
+  <div class="wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
+  <section role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; padding: 24px 16px 40px; border-radius: 32px 32px 0 0; background: #FFFFFF; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
+    <h2 id="aicTitle" style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.01em">{{aic.title}}</h2>
+    <p id="aicBody" style="margin: 4px 0 0; font-size: 17px; line-height: 22px; color: #545458">{{aic.body}}</p>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 24px">
+      <button type="button" class="opt wf-b wf-sec" onClick="{{aic.close}}" style="border: 0; font: inherit; cursor: pointer">{{aic.cancel}}</button>
+      <button type="button" class="opt wf-b wf-pri" onClick="{{aic.confirm}}" style="border: 0; font: inherit; cursor: pointer">{{aic.ok}}</button>
+    </div>
+  </section>
   </div>
 </div>
 </x-dc>
@@ -725,6 +735,25 @@ class Component extends DCLogic {
           note: T('Adding your own sources is not available in this prototype yet.', 'Adicionar as suas próprias fontes ainda não está disponível neste protótipo.'),
           add: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsAddTried: true }); },
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsOpen: !o, chatSet: false }); } }; })(),   // one drawer open at a time
+      // Confirmation before changing role-play or removing the key: a bottom sheet over a glass overlay
+      aic: (() => { const k = s.aiAsk || this._aiAskLast || 'off', open = !!s.aiAsk, A = window.__wfChat && window.__wfChat.ai, pt = lang === 'pt', ja = lang === 'ja';
+        if (s.aiAsk) this._aiAskLast = s.aiAsk;
+        const L = (en, p, j) => (ja ? j : pt ? p : en);
+        const txt = {
+          on: [L('Turn on role-play?', 'Ligar a encenação?', 'ロールプレイをオンにしますか?'),
+            L('Claude will write the crew coordinators\u2019 replies in the incident chats. Calls are billed to your Anthropic account.', 'O Claude vai escrever as respostas dos coordenadores nas conversas dos incidentes. As chamadas são cobradas na sua conta Anthropic.', 'インシデントチャットの隊指揮者の返信をClaudeが書きます。料金はお客様のAnthropicアカウントに請求されます。'),
+            L('Turn on', 'Ligar', 'オンにする')],
+          off: [L('Turn off role-play?', 'Desligar a encenação?', 'ロールプレイをオフにしますか?'),
+            L('Crew coordinators will answer with the in-app replies instead of Claude. Your key stays saved on this phone.', 'Os coordenadores passam a responder com as respostas da app em vez do Claude. A chave continua guardada neste telemóvel.', '隊指揮者はClaudeではなくアプリ内の返信で答えます。キーはこの端末に保存されたままです。'),
+            L('Turn off', 'Desligar', 'オフにする')],
+          rm: [L('Remove the key?', 'Remover a chave?', 'キーを削除しますか?'),
+            L('The key is deleted from this phone and role-play stops. To use it again you will need to paste the key again.', 'A chave é apagada deste telemóvel e a encenação para. Para voltar a usá-la terá de colar a chave de novo.', 'キーはこの端末から削除され、ロールプレイは停止します。再び使うにはキーをもう一度貼り付ける必要があります。'),
+            L('Remove', 'Remover', '削除')] }[k];
+        const close = () => this.setState({ aiAsk: null });
+        return { title: txt[0], body: txt[1], ok: txt[2], cancel: L('Cancel', 'Cancelar', 'キャンセル'), hidden: open ? 'false' : 'true', pe: open ? 'auto' : 'none', op: open ? 1 : 0,
+          y: open ? '0%' : '105%', dur: open ? '.5s' : '.4s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', close,
+          confirm: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const kk = s.aiAsk; close();
+            if (!A) return; if (kk === 'rm') { A.set(''); this.setState({ aiDraft: '' }); } else { A.setOn(kk === 'on'); this.forceUpdate(); } } }; })(),
       ai: (() => { const A = window.__wfChat && window.__wfChat.ai, has = !!(A && A.key()), st = A ? A.status() : null, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         const bad = has && st && !st.ok, busy = !!s.aiBusy, on = !!(A && A.on());
         return { title: T('Role-play with Claude', 'Encenação com o Claude'),
@@ -732,12 +761,12 @@ class Component extends DCLogic {
           pill: busy ? T('Checking', 'A verificar') : bad ? T('Error', 'Erro') : has ? T('On', 'Ligado') : T('Off', 'Desligado'),
           pillBg: busy ? 'rgba(118,118,128,0.14)' : bad ? 'rgba(215,0,21,0.10)' : has ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)', pillFg: busy ? '#48484A' : bad ? '#B3001B' : has ? '#1E7A34' : '#48484A',
           onStr: on ? 'true' : 'false', swBg: on ? (window.__wfY || '#E5FF00') : 'rgba(120,120,128,0.24)', swX: on ? '22px' : '0px', swOp: has ? 1 : 0.4,
-          toggle: () => { if (!A || !has) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} A.setOn(!on); this.forceUpdate(); },
+          toggle: () => { if (!A || !has) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ aiAsk: on ? 'off' : 'on' }); },   // asks first (avoids mis-taps)
           ph: has ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('Anthropic API key (sk-ant-…)', 'Chave da API Anthropic (sk-ant-…)'), draft: s.aiDraft || '', okD: has && !(s.aiDraft || '') ? 'flex' : 'none',
           onInput: (e) => this.setState({ aiDraft: e.target.value }),
           saveTxt: has ? T('Replace key', 'Substituir chave') : T('Save and test', 'Guardar e testar'), rmTxt: T('Remove', 'Remover'), rmD: has ? 'block' : 'none', cols: has ? '1fr 1fr' : '1fr',
           save: () => { const k = (s.aiDraft || '').trim(); if (!A || !k) return; this.setState({ aiBusy: true, aiDraft: '' }); A.set(k, () => this.setState({ aiBusy: false })); },
-          remove: () => { if (A) A.set(''); this.setState({ aiDraft: '' }); },
+          remove: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ aiAsk: 'rm' }); },
           note: has && !on ? T('Switched off: the key stays saved and the in-app replies are used. Switch on to role-play with Claude again.', 'Desligado: a chave fica guardada e são usadas as respostas da aplicação. Ligue para voltar à encenação com o Claude.') : bad ? T('Last call failed: ', 'A última chamada falhou: ') + st.err + T('. The in-app replies are used meanwhile.', '. Entretanto são usadas as respostas da aplicação.')
             : has && !st && (() => { try { return localStorage.getItem('wf-invited-by'); } catch (e) { return ''; } })() ? T('Invited by ', 'Convidado por ') + localStorage.getItem('wf-invited-by') + T('. Role-play is switched on; the first reply confirms it works.', '. A encenação está ligada; a primeira resposta confirma que funciona.')
             : has && st && st.ok ? T('Working · last reply ', 'A funcionar · última resposta ') + new Date(st.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + ' · ' + st.model + T('. Calls are billed to your Anthropic account. The key stays on this phone only.', '. As chamadas são cobradas na sua conta Anthropic. A chave fica apenas neste telemóvel.')
