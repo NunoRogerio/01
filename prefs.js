@@ -226,15 +226,20 @@
   // The fade is laid over the content in the colour of what it sits on (e.g. a white card), so the text fades out
   // while the card and the panel keep crisp edges. 48px + 60% = 77px tall.
   var FH = 85;   // 77px + 10%
-  // The colour of the list's own container under that point: the outermost box inside the scroller that has a background
-  // (the card), never a button, field or pill inside it; between cards, the panel's colour.
+  // One colour per scrolling panel, kept while scrolling: the predominant background of its content (the colour covering
+  // the most area among its outermost boxes, e.g. the white cards), else the panel's own colour. Measured once per opening.
   function solid(c) { return c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c); }
-  function bgAt(el, x, y) {
-    var n = document.elementFromPoint(x, y), best = null;
-    while (n && n !== el && el.contains(n)) { var c = getComputedStyle(n).backgroundColor; if (solid(c)) best = { c: c, n: n }; n = n.parentElement; }
-    if (best) return best;
-    var q = el; while (q) { var c2 = getComputedStyle(q).backgroundColor; if (solid(c2)) return { c: c2, n: q }; q = q.parentElement; }
-    return { c: 'rgb(242, 242, 247)', n: el };
+  function fadeCol(el) {
+    if (el.__wfCol) return el.__wfCol;
+    var area = {}, box = {}, walk = function (n, d) { for (var c = n.firstElementChild; c; c = c.nextElementSibling) {
+      if (c.__wfOv) continue; var cs = getComputedStyle(c), bg = cs.backgroundColor;
+      if (solid(bg)) { var r = c.getBoundingClientRect(), a = r.width * r.height; area[bg] = (area[bg] || 0) + a; var b = box[bg] || (box[bg] = { l: 1e9, r: -1e9 }); b.l = Math.min(b.l, r.left); b.r = Math.max(b.r, r.right); }
+      else if (d < 4) walk(c, d + 1); } };
+    walk(el, 0);
+    var best = null, ba = 0; for (var k in area) if (area[k] > ba) { ba = area[k]; best = k; }
+    var q = el, pc = null; while (q && !pc) { var c2 = getComputedStyle(q).backgroundColor; if (solid(c2)) pc = c2; q = q.parentElement; }
+    el.__wfCol = best ? { c: best, l: box[best].l, r: box[best].r } : { c: pc || 'rgb(242, 242, 247)', l: null, r: null };
+    return el.__wfCol;
   }
   function fadeOne(el) {
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
@@ -244,13 +249,13 @@
     var m = top ? 'linear-gradient(to bottom, transparent 0, #000 ' + top + 'px, #000 100%)' : '';
     if (m !== (el.__wfM || '')) { el.style.webkitMaskImage = m; el.style.maskImage = m; el.__wfM = m; }
     var ov = el.__wfFadeEl, par = el.parentElement;
+    if (!el.offsetParent) el.__wfCol = null;   // measured again next time the panel opens
     if (!more || !par) { if (ov) ov.style.opacity = '0'; return; }
     if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease;height:' + FH + 'px'; el.__wfFadeEl = ov; }
     if (ov.parentElement !== par) { if (getComputedStyle(par).position === 'static') par.style.position = 'relative'; par.appendChild(ov); }
     var r = el.getBoundingClientRect(), pr = par.getBoundingClientRect(), k = pr.width / (par.offsetWidth || pr.width) || 1;
-    var b = bgAt(el, r.left + r.width / 2, r.bottom - 6), br = b.n.getBoundingClientRect();
-    var L = Math.max(r.left, br.left), R = Math.min(r.right, br.right); if (b.n === el || b.n.contains(el)) { L = r.left; R = r.right; }
-    var col = b.c, clear = col.replace(/^rgba?\(([^,]+),([^,]+),([^,)]+).*$/, 'rgba($1,$2,$3,0)');
+    var F = fadeCol(el), L = F.l == null ? r.left : Math.max(r.left, F.l), R = F.r == null ? r.right : Math.min(r.right, F.r);
+    var col = F.c, clear = col.replace(/^rgba?\(([^,]+),([^,]+),([^,)]+).*$/, 'rgba($1,$2,$3,0)');
     // fully solid over the last 8px and snapped to whole pixels, so no sliver of content (a divider, a text edge) peeks under it
     var bot = Math.ceil((r.bottom - pr.top) / k);
     ov.style.left = Math.floor((L - pr.left) / k) + 'px'; ov.style.width = Math.ceil((R - L) / k) + 'px'; ov.style.top = (bot - FH) + 'px'; ov.style.height = FH + 'px';
