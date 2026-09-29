@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=3">
 <link rel="icon" href="icon-192.png?v=3">
-<script src="fit.js?v=55"></script>
+<script src="fit.js?v=56"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=38"></script>
+<script src="prefs.js?v=39"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -135,7 +135,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
-.btn:active,.chip:active,.opt:active,.card:active,.navi:active,.fsbtn:active,.mbtn:active{opacity:.5;transform:none!important;transition:opacity .06s}
+.btn:active,.chip:active,.opt:active,.card:active,.navi:active,.fsbtn:active,.mbtn:active{opacity:.6;transform:none!important;transition:opacity .06s}
 .btn .go,a.card:hover .go,.btn:hover .go{transform:none!important}
 .btn:hover .spin{transform:none}
 .primary{background:var(--wf-y);color:#1C1C1E;}.primary,.primary.green{animation:none!important;padding:0 20px!important;justify-content:center;gap:8px;box-shadow:none}
@@ -162,13 +162,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 .fsin{color:#FFFFFF}
 /* consistency pass: tokens from Main.dc.html */
 .sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}.sqrow.nosep::after{display:none}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(255,255,255,.7)!important}}
-.sqrow:not([disabled]):not(div):not(li):active{opacity:.6}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
+.sqrow:not([disabled]):not(div):not(li):active{opacity:.68}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
 .sqtop::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}
 @media (hover:hover){.sqrow.sqrow[aria-disabled=true][data-sel]:hover{background-color:transparent!important}}
 .sqrow[aria-disabled=true]:active{opacity:1}
 .stepb{display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;flex-shrink:0;border:0;border-radius:50%;background:rgba(120,120,128,0.12);color:#000000;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,opacity .15s ease}
 @media (hover:hover){.stepb:not([aria-disabled=true]):hover{background:rgba(120,120,128,0.2)}}
-.stepb:not([aria-disabled=true]):active{opacity:.5}.stepb[aria-disabled=true]{cursor:default}
+.stepb:not([aria-disabled=true]):active{opacity:.6}.stepb[aria-disabled=true]{cursor:default}
 .sheet.blade{border-radius:28px 28px 0 0!important;box-shadow:0 -4px 16px rgba(0,0,0,0.08)!important;border-top:0!important}
 
 @keyframes sndspin{to{transform:rotate(360deg)}}.sndspin{animation:sndspin .8s linear infinite}
