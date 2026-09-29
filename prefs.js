@@ -116,8 +116,10 @@
     '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
     // Qualifier band (what an item is: ignition detection, active fire, fire station): not a button. Full width, square
     // corners, the map marker's colour, the marker itself before the label. One definition for the whole app.
-    '.wf-qual{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:0;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
-    '.wf-qual svg{flex-shrink:0;scale:1.1}' +
+    '.wf-qual{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;border-radius:0;background:#EBEBF0;color:#1C1C1E;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
+    '.wf-qual svg{flex-shrink:0;scale:1.2}' +
+    // On a card the band is the top row, edge to edge, with the round X at its end
+    '.wf-qual.top{min-height:56px;padding:8px 8px 8px 16px;border-radius:14px 14px 0 0}.wf-qual.top>span{flex-grow:1;min-width:0;overflow:hidden;text-overflow:ellipsis}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
     // The glass overlay behind panels, one definition for the whole app: a slightly dark frosted layer, so the panel's edge
     // reads clearly against what is underneath. Change it here and every overlay changes.
