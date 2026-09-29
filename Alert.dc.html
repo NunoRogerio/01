@@ -18,7 +18,7 @@
 <script src="prefs.js?v=17"></script>
 <script src="i18n.js?v=32"></script>
 <script src="live.js?v=26"></script>
-<script src="chat.js?v=16"></script>
+<script src="chat.js?v=17"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -170,7 +170,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </sc-if>
 
 
-  <div style="position: relative; z-index: 6; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+  <div style="display: {{hdrD}}; position: relative; z-index: 6; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <span aria-hidden="true" style="display: {{panelD}}; position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7"></span>
   <!-- Top header: the place on top, what it is underneath. Tapping it lists the other candidates. No grabber: it is not a drag-to-expand blade. -->
   <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 8px 12px">
@@ -281,20 +281,26 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <section class="rise" aria-labelledby="ai" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 0; animation-delay: 160ms">
       <!-- The current conclusion, in its own card: verdict and status on the left, the likelihood KPI on the right -->
       <div style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF">
-      <!-- The verdict and its status on top; the likelihood, big and in the app's yellow, at the centre of the card -->
-      <div style="display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding: 16px">
-        <span style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0">
-          <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{cur.verdict}}</h2>
-          <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
-        </span>
-        <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 0; padding: 4px 0 8px">
-          <span class="wf-like">{{cur.conf}}%</span>
-          <span style="margin-top: -4px; font-size: 17px; line-height: 22px; color: #545458; white-space: nowrap">Confidence level</span>
-        </span>
+      <!-- The place and a close X on top; the likelihood, big, at the centre; the verdict and its status on one row; then
+           where it is, with the map and the drone as two quiet buttons -->
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 16px 0">
+        <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{curRow.place}}</h2>
+        <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{navBack}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+      </div>
+      <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 0; padding: 12px 16px 16px">
+        <span class="wf-like">{{cur.conf}}%</span>
+        <span style="margin-top: -4px; font-size: 17px; line-height: 22px; color: #545458; white-space: nowrap">Likelihood</span>
+      </span>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 16px; padding: 12px 0; border-top: 1px solid rgba(60,60,67,0.12)">
+        <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{cur.verdict}}</span>
+        <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 0 16px; padding: 12px 0 8px; border-top: 1px solid rgba(60,60,67,0.12); font-size: 17px; line-height: 22px; color: #3C3C43">
         <span style="display: {{locD}}">{{locTxt}}</span>
-        <button type="button" class="btn wf-ter" onClick="{{openMap}}" style="height: 36px; margin: 0; padding: 0 14px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500">View on map</button>
+        <span style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px">
+          <button type="button" class="btn wf-ter" onClick="{{openMap}}" style="display: flex; align-items: center; gap: 8px; height: 48px; margin: 0; padding: 0 16px 0 12px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4Z M9 4v13.5 M15 6.5V20"></path></svg>View on map</button>
+          <a href="Drone.dc.html" class="btn wf-ter" onPointerDown="{{verifyCur}}" onClick="{{verifyCur}}" style="display: flex; align-items: center; gap: 8px; height: 48px; margin: 0; padding: 0 16px 0 12px; border-radius: 10px; font-size: 17px; font-weight: 500; text-decoration: none"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M16.1 5.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M3.5 18.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M16.1 18.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M7.3 7.3l2.7 2.7 M16.7 7.3 14 10 M7.3 16.7l2.7-2.7 M16.7 16.7 14 14 M10 10h4v4h-4Z"></path></svg>Verify by drone</a>
+        </span>
       </div>
       </div>
     </section>
@@ -315,25 +321,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </ul>
     </section>
 
-    <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 24px; animation-delay: 300ms">
-      <!-- Confirm fire goes straight to configuring the dispatch for this fire -->
-      <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmCur}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600; text-decoration: none">
-        <span style="flex-grow: 1; text-align: left">Confirm fire</span>
-        <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-        </span>
-      </a>
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
-        <a href="Drone.dc.html" class="btn ghost" onPointerDown="{{verifyCur}}" onClick="{{verifyCur}}" style="height: 48px; font-size: 17px; font-weight: 500">
-          Verify by drone
-        </a>
-        <button type="button" class="btn ghost" onClick="{{openDz}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">
-          Dismiss ignition
-        </button>
-      </div>
+    <div class="rise" style="display: flex; flex-direction: column; padding: 16px 16px 0; animation-delay: 260ms">
       <!-- The candidate's incident chat: start it (or open it) with the coordinator and the nearest stations' team leads -->
       <a href="Chat.dc.html" class="btn ghost" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="display: {{chat.btnD}}; height: 48px; font-size: 17px; font-weight: 500; text-decoration: none">{{chat.label}}</a>
-      <a href="Main.dc.html" data-wf-back="1" class="btn wf-ter" onClick="{{navBack}}" style="height: 44px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Go back</a>
+    </div>
+    <div class="rise" style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 12px; padding: 32px 16px 24px; animation-delay: 300ms">
+      <!-- Confirm fire goes straight to configuring the dispatch for this fire; Dismiss beside it (they stack if they do not fit) -->
+      <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmCur}}" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 19px; font-weight: 600; white-space: nowrap; text-decoration: none">Confirm fire</a>
+      <button type="button" class="btn ghost" onClick="{{openDz}}" aria-haspopup="dialog" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 17px; font-weight: 500; white-space: nowrap">Dismiss</button>
     </div>
     </div>
   </sc-if>
@@ -787,7 +782,7 @@ class Component extends DCLogic {
       // Location is not evidence: it sits in the conclusion card with the map button
       locTxt: cur.loc || cur.coords || '', locD: (cur.loc || cur.coords) ? 'block' : 'none',
       reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
-      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent confidence level',
+      ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
       mapIgn: [cur].map((c) => ({ id: c.id, x: c.x, y: c.y, place: c.place, conf: c.conf, src: c.src })),   // only this candidate and its suggested stations
@@ -819,7 +814,7 @@ class Component extends DCLogic {
       chat: (() => { const C = window.__wfChat, raw = SC.cands[ci]; if (!C || !raw) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: '', btnD: 'none' };
         const inc = C.incCand(raw), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
         return { badgeD: u ? 'block' : 'none', n: String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), label: ex ? 'Open chat' : 'Start chat', btnD: 'flex' }; })(),
-      confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
+      hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
     };
   }
 }
