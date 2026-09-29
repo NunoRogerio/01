@@ -438,7 +438,8 @@ class Component extends DCLogic {
       const p = this.props, full = p.isFull === true || p.isFull === 'true';
       if (tp && tp.bg && !this._pinched && performance.now() - tp.t < 450 && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) <= 8) {
         if ((this.state || {}).pop) { if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); }
-        else if (typeof p.onBgTap === 'function' && !full) p.onBgTap();
+        else if (typeof p.onFull === 'function' && !full) p.onFull();   // a tap on an empty part of the map opens it full screen (the exit button brings it back)
+        else if (typeof p.onBgTap === 'function' && !full && typeof p.onFull !== 'function') p.onBgTap();
       }
     };
     this.stop = (e) => e.stopPropagation();
@@ -490,7 +491,11 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { this.unitTick(); }
+  componentDidMount() { this.unitTick();
+    // Phone turned sideways: the map fills the screen; turned back upright, it returns to how it was
+    this._orient = () => { const p = this.props; if (typeof p.onFull !== 'function') return; const land = window.innerWidth > window.innerHeight, full = p.isFull === true || p.isFull === 'true';
+      if (land && !full) { this._autoFull = true; p.onFull(); } else if (!land && full && this._autoFull) { this._autoFull = false; p.onFull(); } else if (!land) this._autoFull = false; };
+    window.addEventListener('resize', this._orient); window.addEventListener('orientationchange', this._orient); setTimeout(this._orient, 300); }
   componentDidUpdate(prev) {
     this._pv = null;
     if (prev && prev.hideTips !== this.props.hideTips && this.props.hideTips) {
@@ -506,7 +511,7 @@ class Component extends DCLogic {
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
   }
-  componentWillUnmount() { if (this.stopGlide) this.stopGlide();
+  componentWillUnmount() { if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
     if (this._uT) clearInterval(this._uT);
     if (this.el) this.el.removeEventListener('wheel', this.onWheel);
     if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync);

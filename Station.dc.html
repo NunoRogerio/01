@@ -37,12 +37,12 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <sc-if value="{{hasMap}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{zero}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
+      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" on-full="{{toggleFull}}" is-full="{{full}}" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{zero}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
 
   <!-- Name, region, then the qualifier band in the map marker's navy: the same structure as the ignition candidate card -->
-  <header style="position: relative; z-index: 6; display: flex; align-items: flex-start; gap: 8px; padding: 10px 16px 16px 8px; background: #F2F2F7">
+  <header style="position: relative; z-index: 6; display: flex; align-items: flex-start; gap: 8px; padding: 10px 16px 16px 8px; background: #F2F2F7; transform: translateY({{hdY}}); opacity: {{hdOp}}; pointer-events: {{hdPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <a href="Main.dc.html" data-wf-back="1" class="stback" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; color: #545458; text-decoration: none">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
     </a>
@@ -55,7 +55,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <div style="position: relative; z-index: 5; height: 250px; flex-shrink: 0; pointer-events: none"></div>
 
-  <div style="position: relative; z-index: 6; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 16px 16px 32px; background: #F2F2F7; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08)">
+  <div style="position: relative; z-index: 6; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 16px 16px 32px; background: #F2F2F7; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); transform: translateY({{downY}}); opacity: {{hdOp}}; pointer-events: {{hdPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <sc-if value="{{none}}" hint-placeholder-val="{{ false }}">
       <p style="margin: 24px 0; font-size: 17px; line-height: 22px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
     </sc-if>
@@ -194,7 +194,9 @@ class Component extends DCLogic {
     return {
       none: false, some: true, hasMap: true, back, bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  zero: 0, noList: [], pinId: 'station-' + S.id,
       mapFires: live.map((r) => ({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], res: r[7], ha: r[8], info: r[9] })),
-      mapW: 390, mapH: 844, clipT: 172, clipB: 482, ctrlTop: 180, zoom: 0.9, attr: 28,
+      ...(() => { const F = !!(this.state || {}).full; return { full: F, toggleFull: () => this.setState({ full: !(this.state || {}).full }),
+        hdY: F ? '-200px' : '0px', downY: F ? '110%' : '0px', hdOp: F ? 0 : 1, hdPE: F ? 'none' : 'auto', clipT: F ? 0 : 172, clipB: F ? 0 : 482, attr: F ? 40 : 28 }; })(),
+      mapW: 390, mapH: 844, ctrlTop: 180, zoom: 0.9,
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
         title: name, name, ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), operator: op, opD: op ? 'block' : 'none', coords, x: S.x, y: S.y, chips, hasPhone: !!phone, tel: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '',
