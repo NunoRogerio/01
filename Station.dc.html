@@ -108,8 +108,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <div class="strow">
             <span style="width: 96px; flex-shrink: 0; font-size: 15px; color: #545458">{{r.k}}</span>
             <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
-            <sc-if value="{{r.plain}}" hint-placeholder-val="{{ true }}"><span style="min-width: 0; flex-grow: 1; font-size: 17px; line-height: 22px; overflow-wrap: anywhere">{{r.v}}</span></sc-if>
-            <button type="button" onClick="{{r.copy}}" aria-label="{{r.copyAria}}" style="display: {{r.copyD}}; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: -8px 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: {{r.copyC}}; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.copyIc}}"></path></svg></button>
+            <sc-if value="{{r.plain}}" hint-placeholder-val="{{ true }}"><span style="display: flex; flex-direction: column; min-width: 0; flex-grow: 1"><span style="font-size: 17px; line-height: 22px; overflow-wrap: anywhere">{{r.v}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{r.cpRows}}; opacity: {{r.cpOp}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; margin-top: 2px; font-size: 15px; line-height: 20px; color: #1E7A34">Copied to clipboard</span></span></span></sc-if>
+            <button type="button" onClick="{{r.copy}}" aria-label="{{r.copyAria}}" style="display: {{r.copyD}}; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: -8px 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: {{r.copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.copyIc}}"></path></svg></button>
           </div>
         </sc-for>
       </div>
@@ -167,9 +167,9 @@ class Component extends DCLogic {
     const phone = T.phone || T['contact:phone'] || '', web = T.website || T['contact:website'] || '', mail = T.email || T['contact:email'] || '';
     const coords = Math.abs(S.lat).toFixed(4) + '° ' + (S.lat >= 0 ? 'N' : 'S') + ', ' + Math.abs(S.lon).toFixed(4) + '° ' + (S.lon >= 0 ? 'E' : 'W');
     const rows = [];
-    const done = this.state && this.state.copied && Date.now() - this.state.copied < 1600;
-    const add = (k, v, href, copy) => { if (v) rows.push({ k, v, href: href || '', link: !!href, plain: !href, copyD: copy ? 'flex' : 'none', copyIc: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', copyC: done ? '#1E7A34' : '#3C3C43', copyAria: done ? 'Copied' : 'Copy coordinates',
-      copy: () => { try { navigator.clipboard.writeText(v); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ copied: Date.now() }); setTimeout(() => this.forceUpdate(), 1700); } }); };
+    const cp = (this.state && this.state.copied) || null;   // the check stays on the copied row; the label fades after 3 s
+    const add = (k, v, href, copy) => { const done = !!(copy && cp && cp.v === v), fresh = done && Date.now() - cp.t < 3000; if (v) rows.push({ k, v, cpRows: fresh ? '1fr' : '0fr', cpOp: fresh ? 1 : 0, href: href || '', link: !!href, plain: !href, copyD: copy ? 'flex' : 'none', copyIc: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', copyC: done ? '#1E7A34' : '#3C3C43', copyAria: done ? 'Copied' : 'Copy coordinates',
+      copy: () => { try { navigator.clipboard.writeText(v).catch(() => {}); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ copied: { v, t: Date.now() } }); setTimeout(() => this.forceUpdate(), 3100); } }); };
     add('Operator', op); add('Type', kind); add('Code', T['fire_station:code'] || T.ref); add('Address', addr);
     add('Phone', phone, phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : ''); add('Email', mail, mail ? 'mailto:' + mail : '');
     add('Website', web.replace(/^https?:\/\//, '').replace(/\/$/, ''), web ? (/^https?:/.test(web) ? web : 'https://' + web) : '');
