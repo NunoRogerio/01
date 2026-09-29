@@ -475,7 +475,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
                   <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
                   <!-- Text styles: title (bold), description (grey), annotation (smaller, mid grey) -->
-                  <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{d.added}}</span>
+                  <!-- Annotation line: when it was last loaded (bold), then when it was added -->
+                  <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73"><b style="display: {{d.loadedD}}; font-weight: 600">{{d.loaded}}<span style="font-weight: 400"> · </span></b><span style="white-space: nowrap">{{d.added}}</span></span>
                 </li>
               </sc-for>
             </ul>
@@ -731,6 +732,7 @@ class Component extends DCLogic {
         let c = {}; try { c = JSON.parse(localStorage.getItem('wf-live-fires-v15') || 'null') || {}; } catch (e) {}
         const ago = (t) => { if (!t) return T('Not loaded on this phone yet', 'Ainda não carregado neste telemóvel'); const m = Math.max(0, Math.round((Date.now() - t) / 60000));
           if (lang === 'ja') return '読み込み: ' + (m < 1 ? 'たった今' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前');   // Japanese units
+          if (pt && m < 1) return 'Carregado agora';
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         const items = [
           ['NASA FIRMS', T('Satellite heat detections (VIIRS) · Europe and the Americas', 'Deteções de calor por satélite (VIIRS) · Europa e Américas'), c.tSat, false, 26],
@@ -740,9 +742,10 @@ class Component extends DCLogic {
           ['BC Wildfire Service', T('Wildfires · British Columbia', 'Incêndios florestais · Colúmbia Britânica'), c.tCAN, false, 26],
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27],
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26]
-        ].map(([name, what, t, still, day]) => ({ name, sub: what + (still ? '' : ' · ' + ago(t)),
+        ].map(([name, what, t, still, day]) => ({ name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
           // annotation: when the source was added to the app (September 2026, from the project history)
-          added: lang === 'ja' ? '2026年9月' + day + '日に追加' : pt ? 'Adicionada a ' + day + ' set 2026' : 'Added ' + day + ' Sep 2026' }));
+          added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
+            return lang === 'ja' ? (yr ? '2026年' : '') + '9月' + day + '日に追加' : pt ? 'Adicionada a ' + day + ' set' + yr : 'Added ' + day + ' Sep' + yr; })() }));
         return { title: T('Connect data sources', 'Ligar fontes de dados'), count: String(items.length), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
