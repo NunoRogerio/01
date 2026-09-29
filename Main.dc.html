@@ -692,7 +692,7 @@ class Component extends DCLogic {
       pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
       pfInOp: pf ? 1 : 0, pfInY: pf ? '0px' : '-12px', pfInDelay: boot ? '0s' : pf ? '.15s' : '0s', pfXRot: s.pfSpin ? '90deg' : '0deg',
       cs: (() => { const o = !!s.chatSet, pt = lang === 'pt';
-        return { title: pt ? 'Definições das conversas' : 'Chat settings', str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
+        return { title: pt ? 'Conversas' : 'Chat settings', str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o, dsOpen: false }); } }; })(),   // one drawer open at a time
       // The data sources the app reads, with when this phone last loaded each (from the live-data cache)
