@@ -23,6 +23,12 @@ window.__wfRegion = function (st, co) {
   if (st === 'PT') return /^(Açores|Madeira)$/.test(co) ? co + ', Portugal' : co + ' District, Portugal';
   if ((g ? g[4] : (st.length === 2 ? 'US' : '')) === 'US') return co + (st === 'LA' ? ' Parish' : st === 'AK' ? '' : ' County') + ', ' + name;
   return co + ', ' + name;
+};
+// Only the level above a place (county, district or region), without the state or country: the area picker
+// above already names those. Used on map tooltips.
+window.__wfRegionUp = function (st, co) {
+  var full = window.__wfRegion(st, co); if (!co) return full;
+  return full.replace(/, [^,]+$/, '');
 };   // tells the map to use live web-map tiles
 (function(){
   var US_URL='https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Incident_Locations_Current/FeatureServer/0/query';
