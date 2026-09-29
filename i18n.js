@@ -8,7 +8,13 @@
   // Every profile can choose English, Portuguese or Japanese; the Portuguese profiles start in Portuguese.
   try{var role=localStorage.getItem('wf-role')||'',sv=localStorage.getItem('wf-lang-'+role);lang=(sv==='en'||sv==='pt'||sv==='ja')?sv:((role==='pt'||role==='design')?'pt':'en');}catch(e){}
   window.__wfLang=lang;
-  window.__wfSetLang=function(l){try{localStorage.setItem('wf-lang-'+(localStorage.getItem('wf-role')||''),l);}catch(e){}location.reload();};
+  // Changing language reloads the page: it fades out softly and the new page fades in (no white flash in between)
+  window.__wfSetLang=function(l){try{localStorage.setItem('wf-lang-'+(localStorage.getItem('wf-role')||''),l);sessionStorage.setItem('wf-fadein','1');}catch(e){}
+    try{document.documentElement.style.background=getComputedStyle(document.body).backgroundColor||'#F2F2F7';document.body.style.transition='opacity .2s ease';document.body.style.opacity='0';}catch(e){}
+    setTimeout(function(){location.reload();},210);};
+  try{if(sessionStorage.getItem('wf-fadein')==='1'){sessionStorage.removeItem('wf-fadein');var fs=document.createElement('style');
+    fs.textContent='html{background:'+(localStorage.getItem('wf-theme-'+(localStorage.getItem('wf-role')||''))==='dark'?'#1C1C1E':'#F2F2F7')+'}body{opacity:0;animation:wfFadeIn .35s ease .05s forwards}@keyframes wfFadeIn{to{opacity:1}}';
+    (document.head||document.documentElement).appendChild(fs);}}catch(e){}
   if(lang==='en')return;
   try{document.documentElement.lang=lang==='ja'?'ja':'pt-PT';}catch(e){}
 

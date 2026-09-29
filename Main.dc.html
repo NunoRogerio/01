@@ -414,7 +414,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div role="radiogroup" aria-label="{{g.label}}" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
           <span aria-hidden="true" style="margin-left: 4px; font-size: 17px; font-weight: 600; line-height: 22px; color: #545458">{{g.label}}</span>
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 10px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
-            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; border-radius: 999px; background: #D7F41A; transform: translateX({{g.thumbX}}); transition: transform .4s cubic-bezier(.3,.9,.25,1)"></span>
+            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; border-radius: 999px; background: #D7F41A; transform: translateX({{g.thumbX}}); transition: transform .45s cubic-bezier(.4,0,.2,1); will-change: transform"></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
               <button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: #1C1C1E; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
             </sc-for>
@@ -671,9 +671,15 @@ class Component extends DCLogic {
     const me = (P && P.person) || { code: 'NR', name: 'Nuno Rogerio', title: 'Platform administrator', org: 'Forest Fire Watch', access: 'Access to all features · All regions', photo: '', lang: 'en' };
     const theme = P ? P.get('theme') : (s.theme || 'light'), text = P ? P.get('text') : (s.text || 'normal'), lang = window.__wfLang || 'en';
     const setPref = (k, v) => { if (P) P.set(k, v); this.setState({ [k]: v }); };
-    const group = (label, cur, opts, pick) => { const i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
+    // Segmented controls: the yellow slides to the new option first; the choice is applied once it has arrived, so the
+    // repaint (theme, text size) or reload (language) never interrupts the movement
+    const group = (label, cur0, opts, pick) => { const pend = (s.segPend || {})[label], cur = pend !== undefined ? pend : cur0, i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
       label, cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 20px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
-      opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, pick: () => { if (o[0] !== cur) pick(o[0]); } })) }; };
+      opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, pick: () => { if (o[0] === cur) return;
+        try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+        this.setState({ segPend: Object.assign({}, (this.state || {}).segPend, { [label]: o[0] }) });
+        clearTimeout((this._segT = this._segT || {})[label]);
+        this._segT[label] = setTimeout(() => { pick(o[0]); const P2 = Object.assign({}, (this.state || {}).segPend); delete P2[label]; this.setState({ segPend: P2 }); }, 460); } })) }; };
     return {
       me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none', pfScrimOp: pf ? 1 : 0, pfDy: this.wfDrag('pf').y, hPf: this.wfHandle('pf', 'up', () => this.setState({ pf: false })),
