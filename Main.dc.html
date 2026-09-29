@@ -861,7 +861,7 @@ class Component extends DCLogic {
     const s = this.state || {}, open = !!s.ntOpen, now = Date.now();
     const T0 = window.__wfNtT0 || (window.__wfNtT0 = now);
     let seen = 0; try { seen = +window.sessionStorage.getItem('wf-nt-seen') || 0; } catch (e) {} seen = Math.max(seen, (window.__wfMem || {}).ntSeen || 0);
-    const TRI = 'M2.6 3H11.4L7 11Z', CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z', SQ = 'M3 4.5Q3 3 4.5 3H9.5Q11 3 11 4.5V9.5Q11 11 9.5 11H4.5Q3 11 3 9.5Z';
+    const TRI = 'M2.6 3H11.4L7 11Z', CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z', SQ = 'M7 2.4 11.6 6.4V11.6H2.4V6.4Z';
     const confC = (c) => (window.__wfConfC ? window.__wfConfC(c) : '#0A6FDB');
     const ageTxt = (ms) => { const m = Math.max(1, Math.round((now - ms) / 60000)); return (m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' d') + ' ago'; };
     const goFire = (f) => () => { this.wfListFlag(true); this.wfSetFireView(f); };
@@ -880,7 +880,7 @@ class Component extends DCLogic {
     const unread = out.filter((n) => n.t > seen).length;
     const items = out.map((n, i) => {
       const un = n.t > seen;
-      const ic = n.kind === 'ign' ? [TRI, n.c, 'rgba(0,0,0,0.25)'] : n.kind === 'fire' ? [CIR, '#E8590C', '#3A3A3C'] : [SQ, '#2B4C7E', '#FFFFFF'];
+      const ic = n.kind === 'ign' ? [TRI, n.c, 'rgba(0,0,0,0.25)'] : n.kind === 'fire' ? [CIR, '#E8590C', '#3A3A3C'] : [SQ, '#3A3A3C', '#FFFFFF'];
       return { title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes

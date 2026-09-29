@@ -185,7 +185,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-for>
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
-    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; white-space: nowrap">
+    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: {{t.blur}}; -webkit-backdrop-filter: {{t.blur}}; font-size: 13px; font-weight: 600; white-space: nowrap">
       <svg width="14" height="14" viewBox="0 0 24 24" style="scale: 1.1" fill="{{t.fill}}" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
@@ -214,7 +214,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
-      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><g transform="translate(14 14)" style="display: {{fm.pulseD}}"><circle r="10.25" fill="none" stroke="#3A3A3C" stroke-width="1.4" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></circle></g><circle cx="14" cy="14" r="10.25" fill="#E8590C" stroke="#3A3A3C" stroke-width="1.6"></circle></svg></button>
+      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"><circle cx="14" cy="14" r="10.25" fill="#E8590C" stroke="#3A3A3C" stroke-width="1.6"></circle></svg></button>
       <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
@@ -227,7 +227,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mvI}}">
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
           <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 0.77; overflow: visible">
-            <g transform="translate(48 47.5)"><polygon points="-19,-11 19,-11 0,22" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
+            <g transform="translate(48 47.5)"><polygon points="-19,-11 19,-11 0,22" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;1.54" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
             <polygon points="29,36.5 67,36.5 48,69.5" fill="{{ig.c}}" stroke="#3A3A3C" stroke-width="2.3" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35))"></polygon>
           </svg>
           <span class="igpill" role="tooltip">
@@ -240,7 +240,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
           <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
-            <g transform="translate(32 32.7)"><polygon points="-16,-10.3 16,-10.3 0,17.7" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.2" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
+            <g transform="translate(32 32.7)"><polygon points="-16,-10.3 16,-10.3 0,17.7" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;1.54" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="0.9;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
             <polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}" stroke="{{ig.rim}}" stroke-width="2.1" stroke-linejoin="round" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))"></polygon>
           </svg>
           </sc-if>
@@ -256,7 +256,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <sc-if value="{{noLink}}" hint-placeholder-val="{{ false }}">
       <span class="tipwrap" tabindex="0" style="position: absolute; z-index: 24; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
         <sc-if value="{{pinSt}}" hint-placeholder-val="{{ false }}">
-          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><rect x="13" y="13" width="14" height="14" rx="3.5" fill="#2B4C7E" stroke="#FFFFFF" stroke-width="2" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35))"></rect></svg>
+          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><path d="M20 11.5 28.5 18.8V28.5H11.5V18.8Z" fill="#3A3A3C" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35))"></rect></svg>
         </sc-if>
         <sc-if value="{{pinFire}}" hint-placeholder-val="{{ true }}">
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1">
@@ -991,7 +991,7 @@ class Component extends DCLogic {
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, '#E8590C', '#3A3A3C'],
-      ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M3 4.5Q3 3 4.5 3H9.5Q11 3 11 4.5V9.5Q11 11 9.5 11H4.5Q3 11 3 9.5Z', '#2B4C7E', '#FFFFFF']
+      ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M7 2.4 11.6 6.4V11.6H2.4V6.4Z', '#3A3A3C', '#FFFFFF']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
@@ -1069,7 +1069,7 @@ class Component extends DCLogic {
     const c = this.clampView(this.view().cx, this.view().cy, this.view().s);
     const s = c.s;
     const tx = W / 2 - c.cx * s, ty = H / 2 - c.cy * s;
-    const at = (x, y, extra) => ({ left: +(tx + x * s).toFixed(1), top: +(ty + y * s).toFixed(1), ...extra });
+    const at = (x, y, extra) => ({ left: +(tx + x * s).toFixed(1), top: +(ty + y * s).toFixed(1), blur: extra && extra.bg && extra.bg !== 'transparent' ? 'blur(8px)' : 'none', ...extra });   // a bare icon gets no frosted halo
     const WN = this.win();
     const ck = WN.t + ',' + WN.b + ',' + WN.l + ',' + WN.r;
     if (this._ck !== undefined && this._ck !== ck) this._animUntil = Date.now() + 700;
@@ -1114,10 +1114,10 @@ class Component extends DCLogic {
     const stations = ST.map(([id, code, x, y, busy, nm, avail]) => {
       const on = !isRisk && id === selId;
       const o = at(x, y - 10, {
-        label: on && p.stationLabel ? p.stationLabel : code, icon: 'M12 3.2 21.6 20H2.4Z', fill: on ? '#FFFFFF' : '#2B4C7E',
+        label: on && p.stationLabel ? p.stationLabel : code, icon: 'M12 4.8 19.2 11V19.2H4.8V11Z', fill: on ? '#FFFFFF' : '#3A3A3C',
         bg: on ? 'rgba(0,113,227,0.95)' : 'rgba(255,255,255,0.78)',
         bd: on ? 'rgba(120,180,255,0.9)' : 'rgba(60,60,67,0.132)',
-        fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#2B4C7E',
+        fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#FFFFFF',
         op: (!isRisk && busy) ? 0.5 : 1
       });
       return withTip(o, 'Fire station ' + code + ' · ' + nm, avail + (on ? '. Selected for dispatch.' : '.'));
@@ -1139,7 +1139,7 @@ class Component extends DCLogic {
         const st = { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4] || '', lat: la, lon: lo, tags: r[5] ? { operator: r[5] } : {}, x: xy[0], y: xy[1], kmX, kmY, partial: true };
         const nk = NEAR.get(V[j]), near = nk != null, RT = near ? this.routeOf({ i: V[j] }) : null, rOk = !!(RT && !RT.fail);
         const kmT = (k) => (k < 10 ? k.toFixed(1) : String(Math.round(k))) + ' km';
-        out.push(withTip(at(xy[0], xy[1] + 4, { label: near ? (rOk ? kmT(RT.km) + ' · ' + RT.min + ' min' : '~' + kmT(nk * 1.35) + ' · ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min') : '', icon: 'M6 8.5Q6 6 8.5 6H15.5Q18 6 18 8.5V15.5Q18 18 15.5 18H8.5Q6 18 6 15.5Z', fill: '#2B4C7E', bg: near ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near ? 'rgba(43,76,126,0.5)' : 'transparent', fg: near ? '#2B4C7E' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+        out.push(withTip(at(xy[0], xy[1] + 4, { label: near ? (rOk ? kmT(RT.km) + ' · ' + RT.min + ' min' : '~' + kmT(nk * 1.35) + ' · ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min') : '', icon: 'M12 4.8 19.2 11V19.2H4.8V11Z', fill: '#3A3A3C', bg: near ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near ? 'rgba(58,58,60,0.4)' : 'transparent', fg: near ? '#3A3A3C' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
           pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), r[4] || 'Fire station', [r[5] || 'Location from OpenStreetMap'].concat(near ? [rOk ? 'By road ' + kmT(RT.km) + ' · about ' + RT.min + ' min drive to the ' + (p.mode === 'pin' ? 'ignition point' : 'fire') : RT && RT.fail ? 'About ' + kmT(nk * 1.35) + ' by road, ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min (estimate: ' + kmT(nk) + ' in a straight line; the road router did not answer)' : kmT(nk) + ' in a straight line · finding the road route…'] : []).join('\n')));
       }
       return out;
@@ -1152,7 +1152,7 @@ class Component extends DCLogic {
       const phone = t.phone || t['contact:phone'] || '';
       const td = [t.operator, addr, phone].filter(Boolean).join('\n') || 'Location from OpenStreetMap';
       const st = { id, type: ty || 'node', name: nm || t.official_name || '', lat: la, lon: lo, tags: t, x: xy[0], y: xy[1], kmX, kmY };
-      return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M6 8.5Q6 6 8.5 6H15.5Q18 6 18 8.5V15.5Q18 18 15.5 18H8.5Q6 18 6 15.5Z', fill: '#2B4C7E', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+      return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M12 4.8 19.2 11V19.2H4.8V11Z', fill: '#3A3A3C', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
         pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), nm || 'Fire station', td);
     }).filter(onScreen).filter((o) => { const f = this.inScopeFn(); return !f || !o._st || f(o._st.x, o._st.y); }) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
