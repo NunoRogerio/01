@@ -378,7 +378,7 @@ window.__wfBlink=function(path,dur){
   var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],label,summary,.opt,.sqrow';
   var st=document.createElement('style');
   st.textContent='#wf-fx{position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:99998}'+
-    '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.22);transform:scale(0);opacity:1;transition:transform .42s cubic-bezier(.2,.8,.2,1),opacity .35s ease}'+
+    '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.187);transform:scale(0);opacity:1;transition:transform .42s cubic-bezier(.2,.8,.2,1),opacity .35s ease}'+
     '#wf-hap{position:fixed;left:-99px;top:-99px;width:1px;height:1px;opacity:0;pointer-events:none}';
   document.head.appendChild(st);
   var box=null,dot=null,sx=0,sy=0,live=false,hap=null;
