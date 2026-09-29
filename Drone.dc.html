@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=25"></script>
+<script src="prefs.js?v=26"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -293,12 +293,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div class="scrim" onClick="{{closeFa}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{faOp}}; pointer-events: {{faPE}}"></div>
-  <section class="sheet" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; padding: 8px 16px 48px; border-radius: 32px 32px 0 0; background: #FFFFFF; border-top: 1px solid rgba(60,60,67,0.088); box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}}); transition-duration: {{faT}}">
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hFa.down}}" onPointerMove="{{hFa.move}}" onPointerUp="{{hFa.up}}" onPointerCancel="{{hFa.cancel}}" onKeyDown="{{hFa.key}}" style="display: flex; justify-content: center; height: 53px; margin: -8px -16px 0; padding-top: 8px; box-sizing: border-box; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
+  <section class="sheet wf-dlg" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column;  background: #FFFFFF; border-top: 1px solid rgba(60,60,67,0.088); box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}}); transition-duration: {{faT}}">
     <h2 id="faTitle" style="margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #000000">Dismiss this candidate?</h2>
     <p id="faBody" style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #545458">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 24px">
-      <button type="button" class="btn wf-sec" onClick="{{closeFa}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
+    <div class="wf-dlg-acts">
+      <button type="button" class="btn wf-sec" data-swipe-go="1" onClick="{{closeFa}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
       <a href="Main.dc.html" class="btn primary" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px">
         Dismiss
       </a>

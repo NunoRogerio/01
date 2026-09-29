@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=25"></script>
+<script src="prefs.js?v=26"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -489,12 +489,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <button type="button" data-pf-av="1" class="opt avbtn" onClick="{{closePrefs}}" aria-label="Close preferences" aria-hidden="{{pfHidden}}" style="position: absolute; top: {{pfAv.top}}px; left: {{pfAv.left}}px; z-index: 41; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer; opacity: {{pfAv.op}}; pointer-events: {{pfPE}}; transition: opacity 0s linear {{pfAv.delay}}">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span><span aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 4px var(--wf-y); pointer-events: none; opacity: {{pfAv.ring}}; transition: opacity .3s ease"></span></button>
   <!-- Confirm role-play changes and key removal (no grabber: it is not expandable; Cancel or a tap outside closes it) -->
   <div class="wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
-  <section role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; padding: 16px 16px 48px; border-radius: 32px 32px 0 0; background: #FFFFFF; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
+  <section class="wf-dlg" role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
     <!-- Text styles as in the user settings: title, description, annotation -->
     <h2 id="aicTitle" style="margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #000000">{{aic.title}}</h2>
     <p id="aicBody" style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #545458">{{aic.body}}</p>
     <p style="display: {{aic.noteD}}; margin: 2px 0 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{aic.note}}</p>
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px">
+    <div class="wf-dlg-acts">
       <button type="button" class="opt wf-b wf-sec" onClick="{{aic.close}}" style="border: 0; font: inherit; cursor: pointer">{{aic.cancel}}</button>
       <button type="button" class="opt wf-b wf-pri" onClick="{{aic.confirm}}" style="border: 0; font: inherit; cursor: pointer">{{aic.ok}}</button>
     </div>
