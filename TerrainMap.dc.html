@@ -297,41 +297,34 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
   <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: {{pop.w}}px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
-    <!-- Ignition candidate (the selected marker already says what it is; no X: a tap on the marker or the map closes it):
-         the likelihood on top ('Likelihood' above the XS KPI), then the place and the level above it, centred; then View -->
+    <!-- Map tooltip panel: one block, three variants (candidate, fire, station). Same 180px width, padding, text styles and gaps:
+         the selected marker says what the item is, so no header and no X (a tap on the marker or the map closes it). All centred.
+         Groups, top to bottom: KPI (annotation above the XS number), tag, place (Title XS with the level above as annotation), View.
+         Gaps: 8px after the KPI (its box already carries space under the digits), 12px between the other groups, 16px above View. -->
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
-      <span role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; padding: 12px 12px 0">
-        <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap">Likelihood</span>
-        <span class="wf-like-xs" style="margin-top: -3px">{{pop.pct}}</span>
-      </span>
-      <div style="display: flex; padding: 8px 12px 0">
-        <span style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; min-width: 0; text-align: center">
-          <b class="wf-title-xs" style="display: block">{{pop.place}}</b>
-          <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
-        </span>
+      <div role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
+        <span style="display: block; font-size: 15px; line-height: 20px; color: #6E6E73">Likelihood</span>
+        <span class="wf-like-xs" style="display: block; margin-top: -3px; white-space: nowrap">{{pop.pct}}</span>
+        <b class="wf-title-xs" style="display: block; margin-top: 8px">{{pop.place}}</b>
+        <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
       </div>
     </sc-if>
     <sc-if value="{{pop.isFire}}" hint-placeholder-val="{{ false }}">
-      <!-- Fire, centred like the candidate: the burned area as the XS KPI with the time active below it, the place (Title XS) and the
-           level above it, then the status tag in the colours of the fire screen; then View -->
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
         <span style="display: block; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkLbl}}</span>
         <span class="wf-like-xs" style="display: block; margin-top: -3px; white-space: nowrap; --wf-fs: {{pop.fkFs}}px">{{pop.fkNum}}</span>
         <span style="display: {{pop.fkSubD}}; margin-top: -2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkSub}}</span>
-        <span role="status" style="display: inline-flex; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 16px; padding: 4px 12px; border-radius: 16px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; line-height: 20px; font-weight: 400"><b style="font-weight: 700">{{pop.fkTag}}</b></span>
-        <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.fkName}}</b>
+        <span role="status" style="display: inline-flex; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 8px; padding: 4px 12px; border-radius: 16px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; line-height: 20px; font-weight: 700">{{pop.fkTag}}</span>
+        <b class="wf-title-xs" style="display: block; margin-top: 12px">{{pop.fkName}}</b>
         <span class="wf-dot" style="display: {{pop.fkRegD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkReg}}</span>
       </div>
     </sc-if>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
-    <!-- Station tooltip (the selected marker already says what it is; no X), centred: the location (name, the level above it), the
-         availability tag (busy or available; not published for map stations from OpenStreetMap), then View -->
-    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
-      <b class="wf-title-xs" style="display: block">{{pop.tt}}</b>
-      <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
-      <span style="display: {{pop.tdD}}; margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: pre-line">{{pop.td}}</span>
-      <span role="status" style="display: {{pop.tagD}}; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 12px; padding: 4px 12px; border-radius: 16px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700">{{pop.tagTxt}}</span>
-    </div>
+      <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
+        <b class="wf-title-xs" style="display: block">{{pop.tt}}</b>
+        <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
+        <span role="status" style="display: {{pop.tagD}}; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 12px; padding: 4px 12px; border-radius: 16px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700">{{pop.tagTxt}}</span>
+      </div>
     </sc-if>
     <div style="display: {{pop.viewD}}; gap: 8px; margin-top: {{pop.btnMt}}; padding: {{pop.btnPad}}">
       <sc-if value="{{pop.hasView}}" hint-placeholder-val="{{ true }}">
@@ -1505,7 +1498,7 @@ class Component extends DCLogic {
         const A = nB > 0 ? [nB + (nB === 1 ? ' fire' : ' fires'), 'rgba(232,106,0,0.14)', '#A34800'] : ['Available', 'rgba(52,199,89,0.14)', '#1E7A34'];
         return { tagD: 'inline-flex', tagTxt: A[0], tagBg: A[1], tagFg: A[2] }; })(), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
       from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 28px)' : 'inset(calc(100% - 60px) 0 0 0 round 28px)',   // starts as the 60px band nearest the marker, then unfolds
-      ...chatFor(chatInc), ...(P.kind === 'ign' || FD ? { chatD: 'none' } : {}), isIgn: P.kind === 'ign', isFire: !!FD, notIgn: P.kind !== 'ign' && !FD, w: PW, pad: true ? '0' : '16px 8px 8px', btnPad: true ? '0 8px 8px' : '0', btnMt: '16px', btnCls: true ? 'wf-b wf-pri wf-cond' : 'wf-b wf-pri wf-h44', chatS: true ? '32px' : '44px', chatI: true ? '17px' : '22px', regD: (P.kind === 'st' ? stReg : m.reg) ? 'block' : 'none', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', place: m.place || '', reg: P.kind === 'st' ? stReg : (m.reg || ''), igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
+      ...chatFor(chatInc), chatD: 'none', isIgn: P.kind === 'ign', isFire: !!FD, notIgn: P.kind !== 'ign' && !FD, w: PW, pad: '0', btnPad: '0 8px 8px', btnMt: '16px', btnCls: 'wf-b wf-pri wf-cond', chatS: '32px', chatI: '17px', regD: (P.kind === 'st' ? stReg : m.reg) ? 'block' : 'none', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', place: m.place || '', reg: P.kind === 'st' ? stReg : (m.reg || ''), igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
       ...(FD ? { fkNum: FD.kpiNum, fkUnit: FD.kpiUnit, fkFs: FD.kpiFs, fkLbl: FD.kpiLbl, fkSub: FD.kpiSub, fkSubD: FD.kpiSubD, fkTagT: FD.kpiTT, fkName: FD.name, fkReg: FD.sub, fkRegD: FD.subD, fkTag: FD.stTxt, fkTagBg: FD.stBg, fkTagFg: FD.stFg } : { fkNum: '', fkUnit: '', fkFs: 40, fkLbl: '', fkSub: '', fkSubD: 'none', fkTagT: '', fkName: '', fkReg: '', fkRegD: 'none', fkTag: '', fkTagBg: '', fkTagFg: '' }),
       hasView: !noView && (P.kind !== 'st' || !!m._st), viewD: !noView && (P.kind !== 'st' || !!m._st) ? 'flex' : 'none', href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
     return OUT;
