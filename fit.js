@@ -414,10 +414,38 @@ window.__wfBlink=function(path,dur){
     box.appendChild(dot);document.body.appendChild(box);sx=e.clientX;sy=e.clientY;live=true;
     requestAnimationFrame(function(){if(dot)dot.style.transform='scale(1)';});
   },{capture:true,passive:true});
+  // iPhone (iOS 26.5+): Safari only buzzes when a real finger taps a real system switch; switches clicked from code are
+  // ignored. So when a finger lands on something tappable, an invisible label holding a hidden switch is laid over it for
+  // that one tap: the finger's own tap lands on the label (a real tap, so the phone gives its haptic tick) and the tap is
+  // then passed on to the element underneath, which behaves exactly as before. Moving the finger (scrolling) removes it.
+  var IOS=!navigator.vibrate&&/iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)&&'ontouchend' in document,ov=null,ovT=null,ovX=0,ovY=0;
+  function ovOff(){if(ov){var o=ov;ov=null;o.remove();}clearTimeout(ovT);}
+  if(IOS){
+    document.addEventListener('touchstart',function(e){
+      ovOff();if(e.touches.length!==1)return;var p=e.touches[0],tg=e.target;
+      var t=tg&&tg.closest&&tg.closest(SEL);if(!t||skip(t,tg)||t.closest('#wf-hapov'))return;
+      if(t.closest('[role=application]')&&!t.closest('[role=group]'))return;   // the map pans freely
+      var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
+      var l=document.createElement('label');l.id='wf-hapov';l.setAttribute('aria-hidden','true');
+      l.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;z-index:2147483647;opacity:0;-webkit-tap-highlight-color:transparent;margin:0;padding:0';
+      var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;c.style.cssText='position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0';l.appendChild(c);
+      l.__t=t;ovX=p.clientX;ovY=p.clientY;
+      l.addEventListener('click',function(ev){
+        if(ev.target!==l)return;   // the label's own click (the switch toggles, the phone ticks); the input's echo is ignored
+        ev.stopPropagation();var tt=l.__t;ovOff();
+        setTimeout(function(){try{window.__wfFwd=true;tt.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:ovX,clientY:ovY}));}finally{window.__wfFwd=false;}},0);
+      });
+      document.body.appendChild(l);ov=l;ovT=setTimeout(ovOff,1500);
+    },{capture:true,passive:true});
+    document.addEventListener('touchmove',function(e){if(ov&&e.touches[0]&&Math.hypot(e.touches[0].clientX-ovX,e.touches[0].clientY-ovY)>10)ovOff();},{capture:true,passive:true});
+    document.addEventListener('touchcancel',ovOff,{capture:true,passive:true});
+    document.addEventListener('scroll',ovOff,{capture:true,passive:true});
+  }
   document.addEventListener('pointermove',function(e){if(live&&Math.hypot(e.clientX-sx,e.clientY-sy)>10){live=false;fade(true);}},{capture:true,passive:true});
   document.addEventListener('pointerup',function(){if(live){live=false;setTimeout(function(){fade(false);},120);}},{capture:true,passive:true});
   document.addEventListener('pointercancel',function(){live=false;fade(true);},{capture:true,passive:true});
-  document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;
+  document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||t.closest('#wf-hapov')||skip(t,e.target))return;
+    if(IOS)return;   // iPhone: the tap itself already ticked through the overlay switch
     if(t.matches('[role=switch]:not(.wf-tog),[data-hap=late]')){hapticAt(215);return;}   // a toggle: the vibration lands with the thumb
     haptic();},{capture:true});
 })();
