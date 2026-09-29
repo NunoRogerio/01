@@ -252,14 +252,21 @@
     var th = document.documentElement.classList.contains('wf-dark');   // a theme change always measures the colour again
     if (el.__wfCol && el.__wfColTh === th) return el.__wfCol;
     el.__wfColTh = th;
-    var area = {}, box = {}, walk = function (n, d) { for (var c = n.firstElementChild; c; c = c.nextElementSibling) {
+    var imgA = 0, area = {}, box = {}, walk = function (n, d) { for (var c = n.firstElementChild; c; c = c.nextElementSibling) {
       if (c.__wfOv) continue; var cs = getComputedStyle(c), bg = cs.backgroundColor;
-      if (/wf-rip|ripple/.test(c.className && c.className.baseVal == null ? c.className : '')) continue; if (solid(bg)) { bg = opaque(bg); var r = c.getBoundingClientRect(), a = r.width * r.height; area[bg] = (area[bg] || 0) + a; var b = box[bg] || (box[bg] = { l: 1e9, r: -1e9 }); b.l = Math.min(b.l, r.left); b.r = Math.max(b.r, r.right); }
+      if (/wf-rip|ripple/.test(c.className && c.className.baseVal == null ? c.className : '')) continue;
+      if (cs.backgroundImage && cs.backgroundImage !== 'none' || /^(IMG|VIDEO|CANVAS)$/.test(c.nodeName)) { var ri = c.getBoundingClientRect(); imgA += ri.width * ri.height; }
+      if (solid(bg)) { bg = opaque(bg); var r = c.getBoundingClientRect(), a = r.width * r.height; area[bg] = (area[bg] || 0) + a; var b = box[bg] || (box[bg] = { l: 1e9, r: -1e9 }); b.l = Math.min(b.l, r.left); b.r = Math.max(b.r, r.right); }
       else if (d < 4) walk(c, d + 1); } };
     walk(el, 0);
     var best = null, ba = 0; for (var k in area) if (area[k] > ba) { ba = area[k]; best = k; }
     var q = el, pc = null; while (q && !pc) { var c2 = getComputedStyle(q).backgroundColor; if (solid(c2, 0.5)) pc = opaque(c2); q = q.parentElement; }
-    el.__wfCol = best ? { c: best, l: box[best].l, r: box[best].r } : { c: pc || 'rgb(242, 242, 247)', l: null, r: null };
+    // Mixed content (photo cards, dark cards next to light ones, several card colours): no single colour can be laid over it
+    // without painting over something, so the content itself fades out (a mask) and the panel shows through
+    var tot = 0, big = 0, er = el.getBoundingClientRect(), ea = Math.max(1, er.width * Math.min(er.height, el.scrollHeight));
+    for (var k2 in area) { tot += area[k2]; if (area[k2] > ea * 0.08) big++; }
+    var mixed = big > 1 || imgA > ea * 0.08;
+    el.__wfCol = best ? { c: best, l: box[best].l, r: box[best].r, mixed: mixed } : { c: pc || 'rgb(242, 242, 247)', l: null, r: null, mixed: mixed };
     return el.__wfCol;
   }
   function fadeOne(el) {
@@ -270,6 +277,12 @@
     el.__wfM = '';
     var par = el.parentElement, less = sc && el.scrollTop > 1 && el.offsetParent;   // content scrolled away above: fade at the top too
     if (!el.offsetParent) el.__wfCol = null;   // measured again next time the panel opens
+    var F0 = (less || more) ? fadeCol(el) : null;
+    if (F0 && F0.mixed) {
+      fadeEdge(el, par, 'top', false); fadeEdge(el, par, 'bottom', false);
+      var g = 'linear-gradient(to bottom, ' + (less ? 'transparent 0, #000 ' + FH + 'px' : '#000 0') + ', ' + (more ? '#000 calc(100% - ' + FH + 'px), transparent 100%' : '#000 100%') + ')';
+      el.style.webkitMaskImage = el.style.maskImage = g; el.__wfM = g; return;
+    }
     fadeEdge(el, par, 'top', less);
     fadeEdge(el, par, 'bottom', more);
   }
