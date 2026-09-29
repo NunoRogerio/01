@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=69"></script>
+<script src="prefs.js?v=70"></script>
 <script src="i18n.js?v=48"></script>
 <script src="live.js?v=30"></script>
 <script src="chat.js?v=18"></script>
@@ -187,16 +187,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: absolute; left: {{colL}}px; top: 0; width: {{colW}}px; height: {{vh}}px; z-index: 2; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 56px; pointer-events: none">
 
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 163px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
+  <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; height: 180px; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
   <header class="fade" data-pull="down" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 32px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
-        <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px">{{scope.title}}</span>
+      <span style="display: flex; align-items: center; gap: 6px; height: 41px; max-width: 100%; min-width: 0">
+        <span class="wf-title-l" style="font-size: 34px; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 41px">{{scope.title}}</span>
       </span>
-      <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap">{{scope.parent}}</span>
+      <span style="font-size: 26px; font-weight: 400; line-height: 32px; letter-spacing: -0.01em; color: #000000; white-space: nowrap">{{scope.parent}}</span>
     </button>
     <span aria-hidden="true" style="flex: 1 1 auto"></span>
     <a href="Chat.dc.html" class="opt" onClick="{{ch.open}}" aria-label="{{ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{ch.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 600; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{ch.n}}</span></a>
@@ -257,10 +257,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barH}}px; padding: 0 12px; flex-shrink: 0">
       <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 53px 8px 4px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span aria-hidden="true" style="position: absolute; left: 50%; top: 8px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); opacity: {{barGrabOp}}; transition: opacity .3s ease"></span>
-        <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
-          <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px; color: {{barC}}">{{barTitle}}</span>
+        <span style="display: flex; align-items: center; gap: 6px; height: 41px; max-width: 100%; min-width: 0">
+          <span class="wf-title-l" style="font-size: 34px; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 41px; color: {{barC}}">{{barTitle}}</span>
         </span>
-        <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap">{{barSub}}</span>
+        <span style="font-size: 26px; font-weight: 400; line-height: 32px; letter-spacing: -0.01em; color: #000000; white-space: nowrap">{{barSub}}</span>
       </button>
     </div>
   </section>
@@ -274,10 +274,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section role="dialog" data-swipe="up" data-swipe-key="sc" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 24px 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path .55s cubic-bezier(.2,.8,.2,1), -webkit-clip-path .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 12px 12px; flex-shrink: 0">
       <button type="button" class="opt" data-swipe-go="1" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-        <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
-          <span style="font-size: 28px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 34px">{{scope.title}}</span>
+        <span style="display: flex; align-items: center; gap: 6px; height: 41px; max-width: 100%; min-width: 0">
+          <span class="wf-title-l" style="font-size: 34px; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 41px">{{scope.title}}</span>
         </span>
-        <span style="font-size: 17px; color: #000000; white-space: nowrap; line-height: 22px">{{scope.parent}}</span>
+        <span style="font-size: 26px; font-weight: 400; line-height: 32px; letter-spacing: -0.01em; color: #000000; white-space: nowrap">{{scope.parent}}</span>
       </button>
       <span aria-hidden="true" style="flex: 1 1 auto"></span>
       <a href="Chat.dc.html" class="opt" onClick="{{ch.open}}" aria-label="{{ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{ch.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 600; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{ch.n}}</span></a>
@@ -935,7 +935,7 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 158, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 175, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
     const L = this.wfLayout();
@@ -1111,14 +1111,14 @@ class Component extends DCLogic {
       stackAria: N + ' ignition candidates and ' + NF + ' active fires, ' + (N + NF) + ' incidents in total. Show all', topPick: focus(top.id),
       openList: () => { this.wfListFlag(false); this.setState({ list: true }); }, closeList: () => { this.wfListFlag(false); this.setState({ list: false }); }, navHome: () => { this.wfListFlag(false); this.setState({ list: false, scOpen: false }); },
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
-      liTop: L.side ? 88 : 163 + 32 /* the drop-up stops 32px below the top blade */, listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg', barGrabOp: listOpen ? 0 : 1,
+      liTop: L.side ? 88 : 180 + 32 /* the drop-up stops 32px below the top blade */, listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg', barGrabOp: listOpen ? 0 : 1,
       toggleList: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.wfListFlag(false); this.setState({ list: !listOpen }); },
       barTitle: N === 0 ? 'No ignition candidates' : N + ' ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#1E7A34' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' fire' + (NF === 1 ? '' : 's'),
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
       ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,
       full: !!s.full, toggleFull: () => this.setState({ full: !s.full, list: false }),
-      padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : 163), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : 221, ctrlTop: 422,
+      padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : 180), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : 238, ctrlTop: 422,
       clipL: L.side && !s.full ? L.colL + L.colW : L.sl, clipR: L.sr,
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: s.full ? '200px' : '0px', downOp: s.full ? 0 : 1,
     };

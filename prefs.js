@@ -20,8 +20,8 @@
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
-  var SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 34];
-  var LINES = [12, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 36];
+  var SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 34];
+  var LINES = [12, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 32, 36, 41];
   var STEP = { comfortable: 1.1, condensed: 0.92 };
   function fontCss(mode) {
     var f = STEP[mode]; if (!f) return '';
