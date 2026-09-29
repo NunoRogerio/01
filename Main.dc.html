@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=24"></script>
+<script src="prefs.js?v=25"></script>
 <script src="i18n.js?v=34"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -472,6 +472,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <li style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.12)">
                   <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
                   <span style="font-size: 17px; line-height: 22px; color: #545458">{{d.sub}}</span>
+                  <!-- Text styles: title (bold), description (grey), annotation (smaller, mid grey) -->
+                  <span style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{d.added}}</span>
                 </li>
               </sc-for>
             </ul>
@@ -706,14 +708,16 @@ class Component extends DCLogic {
           if (lang === 'ja') return '読み込み: ' + (m < 1 ? 'たった今' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前');   // Japanese units
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         const items = [
-          ['NASA FIRMS', T('Satellite heat detections (VIIRS) · Europe and the Americas', 'Deteções de calor por satélite (VIIRS) · Europa e Américas'), c.tSat],
-          ['NIFC · WFIGS', T('Wildfire incidents · United States', 'Incêndios florestais · Estados Unidos'), c.tUS],
-          ['Fogos.pt · ANEPC', T('Rural fire occurrences · Portugal', 'Ocorrências de incêndios rurais · Portugal'), c.tPT],
-          ['INPE · Programa Queimadas', T('Fire events · Brazil', 'Eventos de fogo · Brasil'), c.tBR],
-          ['BC Wildfire Service', T('Wildfires · British Columbia', 'Incêndios florestais · Colúmbia Britânica'), c.tCAN],
-          ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true],
-          ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true]
-        ].map(([name, what, t, still]) => ({ name, sub: what + (still ? '' : ' · ' + ago(t)) }));
+          ['NASA FIRMS', T('Satellite heat detections (VIIRS) · Europe and the Americas', 'Deteções de calor por satélite (VIIRS) · Europa e Américas'), c.tSat, false, 26],
+          ['NIFC · WFIGS', T('Wildfire incidents · United States', 'Incêndios florestais · Estados Unidos'), c.tUS, false, 26],
+          ['Fogos.pt · ANEPC', T('Rural fire occurrences · Portugal', 'Ocorrências de incêndios rurais · Portugal'), c.tPT, false, 26],
+          ['INPE · Programa Queimadas', T('Fire events · Brazil', 'Eventos de fogo · Brasil'), c.tBR, false, 27],
+          ['BC Wildfire Service', T('Wildfires · British Columbia', 'Incêndios florestais · Colúmbia Britânica'), c.tCAN, false, 26],
+          ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27],
+          ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26]
+        ].map(([name, what, t, still, day]) => ({ name, sub: what + (still ? '' : ' · ' + ago(t)),
+          // annotation: when the source was added to the app (September 2026, from the project history)
+          added: lang === 'ja' ? '2026年9月' + day + '日に追加' : pt ? 'Adicionada a ' + day + ' set 2026' : 'Added ' + day + ' Sep 2026' }));
         return { title: T('Connect data sources', 'Ligar fontes de dados'), count: String(items.length), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
