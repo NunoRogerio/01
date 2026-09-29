@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=17"></script>
+<script src="prefs.js?v=18"></script>
 <script src="i18n.js?v=33"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -230,7 +230,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <p style="margin: 10px 0 0; font-size: 14px; line-height: 16px; color: #545458">{{res.foot}}</p>
   </section>
   </sc-if>
-  <div class="rise" style="display: {{vmD}}; padding: 16px 16px 0; animation-delay: 100ms"><button type="button" class="btn ghost" onClick="{{openMap}}" style="width: 100%; height: 48px; font-size: 17px; font-weight: 500">View on map</button></div>
+  <div class="rise" style="display: {{vmD}}; padding: 16px 16px 0; animation-delay: 100ms"><button type="button" class="btn wf-sec" onClick="{{openMap}}" style="width: 100%; height: 48px; font-size: 17px; font-weight: 500">View on map</button></div>
   <section class="rise" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: {{kpiPad}}; animation-delay: 160ms">
     <div style="display: flex; flex-direction: column; gap: 10px">
       <span class="lbl" style="white-space: nowrap">{{spreadLbl}}</span>
@@ -266,11 +266,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding: 12px 16px 40px; animation-delay: 360ms">
-    <button type="button" class="btn primary green" onClick="{{sendAll}}" aria-disabled="{{pk.sendDis}}" style="opacity: {{pk.sendOp}}; transition: opacity .3s ease; height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
-      <span style="flex-grow: 1; text-align: left">{{sendLbl}}</span>
-      <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-      </span>
+    <button type="button" class="btn primary" onClick="{{sendAll}}" aria-disabled="{{pk.sendDis}}" style="opacity: {{pk.sendOp}}; transition: opacity .3s ease; height: 56px; font-size: 19px; font-weight: 600">
+      {{sendLbl}}
     </button>
   </div>
   </div>
@@ -312,9 +309,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </ul>
     <span style="margin: 8px 4px 0; font-size: 13px; line-height: 18px; color: #545458">Demo: no real order is sent</span>
-    <button type="button" class="btn primary" onClick="{{snd.done}}" disabled="{{snd.notDone}}" style="margin-top: auto; height: 56px; font-size: 19px; font-weight: 600; opacity: {{snd.btnOp}}; transition: opacity .3s ease">Done</button>
+    <button type="button" class="btn primary" onClick="{{snd.done}}" disabled="{{snd.notDone}}" style="margin-top: auto; height: 48px; font-size: 17px; font-weight: 600; opacity: {{snd.btnOp}}; transition: opacity .3s ease">Done</button>
     <!-- Last-minute change: back to the configuration with the same stations and forces (nothing is kept until Done) -->
-    <button type="button" class="btn wf-ter" onClick="{{snd.redo}}" style="height: 44px; margin-top: 8px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Reconfigure dispatch</button>
+    <button type="button" class="btn wf-ter" onClick="{{snd.redo}}" style="margin-top: 8px">Reconfigure dispatch</button>
   </section>
 
   <div class="scrim" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{scrimOp}}; pointer-events: {{scrimPE}}"></div>
@@ -337,8 +334,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     </div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; flex-shrink: 0; padding: 12px 16px 4px">
-      <button type="button" class="btn ghost" onClick="{{stCancel}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <button type="button" class="btn" onClick="{{stApply}}" disabled="{{stNone}}" style="height: 48px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600; opacity: {{stApplyOp}}; transition: opacity .2s ease">Apply</button>
+      <button type="button" class="btn wf-sec" onClick="{{stCancel}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
+      <button type="button" class="btn primary" onClick="{{stApply}}" disabled="{{stNone}}" style="height: 48px; background: #D7F41A; color: #1C1C1E; font-size: 17px; font-weight: 600; opacity: {{stApplyOp}}; transition: opacity .2s ease">Apply</button>
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hSt.down}}" onPointerMove="{{hSt.move}}" onPointerUp="{{hSt.up}}" onPointerCancel="{{hSt.cancel}}" onKeyDown="{{hSt.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
@@ -514,12 +511,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
       </span>
       <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}">
-        <button type="button" class="btn ghost" onClick="{{recallDrone}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; font-size: 17px; font-weight: 500">
+        <button type="button" class="btn wf-sec" onClick="{{recallDrone}}" style="padding: 0 16px; flex-shrink: 0">
           Recall
         </button>
       </sc-if>
       <sc-if value="{{drone.idle}}" hint-placeholder-val="{{ false }}">
-        <button type="button" class="btn" onClick="{{launchDrone}}" style="height: 36px; padding: 0 14px; flex-shrink: 0; background-color: rgba(0,121,166,0.14); border-color: transparent; color: #006A91; font-size: 17px; font-weight: 600">
+        <button type="button" class="btn wf-sec" onClick="{{launchDrone}}" style="padding: 0 16px; flex-shrink: 0">
           Launch drone
         </button>
       </sc-if>

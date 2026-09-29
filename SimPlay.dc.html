@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=17"></script>
+<script src="prefs.js?v=18"></script>
 <script src="i18n.js?v=33"></script>
 
 <title>Fire Simulation</title>
@@ -113,7 +113,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
           <div style="display: flex; align-items: center; gap: 8px; min-height: 50px; margin-top: 6px; border-top: 1px solid rgba(60,60,67,0.12)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{cr.icon}}"></path></svg>
             <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 16px; font-weight: 600; line-height: 18px">{{cr.name}}</span><span style="font-size: 13px; line-height: 15px; color: #545458">{{cr.sub}}</span></span>
-            <button type="button" onClick="{{cr.deploy}}" disabled="{{cr.dis}}" aria-label="{{cr.aria}}" style="height: 40px; padding: 0 14px; flex-shrink: 0; border: 0; border-radius: 10px; background: {{cr.bg}}; color: {{cr.fg}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Deploy</button>
+            <button type="button" class="wf-b" onClick="{{cr.deploy}}" disabled="{{cr.dis}}" aria-label="{{cr.aria}}" style="padding: 0 16px; flex-shrink: 0; border: 0; border-radius: 10px; background: {{cr.bg}}; color: {{cr.fg}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Deploy</button>
           </div>
         </sc-for>
       </div>
@@ -169,8 +169,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
         </sc-for>
       </div>
       <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px">
-        <a href="SimSetup.dc.html" class="wf-sec" style="display: flex; align-items: center; justify-content: center; height: 50px; border-radius: 10px; background: rgba(118,118,128,0.14); color: #0062CC; font-size: 18px; font-weight: 600; text-decoration: none">Change setup</a>
-        <button type="button" onClick="{{restart}}" style="height: 50px; border: 0; border-radius: 10px; background: #D7F41A; color: #1C1C1E; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer">Play again</button>
+        <a href="SimSetup.dc.html" class="wf-b wf-sec" style="display: flex; align-items: center; justify-content: center">Change setup</a>
+        <button type="button" class="wf-b wf-pri" onClick="{{restart}}" style="border: 0; font: inherit; cursor: pointer">Play again</button>
       </div>
     </section>
   </sc-if>

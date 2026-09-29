@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=17"></script>
+<script src="prefs.js?v=18"></script>
 <script src="i18n.js?v=33"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -333,7 +333,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div class="rise" style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 12px; padding: 24px 16px 32px; animation-delay: 300ms">
       <!-- Confirm fire goes straight to configuring the dispatch for this fire; Dismiss beside it (they stack if they do not fit) -->
       <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmCur}}" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 19px; font-weight: 600; white-space: nowrap; text-decoration: none">Confirm fire</a>
-      <button type="button" class="btn ghost" onClick="{{openDz}}" aria-haspopup="dialog" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 17px; font-weight: 500; white-space: nowrap">Dismiss</button>
+      <button type="button" class="btn wf-sec" onClick="{{openDz}}" aria-haspopup="dialog" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 17px; font-weight: 500; white-space: nowrap">Dismiss</button>
     </div>
     </div>
   </sc-if>
@@ -345,17 +345,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
       <h2 style="margin: 16px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
       <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px; margin-top: 24px; border: 0; border-radius: 10px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset; color: #000000; font-size: 17px; font-weight: 600; text-decoration: none">
+      <a href="Main.dc.html" class="btn primary" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; align-self: stretch; margin-top: 24px; padding: 0 16px">
         Back to the map
       </a>
-      <button type="button" onClick="{{restore}}" style="margin-top: 8px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5); font: 400 17px -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; cursor: pointer">Restore demo alerts</button>
+      <button type="button" onClick="{{restore}}" class="btn wf-sec" style="align-self: stretch; margin-top: 16px; padding: 0 16px; border: 0; cursor: pointer">Restore demo alerts</button>
     </div>
   </sc-if>
 
   <sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
     <div class="pop" role="status" style="position: absolute; left: 50%; top: 132px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: rgba(255,255,255,0.94); border: 1px solid rgba(60,60,67,0.11); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 30px -10px rgba(0,0,0,0.176); white-space: nowrap; font-size: 15px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>{{toastText}}
-      <button type="button" class="btn wf-ter" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #0062CC; font-size: 17px; font-weight: 600">Undo</button>
+      <button type="button" class="btn wf-ter wf-cmp" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #0062CC; font-size: 17px; font-weight: 600">Undo</button>
     </div>
   </sc-if>
 
@@ -366,8 +366,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h2 id="dzTitle" style="margin: 0 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.01em">Dismiss this candidate?</h2>
     <p id="dzBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
-      <button type="button" class="btn ghost" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #1E7A34; font-size: 17px; font-weight: 600">
+      <button type="button" class="btn wf-sec" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
+      <a href="Main.dc.html" class="btn primary" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px">
         Dismiss
       </a>
     </div>

@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=2">
 <script src="fit.js?v=51"></script>
 <script src="avatar.js?v=7"></script>
-<script src="prefs.js?v=17"></script>
+<script src="prefs.js?v=18"></script>
 <script src="i18n.js?v=33"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
@@ -284,14 +284,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </dl>
 
   <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; padding: 0 16px 40px; animation-delay: 340ms">
-    <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmHere}}" style="height: 56px; padding: 0 8px 0 22px; font-size: 19px; font-weight: 600">
-      <span style="flex-grow: 1">Confirm fire</span>
-      <span class="go" style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-      </span>
+    <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmHere}}" style="height: 56px; font-size: 19px; font-weight: 600">
+      Confirm fire
     </a>
-    <button type="button" class="btn ghost" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">Dismiss ignition</button>
-    <a href="Alert.dc.html" data-wf-back="1" class="btn wf-ter" style="height: 44px; background: transparent; border-color: transparent; color: #0062CC; font-size: 17px; font-weight: 500">Go back</a>
+    <button type="button" class="btn wf-sec" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 500">Dismiss ignition</button>
+    <a href="Alert.dc.html" data-wf-back="1" class="btn wf-ter" style="height: 48px">Go back</a>
   </div>
   </div>
 
@@ -301,8 +298,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h2 id="faTitle" style="margin: 0 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.01em">Dismiss this candidate?</h2>
     <p id="faBody" style="margin: 2px 0 0; font-size: 17px; line-height: 1.5; color: #545458">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px">
-      <button type="button" class="btn ghost" onClick="{{closeFa}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <a href="Main.dc.html" class="btn" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px; background-color: rgba(52,199,89,0.16); border-color: rgba(52,199,89,0.45); color: #1E7A34; font-size: 17px; font-weight: 600">
+      <button type="button" class="btn wf-sec" onClick="{{closeFa}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
+      <a href="Main.dc.html" class="btn primary" onPointerDown="{{confirmFa}}" onClick="{{confirmFa}}" style="height: 48px">
         Dismiss
       </a>
     </div>

@@ -69,7 +69,7 @@
     o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
     o.push('html:root .wf-big,html:root .wf-like{color:#E5E5EA!important}');   // big numbers stay readable at night
-    o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#E8E8ED}');
+    o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#404043!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
@@ -99,6 +99,10 @@
   var BTN = ':root{--wf-sec-bg:#2C2C2E;--wf-sec-fg:#D7F41A;--wf-ter-bg:rgba(215,244,26,0.07);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
+    // One button: every text button in the app is 48px tall, 17px semibold, one corner radius; roles are primary, secondary, tertiary
+    ':root .btn:not(.round):not(.wf-cmp),:root .wf-b{height:48px!important;min-height:48px;box-sizing:border-box;border-radius:10px!important;font-size:17px!important;font-weight:600!important;line-height:22px!important;padding-top:0!important;padding-bottom:0!important;text-decoration:none}' +
+    ':root .wf-pri,:root .btn.primary{background:#D7F41A!important;color:#1C1C1E!important;-webkit-text-fill-color:#1C1C1E;border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
+    ':root .wf-danger{background:rgba(255,59,48,0.14)!important;color:#B0001A!important;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
     // Big KPI numbers across the app (forces, resolution summary, profiles): dark grey, one size
