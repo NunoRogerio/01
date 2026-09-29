@@ -220,13 +220,6 @@
     var segGo = function () { segWatch(document); segMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true, childList: true }); };
     if (document.body) segGo(); else document.addEventListener('DOMContentLoaded', segGo);
   }
-  // Toggle thumbs: a small haptic tap at the moment the thumb clicks into place
-  if (window.MutationObserver) {
-    var togMo = new MutationObserver(function (ms) { ms.forEach(function (m) { var n = m.target; if (!n.classList || !(n.classList.contains('sw26k') || n.classList.contains('wf-thumb'))) return;
-      var t = n.style.transform; if (n.__wfT !== undefined && t !== n.__wfT && n.isConnected) setTimeout(function () { try { if (window.__wfHaptic) window.__wfHaptic(); } catch (x) {} }, 220); n.__wfT = t; }); });
-    var togGo = function () { document.querySelectorAll('.sw26k,.wf-thumb').forEach(function (n) { n.__wfT = n.style.transform; }); togMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true }); };
-    if (document.body) togGo(); else document.addEventListener('DOMContentLoaded', togGo);
-  }
   // Scrolling panels: while there is more below, the last 32px fade out into the panel (a hint that it scrolls);
   // at the very end the fade goes away. One rule for every scrolling list or panel in the app.
   var FSEL = '[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap,[data-wf-fadetop]';

@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=3">
 <link rel="icon" href="icon-192.png?v=3">
-<script src="fit.js?v=57"></script>
+<script src="fit.js?v=58"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=39"></script>
+<script src="prefs.js?v=40"></script>
 <script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 
@@ -36,6 +36,7 @@ body{margin:0}
 .tipwrap:hover,.tipwrap:focus-visible{z-index:40}
 .igname{display:inline-flex;align-items:center;gap:8px;max-width:240px;overflow:hidden;white-space:nowrap;transition:max-width .25s cubic-bezier(.2,.8,.2,1),opacity .15s ease,margin-left .25s cubic-bezier(.2,.8,.2,1)}
 .igsel:hover .igname,.igsel:focus-visible .igname{max-width:0;opacity:0;margin-left:-8px;transition:max-width .25s cubic-bezier(.2,.8,.2,1) .22s,opacity .12s ease .22s,margin-left .25s cubic-bezier(.2,.8,.2,1) .22s}
+@keyframes wfUnfold{from{opacity:0;scale:.12}to{opacity:1;scale:1}}.wfpop{animation:wfUnfold .4s cubic-bezier(.2,.8,.2,1) both;transition:scale .24s cubic-bezier(.4,0,.8,.4),opacity .22s ease}.wfpop.wfpop-out{scale:.12;opacity:0}
 @keyframes igin{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
 
 /* iOS layer */
@@ -288,7 +289,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   </sc-if>
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; transform: translateY({{pop.ty}}); width: 240px; box-sizing: border-box; padding: 16px 16px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
+  <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
+  <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; transform-origin: {{pop.org}}; width: 240px; box-sizing: border-box; padding: 16px 16px 12px; border-radius: 14px; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
     <div style="display: flex; align-items: flex-start; gap: 8px">
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
@@ -314,7 +316,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   </sc-if>
   <sc-if value="{{hasFc}}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
+  <div role="dialog" class="{{popCls}}" aria-label="{{fc.aria}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{fc.left}}px; top: {{fc.top}}px; transform: translateY(-50%); transform-origin: {{fc.org}}; width: {{fc.w}}px; max-height: {{fc.maxH}}px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; border-radius: 18px; background: rgba(255,255,255,0.98); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 14px 40px rgba(0,0,0,0.2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; color: #000000">
     <div style="flex-shrink: 0; padding: 16px 16px 12px">
       <div style="display: flex; align-items: flex-start; gap: 8px">
       <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
@@ -1484,7 +1486,12 @@ class Component extends DCLogic {
   withPop(OUT) {
     const noView = String(this.props.noView) === 'true';   // candidate screen: cards inform only, no jump to another fire or station
     const P = (this.state || {}).pop, strip = (t) => String(t || '').replace(/\n?Tap to [^\n]*\.?$/, '').trim();
-    const sel = (kind, key) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault(); this.setState({ pop: { kind, key } }); };
+    const closePop = () => { if (this._popT) return; this.setState({ popSpin: true }); this._popT = setTimeout(() => { this._popT = null; this.setState({ pop: null, popSpin: false }); }, 260); };
+    // Tapping the same marker again closes its tooltip panel; another marker opens its own (unfolding again from it)
+    const sel = (kind, key) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault();
+      const cur = (this.state || {}).pop; if (cur && cur.kind === kind && cur.key === key) { closePop(); return; }
+      if (cur) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); requestAnimationFrame(() => this.setState({ pop: { kind, key } })); return; }
+      this.setState({ pop: { kind, key } }); };
     this._fireMarks = OUT.fireMarks || [];
     // Markers are drawn by position in their list. Animate their movement only while the list keeps the same
     // members in the same order; otherwise a marker would glide from one station to another. Snap instead.
@@ -1495,7 +1502,8 @@ class Component extends DCLogic {
     (OUT.fireMarks || []).forEach((m, i) => { m.sel = sel('fire', m._g ? m._g.id : i); });
     (OUT.ignMarks || []).forEach((m, i) => { m.sel = sel('ign', m._id || i); });
     (OUT.stations || []).forEach((m, i) => { m.sel = sel('st', i); });
-    OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (this._popT) return; this.setState({ popSpin: true }); this._popT = setTimeout(() => { this._popT = null; this.setState({ pop: null, popSpin: false }); }, 260); };
+    OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
+    OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
     OUT.popXRot = (this.state || {}).popSpin ? '90deg' : '0deg';
     OUT.fcGoD = noView ? 'none' : 'flex'; OUT.fcRowPad = noView ? '0 0 6px' : '10px 16px 14px';
     OUT.hasPop = false; OUT.pop = { chatD: 'none', chat: null, tt: '', td: '', left: 0, top: 0, ty: '0', hasView: false, viewD: 'none', href: '', go: null, isIgn: false, notIgn: true };
@@ -1508,9 +1516,16 @@ class Component extends DCLogic {
     const CHT = window.__wfChat, chatFor = (inc) => (CHT && inc ? { chatD: 'flex', chat: () => { CHT.open(inc); } } : { chatD: 'none', chat: null });
     const ignObj = P.kind === 'ign' ? (Array.isArray(this.props.ignitions) ? this.props.ignitions.find((q) => q.id === (m._id || P.key)) : null) : null;
     const chatInc = !CHT ? null : g ? CHT.incFire(g) : ignObj ? CHT.incCand(ignObj) : null;
-    if (g && g.info) { OUT.hasFc = true; OUT.fc = Object.assign(this.fireCard(g, m, x, y), chatFor(chatInc)); return OUT; }
+    if (g && g.info) { OUT.hasFc = true; OUT.fc = Object.assign(this.fireCard(g, m, x, y), chatFor(chatInc)); OUT.fc.org = Math.round(x - OUT.fc.left) + 'px calc(50% + ' + Math.round(y - OUT.fc.top) + 'px)'; return OUT; }
     OUT.hasPop = true;
-    OUT.pop = { tt: m.tt || '', td: strip(m.td), left: Math.round(Math.max(8, Math.min(W - 248, x - 120))), top: Math.round(above ? y - 22 : y + 26), ty: above ? '-100%' : '0',
+    // Placement: above the marker if it fits, else below; if neither fits fully, the side with more room, kept on screen.
+    // Sideways it follows the marker but always stays 16px from the nearest screen edge.
+    const PW = 240, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
+    const PH = this._popH || (P.kind === 'ign' ? 236 : 150), up = y - 22 - topLim, dn = botLim - (y + 26);
+    const goUp = up >= PH ? true : dn >= PH ? false : up >= dn;
+    const pTop = Math.round(Math.max(topLim, Math.min(botLim - PH, goUp ? y - 22 - PH : y + 26))), pLeft = Math.round(Math.max(16, Math.min(W - PW - 16, x - PW / 2)));
+    requestAnimationFrame(() => { try { const el = document.querySelector('[data-wf-pop]'); const h = el ? el.offsetHeight : 0; if (h && Math.abs(h - (this._popH || 0)) > 1) { this._popH = h; this.setState({ popHV: h }); } } catch (e) {} });
+    OUT.pop = { tt: m.tt || '', td: strip(m.td), left: pLeft, top: pTop, org: Math.round(x - pLeft) + 'px ' + Math.round(y - pTop) + 'px',
       ...chatFor(chatInc), isIgn: P.kind === 'ign', notIgn: P.kind !== 'ign', place: m.place || '', pct: (m.conf != null ? m.conf : '') + '%', pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
       hasView: !noView && (P.kind !== 'st' || !!m._st), viewD: !noView && (P.kind !== 'st' || !!m._st) ? 'flex' : 'none', href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); } };
     return OUT;

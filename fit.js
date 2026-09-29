@@ -378,7 +378,7 @@ window.__wfBlink=function(path,dur){
   var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],label,summary,.opt,.sqrow';
   var st=document.createElement('style');
   st.textContent='#wf-fx{position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:99998}'+
-    '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.15);transform:scale(0);opacity:1;transition:transform .42s cubic-bezier(.2,.8,.2,1),opacity .35s ease}'+
+    '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.09);transform:scale(0);opacity:1;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .42s ease}'+
     '#wf-hap{position:fixed;left:-99px;top:-99px;width:1px;height:1px;opacity:0;pointer-events:none}';
   document.head.appendChild(st);
   var box=null,dot=null,sx=0,sy=0,live=false,hap=null;
@@ -392,8 +392,13 @@ window.__wfBlink=function(path,dur){
     try{if(!hap){hap=document.createElement('label');hap.id='wf-hap';hap.setAttribute('aria-hidden','true');var c=document.createElement('input');c.type='checkbox';c.setAttribute('switch','');c.tabIndex=-1;hap.appendChild(c);document.body.appendChild(hap);}hap.click();}catch(e){}
     try{if(isField(a)&&document.activeElement!==a)a.focus({preventScroll:true});}catch(e){}
   }
+  // Haptic timed to land later (a toggle thumb clicking into place). Android: one vibration pattern started inside the tap
+  // (0 ms on, then a pause, then a short pulse), so it fires on time. iPhone: web pages may only buzz during the tap itself,
+  // so it fires on the tap there (the only moment iOS allows).
+  function hapticAt(ms){try{if(navigator.vibrate&&navigator.vibrate([0,ms,12]))return;}catch(e){}haptic();}
+  window.__wfHapticAt=hapticAt;
   window.__wfHaptic=haptic;   // shared: other parts of the app can give the same tap (e.g. a toggle clicking into place)
-  function fade(fast){if(!box)return;var b=box,d=dot;box=dot=null;d.style.transition='transform .42s cubic-bezier(.2,.8,.2,1),opacity '+(fast?'.12s':'.35s')+' ease';d.style.opacity='0';setTimeout(function(){b.remove();},fast?150:420);}
+  function fade(fast){if(!box)return;var b=box,d=dot;box=dot=null;d.style.transition='transform .5s cubic-bezier(.2,.8,.2,1),opacity '+(fast?'.14s':'.42s')+' ease';d.style.opacity='0';setTimeout(function(){b.remove();},fast?180:500);}
   document.addEventListener('pointerdown',function(e){
     var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;
     if(t.closest('[role=application]')&&!t.closest('[role=group]'))return;          // map panning stays clean
@@ -411,7 +416,7 @@ window.__wfBlink=function(path,dur){
   document.addEventListener('pointerup',function(){if(live){live=false;setTimeout(function(){fade(false);},120);}},{capture:true,passive:true});
   document.addEventListener('pointercancel',function(){live=false;fade(true);},{capture:true,passive:true});
   document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;
-    if(t.matches('[role=switch],[data-hap=late]'))return;   // toggles vibrate when the thumb lands, not on the tap (prefs.js)
+    if(t.matches('[role=switch]:not(.wf-tog),[data-hap=late]')){hapticAt(215);return;}   // a toggle: the vibration lands with the thumb
     haptic();},{capture:true});
 })();
 
