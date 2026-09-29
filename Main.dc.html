@@ -394,7 +394,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
       </span>
       <!-- Spacer where the profile picture sits: the picture itself stays fixed above the panel (see pfAv) -->
-      <button type="button" data-swipe-go="1" onClick="{{closePrefs}}" tabindex="-1" aria-hidden="true" style="visibility: hidden; flex-shrink: 0; width: 40px; height: 40px; padding: 0; border: 0"></button>
+      <button type="button" data-swipe-go="1" data-pf-av-spot="1" onClick="{{closePrefs}}" tabindex="-1" aria-hidden="true" style="visibility: hidden; flex-shrink: 0; width: 40px; height: 40px; padding: 0; border: 0"></button>
     </div>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
     <div style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 16px 16px 0; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px); mask-image: linear-gradient(to bottom, transparent 0, #000 16px); opacity: {{pfInOp}}; transform: translateY({{pfInY}}); transition: opacity .3s ease {{pfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pfInDelay}}">
@@ -597,7 +597,14 @@ class Component extends DCLogic {
   wfPfAvPos() { try { const ov = document.querySelector('[data-pf-av]'), O = ov.offsetParent.getBoundingClientRect(), R = document.querySelector('[data-wfroot]').getBoundingClientRect(),
       k = R.width / ((window.__wfVP || {}).w || 390) || 1, b = [...document.querySelectorAll('button.avbtn[aria-haspopup="dialog"]')].find((x) => { const r = x.getBoundingClientRect(); return r.width && getComputedStyle(x).visibility !== 'hidden'; }), q = b.getBoundingClientRect();
       return { top: Math.round((q.top - O.top) / k), left: Math.round((q.left - O.left) / k) }; } catch (x) { return null; } }
-  componentDidMount() { setTimeout(() => { const av = this.wfPfAvPos(); if (av) this.setState({ pfAvPos: av }); }, 60);   // the fixed profile picture, placed over the top-bar one
+  // Keeps the fixed profile picture exactly on its spot: measured from the top bar before opening, then checked against the
+  // panel's own spacer once the panel has settled (and again when the screen size changes), so it can never drift off.
+  wfPfAvFix() { try { const ov = document.querySelector('[data-pf-av]'), sp = document.querySelector('[data-pf-av-spot]'); if (!ov || !sp || !this.state.pf) return;
+      const O = ov.offsetParent.getBoundingClientRect(), R = document.querySelector('[data-wfroot]').getBoundingClientRect(), k = R.width / ((window.__wfVP || {}).w || 390) || 1, q = sp.getBoundingClientRect();
+      const av = { top: Math.round((q.top - O.top) / k), left: Math.round((q.left - O.left) / k) }, c = this.state.pfAvPos || {};
+      if (Math.abs((c.top || 0) - av.top) > 1 || Math.abs((c.left || 0) - av.left) > 1) this.setState({ pfAvPos: av }); } catch (x) {} }
+  componentDidMount() { [60, 600, 1600].forEach((t) => setTimeout(() => { if (this.state.pf) this.wfPfAvFix(); else { const av = this.wfPfAvPos(); if (av) this.setState({ pfAvPos: av }); } }, t));
+    try { window.addEventListener('resize', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 120)); window.addEventListener('pageshow', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 300)); } catch (x) {}
  window.__wfSwipeDrag = (k, dy) => this.setState({ hdK: dy ? k : null, hdY: dy });   // a whole-blade swipe (fit.js) shows as the blade's own drag
     try { sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { try { window.removeEventListener('wf-vp', this._wfVp); } catch (e) {} try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
@@ -805,7 +812,7 @@ class Component extends DCLogic {
           copy,
           note: !key ? T('Save your Anthropic key above first: the link carries it.', 'Guarde primeiro a sua chave Anthropic acima: a ligação leva-a consigo.')
             : T('The link carries your key: calls from invited phones use your credit. Send it privately, only to people you trust. To cut everyone off, replace the key in the Anthropic console.', 'A ligação leva a sua chave: as chamadas dos telemóveis convidados usam o seu crédito. Envie-a em privado, só a quem confia. Para cortar o acesso a todos, substitua a chave na consola Anthropic.') }; })(),
-      openPrefs: () => { const av = this.wfPfAvPos(); this.setState(av ? { pf: true, pfSpin: false, pfAvPos: av } : { pf: true, pfSpin: false }); },
+      openPrefs: () => { const av = this.wfPfAvPos(); this.setState(av ? { pf: true, pfSpin: false, pfAvPos: av } : { pf: true, pfSpin: false }); clearTimeout(this._pfFixT); this._pfFixT = setTimeout(() => this.wfPfAvFix(), 620); },
       closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); }, 280); },
       pfGroups: [
         group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', '日本']], (l) => { if (window.__wfSetLang) window.__wfSetLang(l); }),

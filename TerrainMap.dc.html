@@ -186,7 +186,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
     <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: {{t.blur}}; -webkit-backdrop-filter: {{t.blur}}; font-size: 13px; font-weight: 600; white-space: nowrap">
-      <svg width="14" height="14" viewBox="0 0 24 24" style="scale: 1.1" fill="{{t.fill}}" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
+      <svg width="14" height="14" viewBox="0 0 24 24" style="scale: 1.43" fill="{{t.fill}}" stroke="{{t.ic}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>{{t.label}}
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
   </sc-for>
