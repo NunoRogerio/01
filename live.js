@@ -90,7 +90,7 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
       var ll=Math.abs(lat).toFixed(2)+'°'+(lat>=0?'N':'S')+' '+Math.abs(lon).toFixed(2)+'°'+(lon>=0?'E':'W');
       // p[9..11] = nearest named place (GeoNames), km and direction from it; older files have none
       var nm=p[9]||'',km=p[10],dir=p[11]||'';
-      var place=nm?(km>=1.5?'Near '+nm:nm):'Hotspot '+ll;
+      var place=nm||'Hotspot '+ll;   // the distance and direction from it are on the location row
       var DW={N:'north',NE:'northeast',E:'east',SE:'southeast',S:'south',SW:'southwest',W:'west',NW:'northwest'};
       var nearTxt=nm?(km>=1.5?(km<10?km.toFixed(1).replace(/\.0$/,''):Math.round(km))+' km '+(DW[dir]||dir)+' of '+nm:'In '+nm):'';
       var id='HS-'+Math.round((lat+90)*100)+'-'+Math.round((lon+180)*100);
@@ -392,7 +392,8 @@ window.__wfLiveMap = true;   // tells the map to use live web-map tiles
   }).then(function(){window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}});};
   idbGet(KEY).then(function(v){
     var have=v&&v.cands&&v.t===c.tSat;
-    if(have&&!window.__wfLiveCands){window.__wfLiveCands=v.cands;if(v.boxes)window.__wfGeoBoxes=v.boxes;window.__wfWorld=null;window.__wfGeo=null;
+    if(have&&!window.__wfLiveCands){window.__wfLiveCands=v.cands.map(function(r){if(/^Near /.test(r[3]))r[3]=r[3].slice(5);return r;});   // copies saved before places dropped 'Near'
+    if(v.boxes)window.__wfGeoBoxes=v.boxes;window.__wfWorld=null;window.__wfGeo=null;
       window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
     if(!have||!fresh('tSat'))satNet();
   });

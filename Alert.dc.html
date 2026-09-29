@@ -284,10 +284,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- The place and a close X on top; the likelihood, big, at the centre; the verdict and its status on one row; then
            where it is, with the map and the drone as two quiet buttons -->
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 16px 0">
-        <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{curRow.place}}</h2>
+        <span style="display: flex; flex-direction: column; align-items: flex-start; min-width: 0">
+          <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{curRow.place}}</h2>
+          <span style="margin-top: 2px; font-size: 17px; line-height: 22px; color: #545458">{{region}}</span>
+          <!-- What it is, in the hi-vis yellow, with the same marker as on the map and its legend -->
+          <span style="display: flex; align-items: center; gap: 8px; height: 32px; margin-top: 12px; padding: 0 14px 0 12px; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 15px; font-weight: 600; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0; scale: 1.1"><path d="M1 1.5H13L7 12.5Z" fill="#D7F41A" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg>Ignition detection</span>
+        </span>
         <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{navBack}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
       </div>
-      <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 0; padding: 12px 16px 16px">
+      <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 0; padding: 16px 16px 16px">
         <span class="wf-like">{{cur.conf}}%</span>
         <span style="margin-top: -4px; font-size: 17px; line-height: 22px; color: #3C3C43; white-space: nowrap">Likelihood</span>
       </span>
@@ -651,11 +656,11 @@ class Component extends DCLogic {
       const time = d && !isNaN(d) ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
       const day = d && !isNaN(d) ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) : '';
       const ll = Math.abs(L.lat).toFixed(4) + '° ' + (L.lat >= 0 ? 'N' : 'S') + ' · ' + Math.abs(L.lon).toFixed(4) + '° ' + (L.lon >= 0 ? 'E' : 'W');
-      const loc = [L.near ? L.near + (c.co ? ', ' + c.co : '') : (c.co || ''), L.ll || ''].filter(Boolean).join(' · ');
+      const loc = [L.near || '', L.ll || ''].filter(Boolean).join(' · ');   // the region sits under the title
       const reasons = [['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
         [L.frp > 0 ? 'Fire radiative power ' + L.frp + ' MW' + (L.n > 1 ? ' · ' + L.n + ' detections within 3 km' : '') : (L.n > 1 ? L.n + ' detections within 3 km' : 'One detection'), true],
         ['Not yet confirmed on the ground', false]];
-      return { id: c.id, place: c.place, ll: L.ll || '', loc, reg: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
+      return { id: c.id, place: c.place, ll: L.ll || '', loc, reg: c.co || '', co: c.co || '', time, conf: c.conf, verdict: c.conf >= 80 ? 'Strong heat signal' : c.conf >= 60 ? 'Heat anomaly' : 'Weak heat signal',
         agree: c.agree, srcList: c.srcList, src: c.src, st: c.st || '', drone: 'D-5', px: c.x, py: c.y, fx: c.x, fy: c.y + 12, zoom: 2.6, fsZoom: 2.6,   // pin sits a little above centre, leaving room for its label
         coords: 'Heat is inside the dashed circle · ±375 m', cams: [], reasons, tabs: [{ id: 'map', label: 'Map', icon: I.map, isMap: true, caption: 'Satellite detection point' }] };
     };
@@ -708,7 +713,7 @@ class Component extends DCLogic {
         if (reasons.length < 2) reasons.push([k0.ok2, true]);
         reasons = reasons.slice(0, 2).concat([[k0.warn, false]]);
       }
-      return { id: c.id, place: c.place, time, conf: c.conf, verdict: m.verdict || k0.verdict, agree: c.agree, srcList: c.srcList, src: c.src, drone: m.drone || 'D-5',
+      return { id: c.id, place: c.place, co: c.co || '', time, conf: c.conf, verdict: m.verdict || k0.verdict, agree: c.agree, srcList: c.srcList, src: c.src, drone: m.drone || 'D-5',
         st: c.st || '', px, py, fx: px, fy: py, zoom: 0.7, fsZoom: 0.9, coords: m.coords || (c.co + ' County, ' + c.st + ' · ±300 ft'), cams, reasons, tabs };
     };
     const dismissed = this.wfDismissed();
@@ -771,6 +776,13 @@ class Component extends DCLogic {
           ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', grabOp: dd ? 0 : 1, ddOp: dd ? 1 : 0, ddClip: dd ? 'inset(0px 0px 0px 0px round 0px 0px 28px 28px)' : 'inset(0px 0px 100% 0px round 0px 0px 28px 28px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
         };
       })(),
+      // The level above the place: county and state in the US, district in Portugal, else region and country
+      region: (() => { const st = cur.st || '', co = cur.co || '', g = (window.__wfGeoStates || []).find((x) => x[0] === st);
+        const name = g ? g[1] : ({ PT: 'Portugal', CA: 'California', AZ: 'Arizona', OR: 'Oregon', NV: 'Nevada', NM: 'New Mexico', WA: 'Washington', ID: 'Idaho', CO: 'Colorado', UT: 'Utah', MT: 'Montana' })[st] || st;
+        if (!co) return name; if (co === name) return co;
+        if (st === 'PT') return /^(Açores|Madeira)$/.test(co) ? co + ', Portugal' : co + ' District, Portugal';
+        if ((g ? g[4] : (st.length === 2 ? 'US' : '')) === 'US') return co + (st === 'LA' ? ' Parish' : st === 'AK' ? '' : ' County') + ', ' + name;
+        return co + ', ' + name; })(),
       headerSub: n > 0 ? (cur.reg ? cur.reg + ' · ' : '') + (cur.ll || cur.id) + ' · ' + cur.time + ' · ' + (ci + 1) + ' of ' + n : 'Nothing to review',
       candChips: active.map((c, i) => ({
         place: c.place, conf: c.conf,
