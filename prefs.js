@@ -238,18 +238,22 @@
   var FH = 85;   // 77px + 10%
   // One colour per scrolling panel, kept while scrolling: the predominant background of its content (the colour covering
   // the most area among its outermost boxes, e.g. the white cards), else the panel's own colour. Measured once per opening.
-  function solid(c) { return c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c); }
+  // Only (nearly) opaque colours count: a translucent tint (a touch ripple, a pressed row, a hover) never sets the fade colour.
+  // min: the alpha needed (content boxes need a solid colour; the panel itself may be frosted glass, taken without its alpha).
+  function alphaOf(c) { var m = /rgba\([^,]+,[^,]+,[^,]+,\s*([\d.]+)\)/.exec(c || ''); return m ? parseFloat(m[1]) : (c && c !== 'transparent' ? 1 : 0); }
+  function solid(c, min) { return !!c && c !== 'transparent' && alphaOf(c) >= (min == null ? 0.9 : min); }
+  function opaque(c) { return String(c).replace(/^rgba\(([^,]+),([^,]+),([^,)]+),[^)]*\)$/, 'rgb($1,$2,$3)'); }
   function fadeCol(el) {
     var th = document.documentElement.classList.contains('wf-dark');   // a theme change always measures the colour again
     if (el.__wfCol && el.__wfColTh === th) return el.__wfCol;
     el.__wfColTh = th;
     var area = {}, box = {}, walk = function (n, d) { for (var c = n.firstElementChild; c; c = c.nextElementSibling) {
       if (c.__wfOv) continue; var cs = getComputedStyle(c), bg = cs.backgroundColor;
-      if (solid(bg)) { var r = c.getBoundingClientRect(), a = r.width * r.height; area[bg] = (area[bg] || 0) + a; var b = box[bg] || (box[bg] = { l: 1e9, r: -1e9 }); b.l = Math.min(b.l, r.left); b.r = Math.max(b.r, r.right); }
+      if (/wf-rip|ripple/.test(c.className && c.className.baseVal == null ? c.className : '')) continue; if (solid(bg)) { bg = opaque(bg); var r = c.getBoundingClientRect(), a = r.width * r.height; area[bg] = (area[bg] || 0) + a; var b = box[bg] || (box[bg] = { l: 1e9, r: -1e9 }); b.l = Math.min(b.l, r.left); b.r = Math.max(b.r, r.right); }
       else if (d < 4) walk(c, d + 1); } };
     walk(el, 0);
     var best = null, ba = 0; for (var k in area) if (area[k] > ba) { ba = area[k]; best = k; }
-    var q = el, pc = null; while (q && !pc) { var c2 = getComputedStyle(q).backgroundColor; if (solid(c2)) pc = c2; q = q.parentElement; }
+    var q = el, pc = null; while (q && !pc) { var c2 = getComputedStyle(q).backgroundColor; if (solid(c2, 0.5)) pc = opaque(c2); q = q.parentElement; }
     el.__wfCol = best ? { c: best, l: box[best].l, r: box[best].r } : { c: pc || 'rgb(242, 242, 247)', l: null, r: null };
     return el.__wfCol;
   }
