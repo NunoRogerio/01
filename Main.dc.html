@@ -17,7 +17,7 @@
 <script src="fit.js?v=53"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=25"></script>
-<script src="i18n.js?v=35"></script>
+<script src="i18n.js?v=36"></script>
 <script src="live.js?v=26"></script>
 <script src="chat.js?v=17"></script>
 
@@ -413,7 +413,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
         <div role="radiogroup" aria-label="{{g.label}}" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
-          <span aria-hidden="true" style="margin-left: 4px; font-size: 17px; font-weight: 600; line-height: 22px; color: #545458">{{g.label}}</span>
+          <!-- Group label in the annotation style (smaller, mid grey) -->
+          <span aria-hidden="true" style="margin-left: 4px; font-size: 15px; line-height: 20px; color: #6E6E73">{{g.label}}</span>
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 10px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
             <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
