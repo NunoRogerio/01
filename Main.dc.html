@@ -429,7 +429,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
       <!-- Chat settings: a drawer row like Connect data sources; opens in place to the Claude key and the invite links -->
       <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
-        <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 17px; color: #545458">{{ai.pill}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
+        <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{ai.pill}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
         <div style="display: grid; grid-template-rows: {{cs.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{cs.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{cs.vis}}; opacity: {{cs.op}}; transition: opacity .35s ease {{cs.delay}}, visibility 0s linear {{cs.visDelay}}">
           <!-- Role play: the crew coordinators in the incident chats answer through Claude with the person's own API key -->
@@ -443,7 +443,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <button type="button" class="opt wf-b wf-pri" onClick="{{ai.save}}" style="border: 0; font: inherit; cursor: pointer">{{ai.saveTxt}}</button>
               <button type="button" class="opt wf-b wf-ter" onClick="{{ai.remove}}" style="display: {{ai.rmD}}; border: 0; font: inherit; cursor: pointer">{{ai.rmTxt}}</button>
             </div>
-            <span style="font-size: 17px; line-height: 22px; color: {{ai.noteC}}">{{ai.note}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: {{ai.noteC}}">{{ai.note}}</span>
           </div>
           <!-- Administrator only: invite links that switch on Claude role-play on the invitee's phone -->
           <div style="display: {{inv.d}}; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-top: 1px solid rgba(60,60,67,0.12)">
@@ -456,7 +456,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               </div>
             </sc-if>
             <button type="button" class="opt wf-b wf-pri" onClick="{{inv.make}}" disabled="{{inv.dis}}" style="display: {{inv.makeD}}; border: 0; font: inherit; opacity: {{inv.op}}; cursor: pointer">{{inv.makeTxt}}</button>
-            <span style="font-size: 17px; line-height: 22px; color: #000000">{{inv.note}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{inv.note}}</span>
           </div>
           </div>
         </div>
@@ -802,7 +802,7 @@ class Component extends DCLogic {
             : has && !st && (() => { try { return localStorage.getItem('wf-invited-by'); } catch (e) { return ''; } })() ? T('Invited by ', 'Convidado por ') + localStorage.getItem('wf-invited-by') + T('. Role-play is switched on; the first reply confirms it works.', '. A encenação está ligada; a primeira resposta confirma que funciona.')
             : has && st && st.ok ? T('Working · last reply ', 'A funcionar · última resposta ') + new Date(st.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + ' · ' + st.model + T('. Calls are billed to your Anthropic account. The key stays on this phone only.', '. As chamadas são cobradas na sua conta Anthropic. A chave fica apenas neste telemóvel.')
             : T('Get a key at console.anthropic.com. Calls are billed to your Anthropic account; the key stays on this phone only. Without it, the in-app replies are used.', 'Obtenha uma chave em console.anthropic.com. As chamadas são cobradas na sua conta Anthropic; a chave fica apenas neste telemóvel. Sem ela, são usadas as respostas da aplicação.'),
-          noteC: bad ? '#B3001B' : '#545458' }; })(),
+          noteC: bad ? '#B3001B' : '#6E6E73' }; })(),
       inv: (() => { const A = window.__wfChat && window.__wfChat.ai, key = A ? A.key() : '', pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), admin = this.wfRole() === 'admin';
         if (!admin) return { d: 'none', hasLink: false };
         const mk = () => { const payload = btoa(unescape(encodeURIComponent(JSON.stringify({ k: key, by: me.name, t: Date.now() })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
