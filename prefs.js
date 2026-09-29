@@ -220,24 +220,44 @@
     var segGo = function () { segWatch(document); segMo.observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true, childList: true }); };
     if (document.body) segGo(); else document.addEventListener('DOMContentLoaded', segGo);
   }
-  // Scrolling panels: while there is more below, the last 48px fade out into the panel (a hint that it scrolls);
+  // Scrolling panels: while there is more below, the content's last 77px fade out into the panel (a hint that it scrolls);
   // at the very end the fade goes away. One rule for every scrolling list or panel in the app.
   var FSEL = '[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap,[data-wf-fadetop]';
+  // The fade is laid over the content in the colour of what it sits on (e.g. a white card), so the text fades out
+  // while the card and the panel keep crisp edges. 48px + 60% = 77px tall.
+  var FH = 77;
+  function bgAt(el, x, y) {
+    var n = document.elementFromPoint(x, y);
+    while (n && n !== el.parentElement) { var c = getComputedStyle(n).backgroundColor; if (c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c)) return { c: c, n: n }; n = n.parentElement; }
+    var q = el.parentElement; while (q) { var c2 = getComputedStyle(q).backgroundColor; if (c2 && c2 !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c2)) return { c: c2, n: q }; q = q.parentElement; }
+    return { c: 'rgb(242, 242, 247)', n: el };
+  }
   function fadeOne(el) {
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
     if (!el.__wfMaskOwn) return;
-    var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY), more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1;
-    var top = +el.getAttribute('data-wf-fadetop') || 0, parts = [];
-    if (!top && !more) { if (el.__wfM) { el.style.maskImage = el.style.webkitMaskImage = ''; el.__wfM = ''; el.__wfMaskOwn = undefined; } return; }
-    var m = 'linear-gradient(to bottom, ' + (top ? 'transparent 0, #000 ' + top + 'px, ' : '#000 0, ') + (more ? '#000 calc(100% - 48px), transparent 100%)' : '#000 100%)');
-    if (m !== el.__wfM) { el.style.webkitMaskImage = m; el.style.maskImage = m; el.__wfM = m; }
+    var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY), more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1 && el.offsetParent;
+    var top = +el.getAttribute('data-wf-fadetop') || 0;
+    var m = top ? 'linear-gradient(to bottom, transparent 0, #000 ' + top + 'px, #000 100%)' : '';
+    if (m !== (el.__wfM || '')) { el.style.webkitMaskImage = m; el.style.maskImage = m; el.__wfM = m; }
+    var ov = el.__wfFadeEl, par = el.parentElement;
+    if (!more || !par) { if (ov) ov.style.opacity = '0'; return; }
+    if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease;height:' + FH + 'px'; el.__wfFadeEl = ov; }
+    if (ov.parentElement !== par) { if (getComputedStyle(par).position === 'static') par.style.position = 'relative'; par.appendChild(ov); }
+    var r = el.getBoundingClientRect(), pr = par.getBoundingClientRect(), k = pr.width / (par.offsetWidth || pr.width) || 1;
+    var b = bgAt(el, r.left + r.width / 2, r.bottom - 6), br = b.n.getBoundingClientRect();
+    var L = Math.max(r.left, br.left), R = Math.min(r.right, br.right); if (b.n === el || b.n.contains(el)) { L = r.left; R = r.right; }
+    var col = b.c, clear = col.replace(/^rgba?\(([^,]+),([^,]+),([^,)]+).*$/, 'rgba($1,$2,$3,0)');
+    ov.style.left = ((L - pr.left) / k) + 'px'; ov.style.width = ((R - L) / k) + 'px'; ov.style.top = ((r.bottom - pr.top) / k - FH) + 'px';
+    ov.style.background = 'linear-gradient(to bottom, ' + clear + ', ' + col + ')'; ov.style.opacity = '1';
   }
   var fq = false;
   function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; document.querySelectorAll(FSEL).forEach(fadeOne); }); }
   window.__wfFade = fadeAll;
   document.addEventListener('scroll', function (e) { var t = e.target; if (t && t.nodeType === 1 && t.matches && t.matches(FSEL)) fadeOne(t); }, true);
+  setInterval(function () { document.querySelectorAll(FSEL).forEach(function (el) { if (el.__wfFadeEl) fadeOne(el); }); }, 250);   // follows panels while they slide
   window.addEventListener('resize', fadeAll);
-  if (window.MutationObserver) { var fMo = new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var n = ms[i].target; if (n && n.nodeType === 1 && (n.__wfM !== undefined && ms[i].attributeName === 'style')) continue; fadeAll(); return; } });
+  if (window.MutationObserver) { var fMo = new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var n = ms[i].target; if (n && n.nodeType === 1 && ((n.__wfM !== undefined && ms[i].attributeName === 'style') || n.__wfOv)) continue;
+      if (ms[i].type === 'childList' && ms[i].addedNodes.length === 1 && ms[i].addedNodes[0].__wfOv) continue; fadeAll(); return; } });
     var fGo = function () { fadeAll(); fMo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'aria-hidden', 'aria-expanded'] }); };
     if (document.body) fGo(); else document.addEventListener('DOMContentLoaded', fGo); }
   setInterval(fadeAll, 1000);   // content that grows by animation (drawers opening) is caught within a second
