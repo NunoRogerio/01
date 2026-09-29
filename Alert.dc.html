@@ -293,11 +293,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 16px; padding: 12px 0; border-top: 1px solid rgba(60,60,67,0.12)">
         <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{cur.verdict}}</span>
-        <span style="display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 15px; white-space: nowrap"><span class="dot" style="width: 5.6px; height: 5.6px"></span>Unverified</span>
+        <span style="display: flex; align-items: center; height: 48px; padding: 0 16px; flex-shrink: 0; border-radius: 999px; background: rgba(204,153,0,0.12); color: #7A5600; font-size: 17px; white-space: nowrap">Unverified</span>
       </div>
-      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 0 16px; padding: 12px 0 8px; border-top: 1px solid rgba(60,60,67,0.12); font-size: 17px; line-height: 22px; color: #3C3C43">
-        <span style="display: {{locD}}">{{locTxt}}</span>
-        <span style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-self: stretch; margin-top: 4px">
+      <!-- Where it is; the GPS on a line of its own with a copy button; then the two quiet actions. Rows between separators. -->
+      <div style="display: {{locD}}; margin: 0 16px; padding: 12px 0; border-top: 1px solid rgba(60,60,67,0.12); font-size: 17px; line-height: 22px; color: #3C3C43">{{locPlace}}</div>
+      <div style="display: {{gpsD}}; align-items: center; justify-content: space-between; gap: 12px; margin: 0 16px; padding: 12px 0; border-top: 1px solid rgba(60,60,67,0.12)">
+        <span style="min-width: 0; font-size: 17px; line-height: 22px; color: #3C3C43; font-variant-numeric: tabular-nums">{{gps}}</span>
+        <button type="button" class="mbtn" onClick="{{copyGps}}" aria-label="{{copyAria}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: {{copyC}}; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{copyIc}}"></path></svg></button>
+      </div>
+      <div style="margin: 0 16px; padding: 12px 0 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+        <span style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
           <button type="button" class="btn wf-ter" onClick="{{openMap}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 0; padding: 0 8px; border-radius: 10px; background: transparent; color: #0062CC; font-size: 17px; font-weight: 500; white-space: nowrap"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4Z M9 4v13.5 M15 6.5V20"></path></svg>View on map</button>
           <a href="Drone.dc.html" class="btn wf-ter" onPointerDown="{{verifyCur}}" onClick="{{verifyCur}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 0; padding: 0 8px; border-radius: 10px; font-size: 17px; font-weight: 500; white-space: nowrap; text-decoration: none"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M16.1 5.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M3.5 18.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M16.1 18.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0 M7.3 7.3l2.7 2.7 M16.7 7.3 14 10 M7.3 16.7l2.7-2.7 M16.7 16.7 14 14 M10 10h4v4h-4Z"></path></svg>Verify by drone</a>
         </span>
@@ -780,7 +785,11 @@ class Component extends DCLogic {
       tabs: tabs0.map((t, i) => ({ ...t, selected: i === tIdx ? 'true' : 'false', fg: i === tIdx ? '#FFFFFF' : '#98989F', pick: () => this.setState({ tab: t.id }) })),
       nTabs: tabs0.length, tabsD: tabs0.length > 1 ? 'grid' : 'none', segW: Math.round(segW), segLeft: Math.round(3 + tIdx * segW),
       // Location is not evidence: it sits in the conclusion card with the map button
-      locTxt: cur.loc || cur.coords || '', locD: (cur.loc || cur.coords) ? 'block' : 'none',
+      locTxt: cur.loc || cur.coords || '', ...(() => { const G = cur.ll || ((/-?[\d.]+° ?[NS][ ·]+-?[\d.]+° ?[EW]/.exec(cur.coords || cur.loc || '') || [])[0] || '');
+        const place = String(cur.loc || cur.coords || '').split(' · ').filter((x) => x && x !== G && !G.includes(x)).join(' · ');
+        const done = this.state && this.state.copied && Date.now() - this.state.copied < 1600;
+        return { locPlace: place, locD: place ? 'block' : 'none', gps: G, gpsD: G ? 'flex' : 'none', copyIc: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', copyC: done ? '#1E7A34' : '#3C3C43', copyAria: done ? 'Copied' : 'Copy coordinates',
+          copyGps: () => { try { navigator.clipboard.writeText(G); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ copied: Date.now() }); setTimeout(() => this.forceUpdate(), 1700); } }; })(),
       reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
