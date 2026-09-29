@@ -287,11 +287,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="display: flex; flex-direction: column; align-items: flex-start; min-width: 0">
           <h2 id="ai" style="margin: 0; min-width: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px">{{curRow.place}}</h2>
           <span style="margin-top: 2px; font-size: 17px; line-height: 22px; color: #545458">{{region}}</span>
-          <!-- What it is, in the hi-vis yellow, with the same marker as on the map and its legend -->
-          <span style="display: flex; align-items: center; gap: 8px; height: 32px; margin-top: 12px; padding: 0 14px 0 12px; border-radius: 999px; background: #D7F41A; color: #1C1C1E; font-size: 15px; font-weight: 600; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0; scale: 1.1"><path d="M1 1.5H13L7 12.5Z" fill="#D7F41A" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg>Ignition detection</span>
         </span>
         <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{navBack}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
       </div>
+      <!-- What it is: a qualifier band (not a button) in the hi-vis yellow, full width, square corners, with the map marker -->
+      <span style="display: flex; align-items: center; gap: 8px; height: 36px; margin: 12px 16px 0; padding: 0 12px; border-radius: 0; background: #D7F41A; color: #1C1C1E; font-size: 15px; font-weight: 600; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0; scale: 1.1"><path d="M1 1.5H13L7 12.5Z" fill="#D7F41A" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg>Ignition detection</span>
       <span role="img" aria-label="{{ringLabel}}" style="display: flex; flex-direction: column; align-items: center; gap: 0; padding: 16px 16px 16px">
         <span class="wf-like">{{cur.conf}}%</span>
         <span style="margin-top: -4px; font-size: 17px; line-height: 22px; color: #3C3C43; white-space: nowrap">Likelihood</span>
