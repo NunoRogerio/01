@@ -63,7 +63,8 @@
     o.push('[style*="text-shadow: rgb(255, 255, 255)"]{text-shadow:0 0 2px #000,0 0 6px #000!important}');   // map labels and credit: dark halo
     // The screens' own style sheets
     o.push('html,body{background:#1E1E20!important;color:#E8E8ED}a{color:#409CFF}');
-    o.push('.segthumb{background:#636366!important}');
+    o.push('.segthumb{background:#D7F41A!important}.segopt[aria-checked=true]{color:#1C1C1E!important}.segopt[aria-checked=false]{color:#D1D1D6!important}');   // the accent is the same hi-vis yellow in both themes
+    o.push('.wf-qual{background:#3A3A3C!important;color:#E8E8ED!important}');
     o.push('.sheet{background:#262629!important}.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder{color:#AEAEB2!important}');
     o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
     o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');

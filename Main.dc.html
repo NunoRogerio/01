@@ -416,7 +416,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 10px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
             <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; border-radius: 999px; background: #D7F41A; transform: translateX({{g.thumbX}}); transition: transform .45s cubic-bezier(.4,0,.2,1); will-change: transform"></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
-              <button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: #1C1C1E; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
+              <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
             </sc-for>
           </div>
         </div>
@@ -675,7 +675,7 @@ class Component extends DCLogic {
     // repaint (theme, text size) or reload (language) never interrupts the movement
     const group = (label, cur0, opts, pick) => { const pend = (s.segPend || {})[label], cur = pend !== undefined ? pend : cur0, i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
       label, cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 20px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
-      opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, pick: () => { if (o[0] === cur) return;
+      opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, fg: o[0] === cur ? '#1C1C1E' : '#3C3C43', pick: () => { if (o[0] === cur) return;
         try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
         this.setState({ segPend: Object.assign({}, (this.state || {}).segPend, { [label]: o[0] }) });
         clearTimeout((this._segT = this._segT || {})[label]);
@@ -691,7 +691,7 @@ class Component extends DCLogic {
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o }); } }; })(),
       // The data sources the app reads, with when this phone last loaded each (from the live-data cache)
-      ds: (() => { const o = !!s.dsOpen, pt = lang === 'pt', T = (en, p) => (pt ? p : en);
+      ds: (() => { const o = !!s.dsOpen, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         let c = {}; try { c = JSON.parse(localStorage.getItem('wf-live-fires-v15') || 'null') || {}; } catch (e) {}
         const ago = (t) => { if (!t) return T('Not loaded on this phone yet', 'Ainda não carregado neste telemóvel'); const m = Math.max(0, Math.round((Date.now() - t) / 60000));
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
@@ -711,7 +711,7 @@ class Component extends DCLogic {
           note: T('Adding your own sources is not available in this prototype yet.', 'Adicionar as suas próprias fontes ainda não está disponível neste protótipo.'),
           add: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsAddTried: true }); },
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsOpen: !o }); } }; })(),
-      ai: (() => { const A = window.__wfChat && window.__wfChat.ai, has = !!(A && A.key()), st = A ? A.status() : null, pt = lang === 'pt', T = (en, p) => (pt ? p : en);
+      ai: (() => { const A = window.__wfChat && window.__wfChat.ai, has = !!(A && A.key()), st = A ? A.status() : null, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         const bad = has && st && !st.ok, busy = !!s.aiBusy, on = !!(A && A.on());
         return { title: T('Role-play with Claude', 'Encenação com o Claude'),
           sub: T('Crew coordinators in the incident chats answer in character, written by Claude from the state of the fire.', 'Os coordenadores de equipa nas conversas respondem em personagem, escritos pelo Claude a partir do estado do incêndio.'),
@@ -729,7 +729,7 @@ class Component extends DCLogic {
             : has && st && st.ok ? T('Working · last reply ', 'A funcionar · última resposta ') + new Date(st.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + ' · ' + st.model + T('. Calls are billed to your Anthropic account. The key stays on this phone only.', '. As chamadas são cobradas na sua conta Anthropic. A chave fica apenas neste telemóvel.')
             : T('Get a key at console.anthropic.com. Calls are billed to your Anthropic account; the key stays on this phone only. Without it, the in-app replies are used.', 'Obtenha uma chave em console.anthropic.com. As chamadas são cobradas na sua conta Anthropic; a chave fica apenas neste telemóvel. Sem ela, são usadas as respostas da aplicação.'),
           noteC: bad ? '#B3001B' : '#545458' }; })(),
-      inv: (() => { const A = window.__wfChat && window.__wfChat.ai, key = A ? A.key() : '', pt = lang === 'pt', T = (en, p) => (pt ? p : en), admin = this.wfRole() === 'admin';
+      inv: (() => { const A = window.__wfChat && window.__wfChat.ai, key = A ? A.key() : '', pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), admin = this.wfRole() === 'admin';
         if (!admin) return { d: 'none', hasLink: false };
         const mk = () => { const payload = btoa(unescape(encodeURIComponent(JSON.stringify({ k: key, by: me.name, t: Date.now() })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
           return new URL('./', location.href).href + '#invite=' + payload; };
@@ -748,7 +748,7 @@ class Component extends DCLogic {
       openPrefs: () => this.setState({ pf: true, pfSpin: false }),
       closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); }, 280); },
       pfGroups: [
-        group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', 'JP']], (l) => { try { window.sessionStorage.setItem('wf-prefs-open', '1'); } catch (e) {} if (window.__wfSetLang) window.__wfSetLang(l); }),
+        group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', '日本']], (l) => { try { window.sessionStorage.setItem('wf-prefs-open', '1'); } catch (e) {} if (window.__wfSetLang) window.__wfSetLang(l); }),
         group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
         group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v))
       ]

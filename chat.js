@@ -12,7 +12,7 @@
   var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {}
   var KEY = 'wf-chats3-' + (role || 'anon'), ACH = 'wf-achv';
   var PT = function () { return window.__wfLang === 'pt'; };
-  var L = function (en, pt) { return PT() && pt ? pt : en; };
+  var L = function (en, pt) { return PT() && pt ? pt : (window.__wfJA ? window.__wfJA(en) : en); };
   var MIN = 60000;
 
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------

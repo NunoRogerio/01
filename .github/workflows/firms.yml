@@ -34,5 +34,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/regions.json data/hotspots.json 2>/dev/null || git add data/regions.json
+          git add data/regions.json data/hotspots.json data/names-ja.json 2>/dev/null || git add data/regions.json
           git diff --cached --quiet || (git commit -m "Update satellite hotspots" && git pull --rebase -q && git push)

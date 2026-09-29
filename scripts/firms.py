@@ -44,6 +44,8 @@ def ne(name):
     return json.load(open(path, encoding='utf-8'))['features']
 
 
+JA = {}   # English name -> Japanese (Natural Earth name_ja, GeoNames alternate names in Japanese) for data/names-ja.json
+KANA = lambda t: any('\u3040' <= ch <= '\u30ff' or '\u4e00' <= ch <= '\u9fff' for ch in t)
 GEONAMES = 'https://download.geonames.org/export/dump/cities1000.zip'   # every place with 1,000+ people (CC BY 4.0)
 
 
@@ -62,6 +64,10 @@ def places():
                 if len(f) < 9 or f[6] != 'P':
                     continue
                 la, lo = float(f[4]), float(f[5])
+                if f[1] not in JA:
+                    ja = next((a for a in f[3].split(',') if a and KANA(a)), None)
+                    if ja:
+                        JA[f[1]] = ja
                 grid.setdefault((math.floor(la * 2), math.floor(lo * 2)), []).append((la, lo, f[1]))
         print(sum(len(v) for v in grid.values()), 'named places', flush=True)
         return grid
@@ -112,6 +118,8 @@ def main():
         if a3 not in COUNTRIES or not f.get('geometry'):
             continue
         name = prop(p, 'name', 'NAME', 'name_en') or '?'
+        if prop(p, 'name_ja', 'NAME_JA') and name not in JA:
+            JA[name] = prop(p, 'name_ja', 'NAME_JA')
         if a3 == 'USA':
             sid, sname, country = prop(p, 'postal', 'POSTAL'), name, 'US'
         elif a3 == 'PRT':
@@ -139,6 +147,8 @@ def main():
         if not st:
             continue
         name = prop(p, 'NAME', 'name', 'NAME_EN')
+        if prop(p, 'NAME_JA', 'name_ja') and name not in JA:
+            JA[name] = prop(p, 'NAME_JA', 'name_ja')
         regions[st][2].add(name); cgeoms.append(g); ctags.append((st, name)); rbox[(st, name)] = g
     ctree = STRtree(cgeoms) if cgeoms else None
 
@@ -231,6 +241,11 @@ def main():
     json.dump({'updated': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%MZ'), 'source': 'NASA FIRMS VIIRS NRT, last 24 h',
                'points': points}, open('data/hotspots.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     print(len(points), 'hotspots written', flush=True)
+    # Japanese names for every place the app shows (regions, counties, the candidates' nearest towns)
+    used = {r[1] for r in states} | {n for r in states for n in r[3]} | {p[1] for p in points} | {p[9] for p in points if len(p) > 9}
+    names = {k: v for k, v in sorted(JA.items()) if k in used}
+    json.dump(names, open('data/names-ja.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    print(len(names), 'Japanese place names written', flush=True)
 
 
 if __name__ == '__main__':
