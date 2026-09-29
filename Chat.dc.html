@@ -16,7 +16,7 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=78"></script>
-<script src="i18n.js?v=49"></script>
+<script src="i18n.js?v=50"></script>
 <script src="live.js?v=30"></script>
 <script src="chat.js?v=18"></script>
 <script src="trophy.js?v=14"></script>
@@ -543,7 +543,7 @@ class Component extends DCLogic {
         sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: B ? L('Drill complete', 'Simulação concluída') : L('Fire resolved', 'Incêndio resolvido'), headline: c.place, closedAt: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + (Z.est ? '~' : '') + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
           note: B ? L('Training drill against the real fire of ', 'Simulação contra o incêndio real de ') + dayTxt(B.t) + L('. Crew replies are role-played, and drills do not go into firefighters’ profiles.', '. As respostas das equipas são encenadas e as simulações não entram nos perfis dos bombeiros.') : '', noteD: B ? 'block' : 'none',
           get kPx() { return window.__wfKpiPx ? window.__wfKpiPx(this.kpis.map((k) => k.v), 2, 318) : '44px'; },
-          kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Time to response', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Time to resolution', 'Tempo até à resolução'), c: '#1E7A34', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
+          kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Response time', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Final duration', 'Duração final'), c: '#1E7A34', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
             { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800', ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC', cmp: '', cmpD: 'none', cmpC: '#545458' }],
           forcesSub: (Z.est ? '~' : '') + Z.people + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + Z.veh + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
           me: { name: me.name, code: me.code, photo: photo(me) }, goOwner: openPerson(me.name) } };
