@@ -172,11 +172,17 @@
     person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'Access to all features · ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) {
-      // A new text size grows or shrinks the text smoothly instead of jumping (every size and line height eases for a moment)
-      if (k === 'text') { var r = document.documentElement, st = document.getElementById('wf-tx-anim');
-        if (!st) { st = document.createElement('style'); st.id = 'wf-tx-anim'; st.textContent = 'html.wf-tx-anim *{transition:font-size .45s cubic-bezier(.4,0,.2,1),line-height .45s cubic-bezier(.4,0,.2,1)!important}'; (document.head || r).appendChild(st); }
-        r.classList.add('wf-tx-anim'); clearTimeout(window.__wfTxT); window.__wfTxT = setTimeout(function () { r.classList.remove('wf-tx-anim'); }, 700); }
-      try { localStorage.setItem(key(k), v); } catch (e) {} apply(); }
+      try { localStorage.setItem(key(k), v); } catch (e) {}
+      // A new text size cross-dissolves from the old layout to the new one in a single composited pass (View Transitions):
+      // nothing reflows frame by frame, so there is no jitter; pixels that don't change stay perfectly still
+      if (k === 'text' && document.startViewTransition && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+        var r = document.documentElement, st = document.getElementById('wf-tx-vt');
+        if (!st) { st = document.createElement('style'); st.id = 'wf-tx-vt'; st.textContent = 'html.wf-tx-vt::view-transition-old(root),html.wf-tx-vt::view-transition-new(root){animation-duration:.55s;animation-timing-function:cubic-bezier(.4,0,.2,1)}'; (document.head || r).appendChild(st); }
+        r.classList.add('wf-tx-vt');
+        try { var vt = document.startViewTransition(apply); vt.finished.then(function () { r.classList.remove('wf-tx-vt'); }, function () { r.classList.remove('wf-tx-vt'); }); return; }
+        catch (e) { r.classList.remove('wf-tx-vt'); }
+      }
+      apply(); }
   };
   apply();
 })();
