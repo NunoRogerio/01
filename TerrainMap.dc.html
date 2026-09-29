@@ -48,8 +48,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 .tipwrap svg,.fzone>svg{opacity:.72}.tipwrap [role=tooltip] svg{opacity:1}
 /* Marker fills (the coloured body) 10 points more transparent than the marker (72% -> 62%); outlines stay at 72% */
 .tipwrap svg :is(polygon,circle,path,rect)[fill]:not([fill=none]),.fzone>svg :is(polygon,circle,path,rect)[fill]:not([fill=none]){fill-opacity:.86}.tipwrap [role=tooltip] svg *{fill-opacity:1}
+/* Selectable markers (fires, candidates, stations): the body alone is translucent (62%), the selected outline is solid and sits outside the shape */
+.tipwrap svg.mk,.fzone>svg.mk{opacity:1}.tipwrap svg.mk :is(polygon,circle,path,rect)[fill]:not([fill=none]),.fzone>svg.mk :is(polygon,circle,path,rect)[fill]:not([fill=none]){fill-opacity:.62}.tipwrap svg.mk mask *{fill-opacity:1!important}
 
-.fzone{display:block;background:transparent;transition:background-color .15s ease;-webkit-tap-highlight-color:transparent}.fzone:hover,.fzone:focus-visible{background-color:rgba(255,59,48,0.14)}.fzone:hover+.fanchor>.tip,.fzone:focus-visible+.fanchor>.tip{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .18s ease .1s,transform .18s ease .1s,visibility 0s linear .1s}.fzone:hover+.fanchor>.tip.l,.fzone:hover+.fanchor>.tip.r,.fzone:focus-visible+.fanchor>.tip.l,.fzone:focus-visible+.fanchor>.tip.r{transform:translate(0,0)}
+.fzone{display:block;background:transparent;transition:background-color .15s ease;-webkit-tap-highlight-color:transparent}.fzone:focus{outline:none}.fzone:hover+.fanchor>.tip,.fzone:focus-visible+.fanchor>.tip{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .18s ease .1s,transform .18s ease .1s,visibility 0s linear .1s}.fzone:hover+.fanchor>.tip.l,.fzone:hover+.fanchor>.tip.r,.fzone:focus-visible+.fanchor>.tip.l,.fzone:focus-visible+.fanchor>.tip.r{transform:translate(0,0)}
 .tip,.igmore>span{white-space:pre-line}
 @media (hover:none){.tip,.igpill{display:none!important}}
 .ighide .igpill{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease}
@@ -191,7 +193,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
     <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: {{t.blur}}; -webkit-backdrop-filter: {{t.blur}}; font-size: 13px; font-weight: 600; white-space: nowrap">
-      <svg width="14" height="14" viewBox="0 0 24 24" style="scale: 1.43; overflow: visible" fill="{{t.fill}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}" stroke="{{t.bdC}}" stroke-width="{{t.bdW}}" style="paint-order: stroke"></path></svg>{{t.label}}
+      <svg class="mk" width="14" height="14" viewBox="0 0 24 24" style="scale: 1.43; overflow: visible" fill="{{t.fill}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="wfStM" maskUnits="userSpaceOnUse" x="-40" y="-40" width="104" height="104"><rect x="-40" y="-40" width="104" height="104" fill="#fff"></rect><path d="{{t.icon}}" fill="#000"></path></mask></defs><path d="{{t.icon}}" fill="{{t.fill}}" stroke="none"></path><path d="{{t.icon}}" fill="none" stroke="{{t.bdC}}" stroke-width="{{t.bdW}}" mask="url(#wfStM)"></path></svg>{{t.label}}
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
   </sc-for>
@@ -219,7 +221,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
-      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="{{fm.r}}" fill="#E8590C" stroke="#3A3A3C" stroke-width="{{fm.bdW}}" style="paint-order: stroke"></circle></svg></button>
+      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="10.25" fill="#E8590C"></circle><circle cx="14" cy="14" r="12.25" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle></svg></button>
       <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
@@ -231,9 +233,9 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <sc-for list="{{ignMarks}}" as="ig" hint-placeholder-count="2">
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mvI}}">
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
-          <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 0.77; overflow: visible">
+          <svg class="mk" width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 0.77; overflow: visible">
             <g transform="translate(48 47.5)"><polygon points="-19,-11 19,-11 0,22" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
-            <polygon points="29,36.5 67,36.5 48,69.5" fill="{{ig.c}}" stroke="#3A3A3C" stroke-width="{{ig.bdW2}}" stroke-linejoin="round" style="paint-order: {{ig.po}}"></polygon>
+            <defs><mask id="wfIgMS" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><polygon points="29,36.5 67,36.5 48,69.5" fill="#000" stroke-linejoin="round"></polygon></mask></defs><polygon points="29,36.5 67,36.5 48,69.5" fill="{{ig.c}}"></polygon><polygon points="29,36.5 67,36.5 48,69.5" fill="none" stroke="#3A3A3C" stroke-width="{{ig.bdW2}}" stroke-linejoin="round" mask="url(#wfIgMS)"></polygon>
           </svg>
           <span class="igpill" role="tooltip">
             <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 10px; white-space: nowrap">
@@ -244,14 +246,14 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
-          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
+          <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
             <g transform="translate(32 32.7)"><polygon points="-16,-10.3 16,-10.3 0,17.7" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
-            <polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" stroke-linejoin="round" style="paint-order: {{ig.po}}"></polygon>
+            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><polygon points="16,22.4 48,22.4 32,50.4" fill="#000" stroke-linejoin="round"></polygon></mask></defs><polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}"></polygon><polygon points="16,22.4 48,22.4 32,50.4" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" stroke-linejoin="round" mask="url(#wfIgMN)"></polygon>
           </svg>
           </sc-if>
           <sc-if value="{{ig.still}}" hint-placeholder-val="{{ false }}">
-          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
-            <polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" stroke-linejoin="round" style="paint-order: {{ig.po}}"></polygon>
+          <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
+            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><polygon points="16,22.4 48,22.4 32,50.4" fill="#000" stroke-linejoin="round"></polygon></mask></defs><polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}"></polygon><polygon points="16,22.4 48,22.4 32,50.4" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" stroke-linejoin="round" mask="url(#wfIgMN)"></polygon>
           </svg>
           </sc-if>
           <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
@@ -1460,8 +1462,8 @@ class Component extends DCLogic {
     // The marker whose tooltip is open: a 4px border outside it (painted under the fill), dark grey on candidates
     // and fires, the primary lime on stations. SVG units: candidates are drawn at 0.77 scale, stations at 20px for 24 units.
     const PS = (this.state || {}).pop, on = (kind, key) => !!PS && PS.kind === kind && PS.key === key;
-    (OUT.fireMarks || []).forEach((m, i) => { const k = m._g ? m._g.id : i, o = on('fire', k); m.sel = sel('fire', k); m.r = o ? 6.25 : 10.25; m.bdW = o ? 8 : 0; });
-    (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = o ? '#3A3A3C' : m.rim; m.bdW = o ? 10.4 : 2.1; m.bdW2 = o ? 10.4 : 2.3; m.po = o ? 'stroke' : 'normal'; });
+    (OUT.fireMarks || []).forEach((m, i) => { const k = m._g ? m._g.id : i, o = on('fire', k); m.sel = sel('fire', k); m.bdW = o ? 4 : 0; });
+    (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 0; m.bdW2 = o ? 10.4 : 0; m.po = o ? 'stroke' : 'normal'; });
     (OUT.stations || []).forEach((m, i) => { const o = on('st', i); m.sel = sel('st', i); m.bdC = o ? (window.__wfY || '#E5FF00') : 'none'; m.bdW = o ? 9.6 : 0; });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
