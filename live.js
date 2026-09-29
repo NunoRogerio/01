@@ -125,14 +125,24 @@ window.__wfRegion = function (st, co) {
   function idbGet(k){return idb().then(function(db){return new Promise(function(ok){var r=db.transaction('kv').objectStore('kv').get(k);r.onsuccess=function(){ok(r.result);};r.onerror=function(){ok(null);};});}).catch(function(){return null;});}
   function save(stamp){
     var c=readCache();c[stamp]=Date.now();
-    c.rows=window.__wfLiveFires||null;c.geo=window.__wfGeoStates||null;delete c.cands;delete c.boxes;
-    if(stamp==='tSat')idbPut(KEY,{cands:window.__wfLiveCands||null,boxes:window.__wfGeoBoxes||null,t:c.tSat});
+    c.rows=window.__wfLiveFiresAll||window.__wfLiveFires||null;c.geo=window.__wfGeoStates||null;delete c.cands;delete c.boxes;
+    if(stamp==='tSat')idbPut(KEY,{cands:window.__wfLiveCandsAll||window.__wfLiveCands||null,boxes:window.__wfGeoBoxes||null,t:c.tSat});
     try{localStorage.setItem(KEY,JSON.stringify(c));}catch(e){}
     window.__wfWorld=null;window.__wfGeo=null;
     try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
   }
   // Replace one source's fires (US, Portugal or British Columbia) and keep the others'.
   var srcOf=function(r){return r[0]==='PT'?'PT':r[0]==='CAN'?'CAN':r[0]==='BRA'?'BR':'US';};
+  // Data sources the user switched off (Preferences › Current data sources): their fires or candidates are kept but not
+  // shown anywhere. SAT = NASA FIRMS candidates; US, PT, BR, CAN = the fire feeds. Kept per phone.
+  var DSOFF={};try{DSOFF=JSON.parse(localStorage.getItem('wf-ds-off')||'{}')||{};}catch(e){}
+  function dsApply(sync){
+    if(window.__wfLiveFiresAll)window.__wfLiveFires=window.__wfLiveFiresAll.filter(function(r){return !DSOFF[srcOf(r)];});
+    if(window.__wfLiveCandsAll)window.__wfLiveCands=DSOFF.SAT?[]:window.__wfLiveCandsAll;
+    window.__wfWorld=null;window.__wfGeo=null;
+    if(sync){try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
+  }
+  window.__wfDS={on:function(k){return !DSOFF[k];},set:function(k,on){if(on)delete DSOFF[k];else DSOFF[k]=1;try{localStorage.setItem('wf-ds-off',JSON.stringify(DSOFF));}catch(e){}dsApply(true);}};
   // Forces where the source publishes none (NIFC publishes personnel only for fires with an incident report and never
   // vehicles or aircraft; Canada and Brazil publish none): an estimate from the fire's size, state and containment,
   // at typical wildland staffing (about 4 to 5 people per ground vehicle, aircraft on growing fires over ~10 ha).
@@ -155,9 +165,9 @@ window.__wfRegion = function (st, co) {
   }
   function publishPart(src,rows){
     rows.forEach(function(x){var r=x.r;if(r&&(!r[7]||r[7].man==null||r[7].terrain==null||r[7].aerial==null)&&r[0]!=='PT')r[7]=estRes(r);});
-    var other=(window.__wfLiveFires||[]).filter(function(r){return srcOf(r)!==src;});
+    var other=(window.__wfLiveFiresAll||[]).filter(function(r){return srcOf(r)!==src;});
     var mine=rows.sort(function(a,b){return b.w-a.w;}).map(function(x){return x.r;});
-    window.__wfLiveFires=mine.concat(other);window.__wfLiveAt=Date.now();
+    window.__wfLiveFiresAll=mine.concat(other);dsApply(false);window.__wfLiveAt=Date.now();
     save('t'+src);
   }
   // Brazil: INPE Programa Queimadas fire events (satellite detections grouped into individual fires, hourly).
@@ -288,7 +298,7 @@ window.__wfRegion = function (st, co) {
     }).catch(function(){return null;});
   }
   function satellitePerimeter(f,o){
-    var near=(window.__wfLiveCands||[]).map(function(c){return c[9];}).filter(function(m){return m&&Math.abs(m.lat-f.lat)<0.08&&Math.abs(m.lon-f.lon)<0.1;})
+    var near=(window.__wfLiveCandsAll||window.__wfLiveCands||[]).map(function(c){return c[9];}).filter(function(m){return m&&Math.abs(m.lat-f.lat)<0.08&&Math.abs(m.lon-f.lon)<0.1;})
       .map(function(m){return toLocal([[m.lat,m.lon]],o)[0];}).filter(function(p){return Math.hypot(p[0],p[1])<6000;});
     if(!near.length)return null;
     var pts=[];var h=187.5;near.forEach(function(p){[[-h,-h],[h,-h],[h,h],[-h,h]].forEach(function(c){pts.push([p[0]+c[0],p[1]+c[1]]);});});  // each VIIRS pixel ≈ 375 m square  // each VIIRS pixel ≈ 375 m
@@ -394,7 +404,7 @@ window.__wfRegion = function (st, co) {
   };
 
   var c=readCache(),now=Date.now();
-  if(c.rows)window.__wfLiveFires=c.rows;if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
+  if(c.rows){window.__wfLiveFiresAll=c.rows;dsApply(false);}if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
   var fresh=function(k){return c[k]&&now-c[k]<TTL;};
   var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
@@ -405,12 +415,12 @@ window.__wfRegion = function (st, co) {
   var satNet=function(){return Promise.all([fetch('data/regions.json?t='+Math.floor(tick/1440)).then(jsonOk).catch(function(){return null;}),
                fetch('data/hotspots.json?t='+tick).then(jsonOk).catch(function(){return null;})]).then(function(r){
     if(r[0]){var g=buildGeo(r[0]);if(g.length)window.__wfGeoStates=g;}
-    if(r[1]&&r[0]){window.__wfLiveCands=buildCands(r[1]);}
+    if(r[1]&&r[0]){window.__wfLiveCandsAll=buildCands(r[1]);dsApply(false);}
     if(r[0]&&r[1])save('tSat');
   }).then(function(){window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}});};
   idbGet(KEY).then(function(v){
     var have=v&&v.cands&&v.t===c.tSat;
-    if(have&&!window.__wfLiveCands){window.__wfLiveCands=v.cands.map(function(r){if(/^Near /.test(r[3]))r[3]=r[3].slice(5);return r;});   // copies saved before places dropped 'Near'
+    if(have&&!window.__wfLiveCandsAll){window.__wfLiveCandsAll=v.cands.map(function(r){if(/^Near /.test(r[3]))r[3]=r[3].slice(5);return r;});dsApply(false);   // copies saved before places dropped 'Near'
     if(v.boxes)window.__wfGeoBoxes=v.boxes;window.__wfWorld=null;window.__wfGeo=null;
       window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
     if(!have||!fresh('tSat'))satNet();

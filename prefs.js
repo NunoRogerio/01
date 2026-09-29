@@ -107,7 +107,7 @@
     'html{--wf-panel-r:28px;--wf-panel-sh:0 8px 40px rgba(0,0,0,.14);--wf-safe-b:48px}' +   // shared panel: radius, shadow, 48px clear of the home indicator
     'html .wf-panel{bottom:var(--wf-safe-b)!important;border-radius:0 0 var(--wf-panel-r) var(--wf-panel-r)!important;box-shadow:var(--wf-panel-sh)!important}' +
     // dialogs: a floating panel 48px above the bottom, 24px inside, the panel shadow plus a soft primary light from underneath
-    'html .wf-dlg{left:0!important;right:0!important;bottom:var(--wf-safe-b)!important;padding:24px!important;border-radius:0!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
+    'html .wf-dlg{left:0!important;right:0!important;bottom:var(--wf-safe-b)!important;padding:24px 24px 32px!important;border-radius:0!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
     // the soft primary light only rises above the dialog, so the panel's own shadow below it stays clean
     'html .wf-dlg::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:420px;pointer-events:none;background:radial-gradient(120% 100% at 50% 100%,rgba(var(--wf-y-rgb),.5) 0,rgba(var(--wf-y-rgb),.22) 40%,rgba(var(--wf-y-rgb),0) 75%);transition:opacity .45s ease}' +
     'html .wf-dlg[aria-hidden="true"]{translate:0 calc(var(--wf-safe-b) + 24px)!important;box-shadow:none!important}html .wf-dlg[aria-hidden="true"]::before{opacity:0}' +

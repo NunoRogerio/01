@@ -16,9 +16,9 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=61"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=48"></script>
-<script src="i18n.js?v=37"></script>
-<script src="live.js?v=26"></script>
+<script src="prefs.js?v=49"></script>
+<script src="i18n.js?v=38"></script>
+<script src="live.js?v=27"></script>
 <script src="chat.js?v=17"></script>
 
 <title>Incidents</title>
@@ -417,7 +417,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
         <div role="radiogroup" aria-label="{{g.label}}" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
           <!-- Group label in the annotation style (smaller, mid grey) -->
-          <span aria-hidden="true" style="margin-left: 4px; font-size: 15px; line-height: 20px; color: #6E6E73">{{g.label}}</span>
+          <span class="wf-label" aria-hidden="true" style="margin-left: 4px; font-size: 15px; line-height: 20px; color: #6E6E73">{{g.label}}</span>
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 10px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
             <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
@@ -428,7 +428,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </div>
       </sc-for>
       <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
-      <span aria-hidden="true" style="margin: 0 0 -16px 4px; font-size: 15px; line-height: 20px; color: #6E6E73">Settings</span>
+      <span class="wf-label" aria-hidden="true" style="margin: 0 0 -16px 4px; font-size: 15px; line-height: 20px; color: #6E6E73">Chat settings</span>
       <!-- Chat settings: a drawer row like Connect data sources; opens in place to the Claude key and the invite links -->
       <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
         <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{ai.pill}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
@@ -463,6 +463,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
       </div>
+      <span class="wf-label" aria-hidden="true" style="margin: 0 0 -16px 4px; font-size: 15px; line-height: 20px; color: #6E6E73">Current data sources</span>
       <!-- Connect data sources: a drawer like Chat settings; Add data source on top, then the sources the app reads -->
       <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden">
         <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 17px; color: #545458">{{ds.count}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
@@ -475,12 +476,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
               <sc-for list="{{ds.items}}" as="d" hint-placeholder-count="7">
                 <!-- Rows: the name in bold, dividers edge to edge -->
-                <li style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+                  <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
                   <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
                   <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
                   <!-- Text styles: title (bold), description (grey), annotation (smaller, mid grey) -->
                   <!-- Annotation line: when it was last loaded (bold), then when it was added -->
                   <span class="wf-dot" style="margin-top: 2px; font-size: 15px; line-height: 20px; color: #6E6E73"><b style="display: {{d.loadedD}}; font-weight: 600">{{d.loaded}}<span style="font-weight: 400"> · </span></b><span style="white-space: nowrap">{{d.added}}</span></span>
+                  </span>
+                  <!-- Show or hide this source's data (asks first); the map and place names cannot be switched off -->
+                  <button type="button" role="switch" class="wf-tog" aria-checked="{{d.onStr}}" aria-label="{{d.name}}" aria-disabled="{{d.lockStr}}" onClick="{{d.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{d.swBg}}; opacity: {{d.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 2px; left: 2px; width: 38px; height: 21px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.14), 0 0 0 0.5px rgba(0,0,0,0.04); transform: translateX({{d.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
                 </li>
               </sc-for>
             </ul>
@@ -729,7 +734,7 @@ class Component extends DCLogic {
       pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
       pfInOp: pf ? 1 : 0, pfInY: pf ? '0px' : '-12px', pfInDelay: boot ? '0s' : pf ? '.15s' : '0s', pfXRot: s.pfSpin ? '90deg' : '0deg',
       cs: (() => { const o = !!s.chatSet, pt = lang === 'pt';
-        return { title: pt ? 'Conversas' : 'Chat settings', str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
+        return { title: pt ? 'Encenação e chave' : (window.__wfJA ? window.__wfJA('Chat role-play and key') : 'Chat role-play and key'), str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o, dsOpen: false }); } }; })(),   // one drawer open at a time
       // The data sources the app reads, with when this phone last loaded each (from the live-data cache)
@@ -740,17 +745,20 @@ class Component extends DCLogic {
           if (pt && m < 1) return 'Carregado agora';
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         const items = [
-          ['NASA FIRMS', T('Satellite heat detections (VIIRS) · Europe and the Americas', 'Deteções de calor por satélite (VIIRS) · Europa e Américas'), c.tSat, false, 26],
-          ['NIFC · WFIGS', T('Wildfire incidents · United States', 'Incêndios florestais · Estados Unidos'), c.tUS, false, 26],
-          ['Fogos.pt · ANEPC', T('Rural fire occurrences · Portugal', 'Ocorrências de incêndios rurais · Portugal'), c.tPT, false, 26],
-          ['INPE · Programa Queimadas', T('Fire events · Brazil', 'Eventos de fogo · Brasil'), c.tBR, false, 27],
-          ['BC Wildfire Service', T('Wildfires · British Columbia', 'Incêndios florestais · Colúmbia Britânica'), c.tCAN, false, 26],
+          ['NASA FIRMS', T('Satellite heat detections (VIIRS) · Europe and the Americas', 'Deteções de calor por satélite (VIIRS) · Europa e Américas'), c.tSat, false, 26, 'SAT'],
+          ['NIFC · WFIGS', T('Wildfire incidents · United States', 'Incêndios florestais · Estados Unidos'), c.tUS, false, 26, 'US'],
+          ['Fogos.pt · ANEPC', T('Rural fire occurrences · Portugal', 'Ocorrências de incêndios rurais · Portugal'), c.tPT, false, 26, 'PT'],
+          ['INPE · Programa Queimadas', T('Fire events · Brazil', 'Eventos de fogo · Brasil'), c.tBR, false, 27, 'BR'],
+          ['BC Wildfire Service', T('Wildfires · British Columbia', 'Incêndios florestais · Colúmbia Britânica'), c.tCAN, false, 26, 'CAN'],
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27],
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26]
-        ].map(([name, what, t, still, day]) => ({ name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
+        ].map(([name, what, t, still, day, key]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
+          return { name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
+          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfY || '#E5FF00') : 'rgba(120,120,128,0.24)', swX: on ? '22px' : '0px', swOp: lock ? 0.4 : 1,
+          toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
-            return lang === 'ja' ? (yr ? '2026年' : '') + '9月' + day + '日に追加' : pt ? 'Adicionada a ' + day + ' set' + yr : 'Added ' + day + ' Sep' + yr; })() }));
+            return lang === 'ja' ? (yr ? '2026年' : '') + '9月' + day + '日に追加' : pt ? 'Adicionada a ' + day + ' set' + yr : 'Added ' + day + ' Sep' + yr; })() }; });
         return { title: T('Connect data sources', 'Ligar fontes de dados'), count: String(items.length), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
@@ -762,7 +770,11 @@ class Component extends DCLogic {
       aic: (() => { const k = s.aiAsk || this._aiAskLast || 'off', open = !!s.aiAsk, A = window.__wfChat && window.__wfChat.ai, pt = lang === 'pt', ja = lang === 'ja';
         if (s.aiAsk) this._aiAskLast = s.aiAsk;
         const L = (en, p, j) => (ja ? j : pt ? p : en);
-        const txt = {
+        const nm = s.aiAskName || '', dsk = /^ds(on|off):/.test(k) ? k.replace(/^ds(on|off):/, '') : null, what = dsk === 'SAT' ? L('ignition candidates', 'candidatos a ignição', '発火候補') : L('fires', 'incêndios', '火災');
+        const dsT = dsk ? (/^dsoff/.test(k)
+          ? [L('Turn off ' + nm + '?', 'Desligar ' + nm + '?', nm + 'をオフにしますか?'), L('Its ' + what + ' are hidden from the map and the lists.', 'Os ' + what + ' desta fonte deixam de aparecer no mapa e nas listas.', 'この' + what + 'は地図とリストに表示されなくなります。'), L('Nothing is deleted: turn it on again to see them.', 'Nada é apagado: volte a ligar para os ver.', '削除はされません。再びオンにすると表示されます。'), L('Turn off', 'Desligar', 'オフにする')]
+          : [L('Turn on ' + nm + '?', 'Ligar ' + nm + '?', nm + 'をオンにしますか?'), L('Its ' + what + ' show again on the map and in the lists.', 'Os ' + what + ' desta fonte voltam a aparecer no mapa e nas listas.', 'この' + what + 'が再び地図とリストに表示されます。'), '', L('Turn on', 'Ligar', 'オンにする')]) : null;
+        const txt = dsT || {
           on: [L('Turn on role-play?', 'Ligar a encenação?', 'ロールプレイをオンにしますか?'),
             L('Claude will write the crew coordinators\u2019 replies in the incident chats.', 'O Claude vai escrever as respostas dos coordenadores nas conversas dos incidentes.', 'インシデントチャットの隊指揮者の返信をClaudeが書きます。'),
             L('Calls are billed to your Anthropic account.', 'As chamadas são cobradas na sua conta Anthropic.', '料金はお客様のAnthropicアカウントに請求されます。'),
@@ -782,8 +794,9 @@ class Component extends DCLogic {
         const close = () => this.setState({ aiAsk: null });
         return { title: txt[0], body: txt[1], note: txt[2] || '', noteD: txt[2] ? 'block' : 'none', ok: txt[3], cancel: L('Cancel', 'Cancelar', 'キャンセル'), hidden: open ? 'false' : 'true', pe: open ? 'auto' : 'none', op: open ? 1 : 0,
           y: open ? '0%' : '105%', dur: open ? '.5s' : '.4s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', close,
-          hap: (k === 'on' || k === 'off') ? 'late' : 'now',   // turning role-play on/off: the vibration comes when the toggle lands
-          confirm: () => { const kk = s.aiAsk; if (kk !== 'on' && kk !== 'off') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} } close();
+          hap: (k === 'on' || k === 'off' || /^ds/.test(k)) ? 'late' : 'now',   // turning role-play on/off: the vibration comes when the toggle lands
+          confirm: () => { const kk = s.aiAsk; if (kk !== 'on' && kk !== 'off' && !/^ds/.test(kk || '')) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} } close();
+            if (/^ds(on|off):/.test(kk || '')) { if (window.__wfDS) window.__wfDS.set(kk.replace(/^ds(on|off):/, ''), /^dson/.test(kk)); this.forceUpdate(); return; }
             if (!A) return; if (kk === 'rep') { const d = (s.aiDraft || '').trim(); if (d) { this.setState({ aiBusy: true, aiDraft: '', aiRep: false }); A.set(d, () => this.setState({ aiBusy: false })); } else { this.setState({ aiRep: true }); setTimeout(() => { try { document.getElementById('wf-ai-key-in').focus(); } catch (e) {} }, 450); } return; }
             if (kk === 'rm') { A.set(''); this.setState({ aiDraft: '', aiRep: false }); } else { A.setOn(kk === 'on'); this.forceUpdate(); } } }; })(),
       ai: (() => { const A = window.__wfChat && window.__wfChat.ai, has = !!(A && A.key()), st = A ? A.status() : null, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
