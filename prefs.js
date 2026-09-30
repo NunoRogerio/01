@@ -206,9 +206,11 @@
   var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1] };
   function uniform(r, name) { var k = KITS[r]; return k && window.__wfAvatar ? window.__wfAvatar(name, k[0], !!k[1]) : ''; }
   var who = PEOPLE[role] || null;
+  // A profile created on this phone (login screen, New profile) signs in with its area's role and shows as itself
+  var cu = null; try { var cid = localStorage.getItem('wf-custom'); if (cid) cu = (JSON.parse(localStorage.getItem('wf-custom-profiles') || '[]') || []).find(function (x) { return x && x.id === cid && x.base === role; }) || null; } catch (e) {}
   window.__wfPrefs = {
     role: role,
-    person: who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'All features. ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
+    person: cu ? { id: role, code: cu.code, name: cu.name, title: cu.title || '', org: cu.org || '', access: 'All features. ' + (who ? who[4] : 'All regions'), photo: cu.photo || '', lang: who ? who[6] : 'en', custom: true } : who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'All features. ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) {
       // Applied at once, like the language: no animation on the text size (the switcher's yellow has already landed)

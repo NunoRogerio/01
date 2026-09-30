@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=73"></script>
 <script src="avatar.js?v=8"></script>
-<script src="i18n.js?v=86"></script>
+<script src="i18n.js?v=87"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -118,6 +118,66 @@ a{color:#0062CC}a:hover{color:#004FA3}
           <span style="display: block; padding-left: 56px; font-size: 17px; line-height: 22px; color: #000000">{{p.sum}}</span>
         </button>
       </sc-for>
+      <!-- Last in the list: create a profile of your own (kept on this phone) -->
+      <button type="button" class="opt" onClick="{{cp.open}}" aria-label="New profile" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
+        <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>
+        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+          <span style="font-size: 17px; font-weight: 600; line-height: 24px">New profile</span>
+          <span style="font-size: 15px; line-height: 19px; color: #545458">Name, role, area and photo.</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- New profile: photo (camera, library or one of the team's), the profile's texts with an offer to polish each one, and its area -->
+  <div role="dialog" aria-modal="true" aria-labelledby="cpTitle" aria-hidden="{{cp.hidden}}" style="position: absolute; inset: 0 0 -80px 0; z-index: 30; display: flex; flex-direction: column; padding: 64px 0 0; background: #F2F2F7; transform: translateY({{cp.y}}); visibility: {{cp.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{cp.visDelay}}">
+    <div style="display: flex; align-items: flex-start; gap: 24px; padding: 12px 16px 8px">
+      <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+        <h2 id="cpTitle" style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">New profile</h2>
+        <span style="font-size: 17px; line-height: 22px; color: #000000">Kept on this phone.</span>
+      </span>
+      <button type="button" onClick="{{cp.close}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; transform: rotate({{cp.xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 120px">
+      <!-- Photo: the round portrait, a button that opens the phone's camera or photo library, and the team's photos to pick from -->
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 16px">
+        <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 112px; height: 112px; border-radius: 50%; background: #E5E5EA; color: #3A3A3C; font-size: 34px; font-weight: 600; overflow: hidden">{{cp.code}}<span style="position: absolute; inset: 0; background-image: {{cp.photoBg}}; background-size: cover; background-position: center"></span></span>
+        <label class="opt" style="position: relative; display: flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font-size: 17px; font-weight: 600; cursor: pointer; overflow: hidden">{{cp.photoLbl}}<input type="file" accept="image/*" onChange="{{cp.onFile}}" aria-label="{{cp.photoLbl}}" style="position: absolute; inset: 0; opacity: 0; cursor: pointer"></label>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="margin: 0 4px; font-size: 15px; line-height: 20px; color: #545458">Or pick one</span>
+        <div role="listbox" aria-label="Photos" style="display: flex; gap: 12px; margin: 0 -16px; padding: 4px 16px 8px; overflow-x: auto; scrollbar-width: none">
+          <sc-for list="{{cp.faces}}" as="f" hint-placeholder-count="8">
+            <button type="button" role="option" aria-selected="{{f.sel}}" aria-label="{{f.aria}}" onClick="{{f.pick}}" style="flex: 0 0 60px; width: 60px; height: 60px; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA url('{{f.url}}') center / cover; box-shadow: {{f.ring}}; cursor: pointer"></button>
+          </sc-for>
+        </div>
+      </div>
+      <!-- The texts: write the idea, and on Enter (or leaving the field) the app offers to polish it -->
+      <div style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF">
+        <sc-for list="{{cp.fields}}" as="f" hint-placeholder-count="4">
+          <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-top: {{f.sep}}">
+            <span style="font-size: 15px; line-height: 20px; color: #545458">{{f.label}}</span>
+            <sc-if value="{{f.line}}" hint-placeholder-val="{{ true }}"><input type="text" value="{{f.v}}" onInput="{{f.onInput}}" onKeyDown="{{f.onKey}}" onBlur="{{f.onBlur}}" placeholder="{{f.ph}}" enterkeyhint="done" autocomplete="off" aria-label="{{f.label}}" style="min-width: 0; height: 30px; padding: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></sc-if>
+            <sc-if value="{{f.area}}" hint-placeholder-val="{{ false }}"><textarea rows="4" onInput="{{f.onInput}}" onKeyDown="{{f.onKey}}" onBlur="{{f.onBlur}}" placeholder="{{f.ph}}" enterkeyhint="done" aria-label="{{f.label}}" value="{{f.v}}" style="min-width: 0; padding: 4px 0 0; border: 0; outline: 0; background: transparent; resize: none; font: inherit; font-size: 17px; line-height: 22px; color: #000000"></textarea></sc-if>
+            <!-- The offer: polish this text? Yes rewrites it (Claude with a key saved in Chat settings, else a tidy of spelling and punctuation); Undo brings yours back -->
+            <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 12px; border-radius: 12px; background: rgba(var(--wf-y-rgb), 0.16)">
+              <span style="flex-grow: 1; min-width: 0; font-size: 15px; line-height: 20px; color: #1C1C1E">{{f.askTxt}}</span>
+              <button type="button" onClick="{{f.no}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.14); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.noLbl}}</button>
+              <button type="button" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
+            </div>
+          </div>
+        </sc-for>
+        <label style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.14)">
+          <span style="font-size: 15px; line-height: 20px; color: #545458">Area</span>
+          <select onChange="{{cp.onArea}}" aria-label="Area" style="height: 30px; padding: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000; -webkit-appearance: none; appearance: none">
+            <sc-for list="{{cp.areas}}" as="a" hint-placeholder-count="5"><option value="{{a.v}}" selected="{{a.sel}}">{{a.label}}</option></sc-for>
+          </select>
+        </label>
+      </div>
+      <button type="button" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">Create profile</button>
+      <p style="margin: -8px 4px 0; font-size: 15px; line-height: 20px; color: #545458">{{cp.note}}</p>
     </div>
   </div>
 </div>
@@ -246,6 +306,64 @@ class Component extends DCLogic {
       if (!u) first(); else { const im = new Image(); im.src = u[1]; (im.decode ? im.decode() : Promise.reject()).then(first, () => { im.complete ? first() : (im.onload = im.onerror = first); }); }
     } else if (this._bgReady) apply();
   }
+  customs() { try { return (JSON.parse(window.localStorage.getItem('wf-custom-profiles') || '[]') || []).filter((c) => c && c.id && c.name); } catch (e) { return []; } }
+  // Polishing a text: Claude rewrites it when an Anthropic key is saved on this phone (Chat settings); otherwise a tidy
+  // of spaces, capitals and punctuation. Either way the result keeps the language it was written in.
+  polish(k, text, done) {
+    const tidy = (t) => { let x = String(t).replace(/\s+/g, ' ').trim().replace(/\s+([,.;:!?])/g, '$1').replace(/([,;:!?])(?=[^\s\d])/g, '$1 ').replace(/\s*·\s*/g, '. ').replace(/\.{2,}/g, '.');
+      x = x.charAt(0).toUpperCase() + x.slice(1); x = x.replace(/([.!?]\s+)(\p{Ll})/gu, (m, a, b) => a + b.toUpperCase());
+      if (k === 'sum' && x && !/[.!?]$/.test(x)) x += '.'; if (k !== 'sum') x = x.replace(/\.$/, ''); return x; };
+    let key = ''; try { if (window.localStorage.getItem('wf-ai-off') !== '1') key = window.localStorage.getItem('wf-ai-key') || ''; } catch (e) {}
+    if (!key) { done(tidy(text), false); return; }
+    const what = { title: 'a job title', org: 'an organisation name with its unit or city', sum: 'a two or three sentence description of what this person does in wildfire command' }[k] || 'a short profile text';
+    const sys = 'You polish short texts for user profiles in a wildfire command app. The text is ' + what + '. Keep its meaning and facts, fix spelling and grammar and make it clear, concise and professional. Keep the language it is written in (European Portuguese stays European Portuguese). Sentence case, no middle dots, no quotes, no emoji. Reply with the improved text only.';
+    const models = ['claude-sonnet-5', 'claude-haiku-4-5-20251001'];
+    const call = (mi) => fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: models[mi], max_tokens: 400, system: sys, messages: [{ role: 'user', content: String(text) }] }) })
+      .then((r) => r.json().then((j) => ({ ok: r.ok, j }), () => ({ ok: r.ok, j: {} })))
+      .then((x) => { if (!x.ok) { if (mi + 1 < models.length) return call(mi + 1); throw new Error('ai'); } const t = (x.j.content || []).map((b) => b.text || '').join('').trim().replace(/^["“]|["”]$/g, ''); done(t || tidy(text), !!t); })
+      .catch(() => done(tidy(text), false));
+    call(0);
+  }
+  cpVals(AREAS) {
+    const s = this.state || {}, on = !!s.cpOpen, F = s.cpF || {}, PT = window.__wfLang === 'pt', L = (en, pt) => (PT ? pt : en);
+    const set = (patch) => this.setState({ cpF: Object.assign({}, (this.state || {}).cpF || {}, patch) });
+    const ini = (n) => String(n || '').trim().split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+    const FACES = ['pt-m1', 'pt-f1', 'pt-m2', 'pt-f2', 'pt-m3', 'pt-f3', 'pt-m4', 'pt-f4', 'us-m1', 'us-f1', 'us-m2', 'us-f2', 'us-m3', 'us-f3', 'us-m4', 'us-f4'].map((k) => 'assets/faces/' + k + '.jpg');
+    const fileIn = (e) => { const f = e && e.target && e.target.files && e.target.files[0]; if (!f) return; const rd = new FileReader();
+      rd.onload = () => { const im = new Image(); im.onload = () => { try { const n = 320, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'), m = Math.min(im.width, im.height);
+        g.drawImage(im, (im.width - m) / 2, (im.height - m) / 2, m, m, 0, 0, n, n); set({ photo: c.toDataURL('image/jpeg', 0.85) }); } catch (x) {} }; im.src = rd.result; };   // a square from the middle, 320 px, small enough to keep on the phone
+      rd.readAsDataURL(f); try { e.target.value = ''; } catch (x) {} };
+    const ask = s.cpAsk || null, busy = s.cpBusy || null, undo = s.cpUndo || null;
+    const offer = (k) => { const v = String(((this.state || {}).cpF || {})[k] || '').trim(); const seen = (this.state || {}).cpSeen || {}; if (v.length < 3 || seen[k] === v) return; this.setState({ cpAsk: k, cpUndo: null }); };
+    const defs = [['name', L('Name', 'Nome'), L('First and last name', 'Nome e apelido'), false], ['title', L('Role', 'Função'), L('e.g. district operations commander', 'ex.: comandante de operações distrital'), true], ['org', L('Organisation', 'Organização'), L('e.g. ANEPC, Coimbra', 'ex.: ANEPC, Coimbra'), true], ['sum', L('About', 'Sobre'), L('What you do, in a sentence or two', 'O que faz, numa ou duas frases'), true]];
+    const fields = defs.map(([k, label, ph, ai], i) => {
+      const a = ai && ask === k, b = busy === k, u = undo && undo.k === k;
+      return { label, ph, v: F[k] || '', line: k !== 'sum', area: k === 'sum', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+        onInput: (e) => { set({ [k]: e.target.value }); if ((this.state || {}).cpAsk === k || ((this.state || {}).cpUndo || {}).k === k) this.setState({ cpAsk: null, cpUndo: null }); },
+        onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); if (ai) offer(k); try { e.target.blur(); } catch (x) {} } },
+        onBlur: () => { if (ai) offer(k); },
+        askD: a || b || u ? 'flex' : 'none', btnD: b ? 'none' : 'inline-flex',
+        askTxt: b ? L('Improving…', 'A melhorar…') : u ? (undo.ai ? L('Rewritten by Claude.', 'Reescrito pelo Claude.') : L('Spelling and punctuation tidied.', 'Ortografia e pontuação revistas.')) : L('Improve this text?', 'Melhorar este texto?'),
+        noLbl: u ? L('Undo', 'Desfazer') : L('No', 'Não'), yesLbl: u ? L('OK', 'OK') : L('Yes', 'Sim'),
+        no: () => { const st = this.state || {}; if (u) { set({ [k]: undo.prev }); this.setState({ cpUndo: null, cpSeen: Object.assign({}, st.cpSeen, { [k]: undo.prev.trim() }) }); } else this.setState({ cpAsk: null, cpSeen: Object.assign({}, st.cpSeen, { [k]: String(F[k] || '').trim() }) }); },
+        yes: () => { if (u) { this.setState({ cpUndo: null }); return; } const prev = String(F[k] || ''); this.setState({ cpAsk: null, cpBusy: k });
+          this.polish(k, prev, (t, byAi) => { const st = this.state || {}; set({ [k]: t }); this.setState({ cpBusy: null, cpUndo: { k, prev, ai: byAi }, cpSeen: Object.assign({}, st.cpSeen, { [k]: t.trim() }) }); }); } };
+    });
+    const base = F.base || 'pt', ok = String(F.name || '').trim().length > 1;
+    const create = () => { if (!ok) return; const id = 'u' + Date.now().toString(36), name = String(F.name).trim();
+      const rec = { id, base, name, code: ini(name), user: name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]+/g, '.').replace(/^\.|\.$/g, ''), title: String(F.title || '').trim(), org: String(F.org || '').trim(), sum: String(F.sum || '').trim(), photo: F.photo || '' };
+      try { const all = this.customs(); all.push(rec); window.localStorage.setItem('wf-custom-profiles', JSON.stringify(all)); } catch (e) {}
+      try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+      this.setState({ cpOpen: false, cpF: {}, cpAsk: null, cpUndo: null, cpSeen: {}, sel: id }); this.closePanel(); };
+    return { hidden: on ? 'false' : 'true', y: on ? '0%' : '105%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', xRot: '0deg',
+      open: () => this.setState({ cpOpen: true }), close: () => this.setState({ cpOpen: false }),
+      code: F.photo ? '' : ini(F.name), photoBg: F.photo ? 'url("' + F.photo + '")' : 'none', photoLbl: F.photo ? L('Change photo', 'Mudar fotografia') : L('Take or choose a photo', 'Tirar ou escolher fotografia'), onFile: fileIn,
+      faces: FACES.map((u, i) => ({ url: u, sel: String(F.photo === u), aria: L('Photo ', 'Fotografia ') + (i + 1), ring: F.photo === u ? '0 0 0 3px #F2F2F7, 0 0 0 5px #1C1C1E' : 'none', pick: () => set({ photo: u }) })),
+      fields, areas: Object.keys(AREAS).map((k) => ({ v: k, label: AREAS[k][0], sel: base === k })), onArea: (e) => set({ base: e.target.value }),
+      create, offStr: ok ? 'false' : 'true', btnOp: ok ? 1 : 0.4,
+      note: L('Your name is enough to start. The area sets what the profile sees. With a Claude key in Chat settings, texts are rewritten by Claude; without one, spelling and punctuation are tidied.', 'Basta o nome para começar. A área define o que o perfil vê. Com uma chave do Claude nas definições das conversas, os textos são reescritos pelo Claude; sem ela, revê-se a ortografia e a pontuação.') };
+  }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
   renderVals() {
     const s = this.state || {};
@@ -269,6 +387,8 @@ class Component extends DCLogic {
       ['admin', 'NR', 'nuno.rogerio', 'Nuno Rogerio', 'Platform administrator', 'Forest Fire Watch', 'All countries and regions',
         'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.', 'assets/faces/pt-m2.jpg']
     ];
+    const CU = this.customs(), AREAS = { pt: ['Portugal', '20 districts', 'Portugal only', 'Portugal region only', 'PT'], ca: ['California', '58 counties', 'California only', 'California region only', 'US'], nv: ['Nevada', '17 counties', 'Nevada only', 'Nevada region only', 'US'], amz: ['Amazônia Legal', '9 states', 'Amazônia Legal only', 'Amazônia Legal region only', 'BR'], admin: ['All regions', 'All countries and regions', 'all countries and regions', 'All regions', ''] };
+    CU.forEach((c) => P.push([c.id, c.code, c.user, c.name, c.title || '', c.org || '', AREAS[c.base] ? AREAS[c.base][1] : 'All countries and regions', c.sum || '', c.photo || '', c.base]));   // after the demo profiles
     // Each demo profile in their own service's uniform (illustrated portraits, avatar.js)
     const KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1] };
     const uni = (id, name) => (KITS[id] && window.__wfAvatar ? window.__wfAvatar(name, KITS[id][0], !!KITS[id][1]) : '');
@@ -293,18 +413,19 @@ class Component extends DCLogic {
       userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#545458', userFs: sel ? '17px' : '19px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
       pwBlur: (e) => { if (!sel) { try { e.target.blur(); } catch (x) {} } },
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
-      hint: sel ? sel[3] + ' · ' + sel[4] + '. ' + sel[7] + ' Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[0]] + '.' : 'Tap Username to choose a demo profile.',
+      hint: sel ? sel[3] + (sel[4] ? ' · ' + sel[4] : '') + '. ' + (sel[7] ? sel[7] + ' ' : '') + 'Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[9] || sel[0]] + '.' : 'Tap Username to choose a demo profile.',
       selPhoto: sel ? 'url("' + (uni(sel[0], sel[3]) || sel[8]) + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
-      selAccess: sel ? 'All features. ' + ({ design: 'All regions', admin: 'All regions', pt: 'Portugal region only', ca: 'California region only', nv: 'Nevada region only', amz: 'Amazônia Legal region only' })[sel[0]] : '',   // mini card: organisation, then access on a row of its own
+      selAccess: sel ? 'All features. ' + ({ design: 'All regions', admin: 'All regions', pt: 'Portugal region only', ca: 'California region only', nv: 'Nevada region only', amz: 'Amazônia Legal region only' })[sel[9] || sel[0]] : '',   // mini card: organisation, then access on a row of its own
       goD: sel ? 'flex' : 'none', offD: sel ? 'none' : 'flex',
-      profiles: P.map(([id, code, user, name, role, org, area, sum, photo0], i) => { const photo = uni(id, name) || photo0; return ({
+      profiles: P.map(([id, code, user, name, role, org, area, sum, photo0, base], i) => { const photo = uni(id, name) || photo0; const cc = ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', design: 'PT', admin: 'PT' })[base || id]; return ({
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), feats: ({})[id] || 'All features enabled', sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
         badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
-        tick: selId === id ? 1 : 0, selD: selId === id ? 'block' : 'none', orgCc: org + (({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', design: 'PT', admin: 'PT' })[id] ? ' · ' + ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', design: 'PT', admin: 'PT' })[id] : ''), selStr: selId === id ? 'true' : 'false', ring: selId === id ? '#0062CC' : 'transparent',
+        tick: selId === id ? 1 : 0, selD: selId === id ? 'block' : 'none', orgCc: (org || '') + (cc && !base ? ' · ' + cc : ''), selStr: selId === id ? 'true' : 'false', ring: selId === id ? '#0062CC' : 'transparent',
         aria: name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (selId === id ? ' Selected' : ''),
         pick: () => { this.setState({ sel: id }); this.closePanel(); }
       }); }),
+      cp: this.cpVals(AREAS),
       lvOp: 1, lvY: '0px',   // on log in nothing moves underneath: the loading screen fades in over it, logo in exactly the same place
       // Sign in: the form drifts up and fades as the loading screen (black-and-white forest, logo) fades in over it;
       // the app then opens on that same frame and the colour wave carries on.
@@ -326,9 +447,9 @@ class Component extends DCLogic {
             if (u) window.__wfSoftPhoto = { f: u[1], s: m ? parseFloat(m[1]) : 1, t: Date.now() }; } } catch (x) {}
         try { if (window.__wfSoftOut) window.__wfSoftOut(); } catch (x) {}   // the loading screen takes over right here, then carries on in the app
         setTimeout(() => { window.location.href = 'Main.dc.html'; }, 560);   // once the loading screen has faded in (0.5 s)
-        if (window.__wfSetY) window.__wfSetY(sel[0]);   // the signed-in profile's hi-vis colour, from the loading screen on
-        try { window.localStorage.setItem('wf-role', sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
-        window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[0], scope: null });
+        if (window.__wfSetY) window.__wfSetY(sel[9] || sel[0]);   // the signed-in profile's hi-vis colour, from the loading screen on
+        try { window.localStorage.setItem('wf-role', sel[9] || sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); if (sel[9]) window.localStorage.setItem('wf-custom', sel[0]); else window.localStorage.removeItem('wf-custom'); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
+        window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[9] || sel[0], scope: null });
       }
     };
   }
