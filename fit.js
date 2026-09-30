@@ -310,7 +310,7 @@ window.__wfBlink=function(path,dur){
       // The wave spreads steadily with time over the loading time; the counter reads its progress, so both stay in step.
       // While live data is still coming it glides to a stop short of the edges, then carries on; every change of pace
       // is smoothed over about a quarter of a second, so it never stutters.
-      var t1=performance.now(),dur=Math.max(minMs-(Date.now()-t0),2000),last=t1;
+      var t1=performance.now(),dur=Math.max(minMs-(Date.now()-t0),2000)*1.15,   /* 15% slower wave */ last=t1;
       wave={p:0,done:false};var END=1.1;   // the count runs on to 110% (shown as 100%): the colour covers the whole screen only at 110, so it never ends before the count
       (function step(now){
         if(!el.parentNode)return;
