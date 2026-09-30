@@ -293,3 +293,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Chat list rows:** "Chat Torrance" / "Conversa Torrance" (the word regular, the place bold); open chats end with a bold line in the annotation size, 6px apart: "5 unread messages." or "All messages read.".
 - **Area picker:** the back is the round grey 44px button, 16px from the screen edge and 8px from the area name; every row below aligns with that name (68px); numbers 32px from the right edge, the two columns 12px apart.
 - **Preferences panel:** closes with the round X at top right (as notifications and chats), where the profile picture sat; the picture (96px circle) sits centred above the name in the profile card, 16px above it.
+- **Timelines (stage lists):** each stage is its own row: 20px above and below, full-width divider between rows, 12px between the stage line and its bar.
