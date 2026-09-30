@@ -95,22 +95,24 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <button type="button" class="chbtn" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer">{{tm.n}}</button>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
-      <button type="button" class="chrow" onClick="{{openSheet}}" aria-haspopup="dialog" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
-        <span style="display: flex; align-items: center; gap: 12px; width: 100%">
-          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: {{c.ic.circ}}; transition: background-color .6s ease"><svg width="26" height="26" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="{{c.ic.sw}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+      <button type="button" class="chrow" onClick="{{c.tog}}" aria-expanded="{{c.expStr}}" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
+        <span style="display: flex; align-items: flex-start; gap: 12px; width: 100%">
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; margin-top: 7px; border-radius: 50%; background: {{c.ic.circ}}; transition: background-color .6s ease"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="{{c.ic.sw}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 17px; font-weight: 600; line-height: 24px; color: {{c.stC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
             <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.summary}}</span>
           </span>
-          <span style="display: flex; align-items: center; gap: 2px; flex-shrink: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #3C3C43">{{t.details}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0; color: #3C3C43"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate({{c.chevRot}}); transition: transform .4s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
         </span>
         <span aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; width: 100%">
           <sc-for list="{{c.bar}}" as="b" hint-placeholder-count="8"><span style="height: 2px; border-radius: 999px; background: {{b.c}}; transition: background-color .4s ease"></span></sc-for>
         </span>
-        <span style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%">
+        <span style="display: grid; grid-template-rows: {{c.tmRows}}; width: 100%; margin-top: {{c.tmMt}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), margin-top .4s cubic-bezier(.2,.8,.2,1)"><span style="min-height: 0; overflow: hidden">
+        <span style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; padding-bottom: {{c.tmPb}}">
           <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblL}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.inStage}}</span></span>
           <span style="display: flex; flex-direction: column; gap: 2px; text-align: right"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblR}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.elapsed}}</span></span>
         </span>
+        </span></span>
       </button>
     </div>
 
@@ -146,10 +148,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
           <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden">
             <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 12px; padding: 12px 16px">
-              <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="20" height="20" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+              <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
               <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-                <span style="font-size: 15px; line-height: 20px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
-                <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{m.title}}</span>
+                <span style="margin-bottom: 8px; font-size: 17px; font-weight: 700; line-height: 22px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
+                <span style="font-size: 17px; font-weight: 400; line-height: 22px">{{m.title}}</span>
                 <span style="display: {{m.bodyD}}; font-size: 17px; line-height: 22px; color: #000000">{{m.body}}</span>
               </div>
               <sc-if value="{{m.hasKpi}}" hint-placeholder-val="{{ false }}">
@@ -162,7 +164,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{m.hasRows}}" hint-placeholder-val="{{ false }}">
               <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.12)">
                 <sc-for list="{{m.rows}}" as="r" hint-placeholder-count="3">
-                  <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2px 8px; align-items: center; padding: 8px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="font-size: 15px; line-height: 20px; color: {{r.rc}}; text-align: right">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 15px; line-height: 20px; color: #545458">{{r.b}}</span></li>
+                  <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2px 8px; align-items: center; padding: 8px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="justify-self: end; align-self: start; padding: 2px 10px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.rc}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 15px; line-height: 20px; color: #545458">{{r.b}}</span></li>
                 </sc-for>
               </ul>
             </sc-if>
@@ -618,7 +620,7 @@ class Component extends DCLogic {
         items.push({ isCard: true, time, tag: T(m.tag), tagC: I ? I.c : DK && m.tagC ? lite(m.tagC, 0.45) : (m.tagC || '#545458'), title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
-          hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: r.rc, crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
+          hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           hasLink: !!m.link || toSheet, link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : inc.href,
@@ -656,6 +658,7 @@ class Component extends DCLogic {
       goProj: () => { const v = { id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, place: c.place, note: c.note || c.reg || '', x: c.x, y: c.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { proj: v }); try { sessionStorage.setItem('wf-proj', JSON.stringify(v)); } catch (e) {} },
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
+        ...(() => { const ex = !!s.stEx; return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-12px', tmPb: '0', tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: !ex }); } }; })(),
         elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,
         pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
