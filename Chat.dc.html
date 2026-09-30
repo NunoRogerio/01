@@ -18,7 +18,7 @@
 <script src="prefs.js?v=96"></script>
 <script src="i18n.js?v=91"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=26"></script>
+<script src="chat.js?v=27"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -97,7 +97,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <button type="button" class="chrow" onClick="{{openSheet}}" aria-haspopup="dialog" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
         <span style="display: flex; align-items: center; gap: 12px; width: 100%">
-          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: {{c.stC}}; transition: background-color .6s ease"><svg width="26" height="26" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="#FFFFFF" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: {{c.ic.circ}}; transition: background-color .6s ease"><svg width="26" height="26" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="{{c.ic.sw}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 17px; font-weight: 600; line-height: 24px; color: {{c.stC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
             <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.summary}}</span>
@@ -484,7 +484,8 @@ class Component extends DCLogic {
     const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
     const lite = (h, k) => { const c = rgb(h); return 'rgb(' + c.map((v) => Math.round(v + (255 - v) * k)).join(',') + ')'; };
     const tone = (S) => DK ? { c: lite(S.c, 0.45), bg: 'rgba(' + rgb(S.c).join(',') + ',0.28)' } : { c: S.c, bg: S.bg };
-    const iconFor = (S) => { const k = tone(S); return { d: C.ICON[S.icon], c: k.c, bg: k.bg, fill: S.icon === 'cand' ? k.c : 'none', fillW: S.icon === 'cand' ? '#FFFFFF' : 'none' }; };
+    const iconFor = (S) => { const k = tone(S), Y = window.__wfY || '#E5FF00'; if (S.icon === 'cand') return { d: C.ICON.cand, c: DK ? '#E8E8ED' : '#3A3A3C', bg: DK ? 'rgba(118,118,128,0.28)' : '#ECECEF', fill: Y, fillW: Y, sw: '#3A3A3C', circ: DK ? 'rgba(118,118,128,0.28)' : '#FFFFFF' };   /* the candidate as on the map: hi-vis triangle, dark outline */
+      return { d: C.ICON[S.icon], c: k.c, bg: k.bg, fill: 'none', fillW: 'none', sw: '#FFFFFF', circ: k.c }; };
     const ago = (tm) => { const m = Math.round((Date.now() - tm) / 60000); if (m < 1) return L('now', 'agora'); if (m < 60) return L(m + ' min ago', 'há ' + m + ' min'); const d = new Date(tm), n = new Date(); return d.toDateString() === n.toDateString() ? C.hhmm(tm) : d.toLocaleDateString(L('en-GB', 'pt-PT'), { day: 'numeric', month: 'short' }); };
     const dayTxt = (tm) => new Date(tm).toLocaleDateString(L('en-GB', 'pt-PT'), { weekday: 'short', day: 'numeric', month: 'short' });
     const whenTxt = (tm) => dayTxt(tm) + ', ' + C.hhmm(tm);
@@ -649,7 +650,7 @@ class Component extends DCLogic {
         const toSheet = !!m.fire && !c.closed;
         items.push({ isCard: true, time, tag: T(m.tag), tagC: I ? I.c : DK && m.tagC ? lite(m.tagC, 0.45) : (m.tagC || '#545458'), title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
-          hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (/%$/.test(m.kpi.v) ? (window.__wfY || '#E5FF00') : m.kpi.c) : '#000000', kpiCls: m.kpi && /%$/.test(m.kpi.v) ? 'wf-like' : '', kpiFs: m.kpi && /%$/.test(m.kpi.v) ? '60px' : '30px', kpiLh: m.kpi && /%$/.test(m.kpi.v) ? '64px' : '32px', kpiWrap: m.kpi && /%$/.test(m.kpi.v) ? 'wrap' : 'nowrap', kpiBasis: m.kpi && /%$/.test(m.kpi.v) ? '100%' : 'auto', kpiPad: m.kpi && /%$/.test(m.kpi.v) ? '8px 0 4px' : '0',
+          hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: r.rc, crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
