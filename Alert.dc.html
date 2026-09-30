@@ -167,7 +167,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: {{rootBg}}; transition: background-color .6s ease; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <sc-if value="{{mapLayer}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" close-x="true" mode="pin" no-view="true" no-routes="true" st-names="true" cams="{{noCams}}" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
+      <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-bg-tap="{{bgTap}}" close-x="true" mode="pin" no-view="true" no-routes="true" st-names="true" cams="{{noCams}}" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
 
@@ -253,8 +253,20 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div class="wf-page {{mo.pageCls}}" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
       <!-- The map band: only this candidate, framed on it; a tap or the button opens it full screen -->
       <div style="position: relative; flex-shrink: 0; height: 234px; overflow: hidden">
-        <dc-import name="TerrainMap" on-full="{{openMap}}" mode="pin" no-view="true" fire-only="true" loader="true" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" hint-size="390px,234px"></dc-import>
+        <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-full="{{openMap}}" mode="pin" no-view="true" fire-only="true" loader="true" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" hint-size="390px,234px"></dc-import>
       </div>
+
+      <!-- Location, right under the map: where it is and the GPS with its copy button (the drone is the lime button on the map) -->
+      <section aria-label="Location" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px">
+        <span style="margin: 0 4px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Location</span>
+        <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+          <div style="display: {{locD}}; padding: 12px 16px; font-size: 17px; line-height: 22px; color: #000000">{{locPlace}}</div>
+          <div style="display: {{gpsD}}; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: {{ig.gpsBd}}">
+            <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{copyRows}}; opacity: {{copyOp}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; margin-top: 2px; font-size: 15px; line-height: 20px; color: #1E7A34">{{copyTxt}}</span></span></span>
+            <button type="button" class="mbtn" onClick="{{copyGps}}" aria-label="{{copyAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: {{copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{copyIc}}"></path></svg></button>
+          </div>
+        </div>
+      </section>
 
       <!-- Key figures: cards three per row, reorderable (press, hold, move), a vertical note when a figure is estimated or simulated -->
       <section aria-label="Key figures" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px">
@@ -367,20 +379,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </ul>
       </section>
 
-      <!-- Location: where it is, the GPS with its copy button, and the drone -->
-      <section aria-label="Location" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px">
-        <span style="margin: 0 4px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Location</span>
-        <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
-          <div style="display: {{locD}}; padding: 12px 16px; font-size: 17px; line-height: 22px; color: #000000">{{locPlace}}</div>
-          <div style="display: {{gpsD}}; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: {{ig.gpsBd}}">
-            <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{copyRows}}; opacity: {{copyOp}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; margin-top: 2px; font-size: 15px; line-height: 20px; color: #1E7A34">{{copyTxt}}</span></span></span>
-            <button type="button" class="mbtn" onClick="{{copyGps}}" aria-label="{{copyAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: {{copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{copyIc}}"></path></svg></button>
-          </div>
-          <div style="padding: 12px 16px 16px; border-top: 1px solid rgba(60,60,67,0.12)">
-            <a href="Drone.dc.html" class="btn wf-ter" onPointerDown="{{verifyCur}}" onClick="{{verifyCur}}" style="display: flex; align-items: center; justify-content: center; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">Send drone</a>
-          </div>
-        </div>
-      </section>
     </div>
 
     <!-- The action fixed at the foot: Team chat (primary). Back sits before the title; Confirm and Dismiss open from the status tag -->
@@ -1049,7 +1047,7 @@ class Component extends DCLogic {
       chat: (() => { const C = window.__wfChat, raw = SC.cands[ci]; if (!C || !raw) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: '', btnD: 'none' };
         const inc = C.incCand(raw), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
         return { badgeD: u ? 'block' : 'none', n: C.badge ? C.badge(u) : String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), label: 'Team chat', btnD: 'block' }; })(),
-      hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
+      hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), goDrone: () => { this.wfSetVerify(cur.id); try { window.location.href = 'Drone.dc.html'; } catch (e) {} }, scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
     };
   }
 }

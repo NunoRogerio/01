@@ -372,6 +372,9 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
     <!-- Find a place: the map's search sits above the full-screen button, same size and look (both are map controls) -->
     <button type="button" class="mbtn" aria-label="Find a place" onClick="{{srch}}" style="display: {{srchD}}; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #F2F2F7; box-shadow: 0 2px 10px rgba(0,0,0,0.14); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg></button>
+    <div style="display: flex; align-items: center; gap: 8px">
+    <!-- Send a drone: primary lime, black drone, same size as the full-screen button and just left of it (pages that pass on-drone) -->
+    <button type="button" class="mbtn" aria-label="Send drone" onClick="{{droneClick}}" style="display: {{droneD}}; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y); box-shadow: 0 2px 10px rgba(0,0,0,0.14); color: #000000; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h7M15 6h7M5.5 6v3.5M18.5 6v3.5M5.5 9.5h13"></path><rect x="8.5" y="9.5" width="7" height="5" rx="1.6"></rect><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle><path d="M9.5 14.5 8 18M14.5 14.5 16 18"></path></svg></button>
     <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
       <!-- Test: the colours of the round X buttons (the X's 12% grey as it looks on the light panels, solid so it reads over the map) -->
       <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 50%; background: #F2F2F7; box-shadow: 0 2px 10px rgba(0,0,0,0.14); color: #3C3C43; cursor: pointer">
@@ -382,6 +385,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </svg>
       </button>
     </sc-if>
+    </div>
   </div>
 
   <span class="wf-note" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; color: #6E6E73; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
@@ -1384,6 +1388,7 @@ class Component extends DCLogic {
         };
       })(),
       fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
+      droneD: typeof p.onDrone === 'function' ? 'flex' : 'none', droneClick: (e) => { if (typeof p.onDrone === 'function') p.onDrone(e); },
       fsRot: (p.isFull === true || p.isFull === 'true') ? '180deg' : '0deg',
       fsXD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'inline' : 'none', fsCornD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'none' : 'inline',
       fullLabel: (p.isFull === true || p.isFull === 'true') ? (String(p.closeX) === 'true' ? 'Close map' : 'Exit full screen') : 'Full screen',
