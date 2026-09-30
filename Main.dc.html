@@ -997,7 +997,7 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 158, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 174, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
     const L = this.wfLayout();
