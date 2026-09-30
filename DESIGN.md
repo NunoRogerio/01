@@ -90,7 +90,11 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 ### Search field
 
-One look everywhere (Find a place, the area picker, any future search): a 48px pill, light grey fill `rgba(118,118,128,0.12)`, a 20px magnifier, 17px text, 12px inner padding. Where the search is a panel of its own, a round 44px X closes it beside the field.
+One look everywhere (Find a place, the area picker, any future search): centred in the space it sits in (equal room above and below), a 48px pill, light grey fill `rgba(118,118,128,0.12)`, a 20px magnifier, 17px text, 12px inner padding. Where the search is a panel of its own, a round 44px X closes it beside the field.
+
+### Icons
+
+Line icons share one drawn thickness on screen: 1.5px, whatever their size (stroke-width = 36 ÷ the icon's pixel size in a 24-unit viewBox): arrows, chevrons, the magnifier, chat, bell, full screen, close. Weather and terrain cards carry a 22px icon above their label: thermometer, wind arrow pointing where the wind blows, drop (humidity), leaf with a drop (fuel moisture), mountains (relief), flame (fuel), slope.
 
 ### Round buttons
 
@@ -134,6 +138,7 @@ The one from the user preferences, used everywhere:
 - Actions sit side by side on one row, 16px from the sides and 32px from the bottom edge: Back on the left (subtle button, a left arrow before the label, returns to the previous screen), Team chat on the right (primary, chat icon before the label, unread badge on it; the chat is not in the header). These two are the text buttons with a leading icon, by Nuno's choice.
 - No blades and no back button (Done at the bottom closes the page, so the header aligns with the content): only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 234px band framed on the fire's shape, with the perimeter legend and no weather chips, full screen from its button or a tap) and all the information scroll together in one column.
 - The kind band on a fire detail reads: dot (active orange, resolved dark brown), the kind ("Active fire"), and the stage tag on the right. The band has 18px corners and the tag sits 4px inside it with 14px corners (concentric). The start time sits on the place line, right-aligned under the time active ("Started 8:54", annotation), saving a line. No stages bar. The ignition detail does the same with its detection time.
+- **The ignition detail has Weather and Terrain too**, from the fire model's reading at the point when there is one, else simulated and labelled.
 - **Detail pages read like the user preferences:** each section (Key figures, Weather, Terrain, Endurance, Stations on this fire) is named by a label (15px regular mid grey, 4px in from the content's edge, no full stop), 8px above its content, sections 24px apart, no dividers between them; the content sits in white cards (16px corners, light shadow). Lists of units sit in one white block with dividers inside it. A section's "Simulated" or "Estimate" note sits on the right of its label.
 - Fire detail order: map band (234px, perimeter legend only, framed on the fire's shape), KPIs with charts, weather, terrain, endurance (simulated), stations as small cards, as many as the resources make plausible (about two ground vehicles per station, personnel / 5 when vehicles are not published, 1 to 4), each with the station's crest as on the station detail (the shield when it has none), name in Title XS, distance and drive time, crews free simulated), source.
 - Where no perimeter is mapped, the model's outline is irregular and fire-like (lobes, stretched along one axis) with the reported area, never a circle.

@@ -206,7 +206,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
       <span class="tipwrap" tabindex="0" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>{{cm.label}}
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>{{cm.label}}
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
@@ -306,7 +306,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <div role="group" aria-label="Weather at the map centre" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{srchL}}px; right: {{legR}}px; top: {{wxTop}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; pointer-events: auto">
     <sc-for list="{{wx}}" as="w" hint-placeholder-count="3">
       <span role="img" aria-label="{{w.aria}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: #3C3C43; font-size: 15px; line-height: 32px; white-space: nowrap; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{w.rot}}deg)"><path d="{{w.d}}"></path></svg>{{w.txt}}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{w.rot}}deg)"><path d="{{w.d}}"></path></svg>{{w.txt}}
       </span>
     </sc-for>
   </div>
@@ -355,11 +355,11 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
     <!-- Find a place: the map's search sits above the full-screen button, same size and look (both are map controls) -->
-    <button type="button" class="mbtn" aria-label="Find a place" onClick="{{srch}}" style="display: {{srchD}}; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #F2F2F7; box-shadow: 0 2px 10px rgba(0,0,0,0.14); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg></button>
+    <button type="button" class="mbtn" aria-label="Find a place" onClick="{{srch}}" style="display: {{srchD}}; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #F2F2F7; box-shadow: 0 2px 10px rgba(0,0,0,0.14); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg></button>
     <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
       <!-- Test: the colours of the round X buttons (the X's 12% grey as it looks on the light panels, solid so it reads over the map) -->
       <button type="button" class="mbtn" aria-label="{{fullLabel}}" onClick="{{fullClick}}" style="display: flex; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; border: 0; border-radius: 50%; background: #F2F2F7; box-shadow: 0 2px 10px rgba(0,0,0,0.14); color: #3C3C43; cursor: pointer">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <!-- The four corners turn half a circle each as the map grows or shrinks: outward corners = full screen, inward = exit -->
           <g style="display: {{fsCornD}}"><path d="M4 9V4h5" style="transform-box: fill-box; transform-origin: center; transform: rotate({{fsRot}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)"></path><path d="M20 9V4h-5" style="transform-box: fill-box; transform-origin: center; transform: rotate({{fsRot}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)"></path><path d="M4 15v5h5" style="transform-box: fill-box; transform-origin: center; transform: rotate({{fsRot}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)"></path><path d="M20 15v5h-5" style="transform-box: fill-box; transform-origin: center; transform: rotate({{fsRot}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)"></path></g>
           <path d="M6 6l12 12M18 6 6 18" style="display: {{fsXD}}"></path>
