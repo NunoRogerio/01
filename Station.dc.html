@@ -18,7 +18,7 @@
 <script src="prefs.js?v=96"></script>
 <script src="i18n.js?v=90"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=25"></script>
+<script src="chat.js?v=26"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -116,7 +116,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cmd.sub}}</span>
             </span>
           </button>
-          <button type="button" class="mbtn" onClick="{{cmd.chat}}" aria-label="{{tx.groupChat}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg></button>
+          <button type="button" class="mbtn" onClick="{{cmd.chat}}" aria-label="{{cmd.chatAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg><span aria-hidden="true" style="display: {{cmd.bD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{cmd.bN}}</span></button>
         </div>
       </div>
 
@@ -199,7 +199,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </li>
       </sc-for>
     </ul>
-    <button type="button" class="btn primary" onClick="{{sq.chat}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 48px; margin: 16px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg>{{sq.chatLbl}}</button>
+    <button type="button" class="btn primary" onClick="{{sq.chat}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 48px; margin: 16px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg>{{sq.chatLbl}}<span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{sq.bN}}</span></button>
   </section>
 
   <!-- Cards picker: the key figures with toggles -->
@@ -223,6 +223,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   componentDidMount() {
+    try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {}   // chat counts follow new messages
     // Stations from the country snapshot carry only name and operator: read the rest (address, phone, website…) live.
     const S = this.station();
     if (S && S.partial) {
@@ -235,7 +236,7 @@ class Component extends DCLogic {
       }).catch(() => {});
     }
     this._sync = () => this.forceUpdate(); try { window.addEventListener('wf-sync', this._sync); } catch (e) {} this._t = setTimeout(this._sync, 1500); }
-  componentWillUnmount() { try { window.removeEventListener('wf-sync', this._sync); } catch (e) {} clearTimeout(this._t); }
+  componentWillUnmount() { try { window.removeEventListener('wf-sync', this._sync); window.removeEventListener('wf-chat', this._chatSync); } catch (e) {} clearTimeout(this._t); }
   station() {
     let s = (window.__wfMem || {}).station || null;
     if (!s) { try { s = JSON.parse(window.sessionStorage.getItem('wf-station') || 'null'); } catch (e) {} }
@@ -388,14 +389,15 @@ class Component extends DCLogic {
     const offerCrew = crews.find((c) => c.st === 'ok') || crews[0];
     const offer = (c) => ({ en: c.name + ' (' + c.ppl.length + ' firefighters and ' + c.veh + ')', pt: 'a ' + c.name + ' (' + c.ppl.length + ' bombeiros e o ' + c.veh + ')' });
     const goChat = (o) => { if (!C || !C.direct) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} C.direct(Object.assign({ st: cc, org, station: name, ck: (S.type === 'way' ? 'w' : 'n') + S.id, lat: S.lat, lon: S.lon, x: S.x, y: S.y, face: F, eta: 12 + H0 % 10 }, o)); window.location.href = 'Chat.dc.html'; };
+    const unr = (id) => { try { const c = C && C.get ? C.get('d:' + id) : null; return c ? C.unread(c) : 0; } catch (e) { return 0; } }, bdg = (n) => ({ bD: n ? 'block' : 'none', bN: C && C.badge ? C.badge(n) : String(n) });
     const cmdChat = () => goChat({ id: 'cmd-' + S.id, title: L('Command · ', 'Comando · ') + org, people: cmdP, offer: offer(offerCrew) });
     const cmd = { faces: cmdP.map((p) => ({ code: ini(p.name), photo: photo(p.name) })), sub: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + cmdP[0].name + '. ' + cmdP.length + ' ' + L('people', 'pessoas') + '.',
-      aria: tx.cmdTeam + ', ' + cmdP.map((p) => p.name).join(', '), open: () => this.setState({ sq: 'cmd' }), chat: cmdChat };
+      aria: tx.cmdTeam + ', ' + cmdP.map((p) => p.name).join(', '), open: () => this.setState({ sq: 'cmd' }), chat: cmdChat, ...bdg(unr('cmd-' + S.id)), chatAria: tx.groupChat + (unr('cmd-' + S.id) ? ', ' + unr('cmd-' + S.id) + L(' unread', ' por ler') : '') };
     const sqK = s0.sq || '', sqC = /^c\d+$/.test(sqK) ? crews[Number(sqK.slice(1))] : null, sqOn = sqK === 'cmd' || !!sqC;
     const sq = { y: sqOn ? '0%' : '105%', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
       title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.veh + '.' : org,
       people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700 })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700 }))).map((p) => ({ ...p, code: ini(p.name), photo: photo(p.name) })),
-      chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat,
+      chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat, ...bdg(unr(sqC ? 'crew-' + S.id + '-' + sqC.name : 'cmd-' + S.id)),
       chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
 
     return {

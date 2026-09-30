@@ -18,7 +18,7 @@
 <script src="prefs.js?v=96"></script>
 <script src="i18n.js?v=90"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=25"></script>
+<script src="chat.js?v=26"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -1027,7 +1027,7 @@ class Component extends DCLogic {
       // then make sure the dispatch screen opens.
       chat: (() => { const C = window.__wfChat, raw = SC.cands[ci]; if (!C || !raw) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: '', btnD: 'none' };
         const inc = C.incCand(raw), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
-        return { badgeD: u ? 'block' : 'none', n: String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), label: 'Team chat', btnD: 'block' }; })(),
+        return { badgeD: u ? 'block' : 'none', n: C.badge ? C.badge(u) : String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), label: 'Team chat', btnD: 'block' }; })(),
       hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
     };
   }

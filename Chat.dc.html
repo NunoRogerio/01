@@ -18,7 +18,7 @@
 <script src="prefs.js?v=96"></script>
 <script src="i18n.js?v=90"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=25"></script>
+<script src="chat.js?v=26"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -516,7 +516,7 @@ class Component extends DCLogic {
       const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);
         const who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? L('You', 'Você') : (c.people[lm.from] || {}).name || '') : '';
         const txt = lm ? (lm.kind === 'card' ? (lm.summary ? L('Fire resolved', 'Incêndio resolvido') : T(lm.title)) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
-        return { place: (c.drill ? L('Drill · ', 'Simulação · ') : '') + c.place, st: c.kind === 'dm' ? c.reg : T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: u > 9 ? '9+' : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
+        return { place: (c.drill ? L('Drill · ', 'Simulação · ') : '') + c.place, st: c.kind === 'dm' ? c.reg : T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: C.badge ? C.badge(u) : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
           ic: iconFor(S), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
           go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, fromRes: tab === 'resolved', draft: '', stack: [], sheet: false }); } }; };
       const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };

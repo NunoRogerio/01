@@ -638,7 +638,14 @@
     text = String(text).trim(); mine(c, text, text);
     if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (!c.dismissed && c.stage < 7 && c.people.length) {
-      var rules = function (c) {
+      var rules = function (c) { ruleReply(c, text); };
+      if (aiKey()) aiReply(c, text, rules); else rules(c);
+    }
+    c.updated = Date.now(); c.seenAt = Date.now(); c.idleAt = Date.now(); save(); emit();
+  }
+  // The in-app answer to a message (also used when a Claude answer was lost because the screen was left mid-call)
+  function ruleReply(c, text) {
+      (function (c) {
       var it = intentOf(text), named = responder(c, text), n = c.people.length;
       var byTopic = { safety: 1, water: 2, homes: 1, wind: 0, eta: 0, need: 1, status: 0, order: 0, thanks: 0, other: c.beat % n };
       var who = named >= 0 ? named : Math.min(n - 1, byTopic[it] != null ? byTopic[it] : 0);
@@ -649,10 +656,7 @@
         if (it === 'status') b2 = c.stage === 2 ? ['Right behind them, same ETA.', 'Logo atrás, mesma hora de chegada.'] : ['Same on our side: ' + (c.stage >= 4 ? 'flank quiet.' : 'north flank still active, we are holding it.'), 'Do nosso lado igual: ' + (c.stage >= 4 ? 'flanco calmo.' : 'flanco norte ainda ativo, estamos a segurá-lo.')];
         say(c, w2, b2[0], b2[1], 5200, vary(c, 1, 4, 'c' + c.beat));
       }
-      };
-      if (aiKey()) aiReply(c, text, rules); else rules(c);
-    }
-    c.updated = Date.now(); c.seenAt = Date.now(); c.idleAt = Date.now(); save(); emit();
+      })(c);
   }
 
 
@@ -760,9 +764,11 @@
     });
     c.updated = Date.now(); save(); emit();
   }
+  var INF = {};   // answers being written by Claude from this screen
   function aiReply(c, text, fallback) {
-    var key = c.key, guess = responder(c, text); c.pending = { who: guess >= 0 ? guess : 0, at: Date.now() };
+    var key = c.key, guess = responder(c, text); c.pending = { who: guess >= 0 ? guess : 0, at: Date.now(), q: text }; INF[key] = 1;
     aiCall(aiSys(), aiBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now as the right coordinator(s).', 900, function (err, txt) {
+      delete INF[key];
       if (err) { var c2 = load().chats[key]; if (c2) { c2.pending = null; fallback(c2); save(); emit(); } return; }
       aiDeliver(key, txt, fallback);
     });
@@ -905,6 +911,8 @@
         else c.msgs.push(m);
         c.updated = q.due; changed = true;
       }
+      // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
+      if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;
     });
     if (changed) { save(); emit(); }
@@ -993,6 +1001,7 @@
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },
+    badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
     totalUnread: function () { var db = load(); return Object.keys(db.chats).reduce(function (a, k) { return a + unread(db.chats[k]); }, 0); },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
