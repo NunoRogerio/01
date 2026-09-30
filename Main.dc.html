@@ -17,7 +17,7 @@
 <script src="fit.js?v=77"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=93"></script>
+<script src="i18n.js?v=94"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=27"></script>
 
@@ -396,7 +396,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section class="wf-panel" role="dialog" data-swipe="up" data-swipe-key="nt" aria-modal="true" aria-labelledby="ntTitle" aria-hidden="{{nt.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{nt.y}}); clip-path: inset(0 0 {{nt.cl}}px 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{nt.cl}}px 0 round 0 0 28px 28px); visibility: {{nt.vis}}; pointer-events: {{nt.pe}}; transition: transform {{nt.dur}} {{nt.ease}}, clip-path {{nt.clT}} ease, -webkit-clip-path {{nt.clT}} ease, visibility 0s linear {{nt.visDelay}}">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 8px 12px; flex-shrink: 0">
       <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px">
-        <h2 id="ntTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">Notifications</h2>
+        <h2 id="ntTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{nt.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{nt.sub}}</span>
       </span>
       <button type="button" class="opt" data-swipe-go="1" onClick="{{nt.close}}" aria-label="Close notifications" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
@@ -1002,7 +1002,7 @@ class Component extends DCLogic {
     });
     const where = (scope && scope.title) || 'All areas';
     return {
-      items, none: items.length === 0, listD: items.length ? 'flex' : 'none', sub: where + '. ' + (unread ? unread + ' unread' : items.length + (items.length === 1 ? ' update' : ' updates')) + '.', unread: unread > 20 ? '20+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
+      items, none: items.length === 0, listD: items.length ? 'flex' : 'none', title: where, sub: 'Notifications. ' + (unread ? unread + ' unread' : items.length + (items.length === 1 ? ' update' : ' updates')) + '.', unread: unread > 20 ? '20+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
       ring: 'none',   // the bell stays still; the yellow count badge alone shows unread updates
       note: 'Station updates are examples until a dispatch feed is connected.', noteD: out.some((n) => n.kind === 'st') ? 'block' : 'none',
       aria: unread ? 'Notifications, ' + unread + ' unread' : 'Notifications', str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
