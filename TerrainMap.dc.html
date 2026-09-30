@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=87"></script>
+<script src="fit.js?v=88"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
 <script src="i18n.js?v=101"></script>
@@ -541,7 +541,7 @@ class Component extends DCLogic {
       if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); };
     document.addEventListener('pointerdown', this._popOut, true);
     // Phone turned sideways: the map fills the screen; turned back upright, it returns to how it was
-    this._orient = () => { const p = this.props; if (typeof p.onFull !== 'function') return; const land = window.innerWidth > window.innerHeight, full = p.isFull === true || p.isFull === 'true';
+    this._orient = () => { const p = this.props; if (typeof p.onFull !== 'function' || window.__wfDesk) return; const land = window.innerWidth > window.innerHeight, full = p.isFull === true || p.isFull === 'true';
       if (land && !full) { this._autoFull = true; p.onFull(); } else if (!land && full && this._autoFull) { this._autoFull = false; p.onFull(); } else if (!land) this._autoFull = false; };
     window.addEventListener('resize', this._orient); window.addEventListener('orientationchange', this._orient); setTimeout(this._orient, 300); }
   componentDidUpdate(prev) {

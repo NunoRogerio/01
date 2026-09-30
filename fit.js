@@ -80,9 +80,14 @@ window.__wfBlink=function(path,dur){
   function under(){var u=false;try{if(SA){var pr=document.createElement('div');pr.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';(document.body||document.documentElement).appendChild(pr);u=(parseFloat(getComputedStyle(pr).paddingTop)||0)>20;pr.remove();if(!u&&Math.max(innerWidth,innerHeight)>=Math.max(screen.width,screen.height)-2)u=true;}}catch(e){}return u;}
   var UNDER=under();
   var W=390,H=844,TOP=UNDER?0:52,VH=H-TOP,MAXS=1.6;window.__wfTOP=TOP;
-  var m=document.querySelector('meta[name="wf-layout"]'),fluid=!!(m&&m.getAttribute('content')==='fluid');
+  /* Desktop browsers (Chrome, Safari, Firefox on a computer: a mouse, no touch) show the app as the phone it is, centred and
+     scaled to the window's height, instead of stretching to a wide window (and never treat the wide window as a phone
+     turned sideways) */
+  var DESK=false;try{DESK=!!(matchMedia('(hover: hover) and (pointer: fine)').matches&&!('ontouchstart' in window)&&!(navigator.maxTouchPoints>0));}catch(e){}window.__wfDesk=DESK;
+  var m=document.querySelector('meta[name="wf-layout"]'),fluid=!DESK&&!!(m&&m.getAttribute('content')==='fluid');
   var st=document.createElement('style');
-  st.textContent='html,body{background:#F2F2F7;overflow:hidden;height:100%;margin:0;overscroll-behavior:none}'+
+  st.textContent='html,body{background:#F2F2F7;overflow:hidden;height:100%;margin:0;overscroll-behavior:none}*{scrollbar-width:none}*::-webkit-scrollbar{display:none;width:0;height:0}'+   /* no scrollbars in any browser (desktop Safari and Chrome draw them) */
+    
     '#dc-root{zoom:var(--fit,1);width:var(--wf-w,'+W+'px);height:var(--wf-h,'+H+'px);margin:0 auto;overflow:hidden;position:relative;top:-'+TOP+'px}';
   document.head.appendChild(st);
   var probe=null;
