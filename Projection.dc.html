@@ -41,8 +41,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- Same header as the fire: the place, the level above, the kind band with the fire's state tag -->
   <div style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY({{hdY}}); opacity: {{hdOp}}; pointer-events: {{hdPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
+    <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0">
+      <a href="Chat.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+      <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding-top: 6px">
     <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</h1>
     <span style="display: block; margin-top: 2px; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.region}}</span>
+      </div>
+    </div>
     <span class="wf-qual hd" style="margin-top: 12px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{tx.kind}}</span><span role="status" style="display: {{f.tagD}}; flex-shrink: 0; align-items: center; margin-left: auto; box-sizing: border-box; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{f.tag}}</span></span>
   </div>
 
@@ -67,8 +72,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </sc-for>
     </div>
     <p class="wf-note" style="margin: -4px 4px 0">{{note}}</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
-      <a href="Chat.dc.html" data-wf-back="1" class="btn wf-ter" aria-label="Back" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg><span>Back</span></a>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 8px">
       <a href="Dispatch.dc.html" class="btn primary" onClick="{{goFire}}" style="display: flex; align-items: center; justify-content: center; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">{{tx.fire}}</a>
     </div>
   </div>
