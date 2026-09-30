@@ -94,7 +94,7 @@ One look everywhere (Find a place, the area picker, any future search): centred 
 
 ### Icons
 
-Line icons share one drawn thickness on screen: 1.5px, whatever their size (stroke-width = 36 ÷ the icon's pixel size in a 24-unit viewBox): arrows, chevrons, the magnifier, chat, bell, full screen, close. Weather and terrain cards carry a 22px icon above their label: thermometer, wind arrow pointing where the wind blows, drop (humidity), leaf with a drop (fuel moisture), mountains (relief), flame (fuel), slope.
+Line icons share one drawn thickness on screen: 1.5px, whatever their size (stroke-width = 36 ÷ the icon's pixel size in a 24-unit viewBox): arrows, chevrons, the magnifier, chat, bell, full screen, close. Weather and terrain cards show a 24px icon instead of a label (the name stays for screen readers); a tap on the card shows the name in a small dark tooltip above it for 1.8 s, while press-hold-move still reorders. The icons: thermometer, wind arrow pointing where the wind blows, drop (humidity), leaf with a drop (fuel moisture), mountains (relief), flame (fuel), slope.
 
 ### Round buttons
 
