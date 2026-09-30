@@ -131,7 +131,7 @@ The one from the user preferences, used everywhere:
 
 ### Blades and panels
 
-- **Grabbers:** every expandable blade has one, at the same distance from the edge everywhere, with 40px clear of the content.
+- **Grabbers:** every expandable blade has one, at the same distance from the edge everywhere, with 40px clear of the content. A blade has one grabber fixed to its edge: it rides the edge as the blade opens and closes, never jumping or fading between two copies.
 - **Swipe:** a blade swipes over its whole area unless it scrolls; then it swipes by its grabber only.
 - **Drops:**
   - panels dropping from the top stop 48px above the bottom;
