@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=90"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=108"></script>
+<script src="prefs.js?v=109"></script>
 <script src="i18n.js?v=104"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=31"></script>
@@ -47,75 +47,75 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== List of chats ===== -->
   <sc-if value="{{isList}}" hint-placeholder-val="{{ true }}">
-    <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4.8px 16px 19.4px 20px; flex-shrink: 0">
-      <div style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0; padding-top: 4.8px">
+    <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 20px; flex-shrink: 0">
+      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{listTitle}}</h1>
         <div style="font-size: 17px; line-height: 22px; color: #000000">{{listSub}}</div>
       </div>
       <!-- Close with the round X, as the notifications panel (back to where you were) -->
-      <a href="Main.dc.html" data-wf-back="1" class="chbtn" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 8.5px 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+      <a href="Main.dc.html" data-wf-back="1" class="chbtn" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
     </header>
-    <div role="tablist" aria-label="{{t.chats}}" class="wf-seg" style="flex-shrink: 0; margin: 0 16px 24px">
+    <div role="tablist" aria-label="{{t.chats}}" class="wf-seg" style="flex-shrink: 0; margin: 0 16px 32px">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{tabX}})"><span class="segblob"></span></span>
       <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
       </sc-for>
     </div>
-    <div class="chscroll" style="display: flex; flex-direction: column; gap: 29px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 9.7px 16px 48.4px">
-      <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 29px 8px; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{t.none}}</p></sc-if>
+    <div class="chscroll" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 8px 16px 40px">
+      <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 32px 8px; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{t.none}}</p></sc-if>
       <sc-for list="{{groups}}" as="g" hint-placeholder-count="1">
         <!-- Calm list, like the incidents list: rows edge to edge between full-width dividers, the place in Title S, grey
              annotation on up to two lines (stage and last message), the time then the unread count (yellow) on the right, a chevron -->
         <ul style="display: flex; flex-direction: column; margin: 0 -16px; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
           <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="2">
             <li>
-              <a href="Chat.dc.html" class="chrow" onClick="{{r.go}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 20px; gap: 2.4px 8px; align-items: center; min-height: 60px; padding: 19.4px 16px; box-sizing: border-box; color: #000000; text-decoration: none">
+              <a href="Chat.dc.html" class="chrow" onClick="{{r.go}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 20px; gap: 2px 8px; align-items: center; min-height: 60px; padding: 16px; box-sizing: border-box; color: #000000; text-decoration: none">
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="font-weight: 400">{{r.kindW}}</span> {{r.place}}</span>
                 <span style="justify-self: end; display: flex; align-items: center; gap: 8px"><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.time}}</span><span aria-hidden="true" style="display: {{r.badgeD}}; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{r.unread}}</span></span>
                 <span aria-hidden="true" style="grid-row: 1; grid-column: 3; align-self: center; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
                 <!-- The stage and the last message, on up to two lines -->
                 <span style="grid-column: 1 / span 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{r.st}}. {{r.last}}</span>
                 <!-- Open chats: how many messages wait for you, in bold, a little apart -->
-                <span style="display: {{r.unrD}}; grid-column: 1 / span 2; margin-top: 7.3px; font-size: 15px; font-weight: 700; line-height: 20px; color: #3A3A3C">{{r.unrTxt}}</span>
+                <span style="display: {{r.unrD}}; grid-column: 1 / span 2; margin-top: 6px; font-size: 15px; font-weight: 700; line-height: 20px; color: #3A3A3C">{{r.unrTxt}}</span>
               </a>
             </li>
           </sc-for>
         </ul>
       </sc-for>
-      <p class="wf-note" style="margin: 24px 4px 0">{{listNote}}</p>
+      <p class="wf-note" style="margin: 32px 4px 0">{{listNote}}</p>
     </div>
   </sc-if>
 
   <!-- ===== One chat ===== -->
   <sc-if value="{{isChat}}" hint-placeholder-val="{{ false }}">
     <div style="display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; background: #F2F2F7">
-      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4.8px 16px 14.5px 16px">
+      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px 16px">
         <!-- Back to the screen before: the round back button before the title -->
-        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4.8px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
-        <div style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0; padding-top: 4.8px">
+        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h1>
           <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
         </div>
         <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
-        <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4.8px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
+        <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
-      <button type="button" class="chrow" onClick="{{c.tog}}" aria-expanded="{{c.expStr}}" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 14.5px; margin: 0 16px 14.5px; padding: 14.5px 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
+      <button type="button" class="chrow" onClick="{{c.tog}}" aria-expanded="{{c.expStr}}" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
         <span style="display: flex; align-items: flex-start; gap: 12px; width: 100%">
-          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; margin-top: 8.5px; border-radius: 50%; background: {{c.ic.circ}}; transition: background-color .6s ease"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="{{c.ic.sw}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
-          <span style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0">
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; margin-top: 7px; border-radius: 50%; background: {{c.ic.circ}}; transition: background-color .6s ease"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="{{c.ic.sw}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span style="font-size: 17px; font-weight: 600; line-height: 24px; color: {{c.stC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
             <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.summary}}</span>
           </span>
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0; color: #3C3C43"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate({{c.chevRot}}); transition: transform .4s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
         </span>
-        <span aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4.8px 4px; width: 100%">
+        <span aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; width: 100%">
           <sc-for list="{{c.bar}}" as="b" hint-placeholder-count="8"><span style="height: 2px; border-radius: 999px; background: {{b.c}}; transition: background-color .4s ease"></span></sc-for>
         </span>
         <span style="display: grid; grid-template-rows: {{c.tmRows}}; width: 100%; margin-top: {{c.tmMt}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), margin-top .4s cubic-bezier(.2,.8,.2,1)"><span style="min-height: 0; overflow: hidden">
-        <span style="display: grid; grid-template-columns: 1fr 1fr; gap: 19.4px 16px; width: 100%; padding-bottom: {{c.tmPb}}">
-          <span style="display: flex; flex-direction: column; gap: 2.4px"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblL}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.inStage}}</span></span>
-          <span style="display: flex; flex-direction: column; gap: 2.4px; text-align: right"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblR}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.elapsed}}</span></span>
+        <span style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; padding-bottom: {{c.tmPb}}">
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblL}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.inStage}}</span></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; text-align: right"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblR}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.elapsed}}</span></span>
         </span>
         </span></span>
       </button>
@@ -123,9 +123,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
     <!-- The chat surface: a shade darker than the header and the composer, so they read apart without shadows; the list's edge fade sits on it -->
     <div class="chsurf" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0">
-    <div class="chscroll" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 9.7px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 19.4px 16px 9.7px">
+    <div class="chscroll" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
       <sc-for list="{{items}}" as="m" hint-placeholder-count="4">
-        <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 9.7px 0 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
+        <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
         <sc-if value="{{m.isSys}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="align-self: center; max-width: 300px; font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{m.text}} · {{m.time}}</div>
         </sc-if>
@@ -135,7 +135,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span data-avtip="1" role="button" tabindex="0" onClick="{{m.tip}}" aria-label="{{m.tipAria}}" style="position: relative; flex-shrink: 0; width: 32px; height: 32px; visibility: {{m.avVis}}; cursor: pointer">
               <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
             </span>
-            <div class="chbubL" style="display: flex; flex-direction: column; gap: 2.4px; max-width: 272px; padding: 9.7px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
+            <div class="chbubL" style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
               <span style="display: {{m.nameD}}; font-size: 15px; line-height: 20px; color: #545458">{{m.name}}</span>
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
               <span style="align-self: flex-end; font-size: 15px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
@@ -143,26 +143,26 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 2.4px; max-width: 272px; margin-top: {{m.gap}}; padding: 9.7px 12px; border-radius: 18px 18px 6px 18px; background: #FFFFFF; color: #000000; text-align: left">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: #FFFFFF; color: #000000; text-align: left">
             <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
             <span style="align-self: flex-end; font-size: 15px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
         </sc-if>
         <sc-if value="{{m.isWin}}" hint-placeholder-val="{{ false }}">
           <!-- The trophy card: one widget for every resolved card (trophy.js) -->
-          <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.title}}" sub="{{m.body}}" action="{{m.link}}" credit="1" style="margin-top: 9.7px; cursor: pointer"></wf-trophy>
+          <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.title}}" sub="{{m.body}}" action="{{m.link}}" credit="1" style="margin-top: 8px; cursor: pointer"></wf-trophy>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
-          <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4.8px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden">
-            <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 12px; padding: 14.5px 16px">
+          <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden">
+            <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 12px; padding: 12px 16px">
               <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
-              <div style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0">
-                <span style="margin-bottom: 9.7px; font-size: 17px; font-weight: 700; line-height: 22px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+                <span style="margin-bottom: 8px; font-size: 17px; font-weight: 700; line-height: 22px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
                 <span style="font-size: 17px; font-weight: 400; line-height: 22px">{{m.title}}</span>
                 <span style="display: {{m.bodyD}}; font-size: 17px; line-height: 22px; color: #000000">{{m.body}}</span>
               </div>
               <sc-if value="{{m.hasKpi}}" hint-placeholder-val="{{ false }}">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 2.4px; flex-shrink: 0; flex-basis: {{m.kpiBasis}}; padding: {{m.kpiPad}}">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; flex-basis: {{m.kpiBasis}}; padding: {{m.kpiPad}}">
                   <span class="{{m.kpiCls}}" style="font-size: {{m.kpiFs}}; font-weight: 600; line-height: {{m.kpiLh}}; color: {{m.kpiC}}; font-variant-numeric: tabular-nums">{{m.kpiV}}</span>
                   <span style="font-size: 15px; line-height: 20px; color: #545458">{{m.kpiL}}</span>
                 </div>
@@ -171,26 +171,26 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{m.hasRows}}" hint-placeholder-val="{{ false }}">
               <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.12)">
                 <sc-for list="{{m.rows}}" as="r" hint-placeholder-count="3">
-                  <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2.4px 8px; align-items: center; padding: 9.7px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="justify-self: end; align-self: start; padding: 2px 10px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.rc}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 15px; line-height: 20px; color: #545458">{{r.b}}</span></li>
+                  <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2px 8px; align-items: center; padding: 8px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="justify-self: end; align-self: start; padding: 2px 10px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.rc}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 15px; line-height: 20px; color: #545458">{{r.b}}</span></li>
                 </sc-for>
               </ul>
             </sc-if>
             <sc-if value="{{m.hasChecks}}" hint-placeholder-val="{{ false }}">
-              <ul style="display: flex; flex-direction: column; gap: 9.7px; margin: 0; padding: 0 16px 14.5px; list-style: none">
+              <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0 16px 12px; list-style: none">
                 <sc-for list="{{m.checks}}" as="k" hint-placeholder-count="3">
-                  <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15px; line-height: 20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2.4px"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>{{k.t}}</li>
+                  <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15px; line-height: 20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>{{k.t}}</li>
                 </sc-for>
               </ul>
             </sc-if>
             <sc-if value="{{m.hasActions}}" hint-placeholder-val="{{ false }}">
-              <div data-fitrow="1" style="display: flex; flex-wrap: wrap; gap: 9.7px 8px; padding: 0 16px 19.4px">
+              <div data-fitrow="1" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px">
                 <sc-for list="{{m.actions}}" as="a" hint-placeholder-count="2">
                   <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="flex: 1 1 0; min-width: max-content; height: 48px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 17px; font-weight: {{a.w}}; white-space: nowrap; opacity: {{a.op}}; cursor: {{a.cur}}; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{a.chk}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{a.label}}</button>
                 </sc-for>
               </div>
             </sc-if>
             <sc-if value="{{m.hasLink}}" hint-placeholder-val="{{ false }}">
-              <a href="{{m.href}}" class="chrow wf-b {{m.linkCls}}" onClick="{{m.goInc}}" style="display: flex; align-items: center; justify-content: center; margin: 0 16px 24px">{{m.link}}</a>
+              <a href="{{m.href}}" class="chrow wf-b {{m.linkCls}}" onClick="{{m.goInc}}" style="display: flex; align-items: center; justify-content: center; margin: 0 16px 32px">{{m.link}}</a>
             </sc-if>
           </article>
         </sc-if>
@@ -202,7 +202,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
 
     <sc-if value="{{isHist}}" hint-placeholder-val="{{ false }}">
-    <div style="display: flex; flex-direction: column; gap: 9.7px; flex-shrink: 0; padding: 14.5px 16px 38.7px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 12px 16px 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
       <sc-if value="{{sim.can}}" hint-placeholder-val="{{ true }}"><button type="button" class="chbtn wf-b wf-pri" onClick="{{sim.go}}" style="border: 0; font: inherit; cursor: pointer">{{sim.label}}</button></sc-if>
       <span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{histTxt}}</span>
       <div role="tablist" aria-label="{{t.hist}}" class="wf-seg" style="">
@@ -216,13 +216,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- The photo tooltip lives outside the scrolling list, above its edge fade: placed over the tapped photo (or under it near the top) -->
     <span role="tooltip" aria-hidden="true" style="position: absolute; left: {{avt.x}}px; top: {{avt.y}}px; z-index: 25; display: flex; flex-direction: column; width: max-content; max-width: 300px; transform: translateY({{avt.dy}}); opacity: {{avt.op}}; padding: 6px 12px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; pointer-events: none; transition: opacity .2s ease, transform .2s ease"><span style="font-weight: 600">{{avt.name}}</span><span>{{avt.role}}</span></span>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
-    <div style="display: flex; flex-direction: column; gap: 9.7px; flex-shrink: 0; padding: 9.7px 0 38.7px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
         <label style="display: flex; align-items: center; gap: 8px; flex-grow: 1; min-width: 0; height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12); color: #545458"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" class="sqsearch" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
         <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
       </div>
       <!-- Suggestions: side by side while they fit, so two short ones share one line; a second row only when needed; two rows at most (any more stay hidden for now) -->
-      <div style="display: {{actD}}; flex-wrap: wrap; gap: 9.7px 8px; max-height: 88px; overflow: hidden; padding: 0 16px">
+      <div style="display: {{actD}}; flex-wrap: wrap; gap: 8px; max-height: 88px; overflow: hidden; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
           <button type="button" class="chbtn" onClick="{{a.go}}" style="flex: 0 0 auto; height: 40px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
@@ -233,8 +233,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- ===== Team blade: drops from the top over the chat (glass behind), the team as a list; tap a person for their profile ===== -->
     <div class="wf-glass" onClick="{{tm.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{tm.scrimOp}}; pointer-events: {{tm.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{t.team}}" style="position: absolute; left: 0; right: 0; top: 0; max-height: {{tm.mh}}; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; box-sizing: border-box; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{tm.y}}); visibility: {{tm.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), max-height {{tm.mhT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{tm.visDelay}}">
-      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4.8px 16px 14.5px">
-        <div style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0; padding-top: 4.8px">
+      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px">
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.team}}</h2>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{tm.sub}}</span>
         </div>
@@ -242,9 +242,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </header>
       <div role="list" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; margin: 0 16px; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
-          <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 64px; padding: 12.1px 16px; border: 0; border-top: {{p.sep}}; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+          <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 64px; padding: 10px 16px; border: 0; border-top: {{p.sep}}; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
             <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
-            <span style="display: flex; flex-direction: column; gap: 2.4px; min-width: 0">
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
               <span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
               <span style="font-size: 15px; line-height: 20px; color: {{p.roleC}}">{{p.role}}</span>
             </span>
@@ -256,46 +256,46 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
     <!-- ===== Topic picker: the incidents within 50 km of this station (fires, then ignition candidates), nearest first ===== -->
     <div class="wf-glass" onClick="{{tp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{tp.op}}; pointer-events: {{tp.pe}}; transition: opacity .35s ease"></div>
-    <section role="dialog" aria-modal="true" aria-label="{{tp.title}}" aria-hidden="{{tp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: calc(100% - 48px); box-sizing: border-box; padding: 36.3px 16px 38.7px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{tp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px">
+    <section role="dialog" aria-modal="true" aria-label="{{tp.title}}" aria-hidden="{{tp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: calc(100% - 48px); box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{tp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 32px">
         <button type="button" class="chbtn" onClick="{{tp.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
-        <span style="display: flex; flex-direction: column; gap: 2.4px; min-width: 0; padding-top: 6px"><h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{tp.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{tp.sub}}</span></span>
+        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-top: 6px"><h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{tp.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{tp.sub}}</span></span>
       </div>
       <div class="chscroll" role="listbox" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{tp.rows}}" as="r" hint-placeholder-count="4">
-          <button type="button" role="option" class="chrow" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: 2.4px 16px; min-height: 76px; padding: 19.4px 16px; box-sizing: border-box; border: 0; border-top: {{r.sep}}; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+          <button type="button" role="option" class="chrow" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: 2px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-top: {{r.sep}}; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
             <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: {{r.icBg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{r.icD}}" fill="{{r.icFill}}" stroke="{{r.icC}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
             <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.place}}</span>
             <span style="grid-row: 1 / span 2; grid-column: 3; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.km}}</span>
             <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{r.sub}}</span>
           </button>
         </sc-for>
-        <p style="display: {{tp.noneD}}; margin: 0; padding: 19.4px 16px; font-size: 17px; line-height: 22px; color: #000000">{{tp.none}}</p>
+        <p style="display: {{tp.noneD}}; margin: 0; padding: 16px; font-size: 17px; line-height: 22px; color: #000000">{{tp.none}}</p>
       </div>
     </section>
     <!-- ===== Fire card: drops from the state card, stops 32px above the bottom, glass over the chat ===== -->
     <div class="wf-glass" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{sh.b}}px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{sh.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
-      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4.8px 16px 14.5px">
+      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px">
         <button type="button" class="chbtn" onClick="{{closeSheet}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
-        <div style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0; padding-top: 4.8px">
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h2>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{t.fireCardSub}}</span>
         </div>
       </header>
-      <div class="chscroll" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 19.4px 16px 19.4px">
+      <div class="chscroll" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 16px">
         <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
           <!-- Spread projection -->
-          <section aria-label="{{t.proj}}" style="display: flex; flex-direction: column; gap: 14.5px; padding: 19.4px 16px; border-radius: 14px; background: #FFFFFF">
-            <div style="display: flex; flex-direction: column; gap: 2.4px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.proj}}</h3><span style="font-size: 17px; line-height: 22px; color: #000000">{{t.projSub}}</span></div>
+          <section aria-label="{{t.proj}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
+            <div style="display: flex; flex-direction: column; gap: 2px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.proj}}</h3><span style="font-size: 17px; line-height: 22px; color: #000000">{{t.projSub}}</span></div>
 
             <a href="Projection.dc.html" class="chbtn wf-b wf-pri" onClick="{{goProj}}" style="display: flex; align-items: center; justify-content: center">{{t.openFire}}</a>
           </section>
           <!-- Time in each stage: a calm list, like the incidents (stage in Title S, when it began as annotation, its time on the right) -->
           <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; margin: 0 -16px">
-            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 20px 9.7px; border-bottom: 1px solid rgba(60,60,67,0.14)"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 20px 8px; border-bottom: 1px solid rgba(60,60,67,0.14)"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
             <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
-              <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2.4px 12px; align-items: center; min-height: 60px; padding: 14.5px 16px; box-sizing: border-box; opacity: {{r.op}}">
+              <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; min-height: 60px; padding: 12px 16px; box-sizing: border-box; opacity: {{r.op}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: {{r.bg}}"><svg width="16" height="16" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
                 <span class="{{r.nowCls}}" style="font-size: 15px; font-weight: {{r.w}}; line-height: 20px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
@@ -313,22 +313,22 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== Resolution summary ===== -->
   <sc-if value="{{isSummary}}" hint-placeholder-val="{{ false }}">
-    <header class="chview" style="display: flex; align-items: flex-start; gap: 12px; padding: 4.8px 16px 14.5px 16px; flex-shrink: 0">
+    <header class="chview" style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px 16px; flex-shrink: 0">
       <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
-      <div style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0; padding-top: 4.8px">
+      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.sumTitle}}</h1>
         <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
       </div>
     </header>
-    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 48.4px">
+    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
       <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.headline}}" sub="{{sum.closedAt}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
       <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column">
-        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 4px 9.7px; font-size: 15px; line-height: 20px; color: #6E6E73"><span style="font-weight: 600">{{t.kf}}</span><span>{{t.kfHint}}</span></span>
-        <div role="list" style="display: flex; flex-wrap: wrap; gap: 9.7px 8px; align-items: stretch">
+        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 4px 8px; font-size: 15px; line-height: 20px; color: #6E6E73"><span style="font-weight: 600">{{t.kf}}</span><span>{{t.kfHint}}</span></span>
+        <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
           <sc-for list="{{sk.cards}}" as="m" hint-placeholder-count="5">
             <div role="listitem" data-wf-kpi="{{m.key}}" data-g="sum" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
-              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 14.5px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center; transition: box-shadow .2s ease">
+              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center; transition: box-shadow .2s ease">
                 <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.l}}</span>
                 <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.u}}</span></span>
                 <span style="display: {{m.cmpD}}; margin-top: auto; padding-top: 6px; font-size: 13px; font-weight: 600; line-height: 18px; color: {{m.cmpC}}">{{m.cmp}}</span>
@@ -338,10 +338,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <button type="button" class="mbtn" onClick="{{sk.open}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
       </section>
-      <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 0; padding: 19.4px 16px 4.8px; border-radius: 14px; background: #FFFFFF">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 19.4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap">{{t.timeline}}</h2><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap">{{tlTotal}}</span></div>
+      <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 4px; border-radius: 14px; background: #FFFFFF">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 16px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap">{{t.timeline}}</h2><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap">{{tlTotal}}</span></div>
         <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
-          <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14.5px 16px; align-items: center; margin: 0 -16px; padding: 24.2px 16px; border-top: 1px solid rgba(60,60,67,0.12); opacity: {{r.op}}">
+          <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px 16px; align-items: center; margin: 0 -16px; padding: 20px 16px; border-top: 1px solid rgba(60,60,67,0.12); opacity: {{r.op}}">
             <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.bg}}"><svg width="22" height="22" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
             <span style="min-width: 0; font-size: 17px; line-height: 22px"><span style="font-weight: 700">{{r.name}}</span> <span style="color: #6E6E73">{{r.at}}</span></span>
             <span style="font-size: 17px; font-weight: {{r.w}}; line-height: 22px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
@@ -349,13 +349,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-for>
       </section>
-      <section style="display: flex; flex-direction: column; gap: 24px">
-        <div style="display: flex; flex-direction: column; gap: 2.4px; padding: 0 4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
+      <section style="display: flex; flex-direction: column; gap: 32px">
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
           <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
-            <div style="display: flex; align-items: center; gap: 12px; padding: 19.4px 16px; background: transparent; color: #000000"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><div style="display: flex; flex-direction: column; gap: 4.8px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 24px">{{f.station}}</span><span style="font-size: 15px; line-height: 20px; color: #545458">{{f.veh}}</span></div></div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: transparent; color: #000000"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 24px">{{f.station}}</span><span style="font-size: 15px; line-height: 20px; color: #545458">{{f.veh}}</span></div></div>
             <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
-              <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 20px; align-items: center; gap: 2.4px 16px; min-height: 76px; padding: 19.4px 16px; box-sizing: border-box; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+              <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 20px; align-items: center; gap: 2px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: {{p.bg}}; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px">{{p.name}}</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 3"><path d="m9 6 6 6-6 6"></path></svg>
@@ -365,11 +365,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </article>
         </sc-for>
         <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
-          <div style="display: flex; flex-direction: column; gap: 2.4px; padding: 14.5px 16px; border-radius: 14px; background: #FFFFFF"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{x.sub}}</span></div>
+          <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{x.sub}}</span></div>
         </sc-for>
-        <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: flex; align-items: center; gap: 12px; padding: 14.5px 16px; border: 0; border-radius: 14px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+        <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden">{{sum.me.code}}<span style="position: absolute; inset: 0; background-image: {{sum.me.photo}}; background-size: cover; background-position: center"></span></span>
-          <span style="display: flex; flex-direction: column; gap: 2.4px; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{sum.me.name}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{t.owner}}</span></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{sum.me.name}}</span><span style="font-size: 15px; line-height: 18px; color: #545458">{{t.owner}}</span></span>
           <svg width="17.5" height="17.5" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2.06" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
         </button>
       </section>
@@ -377,9 +377,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <!-- Cards picker for the key figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
-    <section role="dialog" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 36.3px 16px 38.7px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 24px; padding-right: 16px">
-        <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="chbtn" onClick="{{sk.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2.4px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; line-height: 32px">{{t.kf}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Choose the ones to show.</span></span></div>
+    <section role="dialog" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; padding-right: 16px">
+        <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="chbtn" onClick="{{sk.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; line-height: 32px">{{t.kf}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Choose the ones to show.</span></span></div>
         <button type="button" class="chbtn wf-reset wf-rpill" onClick="{{sk.reset}}" aria-disabled="{{sk.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; margin-top: 6px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{t.reset}}</button>
       </div>
       <div class="chscroll" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
@@ -392,25 +392,25 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== A firefighter's profile and achievements ===== -->
   <sc-if value="{{isPerson}}" hint-placeholder-val="{{ false }}">
-    <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4.8px 16px 4.8px 12px; flex-shrink: 0">
+    <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 12px; flex-shrink: 0">
       <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
     </header>
-    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 48.4px">
-      <section style="display: flex; flex-direction: column; align-items: center; gap: 9.7px; text-align: center">
+    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+      <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 88px; height: 88px; border-radius: 50%; background: #E5E5EA; font-size: 28px; font-weight: 600; overflow: hidden">{{pp.code}}<span style="position: absolute; inset: 0; background-image: {{pp.photo}}; background-size: cover; background-position: center"></span></span>
-        <h1 style="margin: 9.7px 0 0; font-size: 26px; font-weight: 600; line-height: 32px">{{pp.name}}</h1>
+        <h1 style="margin: 8px 0 0; font-size: 26px; font-weight: 600; line-height: 32px">{{pp.name}}</h1>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{pp.role}}</span>
       </section>
-      <section style="--k: {{pp.kPx}}; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9.7px 8px; padding: 19.4px 8px; border-radius: 14px; background: #FFFFFF">
-        <sc-for list="{{pp.kpis}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2.4px"><span class="wf-big" style=" font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span><span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
+      <section style="--k: {{pp.kPx}}; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
+        <sc-for list="{{pp.kpis}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="wf-big" style=" font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span><span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
       </section>
-      <section style="display: flex; flex-direction: column; gap: 9.7px">
+      <section style="display: flex; flex-direction: column; gap: 8px">
         <h2 style="margin: 0; padding: 0 4px; font-size: 17px; font-weight: 600; line-height: 22px">{{t.ach}}</h2>
-        <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 19.4px 16px; border-radius: 14px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
+        <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 14px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
         <sc-for list="{{pp.ach}}" as="a" hint-placeholder-count="2">
-          <article style="display: flex; align-items: flex-start; gap: 12px; padding: 14.5px 16px; border-radius: 14px; background: #FFFFFF">
+          <article style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2.4px; min-width: 0">
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
               <span style="font-size: 15px; line-height: 20px; color: #1E7A34">{{a.kicker}}</span>
               <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{a.place}}</span>
               <span style="font-size: 17px; line-height: 22px; color: #000000">{{a.line}}</span>
