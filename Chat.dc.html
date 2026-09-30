@@ -16,12 +16,12 @@
 <script src="fit.js?v=69"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=89"></script>
-<script src="i18n.js?v=81"></script>
+<script src="i18n.js?v=82"></script>
 <script src="live.js?v=34"></script>
 <script src="chat.js?v=19"></script>
 <script src="trophy.js?v=14"></script>
 
-<title>Incident chats</title>
+<title>Chats</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -426,7 +426,7 @@ class Component extends DCLogic {
     const L = (en, pt) => (C ? C.L(en, pt) : en);
     const T = (o) => (o ? L(o.en, o.pt) : '');
     const PTL = L('en', 'pt') === 'pt';
-    const t = { back: L('Back', 'Voltar'), chats: L('Incident chats', 'Conversas de incidentes'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
+    const t = { back: L('Back', 'Voltar'), chats: L('Chats', 'Conversas'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
       msg: L('Message', 'Mensagem'), send: L('Send', 'Enviar'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
       fireCard: L('Fire card', 'Cartão do incêndio'), fireCardSub: L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios'),
@@ -469,7 +469,11 @@ class Component extends DCLogic {
 
     // ----- list -----
     if (s.view !== 'chat' && s.view !== 'summary') {
-      const all = C.list();
+      /* the area chosen on the main screen: only its chats, and its name under the title */
+      const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} return v || (window.__wfMem || {}).scope || null; })();
+      const inSc = (c) => !SC || !SC.st || !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co) || !c.st;
+      const scName = SC ? (SC.title || SC.co || SC.st || '') : '';
+      const all = C.list().filter(inSc);
       const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);
         const who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? L('You', 'Você') : (c.people[lm.from] || {}).name || '') : '';
         const txt = lm ? (lm.kind === 'card' ? (lm.summary ? L('Fire resolved', 'Incêndio resolvido') : T(lm.title)) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
@@ -483,9 +487,9 @@ class Component extends DCLogic {
       const groups = shown.length ? [{ title: '', mt: '0', rows: shown.map(row) }] : [];
       const tabs = [['open', L('Open', 'Abertas') + (open.length ? ' ' + open.length : '')], ['resolved', L('Resolved', 'Resolvidas') + (done.length ? ' ' + done.length : '')]]
         .map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ tab: k }); } }));
-      const tu = C.totalUnread();
+      const tu = C.totalUnread(), tuA = open.reduce((a, c) => a + (C.unread(c) || 0), 0);
       return { isList: true, isChat: false, isSummary: false, isPerson: false, listNote: tab === 'resolved' ? L('Resolved fires are the benchmarks for training: open one and tap Simulate to replay it from ignition and try to beat its time to resolution and area burnt.', 'Os incêndios resolvidos são as referências para o treino: abra um e toque em Simular para o repetir desde a ignição e tentar bater o tempo até à resolução e a área ardida.') : t.demo, winBg, t: { ...t, none: tab === 'resolved' ? L('No resolved fires yet. When a fire is closed its chat moves here, with every movement and decision.', 'Ainda sem incêndios resolvidos. Quando um incêndio é encerrado, a conversa passa para aqui, com todos os movimentos e decisões.') : t.none }, ic, groups, noChats: !shown.length, tabs, tabX: tab === 'resolved' ? '100%' : '0',
-        listSub: open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tu ? '. ' + tu + ' ' + L('unread', 'por ler') : '') + '.' };
+        listSub: (scName ? scName + '. ' : '') + open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tuA ? '. ' + tuA + ' ' + L('unread', 'por ler') : '') + '.' };
     }
 
     const c = C.get(s.key);

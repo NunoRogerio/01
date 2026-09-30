@@ -17,7 +17,7 @@
 <script src="fit.js?v=69"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=89"></script>
-<script src="i18n.js?v=81"></script>
+<script src="i18n.js?v=82"></script>
 <script src="live.js?v=34"></script>
 <script src="chat.js?v=19"></script>
 
@@ -986,9 +986,9 @@ class Component extends DCLogic {
         sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
     });
-    const where = (scope && scope.title) || 'this area';
+    const where = (scope && scope.title) || 'All areas';
     return {
-      items, none: items.length === 0, listD: items.length ? 'flex' : 'none', sub: 'Latest updates in ' + where, unread: unread > 9 ? '9+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
+      items, none: items.length === 0, listD: items.length ? 'flex' : 'none', sub: where + '. ' + (unread ? unread + ' unread' : items.length + (items.length === 1 ? ' update' : ' updates')) + '.', unread: unread > 9 ? '9+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
       ring: 'none',   // the bell stays still; the yellow count badge alone shows unread updates
       note: 'Station updates are examples until a dispatch feed is connected.', noteD: out.some((n) => n.kind === 'st') ? 'block' : 'none',
       aria: unread ? 'Notifications, ' + unread + ' unread' : 'Notifications', str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
