@@ -889,6 +889,9 @@ class Component extends DCLogic {
             const b = (x.boundingbox || []).map(Number);
             return { name: nm, sub, lat: +x.lat, lon: +x.lon, bb: b.length === 4 ? b : null };
           });
+          // One row per place: a city, its municipality and its district share a name and a spot (e.g. Porto); the first (most important) stays
+          const km = (a, b) => Math.hypot((a.lat - b.lat) * 111, (a.lon - b.lon) * 111 * Math.cos(a.lat * Math.PI / 180)), nk = (t) => String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+          const uniq = []; list.forEach((r) => { if (!uniq.some((q) => nk(q.name) === nk(r.name) && km(q, r) < 40)) uniq.push(r); }); list.length = 0; uniq.forEach((r) => list.push(r));
           if ((this.state || {}).psQ !== qq) return; this._psR = { q: qq, list, st: list.length ? '' : 'none' }; this.forceUpdate();
         }).catch(() => {
           // Offline: the towns the map knows
@@ -1173,7 +1176,7 @@ class Component extends DCLogic {
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
       liTop: L.side ? 88 : 163 + 32 /* the drop-up stops 32px below the top blade */, listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? '0px' : 'calc(100% - ' + L.barH + 'px)', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg', barGrabOp: listOpen ? 0 : 1,
       toggleList: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.wfListFlag(false); this.setState({ list: !listOpen }); },
-      barTitle: N === 0 ? 'No ignition candidates' : N + ' ignition candidate' + (N === 1 ? '' : 's'), barC: N === 0 ? '#1E7A34' : '#000000', barSub: (NF === 0 ? 'No' : NF) + ' fire' + (NF === 1 ? '' : 's'),
+      barTitle: N === 0 ? 'No ignition candidates' : N + ' ignition candidate' + (N === 1 ? '' : 's'), barC: '#000000', barSub: (NF === 0 ? 'No' : NF) + ' fire' + (NF === 1 ? '' : 's'),
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
       ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,

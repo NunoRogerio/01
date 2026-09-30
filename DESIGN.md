@@ -34,6 +34,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 - **Hierarchy follows the references** (user preferences, map tooltips, ignition detail): conclusion first (the KPI and state a firefighter acts on), then where, then evidence and detail, then actions. Every screen should help a Portuguese or Californian firefighter decide faster and better.
 - **Case:** sentence case everywhere. No all caps.
 - **Middle dots:** none between topics; use a full stop ("All features. All regions."). Any " · " is turned into a full stop at display time (i18n.js).
+- **Counts in titles stay black**, even at zero ("No ignition candidates" is not green).
 - **Coloured numbers:** only an ignition's likelihood %. Other numbers stay dark grey. Red is kept only for alerts such as over time or casualties.
 - **Shortest wording** that keeps the meaning, in every language. Examples: "Surveillance", not "Under surveillance"; "Final duration", not "Time it took to resolve".
 - **Relative times** say "ago" ("3 min ago"). Live counters use short units ("58 min 12 s").
@@ -150,7 +151,7 @@ The one from the user preferences, used everywhere:
   - Content from top to bottom: KPI (annotation above the XS number, which fits with 12px clear at each side), tag, place (Title XS plus the level above as an annotation), then a condensed primary View button.
   - Gaps: 8px after the KPI, 12px between groups, 16px above View.
 - **Legend:** chips in the label style but dark grey. Map weather (temperature, humidity, wind) uses the same chips, under the legend, once the map spans under about 100 km.
-- **Overlay placement (every map, in a band or full screen):** 16px from the edges of the visible map. Top left: search (where there is one), then the legend chips in one row, the weather chips under them. Bottom left: the map credit, level with the middle of the full-screen button. Bottom right: the full-screen / exit button. A full-screen detail map puts its title box (with the legend inside) 16px from the top.
+- **Overlay placement (every map, in a band or full screen):** 16px from the edges of the visible map. Top left: the legend chips in one row, the weather chips under them. Bottom left: the map credit, level with the middle of the full-screen button. Bottom right: the map controls stacked 8px apart (search above, full-screen / exit below), round, the blades' background with a light shadow, so they read as controls over any map. A full-screen detail map puts its title box (with the legend inside) 16px from the top.
 - **Full screen:**
   - a tap on an empty part of the map, or turning the phone sideways, fills the screen;
   - blades slide away;
@@ -162,7 +163,7 @@ The one from the user preferences, used everywhere:
   - no flicker;
   - while a finger moves the map (and while it glides), the drawn map and markers move as one picture; the full redraw follows about four times a second and on release;
   - fire stations thin out as the map zooms out (wider spacing near the whole state or country), so the map stays light and readable.
-- **Find a place:** a round search chip in the map itself, top left, before the legend chips (main map). It opens a panel dropping from the top (like the area picker) with a pill search field and a round X. Results are list rows (place bold, the levels above as an annotation). A pick closes the panel, moves the map there and the area follows the map. Searches only the live regions the account can see.
+- **Find a place:** a round search button above the full-screen button (bottom right of the main map), same size and look. It opens a panel dropping from the top (like the area picker) with a pill search field and a round X. Results are list rows (place bold, the levels above as an annotation), one row per place (a city, its municipality and district of the same name are one result). A pick closes the panel, moves the map there and the area follows the map. Searches only the live regions the account can see.
 
 ## 6. Motion and touch
 
