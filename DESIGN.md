@@ -47,7 +47,8 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 ## 2. Spacing and shape
 
-- **Rhythm:** 16px padding and gaps. Nothing touches a screen or container edge.
+- **Rhythm:** 16px padding and gaps horizontally. Nothing touches a screen or container edge.
+- **Vertical spacing ×1.1 (Sep 30):** every vertical space (margins, row gaps, top/bottom padding of containers and rows) is 10% larger than its base value: 16→17.6, 24→26.4, 8→8.8, 12→13.2. Controls with a fixed height, pills and tags keep their inner padding. New layouts use the ×1.1 values. Dialog: 33px top, 35.2px bottom, 26.4px text→buttons.
 - **Groups:**
   - a title and its description sit closer than 8px;
   - closely related content (a name and its details) sits 8px apart;
