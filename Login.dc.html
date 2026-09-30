@@ -25,7 +25,7 @@
 <helmet>
 <style>
 *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}input,textarea,select{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}img,svg{-webkit-user-drag:none}
-html{background:#1E2B22}body{margin:0;background:#1E2B22;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
+html{background:#000000}body{margin:0;background:#000000;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .opt{transition:background-color .15s ease}
@@ -284,7 +284,7 @@ class Component extends DCLogic {
     let h = document.getElementById('wf-login-bg');
     if (!h) {
       h = document.createElement('div'); h.id = 'wf-login-bg'; h.setAttribute('aria-hidden', 'true');
-      h.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;background:#1E2B22;overflow:hidden';
+      h.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;background:#000000;overflow:hidden';
       B.forEach(() => { const d = document.createElement('div'); d.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);transition:opacity 1.6s ease'; h.appendChild(d); });
       const sh = document.createElement('div'); sh.style.cssText = 'position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)'; h.appendChild(sh);
       document.body.appendChild(h);

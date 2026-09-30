@@ -171,7 +171,7 @@ window.__wfBlink=function(path,dur){
   function blink(root){try{var a=(root||document).querySelectorAll('#wf-load path.base');for(var j=0;j<a.length;j++)window.__wfBlink(a[j]);}catch(e){}}
   var st=document.createElement('style');
   st.textContent='@view-transition{navigation:auto}#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
-    '#wf-load.out{opacity:0;pointer-events:none}'+
+    '#wf-load.out{opacity:0;pointer-events:none}#wf-load.photo{background:#000!important}'+
     '#wf-load .in{display:flex;flex-direction:column;align-items:center;gap:22px;opacity:0;animation:wfin .4s ease .25s forwards}'+
     '@keyframes wfin{to{opacity:1}}'+
     '@keyframes wfburn{0%,12%{opacity:0}45%,62%{opacity:1}100%{opacity:0}}'+
@@ -206,7 +206,7 @@ window.__wfBlink=function(path,dur){
   document.head.appendChild(st);
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
   // Screens with a forest photo behind them start on its dark green, never on the light surface (no flash before the photo)
-  if(/Login\.dc\.html/.test(location.pathname)||/\/(01\/)?(index\.html)?$/.test(location.pathname)){el.style.background='#1E2B22';try{document.documentElement.style.background='#1E2B22';}catch(e){}}
+  if(/Login\.dc\.html/.test(location.pathname)||/\/(01\/)?(index\.html)?$/.test(location.pathname)){el.style.background='#000000';try{document.documentElement.style.background='#000000';}catch(e){}}
   var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
     '<path class="base" style="fill: var(--wf-y)" fill-rule="evenodd" d="'+F+'">'+BLINK+'</path>'+
     '<path class="ground" d="'+G+'" fill="none" stroke="'+(window.__wfY||'#E5FF00')+'" stroke-width="1.1" stroke-linecap="round"/></svg>'+
@@ -253,7 +253,7 @@ window.__wfBlink=function(path,dur){
     ZOOM.appendChild(grayLayer(ph0));b0.appendChild(ZOOM);b0.style.transition='none';b0.className='bg on';b0.style.transform='none';el.className='photo';requestAnimationFrame(function(){ZOOM.style.transform='scale('+(s1+RATE*30)+')';});
     var in0=el.querySelector('.in');in0.style.animation='none';in0.style.opacity='1';el.querySelector('.cap').textContent=ph0[1]+' · Photo: '+ph0[2]+' / Unsplash';
     handLayout(el,LAY,false);try{sessionStorage.removeItem('wf-soft-layout');}catch(e){}
-    try{var dk=document.createElement('style');dk.id='wf-dark';dk.textContent='html,body{background:#1E2B22!important}';document.head.appendChild(dk);var tc=document.querySelector('meta[name=theme-color]');if(tc){tc.__c=tc.content;tc.content='#1E2B22';}}catch(e){}}catch(e){}}
+    try{var dk=document.createElement('style');dk.id='wf-dark';dk.textContent='html,body{background:#000000!important}';document.head.appendChild(dk);var tc=document.querySelector('meta[name=theme-color]');if(tc){tc.__c=tc.content;tc.content='#000000';}}catch(e){}}catch(e){}}
   var t0=Date.now(),minMs=0;
   // Cold start (first screen of a new app session): show one of the forest photos shipped with the app,
   // a different one each time, for at least ~1.6 s. Screen-to-screen changes keep the plain logo.
