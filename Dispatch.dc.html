@@ -395,7 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; flex-wrap: wrap; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: flex-start">
         <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="4">
           <div role="listitem" data-wf-kpi="{{m.key}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc(50% - 4px); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
-            <div data-wf-kpicard="1" style="display: flex; flex-direction: column; align-items: center; box-sizing: border-box; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
+            <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
               <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{m.l}}</span>
               <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C">{{m.u}}</span></span>
               <svg role="img" aria-label="{{m.ch.aria}}" width="56%" height="22" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{m.ch.svgD}}; margin-top: 16px; overflow: visible">
@@ -404,8 +404,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <path d="{{m.ch.bars}}" fill="{{m.ch.barC}}" stroke="none"></path>
                 <path d="{{m.ch.bar2}}" fill="{{m.ch.bar2C}}" stroke="none"></path>
               </svg>
+              <!-- An estimate says so along the card's right edge, written vertically, centred and a little fainter (the cards stay aligned) -->
+              <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 4px; top: 50%; writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg); white-space: nowrap; opacity: 0.8; pointer-events: none">{{m.note}}</span>
             </div>
-            <span class="wf-note" style="display: {{m.noteD}}; margin-top: 4px; text-align: center">{{m.note}}</span>
           </div>
         </sc-for>
       </div>
@@ -1442,7 +1443,7 @@ class Component extends DCLogic {
           const hs = [4, 7, 10, 13, 17, 22, 28], bars = hs.map((h, j) => 'M' + (j * 100 / 7 + 2).toFixed(2) + ' ' + (28 - h) + 'h' + (100 / 7 - 4).toFixed(2) + 'v' + h + 'h-' + (100 / 7 - 4).toFixed(2) + 'Z');
           return { key: 'size', v: L, l: 'Size class', note: haEst ? 'Estimate' : '', ch: { ...none, svgD: 'block', bars: bars.filter((_, j) => j !== i).join(''), barC: 'rgba(118,118,128,0.22)', bar2: bars[i], bar2C: '#B84A00', aria: 'Size class ' + L + ' of A to G (NWCG)' } }; })();
         const med0 = [grow ? { key: 'rate', v: grow.v, l: 'Spread rate', ch: grow.chR } : null, SC,
-          { key: 'area', v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published yet.' : '' }, pers ? { key: 'pers', v: pers, l: 'Personnel', ch: chP } : null].filter(Boolean);
+          { key: 'area', v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published' : '' }, pers ? { key: 'pers', v: pers, l: 'Personnel', ch: chP } : null].filter(Boolean);
         { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['rate', 'area', 'size', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
         const two = false, colW = 175 - 16;
         const med = med0.map((m, i) => ({ note: '', ...m, ...(() => { const q = /^(\S+)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: Math.min(34, Math.floor(colW * 0.62 / Math.max(1, (/^(\S+)/.exec(String(m.v)) || ['', ''])[1].length * 0.56))) + 'px' }));
