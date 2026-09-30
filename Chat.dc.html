@@ -188,7 +188,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               </div>
             </sc-if>
             <sc-if value="{{m.hasLink}}" hint-placeholder-val="{{ false }}">
-              <a href="{{m.href}}" class="chrow wf-b wf-ter" onClick="{{m.goInc}}" style="display: flex; align-items: center; justify-content: center; margin: 0 16px 16px">{{m.link}}</a>
+              <a href="{{m.href}}" class="chrow wf-b {{m.linkCls}}" onClick="{{m.goInc}}" style="display: flex; align-items: center; justify-content: center; margin: 0 16px 16px">{{m.link}}</a>
             </sc-if>
           </article>
         </sc-if>
@@ -629,7 +629,7 @@ class Component extends DCLogic {
           hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
-          hasLink: !!m.link || toSheet, link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : inc.href,
+          hasLink: !!m.link || toSheet, linkCls: toSheet ? 'wf-pri' : 'wf-ter',   /* the projection is the main action here: primary lime */ link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : inc.href,
           goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }
