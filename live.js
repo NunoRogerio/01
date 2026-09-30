@@ -291,6 +291,13 @@ window.__wfRegionUp = function (st, co) {
     pts.forEach(function(p){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);});
     for(var i=pts.length-1;i>=0;i--){var p=pts[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
     up.pop();lo.pop();return lo.concat(up);}
+  // No mapped perimeter: an irregular, fire-like outline (lobes, stretched along one axis) with the reported area, seeded by the fire id
+  function blob(r,n,id){var sd=0;String(id||'').split('').forEach(function(c){sd=(sd*31+c.charCodeAt(0))>>>0;});var R=function(k){var q=Math.sin(sd*0.0007+k*12.9898)*43758.5453;return q-Math.floor(q);};
+    var p1=R(1)*6.28,p2=R(2)*6.28,p3=R(3)*6.28,p4=R(4)*6.28,rot=R(5)*6.28,el=1.35+R(6)*0.4,o=[],i,A=0;
+    for(i=0;i<n;i++){var a=2*Math.PI*i/n,k=1+0.22*Math.sin(2*a+p1)+0.14*Math.sin(3*a+p2)+0.09*Math.sin(5*a+p3)+0.05*Math.sin(8*a+p4)+0.05*(R(10+i)-0.5),x=Math.cos(a)*k*el,y=Math.sin(a)*k/el;
+      o.push([x*Math.cos(rot)-y*Math.sin(rot),x*Math.sin(rot)+y*Math.cos(rot)]);}
+    for(i=0;i<n;i++){var u=o[i],v=o[(i+1)%n];A+=u[0]*v[1]-v[0]*u[1];}A=Math.abs(A)/2;var f=r*Math.sqrt(Math.PI/(A||1));
+    return o.map(function(q){return [q[0]*f,q[1]*f];});}
   function circle(r,n){var o=[];for(var i=0;i<n;i++){var a=2*Math.PI*i/n;o.push([r*Math.cos(a),r*Math.sin(a)]);}return o;}
   function perim(P){var s=0;for(var i=0;i<P.length;i++){var b=P[(i+1)%P.length];s+=Math.hypot(b[0]-P[i][0],b[1]-P[i][1]);}return s;}
   function compass(d){return ['N','NE','E','SE','S','SW','W','NW'][Math.round(((d%360)+360)%360/45)%8];}
@@ -407,7 +414,7 @@ window.__wfRegionUp = function (st, co) {
     M[f.id]={done:false};
     var o=[f.lat,f.lon];
     Promise.all([officialPerimeter(f),weatherAt(f),terrainAt(f),fuelAt(f)]).then(function(r){
-      var ring=r[0]||satellitePerimeter(f,o)||{xy:circle(Math.sqrt((f.ha||5)*1e4/Math.PI),48),assumed:true,src:f.ha?'No mapped perimeter · '+f.ha+' ha reported':'No mapped perimeter · size not published'};
+      var ring=r[0]||satellitePerimeter(f,o)||{xy:blob(Math.sqrt((f.ha||5)*1e4/Math.PI),64,f.id),assumed:true,src:f.ha?'No mapped perimeter · '+f.ha+' ha reported':'No mapped perimeter · size not published'};
       var out=simulate(f,ring,ring.src,r[1],r[2],r[3]);out.done=true;out.assumed=!!ring.assumed;M[f.id]=out;
       try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
     }).catch(function(e){console.warn('[fire model] failed',e);M[f.id]={done:true,failed:true};try{window.dispatchEvent(new Event('wf-sync'));}catch(x){}});
