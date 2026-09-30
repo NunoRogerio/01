@@ -48,7 +48,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 ## 2. Spacing and shape
 
 - **Rhythm:** 16px padding and gaps horizontally. Nothing touches a screen or container edge.
-- **Vertical spacing ×1.1 (Sep 30):** every vertical space (margins, row gaps, top/bottom padding of containers and rows) is 10% larger than its base value: 16→17.6, 24→26.4, 8→8.8, 12→13.2. Controls with a fixed height, pills and tags keep their inner padding. New layouts use the ×1.1 values. Dialog: 33px top, 35.2px bottom, 26.4px text→buttons.
+- **Vertical spacing ×1.21 (Sep 30, two rounds of +10%):** every vertical space (margins, row gaps, top/bottom padding of containers and rows) is 21% larger than its base value: 16→19.4, 24→29, 8→9.7, 12→14.5. Controls with a fixed height, pills and tags keep their inner padding. The 56px status-bar offset at the top of every screen and panel is structure, not spacing, and stays 56px; the main screen's top blade grows with its header. New layouts use the scaled values. Dialog: 36.3px top, 38.7px bottom, 29px text→buttons.
 - **Groups:**
   - a title and its description sit closer than 8px;
   - closely related content (a name and its details) sits 8px apart;
@@ -342,3 +342,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Dispatch sending screen and resending (Sep 30)
 - **Sending screen:** every text black (title, subtitle, station state, units, demo note); the title in title M, each station name in title S (17px bold), its state in normal text (17px). Progress bar 4px high.
 - **After the order is sent from the fire page:** the station cards stay still, with no Cancel / Send order. Adding a resource or changing a station (Apply), or removing one, sends the order again at once through the sending screen.
+- **Between groups: 24px (Sep 30).** Vertical gaps and margins between separate groups of items are 24px (were 16px, then 19.4px after the spacing rounds). Spacing inside a group keeps the scaled values.
+- **Reset pill (pickers):** sits beside the picker's title, centred on the title line and the back button (6px from the top). Disabled: grey and faded. Enabled: lime (the app's accent) background, black text. Shared class `.wf-rpill`.
