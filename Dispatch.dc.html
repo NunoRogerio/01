@@ -188,7 +188,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding: 4px 8px">
-      <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{hd.c}}">{{hd.title}}</h1>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{hd.c}}">{{hd.title}}</h1>
       <span title="{{hd.sub}}" style="margin-top: 2px; font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span>
       <!-- What it is: the qualifier band, as on the ignition candidate card, in the map marker's deep orange -->
       <span class="wf-qual" style="margin-top: 12px; margin-right: -52px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg>{{hd.kind}}</span>
@@ -243,7 +243,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
   </section>
 
-  <h2 class="rise" style="margin: 24px 20px 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px; animation-delay: 220ms">Prepare station dispatches</h2>
+  <h2 class="rise" style="margin: 24px 20px 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; animation-delay: 220ms">Prepare station dispatches</h2>
   <div class="rise" style="padding: 12px 16px 0; animation-delay: 240ms">
     <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43; opacity: {{pk.stLblOp}}; transform: translateY({{pk.stLblY}}); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1)">Select station</span>
     <button type="button" class="{{pk.stCls}}" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{pk.stAria}}" style="animation-delay: 950ms; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
@@ -276,7 +276,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Sending dispatch orders: each chosen station's coordinator gets its order in turn, then a confirmation and Done -->
   <section role="dialog" aria-modal="true" aria-labelledby="sendTitle" aria-hidden="{{snd.hidden}}" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; box-sizing: border-box; padding: 72px 16px 40px; background: #F2F2F7; transform: translateY({{snd.y}}); visibility: {{snd.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{snd.visDelay}}">
     <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
-      <h2 id="sendTitle" style="margin: 0; font-size: 28px; font-weight: 600; line-height: 34px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2>
+      <h2 id="sendTitle" style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{snd.sub}}</span>
     </div>
     <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 6px; margin: 24px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
@@ -349,7 +349,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </button>
     <div style="display: flex; align-items: center; gap: 0; flex-shrink: 0; padding: 12px 16px 0">
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-        <h2 id="sentTitle" style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 34px; color: {{sentTitleC}}">{{sentTitle}}</h2>
+        <h2 id="sentTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: {{sentTitleC}}">{{sentTitle}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{fireId}} · {{sentSub}}{{unitsTxt}}</span>
       </span>
     </div>
