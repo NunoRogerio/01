@@ -175,7 +175,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 @keyframes sndspin{to{transform:rotate(360deg)}}.sndspin{animation:sndspin .8s linear infinite}
 .sw26k{will-change:transform}[role=switch]:active .sw26k{scale:1.12;background:rgba(255,255,255,0.7)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.wf-cardpulse{position:absolute;inset:-1.4px;border:1.4px solid #3A3A3C;border-radius:16px;pointer-events:none;animation:wfCardPulse 1.6s linear infinite}@keyframes wfCardPulse{from{inset:-1.4px;border-radius:17.4px;opacity:1}to{inset:-15px;border-radius:31px;opacity:0}}@media (prefers-reduced-motion: reduce){.wf-cardpulse{animation:none;opacity:0}}
+.wf-cardpulse{position:absolute;inset:-1.4px;border-radius:17.4px;outline:1.4px solid #3A3A3C;outline-offset:-1.4px;opacity:0;pointer-events:none;will-change:opacity,outline-offset;animation:wfCardPulse 1.6s linear infinite}@keyframes wfCardPulse{0%{outline-offset:-1.4px;opacity:1}100%{outline-offset:12px;opacity:0}}@media (prefers-reduced-motion: reduce){.wf-cardpulse{animation:none}}
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; overflow: clip; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
