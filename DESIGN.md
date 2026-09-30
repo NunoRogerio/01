@@ -110,6 +110,10 @@ The one from the user preferences, used everywhere:
 - No scroll means no fade.
 - It is a mask on the scrolling panel (`prefs.js`, `fadeOne`), so the panel's own background shows through in both themes.
 
+### Detail pages (being tried)
+
+- No blades: header, a map band, then all the information in one scrolling column, with the action buttons fixed at the bottom. A tap on the map opens it full screen.
+
 ### Blades and panels
 
 - **Grabbers:** every expandable blade has one, at the same distance from the edge everywhere, with 40px clear of the content.
