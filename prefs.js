@@ -247,7 +247,7 @@
   var FSEL = '[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap,[data-wf-fadetop]';
   // The fade is laid over the content in the colour of what it sits on (e.g. a white card), so the text fades out
   // while the card and the panel keep crisp edges. 48px + 60% = 77px tall.
-  var FH = 68;   // 85px less 20%
+  var FH = 54;   // 85px less 20%, then less 20% again
   // One colour per scrolling panel, kept while scrolling: the predominant background of its content (the colour covering
   // the most area among its outermost boxes, e.g. the white cards), else the panel's own colour. Measured once per opening.
   // Only (nearly) opaque colours count: a translucent tint (a touch ripple, a pressed row, a hover) never sets the fade colour.
@@ -337,7 +337,17 @@
       if (w > avail + 0.5 && fs > 12) n.style.setProperty('--k', Math.max(12, Math.floor(fs * avail / w * 0.97)) + 'px');
     }
   }
-  var kRaf = 0, kGo = function () { if (!kRaf) kRaf = requestAnimationFrame(function () { kRaf = 0; fitKpi(); }); };
+  /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
+  var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;
+  function noStickyHover() {
+    if (!touchOnly || !HS) return;
+    var strip = function (rules) { for (var j = 0; j < rules.length; j++) { var r = rules[j];
+      if (r.cssRules && r.media && /hover:\s*hover/.test(r.media.mediaText)) continue;
+      if (r.cssRules && !r.selectorText) { strip(r.cssRules); continue; }
+      if (r.selectorText && r.selectorText.indexOf(':hover') >= 0 && r.style) ['background', 'background-color', 'background-image', 'box-shadow', 'border-color'].forEach(function (p) { if (r.style.getPropertyValue(p)) r.style.removeProperty(p); }); } };
+    for (var i = 0; i < document.styleSheets.length; i++) { var sh = document.styleSheets[i], rl = null; try { rl = sh.cssRules; } catch (e) { continue; } if (!rl || (HS.has(sh) && sh.__wfN === rl.length)) continue; strip(rl); HS.add(sh); sh.__wfN = rl.length; }
+  }
+  var kRaf = 0, kGo = function () { if (!kRaf) kRaf = requestAnimationFrame(function () { kRaf = 0; noStickyHover(); fitKpi(); }); };
   if (window.MutationObserver) { var kMo = new MutationObserver(kGo); var kStart = function () { kMo.observe(document.documentElement, { childList: true, subtree: true, characterData: true }); kGo(); }; if (document.body) kStart(); else document.addEventListener('DOMContentLoaded', kStart); }
   window.addEventListener('resize', kGo); if (document.fonts && document.fonts.ready) document.fonts.ready.then(kGo); setInterval(kGo, 1500);
   apply();
