@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=69"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=88"></script>
+<script src="prefs.js?v=89"></script>
 <script src="i18n.js?v=78"></script>
 <script src="live.js?v=34"></script>
 
@@ -1246,7 +1246,7 @@ class Component extends DCLogic {
     const ringPath = (r) => 'M' + r.map((q) => Pf(q[0], q[1])).join('L') + 'Z';
     const edges = (sn, held) => { let d = ''; const r = sn.ring, n = r.length; for (let i = 0; i < n; i++) { const j = (i + 1) % n; if (!!sn.done[i] === held && !!sn.done[j] === held) d += 'M' + Pf(r[i][0], r[i][1]) + 'L' + Pf(r[j][0], r[j][1]); } return d; };
     // No mapped perimeter (e.g. most Portuguese fires): the model's outline from the reported size, labelled 'Estimated'.
-    const REAL = mdl && !mdl.assumed, showEdge = mdl && (REAL || hz > 0);
+    const REAL = mdl && !mdl.assumed, showEdge = !!mdl;   /* the edge always says its state: burning front (orange) or held line (green), estimated outline or not */
     const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 ? ringPath(snapH.ring) : '',
       mActive: LY.active && showEdge ? edges(snapH, false) : '', mHeld: LY.held && showEdge ? edges(snapH, true) : '',
       // strokes sit inside the CSS-scaled map layer, so size them in screen pixels by dividing by the zoom
@@ -1265,8 +1265,9 @@ class Component extends DCLogic {
           const bl = setInterval(() => { try { const L = this.el && this.el.querySelector('[data-wf-maploader]'), e = L && L.querySelector('path.base'); if (!L || getComputedStyle(L).opacity === '0') { clearInterval(bl); return; } if (e && window.__wfBlink) window.__wfBlink(e); } catch (x) { clearInterval(bl); } }, 2000); }
         /* on a fire the map waits for its perimeter and the framing on it: a new view resets the tile count (1.5 s at most when tiles come from cache) */
         const shapeOk = !(mode === 'spread' && p.fireId && window.__wfLiveMap) || !!(MD && (MD.done || MD.failed)), vk = [p.zoom, p.focusX, p.focusY].join('|');
-        if (on && vk !== this._ldVk) { this._ldVk = vk; if (this._ldT0) { this._tl = 0; this._tilesOk = false; clearTimeout(this._ldVT); this._ldVT = setTimeout(() => { if (!this._tilesOk) { this._tilesOk = true; this.forceUpdate(); } }, 1500); } }
-        const want = on && !this._ldGave && (!this._tilesOk || !shapeOk || Date.now() - (this._ldT0 || 0) < 2500);
+        if (on && !this._ldDone && vk !== this._ldVk) { this._ldVk = vk; if (this._ldT0) { this._tl = 0; this._tilesOk = false; clearTimeout(this._ldVT); this._ldVT = setTimeout(() => { if (!this._tilesOk) { this._tilesOk = true; this.forceUpdate(); } }, 1500); } }
+        const want = on && !this._ldDone && !this._ldGave && (!this._tilesOk || !shapeOk || Date.now() - (this._ldT0 || 0) < 2500);
+        if (on && !want && this._ldT0) this._ldDone = true;   /* once revealed the map never shows the loader again (full screen and back stay instant) */
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
@@ -1429,7 +1430,7 @@ class Component extends DCLogic {
       fire2: withTip(at(842, 252), 'Possible holdover fire IC-0924-08', '54% likelihood. Lightning struck here at 11:40 AM.\nTap to review.'),
       zones: [],
       fdx: (Number(p.fireX) || 610) - 610, fdy: (Number(p.fireY) || 290) - 290,
-      rings: (mdl && LY.burn) ? [(() => { const r = snapH.ring; let top = r[0]; r.forEach((q) => { if (q[0] > top[0]) top = q; }); const xy = this.geo().P(top[0], top[1]);
+      rings: (mdl && LY.burn && !(p.fireOnly === true || p.fireOnly === 'true')) ? [(() => { const r = snapH.ring; let top = r[0]; r.forEach((q) => { if (q[0] > top[0]) top = q; }); const xy = this.geo().P(top[0], top[1]);
         const lo = at(xy[0], xy[1], { label: (hz ? '+' + hz + 'h · ~' : 'Now · ') + snapH.ha.toLocaleString() + ' ha', bd: 'rgba(232,106,0,0.8)', fg: '#A34800' }); lo.top = +(lo.top - 18).toFixed(1);
         if (!hz && mdl.assumed) { lo.label = 'Estimated · ~' + snapH.ha.toLocaleString() + ' ha'; lo.bd = 'rgba(135,88,0,0.45)'; lo.fg = '#875800'; }
         return withTip(lo, hz ? 'Model estimate in ' + hz + ' h' : 'Burned area now',

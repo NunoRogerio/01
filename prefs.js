@@ -82,6 +82,8 @@
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
     o.push('image[href*="tile.openstreetmap"]{filter:url(#wfNightTiles)}');
     o.push('rect[fill="#F2F2F7"]{fill:#262629}');
+    o.push('path[fill="#3A3A3C"][fill-opacity="0.4"]{fill:#E5E5EA;fill-opacity:.22;stroke:#F2F2F7;stroke-opacity:.8}');   /* burned area reads on the night map */
+    o.push('[aria-label^="Map legend"] path[stroke="#1C1C1E"]{stroke:#E5E5EA}');
     o.push('[data-wf-maploader] path[fill="#3A3A3C"]{fill:#D1D1D6}[data-wf-maploader] path[stroke="#3A3A3C"]{stroke:#D1D1D6}');   /* the loader's flame reads light on the dark grey */
     o.push('path[fill-rule="evenodd"][fill="#FFFFFF"]{fill:#141416;fill-opacity:0.2}');   // outside the chosen region: a light dim, not a bright veil
     return o.join('\n');
