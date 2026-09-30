@@ -238,6 +238,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Lists (all):** no dividers between items; only the line that separates the list from its header (or group title). Chevrons align with the first line of the item, not its centre.
 - **Map speed:** nothing outside the map watches it per frame (fades and card sizing ignore map changes; no page-wide searches on timers); a selected station alone draws its mask; while dragging the drawn map moves as one picture and redraws fully at most about twice a second.
 - **Round controls press:** besides the translucent press highlight, a round control swells 10% and returns at once (260 ms), app-wide.
-- **Incidents list:** the app's search field and a switcher (All / Candidates / Fires) above the list; the subtitle keeps the full counts.
+- **Incidents list:** a switcher (All / Candidates / Fires) then the app's search field, which searches only what the switcher shows ("Search fires" when on Fires); the subtitle keeps the full counts.
 - **Under the status bar (installed app):** the status bar is translucent; the frame runs from the very top, so maps and blurs continue under the clock and the camera. The incidents list, open, rises to the top safe area (just under the status bar).
 - **Endurance by station:** the units on a fire are listed per station, one white card each, headed by the station (crest, name, distance, crews still free after those on this fire, or "All crews on this fire"); air support in its own card. No separate "Stations on this fire" block when units are shown.
