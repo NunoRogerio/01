@@ -65,7 +65,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
       <!-- Key figures: three per row, a grey + tile at the end adds or removes cards; simulated figures say so along the right edge -->
       <div style="display: flex; flex-direction: column; padding: 0 16px">
-        <span style="margin: 0 4px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Key figures</span>
+        <span style="margin: 0 4px 8px; font-size: 15px; font-weight: 700; line-height: 20px; color: #6E6E73">Key figures</span>
         <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
           <sc-for list="{{kpis}}" as="m" hint-placeholder-count="3">
             <div role="listitem" style="display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0">
@@ -83,7 +83,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
       <!-- Fires near this station: a calm list, like the incidents -->
       <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Fires near this station</span>
+        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 700; line-height: 20px; color: #6E6E73">Fires near this station</span>
         <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 20px; font-size: 17px; line-height: 22px; color: #000000">{{noFiresTxt}}</p></sc-if>
         <ul style="display: {{firesD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
           <sc-for list="{{fires}}" as="f" hint-placeholder-count="2">
@@ -150,7 +150,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
       <!-- The station itself: crest and name, then its details as label and value rows -->
       <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Station</span>
+        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 700; line-height: 20px; color: #6E6E73">Station</span>
         <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
           <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 12px 16px; box-sizing: border-box">
             <img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain">
