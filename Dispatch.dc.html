@@ -15,9 +15,9 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=80"></script>
-<script src="i18n.js?v=68"></script>
-<script src="live.js?v=32"></script>
+<script src="prefs.js?v=82"></script>
+<script src="i18n.js?v=69"></script>
+<script src="live.js?v=33"></script>
 <script src="chat.js?v=18"></script>
 
 <title>Dispatch sizing</title>
@@ -413,6 +413,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </div>
           </div>
         </sc-for>
+        <button type="button" class="mbtn" onClick="{{pkOpenKpi}}" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 calc(((100% - 16px) / 3 - 4px) / 2); align-self: stretch; min-height: 122px; padding: 0; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
       </div>
       <span class="wf-note" style="display: {{cc.trD}}; margin-top: 12px">{{cc.axis}}</span>
     </div>
@@ -489,6 +490,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 </div>
               </div>
             </sc-for>
+            <button type="button" class="mbtn" onClick="{{d.add}}" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 calc(((100% - 16px) / 3 - 4px) / 2); align-self: stretch; min-height: 72px; padding: 0; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </li>
         </sc-if>
@@ -674,6 +676,23 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- The configuration panel's one grabber, fixed 8px above its bottom edge: it rides the edge as the panel grows and folds back -->
   <span aria-hidden="true" style="position: absolute; z-index: 22; left: 50%; top: {{cfGrabT}}px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); pointer-events: none; visibility: {{cfVis}}; translate: 0 {{cfDy}}px; transition: top .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{cfVisDelay}}"></span>
 
+
+  <!-- Cards picker: the group's cards with toggles (shared by every card group on this screen) -->
+  <div class="wf-glass scrim" onClick="{{pk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{pk.op}}; pointer-events: {{pk.pe}}; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-label="{{pk.title}}" aria-hidden="{{pk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 24px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{pk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px">
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{pk.title}}</h2>
+      <button type="button" class="mbtn" onClick="{{pk.close}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">
+      <sc-for list="{{pk.rows}}" as="r" hint-placeholder-count="6">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 16px; border-top: {{r.sep}}">
+          <span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{r.name}}</span>
+          <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
+        </div>
+      </sc-for>
+    </div>
+  </section>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
@@ -788,10 +807,22 @@ class Component extends DCLogic {
           const IC = {"temp": "M10 14.5V5a2 2 0 1 1 4 0v9.5a4 4 0 1 1-4 0Z M12 17.5v-6", "wind": "M12 20V5 M6.5 10.5 12 5l5.5 5.5", "rh": "M12 3.5c3 4 6 7.4 6 10.5a6 6 0 1 1-12 0c0-3.1 3-6.5 6-10.5Z", "md": "M5 19c0-8 5-13 14-14-1 9-6 14-14 14Z M5 19l7-7 M15.5 15.5c1 1.2 1.5 2.2 1.5 3a1.5 1.5 0 1 1-3 0c0-.8.5-1.8 1.5-3Z", "terr": "M3 19 9.5 8l4 6.5L16 11l5 8Z", "fuel": "M12 3c3 3.5 6 6 6 10a6 6 0 1 1-12 0c0-2.5 1.2-4.2 3-6 .3 2 1.3 3.2 2.5 3.5C11 8 11 5.5 12 3Z", "slope": "M3 19h18L3 8Z M8 19a5 5 0 0 0-1.3-3.4"}, DIR = { N: 0, NNE: 22, NE: 45, ENE: 67, E: 90, ESE: 112, SE: 135, SSE: 157, S: 180, SSW: 202, SW: 225, WSW: 247, W: 270, WNW: 292, NW: 315, NNW: 337 };
           const mk = (m, grp) => { const q = /^(\S+)\s+(.+)$/.exec(m.v); return { ...m, n: q ? q[1] : m.v, u: q ? q[2] : '', uD: q ? 'inline' : 'none', numD: m.txt ? 'none' : 'flex', txtD: m.txt ? 'block' : 'none', txt: m.txt || '', subD: m.sub ? 'block' : 'none', sub: m.sub || '', ic: IC[m.key] || '', icRot: m.key === 'wind' ? ((DIR[String(I.from || '').toUpperCase()] || 0) + 180) % 360 : 0,   ...this.wfKpiDrag(m.key, grp, () => { this.setState({ ctip: grp + ':' + m.key }); clearTimeout(this._ctT); this._ctT = setTimeout(() => this.setState({ ctip: null }), 1800); }), tipOp: (this.state || {}).ctip === grp + ':' + m.key ? 1 : 0, tipY: (this.state || {}).ctip === grp + ':' + m.key ? '0px' : '4px', note: sim ? '' : (m.note || ''), noteD: !sim && m.note ? 'block' : 'none' }; };
           // Two sections: the ground (terrain, fuel, slope) and the weather (temperature, wind, fuel moisture, humidity)
-          const T = ['terr', 'fuel', 'slope'], Wk = ['temp', 'wind', 'md', 'rh'];
-          const pick = (keys, grp) => { let o = null; try { o = JSON.parse(localStorage.getItem('wf-order-' + grp) || 'null'); } catch (e) {} o = Array.isArray(o) ? o : keys; const ix2 = (k) => { const i = o.indexOf(k); return i < 0 ? 99 : i; };
+          const T = ['terr', 'fuel', 'md', 'slope'], Wk = ['temp', 'wind', 'rh'];
+          const pick = (keys, grp) => { const vis = this.wfGrpNote(grp, C0.filter((m) => keys.indexOf(m.key) >= 0)); keys = keys.filter(vis); let o = null; try { o = JSON.parse(localStorage.getItem('wf-order-' + grp) || 'null'); } catch (e) {} o = Array.isArray(o) ? o : keys; const ix2 = (k) => { const i = o.indexOf(k); return i < 0 ? 99 : i; };
             return C0.filter((m) => keys.indexOf(m.key) >= 0).sort((a, b) => ix2(a.key) - ix2(b.key)).map((m) => mk(m, grp)); };
-          return [{ cx: true, item: false, label: 'Conditions', title: 'Weather', grp: 'wx', sim, simD: sim ? 'inline' : 'none', cards: pick(Wk, 'wx') }, { cx: true, item: false, label: 'Conditions', title: 'Terrain', grp: 'terr', sim, simD: sim ? 'inline' : 'none', cards: pick(T, 'terr') }];
+          return [{ cx: true, item: false, label: 'Conditions', title: 'Weather', grp: 'wx', sim, simD: sim ? 'inline' : 'none', add: () => this.setState({ pick: 'wx' }), cards: pick(Wk, 'wx') }, { cx: true, item: false, label: 'Conditions', title: 'Terrain', grp: 'terr', sim, simD: sim ? 'inline' : 'none', add: () => this.setState({ pick: 'terr' }), cards: pick(T, 'terr') }];
+  }
+  // Card groups can be trimmed by the user: the grey + tile at the end of a group opens a list of that group's cards with
+  // toggles. Hidden cards are kept per group on this phone.
+  wfHidden(grp) { let v = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + grp) || 'null'); } catch (e) {} return Array.isArray(v) ? v : []; }
+  wfGrpNote(grp, all) { this._grpAll = this._grpAll || {}; this._grpAll[grp] = all.map((m) => ({ key: m.key, l: m.l })); const H = this.wfHidden(grp); return (k) => H.indexOf(k) < 0; }
+  wfPicker() {
+    const st = this.state || {}, g = st.pick || null, all = (this._grpAll || {})[g] || [], H = g ? this.wfHidden(g) : [];
+    const TT = { kpi: 'Key figures', wx: 'Weather', terr: 'Terrain', ign: 'Key figures' };
+    const tog = (k) => () => { const h = this.wfHidden(g), i = h.indexOf(k); if (i >= 0) h.splice(i, 1); else h.push(k); try { localStorage.setItem('wf-hide-' + g, JSON.stringify(h)); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); };
+    return { on: !!g, title: TT[g] || '', y: g ? '0%' : '105%', op: g ? 1 : 0, pe: g ? 'auto' : 'none', hidden: g ? 'false' : 'true',
+      rows: all.map((m, i) => { const on = H.indexOf(m.key) < 0; return { name: m.l, onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', toggle: tog(m.key), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' }; }),
+      close: () => this.setState({ pick: null }) };
   }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
   componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); }
@@ -1431,7 +1462,7 @@ class Component extends DCLogic {
       hd: (() => { const ign = !!(fv && /^Confirmed from /.test(fv.note || '')); const sec = Math.floor(Math.max(0, actMin) * 60), dd = Math.floor(sec / 86400), hh = Math.floor((sec % 86400) / 3600), mm = Math.floor((sec % 3600) / 60), ss = sec % 60;
         const p2 = (n) => String(n).padStart(2, '0'), el = (dd ? dd + ' d ' + hh + ' h' : hh ? hh + ' h ' + mm + ' min' : mm + ' min');
         const pt = /^pt/i.test(document.documentElement.lang || ''), t0 = Math.round(Date.now() - Math.max(0, actMin) * 60000);
-        const reg = frow && window.__wfRegion ? window.__wfRegion(frow.st, frow.co) : '';
+        const reg = frow && window.__wfPlaceUp ? window.__wfPlaceUp(frow.st, frow.co) : '';
         return ign ? { title: fv.place, c: '#000000', sub: reg || 'Confirmed by satellite', kind: 'Active fire', tagD: 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
           : { title: fv ? (/^[A-Za-z]{2,5}-?\d{3,}$/.test(fv.place || '') ? (frow && frow.parent ? 'Near ' + frow.parent : 'Unnamed fire') : fv.place) : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held fire' : 'Active fire', tagD: 'none', pillD: RO ? 'none' : 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
@@ -1439,6 +1470,7 @@ class Component extends DCLogic {
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? 'inline-flex' : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
       pgScroll: (e) => { if (!RO) return; try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
       mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - MAPH) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
+      pk: this.wfPicker(), pkOpenKpi: () => this.setState({ pick: 'kpi' }),
       hdrB: this._hdrB || 170, MAPH, tlTop, hdChatD: RO ? 'none' : 'flex', ulGap: RO ? '24px' : '2px', ulMt: RO ? '24px' : '16px', ulBd: RO ? '0' : '1px solid rgba(60,60,67,0.14)', backOrd: RO ? '-1' : '0', backLbl2: RO ? 'Back' : 'Done', backIcD: RO ? 'block' : 'none', kindD: 'inline', qualPr: RO ? '4px' : '12px', qualR: RO ? '18px' : '0', kindDot: HELD ? '#6F2B06' : '#E8590C', tagMl: 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const tk = !RO || !HELD ? null : HELD.took != null ? HELD.took : (I.startMs && HELD.at ? HELD.at - I.startMs : I.startMs && I.updMs && I.updMs > I.startMs ? I.updMs - I.startMs : null); const fin = tk != null && tk > 0 ? DUR(tk) : ''; /* how long it took to hold: the source's time, else start to held, else start to the last update */ return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: false, mapFireOnly: RO, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: 'note', tlOpenStr: 'false', tlToggle: null, tlCur: 'default', tlBarD: 'none', tlBar: [], tlDetD: 'none', startD: T && INFO && INFO.startMs ? 'inline' : 'none', startTxt: INFO && INFO.startMs ? (() => { const d = new Date(INFO.startMs); return 'Started ' + (new Date().toDateString() === d.toDateString() ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString([], { day: 'numeric', month: 'short' })); })() : '',   /* today: the time; before: the day (the time active says the rest) */ kindC: '#1C1C1E' }; })(), qualMr: RO ? '-4px' : '-52px',
       chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: 'Team chat', rowD: 'none', title: '', time: '', timeC: '#545458', last: '' };
         const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
@@ -1554,6 +1586,7 @@ class Component extends DCLogic {
         // ...except containment while the source still publishes less than 100% (e.g. NIFC 88%): then it still matters
         if (HELD) for (let i = med0.length - 1; i >= 0; i--) if (['rate', 'head', 'eta'].indexOf(med0[i].key) >= 0 || (med0[i].key === 'cont' && !(I.pc != null && I.pc < 100))) med0.splice(i, 1);
         { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['pop', 'cont', 'rate', 'head', 'eta', 'area', 'size', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
+        { const vis = this.wfGrpNote('kpi', med0); for (let i = med0.length - 1; i >= 0; i--) if (!vis(med0[i].key)) med0.splice(i, 1); }
         const two = false, colW = 106;
         const med = med0.map((m, i) => ({ note: '', tag: '', sub: '', tagFg: '', tagBg: '', ...m, tagD: m.tag ? 'block' : 'none', subD: m.sub ? 'block' : 'none', ...(() => { const q = /^(\S+)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: (() => { const q = /^(\S+)\s*(.*)$/.exec(String(m.v)) || ['', String(m.v), ''], w = colW - (q[2] ? q[2].length * 8.6 + 3 : 0); return Math.max(16, Math.min(30, Math.floor(w / Math.max(1, q[1].length * 0.6)))) + 'px'; })(), padR: '6px', padL: '6px' }));
         const anyCh = med.some((m) => m.ch.svgD !== 'none' || m.ch.segD !== 'none') || chB.svgD !== 'none';

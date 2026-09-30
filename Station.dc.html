@@ -15,9 +15,9 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=80"></script>
-<script src="i18n.js?v=68"></script>
-<script src="live.js?v=32"></script>
+<script src="prefs.js?v=82"></script>
+<script src="i18n.js?v=69"></script>
+<script src="live.js?v=33"></script>
 <script src="chat.js?v=18"></script>
 
 <title>Fire station</title>
@@ -199,7 +199,7 @@ class Component extends DCLogic {
       mapW: 390, mapH: 844, ctrlTop: 180, zoom: 0.9,
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
-        title: name, name, ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), operator: op, opD: op ? 'block' : 'none', coords, x: S.x, y: S.y, chips, hasPhone: !!phone, tel: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '',
+        title: name, name, ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), operator: op, opD: op ? 'block' : 'none', coords, x: S.x, y: S.y, chips, hasPhone: !!phone, tel: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '',
         dir: 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, dirBg: phone ? '#2C2C2E' : (window.__wfY || '#E5FF00'), dirFg: phone ? (window.__wfY || '#E5FF00') : '#1C1C1E',
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
       rows, fires, noFires: !fires.length, noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',

@@ -12,11 +12,11 @@ window.__wfOnly = { PT: 1, CA: 1 };
 // The level above a place, for the line under an item's name: county and state in the US, district in Portugal,
 // else region and country (from the regions file). One definition for candidates, fires and stations.
 // The region at a point (stations carry only coordinates): the smallest region box that holds it
-window.__wfRegionAt = function (lat, lon) {
+window.__wfRegionAt = function (lat, lon, short) {
   var B = window.__wfGeoBoxes || {}, best = null, area = 1e9;
   Object.keys(B).forEach(function (k) { if (k.indexOf('|') < 0 || k.indexOf('AMZ|') === 0) return; var b = B[k]; if (!b || lon < b[0] || lon > b[2] || lat < b[1] || lat > b[3]) return;
     var a = (b[2] - b[0]) * (b[3] - b[1]); if (a < area) { area = a; best = k; } });
-  if (!best) return ''; var i = best.indexOf('|'); return window.__wfRegion(best.slice(0, i), best.slice(i + 1));
+  if (!best) return ''; var i = best.indexOf('|'); return short ? best.slice(i + 1) : window.__wfRegion(best.slice(0, i), best.slice(i + 1));
 };
 window.__wfRegion = function (st, co) {
   st = st || ''; co = co || '';
@@ -27,6 +27,8 @@ window.__wfRegion = function (st, co) {
   if ((g ? g[4] : (st.length === 2 ? 'US' : '')) === 'US') return co + (st === 'LA' ? ' Parish' : st === 'AK' ? '' : ' County') + ', ' + name;
   return co + ', ' + name;
 };
+// Detail headers: just the level above the place by its own name ("Los Angeles", "Aveiro"): no County / District, no state or country
+window.__wfPlaceUp = function (st, co) { return co || window.__wfRegion(st, ''); };
 // Only the level above a place (county, district or region), without the state or country: the area picker
 // above already names those. Used on map tooltips.
 window.__wfRegionUp = function (st, co) {
