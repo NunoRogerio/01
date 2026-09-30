@@ -1256,10 +1256,13 @@ class Component extends DCLogic {
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     const OUT = {
       ld: (() => { const on = (p.loader === true || p.loader === 'true') && window.__wfLiveMap;
-        // Shown for 3 s (and longer only while tiles are still coming, at most 12 s); the eye blinks every 2.5 s
-        if (on && !this._ldT0) { this._ldT0 = Date.now(); setTimeout(() => this.forceUpdate(), 3050); setTimeout(() => { this._ldGave = true; this.forceUpdate(); }, 12000);
+        // Shown for 2.5 s at least, and until the fire's perimeter is drawn, framed and its tiles are in (at most 12 s); the eye blinks every 2.5 s
+        if (on && !this._ldT0) { this._ldT0 = Date.now(); setTimeout(() => this.forceUpdate(), 2550); setTimeout(() => { this._ldGave = true; this.forceUpdate(); }, 12000);
           const bl = setInterval(() => { try { const L = this.el && this.el.querySelector('[data-wf-maploader]'), e = L && L.querySelector('path.base'); if (!L || getComputedStyle(L).opacity === '0') { clearInterval(bl); return; } if (e && window.__wfBlink) window.__wfBlink(e); } catch (x) { clearInterval(bl); } }, 2500); }
-        const want = on && !this._ldGave && (!this._tilesOk || Date.now() - (this._ldT0 || 0) < 3000);
+        /* on a fire the map waits for its perimeter and the framing on it: a new view resets the tile count (1.5 s at most when tiles come from cache) */
+        const shapeOk = !(mode === 'spread' && p.fireId && window.__wfLiveMap) || !!(MD && (MD.done || MD.failed)), vk = [p.zoom, p.focusX, p.focusY].join('|');
+        if (on && vk !== this._ldVk) { this._ldVk = vk; if (this._ldT0) { this._tl = 0; this._tilesOk = false; clearTimeout(this._ldVT); this._ldVT = setTimeout(() => { if (!this._tilesOk) { this._tilesOk = true; this.forceUpdate(); } }, 1500); } }
+        const want = on && !this._ldGave && (!this._tilesOk || !shapeOk || Date.now() - (this._ldT0 || 0) < 2500);
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
