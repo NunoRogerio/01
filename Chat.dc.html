@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=88"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=99"></script>
+<script src="prefs.js?v=100"></script>
 <script src="i18n.js?v=102"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=31"></script>
@@ -380,7 +380,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <section role="dialog" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; padding-right: 16px">
         <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="chbtn" onClick="{{sk.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; line-height: 32px">{{t.kf}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Choose the ones to show.</span></span></div>
-        <button type="button" class="chbtn" onClick="{{sk.reset}}" style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{t.reset}}</button>
+        <button type="button" class="chbtn wf-reset" onClick="{{sk.reset}}" aria-disabled="{{sk.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{t.reset}}</button>
       </div>
       <div class="chscroll" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{sk.rows}}" as="r" hint-placeholder-count="10">
@@ -631,6 +631,7 @@ class Component extends DCLogic {
           const on = !!s.skPick, save = (h) => { try { localStorage.setItem('wf-hide-sum', JSON.stringify(h)); } catch (e) {} this.forceUpdate(); };
           return { cards, open: () => this.setState({ skPick: true }), close: () => this.setState({ skPick: false }),
             y: on ? '0%' : '105%', op: on ? 1 : 0, pe: on ? 'auto' : 'none', hidden: on ? 'false' : 'true',
+            resetDis: (() => { let o = null; try { o = localStorage.getItem('wf-order-sum'); } catch (e) {} const opt = base.filter((m) => m.opt).map((m) => m.key); return !o && hid.length === opt.length && opt.every((k) => hid.indexOf(k) >= 0) ? 'true' : 'false'; })(),
             reset: () => { try { localStorage.removeItem('wf-hide-sum'); localStorage.removeItem('wf-order-sum'); } catch (e) {} this.forceUpdate(); },
             rows: base.map((m) => { const vis = hid.indexOf(m.key) < 0, last = vis && base.filter((q) => hid.indexOf(q.key) < 0).length <= 1;
               return { name: m.l, onStr: String(vis), swBg: vis ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.16)', swX: vis ? '24px' : '0px', op: last ? 0.4 : 1,
