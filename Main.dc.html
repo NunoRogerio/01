@@ -270,7 +270,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <button type="button" class="wf-b wf-sec" onClick="{{showMore}}" style="display: {{moreD}}; align-items: center; justify-content: center; flex-shrink: 0; margin: 8px 16px 16px; border: 0; font: inherit; cursor: pointer">{{moreTxt}}</button>
       </div>
     </div>
-    <!-- Collapsed bottom blade: a grabber at the top says it expands; 30px under the text to the screen edge -->
+    <!-- Collapsed bottom blade: a grabber at the top says it expands; 48px under the text to the screen edge, clear of the home indicator -->
     <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barHNow}}px; padding: 0 12px; flex-shrink: 0; overflow: hidden; opacity: {{barOp}}; transition: height .5s cubic-bezier(.2,.8,.2,1), opacity .25s ease">
       <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 40px 8px 4px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         
@@ -1017,7 +1017,7 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 108, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
+    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 132, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
     const L = this.wfLayout();
