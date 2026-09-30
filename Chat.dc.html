@@ -91,19 +91,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h1>
           <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
         </div>
+        <!-- The team, folded away: a round button the size of the profile photos with how many are on it; it opens the team blade -->
+        <button type="button" class="chbtn" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer">{{tm.n}}</button>
       </header>
-      <!-- The team: you, the fire owner, and the crew coordinator of each station. Tap a person for their profile. -->
-      <div role="list" aria-label="{{t.team}}" class="chscroll" style="display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px">
-        <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
-          <button type="button" role="listitem" class="chrow" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; max-width: 264px; height: 52px; padding: 0 14px 0 6px; border: 0; border-radius: 999px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
-            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
-            <span style="display: flex; flex-direction: column; gap: 0; min-width: 0">
-              <span style="font-size: 15px; font-weight: 600; line-height: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
-              <span style="font-size: 15px; line-height: 20px; color: {{p.roleC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.role}}</span>
-            </span>
-          </button>
-        </sc-for>
-      </div>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <button type="button" class="chrow" onClick="{{openSheet}}" aria-haspopup="dialog" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
         <span style="display: flex; align-items: center; gap: 12px; width: 100%">
@@ -115,7 +105,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <span style="display: flex; align-items: center; gap: 2px; flex-shrink: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #3C3C43">{{t.details}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
         </span>
         <span aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; width: 100%">
-          <sc-for list="{{c.bar}}" as="b" hint-placeholder-count="8"><span style="height: 8px; border-radius: 999px; background: {{b.c}}; transition: background-color .4s ease"></span></sc-for>
+          <sc-for list="{{c.bar}}" as="b" hint-placeholder-count="8"><span style="height: 2px; border-radius: 999px; background: {{b.c}}; transition: background-color .4s ease"></span></sc-for>
         </span>
         <span style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%">
           <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblL}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.inStage}}</span></span>
@@ -224,6 +214,30 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </div>
     </div>
     </sc-if>
+
+    <!-- ===== Team blade: drops from the top over the chat (glass behind), the team as a list; tap a person for their profile ===== -->
+    <div class="wf-glass" onClick="{{tm.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{tm.scrimOp}}; pointer-events: {{tm.pe}}; transition: opacity .4s ease"></div>
+    <section role="dialog" aria-modal="true" aria-label="{{t.team}}" style="position: absolute; left: 0; right: 0; top: 0; max-height: {{tm.mh}}; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; box-sizing: border-box; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{tm.y}}); visibility: {{tm.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), max-height {{tm.mhT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{tm.visDelay}}">
+      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px">
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
+          <h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.team}}</h2>
+          <span style="font-size: 17px; line-height: 22px; color: #000000">{{tm.sub}}</span>
+        </div>
+        <button type="button" class="chbtn" onClick="{{tm.close}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg class="chx" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{tm.xRot}})"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+      </header>
+      <div role="list" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; margin: 0 16px; border-radius: 14px; background: #FFFFFF">
+        <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
+          <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 64px; padding: 10px 16px; border: 0; border-top: {{p.sep}}; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
+              <span style="font-size: 15px; line-height: 20px; color: {{p.roleC}}">{{p.role}}</span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+      <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{tm.h.down}}" onPointerMove="{{tm.h.move}}" onPointerUp="{{tm.h.up}}" onPointerCancel="{{tm.h.cancel}}" onKeyDown="{{tm.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
+    </section>
 
     <!-- ===== Fire card: drops from the state card, stops 32px above the bottom, glass over the chat ===== -->
     <div class="wf-glass" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
@@ -391,14 +405,15 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   // Fire card grabber: a drag up moves only the sheet's bottom edge (with the grabber); past 60px, a quick flick or a tap closes it
-  shHandle() {
-    const self = this, close = () => { self._shd = null; self.setState({ sheet: false, shDy: 0 }); };
+  shHandle(openKey, dyKey) {
+    openKey = openKey || 'sheet'; dyKey = dyKey || 'shDy';
+    const self = this, close = () => { self._shd = null; self.setState({ [openKey]: false, [dyKey]: 0 }); };
     return {
-      down: (e) => { let k = 1; try { const R0 = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R0.height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._shd = { y: e.clientY, k, dy: 0, t: performance.now() }; },
-      move: (e) => { const h = self._shd; if (!h) return; const dy = Math.min(0, (e.clientY - h.y) / h.k); h.dy = dy; self.setState({ shDy: dy }); },
+      down: (e) => { let k = 1; try { const R0 = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R0.height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._shd = { y: e.clientY, k, dy: 0, t: performance.now() }; if (openKey === 'team') { try { self._tmH0 = e.currentTarget.closest('section').getBoundingClientRect().height / k; } catch (x) {} } },
+      move: (e) => { const h = self._shd; if (!h) return; const dy = Math.min(0, (e.clientY - h.y) / h.k); h.dy = dy; self.setState({ [dyKey]: dy }); },
       up: () => { const h = self._shd; self._shd = null; if (!h) return; const d = Math.abs(h.dy), v = d / Math.max(1, performance.now() - h.t);
-        if (d < 6 || d > 60 || (d > 20 && v > 0.5)) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} close(); } else self.setState({ shDy: 0 }); },
-      cancel: () => { self._shd = null; self.setState({ shDy: 0 }); },
+        if (d < 6 || d > 60 || (d > 20 && v > 0.5)) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} close(); } else self.setState({ [dyKey]: 0 }); },
+      cancel: () => { self._shd = null; self.setState({ [dyKey]: 0 }); },
       key: (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { if (e.preventDefault) e.preventDefault(); close(); } }
     };
   }
@@ -635,7 +650,7 @@ class Component extends DCLogic {
     // The team: you, the fire owner, then the crew coordinator of each station
     const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#1E7A34' }]
       .concat(c.people.map((p, i) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
-      .map((p) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name) }));
+      .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '1px solid rgba(60,60,67,0.14)' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); openPerson(p.name)(); } }));
     const ty = C.typing(c);
     const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), go: () => run(a.key) }));
     // Quick replies fill the suggestions up to five: questions the team answers (status, safety, water, homes, wind…), by stage
@@ -654,6 +669,9 @@ class Component extends DCLogic {
       meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
+      tm: (() => { const on = !!s.team, n = team.length; return { n: String(n), aria: L('Team, ', 'Equipa, ') + n + L(n === 1 ? ' person. Open' : ' people. Open', n === 1 ? ' pessoa. Abrir' : ' pessoas. Abrir'), sub: n + L(n === 1 ? ' person' : ' people', n === 1 ? ' pessoa' : ' pessoas') + '.',
+        open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), h: this.shHandle('team', 'tmDy'),
+        mh: s.tmDy && this._tmH0 ? Math.max(120, this._tmH0 + s.tmDy) + 'px' : 'calc(100% - 48px)', mhT: s.tmDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none', xRot: on ? '0deg' : '90deg' }; })(),
       sh: { h: this.shHandle(), b: 48 - (s.shDy || 0), bT: s.shDy ? '0s' : '.35s', y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
       openSheet, closeSheet: () => this.setState({ sheet: false, shDy: 0 }), goFire: inc.go,
       goProj: () => { const v = { id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, place: c.place, note: c.note || c.reg || '', x: c.x, y: c.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { proj: v }); try { sessionStorage.setItem('wf-proj', JSON.stringify(v)); } catch (e) {} },
