@@ -236,4 +236,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Chats list** closes with the round X at the top right (like the notifications panel), not a back chevron.
 - **App icon:** the flame on the US firefighters' lime (#CCFF00). Home screen icons cannot animate on iPhone (a still image); the blink lives in the app's loading screens.
 - **Lists (all):** no dividers between items; only the line that separates the list from its header (or group title). Chevrons align with the first line of the item, not its centre.
-- **Map speed:** nothing outside the map watches it per frame (fades and card sizing ignore map changes; no page-wide searches on timers); a selected station alone draws its mask.
+- **Map speed:** nothing outside the map watches it per frame (fades and card sizing ignore map changes; no page-wide searches on timers); a selected station alone draws its mask; while dragging the drawn map moves as one picture and redraws fully at most about twice a second.

@@ -1093,7 +1093,7 @@ class Component extends DCLogic {
     // so moves in between only update the remembered view and the next frame draws the latest one
     this._pvNext = v; if (!this._pvRaf) this._pvRaf = requestAnimationFrame(() => { this._pvRaf = 0; const n = this._pvNext; this._pvNext = null; if (!n) return;
       // During a drag, pinch or glide the drawn layers move as one picture; a full redraw (new tiles, markers) at most ~4 times a second
-      const t = performance.now(); if (this._gest && this._rv && t - (this._fullT || 0) < 250 && this.imgMove(n)) return;
+      const t = performance.now(); if (this._gest && this._rv && t - (this._fullT || 0) < 450 && this.imgMove(n)) return;
       this._fullT = t; this.setState(n); });
   }
   imgMove(n) {
