@@ -327,5 +327,18 @@
     var fGo = function () { fadeAll(); fMo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'aria-hidden', 'aria-expanded'] }); };
     if (document.body) fGo(); else document.addEventListener('DOMContentLoaded', fGo); }
   setInterval(fadeAll, 1000);   // content that grows by animation (drawers opening) is caught within a second
+  /* Mini card numbers: shrink the value until value + unit fit inside the card's 8px side padding */
+  function fitKpi() {
+    var ns = document.querySelectorAll('[data-wf-kpicard] .wf-big');
+    for (var i = 0; i < ns.length; i++) {
+      var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]');
+      if (!row || !card || !card.clientWidth) continue;
+      var avail = card.clientWidth - 16, w = row.scrollWidth, fs = parseFloat(getComputedStyle(n).fontSize) || 26;
+      if (w > avail + 0.5 && fs > 12) n.style.setProperty('--k', Math.max(12, Math.floor(fs * avail / w * 0.97)) + 'px');
+    }
+  }
+  var kRaf = 0, kGo = function () { if (!kRaf) kRaf = requestAnimationFrame(function () { kRaf = 0; fitKpi(); }); };
+  if (window.MutationObserver) { var kMo = new MutationObserver(kGo); var kStart = function () { kMo.observe(document.documentElement, { childList: true, subtree: true, characterData: true }); kGo(); }; if (document.body) kStart(); else document.addEventListener('DOMContentLoaded', kStart); }
+  window.addEventListener('resize', kGo); if (document.fonts && document.fonts.ready) document.fonts.ready.then(kGo); setInterval(kGo, 1500);
   apply();
 })();
