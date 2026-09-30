@@ -176,7 +176,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Markers:**
   - flat shapes with a translucent body (62%) and no shadows;
   - ignition candidates have a 2px dark grey outline and pulse as an outline only;
-  - fire stations are a shield (like a corporation's crest), drawn 20% larger than the first version (about 24px): a 2px dark grey outline, no inner detail, filled light blue at 50%; the same shield in legends, cards, notifications and headers;
+  - fire stations are a simple shield (flat top, straight sides, meeting in a point below), drawn 20% larger than the first version (about 24px), outline 2px like the ignition candidate's, fill a livelier blue rgba(64,156,255,0.6): a 2px dark grey outline, no inner detail, filled light blue at 50%; the same shield in legends, cards, notifications and headers;
   - fires have no outline;
   - resolved fires use the fire marker in a much darker brown, with their own legend entry;
   - the marker icons match the legend icons.
