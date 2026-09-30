@@ -16,11 +16,11 @@
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=100"></script>
+<script src="i18n.js?v=101"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=30"></script>
+<script src="chat.js?v=31"></script>
 
-<title>Spread projection</title>
+<title>Projection</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -113,7 +113,7 @@ class Component extends DCLogic {
     const F = !!s.full;
     return {
       f: { id: v.id, x: v.x, y: v.y, st: r ? r[0] : '', place: v.place || (r && r[3]) || 'Fire', region: (r && r[1]) || String(v.note || '').split(' · ')[0] || '', tag: I.stEn || I.st || '', tagD: (I.stEn || I.st) ? 'inline-flex' : 'none', tagBg: tn[1], tagFg: tn[0] },
-      tx: { kind: L('Spread projection', 'Projeção da propagação'), hz: L('Projection horizon', 'Horizonte da projeção'), est: L('Estimate', 'Estimativa'), fire: L('View fire', 'Ver incêndio') },
+      tx: { kind: L('Projection', 'Projeção'), hz: L('Projection horizon', 'Horizonte da projeção'), est: L('Estimate', 'Estimativa'), fire: L('View fire', 'Ver incêndio') },
       hz, fakeHz: ({ 0: 0, 1: 1, 3: 2, 6: 3 })[hz], zero: 0, full: F, notFull: F ? 'false' : 'true', view, kpis,
       tabs: HZ.map((h) => ({ label: h ? '+' + h + ' h' : L('Now', 'Agora'), sel: String(h === hz), w: h === hz ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ hz: h }); } })),
       segX: (HZ.indexOf(hz) * 100) + '%',

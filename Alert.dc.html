@@ -16,9 +16,9 @@
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=100"></script>
+<script src="i18n.js?v=101"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=30"></script>
+<script src="chat.js?v=31"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -395,7 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h2 style="margin: 16px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
       <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
       <a href="Main.dc.html" class="btn primary" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; align-self: stretch; margin-top: 24px; padding: 0 16px">
-        Back to the map
+        Map
       </a>
       <button type="button" onClick="{{restore}}" class="btn wf-sec" style="align-self: stretch; margin-top: 16px; padding: 0 16px; border: 0; cursor: pointer">Restore demo alerts</button>
     </div>
@@ -404,7 +404,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
     <div class="pop" role="status" style="position: absolute; left: 50%; top: 132px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 16px; border-radius: 999px; background: rgba(255,255,255,0.94); border: 1px solid rgba(60,60,67,0.11); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 12px 30px -10px rgba(0,0,0,0.176); white-space: nowrap; font-size: 15px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>{{toastText}}
-      <button type="button" class="btn wf-ter wf-cmp" onClick="{{undo}}" style="height: 32px; padding: 0 14px; background-color: transparent; color: #0062CC; font-size: 17px; font-weight: 600">Undo</button>
+      <button type="button" class="btn wf-ter wf-cmp" onClick="{{undo}}" style="height: 32px; padding: 0 14px; font-size: 17px; font-weight: 600">Undo</button>
     </div>
   </sc-if>
 
@@ -424,8 +424,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h2 id="dzTitle" style="margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #000000">Dismiss this candidate?</h2>
     <p id="dzBody" style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
     <div class="wf-dlg-acts">
-      <button type="button" class="btn wf-sec" data-swipe-go="1" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <a href="Main.dc.html" class="btn primary" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px">
+      <button type="button" class="btn wf-sec" data-swipe-go="1" onClick="{{closeDz}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
+      <a href="Main.dc.html" class="btn primary" onPointerDown="{{confirmDz}}" onClick="{{confirmDz}}" style="height: 48px; font-size: 17px; font-weight: 600">
         Dismiss
       </a>
     </div>

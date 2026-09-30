@@ -16,9 +16,9 @@
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=100"></script>
+<script src="i18n.js?v=101"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=30"></script>
+<script src="chat.js?v=31"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -1406,7 +1406,7 @@ class Component extends DCLogic {
             pick: () => { if (!dis) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ flow: { step: 'res', id: d.id, draft: recFor(d.id), edit: false } }); } } }; });
         const close = () => this.setState({ flow: null });
         return {
-          pl: { avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(), cards: cards.slice().reverse(), count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: plan.length ? 'Add another station' : 'Add station and resources',
+          pl: { avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(), cards: cards.slice().reverse(), count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: 'Add resources',
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
           fl: { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close,
@@ -1416,7 +1416,7 @@ class Component extends DCLogic {
             tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
             remove: () => { const go = () => this.setState({ plan: plan.filter((p) => p.id !== id), flow: null }), nmR = id === 'air' ? 'Air support' : dSel ? nm(dSel) : 'This station';
-              if (!window.__wfConfirm) return go(); window.__wfConfirm({ title: 'Remove station?', body: nmR + ' will be removed from this dispatch.', cancel: 'Cancel', ok: 'Remove', onOk: go }); },
+              if (!window.__wfConfirm) return go(); window.__wfConfirm({ title: id === 'air' ? 'Remove air support?' : 'Remove station?', body: nmR + ' will be removed from this dispatch.', cancel: 'Cancel', ok: 'Remove', onOk: go }); },
             apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }); } } };
       })(),
       acc: (() => {

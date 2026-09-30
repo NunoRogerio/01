@@ -223,11 +223,11 @@
     var base = { tag: { en: S.en, pt: S.pt }, tagC: S.c, stage: s };
     if (s === 0) return Object.assign(base, { tag: { en: 'Ignition detected', pt: 'Ignição detetada' }, title: { en: 'Heat anomaly', pt: 'Anomalia térmica' },
       body: { en: (c.src || 'Satellite') + (c.det ? ' · ' + hhmm(c.det) : ''), pt: (c.src || 'Satélite').replace('Satellite', 'Satélite') + (c.det ? ' · ' + hhmm(c.det) : '') },
-      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#3A3A3C' } : null, link: { en: 'View candidate', pt: 'Ver candidato' } });
+      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#3A3A3C' } : null, link: { en: 'View', pt: 'Ver' } });
     if (s === 1) return Object.assign(base, { tag: { en: 'Ignition confirmed', pt: 'Ignição confirmada' }, title: { en: 'Active fire · ' + c.place, pt: 'Incêndio ativo · ' + c.place },
       body: { en: 'Nearest stations, by straight-line distance and estimated drive time', pt: 'Quartéis mais próximos, por distância em linha reta e tempo estimado' },
       rows: st.map(function (x, i) { return { a: x.short, b: kmTxt(x.km) + ' · ~' + x.min + ' min', r: { en: 'Awaiting', pt: 'A aguardar' }, rc: '#545458', i: i }; }).map(function (r, i, R) { if (c.sentIdx && i === R.length - 1) sentRows(c, R); return r; }),
-      link: { en: 'View fire', pt: 'Ver incêndio' } });
+      link: { en: 'View', pt: 'Ver' } });
     if (s === 2) return Object.assign(base, { title: { en: 'Crews en route', pt: 'Meios a caminho' },
       body: { en: 'First on the fire line in about ' + (st[0] ? st[0].min : 15) + ' min', pt: 'Primeiros na linha de fogo em cerca de ' + (st[0] ? st[0].min : 15) + ' min' }, fire: true });
     if (s === 3) return Object.assign(base, { title: { en: 'Crews on the fire line', pt: 'Equipas na linha de fogo' },
@@ -314,9 +314,9 @@
   function closePast(c) {
     var t7 = (c.hist.find(function (h) { return h.s === 7; }) || {}).vt || Date.now() - 86400000, now = Date.now(), P = c.people;
     var add = function (m, vt) { m.id = newId(); m.t = now - 1000; m.vt = vt; c.msgs.push(m); };
-    add({ kind: 'card', tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close the fire', pt: 'Encerrar o incêndio' }, close: true, done: 'close',
+    add({ kind: 'card', tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, close: true, done: 'close',
       checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
-      actions: [{ key: 'close', en: 'Declare fire closed', pt: 'Declarar incêndio encerrado', primary: true }] }, t7 - 3 * MIN);
+      actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }, t7 - 3 * MIN);
     add({ kind: 'msg', from: 'me', en: 'Declaring the fire closed. Thank you all.', pt: 'Declaro o incêndio encerrado. Obrigado a todos.' }, t7 - MIN);
     c.stage = 7; c.closed = true; c.closedVt = t7; c.vNow = t7; c.vAt = now;
     (c.forces || []).forEach(function (f) { f.st = 'released'; }); if (c.air) c.air.st = 'released';
@@ -405,7 +405,7 @@
       if (P[1]) say(c, 1, 'Homes about 1 km north-east. We need air support to hold the head before it gets there.', 'Casas a cerca de 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça antes de lá chegar.', d + 8000, 6);
       card(c, { req: 'air', by: lead(c, 1), tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Crew coordinator'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Coordenador de equipa') }, tagC: '#B8360A',
         title: { en: 'Air support', pt: 'Meio aéreo' }, body: { en: 'One helicopter to hold the head before it reaches the homes', pt: 'Um helicóptero para segurar a cabeça antes de chegar às casas' },
-        actions: [{ key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }, { key: 'declineAir', en: 'Not now', pt: 'Agora não' }] }, d + 9500, 0);
+        actions: [{ key: 'declineAir', en: 'Not now', pt: 'Agora não' }, { key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + 9500, 0);
     } else if (s === 4) {
       if (P[0]) say(c, 0, 'Head is held. Working both flanks, no spread for 20 min.', 'Cabeça dominada. A trabalhar os dois flancos, sem progressão há 20 min.', d + 3000, 4);
     } else if (s === 5) {
@@ -429,7 +429,7 @@
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     if (s === 4) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
     if (s === 5) A.push({ key: 'next', en: 'Move to surveillance', pt: 'Passar a Vigilância', primary: true });
-    if (s === 6 && !c.flags.closeCard) A.push({ key: 'closeCheck', en: 'Close the fire', pt: 'Encerrar o incêndio', primary: true });
+    if (s === 6 && !c.flags.closeCard) A.push({ key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true });
     return A;
   }
 
@@ -456,7 +456,7 @@
     } else if (a === 'drone') {
       c.flags.drone = true; me('Sending the drone to check before I confirm.', 'Vou enviar o drone para verificar antes de confirmar.');
       sys(c, 'Drone D-5 taking off · about 6 min to the point', 'Drone D-5 a descolar · cerca de 6 min até ao ponto', 1500, 1);
-      card(c, { tag: { en: 'Drone D-5 · on site', pt: 'Drone D-5 · no local' }, tagC: '#0A66CC', title: { en: 'Smoke and open flame seen', pt: 'Fumo e chama visíveis' }, body: { en: 'Thermal image shows an active fire front of about 80 m', pt: 'A imagem térmica mostra uma frente ativa de cerca de 80 m' }, link: { en: 'View candidate', pt: 'Ver candidato' } }, 8000, 6);
+      card(c, { tag: { en: 'Drone D-5 · on site', pt: 'Drone D-5 · no local' }, tagC: '#0A66CC', title: { en: 'Smoke and open flame seen', pt: 'Fumo e chama visíveis' }, body: { en: 'Thermal image shows an active fire front of about 80 m', pt: 'A imagem térmica mostra uma frente ativa de cerca de 80 m' }, link: { en: 'View', pt: 'Ver' } }, 8000, 6);
       say(c, lead(c, 0), 'That matches what we see. It is a real fire.', 'Confirma o que vemos. É um incêndio real.', 11000, 1);
     } else if (a === 'dismiss') {
       me('Dismissing this candidate: no fire on the ground.', 'Descarto este candidato: sem incêndio no terreno.');
@@ -511,9 +511,9 @@
       setStage(c, nx, 800, 0);
     } else if (a === 'closeCheck') {
       c.flags.closeCard = true;
-      card(c, { close: true, tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close the fire', pt: 'Encerrar o incêndio' },
+      card(c, { close: true, tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close fire', pt: 'Encerrar incêndio' },
         checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.flags.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.flags.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
-        actions: [{ key: 'close', en: 'Declare fire closed', pt: 'Declarar incêndio encerrado', primary: true }] }, 400, 0);
+        actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }, 400, 0);
     } else if (a === 'close') {
       jump(c, stageSpan(c, 7) * MIN);
       me('Declaring the fire closed. Thank you all.', 'Declaro o incêndio encerrado. Obrigado a todos.');
@@ -695,7 +695,7 @@
     mine(c, 'Topic: ' + inc.place + '.', 'Tópico: ' + inc.place + '.');
     card(c, { topic: true, tag: { en: 'Topic', pt: 'Tópico' }, tagC: '#3A3A3C', title: { en: (fire ? 'Fire. ' : 'Ignition candidate. ') + inc.place, pt: (fire ? 'Incêndio. ' : 'Candidato a ignição. ') + inc.place },
       body: { en: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km from the station' + (!fire && inc.conf ? '. ' + inc.conf + '% likelihood' : ''), pt: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km do quartel' + (!fire && inc.conf ? '. ' + inc.conf + '% de probabilidade' : '') },
-      link: { en: fire ? 'View fire' : 'View candidate', pt: fire ? 'Ver incêndio' : 'Ver candidato' }, inc: c.topic }, 300, 0);
+      link: { en: 'View', pt: 'Ver' }, inc: c.topic }, 300, 0);
     say(c, 0, fire ? 'Copy, ' + inc.place + '. We know the area, tell us what you need there.' : 'Copy, the candidate at ' + inc.place + '. We can go and check it if you want.',
       fire ? 'Entendido, ' + inc.place + '. Conhecemos a zona, diga o que precisa lá.' : 'Entendido, o candidato em ' + inc.place + '. Podemos ir verificar, se quiser.', 2400, 2);
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();

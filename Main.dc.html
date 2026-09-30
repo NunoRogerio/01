@@ -17,9 +17,9 @@
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=100"></script>
+<script src="i18n.js?v=101"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=30"></script>
+<script src="chat.js?v=31"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -484,9 +484,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <button type="button" role="switch" class="wf-tog" aria-checked="{{ai.onStr}}" aria-label="{{ai.title}}" onClick="{{ai.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{ai.swBg}}; opacity: {{ai.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{ai.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
             </div>
             <label style="display: flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{ai.ph}}</span><input id="wf-ai-key-in" type="password" autocomplete="off" spellcheck="false" value="{{ai.draft}}" onInput="{{ai.onInput}}" placeholder="{{ai.ph}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"><!-- Saved key: a check in the primary colour on the right --><span aria-hidden="true" style="display: {{ai.okD}}; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 8px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2.57" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></label>
-            <div style="display: grid; grid-template-columns: {{ai.cols}}; gap: 8px">
-              <button type="button" class="opt wf-b wf-pri" onClick="{{ai.save}}" style="border: 0; font: inherit; cursor: pointer">{{ai.saveTxt}}</button>
-              <button type="button" class="opt wf-b wf-ter" onClick="{{ai.remove}}" style="display: {{ai.rmD}}; border: 0; font: inherit; cursor: pointer">{{ai.rmTxt}}</button>
+            <div style="display: flex; flex-direction: column; gap: 16px">
+              <div style="display: flex; gap: 16px">
+                <button type="button" class="btn wf-sec" onClick="{{ai.remove}}" style="display: {{ai.cxD}}; flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.cxTxt}}</button>
+                <button type="button" class="btn primary" onClick="{{ai.save}}" style="flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.saveTxt}}</button>
+              </div>
+              <!-- The app's Remove: full-width red, white text, asks first -->
+              <button type="button" onClick="{{ai.remove}}" style="display: {{ai.rmD}}; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: #D70015; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{ai.rmTxt}}</button>
             </div>
             <span style="font-size: 15px; line-height: 20px; color: {{ai.noteC}}">{{ai.note}}</span>
           </div>
@@ -549,8 +553,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <p id="aicBody" style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{aic.body}}</p>
     <p style="display: {{aic.noteD}}; margin: 2px 0 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{aic.note}}</p>
     <div class="wf-dlg-acts">
-      <button type="button" class="opt wf-b wf-sec" onClick="{{aic.close}}" style="border: 0; font: inherit; cursor: pointer">{{aic.cancel}}</button>
-      <button type="button" class="opt wf-b wf-pri" data-hap="{{aic.hap}}" onClick="{{aic.confirm}}" style="border: 0; font: inherit; cursor: pointer">{{aic.ok}}</button>
+      <button type="button" class="btn wf-sec" onClick="{{aic.close}}" style="height: 48px; font-size: 17px; font-weight: 600">{{aic.cancel}}</button>
+      <button type="button" class="btn primary" data-hap="{{aic.hap}}" onClick="{{aic.confirm}}" style="height: 48px; font-size: 17px; font-weight: 600">{{aic.ok}}</button>
     </div>
   </section>
   </div>
@@ -853,7 +857,7 @@ class Component extends DCLogic {
           toggle: () => { if (!A || !has) return; this.setState({ aiAsk: on ? 'off' : 'on' }); },   // opens the confirmation (the tap vibrates as usual)   // asks first (avoids mis-taps)
           ph: rep ? T('Paste the new key (sk-ant-…)', 'Cole a nova chave (sk-ant-…)') : has ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('Anthropic API key (sk-ant-…)', 'Chave da API Anthropic (sk-ant-…)'), draft: s.aiDraft || '', okD: has && !rep && !(s.aiDraft || '') ? 'flex' : 'none',
           onInput: (e) => this.setState({ aiDraft: e.target.value }),
-          saveTxt: has && !rep ? T('Replace key', 'Substituir chave') : T('Save and test', 'Guardar e testar'), rmTxt: rep ? T('Cancel', 'Cancelar') : T('Remove', 'Remover'), rmD: has ? 'block' : 'none', cols: has ? '1fr 1fr' : '1fr',
+          saveTxt: has && !rep ? T('Replace key', 'Substituir chave') : T('Save and test', 'Guardar e testar'), rmTxt: T('Remove', 'Remover'), cxTxt: T('Cancel', 'Cancelar'), rmD: has && !rep ? 'flex' : 'none', cxD: rep ? 'flex' : 'none', cols: has ? '1fr 1fr' : '1fr',
           save: () => { const k = (s.aiDraft || '').trim(); if (!A) return;
             if (has && !rep) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ aiAsk: 'rep' }); return; }   // Replace key asks first
             if (!k) { try { document.getElementById('wf-ai-key-in').focus(); } catch (e) {} return; }

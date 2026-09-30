@@ -16,9 +16,9 @@
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=100"></script>
+<script src="i18n.js?v=101"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=30"></script>
+<script src="chat.js?v=31"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -185,7 +185,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{m.hasActions}}" hint-placeholder-val="{{ false }}">
               <div data-fitrow="1" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px">
                 <sc-for list="{{m.actions}}" as="a" hint-placeholder-count="2">
-                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="flex: 1 1 0; min-width: max-content; height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 17px; font-weight: {{a.w}}; white-space: nowrap; opacity: {{a.op}}; cursor: {{a.cur}}; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{a.chk}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{a.label}}</button>
+                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="flex: 1 1 0; min-width: max-content; height: 48px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 17px; font-weight: {{a.w}}; white-space: nowrap; opacity: {{a.op}}; cursor: {{a.cur}}; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{a.chk}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{a.label}}</button>
                 </sc-for>
               </div>
             </sc-if>
@@ -277,11 +277,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="wf-glass" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{sh.b}}px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{sh.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
       <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px">
+        <button type="button" class="chbtn" onClick="{{closeSheet}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h2>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{t.fireCardSub}}</span>
         </div>
-        <button type="button" class="chbtn" onClick="{{closeSheet}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
       </header>
       <div class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 16px">
         <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
