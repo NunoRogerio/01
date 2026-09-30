@@ -217,3 +217,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - To bring a region back, add it to that list.
 - **No sticky hover on touch:** on phones a tapped element never keeps a hover fill or glow (iOS keeps :hover on the last tap); only the tap feedback shows. `prefs.js` strips hover fills on touch screens app-wide.
 - Main screen bottom blade: the counts sit 37px under the blade's top edge (16px higher than before).
+- **Drone verification screen:** the same fixed header as a fire or an ignition (Drone D-3 with the distance to the scene on the right; the place with "Arriving in 21 s" as annotation; the kind band "Drone verification" with its status tag), then the live video (maximise 44px like every round button, no viewfinder corners), Key figures as mini cards (Simulated), and the ignition's actions fixed at the foot: Confirm fire and Dismiss on one row, Back full width under them.
+- **Units in mini cards:** the unit beside a number is in the annotation style (15px regular, mid grey), never bold; area units short: ac, ha.
+- **Trend lines** (from the drone screen): 1.5px dark grey line over the lime area, with the reference point marked by a dot ringed in the card's white (the latest value on history charts, "now" on forecasts).
