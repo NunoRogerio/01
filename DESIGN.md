@@ -154,7 +154,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Where no perimeter is mapped, the model's outline is irregular and fire-like (lobes, stretched along one axis) with the reported area, never a circle.
 - **Detail map loading:** for 2.5 s at least, and on a fire until its perimeter is drawn and framed and the tiles for that view are in (at most 12 s), so the map appears already framed on the shape, the band shows (centred in the grey that shows, under the header) the search grey with the app's flame (22px wide) in dark grey in the middle, swaying slightly, its eye blinking every 2 s, and "Loading map…" under it (annotation); it fades out as the map appears.
 - **Detail map zoom:** the fire's current perimeter fills about 60% of the band's width (or 92% of the clear height under the legend), centred in the clear part below the legend, whatever the fire's size, up to the map's closest zoom (as on Timber).
-- The ignition's full-screen map shows the candidate and its nearest stations only: the main screen's shield markers with the distance above them (no chip), no route lines, no sight lines. A tap opens the main screen's station card, with the distance added after the region.
+- The ignition's full-screen map shows the candidate and its nearest stations only: the main screen's shield markers with the station's short name and the distance above them, on two lines (no chip), no route lines, no sight lines. A tap opens the main screen's station card, with the distance added after the region.
 - Mini card numbers are responsive: value and unit always fit inside the card's 8px side padding (the number shrinks, never clips).
 - A fire's detail map shows only the fire: its perimeter (burned area, burning edge, held line) with that legend, framed on it; no stations, no routes, no unit tracks.
 - On a fire's maps the perimeter polygon (burned, active front, held edge) replaces the fire dot when the model or source gives it.
@@ -176,7 +176,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Markers:**
   - flat shapes with a translucent body (62%) and no shadows;
   - ignition candidates have a 2px dark grey outline and pulse as an outline only;
-  - fire stations are a shield (like a corporation's crest): a 2px dark grey outline, no inner detail, filled light blue at 50%; the same shield in legends, cards, notifications and headers;
+  - fire stations are a shield (like a corporation's crest), drawn 20% larger than the first version (about 24px): a 2px dark grey outline, no inner detail, filled light blue at 50%; the same shield in legends, cards, notifications and headers;
   - fires have no outline;
   - resolved fires use the fire marker in a much darker brown, with their own legend entry;
   - the marker icons match the legend icons.
@@ -226,3 +226,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Mini card anatomy:** the title may take two lines and always reserves them (40px), then the value, then any tag or note; the chart sits anchored 8px from the card's bottom. Cards in a row share the tallest card's height. Only a leading number splits off its unit ("12 min"); words stay whole ("Very high").
 - **Loading flame (one element everywhere):** the app's flame with its eye blinking every 2 s, on the app loading screen and every map loader; light on dark grey in the dark theme.
 - **Endurance** (water, shifts) shows only once crews are assigned: a fire confirmed in the app with no orders yet has no Endurance section.
+- **Station tooltip:** on a candidate's map the distance is the tooltip's XS KPI ("Distance" annotation above it, responsive like every tooltip KPI); then the station (Title XS) and its region; View where allowed; the state tag ("Available", "1 fire") docks on the card's bottom edge as a tab with square bottom corners (main screen and candidate maps alike).

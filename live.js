@@ -321,8 +321,13 @@ window.__wfRegionUp = function (st, co) {
     var near=(window.__wfLiveCandsAll||window.__wfLiveCands||[]).map(function(c){return c[9];}).filter(function(m){return m&&Math.abs(m.lat-f.lat)<0.08&&Math.abs(m.lon-f.lon)<0.1;})
       .map(function(m){return toLocal([[m.lat,m.lon]],o)[0];}).filter(function(p){return Math.hypot(p[0],p[1])<6000;});
     if(!near.length)return null;
-    var pts=[];var h=187.5;near.forEach(function(p){[[-h,-h],[h,-h],[h,h],[-h,h]].forEach(function(c){pts.push([p[0]+c[0],p[1]+c[1]]);});});  // each VIIRS pixel ≈ 375 m square  // each VIIRS pixel ≈ 375 m
-    return {xy:hull(pts),src:'Satellite detections · NASA FIRMS ('+near.length+')'};
+    /* a fire's shape, never the pixel's square: one or two pixels give an irregular outline of their area around their centre;
+       more give the hull of an irregular patch around each pixel (each VIIRS pixel is about 375 m across) */
+    var src='Satellite detections · NASA FIRMS ('+near.length+')';
+    if(near.length<=2){var cx=0,cy=0;near.forEach(function(p){cx+=p[0];cy+=p[1];});cx/=near.length;cy/=near.length;
+      var rr=Math.sqrt(near.length*375*375/Math.PI)*1.05;return {xy:blob(rr,64,f.id).map(function(q){return [q[0]+cx,q[1]+cy];}),src:src};}
+    var pts=[];near.forEach(function(p,i){blob(215,14,f.id+'-'+i).forEach(function(q){pts.push([p[0]+q[0],p[1]+q[1]]);});});
+    return {xy:hull(pts),src:src};
   }
   function fuelAt(f){
     var q='[out:json][timeout:20];is_in('+f.lat.toFixed(5)+','+f.lon.toFixed(5)+')->.a;(area.a["landuse"];area.a["natural"];);out tags;';
