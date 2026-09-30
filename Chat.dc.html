@@ -16,9 +16,9 @@
 <script src="fit.js?v=73"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=96"></script>
-<script src="i18n.js?v=88"></script>
+<script src="i18n.js?v=89"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=21"></script>
+<script src="chat.js?v=22"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -213,11 +213,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
-        <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid rgba(60,60,67,0.18)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
-        <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
+        <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12); color: #545458"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" class="sqsearch" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
+        <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
       </div>
-      <!-- Suggestions: primary buttons, as many rows as they need (3 to 5); the field above stays free to write anything else -->
-      <div style="display: {{actD}}; flex-wrap: wrap; gap: 8px; padding: 0 16px">
+      <!-- Suggestions: primary buttons on two rows at most (any more stay hidden for now); the field above stays free to write anything else -->
+      <div style="display: {{actD}}; flex-wrap: wrap; gap: 8px; max-height: 88px; overflow: hidden; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
           <button type="button" class="chbtn" onClick="{{a.go}}" style="flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
