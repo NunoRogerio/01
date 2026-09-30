@@ -240,3 +240,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Round controls press:** besides the translucent press highlight, a round control swells 10% and returns at once (260 ms), app-wide.
 - **Incidents list:** the app's search field and a switcher (All / Candidates / Fires) above the list; the subtitle keeps the full counts.
 - **Under the status bar (installed app):** the status bar is translucent; the frame runs from the very top, so maps and blurs continue under the clock and the camera. The incidents list, open, rises to the top safe area (just under the status bar).
+- **Endurance by station:** the units on a fire are listed per station, one white card each, headed by the station (crest, name, distance, crews still free after those on this fire, or "All crews on this fire"); air support in its own card. No separate "Stations on this fire" block when units are shown.
