@@ -214,16 +214,16 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       </span>
     </sc-for>
     <!-- The pin's label is the map's title, above the legend, so nothing on the map sits under it (not on a small detail map) -->
-    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: {{pinTtlD}}; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px; border-radius: 14px; background: rgba(242,242,247,0.94); border: 1px solid {{pinBd}}; box-shadow: 0 2px 10px rgba(0,0,0,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
-      <span style="font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pinLabel}}</span>
-      <span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pinCoords}}</span>
+    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: {{pinTtlD}}; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px;  pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{pinLabel}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{pinCoords}}</span>
     </div>
   </sc-if>
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
-    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px; border-radius: 14px; background: rgba(242,242,247,0.94); border: 1px solid rgba(215,0,21,0.35); box-shadow: 0 2px 10px rgba(0,0,0,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
-      <span style="font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapTtl}}</span>
-      <span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
+    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px;  pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{mapTtl}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{mapSub}}</span>
     </div>
   </sc-if>
 
