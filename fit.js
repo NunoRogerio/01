@@ -454,7 +454,9 @@ window.__wfBlink=function(path,dur){
       var fl=tg&&tg.closest?(tg.closest(FIELD)||((tg.closest('label')||{}).querySelector?tg.closest('label').querySelector(FIELD):null)):null;
       if(fl&&document.activeElement===fl)return;   // already typing: taps move the caret, untouched
       var t=fl||(tg&&tg.closest&&tg.closest(SEL));if(!t||(!fl&&skip(t,tg))||t.closest('#wf-hapov'))return;
-      if(tg.closest('[data-wf-kpi]'))return;   // a mini card may be pressed and held to move it: the overlay would take the drag   // the map too: markers tick as well (a pan removes the overlay at once)
+      if(tg.closest('[data-wf-kpi]'))return;
+      // inside a row that scrolls sideways (map legends, chips): the overlay would take the swipe and the row could not scroll
+      for(var hs=tg;hs&&hs!==document.body;hs=hs.parentElement){var ox=getComputedStyle(hs).overflowX;if((ox==='auto'||ox==='scroll')&&hs.scrollWidth>hs.clientWidth+1)return;}   // a mini card may be pressed and held to move it: the overlay would take the drag   // the map too: markers tick as well (a pan removes the overlay at once)
       var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
       var l=document.createElement('label');l.id='wf-hapov';l.setAttribute('aria-hidden','true');
       l.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;z-index:2147483647;opacity:0;-webkit-tap-highlight-color:transparent;margin:0;padding:0';

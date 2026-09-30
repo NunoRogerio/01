@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=88"></script>
+<script src="fit.js?v=89"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=104"></script>
 <script src="i18n.js?v=102"></script>
@@ -299,7 +299,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
-  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{legL}}px; right: {{legR}}px; top: {{legTopC}}px; box-sizing: border-box; padding: 0 {{legIn}}px; display: flex; gap: {{legGap}}; overflow-x: auto; scrollbar-width: none">
+  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legL}}px; right: {{legR}}px; top: {{legTopC}}px; box-sizing: border-box; padding: 0 {{legIn}}px; display: flex; gap: {{legGap}}; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{legBg}}; box-shadow: {{legSh}}; color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
         <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="1.3" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
@@ -436,6 +436,12 @@ class Component extends DCLogic {
       };
       this._glide = requestAnimationFrame(step);
     };
+    // The legend row scrolls sideways by drag (the map's own touch handling would otherwise keep it still); a tap still toggles a layer
+    this.legDown = (e) => { if (e && e.stopPropagation) e.stopPropagation(); const el = e.currentTarget; this._leg = { id: e.pointerId, x: e.clientX, sl: el.scrollLeft, el, moved: false }; };
+    this.legMove = (e) => { const L = this._leg; if (!L || L.id !== e.pointerId) return; const dx = e.clientX - L.x; if (!L.moved && Math.abs(dx) < 6) return;
+      if (!L.moved) { L.moved = true; try { L.el.setPointerCapture(e.pointerId); } catch (x) {} } const z = L.el.getBoundingClientRect().width / (L.el.offsetWidth || 1) || 1; L.el.scrollLeft = L.sl - dx / z; if (e.stopPropagation) e.stopPropagation(); };
+    this.legUp = (e) => { const L = this._leg; if (L && L.id === e.pointerId) { this._legMoved = L.moved ? Date.now() : 0; this._leg = null; } if (e && e.stopPropagation) e.stopPropagation(); };
+    this.legClick = (e) => { if (this._legMoved && Date.now() - this._legMoved < 400) { e.stopPropagation(); e.preventDefault(); this._legMoved = 0; } };
     this.onDown = (e) => {
       if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
       this.stopGlide();
@@ -1291,6 +1297,7 @@ class Component extends DCLogic {
         if (on && !want && this._ldT0) this._ldDone = true;   /* once revealed the map never shows the loader again (full screen and back stay instant) */
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' || p.noTitle === true || p.noTitle === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
+      legDown: this.legDown, legMove: this.legMove, legUp: this.legUp, legClick: this.legClick,
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
       zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
       cursor: (this.state || {}).dragging ? 'grabbing' : 'grab',
