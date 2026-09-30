@@ -390,7 +390,7 @@ window.__wfBlink=function(path,dur){
 // plus a light tap on the phone (vibration where the browser allows it; on iPhone, the system haptic that
 // Safari gives a switch control, which is the only haptic web pages can reach).
 (function(){
-  var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],[role=listitem],label,summary,.opt,.sqrow,[data-wf-kpi],[data-avtip],[tabindex="0"]';
+  var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],label,summary,.opt,.sqrow,[data-avtip],[tabindex="0"]';   // cards that are dragged (press, hold, move) give their own haptic: no tap overlay on them
   var st=document.createElement('style');
   st.textContent='#wf-fx{position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:99998}'+
     '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.0855);transform:scale(0);opacity:1;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .42s ease}'+
@@ -441,7 +441,8 @@ window.__wfBlink=function(path,dur){
       // A text field (e.g. Write a message, search): the tap ticks too, then focuses the field inside the same tap so the keyboard opens
       var fl=tg&&tg.closest?(tg.closest(FIELD)||((tg.closest('label')||{}).querySelector?tg.closest('label').querySelector(FIELD):null)):null;
       if(fl&&document.activeElement===fl)return;   // already typing: taps move the caret, untouched
-      var t=fl||(tg&&tg.closest&&tg.closest(SEL));if(!t||(!fl&&skip(t,tg))||t.closest('#wf-hapov'))return;   // the map too: markers tick as well (a pan removes the overlay at once)
+      var t=fl||(tg&&tg.closest&&tg.closest(SEL));if(!t||(!fl&&skip(t,tg))||t.closest('#wf-hapov'))return;
+      if(tg.closest('[data-wf-kpi]'))return;   // a mini card may be pressed and held to move it: the overlay would take the drag   // the map too: markers tick as well (a pan removes the overlay at once)
       var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
       var l=document.createElement('label');l.id='wf-hapov';l.setAttribute('aria-hidden','true');
       l.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;z-index:2147483647;opacity:0;-webkit-tap-highlight-color:transparent;margin:0;padding:0';
