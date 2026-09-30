@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=90"></script>
+<script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=109"></script>
+<script src="prefs.js?v=110"></script>
 <script src="i18n.js?v=104"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=31"></script>
@@ -27,7 +27,7 @@
 <x-dc>
 <helmet>
 <style>
-.wf-unit+.wf-unit{border-top:1px solid rgba(60,60,67,0.14)}
+.wf-unit+.wf-unit{border-top: 0}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 a{color:#006A91}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -289,7 +289,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
     </div>
     <!-- Step 1: the stations, fastest first -->
-    <div class="wf-snap" role="listbox" aria-label="Stations" style="display: {{fl.stD}}; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
+    <div class="wf-snap" role="listbox" aria-label="Stations" style="display: {{fl.stD}}; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; border-top: 0">
       <sc-for list="{{fl.rows}}" as="r" hint-placeholder-count="0">
         <!-- A station row, airy like the app's other lists: the name in bold (two lines at most), 8px, then the code, distance and crews in grey; the ETA on the right on the name's first line, Suggested on the right on the grey line; 20px above and below, a full-width line between rows. Busy or already added stations are not listed. -->
         <button type="button" role="option" class="sqrow" data-sel="false" aria-disabled="{{r.dis}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 8px 16px; min-height: 84px; padding: 20px 16px; margin-bottom: 2px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; opacity: {{r.op}}; cursor: {{r.cur}}">
@@ -353,7 +353,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <!-- What this station sends -->
           <ul style="display: flex; flex-direction: column; margin: 0; padding: 0 0 8px; list-style: none">
             <sc-for list="{{o.units}}" as="u" hint-placeholder-count="2">
-              <li style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px 0 40px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.08)">
+              <li style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px 0 40px; box-sizing: border-box; border-top: 0">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{u.c}}" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-left: -28px"><path d="{{u.icon}}"></path></svg>
                 <span style="flex-grow: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{u.label}}</span>
                 <span style="font-size: 17px; font-weight: 600; color: #000000; font-variant-numeric: tabular-nums">{{u.n}}</span>
@@ -510,7 +510,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <!-- One card per station on this fire: the station heads it (crest, name, distance and crews still free), its units under it -->
           <sc-for list="{{d.groups}}" as="gp" hint-placeholder-count="2">
             <ul style="display: block; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden">
-              <li style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(60,60,67,0.14)">
+              <li style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 0">
                 <img src="{{gp.crest}}" alt="" style="display: {{gp.crestD}}; width: 36px; height: 36px; flex-shrink: 0; object-fit: contain">
                 <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
               </li>
@@ -691,7 +691,7 @@ class Component extends DCLogic {
     units.sort((a, b) => a.o - b.o || a.k - b.k);   // what needs action first
     const sum = [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B0001A' : '#3A3A3C' }];
     if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders below 20% water', c: low ? '#B0001A' : '#3A3A3C' });
-    return { sum: sum.map((k, i) => ({ ...k, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })), units };
+    return { sum: sum.map((k, i) => ({ ...k, sep: i ? '0' : '0' })), units };
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   // KPI cards: press and hold (250 ms) lifts a card; sliding it sideways moves it among the others; letting go keeps the new order
@@ -770,7 +770,7 @@ class Component extends DCLogic {
     const TT = { kpi: 'Key figures', wx: 'Weather', terr: 'Terrain', ign: 'Key figures' };
     const tog = (k) => () => { const h = this.wfHidden(g), i = h.indexOf(k); if (i < 0 && all.filter((m) => h.indexOf(m.key) < 0).length <= 1) return; if (i >= 0) h.splice(i, 1); else h.push(k);   /* the last card on stays: a group is never empty */ try { localStorage.setItem('wf-hide-' + g, JSON.stringify(h)); localStorage.setItem('wf-seen-' + g, JSON.stringify(all.map((m) => m.key))); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); };
     return { on: !!g, title: TT[g] || '', y: g ? '0%' : '105%', op: g ? 1 : 0, pe: g ? 'auto' : 'none', hidden: g ? 'false' : 'true',
-      rows: all.map((m, i) => { const on = H.indexOf(m.key) < 0, last = on && all.filter((q) => H.indexOf(q.key) < 0).length <= 1; return { name: m.l, onStr: on ? 'true' : 'false', swOp: last ? 0.4 : 1, dis: last ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', toggle: tog(m.key), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' }; }),
+      rows: all.map((m, i) => { const on = H.indexOf(m.key) < 0, last = on && all.filter((q) => H.indexOf(q.key) < 0).length <= 1; return { name: m.l, onStr: on ? 'true' : 'false', swOp: last ? 0.4 : 1, dis: last ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', toggle: tog(m.key), sep: i ? '0' : '0' }; }),
       resetDis: (() => { let o = null; try { o = localStorage.getItem('wf-order-' + g) || (g === 'kpi' ? localStorage.getItem('wf-kpi-order') : null); } catch (e) {} const opt = all.filter((m) => m.opt).map((m) => m.key); return !o && H.length === opt.length && opt.every((k) => H.indexOf(k) >= 0) ? 'true' : 'false'; })(),   /* nothing to reset: the cards are the defaults */
       reset: () => { try { ['wf-hide-', 'wf-seen-', 'wf-order-'].forEach((p) => localStorage.removeItem(p + g)); if (g === 'kpi') localStorage.removeItem('wf-kpi-order'); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); },   /* back to the default cards and order */
       close: () => this.setState({ pick: null }) };
@@ -1385,7 +1385,7 @@ class Component extends DCLogic {
         let parts = [nm].concat(String(I.place || '').split(' · ')); if (parts.filter(Boolean).length < 2) parts = parts.concat(String(frow && window.__wfPlaceUp ? window.__wfPlaceUp(frow.st, frow.co) || '' : '').split(', '));
         const place = parts.filter((q, i, arr) => q && arr.indexOf(q) === i).join(', ');   // parish, municipality, district (no repeats)
         const cp = (this.state && this.state.copied) || null, done = !!(cp && cp.v === G), fresh = done && Date.now() - cp.t < 3000;
-        return { d: G ? 'block' : 'none', place, placeD: place ? 'block' : 'none', bd: place ? '1px solid rgba(60,60,67,0.12)' : '0', gps: G, rows: fresh ? '1fr' : '0fr', op: fresh ? 1 : 0,
+        return { d: G ? 'block' : 'none', place, placeD: place ? 'block' : 'none', bd: place ? '0' : '0', gps: G, rows: fresh ? '1fr' : '0fr', op: fresh ? 1 : 0,
           c: done ? '#1E7A34' : '#3C3C43', ic: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', aria: done ? 'Copied' : 'Copy coordinates',
           copy: () => { try { navigator.clipboard.writeText(G).catch(() => {}); } catch (e) {} this.setState({ copied: { v: G, t: Date.now() } }); setTimeout(() => { try { this.forceUpdate(); } catch (e) {} }, 3100); } }; })(),
       rs: (() => { const conf = !!(frow && /^Confirmed from/.test(frow.note || '')), n = ORD.length, u = ORD.reduce((a, o) => a + (o.n || []).reduce((x, y) => x + y, 0), 0);
@@ -1442,7 +1442,7 @@ class Component extends DCLogic {
         const draft = F && F.draft ? F.draft : (id ? recFor(id) : []), recD = id ? recFor(id) : [], isRec = id ? draft.every((v, i) => v === recD[i]) : true;
         const setD = (arr) => this.setState({ flow: { ...F, draft: arr } });
         const resRows = !id ? [] : (id === 'air' ? [2, 3, 4, 5] : [0, 1]).map((k, j) => { const cap = id === 'air' ? airCap[j] : capSt(dSel || {})[j], n = draft[j] || 0, lessDis = n <= 0, moreDis = n >= cap, m = meta[k];
-          return { name: m.name, icon: m.icon, n, sep: j ? '1px solid rgba(60,60,67,0.14)' : '0', avail: cap >= 99 ? '' : cap === 0 ? 'None available.' : (cap - n) + ' of ' + cap + ' free.', avD: cap >= 99 ? 'none' : 'block',
+          return { name: m.name, icon: m.icon, n, sep: j ? '0' : '0', avail: cap >= 99 ? '' : cap === 0 ? 'None available.' : (cap - n) + ' of ' + cap + ' free.', avD: cap >= 99 ? 'none' : 'block',
             less: () => { if (lessDis) return; const a = draft.slice(); a[j] = n - 1; setD(a); }, more: () => { if (moreDis) return; const a = draft.slice(); a[j] = n + 1; setD(a); },
             lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1, lessLbl: 'Fewer ' + m.name.toLowerCase(), moreLbl: 'More ' + m.name.toLowerCase() }; });
         const inPlan = (x) => plan.some((p) => p.id === x);
@@ -1505,7 +1505,7 @@ class Component extends DCLogic {
         return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
           title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: '#000000',
           sub: 'To station coordinators · ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: all ? '#34C759' : '#0062CC',
-          rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, SCL = window.__wfStationCol || ['#34C759'], TNT = window.__wfTint || ((h, a) => 'rgba(52, 199, 89, ' + a + ')'); return { crest: crestOf(d), crestD: crestOf(d) ? 'block' : 'none', hdBg: d.id === 'air' ? 'rgba(0, 113, 227, 0.06)' : 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+          rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, SCL = window.__wfStationCol || ['#34C759'], TNT = window.__wfTint || ((h, a) => 'rgba(52, 199, 89, ' + a + ')'); return { crest: crestOf(d), crestD: crestOf(d) ? 'block' : 'none', hdBg: d.id === 'air' ? 'rgba(0, 113, 227, 0.06)' : 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '0' : '0',
             units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
             state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: '#000000', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           redo: () => { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
@@ -1556,7 +1556,7 @@ class Component extends DCLogic {
       bandMove: (e) => { const B = this._band; if (!B || B.id !== e.pointerId) return; const dx = e.clientX - B.x, dy = e.clientY - B.y;
         if (Math.hypot(dx, dy) > 8) B.moved = true; if (B.leg && Math.abs(dx) > Math.abs(dy)) { const z = B.leg.getBoundingClientRect().width / (B.leg.offsetWidth || 1) || 1; B.leg.scrollLeft = B.sl - dx / z; } },
       bandUp: (e) => { const B = this._band; this._band = null; if (!B || B.id !== e.pointerId || B.moved || !B.t) return; const b = B.t.closest('button,a,[role=button]'); if (b) { try { b.click(); } catch (x) {} } },
-      bandCancel: () => { this._band = null; }, hdChatD: RO ? 'none' : 'flex', ulGap: RO ? '24px' : '2px', ulMt: RO ? '24px' : '16px', ulBd: RO ? '0' : '1px solid rgba(60,60,67,0.14)', backOrd: RO ? '-1' : '0', backLbl2: RO ? 'Back' : 'Done', doneD: RO ? 'none' : 'grid', backIcD: RO ? 'block' : 'none', kindD: 'inline', qualCls: 'hd', qualPr: '10px', qualR: '26px', kindDot: s.crew ? 'transparent' : HELD ? '#6F2B06' : '#E8590C', tagMl: 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const tk = !RO || !HELD ? null : HELD.took != null ? HELD.took : (I.startMs && HELD.at ? HELD.at - I.startMs : I.startMs && I.updMs && I.updMs > I.startMs ? I.updMs - I.startMs : null); const fin = tk != null && tk > 0 ? DUR(tk) : ''; /* how long it took to hold: the source's time, else start to held, else start to the last update */ return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: false, mapFireOnly: RO, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: 'note', tlOpenStr: 'false', tlToggle: null, tlCur: 'default', tlBarD: 'none', tlBar: [], tlDetD: 'none', startD: T && INFO && INFO.startMs ? 'inline' : 'none', startTxt: INFO && INFO.startMs ? (() => { const d = new Date(INFO.startMs); return 'Started ' + (new Date().toDateString() === d.toDateString() ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString([], { day: 'numeric', month: 'short' })); })() : '',   /* today: the time; before: the day (the time active says the rest) */ kindC: '#1C1C1E' }; })(), qualMr: RO ? '-8px' : '-64px',   /* past the chat button's column when it shows */ qualMl: '-' + (56 + (RO ? 4 : 8)) + 'px',   /* the band spans the header's full width (16px from both edges), as on the ignition candidate page, not the title column */
+      bandCancel: () => { this._band = null; }, hdChatD: RO ? 'none' : 'flex', ulGap: RO ? '24px' : '2px', ulMt: RO ? '24px' : '16px', ulBd: RO ? '0' : '0', backOrd: RO ? '-1' : '0', backLbl2: RO ? 'Back' : 'Done', doneD: RO ? 'none' : 'grid', backIcD: RO ? 'block' : 'none', kindD: 'inline', qualCls: 'hd', qualPr: '10px', qualR: '26px', kindDot: s.crew ? 'transparent' : HELD ? '#6F2B06' : '#E8590C', tagMl: 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const tk = !RO || !HELD ? null : HELD.took != null ? HELD.took : (I.startMs && HELD.at ? HELD.at - I.startMs : I.startMs && I.updMs && I.updMs > I.startMs ? I.updMs - I.startMs : null); const fin = tk != null && tk > 0 ? DUR(tk) : ''; /* how long it took to hold: the source's time, else start to held, else start to the last update */ return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: false, mapFireOnly: RO, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: 'note', tlOpenStr: 'false', tlToggle: null, tlCur: 'default', tlBarD: 'none', tlBar: [], tlDetD: 'none', startD: T && INFO && INFO.startMs ? 'inline' : 'none', startTxt: INFO && INFO.startMs ? (() => { const d = new Date(INFO.startMs); return 'Started ' + (new Date().toDateString() === d.toDateString() ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString([], { day: 'numeric', month: 'short' })); })() : '',   /* today: the time; before: the day (the time active says the rest) */ kindC: '#1C1C1E' }; })(), qualMr: RO ? '-8px' : '-64px',   /* past the chat button's column when it shows */ qualMl: '-' + (56 + (RO ? 4 : 8)) + 'px',   /* the band spans the header's full width (16px from both edges), as on the ignition candidate page, not the title column */
       chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: 'Team chat', rowD: 'none', title: '', time: '', timeC: '#545458', last: '' };
         const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
         const lm = ex ? C.lastMsg(ex) : null, who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? 'You' : (ex.people[lm.from] || {}).name || '') : '';
@@ -1689,11 +1689,11 @@ class Component extends DCLogic {
         { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['pop', 'cont', 'rate', 'head', 'eta', 'area', 'size', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
         { const vis = this.wfGrpNote('kpi', med0); for (let i = med0.length - 1; i >= 0; i--) if (!vis(med0[i].key)) med0.splice(i, 1); }
         const two = false, colW = 106;
-        const med = med0.map((m, i) => ({ note: '', tag: '', sub: '', tagFg: '', tagBg: '', ...m, tagD: m.tag ? 'block' : 'none', subD: m.sub ? 'block' : 'none', ...(() => { const q = /^([~<>≈]?-?[\d.,]+%?)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: (() => { const q = /^([~<>≈]?-?[\d.,]+%?)\s*(.*)$/.exec(String(m.v)) || ['', String(m.v), ''], w = colW - (q[2] ? q[2].length * 8.6 + 3 : 0); return Math.max(16, Math.min(30, Math.floor(w / Math.max(1, q[1].length * 0.6)))) + 'px'; })(), padR: '8px', padL: '8px', ch: Object.assign({ dot: '' }, m.ch) }));
+        const med = med0.map((m, i) => ({ note: '', tag: '', sub: '', tagFg: '', tagBg: '', ...m, tagD: m.tag ? 'block' : 'none', subD: m.sub ? 'block' : 'none', ...(() => { const q = /^([~<>≈]?-?[\d.,]+%?)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '0' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: (() => { const q = /^([~<>≈]?-?[\d.,]+%?)\s*(.*)$/.exec(String(m.v)) || ['', String(m.v), ''], w = colW - (q[2] ? q[2].length * 8.6 + 3 : 0); return Math.max(16, Math.min(30, Math.floor(w / Math.max(1, q[1].length * 0.6)))) + 'px'; })(), padR: '8px', padL: '8px', ch: Object.assign({ dot: '' }, m.ch) }));
         const anyCh = med.some((m) => m.ch.svgD !== 'none' || m.ch.segD !== 'none') || chB.svgD !== 'none';
         return { d: 'flex', bch: none, trD: anyCh ? 'block' : 'none', axis: anyCh ? 'Since ' + clk(t0) + '. Estimated from today\'s figures.' : '', big, fs, bigD: 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
-      kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
+      kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '0' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),

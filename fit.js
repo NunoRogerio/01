@@ -226,7 +226,7 @@ window.__wfBlink=function(path,dur){
   var handS=function(h){return h?h.s+RATE*Math.max(0,Date.now()-h.t)/1000:1;};
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
   // The black-and-white forest, as the loading screen starts: used by the sign-in screen to hand over without a gap.
-  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:saturate(.25) brightness('+(0.8*(ph[3]||1)).toFixed(2)+')';return d;};   // slightly dimmer, most colour gone
+  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:saturate(0) brightness('+(0.7*(ph[3]||1)).toFixed(2)+')';return d;};   // no colour at all, 12% darker than before (0.8 -> 0.7)
   // Places the loading screen's logo, name, line of text and credit exactly where sign in had them (lay, measured there)
   var LOADTXT='Loading live data';
   var handLayout=function(o,lay,first){if(!lay)return false;o.classList.add('hand');
@@ -282,7 +282,7 @@ window.__wfBlink=function(path,dur){
     var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+(ph[3]<1?f.replace('none','')+' brightness('+ph[3]+')':f);return d;};
     // one steady zoom-in for the whole loading screen (after log in it is the one already running, carried on from sign in)
     var zoom=ZOOM||document.createElement('div');if(!ZOOM)zoom.style.cssText='position:absolute;inset:0;transform:scale(1);transition:transform 30s linear;will-change:transform';
-    var gray=mk('saturate(.25) brightness(.8)'),norm=mk('none'),hot=mk('saturate(1.6) contrast(1.03) brightness(1.03)');
+    var gray=mk('saturate(0) brightness(.7)'),norm=mk('none'),hot=mk('saturate(1.6) contrast(1.03) brightness(1.03)');
     zoom.appendChild(gray);zoom.appendChild(hot);zoom.appendChild(norm);
     im.onload=function(){if(!el.parentNode)return;
       if(!ZOOM)bg.appendChild(zoom);el.classList.add('photo');if(!el.classList.contains('hand'))el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';

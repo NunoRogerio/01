@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=90"></script>
+<script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=109"></script>
+<script src="prefs.js?v=110"></script>
 <script src="i18n.js?v=104"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=31"></script>
@@ -188,7 +188,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: absolute; left: {{colL}}px; top: 0; width: {{colW}}px; height: {{vh}}px; z-index: 2; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 56px; pointer-events: none">
 
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
+  <span aria-hidden="true" data-wf-topbg="1" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
   <header class="fade" data-pull="down" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 32px 12px">
@@ -239,7 +239,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </label>
       </div>
       <div class="wf-snap" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
-        <div role="row" style="display: {{li.ignD}}; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; padding: 0 16px 8px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; line-height: 18px; color: #545458">
+        <div role="row" style="display: {{li.ignD}}; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; padding: 0 16px 8px; border-bottom: 0; font-size: 15px; line-height: 18px; color: #545458">
           <span style="font-weight: 600">Ignition candidates</span>
           <span style="text-align: right">Likelihood</span>
           <span></span>
@@ -253,7 +253,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
-        <div role="row" style="display: {{li.fireD}}; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; margin-top: {{li.fireMt}}; padding: 0 16px 8px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; line-height: 18px; color: #545458">
+        <div role="row" style="display: {{li.fireD}}; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; margin-top: {{li.fireMt}}; padding: 0 16px 8px; border-bottom: 0; font-size: 15px; line-height: 18px; color: #545458">
           <span style="font-weight: 600">Fires</span>
           <span style="text-align: right">State</span>
           <span></span>
@@ -311,7 +311,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: #8E8E93; color: #FFFFFF; cursor: pointer"><svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.88" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
       </label>
     </sc-if>
-    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; column-gap: 24px; margin: 38px -16px 0; padding: 0 {{rowPadR}} 2px {{rowPadL}}; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; font-weight: 400; color: #545458">
+    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; column-gap: 24px; margin: 38px -16px 0; padding: 0 {{rowPadR}} 2px {{rowPadL}}; border-bottom: 0; font-size: 15px; font-weight: 400; color: #545458">
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.name.aria}}" onClick="{{sort.name.pick}}" style="position: relative; color: {{sort.name.c}}; text-align: left"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.name.op}}; transform: rotate({{sort.name.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{colName}}</span>&nbsp;</button></span>
       <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{sort.cands.aria}}" onClick="{{sort.cands.pick}}" style="position: relative; color: {{sort.cands.c}}; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.cands.op}}; transform: rotate({{sort.cands.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Candidates</span></button></span>
       <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{sort.fires.aria}}" onClick="{{sort.fires.pick}}" style="position: relative; color: {{sort.fires.c}}; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.fires.op}}; transform: rotate({{sort.fires.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Fires</span></button></span>
@@ -319,7 +319,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <div class="wf-snap" data-sort-list="1" style="display: flex; flex-direction: column; gap: 2px; margin: 0 -16px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; transform: translateX({{slX}}%); opacity: {{slO}}; transition: {{slT}}">
       <sc-if value="{{inCounties}}" hint-placeholder-val="{{ false }}">
-        <div class="sqwrap" data-sel="{{allState.selA}}" style="display: flex; align-items: center; gap: 8px; padding: 12px 0 12px 16px; border-radius: 0; border-bottom: 1px solid rgba(60,60,67,0.14); background-color: {{allState.selBg}}; transition: background-color .15s ease">
+        <div class="sqwrap" data-sel="{{allState.selA}}" style="display: flex; align-items: center; gap: 8px; padding: 12px 0 12px 16px; border-radius: 0; border-bottom: 0; background-color: {{allState.selBg}}; transition: background-color .15s ease">
           <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>
           </button>
@@ -342,7 +342,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.n}}</b><span style="font-size: 13px; color: #545458">deforestation fires</span></span>
             <span style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(179,122,0,0.1)"><b style="font-size: 20px; font-weight: 600; color: #7A5600; font-variant-numeric: tabular-nums">{{ff.ha}}</b><span style="font-size: 13px; color: #545458">hectares burning</span></span>
           </div>
-          <span style="display: flex; flex-direction: column; gap: 2px; padding-top: 10px; border-top: 1px solid rgba(60,60,67,0.12)">
+          <span style="display: flex; flex-direction: column; gap: 2px; padding-top: 10px; border-top: 0">
             <b style="font-size: 15px; font-weight: 600">Who finances forest-risk farming in Brazil</b>
             <span style="font-size: 15px; line-height: 20px; color: #3C3C43">USD 206.7 bn of forest-risk credit since 2016 went through Brazil's agriculture finance programme. Largest lenders: Banco do Brasil 99.8 bn · Sicredi 19.5 bn · Bradesco 17.7 bn · Itaú 14.6 bn · Caixa 12.8 bn · Banco da Amazônia 8.3 bn.</span>
             <span style="font-size: 15px; line-height: 20px; color: #3C3C43">Their conclusion: voluntary pledges have not stopped the finance, so banks should be legally liable for deforestation they fund.</span>
@@ -407,9 +407,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-if value="{{nt.none}}" hint-placeholder-val="{{ false }}"><span style="padding: 16px 4px; font-size: 17px; color: #000000; line-height: 22px">No updates in this area yet.</span></sc-if>
       <!-- Calm list, like the chats and incidents: rows edge to edge between full-width dividers, the headline in Title S,
            one grey annotation line, the time on the right in grey with a lime dot while unread, a chevron -->
-      <ul style="display: {{nt.listD}}; flex-direction: column; margin: 0 -16px; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
+      <ul style="display: {{nt.listD}}; flex-direction: column; margin: 0 -16px; padding: 0; list-style: none; border-top: 0">
         <sc-for list="{{nt.items}}" as="n" hint-placeholder-count="5">
-          <li style="border-bottom: 1px solid rgba(60,60,67,0.14)">
+          <li style="border-bottom: 0">
             <a href="{{n.href}}" class="chrow" onPointerDown="{{n.pick}}" onClick="{{n.pick}}" aria-label="{{n.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 20px; gap: 4px 8px; align-items: center; min-height: 84px; padding: 20px 16px; box-sizing: border-box; color: #000000; text-decoration: none">
               <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{n.title}}</span>
               <span style="justify-self: end; display: flex; align-items: center; gap: 6px; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap"><span aria-hidden="true" style="display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: var(--wf-y); box-shadow: 0 0 0 1px rgba(0,0,0,0.12)"></span>{{n.age}}</span>
@@ -478,7 +478,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div style="display: grid; grid-template-rows: {{cs.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{cs.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{cs.vis}}; opacity: {{cs.op}}; transition: opacity .35s ease {{cs.delay}}, visibility 0s linear {{cs.visDelay}}">
           <!-- Role play: the crew coordinators in the incident chats answer through Claude with the person's own API key -->
-          <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+          <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-top: 0">
             <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
               <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ai.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{ai.sub}}</span></span>
               <button type="button" role="switch" class="wf-tog" aria-checked="{{ai.onStr}}" aria-label="{{ai.title}}" onClick="{{ai.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{ai.swBg}}; opacity: {{ai.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{ai.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
@@ -495,7 +495,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="font-size: 15px; line-height: 20px; color: {{ai.noteC}}">{{ai.note}}</span>
           </div>
           <!-- Administrator only: invite links that switch on Claude role-play on the invitee's phone -->
-          <div style="display: {{inv.d}}; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+          <div style="display: {{inv.d}}; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-top: 0">
             <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{inv.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{inv.sub}}</span></span>
             <sc-if value="{{inv.hasLink}}" hint-placeholder-val="{{ false }}">
               <span style="display: block; padding: 10px 12px; border-radius: 10px; background: rgba(118,118,128,0.12); font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: all; user-select: all; max-height: 54px; overflow: hidden">{{inv.link}}</span>
@@ -516,14 +516,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.count}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
         <div style="display: grid; grid-template-rows: {{ds.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
-            <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-top: 0">
               <button type="button" class="opt wf-b wf-pri" onClick="{{ds.add}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{ds.addTxt}}</button>
               <span style="display: {{ds.noteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.note}}</span>
             </div>
             <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
               <sc-for list="{{ds.items}}" as="d" hint-placeholder-count="7">
                 <!-- Rows: the name in bold, dividers edge to edge -->
-                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.12)">
+                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 12px 16px; border-top: 0">
                   <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
                   <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
                   <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
@@ -663,7 +663,11 @@ class Component extends DCLogic {
       const O = ov.offsetParent.getBoundingClientRect(), R = document.querySelector('[data-wfroot]').getBoundingClientRect(), k = R.width / ((window.__wfVP || {}).w || 390) || 1, q = sp.getBoundingClientRect();
       const av = { top: Math.round((q.top - O.top) / k), left: Math.round((q.left - O.left) / k) }, c = this.state.pfAvPos || {};
       if (Math.abs((c.top || 0) - av.top) > 1 || Math.abs((c.left || 0) - av.left) > 1) this.setState({ pfAvPos: av }); } catch (x) {} }
-  componentDidMount() { [60, 600, 1600].forEach((t) => setTimeout(() => { if (this.state.pf) this.wfPfAvFix(); else { const av = this.wfPfAvPos(); if (av) this.setState({ pfAvPos: av }); } }, t));
+  // The top blade's real height (it grows with its header: larger text, longer names, a resized screen); the panels that
+  // fold into it (area picker, search) and the map's top edge follow it instead of a fixed 163px
+  wfTopWatch() { const m = () => { const e = document.querySelector('[data-wf-topbg]'); if (!e) return; const h = Math.round(e.offsetHeight); if (h > 40 && h !== this._tbh) { this._tbh = h; try { this.forceUpdate(); } catch (x) {} } };
+    [0, 300, 1200].forEach((t) => setTimeout(m, t)); try { if (window.ResizeObserver) { const e = document.querySelector('[data-wf-topbg]'); if (e) new ResizeObserver(m).observe(e); else setTimeout(() => this.wfTopWatch(), 400); } } catch (x) {} window.addEventListener('resize', m); }
+  componentDidMount() { this.wfTopWatch(); [60, 600, 1600].forEach((t) => setTimeout(() => { if (this.state.pf) this.wfPfAvFix(); else { const av = this.wfPfAvPos(); if (av) this.setState({ pfAvPos: av }); } }, t));
     try { window.addEventListener('resize', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 120)); window.addEventListener('pageshow', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 300)); } catch (x) {}
  window.__wfSwipeDrag = (k, dy) => this.setState({ hdK: dy ? k : null, hdY: dy });   // a whole-blade swipe (fit.js) shows as the blade's own drag
     try { sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
@@ -929,7 +933,7 @@ class Component extends DCLogic {
     const res = (R.q === q ? R.list : R.list).map((r) => ({ ...r, go: go(r), aria: r.name + (r.sub ? ', ' + r.sub : '') + '. Show on the map' }));
     const where = only.map((k) => (k === 'PT' ? 'Portugal' : 'California')).join(' and ');
     const msg = q.trim().length < 2 ? 'Towns, villages and places in ' + where + '.' : R.st === 'busy' && !res.length ? 'Searching…' : R.st === 'none' ? 'No places found.' : R.st === 'off' ? 'Search needs a connection.' : '';
-    return { str: on ? 'true' : 'false', op: on ? 1 : 0, pe: on ? 'auto' : 'none', hidden: on ? 'false' : 'true', clip: on ? '0px' : 'calc(100% - 163px)', vis: on || s.psShown ? 'visible' : 'hidden', inOp: on ? 1 : 0, inDelay: on ? '.18s' : '0s', xRot: on ? '0deg' : '-90deg',
+    return { str: on ? 'true' : 'false', op: on ? 1 : 0, pe: on ? 'auto' : 'none', hidden: on ? 'false' : 'true', clip: on ? '0px' : 'calc(100% - ' + (this._tbh || 163) + 'px)', vis: on || s.psShown ? 'visible' : 'hidden', inOp: on ? 1 : 0, inDelay: on ? '.18s' : '0s', xRot: on ? '0deg' : '-90deg',
       q, ph: 'Find a place', res, msg, msgD: msg ? 'block' : 'none',
       open: () => { const sec = document.querySelector('[data-wf-ps]'), i = document.querySelector('[data-wf-psq]'); if (sec) sec.style.visibility = 'visible'; const f = () => { try { const j = document.querySelector('[data-wf-psq]'); if (j && document.activeElement !== j) j.focus({ preventScroll: true }); } catch (e) {} }; try { if (i) i.value = ''; } catch (e) {} f(); this._psR = { q: '', list: [], st: '' }; clearTimeout(this._psHide); this.setState({ psOpen: true, psShown: true, psQ: '', scOpen: false }); setTimeout(f, 60); setTimeout(f, 300); },
       close, onQ: (e) => { const v = e.target.value; this.setState({ psQ: v }); run(v); },
@@ -1002,7 +1006,7 @@ class Component extends DCLogic {
       const un = n.t > seen;
       const ic = n.kind === 'ign' ? [TRI, n.c, 'rgba(0,0,0,0.25)'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
       return { title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
-        sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
+        sep: i ? '0' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
     });
     const where = (scope && scope.title) || 'All areas';
@@ -1181,7 +1185,7 @@ class Component extends DCLogic {
       backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : brObj && brObj.id === 'AMZ' ? 'BRA' : '@', q: '' })), acct: ({ amz: { name: 'Rafael Nogueira · Prevfogo Amazônia', area: 'Ibama · Access: Amazônia Legal only' }, admin: { name: 'Nuno Rogerio · Platform administrator', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
       signOut: () => { try { window.localStorage.removeItem('wf-role'); window.localStorage.removeItem('wf-last-user'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
       backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : brObj && brObj.id === 'AMZ' ? 'Back to Brazil' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
-      scOp: scOpen ? 1 : 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? (this.wfDrag('sc').y ? (-this.wfDrag('sc').y) + 'px' : '0px') : 'calc(100% - 163px)', scClipT: this.wfDrag('sc').y ? '0s' : '.55s', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
+      scOp: scOpen ? 1 : 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? (this.wfDrag('sc').y ? (-this.wfDrag('sc').y) + 'px' : '0px') : 'calc(100% - ' + (this._tbh || 163) + 'px)', scClipT: this.wfDrag('sc').y ? '0s' : '.55s', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
       ps: this.wfPlaceSearch(),
       scopeStr: scOpen ? 'true' : 'false', scopeRot: scOpen ? '180deg' : '0deg',
       scopeAria: 'Area: ' + scope.title + ', ' + scope.parent + '. Change area',
@@ -1215,7 +1219,7 @@ class Component extends DCLogic {
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
       ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,
       full: !!s.full, toggleFull: () => this.setState({ full: !s.full, list: false }),
-      padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : 163), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : L.barH + 23, ctrlTop: 422,
+      padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : (this._tbh || 163)), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : L.barH + 23, ctrlTop: 422,
       clipL: L.side && !s.full ? L.colL + L.colW : L.sl, clipR: L.sr,
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: s.full ? '200px' : '0px', downOp: s.full ? 0 : 1,
     };

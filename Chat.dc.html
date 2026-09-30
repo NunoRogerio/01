@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=90"></script>
+<script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=109"></script>
+<script src="prefs.js?v=110"></script>
 <script src="i18n.js?v=104"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=31"></script>
@@ -66,7 +66,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <sc-for list="{{groups}}" as="g" hint-placeholder-count="1">
         <!-- Calm list, like the incidents list: rows edge to edge between full-width dividers, the place in Title S, grey
              annotation on up to two lines (stage and last message), the time then the unread count (yellow) on the right, a chevron -->
-        <ul style="display: flex; flex-direction: column; margin: 0 -16px; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
+        <ul style="display: flex; flex-direction: column; margin: 0 -16px; padding: 0; list-style: none; border-top: 0">
           <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="2">
             <li>
               <a href="Chat.dc.html" class="chrow" onClick="{{r.go}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 20px; gap: 2px 8px; align-items: center; min-height: 60px; padding: 16px; box-sizing: border-box; color: #000000; text-decoration: none">
@@ -169,7 +169,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               </sc-if>
             </div>
             <sc-if value="{{m.hasRows}}" hint-placeholder-val="{{ false }}">
-              <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.12)">
+              <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 0">
                 <sc-for list="{{m.rows}}" as="r" hint-placeholder-count="3">
                   <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2px 8px; align-items: center; padding: 8px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="justify-self: end; align-self: start; padding: 2px 10px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.rc}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 15px; line-height: 20px; color: #545458">{{r.b}}</span></li>
                 </sc-for>
@@ -202,7 +202,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
 
     <sc-if value="{{isHist}}" hint-placeholder-val="{{ false }}">
-    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 12px 16px 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 12px 16px 32px; background: #F2F2F7; border-top: 0">
       <sc-if value="{{sim.can}}" hint-placeholder-val="{{ true }}"><button type="button" class="chbtn wf-b wf-pri" onClick="{{sim.go}}" style="border: 0; font: inherit; cursor: pointer">{{sim.label}}</button></sc-if>
       <span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{histTxt}}</span>
       <div role="tablist" aria-label="{{t.hist}}" class="wf-seg" style="">
@@ -216,7 +216,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- The photo tooltip lives outside the scrolling list, above its edge fade: placed over the tapped photo (or under it near the top) -->
     <span role="tooltip" aria-hidden="true" style="position: absolute; left: {{avt.x}}px; top: {{avt.y}}px; z-index: 25; display: flex; flex-direction: column; width: max-content; max-width: 300px; transform: translateY({{avt.dy}}); opacity: {{avt.op}}; padding: 6px 12px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; pointer-events: none; transition: opacity .2s ease, transform .2s ease"><span style="font-weight: 600">{{avt.name}}</span><span>{{avt.role}}</span></span>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
-    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 0">
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
         <label style="display: flex; align-items: center; gap: 8px; flex-grow: 1; min-width: 0; height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12); color: #545458"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" class="sqsearch" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
         <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
@@ -293,7 +293,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </section>
           <!-- Time in each stage: a calm list, like the incidents (stage in Title S, when it began as annotation, its time on the right) -->
           <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; margin: 0 -16px">
-            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 20px 8px; border-bottom: 1px solid rgba(60,60,67,0.14)"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 20px 8px; border-bottom: 0"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
             <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
               <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; min-height: 60px; padding: 12px 16px; box-sizing: border-box; opacity: {{r.op}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: {{r.bg}}"><svg width="16" height="16" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
@@ -341,7 +341,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 4px; border-radius: 14px; background: #FFFFFF">
         <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 16px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap">{{t.timeline}}</h2><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap">{{tlTotal}}</span></div>
         <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
-          <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px 16px; align-items: center; margin: 0 -16px; padding: 20px 16px; border-top: 1px solid rgba(60,60,67,0.12); opacity: {{r.op}}">
+          <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px 16px; align-items: center; margin: 0 -16px; padding: 20px 16px; border-top: 0; opacity: {{r.op}}">
             <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.bg}}"><svg width="22" height="22" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
             <span style="min-width: 0; font-size: 17px; line-height: 22px"><span style="font-weight: 700">{{r.name}}</span> <span style="color: #6E6E73">{{r.at}}</span></span>
             <span style="font-size: 17px; font-weight: {{r.w}}; line-height: 22px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
@@ -384,7 +384,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </div>
       <div class="chscroll" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{sk.rows}}" as="r" hint-placeholder-count="10">
-          <button type="button" role="switch" aria-checked="{{r.onStr}}" onClick="{{r.tog}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 0 16px; border: 0; border-bottom: 1px solid rgba(60,60,67,0.12); background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; opacity: {{r.op}}; cursor: pointer">{{r.name}}<span aria-hidden="true" style="position: relative; display: block; flex-shrink: 0; width: 64px; height: 25px; border-radius: 999px; background: {{r.swBg}}; transition: background-color .3s ease"><span style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></span></button>
+          <button type="button" role="switch" aria-checked="{{r.onStr}}" onClick="{{r.tog}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 0 16px; border: 0; border-bottom: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; opacity: {{r.op}}; cursor: pointer">{{r.name}}<span aria-hidden="true" style="position: relative; display: block; flex-shrink: 0; width: 64px; height: 25px; border-radius: 999px; background: {{r.swBg}}; transition: background-color .3s ease"><span style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></span></button>
         </sc-for>
       </div>
     </section>
@@ -534,7 +534,7 @@ class Component extends DCLogic {
         const txt = lm ? (lm.kind === 'card' ? (lm.summary ? L('Fire resolved', 'Incêndio resolvido') : T(lm.title)) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
         return { kindW: c.kind === 'dm' ? '' : L('Chat', 'Conversa'), unrD: c.closed ? 'none' : 'block', unrTxt: u ? u + ' ' + L(u === 1 ? 'unread message' : 'unread messages', u === 1 ? 'mensagem por ler' : 'mensagens por ler') + '.' : L('All messages read.', 'Todas as mensagens lidas.'),
           place: (c.drill ? L('Drill · ', 'Simulação · ') : '') + c.place, st: c.kind === 'dm' ? c.reg : T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: C.badge ? C.badge(u) : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
-          ic: iconFor(S), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
+          ic: iconFor(S), sep: i ? '0' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
           go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, fromRes: tab === 'resolved', draft: '', stack: [], sheet: false }); } }; };
       const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };
       const open = all.filter((c) => !c.closed).sort((a, b) => (C.unread(b) ? 1 : 0) - (C.unread(a) ? 1 : 0) || lastT(b) - lastT(a));
@@ -578,7 +578,7 @@ class Component extends DCLogic {
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
       return { hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
-        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '1px solid rgba(60,60,67,0.08)' : '1px solid rgba(60,60,67,0.12)', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
+        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '0' : '0', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
     const extras = [];
     if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2] }); }
     if (c.evac) extras.push({ name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
@@ -699,7 +699,7 @@ class Component extends DCLogic {
         items.push({ isCard: true, time, tag: T(m.tag), tagC: I ? I.c : DK && m.tagC ? lite(m.tagC, 0.45) : (m.tagC || '#545458'), title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
-          hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
+          hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '0' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           hasLink: !!m.link || toSheet, linkCls: 'wf-pri',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
@@ -710,7 +710,7 @@ class Component extends DCLogic {
     // The team: you, the fire owner, then the crew coordinator of each station
     const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#1E7A34' }]
       .concat(c.people.map((p, i) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
-      .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '1px solid rgba(60,60,67,0.14)' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); openPerson(p.name)(); } }));
+      .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); openPerson(p.name)(); } }));
     const ty = C.typing(c);
     const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), go: () => run(a.key) }));
     // Quick replies fill the suggestions up to five: questions the team answers (status, safety, water, homes, wind…), by stage
@@ -733,7 +733,7 @@ class Component extends DCLogic {
         return { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close: () => this.setState({ topicPick: false }),
           title: L('Set the topic', 'Definir o tópico'), sub: L('Incidents within 50 km of the station.', 'Incidentes a 50 km do quartel.'), noneD: on && !N.length ? 'block' : 'none', none: L('No fires or ignition candidates within 50 km.', 'Sem incêndios nem candidatos a ignição a 50 km.'),
           rows: N.map((o, i) => { const fire = o.kind === 'fire', S0 = C.STAGES[fire ? 3 : 0], Y = window.__wfY || '#E5FF00';
-            return { place: o.inc.place, sub: (fire ? L('Fire', 'Incêndio') : L('Ignition candidate', 'Candidato a ignição') + (o.inc.conf ? '. ' + o.inc.conf + '%' : '')) + (o.inc.reg ? '. ' + o.inc.reg : '') + '.', km: (o.km < 10 ? o.km.toFixed(1) : Math.round(o.km)) + ' km', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+            return { place: o.inc.place, sub: (fire ? L('Fire', 'Incêndio') : L('Ignition candidate', 'Candidato a ignição') + (o.inc.conf ? '. ' + o.inc.conf + '%' : '')) + (o.inc.reg ? '. ' + o.inc.reg : '') + '.', km: (o.km < 10 ? o.km.toFixed(1) : Math.round(o.km)) + ' km', sep: i ? '0' : '0',
               icD: C.ICON[S0.icon], icC: fire ? S0.c : '#3A3A3C', icFill: fire ? 'none' : Y, icBg: fire ? S0.bg : '#ECECEF', aria: o.inc.place + ', ' + Math.round(o.km) + ' km',
               pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stick = true; this.setState({ topicPick: false }); C.setTopic(c.key, o.inc); } }; }) }; })(),
       tm: (() => { const on = !!s.team, n = team.length; return { n: String(n), word: L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros'), aria: n + L(n === 1 ? ' member. Open the team' : ' members. Open the team', n === 1 ? ' membro. Abrir a equipa' : ' membros. Abrir a equipa'), sub: n + L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros') + '.',   /* the same words as the button that opened it */
