@@ -16,7 +16,7 @@
 <script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=82"></script>
-<script src="i18n.js?v=69"></script>
+<script src="i18n.js?v=70"></script>
 <script src="live.js?v=33"></script>
 
 <title>Terrain map</title>
@@ -54,6 +54,9 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 .fzone{display:block;background:transparent;transition:background-color .15s ease;-webkit-tap-highlight-color:transparent}.fzone:focus{outline:none}.fzone:hover+.fanchor>.tip,.fzone:focus-visible+.fanchor>.tip{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .18s ease .1s,transform .18s ease .1s,visibility 0s linear .1s}.fzone:hover+.fanchor>.tip.l,.fzone:hover+.fanchor>.tip.r,.fzone:focus-visible+.fanchor>.tip.l,.fzone:focus-visible+.fanchor>.tip.r{transform:translate(0,0)}
 /* Moving layers: transparent to touches themselves, their contents stay tappable */
 [data-wf-gl]{pointer-events:none}[data-wf-gl]>*,[data-wf-gl] .tipwrap,[data-wf-gl] .fzone,[data-wf-gl] [role=dialog]{pointer-events:auto}
+/* Map loading: the app's flame sways a little (the eye blinks every 3 s from script) */
+@keyframes wfFlick{0%,100%{transform:rotate(-2deg) scaleY(1)}50%{transform:rotate(2deg) scaleY(1.04)}}
+.wf-flick{transform-box:fill-box;transform-origin:50% 100%;animation:wfFlick 2.2s ease-in-out infinite}
 .tip,.igmore>span{white-space:pre-line}
 @media (hover:none){.tip,.igpill{display:none!important}}
 .ighide .igpill{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease}
@@ -353,6 +356,11 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   </sc-if>
   </div>
+  <!-- While the first map tiles load (detail maps): the search grey, the app's flame in the middle, "Loading map" under it -->
+  <div data-wf-maploader="1" aria-live="polite" style="position: absolute; left: 0; right: 0; top: {{clipV}}px; bottom: {{clipB}}px; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: #E5E5EA; opacity: {{ld.op}}; pointer-events: none; transition: opacity .6s ease">
+    <svg width="34" height="41" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible"><path class="base wf-flick" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#3A3A3C" stroke-width="1.1" stroke-linecap="round"></path></svg>
+    <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ld.txt}}</span>
+  </div>
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
     <!-- Find a place: the map's search sits above the full-screen button, same size and look (both are map controls) -->
     <button type="button" class="mbtn" aria-label="Find a place" onClick="{{srch}}" style="display: {{srchD}}; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #F2F2F7; box-shadow: 0 2px 10px rgba(0,0,0,0.14); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg></button>
@@ -387,6 +395,7 @@ class Component extends DCLogic {
     this._onPopSync = () => { if ((this.state || {}).pop) this.forceUpdate(); }; try { window.addEventListener('wf-sync', this._onPopSync); } catch (e) {}
     this.pts = {};
     this.setEl = (el) => { if (el) el.__wfMap = this;
+      if (el && !el.__wfLd) { el.__wfLd = true; el.addEventListener('load', (e) => { if (e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'image') { this._tl = (this._tl || 0) + 1; if (this._tl >= 3 && !this._tilesOk) { this._tilesOk = true; this.forceUpdate(); } } }, true); }
       if (el && el !== this.el) {
         if (this.el) this.el.removeEventListener('wheel', this.onWheel);
         this.el = el;
@@ -1244,6 +1253,10 @@ class Component extends DCLogic {
 
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     const OUT = {
+      ld: (() => { const want = (p.loader === true || p.loader === 'true') && window.__wfLiveMap && !this._tilesOk && !this._ldGave;
+        if (want && !this._ldT0) { this._ldT0 = Date.now(); setTimeout(() => { this._ldGave = true; this.forceUpdate(); }, 12000); }   // never longer than 12 s
+        if (want && !this._ldBl) this._ldBl = setInterval(() => { if (this._tilesOk || this._ldGave) { clearInterval(this._ldBl); this._ldBl = 0; return; } try { const e = this.el && this.el.querySelector('[data-wf-maploader] path.base'); if (e && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 3000);   // one blink every 3 s
+        return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
       zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
