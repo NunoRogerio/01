@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=75"></script>
+<script src="fit.js?v=76"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
 <script src="i18n.js?v=93"></script>
@@ -87,14 +87,15 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== One chat ===== -->
   <sc-if value="{{isChat}}" hint-placeholder-val="{{ false }}">
     <div style="display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; background: #F2F2F7">
-      <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 12px 12px">
-        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
+      <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 12px 16px">
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h1>
           <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
         </div>
-        <!-- The team, folded away: a round button the size of the profile photos with how many are on it; it opens the team blade -->
-        <button type="button" class="chbtn" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer">{{tm.n}}</button>
+        <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
+        <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
+        <!-- Back to the screen before: the round back button at the right -->
+        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <button type="button" class="chrow" onClick="{{c.tog}}" aria-expanded="{{c.expStr}}" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
@@ -655,7 +656,7 @@ class Component extends DCLogic {
       meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
-      tm: (() => { const on = !!s.team, n = team.length; return { n: String(n), aria: L('Team, ', 'Equipa, ') + n + L(n === 1 ? ' person. Open' : ' people. Open', n === 1 ? ' pessoa. Abrir' : ' pessoas. Abrir'), sub: n + L(n === 1 ? ' person' : ' people', n === 1 ? ' pessoa' : ' pessoas') + '.',
+      tm: (() => { const on = !!s.team, n = team.length; return { n: String(n), word: L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros'), aria: L('Team, ', 'Equipa, ') + n + L(n === 1 ? ' person. Open' : ' people. Open', n === 1 ? ' pessoa. Abrir' : ' pessoas. Abrir'), sub: n + L(n === 1 ? ' person' : ' people', n === 1 ? ' pessoa' : ' pessoas') + '.',
         open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), h: this.shHandle('team', 'tmDy'),
         mh: s.tmDy && this._tmH0 ? Math.max(120, this._tmH0 + s.tmDy) + 'px' : 'calc(100% - 48px)', mhT: s.tmDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none', xRot: on ? '0deg' : '90deg' }; })(),
       sh: { h: this.shHandle(), b: 48 - (s.shDy || 0), bT: s.shDy ? '0s' : '.35s', y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },

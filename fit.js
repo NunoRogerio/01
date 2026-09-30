@@ -580,8 +580,8 @@ window.__wfBlink=function(path,dur){
 (function(){
   document.addEventListener('pointerdown',function(e){
     var el=e.target&&e.target.closest?e.target.closest('button,a,[role=button]'):null;if(!el||!el.animate)return;
-    var r=el.getBoundingClientRect();if(!r.width||r.width>72||Math.abs(r.width-r.height)>2)return;
-    var br=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;if(br<r.width/2-1)return;
+    var r=el.getBoundingClientRect(),pill=el.hasAttribute('data-round');if(!r.width)return;   // data-round: a pill that behaves like the round buttons
+    if(!pill){if(r.width>72||Math.abs(r.width-r.height)>2)return;var br=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;if(br<r.width/2-1)return;}
     var k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop'))||1.3;
     try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}
     try{if(el.__wfPop)el.__wfPop.cancel();el.__wfPop=el.animate([{scale:'1',easing:'cubic-bezier(.2,.9,.3,1)'},{scale:String(k),offset:0.18,easing:'cubic-bezier(.4,0,.2,1)'},{scale:'1'}],{duration:480});}catch(x){}
