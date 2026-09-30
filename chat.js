@@ -403,7 +403,7 @@
     } else if (s === 3) {
       if (P[0]) say(c, 0, 'On scene. Fire in ' + (isUS(c) ? 'chaparral and dry grass' : 'pine and eucalyptus') + ', head running north-east with the wind.', 'No local. Fogo em ' + (isUS(c) ? 'chaparral e erva seca' : 'pinhal e eucaliptal') + ', cabeça a progredir para nordeste com o vento.', d + 3000, 3);
       if (P[1]) say(c, 1, 'Homes about 1 km north-east. We need air support to hold the head before it gets there.', 'Casas a cerca de 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça antes de lá chegar.', d + 8000, 6);
-      card(c, { req: 'air', tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Crew coordinator'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Coordenador de equipa') }, tagC: '#B8360A',
+      card(c, { req: 'air', by: lead(c, 1), tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Crew coordinator'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Coordenador de equipa') }, tagC: '#B8360A',
         title: { en: 'Air support', pt: 'Meio aéreo' }, body: { en: 'One helicopter to hold the head before it reaches the homes', pt: 'Um helicóptero para segurar a cabeça antes de chegar às casas' },
         actions: [{ key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }, { key: 'declineAir', en: 'Not now', pt: 'Agora não' }] }, d + 9500, 0);
     } else if (s === 4) {
@@ -826,12 +826,29 @@
     6: [[0, function (c) { return ['Night round done. All cold.', 'Ronda noturna feita. Tudo frio.']; }, 240],
         [0, function (c) { return ['Morning check: no rekindles. Ready to close when you are.', 'Verificação da manhã: sem reacendimentos. Prontos a encerrar quando quiser.']; }, 420]]
   };
+  // A request left waiting (a card with Approve / Not now): the one who asked insists, and says again which button to tap.
+  // First nudge about 45 s after the card, a firmer second one 90 s later, then they wait.
+  function nag(c, now) {
+    var m = null; for (var i = c.msgs.length - 1; i >= 0; i--) { var x = c.msgs[i]; if (x.kind === 'card' && x.req && x.actions && x.actions.length && !x.done) { m = x; break; } }
+    if (!m) return false;
+    if (m.req === 'air' && (c.flags.air || c.flags.airNo)) return false;   // answered from a suggestion instead
+    var n = m.nag || 0; if (n >= 2 || now - (m.nagAt || m.t || now) < (n ? 90000 : 45000)) return false;
+    m.nag = n + 1; m.nagAt = now;
+    var who = m.by != null ? m.by : lead(c, 1), yes = m.actions[0], no = m.actions[1], T = m.title || { en: 'this request', pt: 'este pedido' };
+    var te = String(T.en).toLowerCase(), tp = String(T.pt).toLowerCase();
+    if (!n) say(c, who, 'I still need your approval for ' + te + '. Tap ' + yes.en + ' on my request above' + (no ? ', or ' + no.en + ' if we hold without it.' : '.'),
+      'Continuo a precisar da sua aprovação para o ' + tp + '. Toque em ' + yes.pt + ' no meu pedido acima' + (no ? ', ou em ' + no.pt + ' se seguramos sem ele.' : '.'), 800, 2);
+    else say(c, who, 'Commander, the fire keeps moving and I am still waiting on ' + te + '. I need your decision: ' + yes.en + (no ? ' or ' + no.en : '') + ', on the request card above.',
+      'Comandante, o fogo continua a avançar e ainda aguardo o ' + tp + '. Preciso da sua decisão: ' + yes.pt + (no ? ' ou ' + no.pt : '') + ', no cartão do pedido acima.', 800, 3);
+    return true;
+  }
   function idle(c, now) {
     if (c.kind === 'dm') return false;
     if (c.pending && now - c.pending.at > 45000) c.pending = null;
     if (c.closed || c.dismissed || c.queue.length || c.pending) return false;
     var last = Math.max(c.idleAt || 0, (c.msgs[c.msgs.length - 1] || {}).t || 0);
     if (now - last < 22000) return false;
+    if (nag(c, now)) { c.idleAt = now; return true; }
     var D0 = (DECIS[c.stage] || []).filter(function (d) { return !(c.dec = c.dec || {})[c.stage + d.key]; });
     for (var i = 0; i < D0.length; i++) { c.dec[c.stage + D0[i].key] = 1; if (decide(c, D0[i])) { c.idleAt = now; return true; } }
     var L0 = PROGRESS[c.stage]; if (!L0) return false;

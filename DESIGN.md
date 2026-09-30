@@ -266,3 +266,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Remove profile:** in Edit profile, "Remove profile" under Save is a subtle button with red text (destructive); it asks once more with Cancel as the secondary button (dark, lime text) and the confirmation as the primary, side by side; your own profiles are deleted, demo profiles hidden on this phone.
 - **Destructive actions:** red text (#D70015) on the button that starts them.
 - **Edge margins:** no button ever touches a screen edge: at least 16px from the sides; buttons along the bottom of a screen sit at least 24px above it.
+- **Pending requests in chats:** a request card left unanswered gets a nudge from the person who asked (about 45 s later, a firmer one 90 s after that, then no more), naming the request and the exact buttons to tap.
