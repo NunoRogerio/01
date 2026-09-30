@@ -243,3 +243,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Endurance by station:** the units on a fire are listed per station, one white card each, headed by the station (crest, name, distance, crews still free after those on this fire, or "All crews on this fire"); air support in its own card. No separate "Stations on this fire" block when units are shown.
 - **Open incidents list:** rises to 16px under the status bar; the summary line at the foot ("7 ignition candidates / 7 fires") folds away so the list takes its room.
 - **Map tiles:** a ring of tiles around the view loads ahead, so a swipe never uncovers grey squares.
+- **Open incidents list header:** title S ("Incidents", 17px bold) with the counts under it, 28px under the blade's top edge; the title, switcher and search stay fixed while the list scrolls under them.
+- **Fire state in lists:** the state is the same tag as on the fire page and the map tooltip (tone colour on its 14% tint, 15px bold, 28px tall, radius 14), never coloured plain text.
+- **Map tooltips:** the status tag docks to the top edge (square top, round bottom). Fire: tag, then the number, its label under it, then the place. Station: tag, then the station crest at 30% of the panel width, centred, then the name.
