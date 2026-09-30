@@ -335,13 +335,13 @@
     var fGo = function () { fadeAll(); fMo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'aria-hidden', 'aria-expanded'] }); };
     if (document.body) fGo(); else document.addEventListener('DOMContentLoaded', fGo); }
   setInterval(fadeAll, 1000);   // content that grows by animation (drawers opening) is caught within a second
-  /* Round controls (close X, chat, bell, avatar, map buttons): a press also swells them 30% quickly and lets them settle back slowly, for a tactile feel.
+  /* Round controls (close X, chat, bell, avatar, map buttons): a press also swells them 35% quickly and lets them settle back slowly, for a tactile feel.
      Uses the separate 'scale' property, so the pages' own transforms and press styles stay as they are */
   document.addEventListener('pointerdown', function (e) {
     var el = e.target && e.target.closest ? e.target.closest('button,a,[role=button]') : null; if (!el || !el.animate) return;
     var r = el.getBoundingClientRect(); if (!r.width || r.width > 72 || Math.abs(r.width - r.height) > 2) return;
     var br = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0; if (br < r.width / 2 - 1) return;
-    try { if (el.__wfPop) el.__wfPop.cancel(); el.__wfPop = el.animate([{ scale: '1', easing: 'cubic-bezier(.2,.9,.3,1)' }, { scale: '1.3', offset: 0.18, easing: 'cubic-bezier(.4,0,.2,1)' }, { scale: '1' }], { duration: 480 });   /* a bubble: swells 30% fast, settles back slowly */ } catch (x) {}
+    try { if (el.__wfPop) el.__wfPop.cancel(); el.__wfPop = el.animate([{ scale: '1', easing: 'cubic-bezier(.2,.9,.3,1)' }, { scale: '1.35', offset: 0.18, easing: 'cubic-bezier(.4,0,.2,1)' }, { scale: '1' }], { duration: 480 });   /* a bubble: swells 30% fast, settles back slowly */ } catch (x) {}
   }, { passive: true, capture: true });
   /* Mini card numbers: shrink the value until value + unit fit inside the card's 8px side padding */
   function fitKpi() {

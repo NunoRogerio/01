@@ -388,9 +388,9 @@ window.__wfRegionUp = function (st, co) {
       done=new Array(n).fill(false);
       for(var k=0;k<hold.length&&left>0;k++){var q=hold[k],cost=(q.dh<35&&b.Rm>20)?q.len*3:q.len;if(left>=cost){done[q.i]=true;left-=cost;}}   // fast head: indirect attack, 3x the line
       var activeLen=0;order.forEach(function(q){if(!done[q.i])activeLen+=q.len*2;});activeLen/=2;
-      if(t%60===0&&t<=180){var ll=toLL(P,o);snaps[t/60]={ring:ll,done:done.slice(),ha:Math.round(Math.abs(area(P))/1e4*10)/10,active:Math.round(100*activeLen/Math.max(1,perNow))};}
-      if(activeLen<=perNow*0.02&&etr===null){etr=t;if(t>180)break;}
-      if(etr!==null&&t>=180)break;
+      if(t%60===0&&t<=360){var ll=toLL(P,o);snaps[t/60]={ring:ll,done:done.slice(),ha:Math.round(Math.abs(area(P))/1e4*10)/10,active:Math.round(100*activeLen/Math.max(1,perNow))};}
+      if(activeLen<=perNow*0.02&&etr===null){etr=t;if(t>360)break;}
+      if(etr!==null&&t>=360)break;
       // advance active edges
       var np=P.map(function(p,i){if(done[i])return p;var q=order[i],r=rateAt(b,q.nb)*dt,rad=q.nb*Math.PI/180;return [p[0]+Math.sin(rad)*r,p[1]+Math.cos(rad)*r];});
       // light smoothing keeps the front from folding on itself

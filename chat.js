@@ -533,13 +533,13 @@
   var INTENTS = [
     ['thanks', /\b(thank|thanks|good job|great work|well done)|obrigad|bom trabalho|parab[eé]ns/i],
     ['safety', /\b(safe|safety|injur|hurt|crew ok|everyone ok|fatigue|tired|rest)|segur|ferid|cansa|descans/i],
-    ['eta', /\b(eta|arriv|how long|when will|how far)|chegada|quanto tempo|quando chegam|a que dist/i],
+    ['eta', /\b(eta|arriv|how long|when will|how far)|chegada|chegar|quanto tempo|quando chegam|a que dist/i],
     ['wind', /\b(wind|weather|humidity|temperature|gust)|vento|meteo|humidade|temperatura|rajada/i],
     ['water', /\b(water|hydrant|tanker|tender|refill|foam)|[aá]gua|hidrante|abastec|autotanque/i],
     ['homes', /\b(house|home|homes|evac|residents|people|road)|casa|evacua|morador|popula|estrada/i],
     ['need', /\b(need|resources|reinforce|backup|more crews|support)|precis|meios|refor[cç]o|apoio/i],
     ['order', /\b(hold|flank|attack|defend|protect|move to|go to|cut|line|anchor|focus)|segur|flanco|atac|defend|protej|avanc|linha|cort/i],
-    ['status', /\b(update|status|situation|how is|how's|progress|report|sitrep|what do you see)|ponto de situa|situa[cç][aã]o|como est|progress|relat|o que v[eê]/i]
+    ['status', /\b(update|status|situation|how is|how's|progress|report|sitrep|what do you see)|ponto de situa|situa[cç][aã]o|como est|progress|relat|o que v[eê]|fumo|smoke|pront|ready/i]
   ];
   function intentOf(t) { for (var i = 0; i < INTENTS.length; i++) if (INTENTS[i][1].test(t)) return INTENTS[i][0]; return 'other'; }
   function areaNow(c) {   // hectares burning, growing until the head is held

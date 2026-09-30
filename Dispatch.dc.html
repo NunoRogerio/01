@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=73"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=95"></script>
+<script src="prefs.js?v=96"></script>
 <script src="i18n.js?v=87"></script>
-<script src="live.js?v=34"></script>
-<script src="chat.js?v=20"></script>
+<script src="live.js?v=35"></script>
+<script src="chat.js?v=21"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -587,7 +587,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- Reinforcing now happens in the incident chat; Done is a tertiary (subtle) button -->
     <!-- On a viewed fire: Back, with a left arrow, on the left; Team chat on the right -->
     <div style="display: grid; flex: 1 1 0; min-width: 0; order: {{backOrd}}">
-      <a href="Main.dc.html" class="btn wf-ter" aria-label="{{backLbl2}}" onPointerDown="{{navMap}}" onClick="{{navMap}}" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 48px; font-size: 17px; font-weight: 600">
+      <a href="Main.dc.html" data-wf-back="1" class="btn wf-ter" aria-label="{{backLbl2}}" onClick="{{navMap}}" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 48px; font-size: 17px; font-weight: 600">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{backIcD}}; flex-shrink: 0"><path d="m15 6-6 6 6 6"></path></svg><span>{{backLbl2}}</span>
       </a>
     </div>
@@ -1445,7 +1445,7 @@ class Component extends DCLogic {
     }));
     const AL = this.wfScoped().cands.length;
     return { bgTap: () => { this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} }, goHome: () => this._goHome(), _unused: () => { const t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { home: t, fromList: false }); try { window.sessionStorage.setItem('wf-home', String(t)); window.sessionStorage.setItem('wf-list', '0'); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} },
-      navMap: s.crew ? (e) => { try { if (e && e.preventDefault) e.preventDefault(); } catch (x) {} this.setState({ crew: false, reinforce: false }); } : () => this.wfNav('menu'),
+      navMap: s.crew ? (e) => { try { if (e && e.preventDefault) e.preventDefault(); } catch (x) {} this.setState({ crew: false, reinforce: false }); } : () => { let back = false; try { back = window.history.length > 1 && !!document.referrer && new URL(document.referrer).origin === window.location.origin; } catch (x) {} if (!back) this.wfNav('menu'); },   /* a real back: the screen visited before (fit.js); the main menu only when there is none */
       rs: (() => { const conf = !!(frow && /^Confirmed from/.test(frow.note || '')), n = ORD.length, u = ORD.reduce((a, o) => a + (o.n || []).reduce((x, y) => x + y, 0), 0);
         return { d: RO && conf ? 'block' : 'none', title: n ? 'Crews' : 'Assign crews', sub: n ? u + ' unit' + (u === 1 ? '' : 's') + ' ordered from ' + n + ' station' + (n === 1 ? '' : 's') + '.' : 'None assigned yet.', tag: 'To do', tagD: n ? 'none' : 'inline-flex',
           aria: n ? 'Crews. ' + u + ' units ordered. Open' : 'Assign crews. None assigned yet', go: () => this.setState({ crew: true, reinforce: false, stPick: true }) }; })(), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',

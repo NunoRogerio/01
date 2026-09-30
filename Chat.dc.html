@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=73"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=95"></script>
+<script src="prefs.js?v=96"></script>
 <script src="i18n.js?v=87"></script>
-<script src="live.js?v=34"></script>
-<script src="chat.js?v=20"></script>
+<script src="live.js?v=35"></script>
+<script src="chat.js?v=21"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -112,7 +112,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span style="font-size: 17px; font-weight: 600; line-height: 24px; color: {{c.stC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
             <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.summary}}</span>
           </span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m6 9 6 6 6-6"></path></svg>
+          <span style="display: flex; align-items: center; gap: 2px; flex-shrink: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #3C3C43">{{t.details}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
         </span>
         <span aria-hidden="true" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; width: 100%">
           <sc-for list="{{c.bar}}" as="b" hint-placeholder-count="8"><span style="height: 8px; border-radius: 999px; background: {{b.c}}; transition: background-color .4s ease"></span></sc-for>
@@ -141,7 +141,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: {{meBub}}; color: #000000">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 4px 4px 4px 12px; color: #000000; text-align: right">
             <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
             <span style="align-self: flex-end; font-size: 15px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
@@ -216,9 +216,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid rgba(60,60,67,0.18)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
         <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
       </div>
-      <div class="chscroll" style="display: {{actD}}; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain; padding: 0 16px">
+      <!-- Suggestions: primary buttons, as many rows as they need (3 to 5); the field above stays free to write anything else -->
+      <div style="display: {{actD}}; flex-wrap: wrap; gap: 8px; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
-          <button type="button" class="{{a.cls}}" onClick="{{a.go}}" style="flex: 0 0 auto; height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.bg}}; box-shadow: {{a.line}}; color: {{a.fg}}; font: inherit; font-size: 15px; font-weight: {{a.w}}; white-space: nowrap; cursor: pointer">{{a.label}}</button>
+          <button type="button" class="chbtn" onClick="{{a.go}}" style="flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
       </div>
     </div>
@@ -236,15 +237,15 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </header>
       <div class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 0">
         <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
-          <!-- Time in each stage -->
-          <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
-            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
+          <!-- Time in each stage: a calm list, like the incidents (stage in Title S, when it began as annotation, its time on the right) -->
+          <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; margin: 0 -16px">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 20px 8px; border-bottom: 1px solid rgba(60,60,67,0.14)"><h3 style="margin: 0; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
             <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
-              <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; opacity: {{r.op}}">
+              <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; min-height: 60px; padding: 12px 16px; box-sizing: border-box; opacity: {{r.op}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: {{r.bg}}"><svg width="16" height="16" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
-                <span style="min-width: 0; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}} <span style="color: #545458">{{r.at}}</span></span>
+                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
                 <span class="{{r.nowCls}}" style="font-size: 15px; font-weight: {{r.w}}; line-height: 20px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
-                <span style="grid-column: 2 / span 2; height: 4px; border-radius: 999px; background: rgba(118,118,128,0.14); overflow: hidden"><span class="chbar" style="display: block; width: {{r.pct}}; height: 100%; border-radius: 999px; background: #3A3A3C"></span></span>
+                <span style="grid-column: 2 / span 2; font-size: 15px; line-height: 20px; color: #6E6E73">{{r.atTxt}}</span>
               </div>
             </sc-for>
           </section>
@@ -252,7 +253,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <section aria-label="{{t.proj}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
             <div style="display: flex; flex-direction: column; gap: 2px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.proj}}</h3><span style="font-size: 17px; line-height: 22px; color: #000000">{{t.projSub}}</span></div>
 
-            <a href="Dispatch.dc.html" class="chbtn wf-b wf-sec" onClick="{{goFire}}" style="display: flex; align-items: center; justify-content: center">{{t.openFire}}</a>
+            <a href="Projection.dc.html" class="chbtn wf-b wf-pri" onClick="{{goProj}}" style="display: flex; align-items: center; justify-content: center">{{t.openFire}}</a>
           </section>
           <!-- Forces involved -->
           <section aria-label="{{t.forces}}" style="display: flex; flex-direction: column; gap: 16px">
@@ -430,9 +431,9 @@ class Component extends DCLogic {
     const t = { back: L('Back', 'Voltar'), close: L('Close', 'Fechar'), chats: L('Chats', 'Conversas'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
       msg: L('Message', 'Mensagem'), send: L('Send', 'Enviar'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
-      fireCard: L('Fire card', 'Cartão do incêndio'), fireCardSub: L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios'),
+      fireCard: L('Fire card', 'Cartão do incêndio'), details: L('Details', 'Detalhes'), fireCardSub: L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios'),
       tl: L('Time in each stage', 'Tempo em cada fase'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
-      proj: L('Spread projection', 'Projeção da propagação'), projSub: L('On the fire detail: where the fire can go in the next hours, with the nearest stations', 'No detalhe do incêndio: para onde o fogo pode ir nas próximas horas, com os quartéis mais próximos'), openFire: L('View', 'Ver'),
+      proj: L('Spread projection', 'Projeção da propagação'), projSub: L('Where the fire can be in 1, 3 and 6 hours, on its map.', 'Onde o fogo pode estar dentro de 1, 3 e 6 horas, no mapa.'), openFire: L('View projection', 'Ver projeção'),
       forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
       won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), histDrill: L('Drill finished · your movements and decisions', 'Simulação terminada · os seus movimentos e decisões'), wonBy: L('The forces that won', 'Os meios que venceram'), owner: L('Fire owner', 'Responsável pelo incêndio'),
       ach: L('Achievements', 'Conquistas'), noAch: L('No resolved fires yet. Achievements appear here when a fire this person worked on is closed.', 'Ainda sem incêndios resolvidos. As conquistas aparecem aqui quando um incêndio em que esta pessoa trabalhou é encerrado.'),
@@ -514,7 +515,7 @@ class Component extends DCLogic {
     // Time in each stage (also the timeline of the resolution summary)
     const D = C.stageDurs(c), maxMs = Math.max(1, ...D.map((d) => d.ms));
     const tl = C.STAGES.slice(0, c.dismissed ? 1 : 8).map((St, i) => { const d = D.find((x) => x.s === i), I = iconFor(St);
-      return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', dur: d ? (d.cur ? C.clock(d.ms) : i === 7 ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d ? '#000000' : '#8E8E93',
+      return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', atTxt: d ? L('From ', 'Desde as ') + C.hhmm(d.vt) + '.' : L('Not reached.', 'Por atingir.'), dur: d ? (d.cur ? C.clock(d.ms) : i === 7 ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d && d.cur ? '#000000' : '#6E6E73',
         pct: d && i < 7 ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '' }; });
     const tlTotal = L('Total ', 'Total ') + C.dur(vn - t0);
 
@@ -623,7 +624,14 @@ class Component extends DCLogic {
       .concat(c.people.map((p, i) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
       .map((p) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name) }));
     const ty = C.typing(c);
-    const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), cls: 'chbtn', bg: tint(ME_C), line: line(ME_C), fg: '#000000', w: a.primary ? 600 : 400, go: () => run(a.key) }));
+    const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), go: () => run(a.key) }));
+    // Quick replies fill the suggestions up to five: questions the team answers (status, safety, water, homes, wind…), by stage
+    const QR = c.kind === 'dm' ? (c.step === 0 ? [['Can you send a crew?', 'Podem enviar uma equipa?'], ['Who is free now?', 'Quem está livre agora?']] : c.step === 1 ? [['Main road, north side', 'Estrada principal, lado norte'], ['I will send the location', 'Envio a localização']] : [['How long until you arrive?', 'Quanto tempo até chegarem?'], ['Is the water enough?', 'A água chega?'], ['Thank you', 'Obrigado']])
+      : c.stage <= 1 ? [['Can you see smoke?', 'Veem fumo?'], ['How long to get there?', 'Quanto tempo até lá?'], ['Crews ready?', 'Equipas prontas?']]
+      : c.stage === 2 ? [['How long to arrive?', 'Quanto falta para chegar?'], ['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?']]
+      : c.stage <= 5 ? [['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?'], ['Enough water?', 'A água chega?'], ['Homes at risk?', 'Há casas em risco?'], ['How is the wind?', 'Como está o vento?']]
+      : [['Status update?', 'Ponto de situação?'], ['Thanks, good work', 'Obrigado, bom trabalho']];
+    const acts = c.closed || c.dismissed ? acts0 : acts0.concat(QR.slice(0, Math.max(0, 5 - acts0.length)).map((q) => ({ label: L(q[0], q[1]), go: () => { this._stick = true; C.send(c.key, L(q[0], q[1])); } })));
     const send = () => { const v = (this.state || {}).draft || ''; if (!v.trim()) return; this._stick = true; C.send(c.key, v); this.setState({ draft: '' }); };
     const endT = c.closed ? (c.closedVt || vn) : vn;
     const sh = !!s.sheet;
@@ -635,6 +643,7 @@ class Component extends DCLogic {
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
       sh: { y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
       openSheet, closeSheet: () => this.setState({ sheet: false }), goFire: inc.go,
+      goProj: () => { const v = { id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, place: c.place, note: c.note || c.reg || '', x: c.x, y: c.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { proj: v }); try { sessionStorage.setItem('wf-proj', JSON.stringify(v)); } catch (e) {} },
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),
