@@ -174,10 +174,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span class="wf-qual hd" style="margin-top: 12px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h.01M18 6h.01M6 18h.01M18 18h.01M8 8l2.5 2.5M16 8l-2.5 2.5M8 16l2.5-2.5M16 16l-2.5-2.5"></path><circle cx="6" cy="6" r="2.5"></circle><circle cx="18" cy="6" r="2.5"></circle><circle cx="6" cy="18" r="2.5"></circle><circle cx="18" cy="18" r="2.5"></circle><rect x="10" y="10" width="4" height="4" rx="1"></rect></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">Drone verification</span><span role="status" style="display: inline-flex; flex-shrink: 0; align-items: center; margin-left: auto; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: #F2F2F7; color: #3A3A3C; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{dTag}}</span></span>
   </div>
 
-  <figure class="fade" style="color: #FFFFFF; position: relative; z-index: 1; flex-shrink: 0; width: 390px; height: 288px; margin: 0; overflow: hidden; background: #1C1C1E; animation-delay: 80ms">
-    <video class="xfade" ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed: burning patch in pine forest, flames on the downwind edge, smoke drifting with the Santa Ana wind" style="position: absolute; inset: 0; width: 390px; height: 288px; object-fit: cover; opacity: {{visualOp}}"></video>
-    <video class="xfade" ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed: hot burned patch with a bright flame front" style="position: absolute; inset: 0; width: 390px; height: 288px; object-fit: cover; opacity: {{thermalOp}}"></video>
-    <svg width="390" height="262" viewBox="0 0 390 262" aria-hidden="true" style="position: absolute; left: 0; top: 4px; pointer-events: none">
+  <!-- The live feed in a container 16px from the screen edges, with the blades' corner radius; no full screen (the window is enough) -->
+  <figure class="fade" style="color: #FFFFFF; position: relative; z-index: 1; flex-shrink: 0; width: auto; height: 264px; margin: 16px 16px 0; border-radius: var(--wf-panel-r, 28px); overflow: hidden; background: #1C1C1E; transform: translateZ(0); animation-delay: 80ms">
+    <video class="xfade" ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed: burning patch in pine forest, flames on the downwind edge, smoke drifting with the Santa Ana wind" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{visualOp}}"></video>
+    <video class="xfade" ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed: hot burned patch with a bright flame front" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{thermalOp}}"></video>
+    <svg width="100%" height="100%" viewBox="0 0 390 262" aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none">
       <g fill="none" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="1" stroke-linecap="round">
         <circle cx="195" cy="131" r="14" stroke-opacity="0.45"></circle>
         <path d="M195 109v10M195 143v10M173 131h10M207 131h10" stroke-opacity="0.55"></path>
@@ -186,9 +187,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span style="position: absolute; left: 16px; top: 28px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.7)">
       <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>Live · 400 ft
     </span>
-    <button type="button" class="fsbtn" aria-label="View full screen" onClick="{{openFull}}" style="position: absolute; right: 16px; top: 16px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg>
-    </button>
     <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); width: 240px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
       <button type="button" class="segopt" aria-pressed="{{thermal.pressed}}" aria-selected="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="color: {{thermal.fg}}; font-size: 17px">Thermal</button>
@@ -239,25 +237,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
   </section>
 
-  <sc-if value="{{full}}" hint-placeholder-val="{{ false }}">
-    <div class="fsin" role="dialog" aria-modal="true" aria-label="Drone feed full screen" style="position: absolute; inset: 0; z-index: 60; background: #000000">
-      <video class="xfade" ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed, full screen" style="position: absolute; left: 0; top: 292px; width: 390px; height: 260px; object-fit: cover; opacity: {{visualOp}}"></video>
-      <video class="xfade" ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed, full screen" style="position: absolute; left: 0; top: 292px; width: 390px; height: 260px; object-fit: cover; opacity: {{thermalOp}}"></video>
-      <span style="position: absolute; left: 20px; top: 68px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; letter-spacing: 0.08em">
-        <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>Live · D-3 · 400 ft
-      </span>
-      <button type="button" class="fsbtn" aria-label="Exit full screen" onClick="{{closeFull}}" style="position: absolute; right: 16px; top: 56px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.6); color: #FFFFFF; cursor: pointer">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
-      </button>
-      <div style="position: absolute; left: 0; right: 0; bottom: 34px; height: 44px">
-    <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 240px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
-      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
-      <button type="button" class="segopt" aria-pressed="{{thermal.pressed}}" aria-selected="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="color: {{thermal.fg}}; font-size: 17px">Thermal</button>
-      <button type="button" class="segopt" aria-pressed="{{visual.pressed}}" aria-selected="{{visual.pressed}}" onClick="{{visual.pick}}" style="color: {{visual.fg}}; font-size: 17px">Visual</button>
-    </div>
-      </div>
-    </div>
-  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
@@ -499,7 +478,7 @@ class Component extends DCLogic {
       confirmFa: () => { if (this._faDone) return; this._leaving = true; this._faDone = true; this.setState({ ret: true }); const d = this.wfDismissed(); if (!d[vId]) { d[vId] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._faDone = false; this.setState({ fa: false }); }, 800); },
       faY: fa ? 'calc(0% + ' + this.wfDrag('fa').y + 'px)' : '105%', faT: this.wfDrag('fa').t === '0s' ? '0s' : '.5s', hFa: this.wfHandle('fa', 'down', () => this.setState({ fa: false })), faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
       vId, vPlace, confirmHere: () => { this._leaving = true; this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
-      setVid: this.setVid, full: !!s.full, openFull: () => this.setState({ full: true }), closeFull: () => this.setState({ full: false }),
+      setVid: this.setVid, 
       thermalOp: isThermal ? 1 : 0,
       visualOp: isThermal ? 0 : 1,
       thermal: seg('thermal', isThermal), visual: seg('visual', !isThermal),
