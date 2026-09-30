@@ -114,7 +114,7 @@
     [/^Size class ([A-G]) of A to G \(NWCG\)$/,function(m,a){return 'Classe de área '+a+' de A a G (NWCG)';}],
     [/^From ([NSEW]{1,3})$/,function(m,a){return 'De '+a.replace(/W/g,'O');}],
     [/^(Flat|Rolling|Hilly|Mountainous)\.(?: (Deep forest|Forest|Bush|Rural|Rural, open woodland|Grassland)\.)?$/,function(m,a,b){var R={Flat:'Plano',Rolling:'Ondulado',Hilly:'Acidentado',Mountainous:'Montanhoso'},C={'Deep forest':'Floresta densa',Forest:'Floresta',Bush:'Mato',Rural:'Rural','Rural, open woodland':'Rural, arvoredo aberto',Grassland:'Pastagem'};return R[a]+'.'+(b?' '+C[b]+'.':'');}],
-    [/^Detected (.+) at (.+)\.$/,function(m,a,b){return 'Detetado a '+a+' às '+b+'.';}],
+    [/^Detected (.+)$/,function(m,a){return 'Deteção '+a;}],
     [/^(\d+) (min|h|d) ago$/,function(m,a,b){return 'há '+a+' '+b;}],
     [/^Since (.+?)\. Estimated from today's figures\.$/,function(m,a){return 'Desde '+a+'. Estimado a partir dos valores de hoje.';}],
     [/^Started (.+?) · held (by )?(.+?)( · now (.+))?$/,function(m,a,by,b,x,st){return 'Início '+a+' · dominado '+(by?'até às ':'às ')+b+(st?' · agora '+(X[st.charAt(0).toUpperCase()+st.slice(1)]||st).toLowerCase():'');}],
