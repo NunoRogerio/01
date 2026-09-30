@@ -601,46 +601,50 @@ window.__wfBlink=function(path,dur){
   },{passive:true,capture:true});
   try{document.documentElement.style.setProperty('--wf-round-pop','1.3');}catch(x){}
 })();
-// iOS 26 home-screen app (WebKit bug 301108): with the page running under the status bar, iOS leaves the bottom strip
-// of the screen (as tall as the status bar) outside the page, painted only in the page's background colour. So the
-// colour there follows whatever sits at the bottom of the screen (blade, map, photo), and full-screen photos fade into
-// that same colour at their foot, so the screen reads as one surface from top to bottom.
+// Installed iPhone app: the status bar is opaque (iOS 26 cuts a strip off the bottom of the screen when the page runs
+// under it, WebKit bug 301108), so the page always reaches the bottom edge. The bar takes the colour of whatever sits at
+// the top of the screen (top blade, map, panel), and full-screen photos (sign in, loading) fade at their top into the
+// bar's dark green, so the bar never shows as a white or odd-coloured band, transitions included.
 (function(){
   var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   if(!SA)return;
-  var EDGE='#0B100C',root=document.documentElement,sty=null,cur='',cache={};
-  function short(){var land=innerWidth>innerHeight;if(land)return false;var full=Math.max(screen.width,screen.height);return (window.__wfTOP===0)&&full-innerHeight>20;}
-  function set(c){if(c===cur)return;cur=c;if(!sty){sty=document.createElement('style');sty.id='wf-edge';document.head.appendChild(sty);}
-    sty.textContent=c?'html.wf-short,html.wf-short body{background-color:'+c+'!important}':'';}
+  var BAR='#1E2B22',root=document.documentElement,sty=null,cur='',cache={};
+  function meta(){var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}return m;}
+  function set(c){if(c===cur)return;cur=c;if(!sty){sty=document.createElement('style');sty.id='wf-bar';document.head.appendChild(sty);}
+    sty.textContent=c?'html.wf-bar{background-color:'+c+'!important}':'';if(c){try{meta().setAttribute('content',c);}catch(e){}}}
   function col(s){var m=/rgba?\(([^)]+)\)/.exec(s||'');if(!m)return null;var p=m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat);return [p[0],p[1],p[2],p.length>3?p[3]:1];}
-  function over(top,bot){var a=top[3];return [top[0]*a+bot[0]*(1-a),top[1]*a+bot[1]*(1-a),top[2]*a+bot[2]*(1-a),1];}
-  function hex(c){return 'rgb('+Math.round(c[0])+','+Math.round(c[1])+','+Math.round(c[2])+')';}
-  // average colour of an image around a point given as fractions of its width and height (cached; map tiles allow it)
+  function over(t,b){var a=t[3];return [t[0]*a+b[0]*(1-a),t[1]*a+b[1]*(1-a),t[2]*a+b[2]*(1-a),1];}
+  function hex(c){var h=function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);};return '#'+h(c[0])+h(c[1])+h(c[2]);}
+  // average colour of an image near a point given as fractions of its size (cached; map tiles allow it)
   function pix(url,fx,fy,cb){var k=url+'|'+Math.round(fx*8)+'|'+Math.round(fy*8);if(k in cache){cb(cache[k]);return;}
     var im=new Image();im.crossOrigin='anonymous';im.onload=function(){try{var c=document.createElement('canvas');c.width=c.height=16;var x=c.getContext('2d');x.drawImage(im,0,0,16,16);
       var px=Math.max(0,Math.min(12,Math.round(fx*15)-2)),py=Math.max(0,Math.min(12,Math.round(fy*15)-2)),d=x.getImageData(px,py,4,4).data,r=0,g=0,b=0,n=0;
       for(var i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++;}cache[k]=[r/n,g/n,b/n,1];}catch(e){cache[k]=null;}cb(cache[k]);};
     im.onerror=function(){cache[k]=null;cb(null);};im.src=url;}
+  function photo(){var l=document.getElementById('wf-load');if(l&&/\b(photo|hand)\b/.test(l.className)&&!/\bout\b/.test(l.className))return true;return !!document.getElementById('wf-login-bg')||/Login\.dc\.html/.test(location.pathname);}
   function probe(){
-    var on=short();root.classList.toggle('wf-short',on);if(!on){set('');return;}
-    var y=innerHeight-1,xs=[8,innerWidth/2,innerWidth-8],layers=[],done=null;
-    if(document.getElementById('wf-login-bg')){set(EDGE);return;}
-    var els=document.elementsFromPoint?document.elementsFromPoint(xs[0],y):[];
-    for(var i=0;i<els.length&&!done;i++){var el=els[i];
-      if(el.id==='wf-load'){if(/\bphoto\b|\bhand\b/.test(el.className)){set(EDGE);return;}}
-      var tag=(el.tagName||'').toLowerCase();
-      if(tag==='image'||tag==='img'){var u=el.getAttribute('href')||el.getAttribute('xlink:href')||el.getAttribute('src');if(u){var r=el.getBoundingClientRect();if(r.width>0&&r.height>0){done={img:new URL(u,location.href).href,fx:(xs[0]-r.left)/r.width,fy:(y-r.top)/r.height};}}continue;}
+    var on=window.__wfTOP!==0&&innerHeight>innerWidth;root.classList.toggle('wf-bar',on);if(!on){set('');return;}
+    if(photo()){set(BAR);return;}
+    var x=innerWidth/2,y=1,layers=[],img=null,els=document.elementsFromPoint?document.elementsFromPoint(x,y):[];
+    for(var i=0;i<els.length;i++){var el=els[i],tag=(el.tagName||'').toLowerCase();
+      if(el.id==='wf-load'&&!/\bout\b/.test(el.className)){layers.push(col(getComputedStyle(el).backgroundColor)||[242,242,247,1]);break;}
+      if(tag==='image'||tag==='img'){var u=el.getAttribute('href')||el.getAttribute('xlink:href')||el.getAttribute('src'),r=el.getBoundingClientRect();
+        if(u&&r.width>0&&r.height>0){img={u:new URL(u,location.href).href,fx:(x-r.left)/r.width,fy:(y-r.top)/r.height};break;}continue;}
       var cs=getComputedStyle(el),c=col(cs.backgroundColor);
-      if(c&&c[3]>0.02){c[3]*=parseFloat(cs.opacity)||1;layers.push(c);if(c[3]>=0.97)done={solid:true};}}
-    function finish(base){var c=base||[242,242,247,1];for(var j=layers.length-1;j>=0;j--)c=over(layers[j],c);set(hex(c));}
-    if(done&&done.img){pix(done.img,done.fx,done.fy,function(c){finish(c);});}else finish(null);
+      if(c&&c[3]>0.02){c[3]*=parseFloat(cs.opacity)||1;layers.push(c);if(c[3]>=0.97)break;}}
+    function finish(base){var c=base||col(getComputedStyle(document.body).backgroundColor)||[242,242,247,1];if(c[3]<1)c=[242,242,247,1];for(var j=layers.length-1;j>=0;j--)c=over(layers[j],c);set(hex(c));}
+    if(img)pix(img.u,img.fx,img.fy,finish);else finish(null);
   }
+  window.__wfBarProbe=probe;
+  // before the first paint: screens with a photo start on the bar's dark green
+  if(photo()||(function(){try{return sessionStorage.getItem('wf-soft')==='1';}catch(e){return false;}})()){root.classList.add('wf-bar');set(BAR);}
   var T=0;function soon(){clearTimeout(T);T=setTimeout(probe,60);}
   window.addEventListener('wf-sync',soon);window.addEventListener('wf-vp',soon);window.addEventListener('resize',soon);
   document.addEventListener('pointerup',function(){setTimeout(probe,450);},true);
-  window.addEventListener('load',function(){probe();setInterval(function(){if(!document.hidden)probe();},700);});
+  window.addEventListener('pageshow',soon);
+  window.addEventListener('load',function(){probe();setInterval(function(){if(!document.hidden)probe();},600);});
   var fs=document.createElement('style');
-  fs.textContent='html.wf-short #wf-login-bg::after,html.wf-short #wf-load.photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;z-index:4;pointer-events:none;background:linear-gradient(180deg,rgba(11,16,12,0) 0%,rgba(11,16,12,.55) 55%,'+EDGE+' 100%)}'+
-    'html.wf-short #wf-load.photo .in,html.wf-short #wf-load.photo .cap{z-index:5}';
+  fs.textContent='html.wf-bar #wf-login-bg::before,html.wf-bar #wf-load.photo::before{content:"";position:absolute;left:0;right:0;top:0;height:16%;z-index:4;pointer-events:none;background:linear-gradient(180deg,'+BAR+' 0%,rgba(30,43,34,.55) 45%,rgba(30,43,34,0) 100%)}'+
+    'html.wf-bar #wf-load.photo .in,html.wf-bar #wf-load.photo .cap{z-index:5}';
   document.head.appendChild(fs);
 })();
