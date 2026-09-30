@@ -290,3 +290,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Main bottom blade (collapsed):** 132px tall; its summary starts 24px under the top edge (raised 16px) and ends 64px above the screen edge, clear of the iOS home indicator.
 - **Panel headers with an area:** the area (e.g. Los Angeles) is the title in the panel title style; the line below holds only the counts (Incidents list), or the topic then the counts (Chats. 2 open. / Notifications. 3 unread.).
 - **Stable wording:** a screen or panel opened from an element repeats that element's words (e.g. the "5 members" pill opens a team panel that says "5 members", never "5 people"); keep the same terms from one screen to the next.
+- **Chat list rows:** "Chat Torrance" / "Conversa Torrance" (the word regular, the place bold); open chats end with a bold line in the annotation size, 6px apart: "5 unread messages." or "All messages read.".
