@@ -76,7 +76,7 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 :focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#545458}
-.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:none;color:#545458}
+.lbl{display:flex;align-items:center;gap:6px;margin:0;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6E6E73}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -181,13 +181,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
         <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
           <span style="display: flex; align-items: center; gap: 6px; height: 28px; max-width: 100%; min-width: 0">
-            <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{curRow.place}}</span>
+            <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 28px">{{curRow.place}}</span>
           </span>
           <span style="max-width: 100%; font-size: 15px; line-height: 18px; color: #545458; text-align: left; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden"><span>Ignition candidate</span>{{curRow.sub}}</span>
         </button>
       </sc-if>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
-        <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 4px 4px 0 8px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 600; line-height: 20px; text-align: center">{{chat.n}}</span></a>
+        <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: 4px 4px 0 8px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{chat.n}}</span></a>
       </sc-if>
       <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
         <span style="display: flex; flex-direction: column; padding: 4px 8px; color: #FFFFFF; text-shadow: 0 1px 10px rgba(0,0,0,0.45)"><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">Ignition candidates</span><span style="font-size: 17px; line-height: 22px; color: rgba(255,255,255,0.85)">{{scopeName}}</span></span>
@@ -244,8 +244,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
         </figcaption>
         <span style="position: absolute; left: 16px; top: 42px; display: flex; align-items: baseline; gap: 18px; font-variant-numeric: tabular-nums">
-          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #FF9F0A">{{tab.pmNow}}</span><span style="font-size: 13px; color: #98989F">µg/m³ smoke</span></span>
-          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #64D2FF">{{tab.dT}}°F</span><span style="font-size: 13px; color: #98989F">now {{tab.tNow}}°F</span></span>
+          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #FF9F0A">{{tab.pmNow}}</span><span style="font-size: 15px; color: #98989F">µg/m³ smoke</span></span>
+          <span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 22px; font-weight: 600; color: #64D2FF">{{tab.dT}}°F</span><span style="font-size: 15px; color: #98989F">now {{tab.tNow}}°F</span></span>
         </span>
         <span class="pop" style="position: absolute; right: 16px; top: 46px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
         <svg width="390" height="220" viewBox="0 0 390 220" aria-hidden="true" style="position: absolute; left: 0; top: 0; pointer-events: none">
@@ -265,7 +265,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span aria-hidden="true" style="position: absolute; left: 16px; top: 112px; display: flex; align-items: center; gap: 3px; height: 28px">
           <sc-for list="{{tab.bars}}" as="bar" hint-placeholder-count="20"><span style="width: 3px; height: {{bar.h}}px; border-radius: 2px; background: rgba(100,210,255,0.55)"></span></sc-for>
         </span>
-        <span style="position: absolute; left: 16px; top: 146px; font-size: 13px; color: #98989F">{{tab.meta}}</span>
+        <span style="position: absolute; left: 16px; top: 146px; font-size: 15px; color: #98989F">{{tab.meta}}</span>
       </sc-if>
       <div role="tablist" aria-label="Evidence" class="wf-seg" style="position: absolute; left: 16px; bottom: 40px; z-index: 4; pointer-events: auto; transform: translateY({{segY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1); display: {{tabsD}}; width: 300px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / {{nTabs}}); transform: translateX({{segX}})"><span class="segblob"></span></span>
@@ -333,7 +333,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <div class="rise" style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 12px; padding: 24px 16px 32px; animation-delay: 300ms">
       <!-- Confirm fire goes straight to configuring the dispatch for this fire; Dismiss beside it (they stack if they do not fit) -->
-      <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmCur}}" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 19px; font-weight: 600; white-space: nowrap; text-decoration: none">Confirm fire</a>
+      <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmCur}}" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">Confirm fire</a>
       <button type="button" class="btn wf-sec" onClick="{{openDz}}" aria-haspopup="dialog" style="flex: 1 1 auto; height: 56px; padding: 0 20px; font-size: 17px; font-weight: 500; white-space: nowrap">Dismiss</button>
     </div>
     </div>

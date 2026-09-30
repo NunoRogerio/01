@@ -208,14 +208,14 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <!-- The pin's label is the map's title, above the legend, so nothing on the map sits under it -->
     <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px; border-radius: 14px; background: rgba(242,242,247,0.94); border: 1px solid {{pinBd}}; box-shadow: 0 2px 10px rgba(0,0,0,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <span style="font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pinLabel}}</span>
-      <span style="font-size: 13px; line-height: 16px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pinCoords}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pinCoords}}</span>
     </div>
   </sc-if>
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
     <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px; border-radius: 14px; background: rgba(242,242,247,0.94); border: 1px solid rgba(215,0,21,0.35); box-shadow: 0 2px 10px rgba(0,0,0,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <span style="font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapTtl}}</span>
-      <span style="font-size: 13px; line-height: 16px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
     </div>
   </sc-if>
 
@@ -357,7 +357,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-if>
   </div>
 
-  <span style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+  <span style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 15px; letter-spacing: 0.04em; color: #3C3C43; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"onBgTap":{"editor":null},"$preview":{"width":366,"height":380}}'>

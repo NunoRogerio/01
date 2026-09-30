@@ -70,7 +70,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
       <!-- Password stays disabled (faded, not tappable) until a username is chosen -->
       <label aria-disabled="{{pwDisA}}" style="display: flex; align-items: center; gap: 8px; padding: 0 16px; pointer-events: {{pwPE}}">
         <span aria-hidden="true" style="display: {{goB}}; position: relative; top: -2px; flex-shrink: 0; font-size: 15px; line-height: 19px; color: #545458">Password:</span>
-        <input class="{{pwCls}}" type="password" readonly disabled="{{pwDis}}" tabindex="{{pwTab}}" onFocus="{{pwBlur}}" value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="flex-grow: 1; min-width: 0; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 19px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
+        <input class="{{pwCls}}" type="password" readonly disabled="{{pwDis}}" tabindex="{{pwTab}}" onFocus="{{pwBlur}}" value="{{pw}}" placeholder="Password" aria-label="Password" autocomplete="off" style="flex-grow: 1; min-width: 0; height: 52px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 17px; letter-spacing: {{pwLs}}; color: #000000; outline-offset: 2px">
       </label>
     </div>
   </form>
@@ -83,8 +83,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
     <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">
     <p style="margin: 0; font-size: 15px; line-height: 18px; color: #FFFFFF">Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
-    <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">{{credit}}</p>
-    <p style="margin: 0; font-size: 13px; line-height: 16px; color: rgba(255,255,255,0.72)">© 2026 Nuno Rogerio. All rights reserved.</p>
+    <p style="margin: 0; font-size: 15px; line-height: 20px; color: rgba(255,255,255,0.72)">{{credit}}</p>
+    <p style="margin: 0; font-size: 15px; line-height: 20px; color: rgba(255,255,255,0.72)">© 2026 Nuno Rogerio. All rights reserved.</p>
     </div>
   </div>
   <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; opacity: {{dOp}}; transition: clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), opacity {{dOpT}}">
@@ -106,7 +106,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
               <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
             </span>
             <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-              <span style="font-size: 20px; font-weight: 600; line-height: 24px">{{p.name}}</span>
+              <span style="font-size: 17px; font-weight: 600; line-height: 24px">{{p.name}}</span>
               <span style="display: flex; flex-direction: column; gap: 2px">
                 <span style="font-size: 17px; line-height: 22px; color: #000000">{{p.role}}</span>
                 <span style="font-size: 15px; line-height: 19px; color: #545458">{{p.orgCc}}</span>
