@@ -115,9 +115,9 @@ The one from the user preferences, used everywhere:
 - The second line is an annotation (15px mid grey).
 - Values sit on the right: numbers are right-aligned, and status uses its tone colour.
 
-### Calm lists (incidents, chats)
+### Calm lists (incidents, chats, notifications)
 
-Rows edge to edge between full-width dividers: the name in Title S, one grey annotation line under it, the value or time on the right in grey, a chevron. No avatars, no coloured status words, no cards around the list; colour only for an ignition's likelihood and the lime unread count.
+Rows edge to edge between full-width dividers: the name in Title S, one grey annotation line under it, the value or time on the right in grey, a chevron. No avatars, no coloured status words, no cards around the list; colour only for an ignition's likelihood and the lime unread count (notifications: a lime dot before the time while unread).
 
 ### Status tags
 
