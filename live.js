@@ -6,6 +6,9 @@
 //    with every country's regions in data/regions.json; both written by the FIRMS GitHub Action
 // Replaces the design's sample fires, and the sample ignition candidates once satellite data exists.
 window.__wfLiveMap = true;
+// Regions with live data. Everything else is paused (no fires, no candidates, not in the area picker) until it is
+// added back here: for now Portugal and California only.
+window.__wfOnly = { PT: 1, CA: 1 };
 // The level above a place, for the line under an item's name: county and state in the US, district in Portugal,
 // else region and country (from the regions file). One definition for candidates, fires and stations.
 // The region at a point (stations carry only coordinates): the smallest region box that holds it
@@ -142,9 +145,11 @@ window.__wfRegionUp = function (st, co) {
   // Data sources the user switched off (Preferences › Current data sources): their fires or candidates are kept but not
   // shown anywhere. SAT = NASA FIRMS candidates; US, PT, BR, CAN = the fire feeds. Kept per phone.
   var DSOFF={};try{DSOFF=JSON.parse(localStorage.getItem('wf-ds-off')||'{}')||{};}catch(e){}
+  var ONLY=window.__wfOnly||null;
   function dsApply(sync){
-    if(window.__wfLiveFiresAll)window.__wfLiveFires=window.__wfLiveFiresAll.filter(function(r){return !DSOFF[srcOf(r)];});
-    if(window.__wfLiveCandsAll)window.__wfLiveCands=DSOFF.SAT?[]:window.__wfLiveCandsAll;
+    var on=function(r){return !ONLY||!!ONLY[r[0]];};
+    if(window.__wfLiveFiresAll)window.__wfLiveFires=window.__wfLiveFiresAll.filter(function(r){return !DSOFF[srcOf(r)]&&on(r);});
+    if(window.__wfLiveCandsAll)window.__wfLiveCands=DSOFF.SAT?[]:window.__wfLiveCandsAll.filter(on);
     window.__wfWorld=null;window.__wfGeo=null;
     if(sync){try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
   }
@@ -449,11 +454,11 @@ window.__wfRegionUp = function (st, co) {
       .catch(function(e){console.warn('[live fires] Portugal feed failed',e);});
   }
   idbGet(KEY+'|br').then(function(g){if(g&&!window.__wfBRGeo){window.__wfBRGeo=g;}});
-  if(!fresh('tBR')){
+  if(!fresh('tBR')&&(!ONLY||ONLY.BRA||ONLY.AMZ)){
     fetch('data/br-fires.json?t='+tick).then(jsonOk).then(buildBR).then(function(rows){publishPart('BR',rows);})
       .catch(function(e){console.warn('[live fires] Brazil feed failed',e);});
   }
-  if(!fresh('tCAN')){
+  if(!fresh('tCAN')&&(!ONLY||ONLY.CAN||ONLY.BC)){
     fetch('data/bc-fires.json?t='+tick).then(jsonOk).then(buildBC).then(function(rows){publishPart('CAN',rows);})
       .catch(function(e){console.warn('[live fires] British Columbia feed failed',e);});
   }

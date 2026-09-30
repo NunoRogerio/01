@@ -18,7 +18,7 @@
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=78"></script>
 <script src="i18n.js?v=51"></script>
-<script src="live.js?v=30"></script>
+<script src="live.js?v=31"></script>
 <script src="chat.js?v=18"></script>
 
 <title>Incidents</title>
@@ -705,7 +705,8 @@ class Component extends DCLogic {
       ['ID', 'Ada', 'F-ID-02', 'Boise Front', 'Contained 60%'], ['CO', 'Larimer', 'F-CO-03', 'Horsetooth', 'Crews on scene']
     ]).slice()).map(([st, co, id, place, note, x, y, res, ha, info, parent]) => { const a = anchor(st, co); return { res: res || null, ha: ha || null, info: info || null, parent: parent || '', st, co, id, place, note, x: x ?? a[0] - 600, y: y ?? a[1] + 450 }; });
     const states = ST.concat((window.__wfGeoStates || []).filter((g) => !ST.some((t) => t[0] === g[0]))).map(([id, name, n, cs, country]) => ({ id, name, n, country: country || (id === 'PT' ? 'PT' : 'US'), counties: cs.map(([cn, risk]) => ({ name: cn, risk })) }));
-    return (window.__wfWorld = { states, cands: C, fires });
+    const O = window.__wfOnly, inO = (id) => !O || !!O[id];   // paused regions (live.js) are left out everywhere
+    return (window.__wfWorld = { states: states.filter((g) => inO(g.id)), cands: C.filter((c) => inO(c.st)), fires: fires.filter((f) => inO(f.st)) });
   }
   wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; }
   // Preferences panel: the signed-in person, theme and text size (applied app-wide by prefs.js) and language.
@@ -959,9 +960,9 @@ class Component extends DCLogic {
     const sumOf = (arr) => arr.reduce((a, d) => ({ fires: a.fires + (d.fires || 0), cands: a.cands + (d.cands || 0), top: Math.max(a.top, d.top || 0) }), { fires: 0, cands: 0, top: 0 });
     const ISO3 = {"Albania":"ALB","Andorra":"AND","Austria":"AUT","Belarus":"BLR","Belgium":"BEL","Bosnia and Herzegovina":"BIH","Bulgaria":"BGR","Croatia":"HRV","Cyprus":"CYP","Czechia":"CZE","Denmark":"DNK","Estonia":"EST","Finland":"FIN","France":"FRA","Germany":"DEU","Greece":"GRC","Hungary":"HUN","Iceland":"ISL","Ireland":"IRL","Italy":"ITA","Kosovo":"KOS","Latvia":"LVA","Liechtenstein":"LIE","Lithuania":"LTU","Luxembourg":"LUX","Malta":"MLT","Moldova":"MDA","Monaco":"MCO","Montenegro":"MNE","Netherlands":"NLD","North Macedonia":"MKD","Norway":"NOR","Poland":"POL","Romania":"ROU","Russia":"RUS","San Marino":"SMR","Serbia":"SRB","Slovakia":"SVK","Slovenia":"SVN","Spain":"ESP","Sweden":"SWE","Switzerland":"CHE","Turkey":"TUR","Ukraine":"UKR","United Kingdom":"GBR","Vatican City":"VAT","Antigua and Barbuda":"ATG","Argentina":"ARG","Bahamas":"BHS","Barbados":"BRB","Belize":"BLZ","Bolivia":"BOL","Brazil":"BRA","Canada":"CAN","Chile":"CHL","Colombia":"COL","Costa Rica":"CRI","Cuba":"CUB","Dominica":"DMA","Dominican Republic":"DOM","Ecuador":"ECU","El Salvador":"SLV","Grenada":"GRD","Guatemala":"GTM","Guyana":"GUY","Haiti":"HTI","Honduras":"HND","Jamaica":"JAM","Mexico":"MEX","Nicaragua":"NIC","Panama":"PAN","Paraguay":"PRY","Peru":"PER","Saint Kitts and Nevis":"KNA","Saint Lucia":"LCA","Saint Vincent and the Grenadines":"VCT","Suriname":"SUR","Trinidad and Tobago":"TTO","Uruguay":"URY","Venezuela":"VEN"};
     const CTRY = [["Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland", "Italy", "Kosovo", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands", "North Macedonia", "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", "Ukraine", "United Kingdom", "Vatican City"].map((n) => [n, 'Europe']), ["Antigua and Barbuda", "Argentina", "Bahamas", "Barbados", "Belize", "Bolivia", "Brazil", "Canada", "Chile", "Colombia", "Costa Rica", "Cuba", "Dominica", "Dominican Republic", "Ecuador", "El Salvador", "Grenada", "Guatemala", "Guyana", "Haiti", "Honduras", "Jamaica", "Mexico", "Nicaragua", "Panama", "Paraguay", "Peru", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Suriname", "Trinidad and Tobago", "United States", "Uruguay", "Venezuela"].map((n) => [n, 'Americas'])].flat().map(([name, cont]) =>
-      name === 'United States' ? { name, cont, id: 'US', live: true, n: usD.length, unit: ' states', ...sumOf(usD) }
+      name === 'United States' ? { name, cont, id: 'US', live: true, n: usD.length, unit: usD.length === 1 ? ' state' : ' states', ...sumOf(usD) }
       : name === 'Portugal' ? { name, cont, id: 'PT', live: true, n: ptD.n, unit: ' districts', ...sumOf([ptD]) }
-      : (() => { const d = DATA.find((x) => x.id === ISO3[name]); return d ? { name, cont, id: d.id, live: true, n: d.n, unit: ' regions', ...sumOf([d]) } : { name, cont, id: null, live: false, fires: 0, cands: 0 }; })());
+      : (() => { const d = DATA.find((x) => x.id === ISO3[name]); return d ? { name, cont, id: d.id, live: true, n: d.n, unit: ' regions', ...sumOf([d]) } : { name, cont, id: null, live: false, fires: 0, cands: 0 }; })()).filter((c) => c.live || !window.__wfOnly);   // paused regions: countries without data are hidden
     const riskC = (r) => r >= 60 ? '#E86A00' : (r >= 40 ? '#7A5600' : '#545458');
     const selSty = (on) => ({ selBg: on ? '#FFFFFF' : 'transparent', selA: on ? 'true' : 'false', fg: '#000000', subC: '#545458' });
     const riskLvl = (r) => r >= 70 ? 'Extreme' : r >= 55 ? 'High' : r >= 35 ? 'Moderate' : 'Low';
