@@ -338,3 +338,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Full-screen map title:** 12px between the title's second line and the legend row; the legend starts where the title's text starts.
 - **Assign crews in place (experiment):** tapping Please assign crews shrinks the card 20% to show the grey surface under it, then it slides away under that surface's edge; the surface becomes "+ Add resources (N)" (N counts down as stations are added), chosen stations fill it (newest on top) and it ends with Cancel | Send order.
 - **VR headsets (Meta Quest browser):** treated like a computer: the app shows as the phone frame, centred and scaled to the window's height.
+
+## Dispatch sending screen and resending (Sep 30)
+- **Sending screen:** every text black (title, subtitle, station state, units, demo note); the title in title M, each station name in title S (17px bold), its state in normal text (17px). Progress bar 4px high.
+- **After the order is sent from the fire page:** the station cards stay still, with no Cancel / Send order. Adding a resource or changing a station (Apply), or removing one, sends the order again at once through the sending screen.

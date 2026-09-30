@@ -333,7 +333,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h2 id="sendTitle" style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{snd.sub}}</span>
     </div>
-    <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 8px; margin: 26.4px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
+    <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 4px; margin: 26.4px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
       <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{snd.pct}}%; border-radius: 999px; background: {{snd.barC}}; transition: width .6s cubic-bezier(.3,.9,.25,1), background-color .3s ease"></span>
     </span>
     <!-- One card per station (and air support), 16px apart -->
@@ -342,8 +342,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <li style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: 0 0 12px rgba(0,0,0,0.08), 0 0 2px rgba(0,0,0,0.06)">
           <div style="display: flex; align-items: center; gap: 16px; min-height: 68px; padding: 13.2px 16px; box-sizing: border-box; background-color: {{o.hdBg}}"><img src="{{o.crest}}" data-crest="{{o.name}}" alt="" style="display: {{o.crestD}}; width: 40px; height: 40px; flex-shrink: 0; object-fit: contain">
           <span style="display: flex; flex-direction: column; gap: 2.2px; flex-grow: 1; min-width: 0">
-            <span style="font-size: 17px; font-weight: 600; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
-            <span style="font-size: 15px; line-height: 18px; color: {{o.stC}}">{{o.state}}</span>
+            <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
+            <span style="font-size: 17px; line-height: 22px; color: {{o.stC}}">{{o.state}}</span>
           </span>
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0">
             <span class="sndspin" style="position: absolute; inset: 2px; border-radius: 50%; border: 2px solid rgba(60,60,67,0.18); border-top-color: #0062CC; opacity: {{o.spinOp}}; transition: opacity .2s ease"></span>
@@ -355,15 +355,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <sc-for list="{{o.units}}" as="u" hint-placeholder-count="2">
               <li style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px 0 40px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.08)">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{u.c}}" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-left: -28px"><path d="{{u.icon}}"></path></svg>
-                <span style="flex-grow: 1; min-width: 0; font-size: 17px; line-height: 22px">{{u.label}}</span>
-                <span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums">{{u.n}}</span>
+                <span style="flex-grow: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{u.label}}</span>
+                <span style="font-size: 17px; font-weight: 600; color: #000000; font-variant-numeric: tabular-nums">{{u.n}}</span>
               </li>
             </sc-for>
           </ul>
         </li>
       </sc-for>
     </ul>
-    <span class="wf-note" style="margin: 8.8px 4px 0">Demo: no real order is sent</span>
+    <span class="wf-note" style="margin: 8.8px 4px 0; color: #000000">Demo: no real order is sent</span>
     <button type="button" class="btn primary" onClick="{{snd.done}}" disabled="{{snd.notDone}}" style="margin-top: auto; height: 48px; font-size: 17px; font-weight: 600; opacity: {{snd.btnOp}}; transition: opacity .3s ease">Done</button>
     <!-- Last-minute change: back to the configuration with the same stations and forces (nothing is kept until Done) -->
     <button type="button" class="btn wf-ter" onClick="{{snd.redo}}" style="margin-top: 8.8px">Reconfigure dispatch</button>
@@ -1433,8 +1433,11 @@ class Component extends DCLogic {
             crest, crestD: crest ? 'block' : 'none', airD: d ? 'none' : 'block', icBg: d ? 'transparent' : 'rgba(0,121,166,0.1)', aria: (d ? nm(d) : 'Air support') + '. ' + sumOf(p.id, p.n) + '. Change',
             edit: () => this.setState({ flow: { step: 'res', id: p.id, draft: p.n.slice(), edit: true } }) }; });
         const hasSt = plan.some((p) => p.id !== 'air');
-        const send = () => { if (!hasSt) return; const per = {}; plan.forEach((p) => { if (p.id !== 'air') per[p.id] = p.n.slice(0, 2); }); const a = plan.find((p) => p.id === 'air'); per.air = a ? a.n.slice() : [0, 0, 0, 0];
-          this.setState({ stations: plan.filter((p) => p.id !== 'air').map((p) => p.id), per, stPick: true, cfPick: true, open: false, cfg: false }, () => { setTimeout(() => { try { this._sendAll && this._sendAll(); } catch (x) {} }, 0); }); };
+        // The order already went out from the fire page: the cards stay still (no Cancel / Send order) and each change is sent at once
+        const inlSent = (s.inlPh || 0) >= 3 && (this.wfOrders()[fireId] || []).length > 0;
+        const sendP = (P) => { if (!P.some((p) => p.id !== 'air')) return; const per = {}; P.forEach((p) => { if (p.id !== 'air') per[p.id] = p.n.slice(0, 2); }); const a = P.find((p) => p.id === 'air'); per.air = a ? a.n.slice() : [0, 0, 0, 0];
+          this.setState({ stations: P.filter((p) => p.id !== 'air').map((p) => p.id), per, stPick: true, cfPick: true, open: false, cfg: false }, () => { setTimeout(() => { try { this._sendAll && this._sendAll(); } catch (x) {} }, 0); }); };
+        const send = () => sendP(plan);
         const on = !!F, step = F ? F.step : 'st', id = F ? F.id : null, dSel = id && id !== 'air' ? byId(id) : null;
         const draft = F && F.draft ? F.draft : (id ? recFor(id) : []), recD = id ? recFor(id) : [], isRec = id ? draft.every((v, i) => v === recD[i]) : true;
         const setD = (arr) => this.setState({ flow: { ...F, draft: arr } });
@@ -1454,7 +1457,7 @@ class Component extends DCLogic {
             pick: () => { if (!dis) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ flow: { step: 'res', id: d.id, draft: recFor(d.id), edit: false } }); } } }; });
         const close = () => this.setState({ flow: null });
         return {
-          pl: { addCnt: 'Add resources (' + (ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length + (inPlan('air') ? 0 : 1)) + ')', inlCards: (s.inlPh || 0) >= 3 ? cards.slice().reverse() : [], inlActD: (s.inlPh || 0) >= 3 && plan.length ? 'grid' : 'none', avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(),
+          pl: { addCnt: 'Add resources (' + (ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length + (inPlan('air') ? 0 : 1)) + ')', inlCards: (s.inlPh || 0) >= 3 ? cards.slice().reverse() : [], inlActD: (s.inlPh || 0) >= 3 && plan.length && !inlSent ? 'grid' : 'none', avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(),
             addDis: ordered.some((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)) || !inPlan('air') ? 'false' : 'true',   /* nothing left to add: Add is disabled */ cards: cards.slice().reverse(), count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: 'Add resources',
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
@@ -1464,9 +1467,9 @@ class Component extends DCLogic {
             stD: step === 'st' ? 'flex' : 'none', backD: step === 'res' ? 'none' : 'flex',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
             tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
-            remove: () => { const go = () => this.setState({ plan: plan.filter((p) => p.id !== id), flow: null }), nmR = id === 'air' ? 'Air support' : dSel ? nm(dSel) : 'This station';
+            remove: () => { const go = () => { const nx = plan.filter((p) => p.id !== id); this.setState({ plan: nx, flow: null }, () => { if (inlSent) sendP(nx); }); }, nmR = id === 'air' ? 'Air support' : dSel ? nm(dSel) : 'This station';
               if (!window.__wfConfirm) return go(); window.__wfConfirm({ title: id === 'air' ? 'Remove air support?' : 'Remove station?', body: nmR + ' will be removed from this dispatch.', cancel: 'Cancel', ok: 'Remove', onOk: go }); },
-            apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }); } } };
+            apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }, () => { if (inlSent) sendP(nx); }); } } };
       })(),
       acc: (() => {
         const setP = (key, i, v) => { const base = { ...PER, air: AIR.slice() }; const arr = base[key].slice(); arr[i] = v; base[key] = arr; this.setState({ per: base, cfPick: true }); };
@@ -1500,11 +1503,11 @@ class Component extends DCLogic {
       snd: (() => {
         const SP = this.wfSplit(chosenList, counts, PER), on = !!s.sending, n = Math.max(1, SP.length), k = Math.min(n, s.sndN || 0), all = on && k >= n;
         return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
-          title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: all ? '#1E7A34' : '#000000',
+          title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: '#000000',
           sub: 'To station coordinators · ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: all ? '#34C759' : '#0062CC',
           rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, SCL = window.__wfStationCol || ['#34C759'], TNT = window.__wfTint || ((h, a) => 'rgba(52, 199, 89, ' + a + ')'); return { crest: crestOf(d), crestD: crestOf(d) ? 'block' : 'none', hdBg: d.id === 'air' ? 'rgba(0, 113, 227, 0.06)' : 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
             units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
-            state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: sentO ? '#1E7A34' : '#545458', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
+            state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: '#000000', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           redo: () => { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
