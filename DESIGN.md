@@ -145,7 +145,8 @@ The one from the user preferences, used everywhere:
 - **Markers:**
   - flat shapes with a translucent body (62%) and no shadows;
   - ignition candidates have a 2px dark grey outline and pulse as an outline only;
-  - fires and stations have no outline;
+  - fire stations are a shield (like a corporation's crest): a 2px dark grey outline, no inner detail, filled light blue at 50%; the same shield in legends, cards, notifications and headers;
+  - fires have no outline;
   - resolved fires use the fire marker in a much darker brown, with their own legend entry;
   - the marker icons match the legend icons.
 - **Selected marker:** a 4px solid outer border, dark grey on candidates and fires, lime on stations.
