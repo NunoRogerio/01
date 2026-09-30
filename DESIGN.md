@@ -56,6 +56,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
   - avatars are full circles, the same size as the round X.
 - **Dividers** between list items run the full width of their container.
 - **Horizontal bars** (progress, stamina, water, stage timelines): 8px tall, fully rounded ends.
+- **Micro trends** complement KPIs: small bar or line charts over the item's own time span (start → Now, in note style), with a note when the shape is estimated.
 
 ## 3. Colour and themes
 

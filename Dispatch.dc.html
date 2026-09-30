@@ -16,7 +16,7 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=79"></script>
-<script src="i18n.js?v=52"></script>
+<script src="i18n.js?v=53"></script>
 <script src="live.js?v=31"></script>
 <script src="chat.js?v=18"></script>
 
@@ -374,6 +374,21 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </sc-for>
       </div>
+      <!-- Micro trends over the incident's own time span: context for the KPIs above (estimated from today's figures) -->
+      <div style="display: {{cc.trD}}; gap: 16px; width: 100%; margin-top: 16px; text-align: left">
+        <sc-for list="{{cc.charts}}" as="c" hint-placeholder-count="2">
+          <div role="img" aria-label="{{c.aria}}" style="display: flex; flex-direction: column; flex: 1 1 0; min-width: 0">
+            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{c.title}}</span>
+            <svg width="100%" height="40" viewBox="0 0 160 40" preserveAspectRatio="none" aria-hidden="true" style="display: block; margin-top: 4px; overflow: visible">
+              <path d="{{c.area}}" fill="{{c.areaFill}}" stroke="none"></path>
+              <path d="{{c.line}}" fill="none" stroke="{{c.lineC}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+              <path d="{{c.bars}}" fill="{{c.barC}}" stroke="none"></path>
+            </svg>
+            <span class="wf-note" style="display: flex; justify-content: space-between; margin-top: 2px"><span>{{c.from}}</span><span>{{c.to}}</span></span>
+          </div>
+        </sc-for>
+      </div>
+      <span class="wf-note" style="display: {{cc.trD}}; margin-top: 8px">Trends estimated from today's figures.</span>
     </div>
     <!-- A fire being fought: every published count in one horizontal row (personnel, crews, ground vehicles, aircraft…) -->
     <div class="wf-hscroll" data-sb-kpi="1" role="list" aria-label="Forces on scene" style="--k: {{kpiPx}}; display: {{kpiTopD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
@@ -406,7 +421,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-if value="{{d.fx}}" hint-placeholder-val="{{ false }}">
         <li style="display: flex; flex-direction: column; flex-shrink: 0; padding: 16px 0 0; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.14)">
           <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 16px">
-            <h3 style="margin: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">Forces on scene</h3>
+            <h3 style="margin: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">Endurance</h3>
             <span class="wf-note">Simulated</span>
           </span>
           <!-- What the coordinator watches: how many units are wearing out, not totals -->
@@ -418,7 +433,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               </div>
             </sc-for>
           </div>
-          <ul style="margin: 16px 0 0; padding: 0; list-style: none">
+          <ul style="display: none; margin: 16px 0 0; padding: 0; list-style: none">
             <sc-for list="{{d.units}}" as="u" hint-placeholder-count="4">
               <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.14)">
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
@@ -1310,7 +1325,21 @@ class Component extends DCLogic {
         const area = I.ha != null ? (u.area === 'ha' ? Math.round(I.ha).toLocaleString() + ' ha' : Math.round(I.ha / 0.4047).toLocaleString() + ' ac') : '';
         const pers = (() => { const r = (RU || []).find((q) => q[0] === 'Personnel'); return r && Number(r[1]) > 0 ? Number(r[1]).toLocaleString() : ''; })();
         const med = [t ? { v: t, l: HELD ? 'Final duration' : 'Time active' } : null, pers ? { v: pers, l: 'Personnel' } : null, area ? { v: area, l: 'Burned area' } : null].filter(Boolean).map((m, i) => ({ ...m, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' }));
-        return { d: 'flex', medK: med.length > 2 ? '28px' : '34px', big, fs, bigD: pcT ? 'block' : 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '12px' : '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
+        // Trend series over [start, now]: the burned area grows on an S-curve to today's figure; containment climbs to today's %
+        // (NIFC), else the personnel builds up to today's count. Estimated shapes, anchored on today's real values.
+        const charts = [], N = 12, W = 160, H = 40, t0 = I.startMs, x = (i) => i / (N - 1);
+        const clk = (ms) => new Date(ms).toLocaleDateString([], { day: 'numeric', month: 'short' });
+        const lineOf = (vals, max) => vals.map((v, i) => (i ? 'L' : 'M') + (x(i) * W).toFixed(1) + ' ' + (H - 2 - (v / (max || 1)) * (H - 6)).toFixed(1)).join(' ');
+        if (t0 && !HELD) {
+          if (I.ha != null && I.ha > 0) { const S = (u) => 1 / (1 + Math.exp(-8 * (u - 0.35))), s1 = S(1), s0 = S(0), vals = [...Array(N)].map((_, i) => (S(x(i)) - s0) / (s1 - s0));
+            const bw = W / N - 3, bars = vals.map((v, i) => { const h = Math.max(2, v * (H - 4)), bx = i * (W / N) + 1.5; return 'M' + bx.toFixed(1) + ' ' + (H - h).toFixed(1) + 'h' + bw.toFixed(1) + 'v' + h.toFixed(1) + 'h-' + bw.toFixed(1) + 'Z'; }).join('');
+            charts.push({ title: 'Burned area', bars, barC: '#B84A00', line: '', lineC: 'none', area: '', areaFill: 'none', from: clk(t0), to: 'Now', aria: 'Burned area grew to ' + area + ' since ' + clk(t0) }); }
+          if (us && I.pc != null) { const vals = [...Array(N)].map((_, i) => I.pc * Math.pow(x(i), 1.6)), ln = lineOf(vals, 100);
+            charts.push({ title: 'Containment', bars: '', barC: 'none', line: ln, lineC: '#1E7A34', area: ln + ' L' + W + ' ' + H + ' L0 ' + H + ' Z', areaFill: 'rgba(52,199,89,0.14)', from: clk(t0), to: 'Now', aria: 'Containment rose to ' + I.pc + '%' }); }
+          else if (pers) { const P = Number(String(pers).replace(/\D/g, '')), vals = [...Array(N)].map((_, i) => P * Math.min(1, 0.25 + x(i) * 1.6)), ln = lineOf(vals, P);
+            charts.push({ title: 'Personnel', bars: '', barC: 'none', line: ln, lineC: '#3A3A3C', area: ln + ' L' + W + ' ' + H + ' L0 ' + H + ' Z', areaFill: 'rgba(118,118,128,0.14)', from: clk(t0), to: 'Now', aria: 'Personnel built up to ' + pers }); }
+        }
+        return { d: 'flex', charts, trD: charts.length ? 'flex' : 'none', medK: med.length > 2 ? '28px' : '34px', big, fs, bigD: pcT ? 'block' : 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '12px' : '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
       kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
