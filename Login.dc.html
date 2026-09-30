@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=73"></script>
+<script src="fit.js?v=74"></script>
 <script src="avatar.js?v=8"></script>
 <script src="i18n.js?v=90"></script>
 
@@ -180,15 +180,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
         </label>
       </div>
       <button type="button" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">{{cp.btn}}</button>
-      <!-- Editing: remove the profile, with a second step so it is never removed by a slip -->
+      <!-- Editing: remove the profile; the app's shared confirmation dialog asks first (fit.js, __wfConfirm) -->
       <button type="button" onClick="{{cp.rmAsk}}" style="display: {{cp.rmD}}; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.12); color: #D70015; -webkit-text-fill-color: #D70015; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button>
-      <div role="group" aria-label="{{cp.rmQ}}" style="display: {{cp.rmAskD}}; flex-direction: column; gap: 16px; flex-shrink: 0">
-        <span style="margin: 0 4px; font-size: 17px; line-height: 22px; color: #000000">{{cp.rmQ}}</span>
-        <div style="display: flex; gap: 8px">
-          <button type="button" onClick="{{cp.rmNo}}" style="display: flex; align-items: center; justify-content: center; flex: 1 1 0; height: 48px; border: 0; border-radius: 999px; background: #1C1C1E; color: var(--wf-y); -webkit-text-fill-color: var(--wf-y); font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmNoLbl}}</button>
-          <button type="button" onClick="{{cp.rmYes}}" style="display: flex; align-items: center; justify-content: center; flex: 1 1 0; height: 48px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; -webkit-text-fill-color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button>
-        </div>
-      </div>
       <p style="margin: -8px 4px 0; font-size: 15px; line-height: 20px; color: #545458">{{cp.note}}</p>
     </div>
   </div>
@@ -379,21 +372,21 @@ class Component extends DCLogic {
       try { const all = this.customs(); all.push(rec); window.localStorage.setItem('wf-custom-profiles', JSON.stringify(all)); } catch (e) {}
       try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
       this.setState({ cpOpen: false, cpF: {}, cpAsk: null, cpUndo: null, cpSeen: {}, sel: id }); this.closePanel(); };
-    return { hidden: on ? 'false' : 'true', y: on ? '0%' : '105%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', xRot: '0deg',
-      open: () => this.setState({ cpOpen: true, cpEdit: null, cpRm: false, cpF: {} }), close: () => this.setState({ cpOpen: false, cpEdit: null, cpRm: false }),
-      title: ed ? L('Edit profile', 'Editar perfil') : L('Create profile', 'Criar perfil'), btn: ed ? L('Save', 'Guardar') : L('Create profile', 'Criar perfil'),
-      areaD: ed && !this.customs().some((c) => c.id === ed) ? 'none' : 'flex',
-      rmD: ed && !s.cpRm ? 'flex' : 'none', rmAskD: ed && s.cpRm ? 'flex' : 'none', rmLbl: L('Remove profile', 'Remover perfil'), rmNoLbl: L('Cancel', 'Cancelar'),
-      rmQ: L('Remove this profile from this phone?', 'Remover este perfil deste telemóvel?'),
-      rmAsk: () => this.setState({ cpRm: true }), rmNo: () => this.setState({ cpRm: false }),
-      rmYes: () => { try { const all = this.customs(), k = all.findIndex((c) => c.id === ed);   // your own profile is deleted; a demo profile is hidden on this phone
+    const rmYes = () => { try { const all = this.customs(), k = all.findIndex((c) => c.id === ed);   // your own profile is deleted; a demo profile is hidden on this phone
           if (k >= 0) { all.splice(k, 1); window.localStorage.setItem('wf-custom-profiles', JSON.stringify(all)); }
           else { const G = this.gone(); if (G.indexOf(ed) < 0) G.push(ed); window.localStorage.setItem('wf-profile-hidden', JSON.stringify(G)); }
           const E = this.edits(); if (E[ed]) { delete E[ed]; window.localStorage.setItem('wf-profile-edits', JSON.stringify(E)); }
           if (window.localStorage.getItem('wf-last-user') === ed) window.localStorage.removeItem('wf-last-user'); } catch (e) {}
         try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
         const st = this.state || {}, was = st.sel !== undefined ? st.sel : this._last; if (this._last === ed) this._last = null;
-        this.setState({ cpOpen: false, cpEdit: null, cpRm: false, cpF: {}, cpAsk: null, cpUndo: null, cpSeen: {}, ...(was === ed ? { sel: null } : {}) }); },
+        this.setState({ cpOpen: false, cpEdit: null, cpRm: false, cpF: {}, cpAsk: null, cpUndo: null, cpSeen: {}, ...(was === ed ? { sel: null } : {}) }); };
+    return { hidden: on ? 'false' : 'true', y: on ? '0%' : '105%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', xRot: '0deg',
+      open: () => this.setState({ cpOpen: true, cpEdit: null, cpRm: false, cpF: {} }), close: () => this.setState({ cpOpen: false, cpEdit: null, cpRm: false }),
+      title: ed ? L('Edit profile', 'Editar perfil') : L('Create profile', 'Criar perfil'), btn: ed ? L('Save', 'Guardar') : L('Create profile', 'Criar perfil'),
+      areaD: ed && !this.customs().some((c) => c.id === ed) ? 'none' : 'flex',
+      rmD: ed ? 'flex' : 'none', rmLbl: L('Remove profile', 'Remover perfil'),
+      rmAsk: () => { if (!window.__wfConfirm) return; const nm = String((this.state.cpF || {}).name || '').trim();
+        window.__wfConfirm({ title: L('Remove profile?', 'Remover perfil?'), body: L((nm || 'This profile') + ' will be removed from this phone.', (nm || 'Este perfil') + ' será removido deste telemóvel.'), cancel: L('Cancel', 'Cancelar'), ok: L('Remove', 'Remover'), onOk: rmYes }); },
       code: F.photo ? '' : ini(F.name), photoBg: F.photo ? 'url("' + F.photo + '")' : 'none', photoLbl: F.photo ? L('Change photo', 'Mudar fotografia') : L('Take or choose a photo', 'Tirar ou escolher fotografia'), onFile: fileIn,
       faces: FACES.map((u, i) => ({ url: u, sel: String(F.photo === u), aria: L('Photo ', 'Fotografia ') + (i + 1), ring: F.photo === u ? '0 0 0 3px #F2F2F7, 0 0 0 5px #1C1C1E' : 'none', pick: () => set({ photo: u }) })),
       fields, areas: Object.keys(AREAS).map((k) => ({ v: k, label: AREAS[k][0], sel: base === k })), onArea: (e) => set({ base: e.target.value }),
