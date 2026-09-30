@@ -122,7 +122,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
           <div class="chfade" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
-            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}; visibility: {{m.avVis}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
+            <!-- Tap the photo: a tooltip with the name and role (as on the icon cards); tap it again or anywhere else to hide it -->
+            <span data-avtip="1" role="button" tabindex="0" onClick="{{m.tip}}" aria-label="{{m.tipAria}}" style="position: relative; flex-shrink: 0; width: 32px; height: 32px; visibility: {{m.avVis}}; cursor: pointer">
+              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
+              <span role="tooltip" aria-hidden="true" style="position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 5; display: flex; flex-direction: column; width: max-content; max-width: 280px; transform: translateY({{m.tipY}}); opacity: {{m.tipOp}}; padding: 6px 12px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; pointer-events: none; transition: opacity .2s ease, transform .2s ease"><span style="font-weight: 600">{{m.tipName}}</span><span>{{m.tipRole}}</span></span>
+            </span>
             <div class="chbubL" style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
               <span style="display: {{m.nameD}}; font-size: 15px; line-height: 20px; color: #545458">{{m.name}}</span>
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
@@ -206,10 +210,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <label style="display: flex; align-items: center; flex-grow: 1; min-width: 0; height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12); color: #545458"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" class="sqsearch" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></label>
         <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 0; border-radius: 50%; background: {{sendBg}}; color: #1C1C1E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
       </div>
-      <!-- Suggestions: primary buttons on two rows at most (any more stay hidden for now); the field above stays free to write anything else -->
+      <!-- Suggestions: side by side while they fit, so two short ones share one line; a second row only when needed; two rows at most (any more stay hidden for now) -->
       <div style="display: {{actD}}; flex-wrap: wrap; gap: 8px; max-height: 88px; overflow: hidden; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
-          <button type="button" class="chbtn" onClick="{{a.go}}" style="flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer">{{a.label}}</button>
+          <button type="button" class="chbtn" onClick="{{a.go}}" style="flex: 0 0 auto; height: 40px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer">{{a.label}}</button>
         </sc-for>
       </div>
     </div>
@@ -418,6 +422,8 @@ class Component extends DCLogic {
     };
   }
   componentDidMount() {
+    // A photo tooltip hides on any tap elsewhere
+    document.addEventListener('pointerdown', (e) => { if ((this.state || {}).avTip && !(e.target && e.target.closest && e.target.closest('[data-avtip]'))) this.setState({ avTip: null }); }, true);
     this._sync = () => this.forceUpdate();
     try { window.addEventListener('wf-chat', this._sync); window.addEventListener('wf-sync', this._sync); } catch (e) {}
     this._t = setInterval(() => this.forceUpdate(), 1000);
@@ -618,7 +624,8 @@ class Component extends DCLogic {
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: same ? '0' : '4px' });
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: same ? '0' : '4px', ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
+          tip: (e) => { try { e.stopPropagation(); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ avTip: on ? null : m.id }); } }; })() });
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
@@ -681,7 +688,7 @@ class Component extends DCLogic {
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,
         pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
-      acts, actD: acts.length ? 'flex' : 'none',
+      acts, actD: acts.length ? 'flex' : 'none', 
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? (window.__wfY || '#E5FF00') : '#E5E5EA',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
       setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
