@@ -56,7 +56,8 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
   - avatars are full circles, the same size as the round X.
 - **Dividers** between list items run the full width of their container.
 - **Horizontal bars** (progress, stamina, water, stage timelines): 8px tall, fully rounded ends.
-- **Micro trends** complement KPIs: small bar or line charts over the item's own time span (start → Now, in note style), with a note when the shape is estimated.
+- **Micro trends** sit under each KPI (28px tall, full column width): bars or a line over the item's own time span. All charts in a group share one span, so one note under them gives it ("Since 18 Sep.") plus "Estimated…" when the shape is estimated. Time active shows the stages as an 8px bar. Four KPIs sit 2 × 2.
+- **Burned area comes with its spread rate:** area added per interval (hourly under a day, every 6 h under a week, else daily), latest interval as the KPI ("17 ha/day") and in full colour.
 
 ## 3. Colour and themes
 
