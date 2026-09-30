@@ -48,10 +48,11 @@ a{color:#0062CC}a:hover{color:#004FA3}
       <h1 style="margin: 0; font-size: 28px; font-weight: 600; line-height: 34px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{title}}</h1>
       <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{wxLine}}</span>
     </span>
-    <div role="group" aria-label="Simulation speed" style="display: flex; flex-shrink: 0; gap: 2px; padding: 2px; border-radius: 10px; background: #E3E3E8">
-      <sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
-        <button type="button" aria-pressed="{{sp.on}}" aria-label="{{sp.aria}}" onClick="{{sp.pick}}" style="display: flex; align-items: center; justify-content: center; min-width: 36px; height: 40px; padding: 0 4px; border: 0; border-radius: 8px; background: {{sp.bg}}; color: #000000; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: {{sp.sh}}">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display: {{sp.iconD}}"><path d="{{sp.icon}}"></path></svg><span style="display: {{sp.txtD}}">{{sp.label}}</span>
+    <div role="radiogroup" aria-label="Simulation speed" class="wf-seg" style="flex-shrink: 0; width: 168px; height: 44px; padding: 6px">
+      <span class="segthumb" aria-hidden="true" style="top: 6px; bottom: 6px; left: 6px; width: calc((100% - 12px) / 4); transform: translateX({{spX}})"><span class="segblob"></span></span>
+      <sc-for list="{{speeds}}" as="sp" hint-placeholder-count="4">
+        <button type="button" role="radio" class="segopt" aria-checked="{{sp.on}}" aria-label="{{sp.aria}}" onClick="{{sp.pick}}" style="padding: 0; font-size: 15px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display: {{sp.iconD}}"><path d="{{sp.icon}}"></path></svg><span style="display: {{sp.txtD}}">{{sp.label}}</span>
         </button>
       </sc-for>
     </div>
@@ -138,7 +139,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
       </span>
     </div>
 
-    <h2 style="margin: 12px 4px 6px; font-size: 15px; font-weight: 400; color: #545458">STATIONS · tap one here or on the map to deploy its forces</h2>
+    <h2 style="margin: 12px 4px 6px; font-size: 15px; font-weight: 400; color: #545458">Stations. Tap one here or on the map to deploy its forces</h2>
     <div class="scroll" role="group" aria-label="Stations" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px">
       <sc-for list="{{stations}}" as="r" hint-placeholder-count="5">
         <button type="button" class="chipb" onClick="{{r.open}}" aria-label="{{r.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex-shrink: 0; min-width: 104px; min-height: 58px; padding: 8px 10px; border: 0; border-radius: 12px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
@@ -513,12 +514,13 @@ class Component extends DCLogic {
     return {
       title: { pt: 'Portuguese hills', ca: 'California canyon', bc: 'British Columbia valley', gr: 'Farmland and grass' }[c.land] + ' · goal ' + c.goal / 60 + ' h',
       wxLine: 'Wind ' + c.wind + ' km/h from ' + ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(c.dir / 45) % 8] + ' · ' + c.temp + ' °C · RH ' + c.rh + '% · fuel moisture ' + Math.round(W.Md * 100) + '%',
+      spX: (Math.max(0, [0, 1, 2, 4].indexOf(G.speed)) * 100) + '%',
       speeds: [[0, 'Pause', 'M7 5h3v14H7zM14 5h3v14h-3z'], [1, '1×', ''], [2, '2×', ''], [4, '4×', '']].map(([v, label, icon]) => ({ label, icon, iconD: icon ? 'block' : 'none', txtD: icon ? 'none' : 'block', on: G.speed === v ? 'true' : 'false', aria: v ? 'Speed ' + label : 'Pause', bg: G.speed === v ? '#FFFFFF' : 'transparent', sh: G.speed === v ? '0 2px 6px rgba(0,0,0,0.12)' : 'none',
         pick: () => { G.speed = v; this.run(); this.forceUpdate(); } })),
       kpis: [
         { label: 'Time', value: this.clock(t), c: goalLeft < 0 ? '#D70015' : '#000000' },
         { label: 'Burned', value: (G.burned || 0).toLocaleString() + ' ha', c: '#000000' },
-        { label: 'Active front', value: ((G.active || 0) * 0.25).toFixed(1) + ' ha', c: '#A34800' },
+        { label: 'Active front', value: ((G.active || 0) * 0.25).toFixed(1) + ' ha', c: '#000000' },
         { label: 'Casualties', value: String(G.inj + G.dead), c: G.dead ? '#D70015' : G.inj ? '#B34F00' : '#000000' }
       ],
       fuelPaths: S.fuelPaths, roads: S.roads, shade: S.shade, shade2: S.shade2,

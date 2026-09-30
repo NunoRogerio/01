@@ -208,7 +208,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h.01M18 6h.01M6 18h.01M18 18h.01M8 8l2.5 2.5M16 8l-2.5 2.5M8 16l2.5-2.5M16 16l-2.5-2.5"></path><circle cx="6" cy="6" r="2.5"></circle><circle cx="18" cy="6" r="2.5"></circle><circle cx="6" cy="18" r="2.5"></circle><circle cx="18" cy="18" r="2.5"></circle><rect x="10" y="10" width="4" height="4" rx="1"></rect></svg>
     </span>
     <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-      <span style="font-size: 19px; font-weight: 600; line-height: 24px; color: {{dFg}}; font-variant-numeric: tabular-nums">{{dStatus}}</span>
+      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{dStatus}}</span>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{dSub}}</span>
     </span>
   </div>
@@ -240,7 +240,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; gap: 10px; padding: 0 12px; border-left: 1px solid rgba(60,60,67,0.14)">
       <dt class="lbl">Peak</dt>
       <dd style="margin: 0">
-        <button type="button" class="unitbtn" onClick="{{toggleTemp}}" aria-label="{{tempAria}}"><span class="kpi" style="display: block; color: #A34800; white-space: nowrap">{{tempV}}<small> {{tempU}}</small></span></button>
+        <button type="button" class="unitbtn" onClick="{{toggleTemp}}" aria-label="{{tempAria}}"><span class="kpi" style="display: block; color: #3A3A3C; white-space: nowrap">{{tempV}}<small> {{tempU}}</small></span></button>
       <div role="img" aria-label="{{tempChart.aria}}" style="position: relative; width: 84px; height: 24px; margin-top: 14px">
         <svg width="84" height="24" viewBox="0 0 84 24" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible">
           <path d="{{tempChart.area}}" fill="rgba(232,106,0,0.1)"></path>
