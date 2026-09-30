@@ -390,7 +390,7 @@ window.__wfBlink=function(path,dur){
 // plus a light tap on the phone (vibration where the browser allows it; on iPhone, the system haptic that
 // Safari gives a switch control, which is the only haptic web pages can reach).
 (function(){
-  var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],label,summary,.opt,.sqrow';
+  var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],[role=listitem],label,summary,.opt,.sqrow,[data-wf-kpi],[data-avtip],[tabindex="0"]';
   var st=document.createElement('style');
   st.textContent='#wf-fx{position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:99998}'+
     '#wf-fx i{position:absolute;border-radius:50%;background:rgba(118,118,128,.0855);transform:scale(0);opacity:1;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .42s ease}'+
@@ -438,8 +438,10 @@ window.__wfBlink=function(path,dur){
   if(IOS){
     document.addEventListener('touchstart',function(e){
       ovOff();if(e.touches.length!==1)return;var p=e.touches[0],tg=e.target;
-      var t=tg&&tg.closest&&tg.closest(SEL);if(!t||skip(t,tg)||t.closest('#wf-hapov'))return;
-      if(t.closest('[role=application]')&&!t.closest('[role=group],[role=dialog],.mbtn'))return;   // the map pans freely from markers; controls, legend and tooltip panels tick
+      // A text field (e.g. Write a message, search): the tap ticks too, then focuses the field inside the same tap so the keyboard opens
+      var fl=tg&&tg.closest?(tg.closest(FIELD)||((tg.closest('label')||{}).querySelector?tg.closest('label').querySelector(FIELD):null)):null;
+      if(fl&&document.activeElement===fl)return;   // already typing: taps move the caret, untouched
+      var t=fl||(tg&&tg.closest&&tg.closest(SEL));if(!t||(!fl&&skip(t,tg))||t.closest('#wf-hapov'))return;   // the map too: markers tick as well (a pan removes the overlay at once)
       var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
       var l=document.createElement('label');l.id='wf-hapov';l.setAttribute('aria-hidden','true');
       l.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;z-index:2147483647;opacity:0;-webkit-tap-highlight-color:transparent;margin:0;padding:0';
@@ -448,6 +450,7 @@ window.__wfBlink=function(path,dur){
       l.addEventListener('click',function(ev){
         if(ev.target!==l)return;   // the label's own click (the switch toggles, the phone ticks); the input's echo is ignored
         ev.stopPropagation();var tt=l.__t;ovOff();
+        if(tt.matches&&tt.matches(FIELD)){try{tt.focus();}catch(x){}return;}   // a field: focus it now, inside the tap
         setTimeout(function(){try{window.__wfFwd=true;tt.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:ovX,clientY:ovY}));}finally{window.__wfFwd=false;}},0);
       });
       document.body.appendChild(l);ov=l;ovT=setTimeout(ovOff,1500);
@@ -459,7 +462,8 @@ window.__wfBlink=function(path,dur){
   document.addEventListener('pointermove',function(e){if(live&&Math.hypot(e.clientX-sx,e.clientY-sy)>10){live=false;fade(true);}},{capture:true,passive:true});
   document.addEventListener('pointerup',function(){if(live){live=false;setTimeout(function(){fade(false);},120);}},{capture:true,passive:true});
   document.addEventListener('pointercancel',function(){live=false;fade(true);},{capture:true,passive:true});
-  document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||t.closest('#wf-hapov')||skip(t,e.target))return;
+  document.addEventListener('click',function(e){if(!IOS&&isField(e.target)&&document.activeElement!==e.target.closest(FIELD)){try{navigator.vibrate&&navigator.vibrate(8);}catch(x){}}   // a text field ticks too
+    var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||t.closest('#wf-hapov')||skip(t,e.target))return;
     if(IOS)return;   // iPhone: the tap itself already ticked through the overlay switch
     if(t.matches('[role=switch]:not(.wf-tog),[data-hap=late]')){hapticAt(215);return;}   // a toggle: the vibration lands with the thumb
     haptic();},{capture:true});
