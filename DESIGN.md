@@ -154,6 +154,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Where no perimeter is mapped, the model's outline is irregular and fire-like (lobes, stretched along one axis) with the reported area, never a circle.
 - **Detail map loading:** for 3 s (longer only while the first tiles are still coming, at most 12 s), the band shows the search grey with the app's flame (17px wide) in dark grey in the middle, swaying slightly, its eye blinking once, and "Loading map" under it (annotation); it fades out as the map appears.
 - **Detail map zoom:** the fire's current perimeter fills about 60% of the band's width (or 92% of the clear height under the legend), centred in the clear part below the legend, whatever the fire's size, up to the map's closest zoom (as on Timber).
+- The ignition's full-screen map shows the candidate and its nearest stations only: shields labelled with the station's short name and distance ("Pombal. 4.2 km"), no route lines, no sight lines.
 - A fire's detail map shows only the fire: its perimeter (burned area, burning edge, held line) with that legend, framed on it; no stations, no routes, no unit tracks.
 - On a fire's maps the perimeter polygon (burned, active front, held edge) replaces the fire dot when the model or source gives it.
 - List rows in detail pages carry no leading icons.
