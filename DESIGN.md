@@ -157,7 +157,10 @@ The one from the user preferences, used everywhere:
   - zoom out stops at 60% of the whole state or country of the selected area, never trapped in a county;
   - no dragging into empty space;
   - gentle momentum;
-  - no flicker.
+  - no flicker;
+  - while a finger moves the map (and while it glides), the drawn map and markers move as one picture; the full redraw follows about four times a second and on release;
+  - fire stations thin out as the map zooms out (wider spacing near the whole state or country), so the map stays light and readable.
+- **Find a place:** a round search button beside the area name on the main screen opens a panel dropping from the top blade (like the area picker) with a pill search field and a round X. Results are list rows (place bold, the levels above as an annotation). A pick closes the panel, moves the map there and the area follows the map. Searches only the live regions the account can see.
 
 ## 6. Motion and touch
 
@@ -165,7 +168,7 @@ The one from the user preferences, used everywhere:
 - **Transitions:** screen changes dissolve softly and never snap. A panel grows from, and folds back into, what opened it.
 - **Icon motion:** icons move subtly and slowly (for example, the close X turns a quarter turn).
 - **Selection:** no blue text-selection highlight on long press or drag; only text fields can be selected.
-- **Loading:** a loading screen appears only between login and the first screen.
+- **Loading:** a loading screen appears only between login and the first screen. The black-and-white photo turns to colour from the centre, and the counter reads how much of the screen the colour has reached: they start together and reach 100% together.
 
 ## 7. Data scope
 

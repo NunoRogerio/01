@@ -13,10 +13,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=3">
 <link rel="icon" href="icon-192.png?v=3">
-<script src="fit.js?v=65"></script>
+<script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=79"></script>
-<script src="i18n.js?v=54"></script>
+<script src="i18n.js?v=55"></script>
 <script src="live.js?v=31"></script>
 
 <title>Terrain map</title>
@@ -52,6 +52,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 .tipwrap svg.mk,.fzone>svg.mk{opacity:1}.tipwrap svg.mk :is(polygon,circle,path,rect)[fill]:not([fill=none]),.fzone>svg.mk :is(polygon,circle,path,rect)[fill]:not([fill=none]){fill-opacity:.62}.tipwrap svg.mk mask *{fill-opacity:1!important}
 
 .fzone{display:block;background:transparent;transition:background-color .15s ease;-webkit-tap-highlight-color:transparent}.fzone:focus{outline:none}.fzone:hover+.fanchor>.tip,.fzone:focus-visible+.fanchor>.tip{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .18s ease .1s,transform .18s ease .1s,visibility 0s linear .1s}.fzone:hover+.fanchor>.tip.l,.fzone:hover+.fanchor>.tip.r,.fzone:focus-visible+.fanchor>.tip.l,.fzone:focus-visible+.fanchor>.tip.r{transform:translate(0,0)}
+/* Moving layers: transparent to touches themselves, their contents stay tappable */
+[data-wf-gl]{pointer-events:none}[data-wf-gl]>*,[data-wf-gl] .tipwrap,[data-wf-gl] .fzone,[data-wf-gl] [role=dialog]{pointer-events:auto}
 .tip,.igmore>span{white-space:pre-line}
 @media (hover:none){.tip,.igpill{display:none!important}}
 .ighide .igpill{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease}
@@ -59,6 +61,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 </helmet>
 <div ref="{{setEl}}" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: none; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
+  <!-- While a finger moves the map, these layers move as one picture (a CSS transform); the full redraw follows a few times a second and on release -->
+  <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
   <div style="position: absolute; left: 0; top: 0; width: 1000px; height: 1000px; transform-origin: 0 0; transform: translate({{tx}}px, {{ty}}px) scale({{s}}); transition: {{mapTr}}">
     <svg width="1" height="1" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
       <rect x="-400000" y="-200000" width="1000000" height="400000" fill="{{pal.bg}}"></rect>
@@ -132,7 +136,6 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </svg>
   </div>
 
-  <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0.0) 70%, rgba(0,0,0,0.055) 100%)"></div>
 
   <sc-for list="{{stateLabels}}" as="sl" hint-placeholder-count="0">
     <span style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
@@ -197,6 +200,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
   </sc-for>
+  </div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0.0) 70%, rgba(0,0,0,0.055) 100%)"></div>
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
@@ -219,6 +224,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </sc-if>
 
+  <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
       <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="10.25" fill="{{fm.fill}}"></circle><circle cx="14" cy="14" r="12.25" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle></svg></button>
@@ -284,6 +290,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <span class="{{um.tip}}" role="tooltip"><b>{{um.tt}}</b>{{um.td}}</span>
     </span>
   </sc-for>
+  </div>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
   <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{legL}}px; right: {{legR}}px; top: {{legTopC}}px; box-sizing: border-box; padding: 0 {{legIn}}px; display: flex; gap: {{legGap}}; overflow-x: auto; scrollbar-width: none">
@@ -304,6 +311,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-for>
   </div>
   </sc-if>
+  <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 60">
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
   <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: {{pop.w}}px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.97); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px)">
@@ -344,6 +352,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </div>
   </sc-if>
+  </div>
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
     <sc-if value="{{hasFull}}" hint-placeholder-val="{{ false }}">
       <!-- Test: the colours of the round X buttons (the X's 12% grey as it looks on the light panels, solid so it reads over the map) -->
@@ -388,7 +397,7 @@ class Component extends DCLogic {
       this.zoomAt(p.x, p.y, Math.exp(-e.deltaY * 0.0018));
     };
     // Momentum: a flick keeps the map gliding briefly, losing speed quickly (tight, not floaty).
-    this.stopGlide = () => { if (this._glide) cancelAnimationFrame(this._glide); this._glide = 0; };
+    this.stopGlide = () => { if (this._glide) cancelAnimationFrame(this._glide); this._glide = 0; if (this._gest && !Object.keys(this.pts || {}).length) this.endGest(); };
     this.glide = (vx, vy) => {
       this.stopGlide(); let last = performance.now();
       const step = (now) => {
@@ -397,13 +406,14 @@ class Component extends DCLogic {
         this.setView(v.cx - vx * dt / k / v.s, v.cy - vy * dt / k / v.s, v.s);
         const f = Math.exp(-dt / 190); vx *= f; vy *= f;                    // ~0.19 s time constant
         this._glide = Math.hypot(vx, vy) > 0.02 ? requestAnimationFrame(step) : 0;
+        if (!this._glide && this._gest) this.endGest();
       };
       this._glide = requestAnimationFrame(step);
     };
     this.onDown = (e) => {
       if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
       this.stopGlide();
-      if (!Object.keys(this.pts).length) { this._pinched = false; this._trail = []; }
+      if (!Object.keys(this.pts).length) { this._pinched = false; this._trail = []; this._gest = true; }
       try { this.el.setPointerCapture(e.pointerId); } catch (err) {}
       this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
       // Remember a possible tap on the bare map (not a marker, popup, legend or button).
@@ -442,6 +452,7 @@ class Component extends DCLogic {
         const sp = Math.hypot(vx, vy), cap = 2.2; if (sp > cap) { vx *= cap / sp; vy *= cap / sp; }
         if (sp > 0.2) this.glide(vx, vy);
       }
+      if (!this._glide && this._gest) this.endGest();
       this._trail = [];
       // A quick tap on the bare map goes back (detail screens pass onBgTap); an open popup closes first.
       const tp = this._tap; this._tap = null;
@@ -639,7 +650,7 @@ class Component extends DCLogic {
       ['Fort Collins', 40.59, -105.08, 'CO', 'Larimer'], ['Estes Park', 40.38, -105.52, 'CO', 'Larimer'], ['Rocky Mtn NP', 40.34, -105.68, 'CO', 'Larimer', 1], ['Boulder', 40.01, -105.27, 'CO', 'Boulder'], ['Colorado Springs', 38.83, -104.82, 'CO', 'El Paso'], ['Denver', 39.74, -104.99, 'CO', ''],
       ['St. George', 37.1, -113.58, 'UT', 'Washington'], ['Zion NP', 37.3, -113.03, 'UT', 'Washington', 1], ['Cedar City', 37.68, -113.06, 'UT', 'Iron'], ['Salt Lake City', 40.76, -111.89, 'UT', ''],
       ['Missoula', 46.87, -113.99, 'MT', 'Missoula'], ['Kalispell', 48.2, -114.31, 'MT', 'Flathead'], ['Glacier NP', 48.7, -113.8, 'MT', 'Flathead', 1], ['Helena', 46.59, -112.04, 'MT', '']
-    ].map(([n, la, lo, st, co, lm]) => ({ name: n, xy: P(la, lo), st, co, lm: !!lm }));
+    ].map(([n, la, lo, st, co, lm]) => ({ name: n, xy: P(la, lo), lat: la, lon: lo, st, co, lm: !!lm }));
     const FOREST = [[34.2, -118.4], [34.42, -118.52], [34.55, -118.3], [34.45, -117.72], [34.3, -117.62], [34.17, -117.85], [34.17, -118.15]];
     const circle = ([x, y], r) => 'M' + (x - r) + ' ' + y + 'a' + r + ' ' + r + ' 0 1 0 ' + 2 * r + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0Z';
     const bbox = (pts) => { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; pts.forEach(([x, y]) => { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); }); return [a, b, c, d]; };
@@ -1064,7 +1075,34 @@ class Component extends DCLogic {
     const v = this.clampView(cx, cy, s); this._pv = Object.assign({}, this._pv || {}, v);
     // One redraw per screen frame: touch events arrive faster than the phone draws (120 Hz screens send even more),
     // so moves in between only update the remembered view and the next frame draws the latest one
-    this._pvNext = v; if (!this._pvRaf) this._pvRaf = requestAnimationFrame(() => { this._pvRaf = 0; const n = this._pvNext; this._pvNext = null; if (n) this.setState(n); });
+    this._pvNext = v; if (!this._pvRaf) this._pvRaf = requestAnimationFrame(() => { this._pvRaf = 0; const n = this._pvNext; this._pvNext = null; if (!n) return;
+      // During a drag, pinch or glide the drawn layers move as one picture; a full redraw (new tiles, markers) at most ~4 times a second
+      const t = performance.now(); if (this._gest && this._rv && t - (this._fullT || 0) < 250 && this.imgMove(n)) return;
+      this._fullT = t; this.setState(n); });
+  }
+  imgMove(n) {
+    const R = this._rv; if (!this.el || !R) return false;
+    const L = this.el.querySelectorAll('[data-wf-gl]'); if (!L.length) return false;
+    const k = n.s / R.s, dx = (R.cx - n.cx) * n.s, dy = (R.cy - n.cy) * n.s, T = 'translate(' + dx.toFixed(2) + 'px, ' + dy.toFixed(2) + 'px) scale(' + k.toFixed(5) + ')';
+    for (const e of L) e.style.transform = T;
+    return true;
+  }
+  // The gesture ends: draw the final view for real (the picture transform is reset by the redraw)
+  endGest() { this._gest = false; if (this._pvRaf) { cancelAnimationFrame(this._pvRaf); this._pvRaf = 0; } this._pvNext = null; this._fullT = performance.now(); const v = this.view(); this.setState({ cx: v.cx, cy: v.cy, s: v.s }); }
+  // A found place (Main's search): frame its box (lat/lon, at least ~4 km across) in the clear part of the map, then let the
+  // area follow the map as it does after a pan
+  flyTo(lat, lon, bb) {
+    const G = this.geo(); if (!G || !G.P) return false;
+    const c = G.P(lat, lon), w = this.win(), H = this.H();
+    let dx = 0, dy = 0; if (bb) { const a = G.P(bb[0], bb[2]), b = G.P(bb[1], bb[3]); dx = Math.abs(b[0] - a[0]); dy = Math.abs(b[1] - a[1]); }
+    const k = Math.abs(G.P(lat, lon + 0.036)[0] - c[0]) / Math.max(0.1, 4 * Math.cos(lat * Math.PI / 180));   // world px per km
+    dx = Math.max(dx, 4 * k); dy = Math.max(dy, 4 * k);
+    const s = Math.min(this.zMax(), Math.max(this.zMin(), Math.min((w.cw - 64) / dx, (w.h - 64) / dy)));
+    const v = this.clampView(c[0] + ((w.r - w.l) / 2) / s, c[1] + (H / 2 - w.c) / s, s);
+    this.stopGlide(); this._animUntil = Date.now() + 700; this._pv = Object.assign({}, this._pv || {}, v);
+    this.setState({ ...v, selId: '__none', pop: null });
+    clearTimeout(this._rgT); this._rgT = setTimeout(() => this.regionCheck(), 800);
+    return true;
   }
   zoomAt(lx, ly, f) {
     const v = this.view();
@@ -1084,6 +1122,7 @@ class Component extends DCLogic {
     const c = this.clampView(this.view().cx, this.view().cy, this.view().s);
     const s = c.s;
     const tx = W / 2 - c.cx * s, ty = H / 2 - c.cy * s;
+    this._rv = c; this._glFlip = !this._glFlip;   // the drawn view; the flip makes every redraw rewrite the layers' transform
     const at = (x, y, extra) => ({ left: +(tx + x * s).toFixed(1), top: +(ty + y * s).toFixed(1), blur: extra && extra.bg && extra.bg !== 'transparent' ? 'blur(8px)' : 'none', ...extra });   // a bare icon gets no frosted halo
     const WN = this.win();
     const ck = WN.t + ',' + WN.b + ',' + WN.l + ',' + WN.r;
@@ -1140,13 +1179,13 @@ class Component extends DCLogic {
     const SF = this.stationFile();
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
-      const SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], 34, s);   // fixed per zoom step: no popping while panning
+      const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 72 : zr < 4 ? 52 : 34, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
       // On a fire or candidate only the recommended stations show (see nearSt), labelled with their distance;
       // who is actually committed is not published.
       const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km])), onlyRec = this.recMode();
       const inSc = onlyRec ? null : this.inScopeFn();
       for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((onlyRec ? NEAR.has(i) : (SK.has(i) || NEAR.has(i))) && vis(q[0], q[1]) && (!inSc || NEAR.has(i) || inSc(q[0], q[1]))) V.push(i); }
-      const k = Math.max(1, Math.ceil(V.length / 300));
+      const k = Math.max(1, Math.ceil(V.length / 160));
       const out = [];
       for (let j = 0; j < V.length; j++) { if (j % k && !NEAR.has(V[j])) continue;
         const r = SF.rows[V[j]], xy = SF.pts[V[j]], la = r[2], lo = r[3], ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
@@ -1202,6 +1241,7 @@ class Component extends DCLogic {
 
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     const OUT = {
+      glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
       zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
       cursor: (this.state || {}).dragging ? 'grabbing' : 'grab',
