@@ -195,7 +195,7 @@
     root.classList.toggle('wf-dark', theme === 'dark');
     root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
     var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme === 'dark' ? '#262629' : '#F2F2F7');
-    var sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]'); if (sb) sb.setAttribute('content', theme === 'dark' ? 'black' : 'default');
+    var sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]'); if (sb) sb.setAttribute('content', 'black-translucent');   /* the map and the blur run under the status bar */
     if (document.body) ensureNightFilter(); else document.addEventListener('DOMContentLoaded', ensureNightFilter);   // both tile filters: night, and the less saturated day map
     // Scroll fades take the new theme's colours at once (measured again now and once colour transitions have settled)
     var refade = function () { if (typeof FSEL === 'undefined' || !FSEL) return; document.querySelectorAll(FSEL).forEach(function (f) { f.__wfCol = null; }); if (window.__wfFade) window.__wfFade(); };

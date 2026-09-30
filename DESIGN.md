@@ -239,3 +239,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Map speed:** nothing outside the map watches it per frame (fades and card sizing ignore map changes; no page-wide searches on timers); a selected station alone draws its mask; while dragging the drawn map moves as one picture and redraws fully at most about twice a second.
 - **Round controls press:** besides the translucent press highlight, a round control swells 10% and returns at once (260 ms), app-wide.
 - **Incidents list:** the app's search field and a switcher (All / Candidates / Fires) above the list; the subtitle keeps the full counts.
+- **Under the status bar (installed app):** the status bar is translucent; the frame runs from the very top, so maps and blurs continue under the clock and the camera. The incidents list, open, rises to the top safe area (just under the status bar).

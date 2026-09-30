@@ -74,7 +74,9 @@ window.__wfBlink=function(path,dur){
 // Scale: the short side of the screen maps to 390 design pixels (so text stays phone-sized), up to 1.6×
 // on large screens such as a TV. The other screens keep the fixed 390×844 phone frame for now.
 (function(){
-  var W=390,H=844,TOP=52,VH=H-TOP,MAXS=1.6;
+  /* Installed on the home screen, the page runs under the status bar (translucent): the frame's own top 52px show there, so maps and blurs continue under the clock and the camera; in a browser tab the bar is the browser's */
+  var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+  var W=390,H=844,TOP=SA?0:52,VH=H-TOP,MAXS=1.6;
   var m=document.querySelector('meta[name="wf-layout"]'),fluid=!!(m&&m.getAttribute('content')==='fluid');
   var st=document.createElement('style');
   st.textContent='html,body{background:#F2F2F7;overflow:hidden;height:100%;margin:0;overscroll-behavior:none}'+
