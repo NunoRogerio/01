@@ -77,7 +77,8 @@ window.__wfBlink=function(path,dur){
   /* Installed on the home screen, the page runs under the status bar (translucent): the frame's own top 52px show there, so maps and blurs continue under the clock and the camera; in a browser tab the bar is the browser's */
   var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   /* only when the page really runs under the status bar (a top safe area): an app installed before the change keeps the old bar */
-  var UNDER=false;try{if(SA){var pr=document.createElement('div');pr.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';document.documentElement.appendChild(pr);UNDER=(parseFloat(getComputedStyle(pr).paddingTop)||0)>20;pr.remove();if(!UNDER&&Math.max(innerWidth,innerHeight)>=Math.max(screen.width,screen.height)-2)UNDER=true;}}catch(e){}
+  function under(){var u=false;try{if(SA){var pr=document.createElement('div');pr.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';(document.body||document.documentElement).appendChild(pr);u=(parseFloat(getComputedStyle(pr).paddingTop)||0)>20;pr.remove();if(!u&&Math.max(innerWidth,innerHeight)>=Math.max(screen.width,screen.height)-2)u=true;}}catch(e){}return u;}
+  var UNDER=under();
   var W=390,H=844,TOP=UNDER?0:52,VH=H-TOP,MAXS=1.6;window.__wfTOP=TOP;
   var m=document.querySelector('meta[name="wf-layout"]'),fluid=!!(m&&m.getAttribute('content')==='fluid');
   var st=document.createElement('style');
@@ -112,6 +113,10 @@ window.__wfBlink=function(path,dur){
   var t=0;function later(){fit();clearTimeout(t);t=setTimeout(fit,350);}
   window.addEventListener('resize',later);window.addEventListener('orientationchange',later);
   document.addEventListener('DOMContentLoaded',fit);
+  // Too early, the phone may not report the status bar yet: once the page is laid out, check again. Running under the
+  // status bar, the screen's own top shows there (photos and maps fill the whole screen, up behind the camera).
+  function recheck(){if(TOP===0||!under())return;TOP=0;VH=H;window.__wfTOP=0;st.textContent=st.textContent.replace(/top:-52px/,'top:-0px');last='';fit();try{window.dispatchEvent(new Event('wf-vp'));window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
+  document.addEventListener('DOMContentLoaded',recheck);window.addEventListener('load',function(){recheck();setTimeout(recheck,300);});
 })();
 // Crash guard: if the last screen died without closing normally (Safari's "A problem repeatedly occurred"),
 // forget the area and screen it was showing, so the app reopens on the default view instead of crashing again.
