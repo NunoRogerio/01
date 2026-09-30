@@ -16,7 +16,7 @@
 <script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=80"></script>
-<script src="i18n.js?v=59"></script>
+<script src="i18n.js?v=60"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
 
@@ -394,7 +394,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- KPI cards: white, 16px corners, a light shadow. Press and hold a card, then slide it to put the KPIs in your own order (kept on this phone) -->
       <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; flex-wrap: wrap; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: flex-start">
         <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="4">
-          <div role="listitem" data-wf-kpi="{{m.key}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc(50% - 4px); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
+          <div role="listitem" data-wf-kpi="{{m.key}}" data-g="kpi" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc(50% - 4px); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
             <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
               <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{m.l}}</span>
               <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C">{{m.u}}</span></span>
@@ -467,6 +467,23 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               </li>
             </sc-for>
           </ul>
+        </li>
+        </sc-if>
+        <sc-if value="{{d.cx}}" hint-placeholder-val="{{ false }}">
+        <li role="presentation" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 16px 16px 8px; box-sizing: border-box">
+          <h3 style="margin: 0 0 12px; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">Conditions</h3>
+          <div role="list" aria-label="Conditions at the fire. Press and hold a card, then move it to reorder" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
+            <sc-for list="{{d.cards}}" as="m" hint-placeholder-count="6">
+              <div role="listitem" data-wf-kpi="{{m.key}}" data-g="cond" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc(50% - 4px); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
+                <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; box-sizing: border-box; padding: 12px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease; text-align: center">
+                  <span style="font-size: 15px; line-height: 20px; color: #6E6E73; max-width: 100%">{{m.l}}</span>
+                  <span style="display: {{m.numD}}; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C">{{m.u}}</span></span>
+                  <span style="display: {{m.txtD}}; margin-top: 4px; font-size: 17px; line-height: 22px; font-weight: 700; color: #3A3A3C">{{m.txt}}</span>
+                  <span style="display: {{m.subD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.sub}}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
         </li>
         </sc-if>
         <sc-if value="{{d.stc}}" hint-placeholder-val="{{ false }}">
@@ -713,12 +730,13 @@ class Component extends DCLogic {
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   // KPI cards: press and hold (250 ms) lifts a card; sliding it sideways moves it among the others; letting go keeps the new order
   // KPI cards: press and hold (250 ms) lifts a card; moving it over another place makes room there; letting go keeps the new order
-  wfKpiDrag(key) {
+  wfKpiDrag(key, grp) {
+    grp = grp || 'kpi'; const SK = grp === 'kpi' ? 'wf-kpi-order' : 'wf-order-' + grp;
     const self = this;
     // While a card is lifted the page must not scroll, so it can move up and down too (touch-action is fixed at touch start,
     // so the scroll is stopped here, on each touch move, only while a card is held)
     if (!window.__wfKpiTM) { window.__wfKpiTM = true; document.addEventListener('touchmove', (e) => { if (window.__wfKpiLift) e.preventDefault(); }, { passive: false, capture: true }); }
-    const cards = () => [...document.querySelectorAll('[data-wf-kpi]')];
+    const cards = () => [...document.querySelectorAll('[data-wf-kpi][data-g="' + grp + '"]')];
     const reset = () => cards().forEach((c) => { c.style.transform = ''; c.style.zIndex = ''; c.style.transition = ''; const k = c.querySelector('[data-wf-kpicard]'); if (k) k.style.boxShadow = ''; });
     return {
       noMenu: (e) => { try { e.preventDefault(); } catch (x) {} },
@@ -739,8 +757,8 @@ class Component extends DCLogic {
         order.forEach((j, pos) => { if (j === d.idx) return; const c = L[j], a = d.slots[j], b = d.slots[pos]; c.style.transform = pos !== j ? 'translate(' + (b[0] - a[0]).toFixed(1) + 'px, ' + (b[1] - a[1]).toFixed(1) + 'px)' : ''; }); },
       up: () => { clearTimeout(self._kpT); window.__wfKpiLift = false; const d = self._kd; self._kd = null; if (!d || !d.lifted) return; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}
         const L = cards().map((c) => c.getAttribute('data-wf-kpi')), from = d.idx, to = d.to; if (to !== from) { const [x] = L.splice(from, 1); L.splice(to, 0, x); }
-        let all = null; try { all = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (x) {} all = Array.isArray(all) ? all : ['rate', 'area', 'size', 'pers']; const rest = all.filter((q) => L.indexOf(q) < 0);
-        try { localStorage.setItem('wf-kpi-order', JSON.stringify(L.concat(rest))); } catch (x) {}
+        let all = null; try { all = JSON.parse(localStorage.getItem(SK) || 'null'); } catch (x) {} all = Array.isArray(all) ? all : []; const rest = all.filter((q) => L.indexOf(q) < 0);
+        try { localStorage.setItem(SK, JSON.stringify(L.concat(rest))); } catch (x) {}
         reset(); self.forceUpdate(); }
     };
   }
@@ -1170,7 +1188,16 @@ class Component extends DCLogic {
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
         if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources not published' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#1E7A34'));
-        rows.push(row('Conditions', 'Wind ' + I.wind + ' km/h ' + I.from, I.temp + ' °C · humidity ' + I.rh + '% · fuel moisture ' + I.md + '% · slope ' + I.slope + '° · ' + I.fuel + ' · head ' + I.head + ' m/min', '#0079A6'));
+        if (RO) {
+          // Conditions as cards, like the KPIs (press, hold and move to reorder; kept on the phone)
+          const U = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units || {}; return { temp: v.temp || (frow && frow.st !== 'PT' && frow.st !== 'BRA' ? 'F' : 'C') }; })(), tC = U.temp === 'F' ? Math.round(I.temp * 9 / 5 + 32) + ' °F' : I.temp + ' °C';
+          const C0 = [{ key: 'wind', l: 'Wind', v: I.wind + ' km/h', sub: 'From ' + I.from }, { key: 'temp', l: 'Temperature', v: tC }, { key: 'rh', l: 'Humidity', v: I.rh + ' %' },
+            { key: 'md', l: 'Fuel moisture', v: I.md + ' %' }, { key: 'slope', l: 'Slope', v: I.slope + ' °' }, { key: 'head', l: 'Head spread', v: I.head + ' m/min' }, { key: 'fuel', l: 'Fuel', v: '', txt: String(I.fuel || '') }];
+          let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-cond') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : C0.map((q) => q.key);
+          const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; C0.sort((a, b) => ix(a.key) - ix(b.key));
+          const cards = C0.map((m) => { const q = /^(\S+)\s+(.+)$/.exec(m.v); return { ...m, n: q ? q[1] : m.v, u: q ? q[2] : '', uD: q ? 'inline' : 'none', numD: m.txt ? 'none' : 'flex', txtD: m.txt ? 'block' : 'none', txt: m.txt || '', subD: m.sub ? 'block' : 'none', sub: m.sub || '', ...this.wfKpiDrag(m.key, 'cond') }; });
+          rows.push({ cx: true, item: false, label: 'Conditions', cards });
+        } else rows.push(row('Conditions', 'Wind ' + I.wind + ' km/h ' + I.from, I.temp + ' °C · humidity ' + I.rh + '% · fuel moisture ' + I.md + '% · slope ' + I.slope + '° · ' + I.fuel + ' · head ' + I.head + ' m/min', '#0079A6'));
       }
       rows.forEach((r) => { r.g = 'fire'; });
       deployed.unshift(...rows);
@@ -1212,7 +1239,7 @@ class Component extends DCLogic {
         left: 'Started ' + clk(t0), right: etr ? 'Expected containment ~' + clk(etr) : (HELD || cur > 0 && frow.st !== 'PT' ? '' : 'No containment estimate yet'), note, noteD: note ? 'block' : 'none' };
     })();
     if (TL) deployed.unshift(TL);
-    deployed.forEach((d) => { if (d.tl) return; if (!d.bar) d.bar = d.c; d.item = true; if (!d.g) d.g = 'res'; d.barD = Number(d.w) > 0 ? 'block' : 'none'; });
+    deployed.forEach((d) => { if (d.tl || d.cx) return; if (!d.bar) d.bar = d.c; d.item = true; if (!d.g) d.g = 'res'; d.barD = Number(d.w) > 0 ? 'block' : 'none'; });
     // Fighting a fire: personnel and the second figure are already the two numbers at the top, so they are not listed again;
     // the rest of what is on scene stays, without an 'On scene' heading (the title already says it).
     if (RO && RU) { const shown = RU.map((r) => r[0]); for (let i = deployed.length - 1; i >= 0; i--) { const d = deployed[i]; if (d.item && d.g === 'res') { if (shown.indexOf(d.label) >= 0) deployed.splice(i, 1); else d.from = ''; } } }
@@ -1442,8 +1469,12 @@ class Component extends DCLogic {
         const SC = (() => { if (!(HA > 0)) return null; const ac = HA / 0.4047, T = [0.25, 10, 100, 300, 1000, 5000], i = T.filter((x) => ac >= x).length, L = 'ABCDEFG'[i];
           const hs = [4, 7, 10, 13, 17, 22, 28], bars = hs.map((h, j) => 'M' + (j * 100 / 7 + 2).toFixed(2) + ' ' + (28 - h) + 'h' + (100 / 7 - 4).toFixed(2) + 'v' + h + 'h-' + (100 / 7 - 4).toFixed(2) + 'Z');
           return { key: 'size', v: L, l: 'Size class', note: haEst ? 'Estimate' : '', ch: { ...none, svgD: 'block', bars: bars.filter((_, j) => j !== i).join(''), barC: 'rgba(118,118,128,0.22)', bar2: bars[i], bar2C: '#3A3A3C', aria: 'Size class ' + L + ' of A to G (NWCG)' } }; })();
-        const med0 = [grow ? { key: 'rate', v: grow.v, l: 'Spread rate', ch: grow.chR } : null, SC,
-          { key: 'area', v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published' : '' }, pers ? { key: 'pers', v: pers, l: 'Personnel', ch: chP } : null].filter(Boolean);
+        // Always the same four cards, so the layout never jumps while data arrives: a missing figure shows a dash
+        const NP = HELD ? '' : 'Not published';
+        const med0 = [grow ? { key: 'rate', v: grow.v, l: 'Spread rate', ch: grow.chR } : { key: 'rate', v: '—', l: 'Spread rate', ch: none, note: NP },
+          SC || { key: 'size', v: '—', l: 'Size class', ch: none, note: NP },
+          { key: 'area', v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published' : '' },
+          pers ? { key: 'pers', v: pers, l: 'Personnel', ch: chP } : { key: 'pers', v: '—', l: 'Personnel', ch: none, note: NP }];
         { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['rate', 'area', 'size', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
         const two = false, colW = 175 - 16;
         const med = med0.map((m, i) => ({ note: '', ...m, ...(() => { const q = /^(\S+)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: Math.min(34, Math.floor(colW * 0.62 / Math.max(1, (/^(\S+)/.exec(String(m.v)) || ['', ''])[1].length * 0.56))) + 'px' }));
