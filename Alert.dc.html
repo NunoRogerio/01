@@ -16,9 +16,9 @@
 <script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=87"></script>
-<script src="i18n.js?v=74"></script>
+<script src="i18n.js?v=75"></script>
 <script src="live.js?v=33"></script>
-<script src="chat.js?v=18"></script>
+<script src="chat.js?v=19"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -400,7 +400,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <p style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.place}}. Unconfirmed.</p>
     <div class="wf-dlg-acts">
       <button type="button" class="btn wf-sec" onClick="{{mo.dismiss}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 600">Dismiss</button>
-      <button type="button" class="btn primary" onClick="{{mo.confirm}}" style="height: 48px; font-size: 17px; font-weight: 600">Confirm fire</button>
+      <button type="button" class="btn primary" onClick="{{mo.confirm}}" style="height: 48px; font-size: 17px; font-weight: 600">Confirm</button>
     </div>
   </section>
   <div class="scrim" onClick="{{closeDz}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{dzOp}}; pointer-events: {{dzPE}}"></div>
@@ -1011,7 +1011,7 @@ class Component extends DCLogic {
       openDz: () => this.setState({ dz: true, dd: false }), closeDz: () => this.setState({ dz: false }),
       mo: (() => { const M = !!s.morph, O = !!s.so && !M;
         return { kind: M ? 'Active fire' : 'Ignition candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : 'var(--wf-y)', fg: M ? '#B84A00' : '#1C1C1E', chevD: M ? 'none' : 'block', triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
-          aria: M ? 'Active fire. Not contained' : 'Unconfirmed. Confirm fire or dismiss', pageCls: M ? 'morph' : '',
+          aria: M ? 'Active fire. Not contained' : 'Unconfirmed. Confirm or dismiss', pageCls: M ? 'morph' : '',
           op: O ? 1 : 0, pe: O ? 'auto' : 'none', hidden: O ? 'false' : 'true', y: O ? '0%' : '105%',
           open: () => { if (!M) this.setState({ so: true, dd: false }); }, close: () => this.setState({ so: false }),
           dismiss: () => { this.setState({ so: false }); setTimeout(() => this.setState({ dz: true }), 260); },

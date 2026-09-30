@@ -420,7 +420,7 @@
   function actions(c) {
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
-    if (s === 0) { A.push({ key: 'confirm', en: 'Confirm fire', pt: 'Confirmar incêndio', primary: true }); if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Verificar por drone' }); A.push({ key: 'dismiss', en: 'Dismiss', pt: 'Descartar' }); }
+    if (s === 0) { A.push({ key: 'confirm', en: 'Confirm', pt: 'Confirmar', primary: true }); if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Verificar por drone' }); A.push({ key: 'dismiss', en: 'Dismiss', pt: 'Descartar' }); }
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch orders', pt: 'Configurar ordens de despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air) A.push({ key: 'next', en: 'Move to Being resolved', pt: 'Passar a Em resolução', primary: true }); }
