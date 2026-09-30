@@ -58,8 +58,8 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
   - avatars are full circles, the same size as the round X.
 - **Dividers** between list items run the full width of their container.
 - **Horizontal bars** (progress, stamina, water, stage timelines): 16px tall, fully rounded ends.
-- **KPI groups** read label (annotation) → value → micro chart. Micro trends are small charts (28px tall, 70% of the column width, centred; a line for rates, bars for amounts; a note, if any, goes under the chart so charts stay level) over the item's own span; all charts in a group share one span, so one note under them gives it ("Since 18 Sep.") plus "Estimated…" when estimated. A KPI whose chart would say nothing (time active) has none. Four KPIs sit 2 × 2, with 32px between the two rows.
-- **Fire detail KPI order:** spread rate, time active, burned area, personnel.
+- **KPI groups** read label (annotation) → value → micro chart. Micro trends are small charts (22px tall, 56% of the card width, centred; a line for rates, bars for amounts; a note, if any, goes under the chart so charts stay level) over the item's own span; all charts in a group share one span, so one note under them gives it ("Since 18 Sep.") plus "Estimated…" when estimated. A KPI whose chart would say nothing (time active) has none.
+- **Fire detail KPIs:** three white cards (16px corners, light shadow) side by side: spread rate, burned area, personnel by default. The number is the KPI, its unit follows in 15px semibold. Press and hold a card (250 ms, light haptic), slide it sideways and let go to reorder; the order is kept on the phone. Time active is not a KPI card: it sits in the header band.
 - **Burned area comes with its spread rate:** area added per interval (hourly under a day, every 6 h under a week, else daily), latest interval as the KPI ("17 ha/day") and in full colour.
 
 ## 3. Colour and themes
@@ -123,7 +123,7 @@ The one from the user preferences, used everywhere:
 - The page scroll has no snapping.
 - Actions sit side by side on one row, 16px from the sides and 32px from the bottom edge. The team chat lives in its button (chat icon before the label, unread badge on it), not in the header. This is the one text button with a leading icon, by Nuno's choice.
 - No blades and no back button (Done at the bottom closes the page, so the header aligns with the content): only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 180px band without legend, framed on the fire's shape, full screen from its button or a tap) and all the information scroll together in one column.
-- The kind band carries the stage: its text takes the stage colour while the fire is in its first (active) stage, and the stage tag shows only for later stages (no "Active fire" + "Active"). A 4px stages bar sits under the band; a tap on the band or bar opens the stage details (stage and time in it, start, containment estimate, the stage steps).
+- The kind band on a fire detail reads: dot (active orange, resolved dark brown), the stage tag, and on the right the time active (live) or the final duration. A 4px stages bar sits under the band; a tap on the band or bar opens the stage details (stage and time in it, start, containment estimate, the stage steps).
 - Fire detail order: map band (180px, no legend, framed on the fire's shape), KPIs with charts, conditions and model, endurance (simulated), stations as small cards (station symbol, name in Title XS, distance and drive time, crews free simulated), source.
 - Where no perimeter is mapped, the model's outline is irregular and fire-like (lobes, stretched along one axis) with the reported area, never a circle.
 - On a fire's maps the perimeter polygon (burned, active front, held edge) replaces the fire dot when the model or source gives it.

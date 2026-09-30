@@ -16,7 +16,7 @@
 <script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=79"></script>
-<script src="i18n.js?v=57"></script>
+<script src="i18n.js?v=58"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
 
@@ -192,7 +192,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{hd.c}}">{{hd.title}}</h1>
       <span title="{{hd.sub}}" style="margin-top: 2px; font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span>
       <!-- What it is: the qualifier band, as on the ignition candidate card, in the map marker's deep orange -->
-      <span class="wf-qual" role="{{tlRole}}" aria-expanded="{{tlOpenStr}}" onClick="{{tlToggle}}" style="margin-top: 12px; margin-right: {{qualMr}}; color: {{kindC}}; cursor: {{tlCur}}"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg>{{hd.kind}}<span role="status" style="display: {{hdTagD}}; align-items: center; margin-left: auto; margin-right: -4px; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{cc.tag}}</span></span>
+      <span class="wf-qual" role="{{tlRole}}" aria-expanded="{{tlOpenStr}}" onClick="{{tlToggle}}" style="margin-top: 12px; margin-right: {{qualMr}}; color: {{kindC}}; cursor: {{tlCur}}"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{kindDot}}"></path></svg><span style="display: {{kindD}}; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis">{{hd.kind}}</span><span role="status" aria-label="{{hd.kind}}. {{cc.tag}}" style="display: {{hdTagD}}; flex-shrink: 0; align-items: center; margin-left: {{tagMl}}; margin-right: 0; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{cc.tag}}</span><span aria-label="{{hdTimeAria}}" style="display: {{hdTimeD}}; flex-shrink: 0; margin-left: auto; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C; white-space: nowrap; font-variant-numeric: tabular-nums"><span style="display: {{hdLiveD}}" data-tl-since="{{hdT0}}"></span>{{hdTimeTxt}}</span></span>
       <!-- The stages as a thin bar under the band; a tap on the band or the bar shows the stage details -->
       <span role="img" aria-label="Stages over time" onClick="{{tlToggle}}" style="display: {{tlBarD}}; height: 4px; margin-right: {{qualMr}}; background: rgba(60,60,67,0.12); overflow: hidden; cursor: pointer"><sc-for list="{{tlBar}}" as="sg" hint-placeholder-count="0"><span style="flex: 0 0 {{sg.w}}%; background: {{sg.bg}}; opacity: {{sg.op}}"></span></sc-for></span>
       <div style="display: {{tlDetD}}; flex-direction: column; margin-right: {{qualMr}}">
@@ -391,23 +391,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <path d="{{cc.bch.line}}" fill="none" stroke="{{cc.bch.lineC}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
       </svg>
       <!-- Medium KPIs, each with its own micro chart under the label (2 × 2 when there are four) -->
-      <div style="display: {{cc.medD}}; flex-wrap: wrap; justify-content: center; gap: 0; width: 100%; margin-top: {{cc.medMt}}">
-        <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="2">
-          <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 {{m.basis}}; min-width: 0; box-sizing: border-box; padding: 0 8px; margin-top: {{m.mt}}; border-left: {{m.sep}}">
-            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{m.l}}</span>
-            <span class="kpi wf-big" style="--k: {{m.k}}; white-space: nowrap">{{m.v}}</span>
-            <svg role="img" aria-label="{{m.ch.aria}}" width="70%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{m.ch.svgD}}; margin-top: 8px; overflow: visible">
+      <!-- KPI cards: white, 16px corners, a light shadow. Press and hold a card, then slide it to put the KPIs in your own order (kept on this phone) -->
+      <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: stretch">
+        <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="3">
+          <div role="listitem" data-wf-kpi="{{m.key}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; box-sizing: border-box; padding: 12px 4px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease">
+            <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{m.l}}</span>
+            <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C">{{m.u}}</span></span>
+            <svg role="img" aria-label="{{m.ch.aria}}" width="56%" height="22" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{m.ch.svgD}}; margin-top: 8px; overflow: visible">
               <path d="{{m.ch.area}}" fill="{{m.ch.areaFill}}" stroke="none"></path>
               <path d="{{m.ch.line}}" fill="none" stroke="{{m.ch.lineC}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
               <path d="{{m.ch.bars}}" fill="{{m.ch.barC}}" stroke="none"></path>
               <path d="{{m.ch.bar2}}" fill="{{m.ch.bar2C}}" stroke="none"></path>
             </svg>
-            <span class="wf-note" style="display: {{m.noteD}}; margin-top: 4px">{{m.note}}</span>
-            <div role="img" aria-label="{{m.ch.aria}}" style="display: {{m.ch.segD}}; width: 100%; height: 8px; margin-top: 28px; border-radius: 4px; overflow: hidden; background: rgba(118,118,128,0.14)">
-              <sc-for list="{{m.ch.segs}}" as="q" hint-placeholder-count="1">
-                <div style="flex: 0 0 {{q.w}}%; background: {{q.bg}}; opacity: {{q.op}}"></div>
-              </sc-for>
-            </div>
+            <span class="wf-note" style="display: {{m.noteD}}; margin-top: 4px; text-align: center">{{m.note}}</span>
           </div>
         </sc-for>
       </div>
@@ -712,6 +708,30 @@ class Component extends DCLogic {
     return { sum: sum.map((k, i) => ({ ...k, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })), units };
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
+  // KPI cards: press and hold (250 ms) lifts a card; sliding it sideways moves it among the others; letting go keeps the new order
+  wfKpiDrag(key) {
+    const self = this;
+    const cards = () => [...document.querySelectorAll('[data-wf-kpi]')];
+    const reset = () => cards().forEach((c) => { c.style.transform = ''; c.style.zIndex = ''; c.style.boxShadow = ''; });
+    return {
+      noMenu: (e) => { try { e.preventDefault(); } catch (x) {} },
+      down: (e) => { const el = e.currentTarget, x0 = e.clientX, y0 = e.clientY; let k = 1; try { const R = el.closest('[data-wfroot]').getBoundingClientRect(); k = R.width / 390 || 1; } catch (x) {}
+        clearTimeout(self._kpT); self._kd = { key, el, x0, y0, k, lifted: false, pid: e.pointerId };
+        self._kpT = setTimeout(() => { const d = self._kd; if (!d || d.key !== key) return; d.lifted = true; const L = cards(); d.idx = L.indexOf(d.el); d.slot = (d.el.getBoundingClientRect().width / d.k) + 8; d.to = d.idx;
+          try { d.el.setPointerCapture(d.pid); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
+          d.el.style.zIndex = '3'; d.el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.16)'; d.el.style.transition = 'box-shadow .2s ease'; d.el.style.transform = 'scale(1.04)'; }, 250); },
+      move: (e) => { const d = self._kd; if (!d || d.key !== key) return;
+        if (!d.lifted) { if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 8) { clearTimeout(self._kpT); self._kd = null; } return; }
+        const dx = (e.clientX - d.x0) / d.k, L = cards(), n = L.length; d.to = Math.max(0, Math.min(n - 1, Math.round(d.idx + dx / d.slot)));
+        d.el.style.transform = 'translateX(' + dx.toFixed(1) + 'px) scale(1.04)';
+        L.forEach((c, j) => { if (c === d.el) return; let sh = 0; if (d.to > d.idx && j > d.idx && j <= d.to) sh = -d.slot; if (d.to < d.idx && j < d.idx && j >= d.to) sh = d.slot; c.style.transform = sh ? 'translateX(' + sh + 'px)' : ''; }); },
+      up: () => { clearTimeout(self._kpT); const d = self._kd; self._kd = null; if (!d || !d.lifted) return;
+        const L = cards().map((c) => c.getAttribute('data-wf-kpi')), from = d.idx, to = d.to; if (to !== from) { const [x] = L.splice(from, 1); L.splice(to, 0, x); }
+        let all = null; try { all = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (x) {} all = Array.isArray(all) ? all : ['rate', 'area', 'pers']; const rest = all.filter((q) => L.indexOf(q) < 0);
+        try { localStorage.setItem('wf-kpi-order', JSON.stringify(L.concat(rest))); } catch (x) {}
+        d.el.style.transition = ''; reset(); self.forceUpdate(); }
+    };
+  }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
   componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); }
   // The forces blade, lowered, shows its title and the KPIs only; the rest comes up with a swipe up
@@ -1343,10 +1363,10 @@ class Component extends DCLogic {
           : { title: fv ? (/^[A-Za-z]{2,5}-?\d{3,}$/.test(fv.place || '') ? (frow && frow.parent ? 'Near ' + frow.parent : 'Unnamed fire') : fv.place) : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held fire' : 'Active fire', tagD: 'none', pillD: RO ? 'none' : 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
-      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? (tlTop[0] && !tlTop[0].cur ? 'none' : 'inline-flex') : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
+      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? 'inline-flex' : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
       pgScroll: (e) => { if (!RO) return; try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
       mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - MAPH) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
-      hdrB: this._hdrB || 170, MAPH, tlTop, hdChatD: RO ? 'none' : 'flex', mapNoLeg: RO && !s.full, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: T ? 'button' : 'note', tlOpenStr: op ? 'true' : 'false', tlToggle: T ? () => this.setState({ tlOpen: !op }) : null, tlCur: T ? 'pointer' : 'default', tlBarD: T ? 'flex' : 'none', tlBar: T ? T.segs : [], tlDetD: T && op ? 'flex' : 'none', kindC: T && !T.cur ? T.curC : '#1C1C1E' }; })(), qualMr: RO ? '-4px' : '-52px',
+      hdrB: this._hdrB || 170, MAPH, tlTop, hdChatD: RO ? 'none' : 'flex', kindD: RO ? 'none' : 'inline', kindDot: HELD ? '#6F2B06' : '#E8590C', tagMl: RO ? '-2px' : 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const fin = RO && HELD && HELD.took != null ? DUR(HELD.took) : ''; return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: RO && !s.full, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: T ? 'button' : 'note', tlOpenStr: op ? 'true' : 'false', tlToggle: T ? () => this.setState({ tlOpen: !op }) : null, tlCur: T ? 'pointer' : 'default', tlBarD: T ? 'flex' : 'none', tlBar: T ? T.segs : [], tlDetD: T && op ? 'flex' : 'none', kindC: '#1C1C1E' }; })(), qualMr: RO ? '-4px' : '-52px',
       chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: 'Team chat', rowD: 'none', title: '', time: '', timeC: '#545458', last: '' };
         const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
         const lm = ex ? C.lastMsg(ex) : null, who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? 'You' : (ex.people[lm.from] || {}).name || '') : '';
@@ -1405,10 +1425,12 @@ class Component extends DCLogic {
         const P = Number(String(pers).replace(/\D/g, '')), pv = [...Array(12)].map((_, i) => Math.round(P * Math.min(1, 0.25 + i / 11 * 1.6))), chP = live && P ? { ...none, svgD: 'block', bars: barsOf(pv, P, 0, 12), barC: '#636366', aria: 'Personnel built up to ' + pers } : none;
         const chB = live && pcT ? { ...trend([...Array(12)].map((_, i) => I.pc * Math.pow(i / 11, 1.6)), 100, '#1E7A34', 'rgba(52,199,89,0.14)'), aria: 'Containment rose to ' + I.pc + '%' } : none;
         // Order: how fast it spreads, how long it has burned, how much, who is on it. Time active needs no chart (the stages bar sits under the map)
-        const med0 = [grow ? { v: grow.v, l: 'Spread rate', ch: grow.chR } : null, t ? { v: t, l: HELD ? 'Final duration' : 'Time active', ch: none } : null,
-          { v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published yet.' : '' }, pers ? { v: pers, l: 'Personnel', ch: chP } : null].filter(Boolean);
-        const two = med0.length === 4, colW = two ? 163 : Math.floor(358 / Math.max(1, med0.length)) - 16;
-        const med = med0.map((m, i) => ({ note: '', ...m, noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: Math.min(two ? 28 : med0.length > 2 ? 28 : 34, Math.floor(colW / (String(m.v).length * 0.56))) + 'px' }));
+        // Time active sits in the header now; three KPI cards in the user's own order (press, hold and slide to reorder)
+        const med0 = [grow ? { key: 'rate', v: grow.v, l: 'Spread rate', ch: grow.chR } : null,
+          { key: 'area', v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published yet.' : '' }, pers ? { key: 'pers', v: pers, l: 'Personnel', ch: chP } : null].filter(Boolean);
+        { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['rate', 'area', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
+        const two = false, colW = Math.floor((358 - 8 * (med0.length - 1)) / Math.max(1, med0.length)) - 16;
+        const med = med0.map((m, i) => ({ note: '', ...m, ...(() => { const q = /^(\S+)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: Math.min(30, Math.floor(colW * 0.62 / Math.max(1, (/^(\S+)/.exec(String(m.v)) || ['', ''])[1].length * 0.56))) + 'px' }));
         const anyCh = med.some((m) => m.ch.svgD !== 'none' || m.ch.segD !== 'none') || chB.svgD !== 'none';
         return { d: 'flex', bch: chB, trD: anyCh ? 'block' : 'none', axis: anyCh ? 'Since ' + clk(t0) + '. Estimated from today\'s figures.' : '', big, fs, bigD: pcT ? 'block' : 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '16px' : '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
