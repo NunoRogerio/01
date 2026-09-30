@@ -36,6 +36,9 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 - **Shortest wording** that keeps the meaning, in every language. Examples: "Surveillance", not "Under surveillance"; "Final duration", not "Time it took to resolve".
 - **Relative times** say "ago" ("3 min ago"). Live counters use short units ("58 min 12 s").
 - **Real data only.** When something isn't published, say so plainly ("Start time not published.").
+- **Simulated data** (no public feed exists yet: units, shifts, water, aircraft cycles) is allowed for the demo but is always labelled "Simulated" next to its title.
+- **Detail pages don't repeat the tooltip's KPI in big.** The tooltip already gave it; the detail leads with the next question (fire: containment, as % contained or the official stage), and the tooltip's KPI moves to a medium KPI beside the others (time active, burned area).
+- **Forces are read by strain, not totals:** "1 of 2 crews need relief" (12 h shift), "1 of 2 tenders below 20% water"; each unit shows its own state (stamina, water, aircraft attacking / returning / refilling).
 
 ## 2. Spacing and shape
 

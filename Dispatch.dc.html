@@ -16,7 +16,7 @@
 <script src="fit.js?v=65"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=78"></script>
-<script src="i18n.js?v=51"></script>
+<script src="i18n.js?v=52"></script>
 <script src="live.js?v=31"></script>
 <script src="chat.js?v=18"></script>
 
@@ -353,11 +353,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{fireId}} · {{sentSub}}{{unitsTxt}}</span>
       </span>
     </div>
-    <!-- A fire being viewed: the conclusion first, as on the map tooltip: how long it has burned (KPI) and its official stage -->
+    <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
+         (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
     <div role="group" data-sb-kpi="1" aria-label="{{cc.aria}}" style="display: {{cc.d}}; flex-direction: column; align-items: center; flex-shrink: 0; padding: 4px 16px 0; text-align: center">
-      <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{cc.lbl}}</span>
-      <span class="wf-like-xs" style="display: {{cc.numD}}; margin-top: -2px; white-space: nowrap; --wf-fs: {{cc.fs}}px">{{cc.num}}</span>
-      <span role="status" style="display: inline-flex; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: {{cc.tagMt}}; padding: 4px 12px; border-radius: 16px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700">{{cc.tag}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #6E6E73">Containment</span>
+      <span class="wf-like-xs" style="display: block; margin-top: -2px; max-width: 100%; white-space: nowrap; --wf-fs: {{cc.fs}}px">{{cc.big}}</span>
+      <div style="display: {{cc.medD}}; justify-content: center; gap: 0; width: 100%; margin-top: 12px">
+        <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="2">
+          <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; padding: 0 8px; border-left: {{m.sep}}">
+            <span class="kpi wf-big" style="--k: 34px; white-space: nowrap">{{m.v}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{m.l}}</span>
+          </div>
+        </sc-for>
+      </div>
     </div>
     <!-- A fire being fought: every published count in one horizontal row (personnel, crews, ground vehicles, aircraft…) -->
     <div class="wf-hscroll" data-sb-kpi="1" role="list" aria-label="Forces on scene" style="--k: {{kpiPx}}; display: {{kpiTopD}}; flex-shrink: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 18px 16px 0">
@@ -387,18 +395,33 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="display: {{d.noteD}}; font-size: 17px; line-height: 22px; color: #000000">{{d.note}}</span>
         </li>
         </sc-if>
-        <sc-if value="{{d.kpis}}" hint-placeholder-val="{{ false }}">
-        <li style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 16px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.14)">
-          <h3 style="margin: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">Forces on scene</h3>
-          <div role="list" style="--k: {{kpiPx}}; display: flex; overflow-x: auto; scrollbar-width: none">
-            <sc-for list="{{kpiRow}}" as="k" hint-placeholder-count="3">
-              <div role="listitem" style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1 0 {{k.w}}; min-width: 0; padding: 0 4px; border-left: {{k.sep}}; text-align: center">
-                <span class="kpi wf-big" style="white-space: nowrap">{{k.v}}</span>
+        <sc-if value="{{d.fx}}" hint-placeholder-val="{{ false }}">
+        <li style="display: flex; flex-direction: column; flex-shrink: 0; padding: 16px 0 0; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.14)">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 16px">
+            <h3 style="margin: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">Forces on scene</h3>
+            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">Simulated</span>
+          </span>
+          <!-- What the coordinator watches: how many units are wearing out, not totals -->
+          <div style="display: flex; margin-top: 12px; padding: 0 16px">
+            <sc-for list="{{d.sum}}" as="k" hint-placeholder-count="2">
+              <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; padding: 0 8px; border-left: {{k.sep}}; text-align: center">
+                <span class="kpi wf-big" style="--k: 34px; white-space: nowrap; color: {{k.c}}">{{k.v}}</span>
                 <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
               </div>
             </sc-for>
           </div>
-          <span style="display: {{kpiEstD}}; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">Estimated from the fire's size and stage.</span>
+          <ul style="margin: 16px 0 0; padding: 0; list-style: none">
+            <sc-for list="{{d.units}}" as="u" hint-placeholder-count="4">
+              <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.14)">
+                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
+                <span style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 700; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
+                <span style="grid-column: 1 / -1; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
+                <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: {{u.barD}}; height: 6px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
+                  <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{u.pct}}%; border-radius: 999px; background: {{u.barC}}"></span>
+                </span>
+              </li>
+            </sc-for>
+          </ul>
         </li>
         </sc-if>
         <sc-if value="{{d.src}}" hint-placeholder-val="{{ false }}">
@@ -585,6 +608,43 @@ class Component extends DCLogic {
       cancel: () => { self._sb = null; self.setState({ sbDy: null }); },
       key: (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { if (e.preventDefault) e.preventDefault(); set(!isUp); } }
     };
+  }
+  // Forces on scene, simulated (no public feed gives units, shifts, water or aircraft cycles): built from the fire's
+  // published or estimated counts, seeded by the fire so it stays the same between visits and moves on with the clock.
+  // What matters to the coordinator: who needs relief (12 h shift), which tankers run low on water, what aircraft are doing.
+  wfSimForces(fv, frow, INFO, RU, HELD) {
+    if (!fv || !frow || HELD) return null;
+    const pt = frow.st === 'PT', now = Date.now(), I = INFO || {}, t0 = I.startMs || now - 6 * 3600000, age = Math.max(0.5, (now - t0) / 3600000);
+    let h = 0; for (const c of String(fv.id)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    const rnd = () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; };
+    const cnt = (k) => { const r = (RU || []).find((q) => q[0] === k); return r ? Number(r[1]) || 0 : null; };
+    const people = cnt('Personnel') ?? 20, veh = cnt('Ground vehicles') ?? Math.max(2, Math.round(people / 5)), air = cnt('Aircraft') ?? 0;
+    const crews = Math.max(1, Math.min(10, Math.round(people / 5))), tankers = Math.max(1, Math.min(8, Math.round(veh * 0.6))), engines = Math.max(0, Math.min(8, veh - tankers));
+    const DUR = window.__wfDur || ((ms) => Math.round(ms / 60000) + ' min');
+    const T = { ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], warn: ['#7A5600', 'rgba(204,153,0,0.16)'], bad: ['#B0001A', 'rgba(215,0,21,0.12)'], blue: ['#0062CC', 'rgba(0,113,227,0.12)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'] };
+    const units = []; let tired = 0, low = 0;
+    // Crews: arrived at different times since the start; relief is due at 12 h on shift
+    for (let i = 0; i < crews; i++) {
+      const on = Math.min(age, 0.5 + rnd() * Math.min(age, 15)), pct = Math.max(0, Math.round(100 * (1 - on / 12)));
+      const st = on >= 12 ? ['Needs relief', T.bad] : on >= 9 ? ['Relief soon', T.warn] : ['Fresh', T.ok]; if (on >= 12) tired++;
+      units.push({ k: 0, name: (pt ? 'Equipa ' : 'Crew ') + (i + 1), tag: st[0], tagFg: st[1][0], tagBg: st[1][1], sub: DUR(on * 3600000) + ' on shift.', barD: 'block', pct, barC: st[1][0], meterAria: 'Stamina ' + pct + '%', o: 2 - (on >= 12 ? 2 : on >= 9 ? 1 : 0) });
+    }
+    // Water tenders and engines: water left, running down and refilled on a cycle of their own
+    const tank = (i, name, cap) => { const per = 1.2 + rnd() * 1.6, ph = rnd(), lvl = Math.round(100 * (1 - (((now / 3600000) / per + ph) % 1)));
+      const st = lvl < 20 ? ['Low water', T.bad] : lvl < 40 ? ['Half', T.warn] : ['Water OK', T.ok];
+      return { k: 1, name, tag: st[0], tagFg: st[1][0], tagBg: st[1][1], sub: Math.round(cap * lvl / 100).toLocaleString() + ' of ' + cap.toLocaleString() + ' L.', barD: 'block', pct: lvl, barC: st[1][0], meterAria: 'Water ' + lvl + '%', o: lvl < 20 ? 0 : lvl < 40 ? 1 : 2, lowW: lvl < 20 }; };
+    for (let i = 0; i < tankers; i++) { const u = tank(i, (pt ? 'VTTF ' : 'Water tender ') + (i + 1), pt ? 10000 : 7500); if (u.lowW) low++; units.push(u); }
+    for (let i = 0; i < engines; i++) units.push(tank(i, (pt ? 'VFCI ' : 'Engine ') + (i + 1), pt ? 3000 : 2800));
+    // Aircraft: where each is in its drop cycle
+    for (let i = 0; i < air; i++) {
+      const heli = pt ? i % 2 === 0 : i % 3 !== 2, cyc = heli ? 25 : 55, x = (((now / 60000) / cyc) + rnd()) % 1;
+      const ph = x < 0.35 ? ['Attacking', T.bad, 'Dropping on the fire.'] : x < 0.6 ? ['Returning', T.blue, 'Back to base in ' + Math.max(1, Math.round((0.6 - x) * cyc)) + ' min.'] : ['Refilling', T.grey, 'Over the fire in ' + Math.max(1, Math.round((1.35 - x) * cyc)) + ' min.'];
+      units.push({ k: 2, name: (heli ? (pt ? 'Helicóptero H' : 'Helicopter H-') : (pt ? 'Canadair C' : 'Air tanker T-')) + (i + 1), tag: ph[0], tagFg: ph[1][0], tagBg: ph[1][1], sub: ph[2], barD: 'none', pct: 0, barC: '', meterAria: '', o: 1 });
+    }
+    units.sort((a, b) => a.o - b.o || a.k - b.k);   // what needs action first
+    const sum = [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B0001A' : '#3A3A3C' }];
+    if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders below 20% water', c: low ? '#B0001A' : '#3A3A3C' });
+    return { sum: sum.map((k, i) => ({ ...k, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })), units };
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
@@ -1058,7 +1118,7 @@ class Component extends DCLogic {
       // The order a firefighter reads it in: conditions now (weather, containment, spread), forces on scene, stations, history
       const CR = { 'Conditions': 0, 'Fire model': 0, 'Expected containment': 1, 'Perimeter': 3 };
       deployed.forEach((d) => { if (d.tl) d.g = 'hist'; else if (d.g === 'fire') { d.g = 'cond'; d.cr = CR[d.label] ?? 2; } });
-      if (RU && RU.length) deployed.push({ kpis: true, item: false, g: 'forces' });
+      { const FX = this.wfSimForces(fv, frow, INFO, RU, HELD); if (FX) deployed.push({ fx: true, item: false, g: 'forces', ...FX }); }
       const HD = { cond: ['', ''], forces: ['', ''], hist: ['', ''], fire: ['', ''], res: ['', ''], st: ['Suggested stations', 'Within an ideal first attack · the likely first responders (estimate)'] };
       const out = []; let g0 = null;
       const ord = { cond: 0, forces: 1, res: 2, st: 3, hist: 5 }; deployed.sort((a, b) => (ord[a.g] ?? 2) - (ord[b.g] ?? 2) || (a.cr ?? 0) - (b.cr ?? 0));
@@ -1224,12 +1284,16 @@ class Component extends DCLogic {
       stCancel: () => this.setState({ open: false, stDraft: null }),
       kpiD: (RO && RU && RU.length) || (K && String(K.k1V) === '—' && String(K.k2V) === '—') ? 'none' : 'grid',
       kpiRowD: RO && RU && RU.length ? 'flex' : 'none', kpiTopD: 'none', kpiEstD: fres && fres.estF ? 'block' : 'none', oldTopD: RO ? 'none' : 'flex',
-      cc: (() => { if (!RO) return { d: 'none', lbl: '', num: '', numD: 'none', fs: 64, tag: '', tagBg: '', tagFg: '', tagMt: '0', aria: '' };
-        const I = INFO || {}, now = Date.now(), num = HELD ? (HELD.took != null ? DUR(HELD.took) : '') : I.startMs ? DUR(now - I.startMs) : '';
-        const lbl = num ? (HELD ? 'Final duration' : 'Time active') : (HELD ? 'Final duration not published.' : 'Start time not published.');
-        const TN = { hot: ['#B84A00', 'rgba(184,74,0,0.14)'], warn: ['#B84A00', 'rgba(184,74,0,0.14)'], amber: ['#7A5600', 'rgba(122,86,0,0.14)'], ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], watch: ['#00707A', 'rgba(0,112,122,0.14)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || (HELD ? TN.ok : TN.hot);
-        const tag = I.stEn || I.st || (HELD ? 'Held' : 'Active'), n = String(num).replace(/[ ,.]/g, '').length + (String(num).split(' ').length - 1) * 0.45;
-        return { d: 'flex', lbl, num, numD: num ? 'block' : 'none', fs: Math.max(24, Math.min(64, Math.floor(300 / ((n * 0.62) || 1)))), tag, tagBg: tn[1], tagFg: tn[0], tagMt: num ? '8px' : '12px', aria: lbl + (num ? ' ' + num : '') + '. ' + tag }; })(),
+      cc: (() => { if (!RO) return { d: 'none', big: '', fs: 64, med: [], medD: 'none', aria: '' };
+        const I = INFO || {}, now = Date.now(), us = frow && frow.st !== 'PT' && frow.st !== 'BRA';
+        // Containment: the % contained where the source publishes it (NIFC), else the official stage (ANEPC publishes stages only)
+        const big = HELD ? (I.stEn || I.st || 'Contained') : (us && I.pc != null ? I.pc + '%' : (I.stEn || I.st || 'Not contained'));
+        const n = String(big).length, fs = Math.max(26, Math.min(64, Math.floor(330 / ((n * 0.6) || 1))));
+        const t = HELD ? (HELD.took != null ? DUR(HELD.took) : '') : I.startMs ? DUR(now - I.startMs) : '';
+        const u = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ area: us ? 'ac' : 'ha' }, v || {}); })();
+        const area = I.ha != null ? (u.area === 'ha' ? Math.round(I.ha).toLocaleString() + ' ha' : Math.round(I.ha / 0.4047).toLocaleString() + ' ac') : '';
+        const med = [t ? { v: t, l: HELD ? 'Final duration' : 'Time active' } : null, area ? { v: area, l: 'Burned area' } : null].filter(Boolean).map((m, i) => ({ ...m, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' }));
+        return { d: 'flex', big, fs, med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
       kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
