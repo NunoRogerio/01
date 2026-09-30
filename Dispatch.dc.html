@@ -16,7 +16,7 @@
 <script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=80"></script>
-<script src="i18n.js?v=61"></script>
+<script src="i18n.js?v=62"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
 
@@ -1193,6 +1193,12 @@ class Component extends DCLogic {
           const U = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units || {}; return { temp: v.temp || (frow && frow.st !== 'PT' && frow.st !== 'BRA' ? 'F' : 'C') }; })(), tC = U.temp === 'F' ? Math.round(I.temp * 9 / 5 + 32) + ' °F' : I.temp + ' °C';
           const C0 = [{ key: 'wind', l: 'Wind', v: I.wind + ' km/h', sub: 'From ' + I.from }, { key: 'temp', l: 'Temperature', v: tC }, { key: 'rh', l: 'Humidity', v: I.rh + ' %' },
             { key: 'md', l: 'Fuel moisture', v: I.md + ' %' }, { key: 'slope', l: 'Slope', v: I.slope + ' °' }, { key: 'fuel', l: 'Fuel', v: '', txt: String(I.fuel || '') }];
+          // Terrain: the relief from the slope, and the cover from what burned (ICNF shares in Portugal) or from the fuel model
+          { const sl = Number(I.slope) || 0, rel = sl < 5 ? 'Flat' : sl < 12 ? 'Rolling' : sl < 25 ? 'Hilly' : 'Mountainous';
+            const B = INFO && INFO.burn, fu = String(I.fuel || '').toLowerCase();
+            const cov = B && (B.forest + B.scrub + B.farm) > 0 ? (B.forest >= B.scrub && B.forest >= B.farm ? 'Forest' : B.scrub >= B.farm ? 'Bush' : 'Rural')
+              : /understory/.test(fu) ? 'Deep forest' : /forest/.test(fu) ? 'Forest' : /shrub|heath/.test(fu) ? 'Bush' : /woodland/.test(fu) ? 'Rural, open woodland' : /grass/.test(fu) ? 'Grassland' : '';
+            C0.splice(1, 0, { key: 'terr', l: 'Terrain', v: '', txt: rel + (cov ? '. ' + cov + '.' : '.') }); }
           let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-cond') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : C0.map((q) => q.key);
           const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; C0.sort((a, b) => ix(a.key) - ix(b.key));
           const cards = C0.map((m) => { const q = /^(\S+)\s+(.+)$/.exec(m.v); return { ...m, n: q ? q[1] : m.v, u: q ? q[2] : '', uD: q ? 'inline' : 'none', numD: m.txt ? 'none' : 'flex', txtD: m.txt ? 'block' : 'none', txt: m.txt || '', subD: m.sub ? 'block' : 'none', sub: m.sub || '', ...this.wfKpiDrag(m.key, 'cond') }; });
