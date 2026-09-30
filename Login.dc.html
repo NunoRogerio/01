@@ -321,7 +321,7 @@ class Component extends DCLogic {
     if (!key) { done(tidy(text), false); return; }
     const what = { title: 'a job title', org: 'an organisation name with its unit or city', sum: 'a two or three sentence description of what this person does in wildfire command' }[k] || 'a short profile text';
     const sys = 'You polish short texts for user profiles in a wildfire command app. The text is ' + what + '. Keep its meaning and facts, fix spelling and grammar and make it clear, concise and professional. Keep the language it is written in (European Portuguese stays European Portuguese). Sentence case, no middle dots, no quotes, no emoji. Reply with the improved text only.';
-    const models = ['claude-sonnet-5', 'claude-haiku-4-5-20251001'];
+    const models = ['claude-sonnet-5-5', 'claude-haiku-4-5-20251001'];
     const call = (mi) => fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({ model: models[mi], max_tokens: 400, system: sys, messages: [{ role: 'user', content: String(text) }] }) })
       .then((r) => r.json().then((j) => ({ ok: r.ok, j }), () => ({ ok: r.ok, j: {} })))

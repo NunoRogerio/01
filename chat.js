@@ -698,7 +698,7 @@
   // With an Anthropic API key saved in Preferences (kept only on this phone), the crew coordinators' answers and their
   // unprompted progress updates are written by Claude, in character, from the whole picture of the fire. Without a key,
   // or if a call fails, the in-app replies above take over, so the chat never stalls.
-  var AIK = 'wf-ai-key', AIS = 'wf-ai-status', MODELS = ['claude-sonnet-5', 'claude-haiku-4-5-20251001'];
+  var AIK = 'wf-ai-key', AIS = 'wf-ai-status', MODELS = ['claude-sonnet-5-5', 'claude-haiku-4-5-20251001'];
   function rawKey() { try { return localStorage.getItem(AIK) || ''; } catch (e) { return ''; } }
   function aiOff() { try { return localStorage.getItem('wf-ai-off') === '1'; } catch (e) { return false; } }
   function aiKey() { return aiOff() ? '' : rawKey(); }   // switched off: the key stays saved, the in-app replies are used
@@ -741,7 +741,9 @@
       'Team (answer only as these people; index in #):\n' + team + '\n\nRecent chat, oldest first:\n' + tr;
   }
   var AI_SYS = 'You role-play the crew coordinators of fire stations in a wildfire incident chat. This is a realistic training simulation inside a fire command app; the person writing to you is the fire owner (incident commander) who makes all decisions. ' +
-    'Stay in character: each coordinator has their own voice (given in the brief). Write like real fireground radio traffic on a phone chat: short, specific, 1 to 3 sentences, no emojis, no markdown. ' +
+    'Stay in character: each coordinator has their own voice (given in the brief). Write like real people on a phone chat during a fire, not like a form: natural, warm and human, with the rhythm and small asides colleagues use with each other, always focused on the job at hand. ' +
+    'Match the fire owner: a short order gets a short, crisp answer (1 or 2 sentences); a question, a worry or a chat gets a fuller, conversational answer (3 to 6 sentences) that explains what they see, what they are doing and why. ' +
+    'If the fire owner jokes, vents or says something off the wall, react like a real colleague would (a bit of humour, surprise or a straight word), then bring it back to the fire. No emojis, no markdown. ' +
     'Be consistent with the brief: the stage, the forces and where they are, the time elapsed, the burnt area, air support and evacuation. Describe fire behaviour, terrain, water, crew welfare and needs plausibly for this stage. ' +
     'Coordinators may take operational decisions themselves (deploy or recall their own crews, launch the drone, order a local evacuation) and announce them as decisions. Only the fire owner changes the incident stage: never declare the fire held, resolved or closed, and never invent new stations, aircraft or people. ' +
     'If the fire owner names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
@@ -752,7 +754,7 @@
     var js = parseJSON(txt), R = js && Array.isArray(js.replies) ? js.replies : null;
     if (!R || !R.length) { fallback(c); save(); emit(); return; }
     R.slice(0, 2).forEach(function (r, i) {
-      var who = Math.max(0, Math.min(c.people.length - 1, parseInt(r.who, 10) || 0)), t = String(r.text || '').trim().slice(0, 400);
+      var who = Math.max(0, Math.min(c.people.length - 1, parseInt(r.who, 10) || 0)), t = String(r.text || '').trim().slice(0, 900);
       if (!t) return;
       say(c, who, t, t, 400 + i * 2600, Math.max(1, Math.min(15, parseInt(r.minutes, 10) || 3)));
     });
@@ -760,7 +762,7 @@
   }
   function aiReply(c, text, fallback) {
     var key = c.key, guess = responder(c, text); c.pending = { who: guess >= 0 ? guess : 0, at: Date.now() };
-    aiCall(aiSys(), aiBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now as the right coordinator(s).', 500, function (err, txt) {
+    aiCall(aiSys(), aiBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now as the right coordinator(s).', 900, function (err, txt) {
       if (err) { var c2 = load().chats[key]; if (c2) { c2.pending = null; fallback(c2); save(); emit(); } return; }
       aiDeliver(key, txt, fallback);
     });
