@@ -149,7 +149,7 @@ The one from the user preferences, used everywhere:
   - fires have no outline;
   - resolved fires use the fire marker in a much darker brown, with their own legend entry;
   - the marker icons match the legend icons.
-- **Selected marker:** a 4px solid outer border, dark grey on candidates and fires, lime on stations.
+- **Selected marker:** a 4px solid outer border in dark grey on candidates, fires and stations (candidates and stations: their 2px outline grows to 4px, same colour).
 - **Tooltip panels:** one block with three variants (candidate, fire, station).
   - 180px wide, 28px corners, an even shadow all round, all centred, no header and no X.
   - Placed above or below the marker, 24px from its outer edge, and at least 16px from the screen edges.
