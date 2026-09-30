@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
-<script src="i18n.js?v=99"></script>
+<script src="i18n.js?v=100"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -384,7 +384,7 @@ class Component extends DCLogic {
       open: () => this.setState({ cpOpen: true, cpEdit: null, cpRm: false, cpF: {} }), close: () => this.setState({ cpOpen: false, cpEdit: null, cpRm: false }),
       title: ed ? L('Edit profile', 'Editar perfil') : L('Create profile', 'Criar perfil'), btn: ed ? L('Save', 'Guardar') : L('Create profile', 'Criar perfil'),
       areaD: ed && !this.customs().some((c) => c.id === ed) ? 'none' : 'flex',
-      rmD: ed ? 'flex' : 'none', rmLbl: L('Remove profile', 'Remover perfil'),
+      rmD: ed ? 'flex' : 'none', rmLbl: L('Remove', 'Remover'),
       rmAsk: () => { if (!window.__wfConfirm) return; const nm = String((this.state.cpF || {}).name || '').trim();
         window.__wfConfirm({ title: L('Remove profile?', 'Remover perfil?'), body: L((nm || 'This profile') + ' will be removed from this phone.', (nm || 'Este perfil') + ' será removido deste telemóvel.'), cancel: L('Cancel', 'Cancelar'), ok: L('Remove', 'Remover'), onOk: rmYes }); },
       code: F.photo ? '' : ini(F.name), photoBg: F.photo ? 'url("' + F.photo + '")' : 'none', photoLbl: F.photo ? L('Change photo', 'Mudar fotografia') : L('Take or choose a photo', 'Tirar ou escolher fotografia'), onFile: fileIn,

@@ -316,3 +316,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Notification rows:** 20px above and below, 16px sides, the description on up to two lines, the chevron centred on the row, a full-width line between rows.
 - **Chosen stations (Configure dispatch):** Add sits first; each new station comes out from under Add (newest on top), pushes the others down, and settles with a light bounce (~6px overshoot, 0.7 s). Cards are white with 16px corners.
 - **Descriptions next to an action invite the action:** when a card has a to-do (a To do tag, an empty choice), its description says what to do, not the empty state ("Select resources." not "None assigned yet."). Check every state-only label against this.
+- **Remove:** one look everywhere: full-width red button (#D70015, white text), label just "Remove", below the Cancel / Apply pair, and it asks first with the shared confirm dialog (Remove profile, Remove station).

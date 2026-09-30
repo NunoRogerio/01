@@ -16,7 +16,7 @@
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=99"></script>
+<script src="i18n.js?v=100"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=30"></script>
 
@@ -317,8 +317,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </sc-for>
       </div>
-      <button type="button" onClick="{{fl.remove}}" style="display: {{fl.rmD}}; align-items: center; justify-content: center; height: 48px; margin: 24px 16px 0; border: 0; border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.12); color: #D70015; -webkit-text-fill-color: #D70015; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{fl.rmLbl}}</button>
-      <button type="button" class="btn primary" onClick="{{fl.apply}}" style="flex-shrink: 0; height: 48px; margin: 24px 16px 0; font-size: 17px; font-weight: 600">Apply</button>
+      <!-- The app's pair: Cancel (secondary) then Apply (primary); Remove below, the app's remove button (red, white text), asking first like Remove profile -->
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; flex-shrink: 0; margin: 24px 16px 0">
+        <button type="button" class="btn wf-sec" onClick="{{fl.close}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
+        <button type="button" class="btn primary" onClick="{{fl.apply}}" style="height: 48px; font-size: 17px; font-weight: 600">Apply</button>
+      </div>
+      <button type="button" onClick="{{fl.remove}}" style="display: {{fl.rmD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 16px 16px 0; border: 0; border-radius: 999px; background: #D70015; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">Remove</button>
     </div>
   </section>
   <!-- Sending dispatch orders: each chosen station's coordinator gets its order in turn, then a confirmation and Done -->
@@ -1411,7 +1415,8 @@ class Component extends DCLogic {
             stD: step === 'st' ? 'flex' : 'none', resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
             tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
-            remove: () => this.setState({ plan: plan.filter((p) => p.id !== id), flow: null }),
+            remove: () => { const go = () => this.setState({ plan: plan.filter((p) => p.id !== id), flow: null }), nmR = id === 'air' ? 'Air support' : dSel ? nm(dSel) : 'This station';
+              if (!window.__wfConfirm) return go(); window.__wfConfirm({ title: 'Remove station?', body: nmR + ' will be removed from this dispatch.', cancel: 'Cancel', ok: 'Remove', onOk: go }); },
             apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }); } } };
       })(),
       acc: (() => {
