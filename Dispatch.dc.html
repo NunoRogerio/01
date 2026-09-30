@@ -1356,15 +1356,17 @@ class Component extends DCLogic {
         // Open framing the fire's perimeter and its whole projected spread (the furthest horizon), so switching
         // between Now / +1h / +2h / +3h never leaves the projection outside the map.
         const M = FMOD.model, P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
-        const pts = [].concat.apply([], Object.values(M.snaps).filter((q) => q && q.ring && q.ring.length).map((q) => q.ring.map((r) => P(r[0], r[1]))));
+        const pts = [].concat.apply([], Object.values(RO && !s.full && M.snaps[0] ? { 0: M.snaps[0] } : M.snaps).filter((q) => q && q.ring && q.ring.length).map((q) => q.ring.map((r) => P(r[0], r[1]))));
         if (!pts.length) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
-        const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, (RO && !s.full ? MAPH - 24 : 230) / bh) * 0.85));
-        return { zoom: +z.toFixed(4), fx: Math.round((Math.max(...xs) + Math.min(...xs)) / 2), fy: Math.round((Math.max(...ys) + Math.min(...ys)) / 2) };
+        // Detail band: the fire's shape fills about 60% of the width, framed in the clear part under the legend, whatever its size (as on Timber)
+        return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; if (RO && !s.full) { const z = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 72) * 0.92 / bh))); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: +(cy - 28 / z).toFixed(2) }; }
+          const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: Math.round(cy) }; })();
       })() : (window.__wfLiveMap && fv && BRF && ((window.__wfBRGeo || {})[fv.id] || {}).ring) ? (() => {
         const P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662], pts = window.__wfBRGeo[fv.id].ring.map((q) => P(q[0], q[1]));
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
-        return { zoom: +Math.max(0.0015, Math.min(3, Math.min(330 / bw, (RO && !s.full ? MAPH - 24 : 230) / bh) * 0.85)).toFixed(4), fx: Math.round((Math.max(...xs) + Math.min(...xs)) / 2), fy: Math.round((Math.max(...ys) + Math.min(...ys)) / 2) };
+        return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; if (RO && !s.full) { const z = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 72) * 0.92 / bh))); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: +(cy - 28 / z).toFixed(2) }; }
+          const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: Math.round(cy) }; })();
       })() : (window.__wfLiveMap && fv && RO) ? { zoom: 3, fx: FIRE[0], fy: FIRE[1] } : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
       mapUnits: RO ? [] : mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
