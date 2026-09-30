@@ -605,15 +605,15 @@ window.__wfBlink=function(path,dur){
 })();
 // Installed iPhone app: the status bar is opaque (iOS 26 cuts a strip off the bottom of the screen when the page runs
 // under it, WebKit bug 301108), so the page always reaches the bottom edge. The bar takes the colour of whatever sits at
-// the top of the screen (top blade, map, panel); on sign in and loading the bar is black and the photo fades into it
-// under a light blur, so the bar never shows as a white or odd-coloured band, transitions included.
+// the top of the screen (top blade, map, panel); on sign in and loading the bar is black, so the bar never shows as a white or odd-coloured band, transitions included.
 (function(){
   var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   if(!SA)return;
   var BAR='#000000',root=document.documentElement,sty=null,cur='',cache={};
   function meta(){var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}return m;}
+  // iOS takes the bar colour from the page body, so body and html both carry it
   function set(c){if(c===cur)return;cur=c;if(!sty){sty=document.createElement('style');sty.id='wf-bar';document.head.appendChild(sty);}
-    sty.textContent=c?'html.wf-bar{background-color:'+c+'!important}':'';if(c){try{meta().setAttribute('content',c);}catch(e){}}}
+    sty.textContent=c?'html.wf-bar,html.wf-bar body{background-color:'+c+'!important}':'';if(c){try{meta().setAttribute('content',c);}catch(e){}}}
   function col(s){var m=/rgba?\(([^)]+)\)/.exec(s||'');if(!m)return null;var p=m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat);return [p[0],p[1],p[2],p.length>3?p[3]:1];}
   function over(t,b){var a=t[3];return [t[0]*a+b[0]*(1-a),t[1]*a+b[1]*(1-a),t[2]*a+b[2]*(1-a),1];}
   function hex(c){var h=function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);};return '#'+h(c[0])+h(c[1])+h(c[2]);}
@@ -646,9 +646,6 @@ window.__wfBlink=function(path,dur){
   window.addEventListener('pageshow',soon);
   window.addEventListener('load',function(){probe();setInterval(function(){if(!document.hidden)probe();},600);});
   var fs=document.createElement('style');
-  fs.textContent='html.wf-bar #wf-login-bg::before,html.wf-bar #wf-load.photo::before{content:"";position:absolute;left:0;right:0;top:0;height:14%;z-index:4;pointer-events:none;'+
-    'background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 40%,rgba(0,0,0,0) 100%);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);'+
-    '-webkit-mask-image:linear-gradient(180deg,#000 35%,transparent 100%);mask-image:linear-gradient(180deg,#000 35%,transparent 100%)}'+
-    'html.wf-bar #wf-load.photo .in,html.wf-bar #wf-load.photo .cap{z-index:5}';
+  fs.textContent='';
   document.head.appendChild(fs);
 })();
