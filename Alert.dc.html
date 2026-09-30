@@ -16,7 +16,7 @@
 <script src="fit.js?v=68"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=88"></script>
-<script src="i18n.js?v=76"></script>
+<script src="i18n.js?v=77"></script>
 <script src="live.js?v=33"></script>
 <script src="chat.js?v=19"></script>
 
@@ -396,8 +396,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- The status tag's choices: confirm it is a fire (the page turns into the fire's page), or dismiss it (asks first) -->
   <div class="scrim" onClick="{{mo.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{mo.op}}; pointer-events: {{mo.pe}}"></div>
   <section class="sheet wf-dlg" role="dialog" aria-modal="true" aria-labelledby="soTitle" aria-hidden="{{mo.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{mo.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-    <h2 id="soTitle" style="margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #000000">Is this a fire?</h2>
-    <p style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.place}}. Unconfirmed.</p>
+    <h2 id="soTitle" style="margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #000000">Confirm fire?</h2>
+    <p style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.place}}</p>
     <div class="wf-dlg-acts">
       <button type="button" class="btn wf-sec" onClick="{{mo.dismiss}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 600">Dismiss</button>
       <button type="button" class="btn primary" onClick="{{mo.confirm}}" style="height: 48px; font-size: 17px; font-weight: 600">Confirm</button>
