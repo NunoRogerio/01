@@ -83,7 +83,7 @@ window.__wfBlink=function(path,dur){
   /* Desktop browsers (Chrome, Safari, Firefox on a computer: a mouse, no touch) show the app as the phone it is, centred and
      scaled to the window's height, instead of stretching to a wide window (and never treat the wide window as a phone
      turned sideways) */
-  var DESK=false;try{DESK=!!(matchMedia('(hover: hover) and (pointer: fine)').matches&&!('ontouchstart' in window)&&!(navigator.maxTouchPoints>0));}catch(e){}window.__wfDesk=DESK;
+  var DESK=false;try{DESK=!!(matchMedia('(hover: hover) and (pointer: fine)').matches&&!('ontouchstart' in window)&&!(navigator.maxTouchPoints>0))||/OculusBrowser|Quest|Pico|Wolvic/i.test(navigator.userAgent);}catch(e){}window.__wfDesk=DESK;   /* VR headset browsers (Meta Quest) too: a floating window, so the phone frame */
   var m=document.querySelector('meta[name="wf-layout"]'),fluid=!DESK&&!!(m&&m.getAttribute('content')==='fluid');
   var st=document.createElement('style');
   st.textContent='html,body{background:#F2F2F7;overflow:hidden;height:100%;margin:0;overscroll-behavior:none}*{scrollbar-width:none}*::-webkit-scrollbar{display:none;width:0;height:0}'+   /* no scrollbars in any browser (desktop Safari and Chrome draw them) */

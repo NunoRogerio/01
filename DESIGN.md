@@ -335,3 +335,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Fire page map band:** locked like the candidate's (no pan or zoom there), and see-through: the page lets touches reach the map, so its legend scrolls and toggles and its full-screen button works; the page content above still scrolls and takes taps.
 - **Full-screen map title:** 12px between the title's second line and the legend row; the legend starts where the title's text starts.
 - **Assign crews in place (experiment):** tapping Please assign crews shrinks the card 20% to show the grey surface under it, then it slides away under that surface's edge; the surface becomes "+ Add resources (N)" (N counts down as stations are added), chosen stations fill it (newest on top) and it ends with Cancel | Send order.
+- **VR headsets (Meta Quest browser):** treated like a computer: the app shows as the phone frame, centred and scaled to the window's height.
