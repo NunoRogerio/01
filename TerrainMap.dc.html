@@ -1269,7 +1269,7 @@ class Component extends DCLogic {
         const want = on && !this._ldDone && !this._ldGave && (!this._tilesOk || !shapeOk || Date.now() - (this._ldT0 || 0) < 2500);
         if (on && !want && this._ldT0) this._ldDone = true;   /* once revealed the map never shows the loader again (full screen and back stay instant) */
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
-      pinTtlD: p.fireOnly === true || p.fireOnly === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
+      pinTtlD: p.fireOnly === true || p.fireOnly === 'true' || p.noTitle === true || p.noTitle === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
       zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
       cursor: (this.state || {}).dragging ? 'grabbing' : 'grab',
