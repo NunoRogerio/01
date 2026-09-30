@@ -39,6 +39,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 - **Relative times** say "ago" ("3 min ago"). Live counters use short units ("58 min 12 s").
 - **Real data only.** When something isn't published, say so plainly ("Start time not published.").
 - **Simulated data** (no public feed exists yet: units, shifts, water, aircraft cycles) is allowed for the demo but is always labelled "Simulated" next to its title.
+- **Burned area always shows** on a fire detail: the source's figure; where it has none yet, the fire model's estimate with an "Estimate" note; else "—" with "Not published yet."
 - **Detail pages don't repeat the tooltip's KPI in big.** The tooltip already gave it; the detail leads with the next question (fire: containment as a big % where it is published; where only a stage exists, e.g. ANEPC, the stage is a colour-matched tag, never a big word), and the tooltip's KPI moves to a medium KPI beside the others (time active, burned area).
 - **Forces are read by strain, not totals:** "1 of 2 crews need relief" (12 h shift), "1 of 2 tenders below 20% water"; each unit shows its own state (stamina, water, aircraft attacking / returning / refilling).
 
@@ -118,7 +119,7 @@ The one from the user preferences, used everywhere:
 ### Detail pages (being tried)
 
 - The page scroll has no snapping.
-- Actions sit side by side on one row, their bottom 64px above the screen edge (48px kept clear for the iOS home indicator, plus 16px).
+- Actions sit side by side on one row, 16px from the screen edges all round (bottom included; to be tested against the iOS home indicator).
 - No blades and no back button (Done at the bottom closes the page, so the header aligns with the content): only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 240px band) and all the information scroll together in one column. A tap on the map opens it full screen.
 
 ### Blades and panels
@@ -149,6 +150,7 @@ The one from the user preferences, used everywhere:
   - Content from top to bottom: KPI (annotation above the XS number, which fits with 12px clear at each side), tag, place (Title XS plus the level above as an annotation), then a condensed primary View button.
   - Gaps: 8px after the KPI, 12px between groups, 16px above View.
 - **Legend:** chips in the label style but dark grey. Map weather (temperature, humidity, wind) uses the same chips, under the legend, once the map spans under about 100 km.
+- **Overlay placement (every map, in a band or full screen):** 16px from the edges of the visible map. Top left: search (where there is one), then the legend chips in one row, the weather chips under them. Bottom left: the map credit, level with the middle of the full-screen button. Bottom right: the full-screen / exit button. A full-screen detail map puts its title box (with the legend inside) 16px from the top.
 - **Full screen:**
   - a tap on an empty part of the map, or turning the phone sideways, fills the screen;
   - blades slide away;
@@ -160,7 +162,7 @@ The one from the user preferences, used everywhere:
   - no flicker;
   - while a finger moves the map (and while it glides), the drawn map and markers move as one picture; the full redraw follows about four times a second and on release;
   - fire stations thin out as the map zooms out (wider spacing near the whole state or country), so the map stays light and readable.
-- **Find a place:** a round search button beside the area name on the main screen opens a panel dropping from the top blade (like the area picker) with a pill search field and a round X. Results are list rows (place bold, the levels above as an annotation). A pick closes the panel, moves the map there and the area follows the map. Searches only the live regions the account can see.
+- **Find a place:** a round search chip in the map itself, top left, before the legend chips (main map). It opens a panel dropping from the top (like the area picker) with a pill search field and a round X. Results are list rows (place bold, the levels above as an annotation). A pick closes the panel, moves the map there and the area follows the map. Searches only the live regions the account can see.
 
 ## 6. Motion and touch
 

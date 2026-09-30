@@ -16,7 +16,7 @@
 <script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=79"></script>
-<script src="i18n.js?v=55"></script>
+<script src="i18n.js?v=56"></script>
 <script src="live.js?v=31"></script>
 
 <title>Terrain map</title>
@@ -293,6 +293,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
+  <!-- Find a place: the map's own search, top left, before the legend (the screen passes onSearch) -->
+  <button type="button" class="mbtn" aria-label="Find a place" onPointerDown="{{stop}}" onClick="{{srch}}" style="position: absolute; z-index: 51; left: {{srchL}}px; top: {{legTopC}}px; display: {{srchD}}; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: #3A3A3C; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg></button>
   <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{legL}}px; right: {{legR}}px; top: {{legTopC}}px; box-sizing: border-box; padding: 0 {{legIn}}px; display: flex; gap: {{legGap}}; overflow-x: auto; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{legBg}}; box-shadow: {{legSh}}; color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
@@ -303,7 +305,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <sc-if value="{{wxOn}}" hint-placeholder-val="{{ false }}">
   <!-- Weather at the map centre, in the legend's containers, under the legend -->
-  <div role="group" aria-label="Weather at the map centre" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{legL}}px; right: {{legR}}px; top: {{wxTop}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; pointer-events: auto">
+  <div role="group" aria-label="Weather at the map centre" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{srchL}}px; right: {{legR}}px; top: {{wxTop}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; pointer-events: auto">
     <sc-for list="{{wx}}" as="w" hint-placeholder-count="3">
       <span role="img" aria-label="{{w.aria}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: #3C3C43; font-size: 15px; line-height: 32px; white-space: nowrap; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{w.rot}}deg)"><path d="{{w.d}}"></path></svg>{{w.txt}}
@@ -1353,8 +1355,8 @@ class Component extends DCLogic {
       fullIcon: (p.isFull === true || p.isFull === 'true') ? (String(p.closeX) === 'true' ? 'M6 6l12 12M18 6 6 18' : 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5') : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
       // The maximize button sits 16px above whatever panel covers the map's bottom edge (panels overlap the map by attrBottom - 6).
       // Full screen: the minimize button sits 24px from the bottom and 16px from the right; the map credit lines up with its middle.
-      legL: 10 + WN.l, legR: 10 + WN.r,
-      ctrlB: (fullNow ? 16 : Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + 16) + (H - WN.b), ctrlR: 16 + WN.r, attrL: (fullNow ? 16 : 12) + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (fullNow ? 38 : (Number(p.attrBottom ?? 10))) + (H - WN.b),
+      legL: 16 + WN.l + (typeof p.onSearch === 'function' ? 40 : 0), legR: 16 + WN.r, srchD: typeof p.onSearch === 'function' ? 'flex' : 'none', srchL: 16 + WN.l, srch: () => { if (typeof p.onSearch === 'function') p.onSearch(); },
+      ctrlB: (fullNow ? 16 : Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + 16) + (H - WN.b), ctrlR: 16 + WN.r, attrL: 16 + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), clipB: H - WN.b, attrB: (fullNow ? 16 : Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + 16) + (H - WN.b) + 15,   // the credit line sits level with the full-screen button's middle
       mapTr: anim ? 'transform' + EZ : 'none', mv: anim ? 'left' + EZ + ', top' + EZ : 'none', mvSt: anim ? 'left' + EZ + ', top' + EZ + ', background-color .3s, border-color .3s' : 'background-color .3s, border-color .3s',
       ctrl: p.controls === 'top'
         ? { right: '12px', top: '12px', tf: 'none', dir: 'row', sepW: '1px', sepH: '24px', sepM: 'auto 2px' }
@@ -1446,7 +1448,7 @@ class Component extends DCLogic {
         const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0, TT = hasT ? (inT ? 50 : 62) : 0;   // pin: the legend sits inside the title box, under its text
         const WX = this.wxRow(inT);
         return { ...WX, legend, legOn: legend.length > 0, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle, mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : 54, legIn: inT ? 21 : 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
-          legGap: inT ? '16px' : '6px', legPad: inT ? '0' : '0 12px 0 10px', legBg: inT ? 'transparent' : 'rgba(242,242,247,0.94)', legSh: inT ? 'none' : '0 2px 10px rgba(0,0,0,0.10)', ttlTop: Math.round(Math.max(52, this.win().t) + 14), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 14 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 14 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? 40 : 0),
+          legGap: inT ? '16px' : '6px', legPad: inT ? '0' : '0 12px 0 10px', legBg: inT ? 'transparent' : 'rgba(242,242,247,0.94)', legSh: inT ? 'none' : '0 2px 10px rgba(0,0,0,0.10)', ttlTop: Math.round(Math.max(52, this.win().t) + 16), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? 40 : 0),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;
