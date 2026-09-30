@@ -24,11 +24,12 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 | Normal text | 17px regular, same colour as titles | The line under a screen title; body text |
 | Annotation | 15px regular, mid grey `#6E6E73` | Secondary sentence under content; ends with a full stop |
 | Label | Same look as annotation | Names a switcher, dropdown or group of controls; no full stop |
+| Note | 13px regular, mid grey (`.wf-note`) | Estimate and simulation notices only ("Simulated", "Estimated from…", "… (estimate)", demo notices) |
 | KPI | Large bold, dark grey `#3A3A3C` (`.wf-like-xs` in tooltips) | Big numbers; the label is centred with the number |
 
 ### Rules
 
-- **Only these sizes** exist in the app: 26 (Title M), 17 (Title S or normal text), 15 (Title XS, annotation, label). The exceptions are KPI numbers (responsive), cartographic labels drawn on the maps, small badges and pills (count badges, 18–22px tags), avatar initials and the logo. New sizes are added here first, and only when truly needed.
+- **Only these sizes** exist in the app: 26 (Title M), 17 (Title S or normal text), 15 (Title XS, annotation, label), 13 (note, for estimates and simulations only). The exceptions are KPI numbers (responsive), cartographic labels drawn on the maps, small badges and pills (count badges, 18–22px tags), avatar initials and the logo. New sizes are added here first, and only when truly needed.
 - **Hierarchy follows the references** (user preferences, map tooltips, ignition detail): conclusion first (the KPI and state a firefighter acts on), then where, then evidence and detail, then actions. Every screen should help a Portuguese or Californian firefighter decide faster and better.
 - **Case:** sentence case everywhere. No all caps.
 - **Middle dots:** none between topics; use a full stop ("All features. All regions."). Any " · " is turned into a full stop at display time (i18n.js).
@@ -53,6 +54,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
   - text buttons are pills;
   - avatars are full circles, the same size as the round X.
 - **Dividers** between list items run the full width of their container.
+- **Horizontal bars** (progress, stamina, water, stage timelines): 8px tall, fully rounded ends.
 
 ## 3. Colour and themes
 
@@ -112,7 +114,7 @@ The one from the user preferences, used everywhere:
 
 ### Detail pages (being tried)
 
-- No blades: only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 240px band) and all the information scroll together in one column. A tap on the map opens it full screen.
+- No blades and no back button (Done at the bottom closes the page, so the header aligns with the content): only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 240px band) and all the information scroll together in one column. A tap on the map opens it full screen.
 
 ### Blades and panels
 
