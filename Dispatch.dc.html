@@ -16,7 +16,7 @@
 <script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=79"></script>
-<script src="i18n.js?v=58"></script>
+<script src="i18n.js?v=59"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
 
@@ -392,17 +392,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </svg>
       <!-- Medium KPIs, each with its own micro chart under the label (2 × 2 when there are four) -->
       <!-- KPI cards: white, 16px corners, a light shadow. Press and hold a card, then slide it to put the KPIs in your own order (kept on this phone) -->
-      <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: stretch">
-        <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="3">
-          <div role="listitem" data-wf-kpi="{{m.key}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; box-sizing: border-box; padding: 12px 4px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease">
-            <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{m.l}}</span>
-            <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C">{{m.u}}</span></span>
-            <svg role="img" aria-label="{{m.ch.aria}}" width="56%" height="22" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{m.ch.svgD}}; margin-top: 8px; overflow: visible">
-              <path d="{{m.ch.area}}" fill="{{m.ch.areaFill}}" stroke="none"></path>
-              <path d="{{m.ch.line}}" fill="none" stroke="{{m.ch.lineC}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-              <path d="{{m.ch.bars}}" fill="{{m.ch.barC}}" stroke="none"></path>
-              <path d="{{m.ch.bar2}}" fill="{{m.ch.bar2C}}" stroke="none"></path>
-            </svg>
+      <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; flex-wrap: wrap; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: flex-start">
+        <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="4">
+          <div role="listitem" data-wf-kpi="{{m.key}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc(50% - 4px); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
+            <div data-wf-kpicard="1" style="display: flex; flex-direction: column; align-items: center; box-sizing: border-box; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
+              <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{m.l}}</span>
+              <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C">{{m.u}}</span></span>
+              <svg role="img" aria-label="{{m.ch.aria}}" width="56%" height="22" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{m.ch.svgD}}; margin-top: 16px; overflow: visible">
+                <path d="{{m.ch.area}}" fill="{{m.ch.areaFill}}" stroke="none"></path>
+                <path d="{{m.ch.line}}" fill="none" stroke="{{m.ch.lineC}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+                <path d="{{m.ch.bars}}" fill="{{m.ch.barC}}" stroke="none"></path>
+                <path d="{{m.ch.bar2}}" fill="{{m.ch.bar2C}}" stroke="none"></path>
+              </svg>
+            </div>
             <span class="wf-note" style="display: {{m.noteD}}; margin-top: 4px; text-align: center">{{m.note}}</span>
           </div>
         </sc-for>
@@ -709,27 +711,33 @@ class Component extends DCLogic {
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
   // KPI cards: press and hold (250 ms) lifts a card; sliding it sideways moves it among the others; letting go keeps the new order
+  // KPI cards: press and hold (250 ms) lifts a card; moving it over another place makes room there; letting go keeps the new order
   wfKpiDrag(key) {
     const self = this;
     const cards = () => [...document.querySelectorAll('[data-wf-kpi]')];
-    const reset = () => cards().forEach((c) => { c.style.transform = ''; c.style.zIndex = ''; c.style.boxShadow = ''; });
+    const reset = () => cards().forEach((c) => { c.style.transform = ''; c.style.zIndex = ''; c.style.transition = ''; const k = c.querySelector('[data-wf-kpicard]'); if (k) k.style.boxShadow = ''; });
     return {
       noMenu: (e) => { try { e.preventDefault(); } catch (x) {} },
       down: (e) => { const el = e.currentTarget, x0 = e.clientX, y0 = e.clientY; let k = 1; try { const R = el.closest('[data-wfroot]').getBoundingClientRect(); k = R.width / 390 || 1; } catch (x) {}
-        clearTimeout(self._kpT); self._kd = { key, el, x0, y0, k, lifted: false, pid: e.pointerId };
-        self._kpT = setTimeout(() => { const d = self._kd; if (!d || d.key !== key) return; d.lifted = true; const L = cards(); d.idx = L.indexOf(d.el); d.slot = (d.el.getBoundingClientRect().width / d.k) + 8; d.to = d.idx;
-          try { d.el.setPointerCapture(d.pid); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
-          d.el.style.zIndex = '3'; d.el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.16)'; d.el.style.transition = 'box-shadow .2s ease'; d.el.style.transform = 'scale(1.04)'; }, 250); },
+        clearTimeout(self._kpT); self._kd = { key, el, x0, y0, k, lifted: false, pid: e.pointerId }; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}   // iPhone buzzes only inside the touch itself: at the press and at the drop
+        self._kpT = setTimeout(() => { const d = self._kd; if (!d || d.key !== key) return; d.lifted = true; const L = cards(); d.idx = L.indexOf(d.el); d.to = d.idx;
+          d.slots = L.map((c) => { const r = c.getBoundingClientRect(); return [(r.left + r.width / 2) / d.k, (r.top + r.height / 2) / d.k]; });
+          try { d.el.setPointerCapture(d.pid); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
+          const kc = d.el.querySelector('[data-wf-kpicard]'); if (kc) kc.style.boxShadow = '0 8px 24px rgba(0,0,0,0.16)';
+          d.el.style.zIndex = '3'; d.el.style.transition = 'none'; d.el.style.transform = 'scale(1.04)'; }, 250); },
       move: (e) => { const d = self._kd; if (!d || d.key !== key) return;
         if (!d.lifted) { if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 8) { clearTimeout(self._kpT); self._kd = null; } return; }
-        const dx = (e.clientX - d.x0) / d.k, L = cards(), n = L.length; d.to = Math.max(0, Math.min(n - 1, Math.round(d.idx + dx / d.slot)));
-        d.el.style.transform = 'translateX(' + dx.toFixed(1) + 'px) scale(1.04)';
-        L.forEach((c, j) => { if (c === d.el) return; let sh = 0; if (d.to > d.idx && j > d.idx && j <= d.to) sh = -d.slot; if (d.to < d.idx && j < d.idx && j >= d.to) sh = d.slot; c.style.transform = sh ? 'translateX(' + sh + 'px)' : ''; }); },
-      up: () => { clearTimeout(self._kpT); const d = self._kd; self._kd = null; if (!d || !d.lifted) return;
+        const dx = (e.clientX - d.x0) / d.k, dy = (e.clientY - d.y0) / d.k, L = cards(), me = d.slots[d.idx], px = me[0] + dx, py = me[1] + dy;
+        let best = d.idx, bd = 1e9; d.slots.forEach((q, j) => { const dd = Math.hypot(q[0] - px, q[1] - py); if (dd < bd) { bd = dd; best = j; } }); d.to = best;
+        e.preventDefault && e.preventDefault();
+        d.el.style.transform = 'translate(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px) scale(1.04)';
+        const order = L.map((_, j) => j); order.splice(d.idx, 1); order.splice(d.to, 0, d.idx);
+        order.forEach((j, pos) => { if (j === d.idx) return; const c = L[j], a = d.slots[j], b = d.slots[pos]; c.style.transform = pos !== j ? 'translate(' + (b[0] - a[0]).toFixed(1) + 'px, ' + (b[1] - a[1]).toFixed(1) + 'px)' : ''; }); },
+      up: () => { clearTimeout(self._kpT); const d = self._kd; self._kd = null; if (!d || !d.lifted) return; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}
         const L = cards().map((c) => c.getAttribute('data-wf-kpi')), from = d.idx, to = d.to; if (to !== from) { const [x] = L.splice(from, 1); L.splice(to, 0, x); }
-        let all = null; try { all = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (x) {} all = Array.isArray(all) ? all : ['rate', 'area', 'pers']; const rest = all.filter((q) => L.indexOf(q) < 0);
+        let all = null; try { all = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (x) {} all = Array.isArray(all) ? all : ['rate', 'area', 'size', 'pers']; const rest = all.filter((q) => L.indexOf(q) < 0);
         try { localStorage.setItem('wf-kpi-order', JSON.stringify(L.concat(rest))); } catch (x) {}
-        d.el.style.transition = ''; reset(); self.forceUpdate(); }
+        reset(); self.forceUpdate(); }
     };
   }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
@@ -1426,11 +1434,15 @@ class Component extends DCLogic {
         const chB = live && pcT ? { ...trend([...Array(12)].map((_, i) => I.pc * Math.pow(i / 11, 1.6)), 100, '#1E7A34', 'rgba(52,199,89,0.14)'), aria: 'Containment rose to ' + I.pc + '%' } : none;
         // Order: how fast it spreads, how long it has burned, how much, who is on it. Time active needs no chart (the stages bar sits under the map)
         // Time active sits in the header now; three KPI cards in the user's own order (press, hold and slide to reorder)
-        const med0 = [grow ? { key: 'rate', v: grow.v, l: 'Spread rate', ch: grow.chR } : null,
+        // Size class: the US scale (NWCG, A to G by acres), used for every region (Portugal publishes no size classes)
+        const SC = (() => { if (!(HA > 0)) return null; const ac = HA / 0.4047, T = [0.25, 10, 100, 300, 1000, 5000], i = T.filter((x) => ac >= x).length, L = 'ABCDEFG'[i];
+          const hs = [4, 7, 10, 13, 17, 22, 28], bars = hs.map((h, j) => 'M' + (j * 100 / 7 + 2).toFixed(2) + ' ' + (28 - h) + 'h' + (100 / 7 - 4).toFixed(2) + 'v' + h + 'h-' + (100 / 7 - 4).toFixed(2) + 'Z');
+          return { key: 'size', v: L, l: 'Size class', note: haEst ? 'Estimate' : '', ch: { ...none, svgD: 'block', bars: bars.filter((_, j) => j !== i).join(''), barC: 'rgba(118,118,128,0.22)', bar2: bars[i], bar2C: '#B84A00', aria: 'Size class ' + L + ' of A to G (NWCG)' } }; })();
+        const med0 = [grow ? { key: 'rate', v: grow.v, l: 'Spread rate', ch: grow.chR } : null, SC,
           { key: 'area', v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published yet.' : '' }, pers ? { key: 'pers', v: pers, l: 'Personnel', ch: chP } : null].filter(Boolean);
-        { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['rate', 'area', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
-        const two = false, colW = Math.floor((358 - 8 * (med0.length - 1)) / Math.max(1, med0.length)) - 16;
-        const med = med0.map((m, i) => ({ note: '', ...m, ...(() => { const q = /^(\S+)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: Math.min(30, Math.floor(colW * 0.62 / Math.max(1, (/^(\S+)/.exec(String(m.v)) || ['', ''])[1].length * 0.56))) + 'px' }));
+        { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['rate', 'area', 'size', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
+        const two = false, colW = 175 - 16;
+        const med = med0.map((m, i) => ({ note: '', ...m, ...(() => { const q = /^(\S+)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: Math.min(34, Math.floor(colW * 0.62 / Math.max(1, (/^(\S+)/.exec(String(m.v)) || ['', ''])[1].length * 0.56))) + 'px' }));
         const anyCh = med.some((m) => m.ch.svgD !== 'none' || m.ch.segD !== 'none') || chB.svgD !== 'none';
         return { d: 'flex', bch: chB, trD: anyCh ? 'block' : 'none', axis: anyCh ? 'Since ' + clk(t0) + '. Estimated from today\'s figures.' : '', big, fs, bigD: pcT ? 'block' : 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '16px' : '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
