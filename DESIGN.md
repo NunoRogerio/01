@@ -57,8 +57,9 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
   - text buttons are pills;
   - avatars are full circles, the same size as the round X.
 - **Dividers** between list items run the full width of their container.
-- **Horizontal bars** (progress, stamina, water, stage timelines): 8px tall, fully rounded ends.
-- **Micro trends** sit under each KPI (28px tall, full column width): bars or a line over the item's own time span. All charts in a group share one span, so one note under them gives it ("Since 18 Sep.") plus "Estimated…" when the shape is estimated. Time active shows the stages as an 8px bar. Four KPIs sit 2 × 2.
+- **Horizontal bars** (progress, stamina, water, stage timelines): 16px tall, fully rounded ends.
+- **KPI groups** read label (annotation) → value → micro chart. Micro trends are small bar charts (28px tall, full column width) over the item's own span; all charts in a group share one span, so one note under them gives it ("Since 18 Sep.") plus "Estimated…" when estimated. A KPI whose chart would say nothing (time active) has none. Four KPIs sit 2 × 2.
+- **Fire detail KPI order:** spread rate, time active, burned area, personnel.
 - **Burned area comes with its spread rate:** area added per interval (hourly under a day, every 6 h under a week, else daily), latest interval as the KPI ("17 ha/day") and in full colour.
 
 ## 3. Colour and themes
@@ -120,8 +121,11 @@ The one from the user preferences, used everywhere:
 ### Detail pages (being tried)
 
 - The page scroll has no snapping.
-- Actions sit side by side on one row, 16px from the screen edges all round (bottom included; to be tested against the iOS home indicator).
-- No blades and no back button (Done at the bottom closes the page, so the header aligns with the content): only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 240px band) and all the information scroll together in one column. A tap on the map opens it full screen.
+- Actions sit side by side on one row, 16px from the sides and 32px from the bottom edge. The team chat lives in its button (chat icon before the label, unread badge on it), not in the header. This is the one text button with a leading icon, by Nuno's choice.
+- No blades and no back button (Done at the bottom closes the page, so the header aligns with the content): only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 120px band framed on the fire, full screen from its button or a tap) and all the information scroll together in one column.
+- Fire detail order: map band, stages bar (stage now, time in it, the stage steps), KPIs with charts, conditions and model, endurance (simulated), stations as small cards (name, distance and drive time, crews free simulated), source.
+- On a fire's maps the perimeter polygon (burned, active front, held edge) replaces the fire dot when the model or source gives it.
+- List rows in detail pages carry no leading icons.
 
 ### Blades and panels
 
