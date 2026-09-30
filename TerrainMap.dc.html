@@ -415,8 +415,10 @@ class Component extends DCLogic {
         el.addEventListener('wheel', this.onWheel, { passive: false });
       }
     };
+    this.isLocked = () => { const p = this.props; return (p.locked === true || p.locked === 'true') && !(p.isFull === true || p.isFull === 'true'); };
     this.onWheel = (e) => {
       e.preventDefault();
+      if (this.isLocked()) return;   // a locked map (page band) never pans or zooms; full screen does
       const p = this.local(e.clientX, e.clientY);
       this.zoomAt(p.x, p.y, Math.exp(-e.deltaY * 0.0018));
     };
@@ -448,6 +450,7 @@ class Component extends DCLogic {
     this.onMove = (e) => {
       const prev = this.pts[e.pointerId];
       if (!prev) return;
+      if (this.isLocked()) return;
       const ids = Object.keys(this.pts);
       const k = this.scaleK();
       if (ids.length === 1) {
@@ -474,7 +477,7 @@ class Component extends DCLogic {
       if (!this._pinched && a && b && b[0] > a[0] && n - b[0] < 60) {
         let vx = (b[1] - a[1]) / (b[0] - a[0]), vy = (b[2] - a[2]) / (b[0] - a[0]);   // screen px per ms
         const sp = Math.hypot(vx, vy), cap = 2.2; if (sp > cap) { vx *= cap / sp; vy *= cap / sp; }
-        if (sp > 0.2) this.glide(vx, vy);
+        if (sp > 0.2 && !this.isLocked()) this.glide(vx, vy);
       }
       if (!this._glide && this._gest) this.endGest();
       this._trail = [];
