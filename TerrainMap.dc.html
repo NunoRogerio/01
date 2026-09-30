@@ -132,7 +132,6 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <sc-for list="{{camLines}}" as="ln" hint-placeholder-count="3">
           <path d="{{ln.d}}" fill="none" stroke="#0079A6" stroke-width="{{lw.w13}}" stroke-dasharray="{{lw.d36}}" stroke-linecap="round" style="opacity: 0.85"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="1.2s" repeatCount="indefinite"></animate></path>
         </sc-for>
-        <circle cx="{{pin.x}}" cy="{{pin.y}}" r="9" fill="#E86A00" fill-opacity="0.1" stroke="#E86A00" stroke-width="1.2" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></circle>
       </sc-if>
       <sc-for list="{{routeLines}}" as="rl" hint-placeholder-count="0">
         <path d="{{rl.d}}" fill="none" stroke="#FFFFFF" stroke-width="{{lw.w50}}" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.9"></path>
@@ -790,7 +789,11 @@ class Component extends DCLogic {
   view() {
     const st = Object.assign({}, this.state || {}, this._pv || {});
     const b = this.base();
-    return { s: st.s ?? b.s, cx: st.cx ?? b.cx, cy: st.cy ?? b.cy };
+    const z0 = Number(this.props.startZoom) || 1;   // a page can open the map closer than its framing (e.g. 300% on the candidate)
+    // zooming in keeps the pin where the framing put it on screen (its offset from the centre shrinks with the zoom)
+    const px = Number(this.props.pinX), py = Number(this.props.pinY), hasPin = z0 !== 1 && isFinite(px) && isFinite(py) && this.props.pinX != null;
+    const cx0 = hasPin ? px - (px - b.cx) / z0 : b.cx, cy0 = hasPin ? py - (py - b.cy) / z0 : b.cy;
+    return { s: st.s ?? b.s * z0, cx: st.cx ?? cx0, cy: st.cy ?? cy0 };
   }
   clampView(cx, cy, s) {
     const W = this.W(), H = this.H(), w = this.win();
@@ -1504,7 +1507,7 @@ class Component extends DCLogic {
         const c = (window.__wfY || '#E5FF00');   // candidates: the app's hi-vis yellow with a dark rim
         return withTip(at(g.x, g.y, {
           c, rim: '#3A3A3C', r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s',
-          pulse: !MANY && !sel, still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf, reg: window.__wfRegionUp ? window.__wfRegionUp(g.st, g.co) : (g.reg || ''),
+          pulse: !MANY && (!sel || this.props.mode === 'pin'), still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf, reg: window.__wfRegionUp ? window.__wfRegionUp(g.st, g.co) : (g.reg || ''),
           aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent',
           pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
         }), g.place + ' · ' + g.id, g.conf + '% likelihood · ' + g.src + '.\nTap to review.');
