@@ -447,6 +447,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; align-items: center; text-align: center">
           <!-- Title, then one normal-text block (22px lines, no extra gap between them), as in the data source rows -->
           <!-- Title M (26px semibold): the topic of the panel (larger than title S, used in lists) -->
+          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 96px; height: 96px; margin: 4px 0 16px; border-radius: 50%; background: #E5E5EA; color: #000000; font-size: 26px; font-weight: 600; overflow: hidden">{{me.code}}<span style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></span>
           <span class="wf-title-m" style="margin-bottom: 4px; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{me.name}}</span>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.title}}</span>
           <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
@@ -537,9 +538,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <div role="button" tabindex="0" aria-label="Close preferences" onPointerDown="{{hPf.down}}" onPointerMove="{{hPf.move}}" onPointerUp="{{hPf.up}}" onPointerCancel="{{hPf.cancel}}" onKeyDown="{{hPf.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; margin-top: auto; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
   </section>
-  <!-- The profile picture stays where it is in the top bar while the panel slides down underneath it; open, it gains a
-       4px ring in the primary colour outside the circle (test) and closes the panel -->
-  <button type="button" data-pf-av="1" class="opt avbtn" onClick="{{closePrefs}}" aria-label="Close preferences" aria-hidden="{{pfHidden}}" style="position: absolute; top: {{pfAv.top}}px; left: {{pfAv.left}}px; z-index: 41; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer; opacity: {{pfAv.op}}; pointer-events: {{pfPE}}; box-shadow: 0 0 0 4px rgba(var(--wf-y-rgb), {{pfAv.ring}}); transition: opacity 0s linear {{pfAv.delay}}, box-shadow .3s ease">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
+  <!-- Open, the preferences close with a round X where the profile picture sat (as notifications and chats); the picture
+       itself moves into the profile card, above the name -->
+  <button type="button" data-pf-av="1" class="opt" onClick="{{closePrefs}}" aria-label="Close preferences" aria-hidden="{{pfHidden}}" style="position: absolute; top: {{pfAv.top}}px; left: {{pfAv.left}}px; z-index: 41; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; opacity: {{pfAv.op}}; pointer-events: {{pfPE}}; transition: opacity .25s ease {{pfAv.delay}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
   <!-- Confirm role-play changes and key removal (no grabber: it is not expandable; Cancel or a tap outside closes it) -->
   <div class="wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-dlg" role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
@@ -771,7 +772,7 @@ class Component extends DCLogic {
     return {
       me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
       // the fixed profile picture: where the top bar has it (measured on open), shown while the panel is open or closing
-      pfAv: (() => { const P = s.pfAvPos || this._pfAvLast || { top: 15, left: ((window.__wfVP || {}).w || 390) - 56 }; this._pfAvLast = P; return { top: P.top, left: P.left, rowDy: 11, op: pf ? 1 : 0, delay: pf ? '0s' : '.45s', ring: pf ? 1 : 0 }; })(),
+      pfAv: (() => { const P = s.pfAvPos || this._pfAvLast || { top: 15, left: ((window.__wfVP || {}).w || 390) - 56 }; this._pfAvLast = P; return { top: P.top, left: P.left, rowDy: 11, op: pf ? 1 : 0, delay: pf ? '.15s' : '0s', ring: pf ? 1 : 0 }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none', pfScrimOp: pf ? 1 : 0, pfDy: 0, pfCl: this.wfDrag('pf').y ? Math.max(0, -this.wfDrag('pf').y) : -80, pfClT: this.wfDrag('pf').y ? '0s' : '.3s', hPf: this.wfHandle('pf', 'up', () => this.setState({ pf: false })),
       pfY: pf ? '0%' : '-104%', pfDur: boot ? '0s' : pf ? '.55s' : '.45s', pfEase: pf ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)',
       pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
