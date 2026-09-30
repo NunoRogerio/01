@@ -356,9 +356,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
          (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
     <div role="group" data-sb-kpi="1" aria-label="{{cc.aria}}" style="display: {{cc.d}}; flex-direction: column; align-items: center; flex-shrink: 0; padding: 4px 16px 0; text-align: center">
-      <span style="font-size: 15px; line-height: 20px; color: #6E6E73">Containment</span>
-      <span class="wf-like-xs" style="display: block; margin-top: -2px; max-width: 100%; white-space: nowrap; --wf-fs: {{cc.fs}}px">{{cc.big}}</span>
-      <div style="display: {{cc.medD}}; justify-content: center; gap: 0; width: 100%; margin-top: 12px">
+      <span style="display: {{cc.bigD}}; font-size: 15px; line-height: 20px; color: #6E6E73">Containment</span>
+      <span class="wf-like-xs" style="display: {{cc.bigD}}; margin-top: -2px; max-width: 100%; white-space: nowrap; --wf-fs: {{cc.fs}}px">{{cc.big}}</span>
+      <!-- No % published (ANEPC gives stages): the stage is a colour-matched tag, not a big number -->
+      <span role="status" style="display: {{cc.tagD}}; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 8px; padding: 4px 12px; border-radius: 16px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700">{{cc.tag}}</span>
+      <div style="display: {{cc.medD}}; justify-content: center; gap: 0; width: 100%; margin-top: {{cc.medMt}}">
         <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="2">
           <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; padding: 0 8px; border-left: {{m.sep}}">
             <span class="kpi wf-big" style="--k: 34px; white-space: nowrap">{{m.v}}</span>
@@ -1284,16 +1286,17 @@ class Component extends DCLogic {
       stCancel: () => this.setState({ open: false, stDraft: null }),
       kpiD: (RO && RU && RU.length) || (K && String(K.k1V) === '—' && String(K.k2V) === '—') ? 'none' : 'grid',
       kpiRowD: RO && RU && RU.length ? 'flex' : 'none', kpiTopD: 'none', kpiEstD: fres && fres.estF ? 'block' : 'none', oldTopD: RO ? 'none' : 'flex',
-      cc: (() => { if (!RO) return { d: 'none', big: '', fs: 64, med: [], medD: 'none', aria: '' };
+      cc: (() => { if (!RO) return { d: 'none', big: '', fs: 64, bigD: 'none', tagD: 'none', tag: '', tagBg: '', tagFg: '', medMt: '0', med: [], medD: 'none', aria: '' };
         const I = INFO || {}, now = Date.now(), us = frow && frow.st !== 'PT' && frow.st !== 'BRA';
         // Containment: the % contained where the source publishes it (NIFC), else the official stage (ANEPC publishes stages only)
-        const big = HELD ? (I.stEn || I.st || 'Contained') : (us && I.pc != null ? I.pc + '%' : (I.stEn || I.st || 'Not contained'));
+        const pcT = !HELD && us && I.pc != null ? I.pc + '%' : '', stage = I.stEn || I.st || (HELD ? 'Contained' : 'Not contained'), big = pcT || stage;
+        const TN = { hot: ['#B84A00', 'rgba(184,74,0,0.14)'], warn: ['#B84A00', 'rgba(184,74,0,0.14)'], amber: ['#7A5600', 'rgba(122,86,0,0.14)'], ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], watch: ['#00707A', 'rgba(0,112,122,0.14)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || (HELD ? TN.ok : TN.hot);
         const n = String(big).length, fs = Math.max(26, Math.min(64, Math.floor(330 / ((n * 0.6) || 1))));
         const t = HELD ? (HELD.took != null ? DUR(HELD.took) : '') : I.startMs ? DUR(now - I.startMs) : '';
         const u = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ area: us ? 'ac' : 'ha' }, v || {}); })();
         const area = I.ha != null ? (u.area === 'ha' ? Math.round(I.ha).toLocaleString() + ' ha' : Math.round(I.ha / 0.4047).toLocaleString() + ' ac') : '';
         const med = [t ? { v: t, l: HELD ? 'Final duration' : 'Time active' } : null, area ? { v: area, l: 'Burned area' } : null].filter(Boolean).map((m, i) => ({ ...m, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' }));
-        return { d: 'flex', big, fs, med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
+        return { d: 'flex', big, fs, bigD: pcT ? 'block' : 'none', tagD: pcT ? 'none' : 'inline-flex', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '12px' : '16px', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
       kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
