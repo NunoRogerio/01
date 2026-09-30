@@ -112,7 +112,8 @@
     return Math.max(28, Math.min(cap, Math.floor(w / (len * 0.6)))) + 'px';
   };
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
-  var BTN = '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
+  var BTN = '.sqrow::after{display:none!important}' +   /* lists: no divider between items, only the line under the list's header */
+    '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
   'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated
   '.wf-seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:52px;padding:10px;box-sizing:border-box;border-radius:999px;background:rgba(118,118,128,0.12)}' +
   '.wf-seg>.segthumb{position:absolute;top:10px;bottom:10px;left:10px;transition:transform .42s cubic-bezier(.4,0,.2,1) .14s;will-change:transform}' +
