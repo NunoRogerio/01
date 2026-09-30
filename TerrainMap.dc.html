@@ -16,7 +16,7 @@
 <script src="fit.js?v=89"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=105"></script>
-<script src="i18n.js?v=102"></script>
+<script src="i18n.js?v=104"></script>
 <script src="live.js?v=35"></script>
 
 <title>Terrain map</title>
@@ -1410,7 +1410,7 @@ class Component extends DCLogic {
       fullIcon: (p.isFull === true || p.isFull === 'true') ? (String(p.closeX) === 'true' ? 'M6 6l12 12M18 6 6 18' : 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5') : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
       // The maximize button sits 16px above whatever panel covers the map's bottom edge (panels overlap the map by attrBottom - 6).
       // Full screen: the minimize button sits 24px from the bottom and 16px from the right; the map credit lines up with its middle.
-      legL: 16 + WN.l, legR: 16 + WN.r, srchD: typeof p.onSearch === 'function' ? 'flex' : 'none', srchL: 16 + WN.l, srch: () => { if (typeof p.onSearch === 'function') p.onSearch(); },
+      legL: ((p.mode === 'pin' || !!p.mapTitle) ? 32 : 16) + WN.l,   /* under a map title, the legend starts where the title's text does */ legR: 16 + WN.r, srchD: typeof p.onSearch === 'function' ? 'flex' : 'none', srchL: 16 + WN.l, srch: () => { if (typeof p.onSearch === 'function') p.onSearch(); },
       ctrlB: (fullNow ? 24 : Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + 16) + (H - WN.b), ctrlR: 16 + WN.r, attrL: 4 + WN.l, clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), ldPadT: WN.t - Math.max(0, WN.t - (Number(p.clipBleed) || 0)),   /* the loader's flame and words centred in the grey that shows, not under the header */ clipB: H - WN.b, attrB: 4 + (H - WN.b) + (Number(p.attrBottom) >= 60 ? Number(p.attrBottom) - 6 : 0),   /* a panel covering the map's foot (main screen's bottom blade) lifts it above that panel */   // the map credit: 4px from the visible map's bottom and left edges, in the note style, everywhere
       mapTr: anim ? 'transform' + EZ : 'none', mv: anim ? 'left' + EZ + ', top' + EZ : 'none', mvSt: anim ? 'left' + EZ + ', top' + EZ + ', background-color .3s, border-color .3s' : 'background-color .3s, border-color .3s',
       ctrl: p.controls === 'top'
@@ -1500,7 +1500,7 @@ class Component extends DCLogic {
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
-        const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0, TT = hasT ? (inT ? 50 : 62) : 0;   // pin: the legend sits inside the title box, under its text
+        const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0, TT = hasT ? 66 : 0;   // pin: the legend sits inside the title box, under its text
         const WX = this.wxRow(inT);
         const noLeg = p.noLegend === true || p.noLegend === 'true';   // a small detail map shows only the map and its full-screen button
         return { ...WX, ...(noLeg || p.fireOnly === true || p.fireOnly === 'true' ? { wxOn: false } : {}), legend, legOn: legend.length > 0 && !noLeg, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle, mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : 54, legIn: 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10

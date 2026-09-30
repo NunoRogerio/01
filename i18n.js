@@ -40,7 +40,7 @@
     // candidate screen
     'AI validation':'Validação por IA','AI likelihood':'Probabilidade IA','Likelihood':'Probabilidade','Evidence':'Evidências','Unverified':'Por verificar','Being checked':'Em verificação','Verifying':'Em verificação',
     'Strong heat signal':'Sinal térmico forte','Heat anomaly':'Anomalia térmica','Weak heat signal':'Sinal térmico fraco','Smoke plume likely':'Coluna de fumo provável','Possible smoke':'Possível fumo','Possible fire start':'Possível início de incêndio',
-    'Not confirmed on the ground':'Não confirmado no terreno','One detection':'Uma deteção','Estimated ignition point':'Ponto de ignição estimado','Incident chat':'Conversa do incidente','You and the crew coordinators of the stations on this fire':'Você e os coordenadores de equipa dos quartéis neste incêndio','Fire resolved':'Incêndio resolvido','Heat is inside the dashed circle · ±375 m':'O calor está dentro do círculo tracejado · ±375 m',
+    'Not confirmed on the ground':'Não confirmado no terreno','One detection':'Uma deteção','Estimated ignition point':'Ponto de ignição estimado','Within ±375 m':'A ±375 m','Incident chat':'Conversa do incidente','You and the crew coordinators of the stations on this fire':'Você e os coordenadores de equipa dos quartéis neste incêndio','Fire resolved':'Incêndio resolvido','Heat is inside the dashed circle · ±375 m':'O calor está dentro do círculo tracejado · ±375 m',
     'Confirm fire':'Confirmar incêndio','Send drone':'Enviar drone','Dismiss':'Descartar','Dismiss ignition':'Descartar ignição','Go back':'Voltar','Confirm fire?':'Confirmar incêndio?','Dismiss candidate?':'Descartar candidato?',
     'Confirm and size response':'Confirmar e dimensionar resposta','False alarm':'Falso alarme','Controlled burn':'Queima controlada','Satellite detection point':'Ponto de deteção por satélite',
     "You're declaring":'Está a declarar','a real ignition, based on the evidence you reviewed:':'uma ignição real, com base nas evidências que reviu:','will be closed and removed from the map.':'será fechado e retirado do mapa.',
@@ -108,7 +108,7 @@
     [/^Towns, villages and places in (.+)\.$/,function(m,a){return 'Cidades, vilas e lugares em '+a.replace(' and ',' e ').replace('California','Califórnia')+'.';}],
     [/^(.+)\. Show on the map$/,function(m,a){return a+'. Mostrar no mapa';}],
     [/^(\d+) of (\d+) free$/,function(m,a,b){return a+' de '+b+' livres';}],
-    [/^(\d+) of (\d+) crews free$/,function(m,a,b){return a+' de '+b+' equipas livres';}],[/^(.+) will be removed from this dispatch\.$/,'$1 será removido deste despacho.'],[/^(\d+) available$/,function(m,a){return a+(a==='1'?' disponível':' disponíveis');}],
+    [/^(\d+) of (\d+) crews free$/,function(m,a,b){return a+' de '+b+' equipas livres';}],[/^(.+) will be removed from this dispatch\.$/,'$1 será removido deste despacho.'],[/^Add resources \((\d+)\)$/,'Adicionar recursos ($1)'],[/^(\d+) available$/,function(m,a){return a+(a==='1'?' disponível':' disponíveis');}],
     [/^([\d.,]+ (?:km|mi))\. ~(\d+) min drive\.$/,function(m,a,b){return a+'. ~'+b+' min de carro.';}],
     [/^Class ([A-G])$/,function(m,a){return 'Classe '+a;}],
     [/^Size class ([A-G]) of A to G \(NWCG\)$/,function(m,a){return 'Classe de área '+a+' de A a G (NWCG)';}],
