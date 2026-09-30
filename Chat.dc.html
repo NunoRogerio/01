@@ -18,7 +18,7 @@
 <script src="prefs.js?v=93"></script>
 <script src="i18n.js?v=86"></script>
 <script src="live.js?v=34"></script>
-<script src="chat.js?v=19"></script>
+<script src="chat.js?v=20"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -105,7 +105,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-for>
       </div>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
-      <button type="button" class="chrow" onClick="{{openSheet}}" aria-haspopup="dialog" aria-label="{{c.pinAria}}" style="display: flex; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
+      <button type="button" class="chrow" onClick="{{openSheet}}" aria-haspopup="dialog" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
         <span style="display: flex; align-items: center; gap: 12px; width: 100%">
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: {{c.stC}}; transition: background-color .6s ease"><svg width="26" height="26" viewBox="0 0 24 24"><path d="{{c.ic.d}}" fill="{{c.ic.fillW}}" stroke="#FFFFFF" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
@@ -474,13 +474,13 @@ class Component extends DCLogic {
       const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope || null;   /* as the main screen reads it */
         let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} const lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r || ''] || null;
         if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; })();
-      const inSc = (c) => !SC || !SC.st || !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co) || !c.st;
+      const inSc = (c) => c.kind === 'dm' || !SC || !SC.st || !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co) || !c.st;
       const scName = SC ? (SC.title || SC.co || ({ PT: 'Portugal', CA: 'California', US: 'United States', AMZ: 'Amazon', NV: 'Nevada' })[SC.st] || SC.st || '') : '';
       const all = C.list().filter(inSc);
       const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);
         const who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? L('You', 'Você') : (c.people[lm.from] || {}).name || '') : '';
         const txt = lm ? (lm.kind === 'card' ? (lm.summary ? L('Fire resolved', 'Incêndio resolvido') : T(lm.title)) : L(lm.en, lm.pt)) : L('Calling the teams…', 'A chamar as equipas…');
-        return { place: (c.drill ? L('Drill · ', 'Simulação · ') : '') + c.place, st: T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: u > 9 ? '9+' : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
+        return { place: (c.drill ? L('Drill · ', 'Simulação · ') : '') + c.place, st: c.kind === 'dm' ? c.reg : T(S), stC: S.c, time: lm ? ago(lm.t) : '', timeC: u ? '#D70015' : '#545458', last: (who ? who + ': ' : '') + txt, unread: u > 9 ? '9+' : String(u), badgeD: u ? 'block' : 'none', w: u ? 600 : 400,
           ic: iconFor(S), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
           go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, fromRes: tab === 'resolved', draft: '', stack: [], sheet: false }); } }; };
       const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };
@@ -619,8 +619,8 @@ class Component extends DCLogic {
       }
     });
     // The team: you, the fire owner, then the crew coordinator of each station
-    const team = [{ name: me.name, role: L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#1E7A34' }]
-      .concat(c.people.map((p, i) => ({ name: p.name, role: L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
+    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#1E7A34' }]
+      .concat(c.people.map((p, i) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
       .map((p) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name) }));
     const ty = C.typing(c);
     const acts = C.actions(c).map((a) => ({ label: L(a.en, a.pt), cls: 'chbtn', bg: tint(ME_C), line: line(ME_C), fg: '#000000', w: a.primary ? 600 : 400, go: () => run(a.key) }));
@@ -635,7 +635,7 @@ class Component extends DCLogic {
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
       sh: { y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
       openSheet, closeSheet: () => this.setState({ sheet: false }), goFire: inc.go,
-      c: { place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
+      c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,

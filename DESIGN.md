@@ -18,7 +18,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 | Style | Size / weight | Use |
 |---|---|---|
-| Title M | 26px semibold, 32px line | Title of a screen, blade or panel (area name, "Incidents", profile name, "Notifications") |
+| Title M | 26px semibold, 32px line | Title of a screen, blade or panel (area name, profile name, "Notifications") |
 | Title S | 17px bold | First line of a list item; titles inside cards |
 | Title XS | 15px semibold (`.wf-title-xs`) | Place name in map tooltips |
 | Normal text | 17px regular, same colour as titles | The line under a screen title; body text |
@@ -117,7 +117,7 @@ The one from the user preferences, used everywhere:
 
 ### Calm lists (incidents, chats, notifications)
 
-Rows edge to edge between full-width dividers: the name in Title S, one grey annotation line under it, the value or time on the right in grey, a chevron. No avatars, no coloured status words, no cards around the list; colour only for an ignition's likelihood and the lime unread count (notifications: a lime dot before the time while unread).
+Rows edge to edge between full-width dividers: the name in Title S, one grey annotation line under it, the value or time on the right in grey, a chevron. No avatars, no coloured status words (a fire's state is its tag), no cards around the list; colour only for an ignition's likelihood and the lime unread count (notifications: a lime dot before the time while unread).
 
 ### Status tags
 
@@ -246,3 +246,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Open incidents list header:** title S ("Incidents", 17px bold) with the counts under it, 28px under the blade's top edge; the title, switcher and search stay fixed while the list scrolls under them.
 - **Fire state in lists:** the state is the same tag as on the fire page and the map tooltip (tone colour on its 14% tint, 15px bold, 28px tall, radius 14), never coloured plain text.
 - **Map tooltips:** the status tag docks to the top edge (square top, round bottom). Fire: tag, then the number, its label under it, then the place. Station: tag, then the station crest at 30% of the panel width, centred, then the name.
+- **Station screen:** everything under the header scrolls as one page, the map band included (full screen is its own layer). Sections: Key figures (three fixed plus five extra cards behind the + tile: fire danger, turnout time, calls this year, water points within 10 km, response area; simulated ones carry "Estimate"), Fires near this station, Command (the coordination team in one row, a lime round chat button opens a group chat with you and the team), Resources (switcher Vehicles / Crews / Aircraft, a count line, then rows with a 44px grey icon tile, name in Title S, what it is in annotation, and its status tag), Station details.
+- **Crews:** a crew row opens a sheet with its people (chief first, bold) and one primary button, "Chat with <chief>". Station chats are direct chats (no incident state card); the chief offers a free crew, asks where, then rolls.

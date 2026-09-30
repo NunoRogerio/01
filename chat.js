@@ -418,6 +418,7 @@
 
   // Quick actions for the fire owner, per stage
   function actions(c) {
+    if (c.kind === 'dm') return [];
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
     if (s === 0) { A.push({ key: 'confirm', en: 'Confirm', pt: 'Confirmar', primary: true }); if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Verificar por drone' }); A.push({ key: 'dismiss', en: 'Dismiss', pt: 'Descartar' }); }
@@ -635,6 +636,7 @@
   function send(key, text) {
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
+    if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (!c.dismissed && c.stage < 7 && c.people.length) {
       var rules = function (c) {
       var it = intentOf(text), named = responder(c, text), n = c.people.length;
@@ -653,6 +655,44 @@
     c.updated = Date.now(); c.seenAt = Date.now(); c.idleAt = Date.now(); save(); emit();
   }
 
+
+
+  // ---- direct chats: a station's command team or one of its crew chiefs, outside any incident -------------------------
+  // Opened from the station screen. Scripted: you ask for support, they offer the crew they have, you say where, they roll.
+  function direct(o) {
+    var db = load(), k = 'd:' + o.id;
+    if (db.chats[k]) return db.chats[k];
+    var now = Date.now(), g = o.people.length > 1;
+    var ch = { key: k, kind: 'dm', incId: o.id, place: o.title, reg: o.org || '', st: o.st || '', lat: +o.lat || 0, lon: +o.lon || 0, x: o.x, y: o.y, note: '', offer: o.offer || null, eta: o.eta || 15,
+      stage: 0, startStage: 0, started: now, vNow: now, vAt: now, hist: [{ s: 0, vt: now }],
+      people: o.people.map(function (p) { return { name: p.name, code: initials(p.name), org: o.org || '', kind: 'lead', roleEn: p.roleEn, rolePt: p.rolePt }; }),
+      stations: [{ ck: o.ck || '', name: o.station || o.org || '', short: o.org || '', km: 0, min: 0 }], forces: [], air: null, evac: null,
+      msgs: [], queue: [], seenAt: now, beat: 0, flags: {}, closed: false, dismissed: false, updated: now, face: o.face || {}, used: {}, step: 0 };
+    o.people.forEach(function (p) { ch.used[p.name] = 1; });
+    mine(ch, g ? 'Hello everyone, how are you?' : 'Hello ' + o.people[0].name.split(' ')[0] + ', how are you?', g ? 'Olá a todos, como estão?' : 'Olá ' + o.people[0].name.split(' ')[0] + ', como estás?');
+    say(ch, 0, g ? 'Hello! All good, the command team is here. How can we help?' : 'Hello! All good here. How can I help?', g ? 'Olá! Tudo bem, está cá a equipa de comando. Em que podemos ser úteis?' : 'Olá! Tudo bem por aqui. Em que posso ser útil?', 2200, 1);
+    db.chats[k] = ch; save(); emit(); return ch;
+  }
+  function dmReply(c, text) {
+    var t = String(text).toLowerCase(), n = c.people.length, b = c.beat++, O = c.offer || { en: 'a crew of 5 and a fire engine', pt: 'uma equipa de 5 e um veículo' };
+    var q = String(text).trim().replace(/[.!?]+$/, '');
+    if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Anytime. We keep you posted.', 'Às ordens. Vamos dando notícias.', 1800, 1); return; }
+    if (c.step === 0) {   // the ask: they offer what the station has free
+      c.step = 1;
+      say(c, 0, 'Yes, that is possible. I can send ' + O.en + ', out of the station in 5 min. Where do you need us?', 'Sim, é possível. Posso enviar ' + O.pt + ', a sair do quartel em 5 min. Para onde?', 2400, 2);
+      if (n > 1) say(c, 1, 'I will get them kitted up now.', 'Vou já pô-los a equipar.', 5200, 1);
+      return;
+    }
+    if (c.step === 1) {   // the place: they roll
+      c.step = 2;
+      say(c, 0, 'Understood: "' + q + '". Rolling now, about ' + c.eta + ' min out. I will report on arrival.', 'Entendido: "' + q + '". A sair agora, cerca de ' + c.eta + ' min até lá. Dou notícias à chegada.', 2400, 2);
+      say(c, n > 1 ? 1 : 0, 'Crew out of the station.', 'Equipa saiu do quartel.', 9000, 5);
+      return;
+    }
+    if (/quanto|when|eta|minut|tempo|how long|chegam|arriv/.test(t)) { say(c, 0, 'About ' + Math.max(3, c.eta - 6) + ' min to go.', 'Faltam cerca de ' + Math.max(3, c.eta - 6) + ' min.', 2000, 1); return; }
+    if (/água|agua|water|tanque|tank/.test(t)) { say(c, n > 1 ? 1 : 0, 'Tanks full. A water tender can follow if needed.', 'Tanques cheios. Se for preciso, segue um autotanque.', 2000, 1); return; }
+    say(c, b % n, 'Understood.', 'Entendido.', 1800, 1);
+  }
 
   // ---- Claude role play --------------------------------------------------------------------------------------------
   // With an Anthropic API key saved in Preferences (kept only on this phone), the crew coordinators' answers and their
@@ -785,6 +825,7 @@
         [0, function (c) { return ['Morning check: no rekindles. Ready to close when you are.', 'Verificação da manhã: sem reacendimentos. Prontos a encerrar quando quiser.']; }, 420]]
   };
   function idle(c, now) {
+    if (c.kind === 'dm') return false;
     if (c.pending && now - c.pending.at > 45000) c.pending = null;
     if (c.closed || c.dismissed || c.queue.length || c.pending) return false;
     var last = Math.max(c.idleAt || 0, (c.msgs[c.msgs.length - 1] || {}).t || 0);
@@ -934,6 +975,8 @@
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },
     totalUnread: function () { var db = load(); return Object.keys(db.chats).reduce(function (a, k) { return a + unread(db.chats[k]); }, 0); },
+    direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
+    names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },

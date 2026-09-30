@@ -18,7 +18,7 @@
 <script src="prefs.js?v=93"></script>
 <script src="i18n.js?v=86"></script>
 <script src="live.js?v=34"></script>
-<script src="chat.js?v=19"></script>
+<script src="chat.js?v=20"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -32,49 +32,57 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .strow{display:flex;align-items:center;gap:16px;padding:12px 16px;border-top:1px solid rgba(60,60,67,0.12)}.strow:first-child{border-top:0}
 .stfire{transition:background-color .15s ease}.stfire:active{background-color:#E5E5EA}
 .stbtn{transition:opacity .15s ease}.stbtn:active{opacity:.76}
+.strow2{transition:background-color .15s ease}.strow2:not([disabled]):active{background-color:rgba(118,118,128,0.12)}
 .btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;font:inherit;-webkit-tap-highlight-color:transparent}.btn:active,.mbtn:active{opacity:.6}
 </style>
 </helmet>
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
-  <sc-if value="{{hasMap}}" hint-placeholder-val="{{ false }}">
-    <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-      <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" on-full="{{toggleFull}}" is-full="{{full}}" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{zero}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attr}}" loader="true" no-routes="true" no-title="{{notFull}}" no-legend="{{notFull}}" hint-size="390px,844px"></dc-import>
+  <!-- Full screen only: the map as its own layer. On the page the map is a band that scrolls with everything else. -->
+  <sc-if value="{{fullLayer}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 7">
+      <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{yes}}" close-x="true" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoomFull}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attrFull}}" loader="true" no-routes="true" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
 
   <!-- Same fixed header as a fire or an ignition: the station, the level above, the kind band with its state tag -->
-  <div style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY({{hdY}}); opacity: {{hdOp}}; pointer-events: {{hdPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+  <div style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
     <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.title}}</h1></span>
     <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-top: 2px"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.region}}</span><span style="display: {{st.kindD}}; flex-shrink: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap">{{st.kind}}</span></span>
     <span class="wf-qual hd" style="margin-top: 12px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.7 2.1H11.3V7.1L7 12.2 2.7 7.1Z" fill="rgba(64,156,255,0.6)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">Fire station</span><span role="status" style="display: inline-flex; flex-shrink: 0; align-items: center; margin-left: auto; box-sizing: border-box; background: {{st.tagBg}}; color: {{st.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{st.tag}}</span></span>
   </div>
 
-  <div class="wf-page" style="position: relative; z-index: 5; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px; transform: translateY({{downY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-    <!-- The map band: the station and the fires around it (the map layer shows through; a tap opens it full screen) -->
-    <div style="position: relative; flex-shrink: 0; height: 234px; background: transparent"><button type="button" onClick="{{toggleFull}}" aria-label="Full screen" style="position: absolute; right: 8px; bottom: 4px; width: 64px; height: 64px; padding: 0; border: 0; background: transparent; cursor: pointer"></button></div>
+  <!-- Everything under the header scrolls as one page, the map band included -->
+  <div class="wf-page" style="position: relative; z-index: 5; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px">
+    <sc-if value="{{hasMap}}" hint-placeholder-val="{{ false }}">
+      <div style="position: relative; flex-shrink: 0; height: 234px; overflow: hidden">
+        <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" no-routes="true" no-title="true" no-legend="true" hint-size="390px,234px"></dc-import>
+      </div>
+    </sc-if>
     <sc-if value="{{none}}" hint-placeholder-val="{{ false }}">
-      <p style="margin: 0 16px; font-size: 17px; line-height: 22px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
+      <p style="margin: 24px 16px 0; font-size: 17px; line-height: 22px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
     </sc-if>
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
-      <div style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; margin-top: -24px; padding: 24px 0 0; background: #F2F2F7">
-      <div style="display: flex; flex-direction: column; padding: 0 16px; background: #F2F2F7">
+      <!-- Key figures: three per row, a grey + tile at the end adds or removes cards; simulated figures say so along the right edge -->
+      <div style="display: flex; flex-direction: column; padding: 0 16px">
         <span style="margin: 0 4px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Key figures</span>
-        <div role="list" style="display: flex; gap: 8px">
+        <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
           <sc-for list="{{kpis}}" as="m" hint-placeholder-count="3">
             <div role="listitem" style="display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0">
-              <div data-wf-kpicard="1" style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
-                <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">{{m.l}}</span>
+              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+                <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center; overflow-wrap: anywhere">{{m.l}}</span>
                 <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                 <span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
+                <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 11px !important; line-height: 13px !important; opacity: 0.4; pointer-events: none">{{m.note}}</span>
               </div>
             </div>
           </sc-for>
+          <button type="button" class="mbtn" onClick="{{pkOpen}}" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
       </div>
 
       <!-- Fires near this station: a calm list, like the incidents -->
-      <div style="display: flex; flex-direction: column; background: #F2F2F7">
+      <div style="display: flex; flex-direction: column">
         <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Fires near this station</span>
         <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 20px; font-size: 17px; line-height: 22px; color: #000000">{{noFiresTxt}}</p></sc-if>
         <ul style="display: {{firesD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
@@ -93,8 +101,55 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <p class="wf-note" style="display: {{firesD}}; margin: 8px 20px 0">{{firesNote}}</p>
       </div>
 
+      <!-- Command: the station's coordination team, one row; the chat opens a group with you and the whole team -->
+      <div style="display: flex; flex-direction: column">
+        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{tx.cmd}}</span>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 0 16px 0 0; border-top: 1px solid rgba(60,60,67,0.14)">
+          <button type="button" class="strow2" onClick="{{cmd.open}}" aria-haspopup="dialog" aria-label="{{cmd.aria}}" style="display: flex; align-items: center; gap: 12px; flex-grow: 1; min-width: 0; min-height: 60px; padding: 16px 0 16px 16px; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+            <span aria-hidden="true" style="display: flex; flex-shrink: 0; padding-left: 8px">
+              <sc-for list="{{cmd.faces}}" as="p" hint-placeholder-count="3">
+                <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin-left: -8px; border-radius: 50%; background: #E5E5EA; box-shadow: 0 0 0 2px #F2F2F7; font-size: 13px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+              </sc-for>
+            </span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{tx.cmdTeam}}</span>
+              <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cmd.sub}}</span>
+            </span>
+          </button>
+          <button type="button" class="mbtn" onClick="{{cmd.chat}}" aria-label="{{tx.groupChat}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg></button>
+        </div>
+      </div>
+
+      <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
+      <div style="display: flex; flex-direction: column">
+        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{tx.res}}</span>
+        <div style="padding: 0 16px 8px">
+          <div role="tablist" aria-label="{{tx.res}}" class="wf-seg">
+            <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 3); transform: translateX({{rs.x}})"><span class="segblob"></span></span>
+            <sc-for list="{{rs.tabs}}" as="tb" hint-placeholder-count="3">
+              <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+        <span style="margin: 0 20px 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
+        <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px 20px; border-top: 1px solid rgba(60,60,67,0.14); font-size: 17px; line-height: 22px; color: #000000">{{rs.emptyTxt}}</p></sc-if>
+        <ul style="display: {{rs.listD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
+          <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
+            <li>
+              <button type="button" class="strow2" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto {{r.chevW}}; gap: 2px 12px; align-items: center; width: 100%; min-height: 60px; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
+                <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
+                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+                <span style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{r.tag}}</span>
+                <span aria-hidden="true" style="grid-row: 1; grid-column: 4; display: {{r.chevD}}; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+                <span style="grid-column: 2 / span 3; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{r.sub}}</span>
+              </button>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+
       <!-- The station itself: crest and name, then its details as label and value rows -->
-      <div style="display: flex; flex-direction: column; background: #F2F2F7">
+      <div style="display: flex; flex-direction: column">
         <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Station</span>
         <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
           <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 12px 16px; box-sizing: border-box">
@@ -112,17 +167,57 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </li>
           </sc-for>
         </ul>
-        <p class="wf-note" style="margin: 8px 20px 0">Crews, vehicles and readiness are not published in open data. Station details from OpenStreetMap contributors. <a href="{{st.osm}}" target="_blank" rel="noopener" style="color: inherit">{{st.osmLbl}}</a>.</p>
-      </div>
+        <p class="wf-note" style="margin: 8px 20px 0">{{tx.note}} <a href="{{st.osm}}" target="_blank" rel="noopener" style="color: inherit">{{st.osmLbl}}</a>.</p>
       </div>
     </sc-if>
   </div>
 
   <!-- Actions fixed at the foot, as on a fire: Back and the station's main action (Call, else Directions) -->
-  <div style="position: relative; z-index: 6; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7; transform: translateY({{downY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+  <div style="position: relative; z-index: 6; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7">
     <a href="Main.dc.html" data-wf-back="1" class="btn wf-ter" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m15 6-6 6 6 6"></path></svg><span>Back</span></a>
     <a href="{{st.act}}" class="btn primary" target="{{st.actTarget}}" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">{{st.actLbl}}</a>
   </div>
+
+  <!-- People sheet: a crew or the command team, each person with their role; the button opens the chat (crew chief, or the team as a group) -->
+  <div class="wf-glass" onClick="{{sq.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{sq.op}}; pointer-events: {{sq.pe}}; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-label="{{sq.title}}" aria-hidden="{{sq.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sq.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0 0 0 8px; margin-bottom: 16px">
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
+        <span style="font-size: 17px; line-height: 22px; color: #000000">{{sq.sub}}</span>
+      </div>
+      <button type="button" class="mbtn" onClick="{{sq.close}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <ul style="display: flex; flex-direction: column; min-height: 0; margin: 0 -16px; padding: 0; list-style: none; overflow-y: auto; border-top: 1px solid rgba(60,60,67,0.14)">
+      <sc-for list="{{sq.people}}" as="p" hint-placeholder-count="5">
+        <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 16px; box-sizing: border-box">
+          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+            <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
+          </span>
+        </li>
+      </sc-for>
+    </ul>
+    <button type="button" class="btn primary" onClick="{{sq.chat}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 48px; margin: 16px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg>{{sq.chatLbl}}</button>
+  </section>
+
+  <!-- Cards picker: the key figures with toggles -->
+  <div class="wf-glass" onClick="{{kp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{kp.op}}; pointer-events: {{kp.pe}}; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-label="Key figures" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 24px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px">
+      <div style="display: flex; align-items: center; gap: 12px; min-width: 0"><h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">Key figures</h2><button type="button" class="mbtn" onClick="{{kp.reset}}" aria-label="Reset to the default cards" style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; cursor: pointer; flex-shrink: 0">Reset</button></div>
+      <button type="button" class="mbtn" onClick="{{kp.close}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">
+      <sc-for list="{{kp.rows}}" as="r" hint-placeholder-count="6">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 16px; border-top: {{r.sep}}">
+          <span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{r.name}}</span>
+          <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
+        </div>
+      </sc-for>
+    </div>
+  </section>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
@@ -146,10 +241,24 @@ class Component extends DCLogic {
     if (!s) { try { s = JSON.parse(window.sessionStorage.getItem('wf-station') || 'null'); } catch (e) {} }
     return s;
   }
+  // Key figures can be trimmed: the + tile opens the list with toggles; the extra cards start hidden (kept on this phone)
+  wfHidden() { const g = 'stk'; let v = null, sn = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + g) || 'null'); sn = JSON.parse(localStorage.getItem('wf-seen-' + g) || 'null'); } catch (e) {} const opt = (this._kAll || []).filter((m) => m.opt).map((m) => m.key); if (!Array.isArray(v)) return opt; return v.concat(opt.filter((k) => v.indexOf(k) < 0 && !(Array.isArray(sn) && sn.indexOf(k) >= 0))); }
+  wfPicker() {
+    const g = 'stk', open = !!(this.state || {}).pick, all = this._kAll || [], H = this.wfHidden();
+    const tog = (k) => () => { const h = this.wfHidden(), i = h.indexOf(k); if (i < 0 && all.filter((m) => h.indexOf(m.key) < 0).length <= 1) return; if (i >= 0) h.splice(i, 1); else h.push(k); try { localStorage.setItem('wf-hide-' + g, JSON.stringify(h)); localStorage.setItem('wf-seen-' + g, JSON.stringify(all.map((m) => m.key))); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); };
+    return { y: open ? '0%' : '105%', op: open ? 1 : 0, pe: open ? 'auto' : 'none', hidden: open ? 'false' : 'true',
+      rows: all.map((m, i) => { const on = H.indexOf(m.key) < 0, last = on && all.filter((q) => H.indexOf(q.key) < 0).length <= 1; return { name: m.l, onStr: on ? 'true' : 'false', swOp: last ? 0.4 : 1, dis: last ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', toggle: tog(m.key), sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' }; }),
+      reset: () => { try { ['wf-hide-', 'wf-seen-'].forEach((p) => localStorage.removeItem(p + g)); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); },
+      close: () => this.setState({ pick: false }) };
+  }
   renderVals() {
     const S = this.station(), T = (S && S.tags) || {};
+    const PT = window.__wfLang === 'pt', L = (en, pt) => (PT ? pt : en);
     const back = (e) => { try { if (window.history.length > 1) { e.preventDefault(); window.history.back(); } } catch (x) {} };
-    if (!S) return { none: true, some: false, hasMap: false, back, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], fires: [], noFires: false, firesD: 'none', kpis: [], hdY: '0px', hdOp: 1, hdPE: 'auto', downY: '0px', notFull: 'true' };
+    const tx = { cmd: L('Command', 'Comando'), cmdTeam: L('Command team', 'Equipa de coordenação'), groupChat: L('Group chat', 'Conversa de grupo'), res: L('Resources', 'Recursos'),
+      note: L('Resources, crews, people and the extra figures are simulated for this demonstration. Station details from OpenStreetMap contributors.', 'Recursos, equipas, pessoas e os indicadores extra são simulados para esta demonstração. Dados do quartel dos contribuidores do OpenStreetMap.') };
+    const closed = { y: '105%', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: '', close: () => {}, chat: () => {}, reset: () => {} };
+    if (!S) return { none: true, some: false, hasMap: false, fullLayer: false, back, tx, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], fires: [], noFires: false, firesD: 'none', kpis: [], kp: closed, sq: closed, cmd: { faces: [] }, rs: { tabs: [], rows: [] } };
     const name = S.name || T.official_name || 'Fire station';
     const op = T.operator || '';
     const blob = (name + ' ' + op).toLowerCase();
@@ -183,34 +292,125 @@ class Component extends DCLogic {
       const min = Math.round(q.km * 1.3 / 50 * 60);
       return { place: r[3] || r[2], state: (info.stEn || info.st || (active ? 'Active' : 'Resolved')) + (r[8] ? ' · ' + Math.round(r[8]).toLocaleString('en-US') + ' ha' : ''),
         km: q.km < 10 ? q.km.toFixed(1) + ' km' : Math.round(q.km) + ' km', eta: '~' + (min < 60 ? min + ' min' : Math.floor(min / 60) + ' h ' + String(min % 60).padStart(2, '0')),
-        dot: active ? '#FF3B30' : '#8E8E93', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0',
         go: () => { const v = { id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     });
     const n25 = near.filter((q) => q.km <= 25 && !((q.r[9] || {}).resolved)).length;
-    // Key figures, from the same live fires as the map (straight-line distance, drive at 50 km/h)
     const act = near.filter((q) => !((q.r[9] || {}).resolved)), nf = act[0] || null, kmF = (k) => (k < 10 ? k.toFixed(1) : String(Math.round(k)));
-    const kpis = [
-      { l: 'Active fires within 25 km', n: String(n25), u: '', uD: 'none', sub: '', subD: 'none' },
-      { l: 'Nearest active fire', n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', uD: nf ? 'inline' : 'none', sub: nf ? (nf.r[3] || '') : 'None within 60 km', subD: 'block' },
-      { l: 'Drive to it', n: nf ? '~' + Math.round(nf.km * 1.3 / 50 * 60) : '—', u: nf ? 'min' : '', uD: nf ? 'inline' : 'none', sub: nf ? 'At 50 km/h' : '', subD: nf ? 'block' : 'none' }];
-    const chips = [];
-    if (kind) chips.push({ t: kind, bg: 'rgba(36,138,61,0.12)', fg: '#1E7A34' });
-    chips.push(n25 ? { t: n25 + ' active ' + (n25 === 1 ? 'fire' : 'fires') + ' within 25 km', bg: 'rgba(255,59,48,0.12)', fg: '#C4281C' } : { t: 'No active fires within 25 km', bg: 'rgba(118,118,128,0.12)', fg: '#3C3C43' });
+
+    // ---- the station's own demonstration data, stable per station (seeded by its id) ----
+    const hsh = (x) => { let h = 0; x = String(x); for (let i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) >>> 0; return h; };
+    const H0 = hsh(S.id), bit = (k) => (H0 >> k) & 1;
+    const isPT = S.lat > 30 && S.lat < 43 && S.lon > -32 && S.lon < -6, cc = isPT ? 'PT' : 'CA';
+    const num = (String(name).match(/(\d{1,3})\b/) || [])[1] || String(10 + H0 % 80);
+    const nf2 = (n) => Number(n).toLocaleString(PT ? 'pt-PT' : 'en-US');
+    const est = L('Estimate', 'Estimativa');
+    const danger = 2 + H0 % 4, dW = [['Low', 'Reduzido'], ['Moderate', 'Moderado'], ['High', 'Elevado'], ['Very high', 'Muito elevado'], ['Maximum', 'Máximo']][danger - 1];
+    const kAll = [
+      { key: 'n25', l: L('Active fires within 25 km', 'Incêndios ativos a 25 km'), n: String(n25), u: '', sub: '' },
+      { key: 'near', l: L('Nearest active fire', 'Incêndio ativo mais próximo'), n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', sub: nf ? (nf.r[3] || '') : L('None within 60 km', 'Nenhum a 60 km') },
+      { key: 'drive', l: L('Drive to it', 'Chegada'), n: nf ? '~' + Math.round(nf.km * 1.3 / 50 * 60) : '—', u: nf ? 'min' : '', sub: nf ? L('At 50 km/h', 'A 50 km/h') : '' },
+      { key: 'risk', opt: true, sim: true, l: L('Fire danger today', 'Risco de incêndio hoje'), n: String(danger), u: '/ 5', sub: L(dW[0], dW[1]) },
+      { key: 'turn', opt: true, sim: true, l: L('Turnout time', 'Tempo de saída'), n: String(2 + H0 % 3), u: 'min', sub: L('Average', 'Média') },
+      { key: 'calls', opt: true, sim: true, l: L('Calls this year', 'Ocorrências este ano'), n: nf2(600 + H0 % 1400), u: '', sub: nf2(30 + H0 % 70) + L(' wildfires', ' incêndios rurais') },
+      { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' },
+      { key: 'area', opt: true, sim: true, l: L('Response area', 'Área de atuação'), n: nf2(120 + H0 % 360), u: 'km²', sub: '' }];
+    this._kAll = kAll.map((m) => ({ key: m.key, l: m.l, opt: !!m.opt }));
+    const Hk = this.wfHidden();
+    const kpis = kAll.filter((m) => Hk.indexOf(m.key) < 0).map((m) => ({ l: m.l, n: m.n, u: m.u, uD: m.u ? 'inline' : 'none', sub: m.sub, subD: m.sub ? 'block' : 'none', note: est, noteD: m.sim ? 'block' : 'none' }));
+
+    // People: names from the station's country; photos (Portugal and California) kept per station for this visit, so its chats show the same faces
+    const C = window.__wfChat || null;
+    const pool = C ? C.names(cc) : ['João Matos', 'Ana Sousa', 'Pedro Lopes', 'Marta Ribeiro', 'Rui Carvalho', 'Inês Duarte', 'Tiago Ferreira', 'Sofia Martins', 'Nuno Almeida', 'Carla Neves', 'Miguel Costa', 'Beatriz Santos', 'André Pereira', 'Rita Gomes', 'Luís Rodrigues', 'Catarina Silva', 'Hugo Fernandes', 'Joana Pinto', 'Ricardo Oliveira', 'Mariana Teixeira'];
+    let pi = H0 % pool.length; const used = {};
+    const pick = () => { for (let j = 0; j < pool.length; j++) { const nm = pool[(pi + j) % pool.length]; if (!used[nm]) { used[nm] = 1; pi = (pi + j + 7) % pool.length; return nm; } } return pool[pi++ % pool.length]; };
+    const FK = 'wf-face-st-' + S.id; let F = this._face && this._faceK === FK ? this._face : null;
+    if (!F) { try { F = JSON.parse(sessionStorage.getItem(FK) || '{}') || {}; } catch (e) { F = {}; } this._face = F; this._faceK = FK; }
+    const holder = { st: cc, face: F };
+    const photo = (nm) => { const u = C && C.photo ? C.photo(holder, nm) : ''; try { sessionStorage.setItem(FK, JSON.stringify(F)); } catch (e) {} return u ? 'url("' + u + '")' : 'none'; };
+    const ini = (nm) => nm.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+    const TAG = { ok: ['Available', 'Disponível', 'rgba(52,199,89,0.14)', '#1E7A34'], out: ['On a mission', 'Em missão', 'rgba(184,74,0,0.14)', '#B84A00'], off: ['Off duty', 'De folga', 'rgba(118,118,128,0.14)', '#636366'], fix: ['In the workshop', 'Em manutenção', 'rgba(118,118,128,0.14)', '#636366'] };
+    const org = (name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria de Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'BV ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim()) || name;
+
+    // Command team
+    const cmdRoles = isPT ? [['Commander', 'Comandante'], ['Second in command', '2.º Comandante'], ['Deputy commander', 'Adjunto de comando']] : [['Battalion chief', 'Chefe de batalhão'], ['Station captain', 'Capitão do quartel'], ['Fire captain', 'Capitão']];
+    const cmdP = cmdRoles.map((r) => ({ name: pick(), roleEn: r[0], rolePt: r[1] }));
+    // Crews: Portugal's permanent intervention team (EIP), firefighting teams (ECIN) and a logistics team (ELAC); US engine and hand crews
+    const nCrew = 3 + bit(3);
+    const crewDefs = isPT ? [['EIP 1', 'VFCI 01', 5], ['ECIN Alfa', 'VFCI 02', 5], ['ECIN Bravo', 'VLCI 01', 5], ['ELAC 1', 'VTTF 01', 3]] : [['Engine ' + num + ' crew', 'Engine ' + num, 4], ['Brush ' + num + ' crew', 'Brush ' + num, 4], ['Patrol ' + num + ' crew', 'Patrol ' + num, 3], ['Hand Crew ' + (Number(num) % 20 + 1), 'Crew Buggy ' + num, 6]];
+    const crewSt = (i) => (i === 0 ? 'ok' : ['ok', 'out', 'off', 'ok'][(H0 >> (i * 2)) % 4]);
+    const crews = crewDefs.slice(0, nCrew).map((d, i) => { const chief = pick(), ppl = [chief]; for (let k = 1; k < d[2]; k++) ppl.push(pick()); return { name: d[0], veh: d[1], st: crewSt(i), chief, ppl }; });
+    // Vehicles: what a station of its kind usually has; the one a busy crew took is out with it
+    const V = isPT ? [
+      ['VCOT 01', 'cmd', 'Tactical command vehicle. 4 seats.', 'Veículo de comando tático. 4 lugares.'],
+      ['VFCI 01', 'eng', 'Forest firefighting vehicle. 3,000 L. 5 seats.', 'Veículo florestal de combate a incêndios. 3 000 L. 5 lugares.'],
+      ['VFCI 02', 'eng', 'Forest firefighting vehicle. 3,000 L. 5 seats.', 'Veículo florestal de combate a incêndios. 3 000 L. 5 lugares.'],
+      ['VLCI 01', 'pick', 'Light firefighting vehicle. 600 L. 4 seats.', 'Veículo ligeiro de combate a incêndios. 600 L. 4 lugares.'],
+      bit(4) ? ['VUCI 01', 'eng', 'Urban firefighting vehicle. 2,000 L. 6 seats.', 'Veículo urbano de combate a incêndios. 2 000 L. 6 lugares.'] : null,
+      ['VTTF 01', 'tank', 'Forest water tanker. 10,000 L.', 'Veículo tanque tático florestal. 10 000 L.'],
+      bit(5) ? ['VTTP 01', 'bus', 'Crew transport. 9 seats.', 'Veículo de transporte tático de pessoal. 9 lugares.'] : null,
+      ['ABSC 01', 'amb', 'Ambulance. Basic life support.', 'Ambulância de socorro. Suporte básico de vida.'],
+      bit(6) ? ['ABSC 02', 'amb', 'Ambulance. Basic life support.', 'Ambulância de socorro. Suporte básico de vida.'] : null
+    ] : [
+      ['Battalion ' + num, 'cmd', 'Command vehicle. 4 seats.', 'Veículo de comando. 4 lugares.'],
+      ['Engine ' + num, 'eng', 'Type 1 engine. 500 gal. 4 seats.', 'Autobomba tipo 1. 1 900 L. 4 lugares.'],
+      ['Brush ' + num, 'eng', 'Type 3 wildland engine. 500 gal. 4 seats.', 'Autobomba florestal tipo 3. 1 900 L. 4 lugares.'],
+      ['Patrol ' + num, 'pick', 'Type 6 engine. 300 gal. 3 seats.', 'Autobomba tipo 6. 1 100 L. 3 lugares.'],
+      ['Water Tender ' + num, 'tank', 'Water tender. 2,000 gal.', 'Autotanque. 7 500 L.'],
+      ['Crew Buggy ' + num, 'bus', 'Crew carrier. 14 seats.', 'Transporte de pessoal. 14 lugares.'],
+      ['Squad ' + num, 'amb', 'Paramedic squad.', 'Equipa de paramédicos.']
+    ];
+    const veh = V.filter(Boolean).map((v, i) => { const cr = crews.find((c) => c.veh === v[0]); const st = cr && cr.st === 'out' ? 'out' : (i === 5 + bit(7) && bit(2)) ? 'fix' : 'ok'; return { name: v[0], ic: v[1], sub: L(v[2], v[3]), st }; });
+    const air = bit(0) && bit(1) ? [isPT ? { name: 'H' + (10 + H0 % 40), ic: 'heli', sub: L('Initial attack helicopter. 900 L. Carries one heli-attack crew.', 'Helicóptero ligeiro de ataque inicial. 900 L. Transporta uma equipa helitransportada.'), st: bit(8) ? 'out' : 'ok' }
+      : { name: 'Copter ' + num, ic: 'heli', sub: L('Type 2 helicopter. 300 gal. Helitack crew of 9.', 'Helicóptero tipo 2. 1 100 L. Equipa helitransportada de 9.'), st: bit(8) ? 'out' : 'ok' }] : [];
+    const IC = {
+      cmd: 'M3 15.5v-3l2.2-4.5h9.6l2.7 4.5h3.5v3Z M6.5 17.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M15 17.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M10 5h3 M11.5 5v3',
+      eng: 'M2.5 8.5h10v8h-10Z M12.5 11h4.3l2.7 3v2.5h-7Z M3.5 6.5h8 M5.5 6.5v2 M8 6.5v2 M10.5 6.5v2 M4.5 17.8a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M14.5 17.8a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+      pick: 'M2.5 12h8.5V8.5h5l3 3.5h2.5v4h-19Z M5 16.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15 16.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M4 12V9.5h5V12',
+      tank: 'M5 8h7.5a2.5 2.5 0 0 1 2.5 2.5v5H2.5v-5A2.5 2.5 0 0 1 5 8Z M15 11h3l2.5 3v1.5H15 M5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15.5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+      bus: 'M2.5 7h15l3 4v5h-18Z M5 10h3 M10 10h3 M5.5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+      amb: 'M2.5 7h11v9h-11Z M13.5 10h4l3 3.2V16h-7 M6 11.5h4 M8 9.5v4 M5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15.5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+      heli: 'M3 5.5h14 M10 5.5v2.5 M7 8h6.5a3.5 3.5 0 0 1 0 7H10a4 4 0 0 1-3-7Z M17 11.5h4.5 M21.5 9.5v4 M7.5 18.5h8 M9.5 15v3.5 M13.5 15v3.5',
+      crew: 'M9 11a3 3 0 1 0 0-6a3 3 0 1 0 0 6Z M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5 M15.5 10.5a2.5 2.5 0 1 0 0-5 M17.5 14c2 .4 3.5 2.2 3.5 5'
+    };
+    const tg = (k) => ({ tag: L(TAG[k][0], TAG[k][1]), tagBg: TAG[k][2], tagFg: TAG[k][3] });
+    const s0 = this.state || {}, tab = s0.rtab || 'veh';
+    const mob = (k) => ({ chevW: '0px', chevD: 'none', dis: true, cur: 'default', go: () => {} });
+    const rowsFor = tab === 'crew'
+      ? crews.map((c, i) => ({ name: c.name, ic: IC.crew, sub: (c.ppl.length === 1 ? '' : c.ppl.length + ' ') + L(isPT ? 'firefighters' : 'firefighters', 'bombeiros') + '. ' + c.veh + '. ' + L('Chief ', 'Chefe ') + c.chief + '.', ...tg(c.st), chevW: '20px', chevD: 'flex', dis: false, cur: 'pointer', aria: c.name + ', ' + L(TAG[c.st][0], TAG[c.st][1]), go: () => this.setState({ sq: 'c' + i }) }))
+      : (tab === 'air' ? air : veh).map((v) => ({ name: v.name, ic: IC[v.ic], sub: v.sub, ...tg(v.st), ...mob(), aria: v.name + ', ' + v.sub }));
+    const list = tab === 'crew' ? crews : tab === 'air' ? air : veh, free = list.filter((x) => x.st === 'ok').length;
+    const rs = { x: tab === 'crew' ? '100%' : tab === 'air' ? '200%' : '0',
+      tabs: [['veh', L('Vehicles', 'Veículos')], ['crew', L('Crews', 'Equipas')], ['air', L('Aircraft', 'Meios aéreos')]].map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ rtab: k }); } })),
+      sum: !list.length ? '' : list.length + ' ' + (tab === 'crew' ? L(list.length === 1 ? 'crew' : 'crews', list.length === 1 ? 'equipa' : 'equipas') : tab === 'air' ? L('aircraft', list.length === 1 ? 'meio aéreo' : 'meios aéreos') : L(list.length === 1 ? 'vehicle' : 'vehicles', list.length === 1 ? 'veículo' : 'veículos')) + '. ' + free + ' ' + L('available', free === 1 ? 'disponível' : 'disponíveis') + '.',
+      rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No aircraft based at this station.', 'Nenhum meio aéreo sediado neste quartel.') };
+
+    // Chats: the command team as a group, or a crew's chief; both offer the first crew they have free
+    const offerCrew = crews.find((c) => c.st === 'ok') || crews[0];
+    const offer = (c) => ({ en: c.name + ' (' + c.ppl.length + ' firefighters and ' + c.veh + ')', pt: 'a ' + c.name + ' (' + c.ppl.length + ' bombeiros e o ' + c.veh + ')' });
+    const goChat = (o) => { if (!C || !C.direct) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} C.direct(Object.assign({ st: cc, org, station: name, ck: (S.type === 'way' ? 'w' : 'n') + S.id, lat: S.lat, lon: S.lon, x: S.x, y: S.y, face: F, eta: 12 + H0 % 10 }, o)); window.location.href = 'Chat.dc.html'; };
+    const cmdChat = () => goChat({ id: 'cmd-' + S.id, title: L('Command · ', 'Comando · ') + org, people: cmdP, offer: offer(offerCrew) });
+    const cmd = { faces: cmdP.map((p) => ({ code: ini(p.name), photo: photo(p.name) })), sub: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + cmdP[0].name + '. ' + cmdP.length + ' ' + L('people', 'pessoas') + '.',
+      aria: tx.cmdTeam + ', ' + cmdP.map((p) => p.name).join(', '), open: () => this.setState({ sq: 'cmd' }), chat: cmdChat };
+    const sqK = s0.sq || '', sqC = /^c\d+$/.test(sqK) ? crews[Number(sqK.slice(1))] : null, sqOn = sqK === 'cmd' || !!sqC;
+    const sq = { y: sqOn ? '0%' : '105%', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
+      title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.veh + '.' : org,
+      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700 })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700 }))).map((p) => ({ ...p, code: ini(p.name), photo: photo(p.name) })),
+      chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat,
+      chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
+
     return {
-      none: false, some: true, hasMap: true, back, bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  zero: 0, noList: [], pinId: 'station-' + S.id,
+      none: false, some: true, hasMap: true, back, tx, zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(), pkOpen: () => this.setState({ pick: true }), cmd, rs, sq,
       mapFires: live.map((r) => ({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], res: r[7], ha: r[8], info: r[9] })),
-      ...(() => { const F = !!(this.state || {}).full; return { full: F, toggleFull: () => this.setState({ full: !(this.state || {}).full }),
-        hdY: F ? '-200px' : '0px', downY: F ? '110%' : '0px', hdOp: F ? 0 : 1, hdPE: F ? 'none' : 'auto', clipT: F ? 0 : 196, clipB: F ? 0 : 414, attr: F ? 40 : 4, notFull: F ? 'false' : 'true' }; })(),
-      mapW: 390, mapH: 844, ctrlTop: 180, zoom: 0.9,
+      ...(() => { const Fu = !!(this.state || {}).full; return { full: Fu, fullLayer: Fu, toggleFull: () => this.setState({ full: !(this.state || {}).full }) }; })(),
+      ctrlTop: 60, zoom: 0.9, zoomFull: 1.08, attrFull: 40,
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
         title: name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria de Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
         ...(n25 ? { tag: n25 + (n25 === 1 ? ' fire' : ' fires'), tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: 'rgba(52,199,89,0.14)', tagFg: '#1E7A34' }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
-...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), operator: op, opD: op ? 'block' : 'none', coords, x: S.x, y: S.y, chips, hasPhone: !!phone, tel: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '',
-        dir: 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, dirBg: phone ? '#2C2C2E' : (window.__wfY || '#E5FF00'), dirFg: phone ? (window.__wfY || '#E5FF00') : '#1C1C1E',
+        ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
-      rows, fires, kpis, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
+      rows, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'
     };
   }
