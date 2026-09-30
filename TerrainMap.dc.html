@@ -358,7 +358,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
   <!-- While the first map tiles load (detail maps): the search grey, the app's flame in the middle, "Loading map" under it -->
   <div data-wf-maploader="1" aria-live="polite" style="position: absolute; left: 0; right: 0; top: {{clipV}}px; bottom: {{clipB}}px; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: #E5E5EA; opacity: {{ld.op}}; pointer-events: none; transition: opacity .6s ease">
-    <svg width="34" height="41" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible"><path class="base wf-flick" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#3A3A3C" stroke-width="1.1" stroke-linecap="round"></path></svg>
+    <svg width="17" height="21" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible"><path class="base wf-flick" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#3A3A3C" stroke-width="1.1" stroke-linecap="round"></path></svg>
     <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ld.txt}}</span>
   </div>
   <div onPointerDown="{{stop}}" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
@@ -1253,9 +1253,11 @@ class Component extends DCLogic {
 
     const ring = (h) => ({ fill: h === hz ? 0.30 : (h < hz ? 0.16 : 0.05), stroke: h === hz ? 1 : 0.45, w: h === hz ? 2.5 : 1.2 });
     const OUT = {
-      ld: (() => { const want = (p.loader === true || p.loader === 'true') && window.__wfLiveMap && !this._tilesOk && !this._ldGave;
-        if (want && !this._ldT0) { this._ldT0 = Date.now(); setTimeout(() => { this._ldGave = true; this.forceUpdate(); }, 12000); }   // never longer than 12 s
-        if (want && !this._ldBl) this._ldBl = setInterval(() => { if (this._tilesOk || this._ldGave) { clearInterval(this._ldBl); this._ldBl = 0; return; } try { const e = this.el && this.el.querySelector('[data-wf-maploader] path.base'); if (e && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 3000);   // one blink every 3 s
+      ld: (() => { const on = (p.loader === true || p.loader === 'true') && window.__wfLiveMap;
+        // Shown for 3 s (and longer only while tiles are still coming, at most 12 s); the eye blinks once, half way
+        if (on && !this._ldT0) { this._ldT0 = Date.now(); setTimeout(() => this.forceUpdate(), 3050); setTimeout(() => { this._ldGave = true; this.forceUpdate(); }, 12000);
+          setTimeout(() => { try { const e = this.el && this.el.querySelector('[data-wf-maploader] path.base'); if (e && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 1500); }
+        const want = on && !this._ldGave && (!this._tilesOk || Date.now() - (this._ldT0 || 0) < 3000);
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
