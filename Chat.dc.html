@@ -18,7 +18,7 @@
 <script src="prefs.js?v=97"></script>
 <script src="i18n.js?v=96"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=27"></script>
+<script src="chat.js?v=29"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -89,15 +89,15 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== One chat ===== -->
   <sc-if value="{{isChat}}" hint-placeholder-val="{{ false }}">
     <div style="display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; background: #F2F2F7">
-      <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 12px 16px">
+      <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px 16px">
+        <!-- Back to the screen before: the round back button before the title -->
+        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h1>
           <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
         </div>
         <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
         <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
-        <!-- Back to the screen before: the round back button at the right -->
-        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <button type="button" class="chrow" onClick="{{c.tog}}" aria-expanded="{{c.expStr}}" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
@@ -254,6 +254,25 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{tm.h.down}}" onPointerMove="{{tm.h.move}}" onPointerUp="{{tm.h.up}}" onPointerCancel="{{tm.h.cancel}}" onKeyDown="{{tm.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
     </section>
 
+    <!-- ===== Topic picker: the incidents within 50 km of this station (fires, then ignition candidates), nearest first ===== -->
+    <div class="wf-glass" onClick="{{tp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{tp.op}}; pointer-events: {{tp.pe}}; transition: opacity .35s ease"></div>
+    <section role="dialog" aria-modal="true" aria-label="{{tp.title}}" aria-hidden="{{tp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: calc(100% - 48px); box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{tp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px">
+        <button type="button" class="chbtn" onClick="{{tp.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
+        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-top: 6px"><h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{tp.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{tp.sub}}</span></span>
+      </div>
+      <div class="chscroll" role="listbox" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
+        <sc-for list="{{tp.rows}}" as="r" hint-placeholder-count="4">
+          <button type="button" role="option" class="chrow" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: 2px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-top: {{r.sep}}; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+            <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: {{r.icBg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{r.icD}}" fill="{{r.icFill}}" stroke="{{r.icC}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+            <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.place}}</span>
+            <span style="grid-row: 1 / span 2; grid-column: 3; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.km}}</span>
+            <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{r.sub}}</span>
+          </button>
+        </sc-for>
+        <p style="display: {{tp.noneD}}; margin: 0; padding: 16px; font-size: 17px; line-height: 22px; color: #000000">{{tp.none}}</p>
+      </div>
+    </section>
     <!-- ===== Fire card: drops from the state card, stops 32px above the bottom, glass over the chat ===== -->
     <div class="wf-glass" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{sh.b}}px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{sh.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
@@ -625,9 +644,12 @@ class Component extends DCLogic {
       const id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, note = c.kind === 'cand' ? 'Confirmed from ' + c.incId : c.note;
       return { href: 'Dispatch.dc.html', go: () => { const v = { id, place: c.place, note, x: c.x, y: c.y, det: c.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     })();
+    // The topic's own screen: a fire opens its fire page, a candidate its candidate page
+    const topicGo = (T0) => () => { if (T0.kind === 'fire') { const v = { id: T0.id, place: T0.place, note: '', x: T0.x, y: T0.y, det: null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} }
+      else { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: T0.id }); try { sessionStorage.setItem('wf-focus', T0.id); } catch (e) {} } };
     const openSummary = () => this.go('summary');
     // 'Send orders' is configured on the fire's dispatch screen; sending there brings you back here
-    const run = (key, id) => { if (key === 'dispatch') { try { sessionStorage.setItem('wf-chat-return', c.key); } catch (e) {} if (inc.go) inc.go(); window.location.href = 'Dispatch.dc.html'; return; } this._stick = true; C.act(c.key, key, id); };
+    const run = (key, id) => { if (key === 'topic') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ topicPick: true }); return; } if (key === 'dispatch') { try { sessionStorage.setItem('wf-chat-return', c.key); } catch (e) {} if (inc.go) inc.go(); window.location.href = 'Dispatch.dc.html'; return; } this._stick = true; C.act(c.key, key, id); };
     const openSheet = () => { if (c.stage === 7 && !c.dismissed) { openSummary(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ sheet: true }); };
     const summary = c.dismissed ? L('No fire on the ground · crews released', 'Sem incêndio no terreno · equipas libertadas')
       : c.stage === 0 ? (c.conf ? c.conf + '% ' + L('likelihood', 'de probabilidade') + ' · ' : '') + (c.src || '')
@@ -679,8 +701,8 @@ class Component extends DCLogic {
           hasRows: !!(m.rows && m.rows.length), rows: (m.rows || []).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '1px solid rgba(60,60,67,0.08)' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
-          hasLink: !!m.link || toSheet, linkCls: 'wf-pri',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : inc.href,
-          goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
+          hasLink: !!m.link || toSheet, linkCls: 'wf-pri',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
+          goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }
     });
@@ -706,6 +728,13 @@ class Component extends DCLogic {
       meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
+      tp: (() => { const on = !!s.topicPick, N = on && C.nearby ? C.nearby(c.key) : [];
+        return { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close: () => this.setState({ topicPick: false }),
+          title: L('Set the topic', 'Definir o tópico'), sub: L('Incidents within 50 km of the station.', 'Incidentes a 50 km do quartel.'), noneD: on && !N.length ? 'block' : 'none', none: L('No fires or ignition candidates within 50 km.', 'Sem incêndios nem candidatos a ignição a 50 km.'),
+          rows: N.map((o, i) => { const fire = o.kind === 'fire', S0 = C.STAGES[fire ? 3 : 0], Y = window.__wfY || '#E5FF00';
+            return { place: o.inc.place, sub: (fire ? L('Fire', 'Incêndio') : L('Ignition candidate', 'Candidato a ignição') + (o.inc.conf ? '. ' + o.inc.conf + '%' : '')) + (o.inc.reg ? '. ' + o.inc.reg : '') + '.', km: (o.km < 10 ? o.km.toFixed(1) : Math.round(o.km)) + ' km', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0',
+              icD: C.ICON[S0.icon], icC: fire ? S0.c : '#3A3A3C', icFill: fire ? 'none' : Y, icBg: fire ? S0.bg : '#ECECEF', aria: o.inc.place + ', ' + Math.round(o.km) + ' km',
+              pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stick = true; this.setState({ topicPick: false }); C.setTopic(c.key, o.inc); } }; }) }; })(),
       tm: (() => { const on = !!s.team, n = team.length; return { n: String(n), word: L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros'), aria: n + L(n === 1 ? ' member. Open the team' : ' members. Open the team', n === 1 ? ' membro. Abrir a equipa' : ' membros. Abrir a equipa'), sub: n + L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros') + '.',   /* the same words as the button that opened it */
         open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), h: this.shHandle('team', 'tmDy'),
         mh: s.tmDy && this._tmH0 ? Math.max(120, this._tmH0 + s.tmDy) + 'px' : 'calc(100% - 48px)', mhT: s.tmDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none', xRot: on ? '0deg' : '90deg' }; })(),

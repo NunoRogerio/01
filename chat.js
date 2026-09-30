@@ -418,7 +418,7 @@
 
   // Quick actions for the fire owner, per stage
   function actions(c) {
-    if (c.kind === 'dm') return [];
+    if (c.kind === 'dm') return c.topic ? [] : [{ key: 'topic', en: 'Set the topic', pt: 'Definir o tópico', primary: true }];
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
     if (s === 0) { A.push({ key: 'confirm', en: 'Confirm', pt: 'Confirmar', primary: true }); if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Verificar por drone' }); A.push({ key: 'dismiss', en: 'Dismiss', pt: 'Descartar' }); }
@@ -677,11 +677,37 @@
     say(ch, 0, g ? 'Hello! All good, the command team is here. How can we help?' : 'Hello! All good here. How can I help?', g ? 'Olá! Tudo bem, está cá a equipa de comando. Em que podemos ser úteis?' : 'Olá! Tudo bem por aqui. Em que posso ser útil?', 2200, 1);
     db.chats[k] = ch; save(); emit(); return ch;
   }
+  // ---- direct chats: the topic is the incident being talked about (a fire or an ignition candidate within 50 km) -------
+  function kmBetween(a, b) { var R0 = 6371, t = Math.PI / 180, dLa = (b.lat - a.lat) * t, dLo = (b.lon - a.lon) * t, x = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(a.lat * t) * Math.cos(b.lat * t) * Math.sin(dLo / 2) * Math.sin(dLo / 2); return 2 * R0 * Math.asin(Math.min(1, Math.sqrt(x))); }
+  function nearby(c, maxKm) {
+    maxKm = maxKm || 50; var me = { lat: +c.lat, lon: +c.lon }; if (!isFinite(me.lat) || !isFinite(me.lon) || (!me.lat && !me.lon)) return [];
+    var out = [];
+    (window.__wfLiveFires || []).forEach(function (r) { if (!r || r[5] == null) return; var inc = incFire({ id: r[2], place: r[3], co: r[1], st: r[0], note: r[4], x: r[5], y: r[6], info: r[7] || null }), km = kmBetween(me, inc);
+      if (km <= maxKm) out.push({ inc: inc, km: km, kind: 'fire' }); });
+    (window.__wfLiveCands || []).forEach(function (r) { if (!r) return; var L0 = r[9] || {}, inc = incCand({ id: r[2], place: r[3], co: r[1], st: r[0], conf: r[4], srcList: String(r[5] || '').replace(/^sat:/, 'Satellite '), x: r[7], y: r[8], live: L0 }), km = kmBetween(me, inc);
+      if (km <= maxKm) out.push({ inc: inc, km: km, kind: 'cand' }); });
+    return out.sort(function (a, b) { return a.km - b.km; });
+  }
+  function setTopic(key, inc) {
+    var c = load().chats[key]; if (!c || !inc) return;
+    var fire = inc.kind === 'fire', P = c.people[0] || {};
+    c.topic = { id: inc.id, kind: inc.kind, place: inc.place, reg: inc.reg || '', st: inc.st || '', lat: inc.lat, lon: inc.lon, conf: inc.conf || null, x: inc.x, y: inc.y };
+    mine(c, 'Topic: ' + inc.place + '.', 'Tópico: ' + inc.place + '.');
+    card(c, { topic: true, tag: { en: 'Topic', pt: 'Tópico' }, tagC: '#3A3A3C', title: { en: (fire ? 'Fire. ' : 'Ignition candidate. ') + inc.place, pt: (fire ? 'Incêndio. ' : 'Candidato a ignição. ') + inc.place },
+      body: { en: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km from the station' + (!fire && inc.conf ? '. ' + inc.conf + '% likelihood' : ''), pt: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km do quartel' + (!fire && inc.conf ? '. ' + inc.conf + '% de probabilidade' : '') },
+      link: { en: fire ? 'View fire' : 'View candidate', pt: fire ? 'Ver incêndio' : 'Ver candidato' }, inc: c.topic }, 300, 0);
+    say(c, 0, fire ? 'Copy, ' + inc.place + '. We know the area, tell us what you need there.' : 'Copy, the candidate at ' + inc.place + '. We can go and check it if you want.',
+      fire ? 'Entendido, ' + inc.place + '. Conhecemos a zona, diga o que precisa lá.' : 'Entendido, o candidato em ' + inc.place + '. Podemos ir verificar, se quiser.', 2400, 2);
+    c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
+  }
   function dmReply(c, text) {
     var t = String(text).toLowerCase(), n = c.people.length, b = c.beat++, O = c.offer || { en: 'a crew of 5 and a fire engine', pt: 'uma equipa de 5 e um veículo' };
     var q = String(text).trim().replace(/[.!?]+$/, '');
     if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Anytime. We keep you posted.', 'Às ordens. Vamos dando notícias.', 1800, 1); return; }
     if (c.step === 0) {   // the ask: they offer what the station has free
+      if (c.topic && /(send|crew|team|equipa|enviar|mandar|ajuda|help)/.test(t)) { c.step = 2;   // the topic already says where
+        say(c, 0, 'Yes. I can send ' + O.en + ' to ' + c.topic.place + ', out of the station in 5 min, about ' + c.eta + ' min to get there.', 'Sim. Posso enviar ' + O.pt + ' para ' + c.topic.place + ', a sair do quartel em 5 min, cerca de ' + c.eta + ' min até lá.', 2400, 2);
+        if (n > 1) say(c, 1, 'Crew kitting up now.', 'Equipa a equipar-se.', 5200, 1); return; }
       c.step = 1;
       say(c, 0, 'Yes, that is possible. I can send ' + O.en + ', out of the station in 5 min. Where do you need us?', 'Sim, é possível. Posso enviar ' + O.pt + ', a sair do quartel em 5 min. Para onde?', 2400, 2);
       if (n > 1) say(c, 1, 'I will get them kitted up now.', 'Vou já pô-los a equipar.', 5200, 1);
@@ -1003,6 +1029,7 @@
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },
     badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
     totalUnread: function () { var db = load(); return Object.keys(db.chats).reduce(function (a, k) { return a + unread(db.chats[k]); }, 0); },
+    nearby: function (key) { var c = load().chats[key]; return c ? nearby(c, 50) : []; }, setTopic: setTopic,
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
