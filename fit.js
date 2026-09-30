@@ -604,48 +604,23 @@ window.__wfBlink=function(path,dur){
   try{document.documentElement.style.setProperty('--wf-round-pop','1.3');}catch(x){}
 })();
 // Installed iPhone app: the status bar is opaque (iOS 26 cuts a strip off the bottom of the screen when the page runs
-// under it, WebKit bug 301108), so the page always reaches the bottom edge. The bar takes the colour of whatever sits at
-// the top of the screen (top blade, map, panel); on sign in and loading the bar is black, so the bar never shows as a white or odd-coloured band, transitions included.
+// under it, WebKit bug 301108), so the page always reaches the bottom edge. iOS paints the bar from the screen's own
+// top layers. On sign in and loading it is black (their photo layers and the page are black underneath the photo); inside
+// the app nothing is added, so the bar follows the screen and changes only once when a blade or panel covers the top.
 (function(){
   var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   if(!SA)return;
-  var BAR='#000000',root=document.documentElement,sty=null,cur='',cache={};
-  function meta(){var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}return m;}
-  // iOS takes the bar colour from the page body, so body and html both carry it
+  var BAR='#000000',root=document.documentElement,sty=null,cur='',tc0=null;
+  function meta(){return document.querySelector('meta[name="theme-color"]');}
   function set(c){if(c===cur)return;cur=c;if(!sty){sty=document.createElement('style');sty.id='wf-bar';document.head.appendChild(sty);}
-    sty.textContent=c?'html.wf-bar,html.wf-bar body{background-color:'+c+'!important}':'';if(c){try{meta().setAttribute('content',c);}catch(e){}}}
-  function col(s){var m=/rgba?\(([^)]+)\)/.exec(s||'');if(!m)return null;var p=m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat);return [p[0],p[1],p[2],p.length>3?p[3]:1];}
-  function over(t,b){var a=t[3];return [t[0]*a+b[0]*(1-a),t[1]*a+b[1]*(1-a),t[2]*a+b[2]*(1-a),1];}
-  function hex(c){var h=function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);};return '#'+h(c[0])+h(c[1])+h(c[2]);}
-  // average colour of an image near a point given as fractions of its size (cached; map tiles allow it)
-  function pix(url,fx,fy,cb){var k=url+'|'+Math.round(fx*8)+'|'+Math.round(fy*8);if(k in cache){cb(cache[k]);return;}
-    var im=new Image();im.crossOrigin='anonymous';im.onload=function(){try{var c=document.createElement('canvas');c.width=c.height=16;var x=c.getContext('2d');x.drawImage(im,0,0,16,16);
-      var px=Math.max(0,Math.min(12,Math.round(fx*15)-2)),py=Math.max(0,Math.min(12,Math.round(fy*15)-2)),d=x.getImageData(px,py,4,4).data,r=0,g=0,b=0,n=0;
-      for(var i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++;}cache[k]=[r/n,g/n,b/n,1];}catch(e){cache[k]=null;}cb(cache[k]);};
-    im.onerror=function(){cache[k]=null;cb(null);};im.src=url;}
+    sty.textContent=c?'html.wf-bar,html.wf-bar body{background-color:'+c+'!important}':'';
+    var m=meta();if(m){if(c){if(tc0===null)tc0=m.getAttribute('content');m.setAttribute('content',c);}else if(tc0!==null){m.setAttribute('content',tc0);tc0=null;}}}
   function photo(){var l=document.getElementById('wf-load');if(l&&/\b(photo|hand)\b/.test(l.className)&&!/\bout\b/.test(l.className))return true;return !!document.getElementById('wf-login-bg')||/Login\.dc\.html/.test(location.pathname);}
-  function probe(){
-    var on=window.__wfTOP!==0&&innerHeight>innerWidth;root.classList.toggle('wf-bar',on);if(!on){set('');return;}
-    if(photo()){set(BAR);return;}
-    var x=innerWidth/2,y=1,layers=[],img=null,els=document.elementsFromPoint?document.elementsFromPoint(x,y):[];
-    for(var i=0;i<els.length;i++){var el=els[i],tag=(el.tagName||'').toLowerCase();
-      if(el.id==='wf-load'&&!/\bout\b/.test(el.className)){layers.push(col(getComputedStyle(el).backgroundColor)||[242,242,247,1]);break;}
-      if(tag==='image'||tag==='img'){var u=el.getAttribute('href')||el.getAttribute('xlink:href')||el.getAttribute('src'),r=el.getBoundingClientRect();
-        if(u&&r.width>0&&r.height>0){img={u:new URL(u,location.href).href,fx:(x-r.left)/r.width,fy:(y-r.top)/r.height};break;}continue;}
-      var cs=getComputedStyle(el),c=col(cs.backgroundColor);
-      if(c&&c[3]>0.02){c[3]*=parseFloat(cs.opacity)||1;layers.push(c);if(c[3]>=0.97)break;}}
-    function finish(base){var c=base||col(getComputedStyle(document.body).backgroundColor)||[242,242,247,1];if(c[3]<1)c=[242,242,247,1];for(var j=layers.length-1;j>=0;j--)c=over(layers[j],c);set(hex(c));}
-    if(img)pix(img.u,img.fx,img.fy,finish);else finish(null);
-  }
-  window.__wfBarProbe=probe;
-  // before the first paint: screens with a photo start on the bar's dark green
-  if(photo()||(function(){try{return sessionStorage.getItem('wf-soft')==='1';}catch(e){return false;}})()){root.classList.add('wf-bar');set(BAR);}
+  function probe(){var on=window.__wfTOP!==0&&innerHeight>innerWidth;root.classList.toggle('wf-bar',on);set(on&&photo()?BAR:'');}
+  // before the first paint: screens with a photo start black
+  if(photo()){root.classList.add('wf-bar');set(BAR);}
   var T=0;function soon(){clearTimeout(T);T=setTimeout(probe,60);}
-  window.addEventListener('wf-sync',soon);window.addEventListener('wf-vp',soon);window.addEventListener('resize',soon);
-  document.addEventListener('pointerup',function(){setTimeout(probe,450);},true);
-  window.addEventListener('pageshow',soon);
-  window.addEventListener('load',function(){probe();setInterval(function(){if(!document.hidden)probe();},600);});
-  var fs=document.createElement('style');
-  fs.textContent='';
-  document.head.appendChild(fs);
+  window.addEventListener('wf-vp',soon);window.addEventListener('resize',soon);window.addEventListener('pageshow',soon);
+  // the loading screen leaving is the one change to watch for
+  window.addEventListener('load',function(){probe();var iv=setInterval(function(){probe();if(!photo())clearInterval(iv);},300);});
 })();
