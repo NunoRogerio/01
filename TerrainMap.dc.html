@@ -999,8 +999,8 @@ class Component extends DCLogic {
     let v = window.__wfLayers;
     if (!v) { try { v = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
     const out = Object.assign(d, v || {});
-    if (this.props.mode === 'pin' || this.props.mode === 'spread') out.stations = true;   // the suggested stations always show on a fire or candidate
-    if (this.props.fireOnly === true || this.props.fireOnly === 'true') { out.stations = false; out.burn = true; out.active = true; out.held = true; }   // a fire's detail map: only its perimeter
+    // Every legend chip toggles its layer, on every map (nothing is forced on: a chip that does nothing reads as broken)
+    if (this.props.fireOnly === true || this.props.fireOnly === 'true') out.stations = false;   // a fire's detail map: only its perimeter (no stations chip there)
     return out;
   }
   toggleLayer(k) {
@@ -1055,7 +1055,7 @@ class Component extends DCLogic {
       const C = false, off = (c) => (on ? c : 'none');
       return { label, d, fill: on ? fill : 'none', stroke: on || stroke === 'none' ? stroke : '#8E8E93', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
-        aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => { if (k === 'stations' && (this.props.mode === 'pin' || this.props.mode === 'spread')) return; this.toggleLayer(k); } };
+        aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
     });
   }
   // The widest view the map serves: the whole state or country of the selected area (California, Portugal), never just
