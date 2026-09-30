@@ -1511,7 +1511,7 @@ class Component extends DCLogic {
           (() => { const Mm = FMOD && FMOD.model && !FMOD.model.failed ? FMOD.model : null, hd = Mm && Mm.info && Mm.info.head; if (HELD) return { key: 'head', v: '—', l: 'Head spread', ch: none };
             return hd != null ? { key: 'head', v: hd + ' m/min', l: 'Head spread', ch: none, note: 'Estimate' } : { key: 'head', v: '—', l: 'Head spread', ch: none, note: Mm ? 'No data' : 'Calculating' }; })(),
           // Containment: the % the source publishes (NIFC), else the fire model's held share (estimate)
-          (() => { const Mm = FMOD && FMOD.model && !FMOD.model.failed ? FMOD.model : null; if (HELD) return { key: 'cont', v: '100 %', l: 'Containment', ch: none };
+          (() => { const Mm = FMOD && FMOD.model && !FMOD.model.failed ? FMOD.model : null; if (HELD) return { key: 'cont', v: (I.pc != null ? I.pc : 100) + ' %', l: 'Containment', ch: none };
             if (pcT) return { key: 'cont', v: I.pc + ' %', l: 'Containment', ch: chB };
             if (Mm && Mm.startPct != null) return { key: 'cont', v: Mm.startPct + ' %', l: 'Containment', ch: none, note: 'Estimate' };
             return { key: 'cont', v: '—', l: 'Containment', ch: none, note: NP }; })(),
@@ -1542,7 +1542,8 @@ class Component extends DCLogic {
             else if (m.key === 'pers') { if (miss) Object.assign(m, { v: String(Math.round(8 + R(7) * 120)), note: SIM }); if (m.ch.svgD === 'none') m.ch = barCh(7, 'Personnel over time'); }
           }); }
         // A held fire: spread, head spread, containment and time to contain no longer help anyone decide, so those cards go
-        if (HELD) for (let i = med0.length - 1; i >= 0; i--) if (['rate', 'head', 'cont', 'eta'].indexOf(med0[i].key) >= 0) med0.splice(i, 1);
+        // ...except containment while the source still publishes less than 100% (e.g. NIFC 88%): then it still matters
+        if (HELD) for (let i = med0.length - 1; i >= 0; i--) if (['rate', 'head', 'eta'].indexOf(med0[i].key) >= 0 || (med0[i].key === 'cont' && !(I.pc != null && I.pc < 100))) med0.splice(i, 1);
         { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['cont', 'rate', 'head', 'eta', 'area', 'size', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }
         const two = false, colW = 106;
         const med = med0.map((m, i) => ({ note: '', ...m, ...(() => { const q = /^(\S+)\s+(.+)$/.exec(String(m.v)); return q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }; })(), ...this.wfKpiDrag(m.key), noteD: m.note ? 'block' : 'none', sep: (two ? i % 2 : i) ? '1px solid rgba(60,60,67,0.14)' : '0', basis: two ? '50%' : '0', mt: two && i > 1 ? '32px' : '0', k: (() => { const q = /^(\S+)\s*(.*)$/.exec(String(m.v)) || ['', String(m.v), ''], w = colW - (q[2] ? q[2].length * 8.6 + 3 : 0); return Math.max(16, Math.min(30, Math.floor(w / Math.max(1, q[1].length * 0.6)))) + 'px'; })(), padR: '6px', padL: '6px' }));
