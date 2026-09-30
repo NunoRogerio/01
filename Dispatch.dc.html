@@ -16,7 +16,7 @@
 <script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=110"></script>
-<script src="i18n.js?v=104"></script>
+<script src="i18n.js?v=105"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=31"></script>
 
@@ -374,7 +374,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="wf-glass" aria-hidden="true" onClick="{{focusTap}}" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{focusOp}}; pointer-events: {{focusPE}}; transition: opacity .45s ease"></div>
   <section role="dialog" data-pull="toggle" aria-labelledby="sentTitle" aria-hidden="{{sentHidden}}" class="sheet blade {{sbFlat}}" data-sb="1" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; overflow: hidden; height: {{sentH}}; transition: {{sbTr}}; box-sizing: border-box; padding: {{sbPadT}} 0 {{sbPadB}}; border-radius: {{sbRad}}; background: {{sbBg}}; box-shadow: {{sbSh}}; transform: translateY({{sentY}})">
     <button type="button" onPointerDown="{{sb.down}}" onPointerMove="{{sb.move}}" onPointerUp="{{sb.up}}" onPointerCancel="{{sb.cancel}}" onKeyDown="{{sb.key}}" data-pull-go="key" data-noswipe="1" aria-expanded="{{sentUpStr}}" aria-label="{{sentUpLabel}}" style="align-self: stretch; display: {{sbGrabD}}; align-items: flex-start; justify-content: center; box-sizing: border-box; height: 53px; flex-shrink: 0; margin: 0; padding: 8px 0 0; border: 0; border-radius: 28px 28px 0 0; background: transparent; cursor: grab; touch-action: none">
-      <span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
+      <span aria-hidden="true" style="width: 72px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     </button>
     <div style="display: {{oldTopD}}; align-items: center; gap: 0; flex-shrink: 0; padding: 12px 16px 0">
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
@@ -492,14 +492,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </li>
         </sc-if>
         <sc-if value="{{d.fx}}" hint-placeholder-val="{{ false }}">
-        <li style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
+        <li data-wf-res="1" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
           <!-- Section label as in the user preferences: label style, 8px to its content -->
           <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 4px 8px">
-            <h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Endurance</h3>
-            <span class="wf-note">Estimate</span>
+            <h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Resources</h3>
+            <span class="wf-note" style="display: {{d.sumD}}">Estimate</span>
           </span>
           <!-- What the coordinator watches: how many units are wearing out, not totals -->
-          <div style="display: flex; gap: 8px">
+          <div style="display: {{d.sumD}}; gap: 8px; margin-bottom: 8px">
             <sc-for list="{{d.sum}}" as="k" hint-placeholder-count="2">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; flex: 1 1 0; min-width: 0; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center">
                 <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
@@ -507,13 +507,34 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               </div>
             </sc-for>
           </div>
-          <!-- One card per station on this fire: the station heads it (crest, name, distance and crews still free), its units under it -->
+          <!-- A fire confirmed here: resources are added in this section. Add resources (grey, like the + tiles) replaces the
+               tiles while there is nothing yet; the tiles come in with the first station. Chosen stations wait under it until Send order. -->
+          <button type="button" class="mbtn wf-reset" onClick="{{pl.add}}" aria-disabled="{{pl.addDis}}" style="position: relative; z-index: 2; display: {{d.addD}}; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #6E6E73; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 5v14M5 12h14"></path></svg><span>{{pl.addCnt}}</span></button>
+          <div style="display: {{d.planD}}; flex-direction: column; gap: 8px; margin-top: 8px">
+            <sc-for list="{{pl.resCards}}" as="p" hint-placeholder-count="0">
+              <button type="button" class="mbtn" data-wf-plan="{{p.key}}" onClick="{{p.edit}}" aria-label="{{p.aria}}" style="position: relative; flex-shrink: 0; z-index: 1; display: grid; grid-template-columns: 40px minmax(0, 1fr) 20px; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer">
+                <span aria-hidden="true" style="grid-row: 1 / span 3; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{p.icBg}}; color: #0079A6"><img src="{{p.crest}}" alt="" style="display: {{p.crestD}}; width: 40px; height: 40px; object-fit: contain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{p.airD}}"><path d="M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7"></path></svg></span>
+                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{p.name}}</span>
+                <span aria-hidden="true" style="grid-row: 1 / span 3; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+                <span style="grid-column: 2; min-width: 0; font-size: 17px; line-height: 22px">{{p.sum}}</span>
+                <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{p.sub}}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display: {{pl.resActD}}; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px">
+            <button type="button" class="btn wf-sec" onClick="{{pl.cancel}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
+            <button type="button" class="btn primary" onClick="{{pl.send}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{pl.sendOp}}">{{sendLbl}}</button>
+          </div>
+          <!-- One card per station on this fire: the station heads it (crest, name, distance and crews still free), its units under it.
+               The head folds the units away and back (chevron down when folded, up when open). -->
           <sc-for list="{{d.groups}}" as="gp" hint-placeholder-count="2">
             <ul style="display: block; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden">
-              <li style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 0">
+              <li><button type="button" class="mbtn" onClick="{{gp.tog}}" aria-expanded="{{gp.exp}}" aria-label="{{gp.aria}}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
                 <img src="{{gp.crest}}" alt="" style="display: {{gp.crestD}}; width: 36px; height: 36px; flex-shrink: 0; object-fit: contain">
-                <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
-              </li>
+                <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{gp.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
+              </button></li>
+              <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none">
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">
               <li class="wf-unit" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 12px 16px">
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
@@ -524,6 +545,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 </span>
               </li>
               </sc-for>
+              </ul></li>
             </ul>
           </sc-for>
         </li>
@@ -599,7 +621,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     </div>
     <!-- Actions: side by side on one row for a viewed fire (saves a row), stacked otherwise -->
-    <div style="display: flex; flex-direction: {{actDir}}; gap: {{actGap}}; flex-shrink: 0; padding: 16px 16px 0">
+    <div style="position: relative; display: flex; flex-direction: {{actDir}}; gap: {{actGap}}; flex-shrink: 0; padding: 16px 16px 0">
+    <!-- A fire confirmed here with no resources yet: a floating pill takes you down to Resources, where they are added -->
+    <button type="button" class="mbtn" onClick="{{rh.go}}" aria-label="Add resources. Go to Resources" style="position: absolute; left: 50%; bottom: calc(100% + 12px); z-index: 5; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; box-sizing: border-box; border: 0; border-radius: 999px; background: #FFFFFF; box-shadow: 0 0 0 1.4px #3A3A3C, 0 6px 20px rgba(0,0,0,0.16); color: #000000; font: inherit; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer; opacity: {{rh.op}}; pointer-events: {{rh.pe}}; transform: translate(-50%, {{rh.y}}); transition: opacity .3s ease, transform .4s cubic-bezier(.2,.8,.2,1)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>Add resources</button>
     <!-- This fire's incident chat: the same button as on the ignition candidate screen (Team chat) -->
     <div style="display: {{chat.rowD}}; flex: 1 1 0; min-width: 0">
       <a href="Chat.dc.html" class="btn primary" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box; font-size: 17px; font-weight: 600; text-decoration: none; white-space: nowrap; position: relative"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>{{chat.label}}<span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a>
@@ -659,14 +683,15 @@ class Component extends DCLogic {
   // Forces on scene, simulated (no public feed gives units, shifts, water or aircraft cycles): built from the fire's
   // published or estimated counts, seeded by the fire so it stays the same between visits and moves on with the clock.
   // What matters to the coordinator: who needs relief (12 h shift), which tankers run low on water, what aircraft are doing.
-  wfSimForces(fv, frow, INFO, RU, HELD) {
+  wfSimForces(fv, frow, INFO, RU, HELD, CNT) {
     if (!fv || !frow || HELD) return null;
     const pt = frow.st === 'PT', now = Date.now(), I = INFO || {}, t0 = I.startMs || now - 6 * 3600000, age = Math.max(0.5, (now - t0) / 3600000);
     let h = 0; for (const c of String(fv.id)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
     const rnd = () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; };
     const cnt = (k) => { const r = (RU || []).find((q) => q[0] === k); return r ? Number(r[1]) || 0 : null; };
     const people = cnt('Personnel') ?? 20, veh = cnt('Ground vehicles') ?? Math.max(2, Math.round(people / 5)), air = cnt('Aircraft') ?? 0;
-    const crews = Math.max(1, Math.min(10, Math.round(people / 5))), tankers = Math.max(1, Math.min(8, Math.round(veh * 0.6))), engines = Math.max(0, Math.min(8, veh - tankers));
+    let crews = Math.max(1, Math.min(10, Math.round(people / 5))), tankers = Math.max(1, Math.min(8, Math.round(veh * 0.6))), engines = Math.max(0, Math.min(8, veh - tankers)), airN = air;
+    if (CNT) { crews = CNT.c; tankers = CNT.t; engines = 0; airN = CNT.a; }   // what was ordered from here
     const DUR = window.__wfDur || ((ms) => Math.round(ms / 60000) + ' min');
     const T = { ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], warn: ['#7A5600', 'rgba(204,153,0,0.16)'], bad: ['#B0001A', 'rgba(215,0,21,0.12)'], blue: ['#0062CC', 'rgba(0,113,227,0.12)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'] };
     const units = []; let tired = 0, low = 0;
@@ -683,13 +708,13 @@ class Component extends DCLogic {
     for (let i = 0; i < tankers; i++) { const u = tank(i, (pt ? 'VTTF ' : 'Water tender ') + (i + 1), pt ? 10000 : 7500); if (u.lowW) low++; units.push(u); }
     for (let i = 0; i < engines; i++) units.push(tank(i, (pt ? 'VFCI ' : 'Engine ') + (i + 1), pt ? 3000 : 2800));
     // Aircraft: where each is in its drop cycle
-    for (let i = 0; i < air; i++) {
+    for (let i = 0; i < airN; i++) {
       const heli = pt ? i % 2 === 0 : i % 3 !== 2, cyc = heli ? 25 : 55, x = (((now / 60000) / cyc) + rnd()) % 1;
       const ph = x < 0.35 ? ['Attacking', T.bad, 'Dropping on the fire.'] : x < 0.6 ? ['Returning', T.blue, 'Back to base in ' + Math.max(1, Math.round((0.6 - x) * cyc)) + ' min.'] : ['Refilling', T.grey, 'Over the fire in ' + Math.max(1, Math.round((1.35 - x) * cyc)) + ' min.'];
       units.push({ k: 2, name: (heli ? (pt ? 'Helicóptero H' : 'Helicopter H-') : (pt ? 'Canadair C' : 'Air tanker T-')) + (i + 1), tag: ph[0], tagFg: ph[1][0], tagBg: ph[1][1], sub: ph[2], barD: 'none', pct: 0, barC: '', meterAria: '', o: 1 });
     }
     units.sort((a, b) => a.o - b.o || a.k - b.k);   // what needs action first
-    const sum = [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B0001A' : '#3A3A3C' }];
+    const sum = crews ? [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B0001A' : '#3A3A3C' }] : [];
     if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders below 20% water', c: low ? '#B0001A' : '#3A3A3C' });
     return { sum: sum.map((k, i) => ({ ...k, sep: i ? '0' : '0' })), units };
   }
@@ -1075,10 +1100,11 @@ class Component extends DCLogic {
     });
     const avail = data.filter((d) => d.eta !== null && (d.free == null || d.free >= need)).sort((a, b) => a.eta - b.eta);
     const rec = (reinforce && avail.find((d) => !d.onFire)) || avail[0] || data.filter((d) => d.eta !== null).sort((a, b) => a.eta - b.eta)[0] || data[0];
-    const selIds = (Array.isArray(s.stations) && s.stations.length ? s.stations : (s.station ? [s.station] : [rec.id])).filter((id) => data.some((d) => d.id === id && d.eta !== null));
+    const selIds = s.airOnly ? [] : (Array.isArray(s.stations) && s.stations.length ? s.stations : (s.station ? [s.station] : [rec.id])).filter((id) => data.some((d) => d.id === id && d.eta !== null));
     const chosenList = data.filter((d) => selIds.indexOf(d.id) >= 0 && d.eta !== null).sort((a, b) => a.eta - b.eta);
     if (!chosenList.length) chosenList.push(rec);
     const chosen = chosenList[0];
+    const sendList = s.airOnly ? [] : chosenList;   // air support alone: no station goes out (the page still needs a station for its geometry)
     const multi = chosenList.length > 1;
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
@@ -1187,11 +1213,12 @@ class Component extends DCLogic {
     }));
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
     if (RO) {
-      if (!deployed.length && ORD.length) deployed.push({ label: 'Resources not published',   /* before any crews are sent, the Please assign crews card says it all */ from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#545458', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
+      if (!deployed.length && ORD.length && !/^Confirmed from/.test(frow.note || '')) deployed.push({ label: 'Resources not published',   /* before any crews are sent, the Please assign crews card says it all */ from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#545458', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
     }
     if (!RO) deployed.length = 0;
     const ordRows = [];
-    ORD.forEach((o) => {
+    /* Confirmed here: the orders live in Resources, station by station (no separate list of orders) */
+    if (!(RO && frow && /^Confirmed from/.test(frow.note || ''))) ORD.forEach((o) => {
       ordRows.push({ head: true, item: false, title: (o.code && o.code !== '—' ? o.code + ' · ' : '') + o.name, note: (o.km != null ? o.km + (o.du || DU) + ' · ' : '') + 'order sent ' + o.at, noteD: 'block' });
       o.n.forEach((n, i) => { if (n > 0) ordRows.push({ item: true, g: 'ord', label: meta[i].name, icon: meta[i].icon, c: i >= 2 ? '#0079A6' : '#000000', from: '', w: 0, barD: 'none', pre: '', val: String(n), post: '' }); });
     });
@@ -1295,20 +1322,30 @@ class Component extends DCLogic {
       const CR = { 'Conditions': 0, 'Fire model': 0, 'Expected containment': 1, 'Perimeter': 3 };
       deployed.forEach((d) => { if (d.tl) d.g = 'hist'; else if (d.g === 'fire') { d.g = 'cond'; d.cr = CR[d.label] ?? 2; } });
       /* Endurance (water, shifts) only once crews are on it: a fire confirmed here with no orders yet has none */
-      if (!(frow && /^Confirmed from/.test(frow.note || '') && !ORD.length)) { const FX = this.wfSimForces(fv, frow, INFO, RU, HELD); if (FX) {
+      const confF = !!(frow && /^Confirmed from/.test(frow.note || ''));
+      /* A fire confirmed here with no orders yet: Resources is where they are added (Add resources, then the chosen stations) */
+      if (confF && !ORD.length && !HELD) deployed.push({ fx: true, item: false, g: 'forces', sum: [], units: [], groups: [], conf: true });
+      /* Confirmed here: the units are exactly what was ordered, station by station */
+      const oCnt = confF && ORD.length ? ORD.reduce((a, o) => { const n = o.n || []; if (o.id === 'air') a.a += (n[2] || 0) + (n[3] || 0) + (n[4] || 0) + (n[5] || 0); else { a.c += n[0] || 0; a.t += n[1] || 0; } return a; }, { c: 0, t: 0, a: 0 }) : null;
+      if (!(confF && !ORD.length)) { const FX = this.wfSimForces(fv, frow, INFO, RU, HELD, oCnt); if (FX) {
         /* The units grouped by the station they come from (orders sent from here, else the nearest stations, estimate): each
            station heads its own list, with its crews free counted after those on this fire (never all free while it fights it) */
         const NWf = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC, true), duf = NWf.du;
         const rvf = (k) => { const r = (RU || []).find((q) => q[0] === k); return r && Number(r[1]) > 0 ? Number(r[1]) : 0; }, vehf = rvf('Ground vehicles') || Math.ceil(rvf('Personnel') / 5);
         const SRC = ORD.length ? ORD.map((o) => ({ id: o.id, ck: '', name: o.name, km: o.km })) : (NWf.rows || []).slice(0, Math.max(1, Math.min(4, vehf ? Math.ceil(vehf / 2) : 2)));
         const ground = FX.units.filter((u) => u.k !== 2), airU = FX.units.filter((u) => u.k === 2);
-        const groups = SRC.map((r, i) => ({ r, units: ground.filter((u, j) => j % SRC.length === i) }));
+        const groups = oCnt ? (() => { const cr = ground.filter((u) => u.k === 0), tk = ground.filter((u) => u.k === 1);
+            return ORD.filter((o) => o.id !== 'air').map((o) => ({ r: SRC.find((q) => q.id === o.id) || { id: o.id, name: o.name }, units: cr.splice(0, (o.n || [])[0] || 0).concat(tk.splice(0, (o.n || [])[1] || 0)).sort((a, b) => a.o - b.o || a.k - b.k) })); })()
+          : SRC.map((r, i) => ({ r, units: ground.filter((u, j) => j % SRC.length === i) }));
         const gOut = groups.filter((g) => g.units.length).map((g) => { const r = g.r; let hh = 0; for (const ch of String(r.id)) hh = (hh * 31 + ch.charCodeAt(0)) >>> 0;
           const crewsHere = g.units.filter((u) => u.k === 0).length, tot = Math.max(crewsHere, 2 + (hh % 4)), free = Math.max(0, tot - crewsHere);
           const K = window.__wfCrest ? window.__wfCrest(r.ck || '', r.name) : { url: '' };
           return { crest: K.url || '', crestD: K.url ? 'block' : 'none', shD: K.url ? 'none' : 'block', name: r.name, sub: (r.km != null ? r.km + duf + '. ' : '') + (free ? free + ' of ' + tot + ' crews free' : 'All crews on this fire') + '.', units: g.units }; });
         if (airU.length) gOut.push({ crest: '', crestD: 'none', shD: 'none', name: stC === 'PT' ? 'Meios aéreos' : 'Air support', sub: airU.length + (airU.length === 1 ? ' aircraft.' : ' aircraft.'), units: airU });
-        deployed.push({ fx: true, item: false, g: 'forces', ...FX, groups: gOut });
+        const GC = s.gpC || {};   // folded station cards (all open by default)
+        gOut.forEach((g) => { const k = g.name, open = !GC[k]; Object.assign(g, { exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg', aria: g.name + (open ? '. Fold' : '. Unfold'),
+          tog: () => { try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} this.setState({ gpC: { ...((this.state || {}).gpC || {}), [k]: open } }); } }); });
+        deployed.push({ fx: true, item: false, g: 'forces', ...FX, groups: gOut, conf: confF });
         for (let i = ordRows.length - 1; i >= 0; i--) if (ordRows[i].stc) ordRows.splice(i, 1);   /* the stations now head their own units */
       } }
       const HD = { cond: ['', ''], forces: ['', ''], hist: ['', ''], fire: ['', ''], res: ['', ''], st: ['Suggested stations', 'Within an ideal first attack · the likely first responders (estimate)'] };
@@ -1388,8 +1425,14 @@ class Component extends DCLogic {
         return { d: G ? 'block' : 'none', place, placeD: place ? 'block' : 'none', bd: place ? '0' : '0', gps: G, rows: fresh ? '1fr' : '0fr', op: fresh ? 1 : 0,
           c: done ? '#1E7A34' : '#3C3C43', ic: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', aria: done ? 'Copied' : 'Copy coordinates',
           copy: () => { try { navigator.clipboard.writeText(G).catch(() => {}); } catch (e) {} this.setState({ copied: { v: G, t: Date.now() } }); setTimeout(() => { try { this.forceUpdate(); } catch (e) {} }, 3100); } }; })(),
+      // Floating "Add resources" pill: a fire confirmed here with nothing ordered yet, while Resources is out of view; it scrolls down to it
+      rh: (() => { const on = !!(RO && frow && /^Confirmed from/.test(frow.note || '') && !ORD.length && !s.full && !s.resIn && !(Array.isArray(s.plan) && s.plan.length));
+        return { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0px' : '12px',
+          go: () => { try { const sc = document.querySelector('[data-wf-page="1"]'), el = document.querySelector('[data-wf-res]'); if (!sc || !el) return;
+            const k = sc.getBoundingClientRect().height / (sc.offsetHeight || 1) || 1, top = sc.scrollTop + (el.getBoundingClientRect().top - sc.getBoundingClientRect().top) / k - 16;
+            sc.scrollTo({ top: Math.max(0, top), behavior: 'smooth' }); } catch (x) {} } }; })(),
       rs: (() => { const conf = !!(frow && /^Confirmed from/.test(frow.note || '')), n = ORD.length, u = ORD.reduce((a, o) => a + (o.n || []).reduce((x, y) => x + y, 0), 0);
-        return { d: RO && conf ? 'block' : 'none', title: n ? 'Crews' : 'Please assign crews', subD: n ? 'block' : 'none', pulseD: n ? 'none' : 'block', sub: n ? u + ' unit' + (u === 1 ? '' : 's') + ' ordered from ' + n + ' station' + (n === 1 ? '' : 's') + '.' : 'Select resources.', tag: 'To do', tagD: 'none', ring: n ? '' : 'inset 0 0 0 4px var(--wf-y), 0 0 0 1.4px #3A3A3C, ', bg: '#FFFFFF', titleCls: '', titleJ: n ? 'start' : 'center', titleCol: n ? '1' : '1 / -1',   /* to do: lime diagonal bands (30° off vertical, 8px wide, about ten across), like the reflective tape on fire engines and turnout gear */   /* lime border, then a dark 1.4px outline that stays; the pulse leaves from it */   /* while crews are still to do, a 4px primary border round the card */
+        return { d: 'none', title: n ? 'Crews' : 'Please assign crews', subD: n ? 'block' : 'none', pulseD: n ? 'none' : 'block', sub: n ? u + ' unit' + (u === 1 ? '' : 's') + ' ordered from ' + n + ' station' + (n === 1 ? '' : 's') + '.' : 'Select resources.', tag: 'To do', tagD: 'none', ring: n ? '' : 'inset 0 0 0 4px var(--wf-y), 0 0 0 1.4px #3A3A3C, ', bg: '#FFFFFF', titleCls: '', titleJ: n ? 'start' : 'center', titleCol: n ? '1' : '1 / -1',   /* to do: lime diagonal bands (30° off vertical, 8px wide, about ten across), like the reflective tape on fire engines and turnout gear */   /* lime border, then a dark 1.4px outline that stays; the pulse leaves from it */   /* while crews are still to do, a 4px primary border round the card */
           aria: n ? 'Crews. ' + u + ' units ordered. Open' : 'Please assign crews. To do', go: () => { if (n) { this.setState({ crew: true, reinforce: false, stPick: true }); return; } if (s.inlPh) return;
             this.setState({ inlPh: 1 }); setTimeout(() => this.setState({ inlPh: 2 }), 360); setTimeout(() => this.setState({ inlPh: 3, inl: true }), 760); } }; })(),
       inl: (() => { const ph = s.inlPh || 0, open = ph >= 3 && !(this.wfOrders()[fireId] || []).length;
@@ -1421,7 +1464,9 @@ class Component extends DCLogic {
       hasRU: !!RU, noRU: !RU,
       // Configure dispatch station by station (s.plan: [{ id, n }]; air support is id 'air' with its four aircraft kinds)
       ...(() => {
-        const plan = Array.isArray(s.plan) ? s.plan : [], F = s.flow || null, byId = (id) => data.find((d) => d.id === id);
+        const confP = !!(RO && frow && /^Confirmed from/.test(frow.note || ''));
+        // Confirmed here and already ordered: the plan starts from what was ordered, so adding or changing one station keeps the rest
+        const plan = Array.isArray(s.plan) ? s.plan : (confP && ORD.length ? ORD.map((o) => ({ id: o.id, n: o.id === 'air' ? (o.n || []).slice(2, 6) : (o.n || []).slice(0, 2) })) : []), F = s.flow || null, byId = (id) => data.find((d) => d.id === id);
         const capSt = (d) => d.real ? [99, 99] : [d.free != null ? Math.max(0, d.free) : 99, (tenders[d.id] || 0) + 2];
         const recFor = (id) => { if (id === 'air') return REC.slice(2).map((n, i) => Math.min(n, airCap[i])); const d = byId(id), c = d ? capSt(d) : [0, 0], first = !plan.some((p) => p.id !== 'air' && p.id !== id);
           return first ? [Math.min(REC[0], c[0]), Math.min(REC[1], c[1])] : [Math.min(1, c[0]), Math.min(1, c[1])]; };
@@ -1434,9 +1479,13 @@ class Component extends DCLogic {
             edit: () => this.setState({ flow: { step: 'res', id: p.id, draft: p.n.slice(), edit: true } }) }; });
         const hasSt = plan.some((p) => p.id !== 'air');
         // The order already went out from the fire page: the cards stay still (no Cancel / Send order) and each change is sent at once
-        const inlSent = (s.inlPh || 0) >= 3 && (this.wfOrders()[fireId] || []).length > 0;
-        const sendP = (P) => { if (!P.some((p) => p.id !== 'air')) return; const per = {}; P.forEach((p) => { if (p.id !== 'air') per[p.id] = p.n.slice(0, 2); }); const a = P.find((p) => p.id === 'air'); per.air = a ? a.n.slice() : [0, 0, 0, 0];
-          this.setState({ stations: P.filter((p) => p.id !== 'air').map((p) => p.id), per, stPick: true, cfPick: true, open: false, cfg: false }, () => { setTimeout(() => { try { this._sendAll && this._sendAll(); } catch (x) {} }, 0); }); };
+        const inlSent = ((s.inlPh || 0) >= 3 || confP) && (this.wfOrders()[fireId] || []).length > 0;
+        // Resending after the first order: only the station that changed goes out, and its order replaces the one it had
+        const sendP = (P, only) => { if (only) { this._replace = only; P = P.filter((p) => p.id === only); } if (!P.some((p) => p.id !== 'air') && !only) return; const per = {}; P.forEach((p) => { if (p.id !== 'air') per[p.id] = p.n.slice(0, 2); }); const a = P.find((p) => p.id === 'air'); per.air = a ? a.n.slice() : [0, 0, 0, 0];
+          // Start sending in the same state change (the send-all of the previous render would still hold the old stations)
+          const nS = Math.max(1, P.filter((p) => (p.n || []).some((x) => x > 0)).length); if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; }
+          this.setState({ airOnly: !P.some((p) => p.id !== 'air'), stations: P.filter((p) => p.id !== 'air').map((p) => p.id), per, stPick: true, cfPick: true, open: false, cfg: false, full: false, sending: 1, sndN: 0 });
+          let k = 0; const step = () => { k++; this.setState({ sndN: k }); if (k < nS) this._sndT = setTimeout(step, 900); else this._sndT = null; }; this._sndT = setTimeout(step, 1100); };
         const send = () => sendP(plan);
         const on = !!F, step = F ? F.step : 'st', id = F ? F.id : null, dSel = id && id !== 'air' ? byId(id) : null;
         const draft = F && F.draft ? F.draft : (id ? recFor(id) : []), recD = id ? recFor(id) : [], isRec = id ? draft.every((v, i) => v === recD[i]) : true;
@@ -1456,8 +1505,12 @@ class Component extends DCLogic {
             tagD: best ? 'inline-block' : 'none', tag: 'Suggested', tagBg: 'rgba(52,199,89,0.12)', tagFg: '#1E7A34', dis: dis ? 'true' : 'false', op: dis ? 0.45 : 1, cur: dis ? 'default' : 'pointer', aria: nm(d) + (busy ? ', busy' : used ? ', added' : ', ' + d.eta + ' minutes'),
             pick: () => { if (!dis) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ flow: { step: 'res', id: d.id, draft: recFor(d.id), edit: false } }); } } }; });
         const close = () => this.setState({ flow: null });
+        // Resources on a fire confirmed here: tiles only once there is a station (from the plan until the order is sent), Add always
+        deployed.forEach((d) => { if (!d.fx) return; const st = plan.filter((p) => p.id !== 'air'), c = st.reduce((a, p) => a + (p.n[0] || 0), 0), t = st.reduce((a, p) => a + (p.n[1] || 0), 0);
+          if (d.conf && !inlSent) d.sum = st.length ? [{ v: '0 of ' + c, l: 'Crews need relief', c: '#3A3A3C' }].concat(t ? [{ v: '0 of ' + t, l: 'Tenders below 20% water', c: '#3A3A3C' }] : []) : [];
+          d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf ? 'flex' : 'none'; d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
         return {
-          pl: { addCnt: 'Add resources (' + (ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length + (inPlan('air') ? 0 : 1)) + ')', inlCards: (s.inlPh || 0) >= 3 ? cards.slice().reverse() : [], inlActD: (s.inlPh || 0) >= 3 && plan.length && !inlSent ? 'grid' : 'none', avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(),
+          pl: { addCnt: 'Add resources (' + (ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length + (inPlan('air') ? 0 : 1)) + ')', inlCards: (s.inlPh || 0) >= 3 ? cards.slice().reverse() : [], inlActD: (s.inlPh || 0) >= 3 && plan.length && !inlSent ? 'grid' : 'none', resCards: confP && !inlSent ? cards.slice().reverse() : [], resActD: confP && !inlSent && plan.length ? 'grid' : 'none', avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(),
             addDis: ordered.some((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)) || !inPlan('air') ? 'false' : 'true',   /* nothing left to add: Add is disabled */ cards: cards.slice().reverse(), count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: 'Add resources',
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
@@ -1467,9 +1520,11 @@ class Component extends DCLogic {
             stD: step === 'st' ? 'flex' : 'none', backD: step === 'res' ? 'none' : 'flex',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
             tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
-            remove: () => { const go = () => { const nx = plan.filter((p) => p.id !== id); this.setState({ plan: nx, flow: null }, () => { if (inlSent) sendP(nx); }); }, nmR = id === 'air' ? 'Air support' : dSel ? nm(dSel) : 'This station';
+            remove: () => { const go = () => { const nx = plan.filter((p) => p.id !== id);
+                if (inlSent) { const all = this.wfOrders(); all[fireId] = (all[fireId] || []).filter((o) => o.id !== id); try { window.localStorage.setItem('wf-orders', JSON.stringify(all)); } catch (x) {} }   /* stood down: off this fire's orders */
+                this.setState({ plan: nx, flow: null }); }, nmR = id === 'air' ? 'Air support' : dSel ? nm(dSel) : 'This station';
               if (!window.__wfConfirm) return go(); window.__wfConfirm({ title: id === 'air' ? 'Remove air support?' : 'Remove station?', body: nmR + ' will be removed from this dispatch.', cancel: 'Cancel', ok: 'Remove', onOk: go }); },
-            apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }, () => { if (inlSent) sendP(nx); }); } } };
+            apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }, () => { if (inlSent) sendP(nx, id); }); } } };
       })(),
       acc: (() => {
         const setP = (key, i, v) => { const base = { ...PER, air: AIR.slice() }; const arr = base[key].slice(); arr[i] = v; base[key] = arr; this.setState({ per: base, cfPick: true }); };
@@ -1495,23 +1550,24 @@ class Component extends DCLogic {
       // Sending: one order per chosen station, each to that station's coordinator, confirmed in turn; Done shows the dispatch.
       sendAll: this._sendAll = () => {
         if (this._sndT || !(s.stPick && s.cfPick)) return;
-        const n = Math.max(1, this.wfSplit(chosenList, counts, PER).length);
+        const n = Math.max(1, this.wfSplit(sendList, counts, PER).length);
         this.setState({ sending: 1, sndN: 0, open: false, cfg: false, full: false });
         let k = 0; const step = () => { k++; this.setState({ sndN: k }); if (k < n) this._sndT = setTimeout(step, 900); else this._sndT = null; };
         this._sndT = setTimeout(step, 1100);
       },
       snd: (() => {
-        const SP = this.wfSplit(chosenList, counts, PER), on = !!s.sending, n = Math.max(1, SP.length), k = Math.min(n, s.sndN || 0), all = on && k >= n;
+        const SP = this.wfSplit(sendList, counts, PER), on = !!s.sending, n = Math.max(1, SP.length), k = Math.min(n, s.sndN || 0), all = on && k >= n;
         return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
           title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: '#000000',
           sub: 'To station coordinators · ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: all ? '#34C759' : '#0062CC',
           rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, SCL = window.__wfStationCol || ['#34C759'], TNT = window.__wfTint || ((h, a) => 'rgba(52, 199, 89, ' + a + ')'); return { crest: crestOf(d), crestD: crestOf(d) ? 'block' : 'none', hdBg: d.id === 'air' ? 'rgba(0, 113, 227, 0.06)' : 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '0' : '0',
             units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
             state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: '#000000', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
-          redo: () => { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
+          redo: () => { this._replace = null; if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
-          done: () => { if (!all) return; this.wfSaveOrder(fireId, chosenList, counts, DU, PER);
+          done: () => { if (!all) return; if (this._replace) { const A = this.wfOrders(); A[fireId] = (A[fireId] || []).filter((o) => o.id !== this._replace); try { window.localStorage.setItem('wf-orders', JSON.stringify(A)); } catch (x) {} this._replace = null; }
+            this.wfSaveOrder(fireId, sendList, counts, DU, PER);
             // Came from an incident chat: the orders are posted there and you go back to the conversation
             let back = ''; try { back = sessionStorage.getItem('wf-chat-return') || ''; } catch (e) {}
             const ORDS = SP.map((d) => ({ id: d.id, name: d.name, eta: d.eta, units: d.n.map((x, t) => ({ n: x, label: meta[t].name })).filter((u) => u.n > 0) }));
@@ -1539,7 +1595,7 @@ class Component extends DCLogic {
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO && !s.crew ? 'inline-flex' : 'none', crTagD: s.crew ? 'inline-flex' : 'none', stIcD: s.crew ? 'inline' : 'none',   /* Configure dispatch: the fire-station marker and how many stations are free, as the candidate band shows its state */ backD: 'flex', hdPadL: RO ? '4px' : '8px',
-      pgScroll: (e) => { if (!RO) return; try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
+      pgScroll: (e) => { if (!RO) return; try { const el = document.querySelector('[data-wf-res]'), sc = e.currentTarget; if (el) { const r = el.getBoundingClientRect(), R0 = sc.getBoundingClientRect(), vis = r.top < R0.bottom - 40; if (vis !== !!(this.state || {}).resIn) this.setState({ resIn: vis }); } } catch (x) {} try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
       mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - MAPH) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdBack: (e) => { if (!s.crew) return; try { e.preventDefault(); } catch (x) {} this.setState({ crew: false, reinforce: false }); },   /* configuring crews: back returns to the fire page */
       cw: (() => { const on = (id) => chosenList.some((q) => q.id === id), L = data.filter((d) => d.eta !== null && d.id !== 'none').sort((a, b) => (a.km || 0) - (b.km || 0));
