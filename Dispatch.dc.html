@@ -369,7 +369,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div style="display: {{cc.medD}}; justify-content: center; gap: 0; width: 100%; margin-top: {{cc.medMt}}">
         <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="2">
           <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; padding: 0 8px; border-left: {{m.sep}}">
-            <span class="kpi wf-big" style="--k: 34px; white-space: nowrap">{{m.v}}</span>
+            <span class="kpi wf-big" style="--k: {{cc.medK}}; white-space: nowrap">{{m.v}}</span>
             <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{m.l}}</span>
           </div>
         </sc-for>
@@ -1308,8 +1308,9 @@ class Component extends DCLogic {
         const t = HELD ? (HELD.took != null ? DUR(HELD.took) : '') : I.startMs ? DUR(now - I.startMs) : '';
         const u = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ area: us ? 'ac' : 'ha' }, v || {}); })();
         const area = I.ha != null ? (u.area === 'ha' ? Math.round(I.ha).toLocaleString() + ' ha' : Math.round(I.ha / 0.4047).toLocaleString() + ' ac') : '';
-        const med = [t ? { v: t, l: HELD ? 'Final duration' : 'Time active' } : null, area ? { v: area, l: 'Burned area' } : null].filter(Boolean).map((m, i) => ({ ...m, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' }));
-        return { d: 'flex', big, fs, bigD: pcT ? 'block' : 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '12px' : '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
+        const pers = (() => { const r = (RU || []).find((q) => q[0] === 'Personnel'); return r && Number(r[1]) > 0 ? Number(r[1]).toLocaleString() : ''; })();
+        const med = [t ? { v: t, l: HELD ? 'Final duration' : 'Time active' } : null, pers ? { v: pers, l: 'Personnel' } : null, area ? { v: area, l: 'Burned area' } : null].filter(Boolean).map((m, i) => ({ ...m, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' }));
+        return { d: 'flex', medK: med.length > 2 ? '28px' : '34px', big, fs, bigD: pcT ? 'block' : 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '12px' : '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
       kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
