@@ -125,7 +125,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <!-- Tap the photo: a tooltip with the name and role (as on the icon cards); tap it again or anywhere else to hide it -->
             <span data-avtip="1" role="button" tabindex="0" onClick="{{m.tip}}" aria-label="{{m.tipAria}}" style="position: relative; flex-shrink: 0; width: 32px; height: 32px; visibility: {{m.avVis}}; cursor: pointer">
               <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
-              <span role="tooltip" aria-hidden="true" style="position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 5; display: flex; flex-direction: column; width: max-content; max-width: 280px; transform: translateY({{m.tipY}}); opacity: {{m.tipOp}}; padding: 6px 12px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; pointer-events: none; transition: opacity .2s ease, transform .2s ease"><span style="font-weight: 600">{{m.tipName}}</span><span>{{m.tipRole}}</span></span>
             </span>
             <div class="chbubL" style="display: flex; flex-direction: column; gap: 2px; max-width: 272px; padding: 8px 12px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
               <span style="display: {{m.nameD}}; font-size: 15px; line-height: 20px; color: #545458">{{m.name}}</span>
@@ -204,6 +203,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     </div>
     </sc-if>
+    <!-- The photo tooltip lives outside the scrolling list, above its edge fade: placed over the tapped photo (or under it near the top) -->
+    <span role="tooltip" aria-hidden="true" style="position: absolute; left: {{avt.x}}px; top: {{avt.y}}px; z-index: 25; display: flex; flex-direction: column; width: max-content; max-width: 300px; transform: translateY({{avt.dy}}); opacity: {{avt.op}}; padding: 6px 12px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; pointer-events: none; transition: opacity .2s ease, transform .2s ease"><span style="font-weight: 600">{{avt.name}}</span><span>{{avt.role}}</span></span>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 1px solid rgba(60,60,67,0.12)">
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
@@ -625,7 +626,10 @@ class Component extends DCLogic {
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
         items.push({ isThem: true, text: L(m.en, m.pt), time, name: p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: same ? '0' : '4px', ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
-          tip: (e) => { try { e.stopPropagation(); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ avTip: on ? null : m.id }); } }; })() });
+          tip: (e) => { try { e.stopPropagation(); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (on) { this.setState({ avTip: null }); return; }
+            let pos = { x: 16, y: 0, below: false }; try { const el = e.currentTarget, root = el.closest('[data-wfroot]') || document.body, R0 = root.getBoundingClientRect(), k = R0.width / ((window.__wfVP || {}).w || 390) || 1, r = el.getBoundingClientRect(), sc = el.closest('.chscroll'), top = sc ? sc.getBoundingClientRect().top : R0.top;
+              const x = (r.left - R0.left) / k, yT = (r.top - R0.top) / k, below = (r.top - top) / k < 60; pos = { x: Math.max(16, x), y: below ? (r.bottom - R0.top) / k + 6 : yT - 6, below }; } catch (x) {}
+            this.setState({ avTip: m.id, avPos: pos, avName: p.name, avRole: role }); } }; })() });
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
@@ -688,10 +692,11 @@ class Component extends DCLogic {
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,
         pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
+      avt: (() => { const P0 = s.avPos || { x: 16, y: 0, below: false }, on = !!s.avTip; return { x: P0.x, y: P0.y, dy: (P0.below ? '0%' : '-100%') + (on ? '' : ''), op: on ? 1 : 0, name: s.avName || '', role: s.avRole || '' }; })(),
       acts, actD: acts.length ? 'flex' : 'none', 
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? (window.__wfY || '#E5FF00') : '#E5E5EA',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
-      setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
+      setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; if ((this.state || {}).avTip) this.setState({ avTip: null }); this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
       back: (e) => { if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false, sheet: false, tab: c.closed ? 'resolved' : (this.state || {}).tab }); } }
     };
   }
