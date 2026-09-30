@@ -16,7 +16,7 @@
 <script src="fit.js?v=87"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=98"></script>
+<script src="i18n.js?v=99"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=30"></script>
 
@@ -289,12 +289,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- Step 1: the stations, fastest first -->
     <div class="wf-snap" role="listbox" aria-label="Stations" style="display: {{fl.stD}}; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
       <sc-for list="{{fl.rows}}" as="r" hint-placeholder-count="0">
-        <!-- A station row, airy like the app's other lists: the name in bold (two lines at most), then the code, distance and crews in grey, the ETA on the right; 20px above and below, a full-width line between rows -->
-        <button type="button" role="option" class="sqrow" data-sel="false" aria-disabled="{{r.dis}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; min-height: 84px; padding: 20px 16px; margin-bottom: 2px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; opacity: {{r.op}}; cursor: {{r.cur}}">
+        <!-- A station row, airy like the app's other lists: the name in bold (two lines at most), 8px, then the code, distance and crews in grey; the ETA on the right on the name's first line, Suggested on the right on the grey line; 20px above and below, a full-width line between rows. Busy or already added stations are not listed. -->
+        <button type="button" role="option" class="sqrow" data-sel="false" aria-disabled="{{r.dis}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 8px 16px; min-height: 84px; padding: 20px 16px; margin-bottom: 2px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; opacity: {{r.op}}; cursor: {{r.cur}}">
           <span aria-hidden="true" style="grid-row: 1 / span 2; align-self: start; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.icBg}}; color: #0079A6"><img src="{{r.crest}}" alt="" style="display: {{r.crestD}}; width: 40px; height: 40px; object-fit: contain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{r.airD}}"><path d="M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7"></path></svg></span>
           <span style="min-width: 0; font-size: 17px; line-height: 22px; font-weight: 700; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{r.name}}</span>
-          <span style="grid-row: 1; grid-column: 3; align-self: start; font-size: 17px; line-height: 22px; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.etaC}}">{{r.eta}}</span>
-          <span style="grid-column: 2 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap"><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span><span style="display: {{r.tagD}}; flex-shrink: 0; margin-left: auto; height: 24px; padding: 0 10px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 13px; font-weight: 600; line-height: 24px">{{r.tag}}</span></span>
+          <span style="grid-row: 1; grid-column: 3; align-self: start; justify-self: end; font-size: 17px; line-height: 22px; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.etaC}}">{{r.eta}}</span>
+          <span style="grid-column: 2 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0"><span style="min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span><span style="margin-left: auto; flex-shrink: 0; display: {{r.tagD}}; height: 24px; padding: 0 10px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 13px; font-weight: 600; line-height: 24px; white-space: nowrap">{{r.tag}}</span></span>
         </button>
       </sc-for>
     </div>
@@ -929,6 +929,15 @@ class Component extends DCLogic {
     all[fireId] = cur; try { window.localStorage.setItem('wf-orders', JSON.stringify(all)); } catch (e) {}
   }
 
+  // Air support: time from the nearest aerial firefighting base (Portugal: ANEPC air means centres; California: CAL FIRE
+  // air attack bases and LA County air operations). Estimate: helicopter at ~220 km/h plus ~8 min to take off.
+  wfAirEta(FIRE) {
+    const lat = 34.19 - (FIRE[1] - 662) / 2829, lon = (FIRE[0] - 518) / 2345 - 118.13, rad = Math.PI / 180;
+    const B = [[37.15,-8.02],[37.32,-8.55],[37.65,-8.23],[38.17,-8.56],[38.53,-7.89],[38.705,-9.036],[39.21,-8.06],[39.91,-8.64],[40.72,-7.89],[41.27,-7.72],[41.59,-8.44],[41.86,-6.71],[39.84,-7.44],[40.26,-7.48],[40.15,-8.24],[41.85,-8.42],
+      [33.73,-117.02],[33.04,-116.92],[35.67,-120.63],[36.03,-119.06],[36.78,-119.72],[38.03,-120.41],[39.22,-121.0],[39.8,-121.86],[40.51,-122.29],[38.51,-122.81],[36.89,-121.41],[40.55,-124.13],[39.13,-123.2],[38.67,-121.4],[34.26,-118.41]];
+    let km = Infinity; B.forEach(([la, lo]) => { const q = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((lo - lon) * rad / 2) ** 2; km = Math.min(km, 12742 * Math.asin(Math.sqrt(q))); });
+    return km > 400 ? null : Math.round(km / 220 * 60 + 8);
+  }
   wfNearRows(fv, FIRE, US, st, wide) {
     const du = US ? ' mi' : ' km';
     if (!window.__wfLiveMap) return { rows: [], du, live: false };
@@ -1382,8 +1391,9 @@ class Component extends DCLogic {
             less: () => { if (lessDis) return; const a = draft.slice(); a[j] = n - 1; setD(a); }, more: () => { if (moreDis) return; const a = draft.slice(); a[j] = n + 1; setD(a); },
             lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1, lessLbl: 'Fewer ' + m.name.toLowerCase(), moreLbl: 'More ' + m.name.toLowerCase() }; });
         const inPlan = (x) => plan.some((p) => p.id === x);
-        const stRows = [{ id: 'air', air: true }].concat(ordered.filter((d) => d.id !== 'none')).map((d) => { if (d.air) { const used = inPlan('air');
-            return { code: '', name: 'Air support', crest: '', crestD: 'none', airD: 'block', icBg: 'rgba(0,121,166,0.1)', eta: '', etaC: '#000000', sub: used ? 'Added.' : 'Helicopters and air tankers.', tagD: 'none', tag: '', tagBg: '', tagFg: '', dis: used ? 'true' : 'false', op: used ? 0.45 : 1, cur: used ? 'default' : 'pointer', aria: 'Air support',
+        const stRows = [{ id: 'air', air: true }].concat(ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id))).filter((d) => !(d.air && inPlan('air'))).map((d) => { if (d.air) { const used = inPlan('air');
+            const ae = this.wfAirEta(FIRE);
+            return { code: '', name: 'Air support', crest: '', crestD: 'none', airD: 'block', icBg: 'rgba(0,121,166,0.1)', eta: ae ? '~' + ae + ' min' : '', etaC: '#000000', sub: used ? 'Added.' : 'Helicopters and air tankers.', tagD: 'none', tag: '', tagBg: '', tagFg: '', dis: used ? 'true' : 'false', op: used ? 0.45 : 1, cur: used ? 'default' : 'pointer', aria: 'Air support',
               pick: () => { if (!used) this.setState({ flow: { step: 'res', id: 'air', draft: recFor('air'), edit: false } }); } }; }
           const busy = d.eta === null, used = inPlan(d.id), dis = busy || used, crest = crestOf(d), best = d.id === rec.id && !used;
           const code = d.code && d.code !== '—' ? d.code + '. ' : '';
@@ -1396,7 +1406,7 @@ class Component extends DCLogic {
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
           fl: { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close,
-            title: step === 'st' ? 'Choose a station' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'res' && dSel ? 'block' : 'none',
+            title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'res' && dSel ? 'block' : 'none',
             back: () => (step === 'res' && F && !F.edit ? this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }) : close()),
             stD: step === 'st' ? 'flex' : 'none', resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
             tag: isRec ? 'Suggested' : 'Use suggested', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
