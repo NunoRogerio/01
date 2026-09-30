@@ -330,3 +330,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Map legends scroll sideways on every map** (drag the row; a tap still toggles a layer), also on locked maps: locking fixes the map's position and zoom, never the legend. Rows that scroll sideways get no haptic overlay, so the swipe is never taken from them.
 - **Please assign crews card (to do):** plain white (reflective-tape bands and a lime pill behind the words were tried and dropped: too much attention).
 - **Please assign crews card, to-do look (experiment):** no To do tag; the words sit centred on the card; lime 4px border, steady dark outline and dark pulse.
+- **Map legend chips (every map, full screen included):** solid #F2F2F7 with the light shadow, no see-through blur; the legend row has room around the chips so their shadows are never cut; tapping a chip shows or hides the layer; the row drags sideways.
