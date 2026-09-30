@@ -300,7 +300,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <!-- Step 2: its resources -->
     <div style="display: {{fl.resD}}; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
-      <!-- One control, one place, one size: "Suggested" (green tag) while the counts are the suggested ones; change a count and it turns, in place, into the lime "Use suggested" button -->
+      <!-- One control, one place, one size: "Suggested" (green tag) while the counts are the suggested ones; change a count and it turns, in place, into the lime "Reset" button -->
       <div style="display: flex; justify-content: flex-end; padding: 0 16px 8px">
         <button type="button" class="mbtn" onClick="{{fl.useRec}}" aria-disabled="{{fl.recDis}}" style="display: flex; align-items: center; justify-content: center; width: 148px; height: 32px; padding: 0; border: 0; border-radius: 999px; background: {{fl.tagBg}}; color: {{fl.tagFg}}; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: {{fl.recCur}}; transition: background-color .3s ease, color .3s ease">{{fl.tag}}</button>
       </div>
@@ -1409,7 +1409,7 @@ class Component extends DCLogic {
             title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'res' && dSel ? 'block' : 'none',
             back: () => (step === 'res' && F && !F.edit ? this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }) : close()),
             stD: step === 'st' ? 'flex' : 'none', resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
-            tag: isRec ? 'Suggested' : 'Use suggested', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
+            tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
             remove: () => this.setState({ plan: plan.filter((p) => p.id !== id), flow: null }),
             apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }); } } };
