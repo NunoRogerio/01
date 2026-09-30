@@ -233,3 +233,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Map full screen:** opens on the same place at the band's zoom plus 20% (never zoomed out); the user zooms out if they want.
 - **Crew configuration** (from a fire's "Assign crews"): the fire's header, then "Stations" as mini cards of the nearest available stations (name, distance KPI, time or free crews; tap to choose, a check and a dark outline when chosen; the + tile lists all), then "Resources per station" (choose crews and vehicles), and Send order. After sending, Done returns to the fire page.
 - **Chats and notifications titles:** "Chats" / "Notifications", with the chosen area and the counts under the title in normal text ("Los Angeles. 13 open. 23 unread."); both lists show only the chosen area.
+- **Chats list** closes with the round X at the top right (like the notifications panel), not a back chevron.

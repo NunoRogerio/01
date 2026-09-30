@@ -45,12 +45,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== List of chats ===== -->
   <sc-if value="{{isList}}" hint-placeholder-val="{{ true }}">
-    <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 12px; flex-shrink: 0">
-      <a href="Main.dc.html" data-wf-back="1" class="chbtn" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
+    <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 20px; flex-shrink: 0">
       <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.chats}}</h1>
         <div style="font-size: 17px; line-height: 22px; color: #000000">{{listSub}}</div>
       </div>
+      <!-- Close with the round X, as the notifications panel (back to where you were) -->
+      <a href="Main.dc.html" data-wf-back="1" class="chbtn" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
     </header>
     <div role="tablist" aria-label="{{t.chats}}" class="wf-seg" style="flex-shrink: 0; margin: 0 16px 16px">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{tabX}})"><span class="segblob"></span></span>
@@ -426,7 +427,7 @@ class Component extends DCLogic {
     const L = (en, pt) => (C ? C.L(en, pt) : en);
     const T = (o) => (o ? L(o.en, o.pt) : '');
     const PTL = L('en', 'pt') === 'pt';
-    const t = { back: L('Back', 'Voltar'), chats: L('Chats', 'Conversas'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
+    const t = { back: L('Back', 'Voltar'), close: L('Close', 'Fechar'), chats: L('Chats', 'Conversas'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
       msg: L('Message', 'Mensagem'), send: L('Send', 'Enviar'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
       fireCard: L('Fire card', 'Cartão do incêndio'), fireCardSub: L('Time in each stage, projection and forces', 'Tempo em cada fase, projeção e meios'),
@@ -470,9 +471,11 @@ class Component extends DCLogic {
     // ----- list -----
     if (s.view !== 'chat' && s.view !== 'summary') {
       /* the area chosen on the main screen: only its chats, and its name under the title */
-      const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} return v || (window.__wfMem || {}).scope || null; })();
+      const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope || null;   /* as the main screen reads it */
+        let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} const lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r || ''] || null;
+        if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; })();
       const inSc = (c) => !SC || !SC.st || !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co) || !c.st;
-      const scName = SC ? (SC.title || SC.co || SC.st || '') : '';
+      const scName = SC ? (SC.title || SC.co || ({ PT: 'Portugal', CA: 'California', US: 'United States', AMZ: 'Amazon', NV: 'Nevada' })[SC.st] || SC.st || '') : '';
       const all = C.list().filter(inSc);
       const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);
         const who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? L('You', 'Você') : (c.people[lm.from] || {}).name || '') : '';
