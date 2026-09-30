@@ -1157,7 +1157,7 @@ class Component extends DCLogic {
     }));
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
     if (RO) {
-      if (!deployed.length) deployed.push({ label: 'Resources not published', from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#545458', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
+      if (!deployed.length && ORD.length) deployed.push({ label: 'Resources not published',   /* before any crews are sent, the Please assign crews card says it all */ from: frow.st === 'BRA' ? 'INPE tracks the fire, not the brigades; Prevfogo does not publish live resources' : (frow.st === 'PT' ? 'Fogos.pt · ANEPC' : 'NIFC · WFIGS') + ' has no resource numbers for this fire yet', icon: meta[0].icon, c: '#545458', bg: 'transparent', w: 0, pre: '', val: '', post: '' });
     }
     if (!RO) deployed.length = 0;
     const ordRows = [];
@@ -1165,7 +1165,7 @@ class Component extends DCLogic {
       ordRows.push({ head: true, item: false, title: (o.code && o.code !== '—' ? o.code + ' · ' : '') + o.name, note: (o.km != null ? o.km + (o.du || DU) + ' · ' : '') + 'order sent ' + o.at, noteD: 'block' });
       o.n.forEach((n, i) => { if (n > 0) ordRows.push({ item: true, g: 'ord', label: meta[i].name, icon: meta[i].icon, c: i >= 2 ? '#0079A6' : '#000000', from: '', w: 0, barD: 'none', pre: '', val: String(n), post: '' }); });
     });
-    if (!ORD.length && RO) {
+    if (false && !ORD.length && RO) {   /* dropped: before crews are sent the Please assign crews card at the top covers this */
       // Which stations are on the fire is not published per station: the incident chat's forces when there is one (simulation), else an estimate
       const CHF = window.__wfChat && fv ? window.__wfChat.find({ id: fv.id, kind: 'fire' }) : null;
       const onF = CHF ? (CHF.forces || []).filter((f) => f.st !== 'standby' && f.st !== 'released').map((f) => f.station) : [];
