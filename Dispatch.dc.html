@@ -355,7 +355,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
     </div>
 <!-- One scrolling column: the conclusion, then everything else; the actions stay fixed below -->
-    <div class="wf-snap" data-wf-page="{{pgOn}}" onScroll="{{pgScroll}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
+    <div class="{{pgCls}}" data-wf-page="{{pgOn}}" onScroll="{{pgScroll}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
     <!-- A viewed fire: the map is the top of the page and scrolls away with it (a tap opens it full screen) -->
     <div aria-label="Map. Tap to open full screen" role="button" onClick="{{openMap}}" style="display: {{pgMapD}}; flex-shrink: 0; height: 240px; cursor: pointer"></div>
     <div style="display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1; padding-top: {{pgPadT}}; background: #F2F2F7">
@@ -469,15 +469,18 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </ul>
     </div>
     </div>
+    <!-- Actions: side by side on one row for a viewed fire (saves a row), stacked otherwise -->
+    <div style="display: flex; flex-direction: {{actDir}}; gap: {{actGap}}; flex-shrink: 0; padding: 16px 16px 0">
     <!-- This fire's incident chat: the same button as on the ignition candidate screen (Team chat) -->
-    <div style="display: {{chat.rowD}}; margin: 16px 16px 0">
-      <a href="Chat.dc.html" class="btn primary" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box; font-size: 17px; font-weight: 600; text-decoration: none">{{chat.label}}</a>
+    <div style="display: {{chat.rowD}}; flex: 1 1 0; min-width: 0">
+      <a href="Chat.dc.html" class="btn primary" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box; font-size: 17px; font-weight: 600; text-decoration: none; white-space: nowrap">{{chat.label}}</a>
     </div>
     <!-- Reinforcing now happens in the incident chat; Done is a tertiary (subtle) button -->
-    <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; padding: 0 16px">
+    <div style="display: grid; flex: 1 1 0; min-width: 0">
       <a href="Main.dc.html" class="btn wf-ter" onPointerDown="{{navMap}}" onClick="{{navMap}}" style="height: 48px; font-size: 17px; font-weight: 600">
         Done
       </a>
+    </div>
     </div>
   </section>
   <div class="wf-glass" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{cfScrimOp}}; pointer-events: none; transition: opacity .35s ease"></div>
@@ -586,7 +589,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="btn wf-sec" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
         Suggested
       </button>
-      <a href="Chat.dc.html" class="btn primary" onClick="{{startChat}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box; font-size: 17px; font-weight: 600; text-decoration: none">{{chat.label}}</a>
+      <a href="Chat.dc.html" class="btn primary" onClick="{{startChat}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box; font-size: 17px; font-weight: 600; text-decoration: none; white-space: nowrap">{{chat.label}}</a>
       <button type="button" class="btn wf-ter" onClick="{{cfgDone}}" style="grid-column: 1 / -1; height: 48px; font-size: 17px; font-weight: 600">
         Done
       </button>
@@ -1279,7 +1282,7 @@ class Component extends DCLogic {
           : { title: fv ? (/^[A-Za-z]{2,5}-?\d{3,}$/.test(fv.place || '') ? (frow && frow.parent ? 'Near ' + frow.parent : 'Unnamed fire') : fv.place) : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held fire' : 'Active fire', tagD: 'none', pillD: RO ? 'none' : 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
-      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '8px' : '30px', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? 'inline-flex' : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
+      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '12px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? 'inline-flex' : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
       pgScroll: (e) => { if (!RO) return; try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
       mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - 240) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdrB: this._hdrB || 170,
