@@ -320,7 +320,8 @@ window.__wfBlink=function(path,dur){
   // The counter runs 0% to 100% over the loading time; it waits at 90% while live data is still coming,
   // then finishes, and the screen only fades once it reads 100%.
   var pctEl=el.querySelector('.pct'),pv=0,pctDone=!pctEl,blinked65=false;
-  if(cold&&!soft)setTimeout(function(){blink(el);},Math.max(300,minMs-1500));   // opening the app: one blink 1.5 s before it hands over   // no counter between screens: nothing to wait for
+  /* the flame's eye blinks every 2 s while any loading screen shows (the same rhythm as the map loader) */
+  (function(){var bt=setInterval(function(){if(!el.parentNode){clearInterval(bt);return;}blink(el);},2000);})();
   (function count(){
     if(!el.parentNode||!pctEl)return;
     var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
@@ -330,7 +331,7 @@ window.__wfBlink=function(path,dur){
     else if((cold||soft)&&Date.now()-t0<2500){pv=0;}   // the photo is still arriving: the count starts with the colour
     else{if(pv<goal){pv=Math.min(goal>=100?100:Math.floor(goal),pv+2+Math.floor(Math.random()*4));}
     if(goal>=100&&pv>=98)pv=100;}
-    pctEl.textContent=pv+'%';pctDone=pv>=100;if(pv>=65&&!blinked65){blinked65=true;blink(el);}
+    pctEl.textContent=pv+'%';pctDone=pv>=100;
     setTimeout(count,wave?50:(pv>=100?60:Math.max(90,span/28)));})();
   function drawn(){var r=document.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.getBoundingClientRect().height>0&&r.textContent.trim().length>20);}
   function haveData(){return !needsData||!window.__wfLiveMap||((window.__wfLiveCands||window.__wfSatDone)&&window.__wfLiveFires);}
