@@ -212,8 +212,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
       </div>
     </sc-for>
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hDd.down}}" onPointerMove="{{hDd.move}}" onPointerUp="{{hDd.up}}" onPointerCancel="{{hDd.cancel}}" onKeyDown="{{hDd.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin-top: auto"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
+    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hDd.down}}" onPointerMove="{{hDd.move}}" onPointerUp="{{hDd.up}}" onPointerCancel="{{hDd.cancel}}" onKeyDown="{{hDd.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin-top: auto"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: transparent"></span></div>
   </div>
+  <!-- The dropdown's one grabber, fixed 8px above its bottom edge: it rides the edge as the list grows from the header and folds back (it never scrolls with the list) -->
+  <span aria-hidden="true" style="position: absolute; z-index: 6; left: 50%; top: {{ddGrabT}}px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); pointer-events: none; visibility: {{ddVis}}; translate: 0 {{ddDy}}px; transition: top .5s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease"></span>
 
   <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
 
@@ -770,7 +772,7 @@ class Component extends DCLogic {
             pick: () => this.setState({ ci: o.i, focusId: null, tab: null, dd: false, confirm: false, full: false }) })),
           hDd: this.wfHandle('dd', 'up', () => this.setState({ dd: false })), ddDy: this.wfDrag('dd').y, ddDyT: this.wfDrag('dd').t,
           ddToggle: () => { if (n > 1) this.setState({ dd: !s.dd }); }, ddClose: () => this.setState({ dd: false }),
-          ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', grabOp: dd ? 0 : 1, ddOp: dd ? 1 : 0, ddClip: dd ? 'inset(0px 0px 0px 0px round 0px 0px 28px 28px)' : 'inset(0px 0px 100% 0px round 0px 0px 28px 28px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
+          ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', grabOp: dd ? 0 : 1, ddGrabT: dd ? 844 - 48 - 13 : (this._hdrB || 92) - 13, ddOp: dd ? 1 : 0, ddClip: dd ? 'inset(0px 0px 0px 0px round 0px 0px 28px 28px)' : 'inset(0px 0px 100% 0px round 0px 0px 28px 28px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
         };
       })(),
       // The level above the place: county and state in the US, district in Portugal, else region and country
