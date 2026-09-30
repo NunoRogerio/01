@@ -227,7 +227,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
     <!-- ===== Fire card: drops from the state card, stops 32px above the bottom, glass over the chat ===== -->
     <div class="wf-glass" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
-    <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: 48px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
+    <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{sh.b}}px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 12px 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{sh.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
       <header style="display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 12px">
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h2>
@@ -291,7 +291,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <p class="wf-note" style="margin: 0 4px">{{t.demo}}</p>
         </sc-if>
       </div>
-      <button type="button" class="wf-grab gb" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="display: flex; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></button>
+      <!-- The grabber: drag it up (the sheet's edge follows, the content stays still) or tap it to close -->
+      <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{sh.h.down}}" onPointerMove="{{sh.h.move}}" onPointerUp="{{sh.h.up}}" onPointerCancel="{{sh.h.cancel}}" onKeyDown="{{sh.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
     </section>
   </sc-if>
 
@@ -389,6 +390,18 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  // Fire card grabber: a drag up moves only the sheet's bottom edge (with the grabber); past 60px, a quick flick or a tap closes it
+  shHandle() {
+    const self = this, close = () => { self._shd = null; self.setState({ sheet: false, shDy: 0 }); };
+    return {
+      down: (e) => { let k = 1; try { const R0 = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect(); k = R0.height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._shd = { y: e.clientY, k, dy: 0, t: performance.now() }; },
+      move: (e) => { const h = self._shd; if (!h) return; const dy = Math.min(0, (e.clientY - h.y) / h.k); h.dy = dy; self.setState({ shDy: dy }); },
+      up: () => { const h = self._shd; self._shd = null; if (!h) return; const d = Math.abs(h.dy), v = d / Math.max(1, performance.now() - h.t);
+        if (d < 6 || d > 60 || (d > 20 && v > 0.5)) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} close(); } else self.setState({ shDy: 0 }); },
+      cancel: () => { self._shd = null; self.setState({ shDy: 0 }); },
+      key: (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { if (e.preventDefault) e.preventDefault(); close(); } }
+    };
+  }
   componentDidMount() {
     this._sync = () => this.forceUpdate();
     try { window.addEventListener('wf-chat', this._sync); window.addEventListener('wf-sync', this._sync); } catch (e) {}
@@ -641,8 +654,8 @@ class Component extends DCLogic {
       meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
       noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
-      sh: { y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
-      openSheet, closeSheet: () => this.setState({ sheet: false }), goFire: inc.go,
+      sh: { h: this.shHandle(), b: 48 - (s.shDy || 0), bT: s.shDy ? '0s' : '.35s', y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
+      openSheet, closeSheet: () => this.setState({ sheet: false, shDy: 0 }), goFire: inc.go,
       goProj: () => { const v = { id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, place: c.place, note: c.note || c.reg || '', x: c.x, y: c.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { proj: v }); try { sessionStorage.setItem('wf-proj', JSON.stringify(v)); } catch (e) {} },
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,

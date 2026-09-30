@@ -254,7 +254,7 @@ class Component extends DCLogic {
   renderVals() {
     const S = this.station(), T = (S && S.tags) || {};
     const PT = window.__wfLang === 'pt', L = (en, pt) => (PT ? pt : en);
-    const back = (e) => { try { if (window.history.length > 1) { e.preventDefault(); window.history.back(); } } catch (x) {} };
+    const back = () => {};   // the app-wide back (fit.js): the screen visited just before, the map only when opened straight here
     const tx = { cmd: L('Command', 'Comando'), cmdTeam: L('Command team', 'Equipa de coordenação'), groupChat: L('Group chat', 'Conversa de grupo'), res: L('Resources', 'Recursos'),
       note: L('Resources, crews, people and the extra figures are simulated for this demonstration. Station details from OpenStreetMap contributors.', 'Recursos, equipas, pessoas e os indicadores extra são simulados para esta demonstração. Dados do quartel dos contribuidores do OpenStreetMap.') };
     const closed = { y: '105%', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: '', close: () => {}, chat: () => {}, reset: () => {} };
