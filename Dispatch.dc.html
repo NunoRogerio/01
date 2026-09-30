@@ -250,17 +250,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <p class="wf-note" style="margin: 10px 0 0">{{res.foot}}</p>
   </section>
   </sc-if>
-  <div class="rise" style="display: none; padding: 16px 16px 0; animation-delay: 100ms"><button type="button" class="btn wf-sec" onClick="{{openMap}}" style="width: 100%; height: 48px; font-size: 17px; font-weight: 500">View on map</button></div>
-  <section class="rise" style="display: none; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding: {{kpiPad}}; animation-delay: 160ms">
-    <div style="display: flex; flex-direction: column; gap: 10px">
-      <span class="lbl" style="white-space: nowrap">{{spreadLbl}}</span>
-      <button type="button" class="unitbtn" onClick="{{toggleArea}}" aria-label="{{areaAria}}"><span class="kpi" style="display: block; white-space: nowrap">{{areaV}}<small> {{areaU}}</small></span></button>
-    </div>
-    <div style="display: flex; flex-direction: column; gap: 10px; padding-left: 16px; border-left: 1px solid rgba(60,60,67,0.14)">
-      <span class="lbl">Time to fire line</span>
-      <span class="kpi" style="color: #3C3C43; white-space: nowrap">{{sel.eta}}<small> min · at {{sel.at}}</small></span>
-    </div>
-  </section>
 
   <!-- Configure dispatch, station by station: each chosen station (or air support) is a card with what it sends; the grey card
        below adds another (choose the station, then its resources, suggested or your own, Apply). Cancel or Send orders at the foot. -->
@@ -372,34 +361,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <button type="button" class="btn wf-ter" onClick="{{snd.redo}}" style="margin-top: 8px">Reconfigure dispatch</button>
   </section>
 
-  <div class="scrim" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{scrimOp}}; pointer-events: {{scrimPE}}"></div>
-  <div class="wf-glass" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{stScrimOp}}; pointer-events: none; transition: opacity .35s ease"></div>
-  <section role="dialog" data-swipe="up" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="{{stHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: {{hdrB}}px 0 32px; background: #F2F2F7; clip-path: {{stClip}}; -webkit-clip-path: {{stClip}}; visibility: {{stVis}}; pointer-events: {{stPE}}; translate: 0 {{stDy}}px; transition: clip-path {{stClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{stClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{stVisDelay}}, translate {{stDyT}} ease">
-    <h2 id="sheetTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Choose a station</h2>
-    <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 0; opacity: {{stInOp}}; transform: translateY({{stInY}}); transition: opacity .3s ease {{stInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{stInDelay}}">
-    <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 64px; align-items: end; gap: 4px 12px; flex-shrink: 0; padding: 16px 16px 8px 16px; border-bottom: 1px solid rgba(60,60,67,0.14); font-size: 15px; font-weight: 400; line-height: 20px; color: #545458">
-      <span class="wf-note" style="align-self: end">{{crewNote}}</span><span style="text-align: right">Time to<br>fire line</span><span></span>
-    </div>
-    <div role="group" aria-label="Stations, select one or more" style="display: flex; flex-direction: column; gap: 0; padding-top: 4px">
-      <sc-for list="{{stations}}" as="st" hint-placeholder-count="5">
-        <button type="button" role="switch" class="sqrow" data-sel="false" aria-checked="{{st.checked}}" aria-disabled="{{st.disabled}}" onClick="{{st.pick}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto 64px; align-items: center; align-content: center; gap: 4px 12px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 0; background-color: {{st.selBg}}; color: #000000; text-align: left; font: inherit; opacity: {{st.op}}; cursor: {{st.cursor}}">
-          <img src="{{st.crest}}" data-crest="{{st.name}}" alt="" style="grid-row: 1 / span 2; grid-column: 1; visibility: {{st.crestV}}; width: 40px; height: 40px; object-fit: contain">
-          <span style="grid-column: 2; min-width: 0; font-size: 17px; font-weight: 400; line-height: 22px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden"><span style="font-weight: 700">{{st.code}}</span> {{st.name}}</span>
-          <span style="grid-column: 3; align-self: start; text-align: right; font-size: 17px; font-weight: 400; line-height: 22px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap">{{st.etaText}}</span>
-          <span class="sw26" aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 4; position: relative; display: block; width: 64px; height: 25px; border-radius: 999px; background: {{st.swBg}}; transition: background-color .3s ease"><span class="sw26k" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{st.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1), width .2s ease, background-color .2s ease"></span></span>
-          <span style="grid-column: 2 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; line-height: 20px; color: {{st.subColor}}; white-space: nowrap"><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{st.sub}}</span><sc-if value="{{st.isRec}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if></span>
-        </button>
-      </sc-for>
-    </div>
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; flex-shrink: 0; padding: 12px 16px 4px">
-      <button type="button" class="btn wf-sec" onClick="{{stCancel}}" style="height: 48px; font-size: 17px; font-weight: 500">Cancel</button>
-      <button type="button" class="btn primary" onClick="{{stApply}}" disabled="{{stNone}}" style="height: 48px; background: var(--wf-y); color: #1C1C1E; font-size: 17px; font-weight: 600; opacity: {{stApplyOp}}; transition: opacity .2s ease">Apply</button>
-    </div>
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hSt.down}}" onPointerMove="{{hSt.move}}" onPointerUp="{{hSt.up}}" onPointerCancel="{{hSt.cancel}}" onKeyDown="{{hSt.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: transparent"></span></div>
-  </section>
-  <!-- The station picker's one grabber, fixed 8px above its bottom edge: it rides the edge as the panel grows and folds back -->
-  <span aria-hidden="true" style="position: absolute; z-index: 22; left: 50%; top: {{stGrabT}}px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); pointer-events: none; visibility: {{stVis}}; translate: 0 {{stDy}}px; transition: top {{stClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{stVisDelay}}"></span>
 
 
   <div class="wf-glass" aria-hidden="true" onClick="{{focusTap}}" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{focusOp}}; pointer-events: {{focusPE}}; transition: opacity .45s ease"></div>
@@ -614,121 +575,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     </div>
   </section>
-  <div class="wf-glass" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{cfScrimOp}}; pointer-events: none; transition: opacity .35s ease"></div>
-  <section role="dialog" data-swipe="up" aria-modal="true" aria-labelledby="cfgTitle" aria-hidden="{{cfHidden}}" style="position: absolute; inset: 0; z-index: 21; display: flex; flex-direction: column; box-sizing: border-box; padding: {{hdrB}}px 0 32px; background: #F2F2F7; clip-path: {{cfClip}}; -webkit-clip-path: {{cfClip}}; visibility: {{cfVis}}; pointer-events: {{cfPE}}; translate: 0 {{cfDy}}px; transition: clip-path {{cfClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{cfClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{cfVisDelay}}, translate {{cfDyT}} ease">
-    <h2 id="cfgTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Configure dispatch</h2>
-    <div style="flex-shrink: 0; padding-top: 8px; transform: translateY({{cfRepY}}); transition: transform .55s cubic-bezier(.2,.8,.2,1)">
-        <button type="button" class="sqrow sqtop" onClick="{{closeSheet}}" aria-label="Close configuration" data-sel="false" style="display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; align-content: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 0 0 0 40px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-          <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Configure dispatch</span>
-            <span style="flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
-          </span>
-          <span aria-hidden="true" style="display: flex; justify-content: center; margin-left: -4px; color: #545458"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-          <span style="grid-column: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cfgSummary}}</span>
-        </button>
-    </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-top: 14px; opacity: {{cfInOp}}; transform: translateY({{cfInY}}); transition: opacity .3s ease {{cfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{cfInDelay}}">
-    <sc-if value="{{hasRU}}" hint-placeholder-val="{{ false }}">
-    <div role="group" aria-label="Available forces" style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(60,60,67,0.14)">
-      <sc-for list="{{units}}" as="u" hint-placeholder-count="3">
-        <div class="sqrow" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 12px; min-height: 60px; padding: 10px 16px 10px 40px; box-sizing: border-box">
-          <span aria-hidden="true" style="position: absolute; left: 11px; top: 11px; display: flex; width: 18px; height: 18px; color: #000000">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.icon}}"></path></svg>
-          </span>
-          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-            <span style="font-size: 17px; font-weight: 600; line-height: 20px">{{u.name}}</span>
-            <span style="display: flex; align-items: center; gap: 5px; font-size: 15px; line-height: 16px; color: #545458; white-space: nowrap">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.0" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>{{u.from}}
-            </span>
-            <span style="font-size: 15px; line-height: 16px; color: {{u.availColor}}">{{u.availText}}</span>
-          </span>
-          <span style="display: flex; align-items: center; gap: 4px">
-            <button type="button" class="stepb" aria-label="{{u.lessLabel}}" aria-disabled="{{u.lessDis}}" onClick="{{u.less}}" style="opacity: {{u.lessOp}}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>
-            </button>
-            <span aria-live="polite" style="min-width: 28px; text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{u.nColor}}; transition: color .25s ease">{{u.n}}</span>
-            <button type="button" class="stepb" aria-label="{{u.moreLabel}}" aria-disabled="{{u.moreDis}}" onClick="{{u.more}}" style="opacity: {{u.moreOp}}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12M12 6v12"></path></svg>
-            </button>
-          </span>
-        </div>
-      </sc-for>
-    </div>
-    </sc-if>
-    <sc-if value="{{noRU}}" hint-placeholder-val="{{ true }}">
-    <div role="group" aria-label="Dispatch per station" style="display: flex; flex-direction: column; gap: 16px; padding: 4px 16px 0">
-      <sc-for list="{{acc}}" as="g" hint-placeholder-count="2">
-        <div style="flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: 0 0 12px rgba(0,0,0,0.06), 0 0 2px rgba(0,0,0,0.05)">
-          <button type="button" onClick="{{g.toggle}}" aria-expanded="{{g.expStr}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 2px 8px; width: 100%; min-height: 60px; padding: 10px 8px 10px 16px; box-sizing: border-box; border: 0; border-radius: 0; background-color: {{g.bg}}; color: #000000; text-align: left; font: inherit; cursor: pointer">
-            <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><img src="{{g.crest}}" data-crest="{{g.title}}" alt="" style="display: {{g.crestD}}; width: 36px; height: 36px; flex-shrink: 0; object-fit: contain"><span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{g.title}}</span></span>
-            <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; display: flex; justify-content: center; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{g.rot}}); transition: transform .4s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-            <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 18px; color: {{g.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{g.sub}}</span>
-          </button>
-          <div style="display: grid; grid-template-rows: {{g.gr}}; transition: grid-template-rows .45s cubic-bezier(.2,.8,.2,1)">
-            <div style="min-height: 0; overflow: hidden">
-              <sc-for list="{{g.rows}}" as="u" hint-placeholder-count="2">
-                <div style="display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 0 12px; min-height: 60px; padding: 8px 16px; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.12)">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{u.ic}}" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.icon}}"></path></svg>
-                  <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-                    <span style="font-size: 17px; line-height: 20px">{{u.name}}</span>
-                    <span style="display: {{u.avD}}; font-size: 15px; line-height: 16px; color: {{u.availColor}}">{{u.availText}}</span>
-                  </span>
-                  <span style="display: flex; align-items: center; gap: 4px">
-                    <button type="button" class="stepb" aria-label="{{u.lessLabel}}" aria-disabled="{{u.lessDis}}" onClick="{{u.less}}" style="opacity: {{u.lessOp}}">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>
-                    </button>
-                    <span aria-live="polite" style="min-width: 28px; text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{u.nColor}}; transition: color .25s ease">{{u.n}}</span>
-                    <button type="button" class="stepb" aria-label="{{u.moreLabel}}" aria-disabled="{{u.moreDis}}" onClick="{{u.more}}" style="opacity: {{u.moreOp}}">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12M12 6v12"></path></svg>
-                    </button>
-                  </span>
-                </div>
-              </sc-for>
-            </div>
-          </div>
-        </div>
-      </sc-for>
-    </div>
-    </sc-if>
-    <div class="sqrow" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 12px; min-height: 60px; margin-top: 2px; padding: 10px 16px 10px 40px; box-sizing: border-box">
-      <span aria-hidden="true" style="position: absolute; left: 11px; top: 11px; display: flex; width: 18px; height: 18px; color: #006A91">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19M7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M7 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0M21 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0"></path></svg>
-      </span>
-      <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-        <span style="font-size: 17px; font-weight: 600; line-height: 20px">Drone D-3</span>
-        <span aria-live="polite" style="display: flex; align-items: center; gap: 6px; font-size: 15px; line-height: 16px; color: {{drone.fg}}; white-space: nowrap">
-          <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}"><span class="dot" style="width: 5.6px; height: 5.6px"></span></sc-if>
-          <sc-if value="{{drone.idle}}" hint-placeholder-val="{{ false }}"><span style="width: 5.6px; height: 5.6px; border-radius: 50%; background: currentColor; opacity: 0.6"></span></sc-if>{{drone.status}}
-        </span>
-        <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{drone.sub}}</span>
-      </span>
-      <sc-if value="{{drone.flying}}" hint-placeholder-val="{{ true }}">
-        <button type="button" class="btn wf-sec" onClick="{{recallDrone}}" style="padding: 0 16px; flex-shrink: 0">
-          Recall
-        </button>
-      </sc-if>
-      <sc-if value="{{drone.idle}}" hint-placeholder-val="{{ false }}">
-        <button type="button" class="btn wf-sec" onClick="{{launchDrone}}" style="padding: 0 16px; flex-shrink: 0">
-          Launch drone
-        </button>
-      </sc-if>
-    </div>
-    <p style="display: flex; align-items: center; justify-content: space-between; margin: 16px 16px 0 40px; font-size: 15px; color: #545458">
-      <span>Total</span><span style="color: #000000; font-weight: 600; font-variant-numeric: tabular-nums">{{unitTotal}} units · first on scene {{firstEta}} min</span>
-    </p>
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; padding: 0 16px; flex-shrink: 0">
-      <button type="button" class="btn wf-sec" onClick="{{resetCfg}}" aria-disabled="{{sugDis}}" aria-label="{{sugAria}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{sugOp}}; cursor: {{sugCur}}; pointer-events: {{sugPE}}">
-        Suggested
-      </button>
-      <a href="Chat.dc.html" class="btn primary" onClick="{{startChat}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box; font-size: 17px; font-weight: 600; text-decoration: none; white-space: nowrap">{{chat.label}}</a>
-      <button type="button" class="btn wf-ter" onClick="{{cfgDone}}" style="grid-column: 1 / -1; height: 48px; font-size: 17px; font-weight: 600">
-        Done
-      </button>
-    </div>
-    <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hCf.down}}" onPointerMove="{{hCf.move}}" onPointerUp="{{hCf.up}}" onPointerCancel="{{hCf.cancel}}" onKeyDown="{{hCf.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin: 0"><span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: transparent"></span></div>
-  </section>
-  <!-- The configuration panel's one grabber, fixed 8px above its bottom edge: it rides the edge as the panel grows and folds back -->
-  <span aria-hidden="true" style="position: absolute; z-index: 22; left: 50%; top: {{cfGrabT}}px; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: rgba(60,60,67,0.3); pointer-events: none; visibility: {{cfVis}}; translate: 0 {{cfDy}}px; transition: top {{cfClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{cfVisDelay}}"></span>
 
 
   <!-- Cards picker: the group's cards with toggles (shared by every card group on this screen) -->
