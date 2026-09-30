@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=69"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=90"></script>
+<script src="prefs.js?v=91"></script>
 <script src="i18n.js?v=83"></script>
 <script src="live.js?v=34"></script>
 <script src="chat.js?v=19"></script>
@@ -395,7 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <!-- One scrolling column: the conclusion, then everything else; the actions stay fixed below -->
     <div class="{{pgCls}}" data-wf-page="{{pgOn}}" onScroll="{{pgScroll}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
     <!-- A viewed fire: the map is the top of the page and scrolls away with it (a tap opens it full screen) -->
-    <div aria-label="Map. Tap to open full screen" role="button" onClick="{{openMap}}" style="display: {{pgMapD}}; flex-shrink: 0; height: {{MAPH}}px; cursor: pointer"></div>
+    <div aria-hidden="true" style="display: {{pgMapD}}; flex-shrink: 0; height: {{MAPH}}px"></div>
     <div style="display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1; padding-top: {{pgPadT}}; background: #F2F2F7">
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
          (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
@@ -1675,7 +1675,7 @@ class Component extends DCLogic {
           kpi2Px: window.__wfKpiPx ? window.__wfKpiPx([K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k2Val], 2) : '44px' }; })(),
       sentSub: fv ? (BRF ? 'INPE fire event · ' + fv.place : RU ? (fres && fres.est ? fres.src : fres && fres.src ? 'Reported by ' + fres.src : fv.place) : 'Orders from this app') : 'Orders from this app', undoLabel: 'Reinforce',
       focusOp: (sent && !s.full && s.sentUp) ? 1 : 0, focusPE: (sent && !s.full) ? 'auto' : 'none',
-      focusTap: () => this.setState(s.sentUp ? { sentUp: false } : { full: true, open: false, cfg: false }),   // blurred map: lower a raised panel, else open the map full screen
+      focusTap: () => { if (s.sentUp) this.setState({ sentUp: false }); },   // blurred map: lower a raised panel, else open the map full screen
       sentY: (sent && !s.full) ? '0%' : 'calc(100% + 120px)',   // fully off screen on tall phones too sentHidden: (sent && !s.full) ? 'false' : 'true',
       hSt: this.wfHandle('st', 'up', () => this.setState({ open: false })), stDy: this.wfDrag('st').y, stDyT: this.wfDrag('st').t,
       hCf: this.wfHandle('cf', 'up', () => this.setState({ cfg: false })), cfDy: this.wfDrag('cf').y, cfDyT: this.wfDrag('cf').t,

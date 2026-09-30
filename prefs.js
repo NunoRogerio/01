@@ -326,9 +326,9 @@
   function fadeAll() { if (fq) return; fq = true; requestAnimationFrame(function () { fq = false; sweep(); document.querySelectorAll(FSEL).forEach(fadeOne); }); }
   window.__wfFade = fadeAll;
   document.addEventListener('scroll', function (e) { var t = e.target; if (t && t.nodeType === 1 && t.matches && t.matches(FSEL)) fadeOne(t); }, true);
-  setInterval(function () { document.querySelectorAll(FSEL).forEach(function (el) { if (el.__wfFadeEl || el.__wfFadeTop) fadeOne(el); }); }, 250);   // follows panels while they slide
+  setInterval(function () { var seen = []; OVS.forEach(function (ov) { var el = ov.__wfOwn; if (el && seen.indexOf(el) < 0 && el.isConnected) { seen.push(el); fadeOne(el); } }); }, 250);   // follows panels while they slide (only the panels that have a fade: no page-wide search, maps stay smooth)   // follows panels while they slide
   window.addEventListener('resize', fadeAll);
-  if (window.MutationObserver) { var fMo = new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var n = ms[i].target; if (n && n.nodeType === 1 && ((n.__wfM !== undefined && ms[i].attributeName === 'style') || n.__wfOv)) continue;
+  if (window.MutationObserver) { var fMo = new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var n = ms[i].target; if (n && n.nodeType === 1 && ((n.__wfM !== undefined && ms[i].attributeName === 'style') || n.__wfOv)) continue; if (n && n.nodeType === 1 && n.closest && n.closest('[data-wf-maproot]')) continue;   /* a map panning is not a panel moving: no fade work per frame */
       if (ms[i].type === 'childList' && ms[i].addedNodes.length === 1 && ms[i].addedNodes[0].__wfOv) continue; fadeAll(); return; } });
     var fGo = function () { fadeAll(); fMo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'aria-hidden', 'aria-expanded'] }); };
     if (document.body) fGo(); else document.addEventListener('DOMContentLoaded', fGo); }
@@ -353,8 +353,14 @@
       if (r.selectorText && r.selectorText.indexOf(':hover') >= 0 && r.style) ['background', 'background-color', 'background-image', 'box-shadow', 'border-color'].forEach(function (p) { if (r.style.getPropertyValue(p)) r.style.removeProperty(p); }); } };
     for (var i = 0; i < document.styleSheets.length; i++) { var sh = document.styleSheets[i], rl = null; try { rl = sh.cssRules; } catch (e) { continue; } if (!rl || (HS.has(sh) && sh.__wfN === rl.length)) continue; strip(rl); HS.add(sh); sh.__wfN = rl.length; }
   }
-  var kRaf = 0, kGo = function () { if (!kRaf) kRaf = requestAnimationFrame(function () { kRaf = 0; noStickyHover(); fitKpi(); }); };
-  if (window.MutationObserver) { var kMo = new MutationObserver(kGo); var kStart = function () { kMo.observe(document.documentElement, { childList: true, subtree: true, characterData: true }); kGo(); }; if (document.body) kStart(); else document.addEventListener('DOMContentLoaded', kStart); }
-  window.addEventListener('resize', kGo); if (document.fonts && document.fonts.ready) document.fonts.ready.then(kGo); setInterval(kGo, 1500);
+  /* Light on purpose: maps change the page on every frame while panning, so only changes to cards or new style sheets
+     are acted on, at most every 150 ms (the map itself is never measured) */
+  var kT = 0, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); fitKpi(); }, 150); };
+  var kHit = function (ms) { for (var i = 0; i < ms.length; i++) { var m = ms[i], t = m.target && m.target.nodeType === 1 ? m.target : m.target && m.target.parentElement;
+      if (!t) continue; if (t.closest && t.closest('[data-wf-kpicard]')) return true;
+      for (var j = 0; j < m.addedNodes.length; j++) { var n = m.addedNodes[j]; if (n.nodeType !== 1) continue; if (n.tagName === 'STYLE' || n.tagName === 'LINK' || (n.querySelector && n.querySelector('[data-wf-kpicard]')) || (n.hasAttribute && n.hasAttribute('data-wf-kpicard'))) return true; } }
+    return false; };
+  if (window.MutationObserver) { var kMo = new MutationObserver(function (ms) { if (kHit(ms)) kGo(); }); var kStart = function () { kMo.observe(document.documentElement, { childList: true, subtree: true, characterData: true }); kGo(); }; if (document.body) kStart(); else document.addEventListener('DOMContentLoaded', kStart); }
+  window.addEventListener('resize', kGo); if (document.fonts && document.fonts.ready) document.fonts.ready.then(kGo); setInterval(kGo, 2000);
   apply();
 })();

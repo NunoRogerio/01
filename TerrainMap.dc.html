@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=69"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=90"></script>
+<script src="prefs.js?v=91"></script>
 <script src="i18n.js?v=83"></script>
 <script src="live.js?v=34"></script>
 
@@ -62,7 +62,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 .ighide .igpill{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease}
 </style>
 </helmet>
-<div ref="{{setEl}}" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: none; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div ref="{{setEl}}" data-wf-maproot="1" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: none; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
   <!-- While a finger moves the map, these layers move as one picture (a CSS transform); the full redraw follows a few times a second and on release -->
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
@@ -199,7 +199,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
     <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); max-width: 170px; box-sizing: border-box; display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: {{t.blur}}; -webkit-backdrop-filter: {{t.blur}}; font-size: 13px; font-weight: 600; white-space: nowrap">
-      <svg class="mk" width="14" height="14" viewBox="0 0 24 24" style="scale: 1.72; overflow: visible" fill="{{t.fill}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="wfStM" maskUnits="userSpaceOnUse" x="-40" y="-40" width="104" height="104"><rect x="-40" y="-40" width="104" height="104" fill="#fff"></rect><path d="{{t.icon}}" fill="#000"></path></mask></defs><path d="{{t.icon}}" fill="{{t.fill}}" stroke="none"></path><path d="{{t.icon}}" fill="none" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path><path d="{{t.icon}}" fill="none" stroke="{{t.bdC}}" stroke-width="{{t.bdW}}" mask="url(#wfStM)"></path></svg>{{t.label}}<span aria-hidden="true" style="display: {{t.aD}}; position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 3px; width: max-content; max-width: 120px; font-size: 13px; line-height: 16px; font-weight: 600; color: #3A3A3C; text-align: center; pointer-events: none; text-shadow: 0 0 3px #FFFFFF, 0 0 3px #FFFFFF, 0 0 2px #FFFFFF"><span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.aN}}</span><span style="display: block; white-space: nowrap">{{t.aT}}</span></span>
+      <svg class="mk" width="14" height="14" viewBox="0 0 24 24" style="scale: 1.72; overflow: visible" fill="{{t.fill}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="wfStM" maskUnits="userSpaceOnUse" x="-40" y="-40" width="104" height="104"><rect x="-40" y="-40" width="104" height="104" fill="#fff"></rect><path d="{{t.icon}}" fill="#000"></path></mask></defs><path d="{{t.icon}}" fill="{{t.fill}}" stroke="none"></path><path d="{{t.icon}}" fill="none" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path><path d="{{t.icon}}" fill="none" stroke="{{t.bdC}}" stroke-width="{{t.bdW}}" mask="{{t.mask}}"></path></svg>{{t.label}}<span aria-hidden="true" style="display: {{t.aD}}; position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 3px; width: max-content; max-width: 120px; font-size: 13px; line-height: 16px; font-weight: 600; color: #3A3A3C; text-align: center; pointer-events: none; text-shadow: 0 0 3px #FFFFFF, 0 0 3px #FFFFFF, 0 0 2px #FFFFFF"><span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.aN}}</span><span style="display: block; white-space: nowrap">{{t.aT}}</span></span>
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
   </sc-for>
@@ -474,7 +474,7 @@ class Component extends DCLogic {
       const p = this.props, full = p.isFull === true || p.isFull === 'true';
       if (tp && tp.bg && !this._pinched && performance.now() - tp.t < 450 && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) <= 8) {
         if ((this.state || {}).pop) { if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); }
-        else if (typeof p.onFull === 'function' && !full) p.onFull();   // a tap on an empty part of the map opens it full screen (the exit button brings it back)
+        /* full screen only from its button: a tap on the map itself does not open it */
         else if (typeof p.onBgTap === 'function' && !full && typeof p.onFull !== 'function') p.onBgTap();
       }
     };
@@ -1591,7 +1591,7 @@ class Component extends DCLogic {
     const PS = (this.state || {}).pop, on = (kind, key) => !!PS && PS.kind === kind && PS.key === key;
     (OUT.fireMarks || []).forEach((m, i) => { const k = m._g ? m._g.id : i, o = on('fire', k); m.sel = sel('fire', k); m.bdW = o ? 4 : 0; });
     (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 2.6; m.bdW2 = o ? 10.4 : 2.6; m.po = o ? 'stroke' : 'normal'; });
-    (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? '#3A3A3C' : 'none'; m.bdW = o ? 9.6 : 0; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
+    (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? '#3A3A3C' : 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
     OUT.popXRot = (this.state || {}).popSpin ? '90deg' : '0deg';

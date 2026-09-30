@@ -191,7 +191,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Legend:** chips in the label style but dark grey. Map weather (temperature, humidity, wind) uses the same chips, under the legend, once the map spans under about 100 km.
 - **Overlay placement (every map, in a band or full screen):** 16px from the edges of the visible map. Top left: the legend chips in one row, the weather chips under them. Bottom left: the map credit, always 4px from the visible map's bottom and left edges, in the note style (13px). Bottom right: the map controls stacked 8px apart (search above, full-screen / exit below), round, the blades' background with a light shadow, so they read as controls over any map. A full-screen detail map puts its title box (with the legend inside) 16px from the top.
 - **Full screen:**
-  - a tap on an empty part of the map, or turning the phone sideways, fills the screen;
+  - only the full-screen button (or turning the phone sideways) fills the screen; a tap on the map itself never does;
   - blades slide away;
   - the exit button sits bottom right, 16px from the edges.
 - **Zoom and pan:**
@@ -236,3 +236,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Chats list** closes with the round X at the top right (like the notifications panel), not a back chevron.
 - **App icon:** the flame on the US firefighters' lime (#CCFF00). Home screen icons cannot animate on iPhone (a still image); the blink lives in the app's loading screens.
 - **Lists (all):** no dividers between items; only the line that separates the list from its header (or group title). Chevrons align with the first line of the item, not its centre.
+- **Map speed:** nothing outside the map watches it per frame (fades and card sizing ignore map changes; no page-wide searches on timers); a selected station alone draws its mask.
