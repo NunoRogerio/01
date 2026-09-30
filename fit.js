@@ -418,7 +418,7 @@ window.__wfBlink=function(path,dur){
   function fade(fast){if(!box)return;var b=box,d=dot;box=dot=null;d.style.transition='transform .5s cubic-bezier(.4,0,.2,1),opacity '+(fast?'.14s':'.42s')+' ease';d.style.opacity='0';setTimeout(function(){b.remove();},fast?180:500);}
   document.addEventListener('pointerdown',function(e){
     var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||skip(t,e.target))return;
-    if(t.closest('[role=application]')&&!t.closest('[role=group]'))return;          // map panning stays clean
+    if(t.closest('[role=application]')&&!t.closest('[role=group],[role=dialog],.mbtn'))return;   // map panning stays clean: markers pan; its controls, legend and tooltip panels tap and tick
     fade(true);
     var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
     var cs=getComputedStyle(t),k=r.width/(t.offsetWidth||r.width);
@@ -439,7 +439,7 @@ window.__wfBlink=function(path,dur){
     document.addEventListener('touchstart',function(e){
       ovOff();if(e.touches.length!==1)return;var p=e.touches[0],tg=e.target;
       var t=tg&&tg.closest&&tg.closest(SEL);if(!t||skip(t,tg)||t.closest('#wf-hapov'))return;
-      if(t.closest('[role=application]')&&!t.closest('[role=group]'))return;   // the map pans freely
+      if(t.closest('[role=application]')&&!t.closest('[role=group],[role=dialog],.mbtn'))return;   // the map pans freely from markers; controls, legend and tooltip panels tick
       var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
       var l=document.createElement('label');l.id='wf-hapov';l.setAttribute('aria-hidden','true');
       l.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;z-index:2147483647;opacity:0;-webkit-tap-highlight-color:transparent;margin:0;padding:0';
