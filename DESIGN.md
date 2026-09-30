@@ -328,3 +328,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Dialogs:** a dialog with Cancel needs no back button (at most an X, usually not even that). The resources step of Configure dispatch has none.
 - **Configure dispatch list:** the chosen stations scroll between the header and the fixed Cancel / Send order foot, however many are added; Add resources is disabled (faded, not tappable) when no station or air support is left to add.
 - **Map legends scroll sideways on every map** (drag the row; a tap still toggles a layer), also on locked maps: locking fixes the map's position and zoom, never the legend. Rows that scroll sideways get no haptic overlay, so the swipe is never taken from them.
+- **Please assign crews card (to do):** its background is white with lime diagonal bands (30° off vertical, 8px wide, about ten across the card), like the reflective tape on fire engines and turnout gear; back to plain white once crews are sent.
