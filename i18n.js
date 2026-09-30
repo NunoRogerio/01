@@ -108,7 +108,7 @@
     [/^Towns, villages and places in (.+)\.$/,function(m,a){return 'Cidades, vilas e lugares em '+a.replace(' and ',' e ').replace('California','Califórnia')+'.';}],
     [/^(.+)\. Show on the map$/,function(m,a){return a+'. Mostrar no mapa';}],
     [/^(\d+) of (\d+) free$/,function(m,a,b){return a+' de '+b+' livres';}],
-    [/^(\d+) of (\d+) crews free$/,function(m,a,b){return a+' de '+b+' equipas livres';}],
+    [/^(\d+) of (\d+) crews free$/,function(m,a,b){return a+' de '+b+' equipas livres';}],[/^(\d+) available$/,function(m,a){return a+(a==='1'?' disponível':' disponíveis');}],
     [/^([\d.,]+ (?:km|mi))\. ~(\d+) min drive\.$/,function(m,a,b){return a+'. ~'+b+' min de carro.';}],
     [/^Class ([A-G])$/,function(m,a){return 'Classe '+a;}],
     [/^Size class ([A-G]) of A to G \(NWCG\)$/,function(m,a){return 'Classe de área '+a+' de A a G (NWCG)';}],
