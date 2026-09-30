@@ -195,7 +195,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Full screen:**
   - only the full-screen button (or turning the phone sideways) fills the screen; a tap on the map itself never does;
   - blades slide away;
-  - the exit button sits bottom right, 16px from the edges.
+  - the exit button sits bottom right, 16px from the side and 24px from the bottom.
 - **Zoom and pan:**
   - zoom out stops at 60% of the whole state or country of the selected area, never trapped in a county;
   - no dragging into empty space;
@@ -265,3 +265,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Login profiles:** the chosen profile card in the Username field has a round X (44px, like the avatar) that takes it out of the field; the profile list starts with "Create profile"; a long press on a profile opens it in the same profile form as "Edit profile" (Save); demo profiles keep their area.
 - **Remove profile:** in Edit profile, "Remove profile" under Save is a subtle button with red text (destructive); it asks once more with Cancel as the secondary button (dark, lime text) and the confirmation as the primary, side by side; your own profiles are deleted, demo profiles hidden on this phone.
 - **Destructive actions:** red text (#D70015) on the button that starts them.
+- **Edge margins:** no button ever touches a screen edge: at least 16px from the sides; buttons along the bottom of a screen sit at least 24px above it.
