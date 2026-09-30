@@ -283,3 +283,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Chat event cards:** the kicker (e.g. "Ignition detected. 17:18") is the bold title in the stage colour, 8px above the rest in normal text; icons 32px like the chat photos; station statuses are tags (grey for waiting, tinted for other states).
 - **Incidents blade header:** the area name (e.g. "California") is the title, in the former title style (17px bold); the line below keeps only the counts.
 - **Chat list rows:** place (title S) with the time, then the yellow unread count, then the chevron on the right; the stage and last message below on up to two lines.
+- **Chat surface:** the message area is a shade darker (#E8E8ED; dark theme #141416) than the header and composer (#F2F2F7), so they separate without drop shadows; the edge fade works on the list inside it. Your own messages sit in white bubbles (18px corners, the tail corner 6px).

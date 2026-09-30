@@ -32,6 +32,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .chrow{transition:background-color .15s ease,filter .15s ease}.chrow:active{filter:brightness(.94)}
 .chbtn{transition:opacity .15s ease}.chbtn:active{opacity:.68}
 .sqsearch::placeholder{color:#545458}
+.chsurf{background:#E8E8ED}html.wf-dark .chsurf{background:#141416!important}
 .chscroll{scrollbar-width:none}.chscroll>*{flex-shrink:0}.chscroll::-webkit-scrollbar{display:none}
 @keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}@keyframes chFade{from{opacity:0}to{opacity:1}}.chfade{animation:chFade .4s ease-out}@keyframes chBub{from{opacity:0;transform:scale(.72)}60%{opacity:1}to{opacity:1;transform:none}}.chbubL,.chbubR{animation:chBub .55s cubic-bezier(.22,.9,.3,1) both}.chbubL{transform-origin:0 100%}.chbubR{transform-origin:100% 100%}@media (prefers-reduced-motion:reduce){.chbubL,.chbubR,.chfade{animation:none}}
 @keyframes chDot{0%,80%,100%{opacity:.25}40%{opacity:1}}.chdot{animation:chDot 1.2s infinite}
@@ -85,7 +86,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== One chat ===== -->
   <sc-if value="{{isChat}}" hint-placeholder-val="{{ false }}">
-    <div style="display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.06)">
+    <div style="display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; background: #F2F2F7">
       <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 12px 12px">
         <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
@@ -117,6 +118,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </button>
     </div>
 
+    <!-- The chat surface: a shade darker than the header and the composer, so they read apart without shadows; the list's edge fade sits on it -->
+    <div class="chsurf" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0">
     <div class="chscroll" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
       <sc-for list="{{items}}" as="m" hint-placeholder-count="4">
         <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
@@ -137,7 +140,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 4px 4px 4px 12px; color: #000000; text-align: right">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; max-width: 272px; margin-top: {{m.gap}}; padding: 8px 12px; border-radius: 18px 18px 6px 18px; background: #FFFFFF; color: #000000; text-align: left">
             <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
             <span style="align-self: flex-end; font-size: 15px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
@@ -192,6 +195,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <sc-if value="{{typing}}" hint-placeholder-val="{{ false }}">
         <div style="display: flex; align-items: center; gap: 8px; font-size: 15px; line-height: 20px; color: #545458"><span style="display: flex; gap: 3px" aria-hidden="true"><span class="chdot" style="width: 6px; height: 6px; border-radius: 50%; background: #8E8E93"></span><span class="chdot" style="width: 6px; height: 6px; border-radius: 50%; background: #8E8E93; animation-delay: .2s"></span><span class="chdot" style="width: 6px; height: 6px; border-radius: 50%; background: #8E8E93; animation-delay: .4s"></span></span>{{typingTxt}}</div>
       </sc-if>
+    </div>
     </div>
 
     <sc-if value="{{isHist}}" hint-placeholder-val="{{ false }}">
