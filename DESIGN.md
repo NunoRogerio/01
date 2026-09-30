@@ -262,3 +262,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - **Chat composer:** the message field looks like the search box (48px pill, the same grey fill and text), without the magnifier; the send button matches its height. Suggestion bubbles use two rows at most; labels kept short (e.g. "Configure dispatch").
 - **Login profiles:** the chosen profile card in the Username field has a round X (44px, like the avatar) that takes it out of the field; the profile list starts with "Create profile"; a long press on a profile opens it in the same profile form as "Edit profile" (Save); demo profiles keep their area.
+- **Remove profile:** in Edit profile, a subtle "Remove profile" button under Save asks once more (Cancel / Remove profile side by side); your own profiles are deleted, demo profiles hidden on this phone.

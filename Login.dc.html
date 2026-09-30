@@ -180,6 +180,15 @@ a{color:#0062CC}a:hover{color:#004FA3}
         </label>
       </div>
       <button type="button" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">{{cp.btn}}</button>
+      <!-- Editing: remove the profile, with a second step so it is never removed by a slip -->
+      <button type="button" class="wf-ter" onClick="{{cp.rmAsk}}" style="display: {{cp.rmD}}; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button>
+      <div role="group" aria-label="{{cp.rmQ}}" style="display: {{cp.rmAskD}}; flex-direction: column; gap: 16px; flex-shrink: 0">
+        <span style="margin: 0 4px; font-size: 17px; line-height: 22px; color: #000000">{{cp.rmQ}}</span>
+        <div style="display: flex; gap: 8px">
+          <button type="button" class="wf-ter" onClick="{{cp.rmNo}}" style="display: flex; align-items: center; justify-content: center; flex: 1 1 0; height: 48px; border: 0; border-radius: 999px; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmNoLbl}}</button>
+          <button type="button" onClick="{{cp.rmYes}}" style="display: flex; align-items: center; justify-content: center; flex: 1 1 0; height: 48px; border: 0; border-radius: 999px; background: #1C1C1E; color: var(--wf-y); font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button>
+        </div>
+      </div>
       <p style="margin: -8px 4px 0; font-size: 15px; line-height: 20px; color: #545458">{{cp.note}}</p>
     </div>
   </div>
@@ -310,6 +319,7 @@ class Component extends DCLogic {
     } else if (this._bgReady) apply();
   }
   edits() { try { return JSON.parse(window.localStorage.getItem('wf-profile-edits') || '{}') || {}; } catch (e) { return {}; } }
+  gone() { try { return JSON.parse(window.localStorage.getItem('wf-profile-hidden') || '[]') || []; } catch (e) { return []; } }
   customs() { try { return (JSON.parse(window.localStorage.getItem('wf-custom-profiles') || '[]') || []).filter((c) => c && c.id && c.name); } catch (e) { return []; } }
   // Polishing a text: Claude rewrites it when an Anthropic key is saved on this phone (Chat settings); otherwise a tidy
   // of spaces, capitals and punctuation. Either way the result keeps the language it was written in.
@@ -370,9 +380,20 @@ class Component extends DCLogic {
       try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
       this.setState({ cpOpen: false, cpF: {}, cpAsk: null, cpUndo: null, cpSeen: {}, sel: id }); this.closePanel(); };
     return { hidden: on ? 'false' : 'true', y: on ? '0%' : '105%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', xRot: '0deg',
-      open: () => this.setState({ cpOpen: true, cpEdit: null, cpF: {} }), close: () => this.setState({ cpOpen: false, cpEdit: null }),
+      open: () => this.setState({ cpOpen: true, cpEdit: null, cpRm: false, cpF: {} }), close: () => this.setState({ cpOpen: false, cpEdit: null, cpRm: false }),
       title: ed ? L('Edit profile', 'Editar perfil') : L('Create profile', 'Criar perfil'), btn: ed ? L('Save', 'Guardar') : L('Create profile', 'Criar perfil'),
       areaD: ed && !this.customs().some((c) => c.id === ed) ? 'none' : 'flex',
+      rmD: ed && !s.cpRm ? 'flex' : 'none', rmAskD: ed && s.cpRm ? 'flex' : 'none', rmLbl: L('Remove profile', 'Remover perfil'), rmNoLbl: L('Cancel', 'Cancelar'),
+      rmQ: L('Remove this profile from this phone?', 'Remover este perfil deste telemóvel?'),
+      rmAsk: () => this.setState({ cpRm: true }), rmNo: () => this.setState({ cpRm: false }),
+      rmYes: () => { try { const all = this.customs(), k = all.findIndex((c) => c.id === ed);   // your own profile is deleted; a demo profile is hidden on this phone
+          if (k >= 0) { all.splice(k, 1); window.localStorage.setItem('wf-custom-profiles', JSON.stringify(all)); }
+          else { const G = this.gone(); if (G.indexOf(ed) < 0) G.push(ed); window.localStorage.setItem('wf-profile-hidden', JSON.stringify(G)); }
+          const E = this.edits(); if (E[ed]) { delete E[ed]; window.localStorage.setItem('wf-profile-edits', JSON.stringify(E)); }
+          if (window.localStorage.getItem('wf-last-user') === ed) window.localStorage.removeItem('wf-last-user'); } catch (e) {}
+        try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+        const st = this.state || {}, was = st.sel !== undefined ? st.sel : this._last; if (this._last === ed) this._last = null;
+        this.setState({ cpOpen: false, cpEdit: null, cpRm: false, cpF: {}, cpAsk: null, cpUndo: null, cpSeen: {}, ...(was === ed ? { sel: null } : {}) }); },
       code: F.photo ? '' : ini(F.name), photoBg: F.photo ? 'url("' + F.photo + '")' : 'none', photoLbl: F.photo ? L('Change photo', 'Mudar fotografia') : L('Take or choose a photo', 'Tirar ou escolher fotografia'), onFile: fileIn,
       faces: FACES.map((u, i) => ({ url: u, sel: String(F.photo === u), aria: L('Photo ', 'Fotografia ') + (i + 1), ring: F.photo === u ? '0 0 0 3px #F2F2F7, 0 0 0 5px #1C1C1E' : 'none', pick: () => set({ photo: u }) })),
       fields, areas: Object.keys(AREAS).map((k) => ({ v: k, label: AREAS[k][0], sel: base === k })), onArea: (e) => set({ base: e.target.value }),
@@ -404,6 +425,7 @@ class Component extends DCLogic {
     ];
     const CU = this.customs(), AREAS = { pt: ['Portugal', '20 districts', 'Portugal only', 'Portugal region only', 'PT'], ca: ['California', '58 counties', 'California only', 'California region only', 'US'], nv: ['Nevada', '17 counties', 'Nevada only', 'Nevada region only', 'US'], amz: ['Amazônia Legal', '9 states', 'Amazônia Legal only', 'Amazônia Legal region only', 'BR'], admin: ['All regions', 'All countries and regions', 'all countries and regions', 'All regions', ''] };
     { const E = this.edits(); P.forEach((p) => { const e = E[p[0]]; if (!e) return; p[1] = e.code || p[1]; p[3] = e.name || p[3]; p[4] = e.title; p[5] = e.org; p[7] = e.sum; if (e.photo) p[10] = e.photo; }); }
+    { const G = this.gone(); for (let i = P.length - 1; i >= 0; i--) if (G.indexOf(P[i][0]) >= 0) P.splice(i, 1); }
     CU.forEach((c) => P.push([c.id, c.code, c.user, c.name, c.title || '', c.org || '', AREAS[c.base] ? AREAS[c.base][1] : 'All countries and regions', c.sum || '', c.photo || '', c.base]));   // after the demo profiles
     // Each demo profile in their own service's uniform (illustrated portraits, avatar.js)
     const KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1] };
@@ -444,7 +466,7 @@ class Component extends DCLogic {
         down: (e) => { clearTimeout(this._lp); this._lpFired = false; this._lpXY = [e.clientX, e.clientY];
           this._lp = setTimeout(() => { this._lpFired = true; try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
             const cu = this.customs().find((c) => c.id === id);
-            this.setState({ cpOpen: true, cpEdit: id, cpAsk: null, cpUndo: null, cpSeen: {}, cpF: { name, title: role, org, sum, photo: own || (cu ? cu.photo : photo), base: cu ? cu.base : (base || 'pt') } }); }, 500); },
+            this.setState({ cpOpen: true, cpEdit: id, cpRm: false, cpAsk: null, cpUndo: null, cpSeen: {}, cpF: { name, title: role, org, sum, photo: own || (cu ? cu.photo : photo), base: cu ? cu.base : (base || 'pt') } }); }, 500); },
         move: (e) => { const o = this._lpXY; if (o && Math.hypot(e.clientX - o[0], e.clientY - o[1]) > 10) clearTimeout(this._lp); },
         up: () => clearTimeout(this._lp), noMenu: (e) => { try { e.preventDefault(); } catch (x) {} }
       }); }),
