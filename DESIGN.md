@@ -296,3 +296,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Timelines (stage lists):** each stage is its own row: 20px above and below, full-width divider between rows, 12px between the stage line and its bar.
 - **Back icon:** every back control uses the friendly return arrow (arrow to the left whose stem curves round 180°), never a plain chevron.
 - **Card pickers:** the list container sits 16px from the screen edges; Reset lines up with the toggles; the title has "Choose the ones to show." under it.
+- **Incidents blade spacing:** 18px under the header (area and counts), 16px between the switcher and the search, 24px under the search.
