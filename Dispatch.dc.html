@@ -714,6 +714,9 @@ class Component extends DCLogic {
   // KPI cards: press and hold (250 ms) lifts a card; moving it over another place makes room there; letting go keeps the new order
   wfKpiDrag(key) {
     const self = this;
+    // While a card is lifted the page must not scroll, so it can move up and down too (touch-action is fixed at touch start,
+    // so the scroll is stopped here, on each touch move, only while a card is held)
+    if (!window.__wfKpiTM) { window.__wfKpiTM = true; document.addEventListener('touchmove', (e) => { if (window.__wfKpiLift) e.preventDefault(); }, { passive: false, capture: true }); }
     const cards = () => [...document.querySelectorAll('[data-wf-kpi]')];
     const reset = () => cards().forEach((c) => { c.style.transform = ''; c.style.zIndex = ''; c.style.transition = ''; const k = c.querySelector('[data-wf-kpicard]'); if (k) k.style.boxShadow = ''; });
     return {
@@ -724,7 +727,7 @@ class Component extends DCLogic {
           d.slots = L.map((c) => { const r = c.getBoundingClientRect(); return [(r.left + r.width / 2) / d.k, (r.top + r.height / 2) / d.k]; });
           try { d.el.setPointerCapture(d.pid); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
           const kc = d.el.querySelector('[data-wf-kpicard]'); if (kc) kc.style.boxShadow = '0 8px 24px rgba(0,0,0,0.16)';
-          d.el.style.zIndex = '3'; d.el.style.transition = 'none'; d.el.style.transform = 'scale(1.04)'; }, 250); },
+          d.el.style.zIndex = '3'; d.el.style.transition = 'none'; d.el.style.transform = 'scale(1.04)'; window.__wfKpiLift = true; }, 250); },
       move: (e) => { const d = self._kd; if (!d || d.key !== key) return;
         if (!d.lifted) { if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 8) { clearTimeout(self._kpT); self._kd = null; } return; }
         const dx = (e.clientX - d.x0) / d.k, dy = (e.clientY - d.y0) / d.k, L = cards(), me = d.slots[d.idx], px = me[0] + dx, py = me[1] + dy;
@@ -733,7 +736,7 @@ class Component extends DCLogic {
         d.el.style.transform = 'translate(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px) scale(1.04)';
         const order = L.map((_, j) => j); order.splice(d.idx, 1); order.splice(d.to, 0, d.idx);
         order.forEach((j, pos) => { if (j === d.idx) return; const c = L[j], a = d.slots[j], b = d.slots[pos]; c.style.transform = pos !== j ? 'translate(' + (b[0] - a[0]).toFixed(1) + 'px, ' + (b[1] - a[1]).toFixed(1) + 'px)' : ''; }); },
-      up: () => { clearTimeout(self._kpT); const d = self._kd; self._kd = null; if (!d || !d.lifted) return; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}
+      up: () => { clearTimeout(self._kpT); window.__wfKpiLift = false; const d = self._kd; self._kd = null; if (!d || !d.lifted) return; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}
         const L = cards().map((c) => c.getAttribute('data-wf-kpi')), from = d.idx, to = d.to; if (to !== from) { const [x] = L.splice(from, 1); L.splice(to, 0, x); }
         let all = null; try { all = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (x) {} all = Array.isArray(all) ? all : ['rate', 'area', 'size', 'pers']; const rest = all.filter((q) => L.indexOf(q) < 0);
         try { localStorage.setItem('wf-kpi-order', JSON.stringify(L.concat(rest))); } catch (x) {}
