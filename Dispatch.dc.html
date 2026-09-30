@@ -170,7 +170,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 @media (hover:hover){.stepb:not([aria-disabled=true]):hover{background:rgba(120,120,128,0.2)}}
 .stepb:not([aria-disabled=true]):active{opacity:.6}.stepb[aria-disabled=true]{cursor:default}
 .sheet.blade{border-radius:28px 28px 0 0!important;box-shadow:0 -4px 16px rgba(0,0,0,0.08)!important;border-top:0!important}
-.sheet.blade.flat{border-radius:0!important;box-shadow:none!important;border-top:1px solid rgba(60,60,67,0.14)!important}   /* a viewed fire: a page, not a blade */
+.sheet.blade.flat{border-radius:0!important;box-shadow:none!important;border-top:0!important;background:transparent!important}   /* a viewed fire: a page, not a blade */
 
 @keyframes sndspin{to{transform:rotate(360deg)}}.sndspin{animation:sndspin .8s linear infinite}
 .sw26k{will-change:transform}[role=switch]:active .sw26k{scale:1.12;background:rgba(255,255,255,0.7)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
@@ -178,7 +178,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </helmet>
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; overflow: clip; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
-  <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1; opacity: {{mapOp}}; pointer-events: {{mapPE}}; transition: opacity .45s ease">
+  <div data-wf-maplayer="1" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1; transform: translateY({{mapTY}}); clip-path: {{mapClip}}; -webkit-clip-path: {{mapClip}}; opacity: {{mapOp}}; pointer-events: {{mapPE}}; transition: opacity .45s ease">
   <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" close-x="{{mapCloseX}}" mode="spread" stations-st="{{fireSt}}" legend-offset="{{legOff}}" ctrl-offset="{{ctrlOff}}" fire-x="{{fireX}}" fire-y="{{fireY}}" fire-id="{{fireId}}" map-title="{{mapTtl}}" map-sub="{{mapSub}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" horizon="{{hzNum}}" station="{{sel.id}}" station-label="{{sel.mapLabel}}" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" link-candidate="{{no}}" tip-safe-top="{{tipSafe}}" units="{{mapUnits}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
   </div>
 
@@ -192,7 +192,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{hd.c}}">{{hd.title}}</h1>
       <span title="{{hd.sub}}" style="margin-top: 2px; font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span>
       <!-- What it is: the qualifier band, as on the ignition candidate card, in the map marker's deep orange -->
-      <span class="wf-qual" style="margin-top: 12px; margin-right: -52px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg>{{hd.kind}}</span>
+      <span class="wf-qual" style="margin-top: 12px; margin-right: -52px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg>{{hd.kind}}<span role="status" style="display: {{hdTagD}}; align-items: center; margin-left: auto; margin-right: -4px; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{cc.tag}}</span></span>
       <span role="timer" aria-label="{{hd.detAria}}" style="display: {{hd.tagD}}; align-self: flex-start; align-items: center; gap: 4px; height: 28px; margin-top: 8px; padding: 0 12px; border-radius: 999px; background: rgba(232,106,0,0.14); color: #A34800; font-size: 15px; white-space: nowrap; font-variant-numeric: tabular-nums"><span class="dot" style="width: 5.6px; height: 5.6px; margin-right: 3px"></span><span>{{hd.pre}}</span> <span data-tl-since="{{hd.t0}}">{{hd.el}}</span><span style="display: {{hd.postD}}"> ago</span></span>
       <span role="status" aria-label="{{activeAria}}" style="display: {{hd.pillD}}; align-items: center; gap: 7px; height: 28px; align-self: flex-start; margin: 8px 0 0; padding: 0 12px; border-radius: 999px; background: {{pillBg}}; color: {{pillFg}}; font-size: 15px; font-weight: 400; white-space: nowrap; max-width: 100%; font-variant-numeric: tabular-nums">
       {{pillTxt}}
@@ -344,7 +344,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 
   <div class="wf-glass" aria-hidden="true" onClick="{{focusTap}}" style="position: absolute; inset: 0; z-index: 20; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{focusOp}}; pointer-events: {{focusPE}}; transition: opacity .45s ease"></div>
-  <section role="dialog" data-pull="toggle" aria-labelledby="sentTitle" aria-hidden="{{sentHidden}}" class="sheet blade {{sbFlat}}" data-sb="1" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; overflow: hidden; height: {{sentH}}; transition: {{sbTr}}; box-sizing: border-box; padding: {{sbPadT}} 0 {{sbPadB}}; border-radius: {{sbRad}}; background: #F2F2F7; box-shadow: {{sbSh}}; transform: translateY({{sentY}})">
+  <section role="dialog" data-pull="toggle" aria-labelledby="sentTitle" aria-hidden="{{sentHidden}}" class="sheet blade {{sbFlat}}" data-sb="1" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; overflow: hidden; height: {{sentH}}; transition: {{sbTr}}; box-sizing: border-box; padding: {{sbPadT}} 0 {{sbPadB}}; border-radius: {{sbRad}}; background: {{sbBg}}; box-shadow: {{sbSh}}; transform: translateY({{sentY}})">
     <button type="button" onPointerDown="{{sb.down}}" onPointerMove="{{sb.move}}" onPointerUp="{{sb.up}}" onPointerCancel="{{sb.cancel}}" onKeyDown="{{sb.key}}" data-pull-go="key" data-noswipe="1" aria-expanded="{{sentUpStr}}" aria-label="{{sentUpLabel}}" style="align-self: stretch; display: {{sbGrabD}}; align-items: flex-start; justify-content: center; box-sizing: border-box; height: 53px; flex-shrink: 0; margin: 0; padding: 8px 0 0; border: 0; border-radius: 28px 28px 0 0; background: transparent; cursor: grab; touch-action: none">
       <span aria-hidden="true" style="width: 36px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span>
     </button>
@@ -355,7 +355,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </span>
     </div>
 <!-- One scrolling column: the conclusion, then everything else; the actions stay fixed below -->
-    <div class="wf-snap" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
+    <div class="wf-snap" data-wf-page="{{pgOn}}" onScroll="{{pgScroll}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
+    <!-- A viewed fire: the map is the top of the page and scrolls away with it (a tap opens it full screen) -->
+    <div aria-label="Map. Tap to open full screen" role="button" onClick="{{openMap}}" style="display: {{pgMapD}}; flex-shrink: 0; height: 240px; cursor: pointer"></div>
+    <div style="display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1; padding-top: {{pgPadT}}; background: #F2F2F7">
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
          (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
     <div role="group" data-sb-kpi="1" aria-label="{{cc.aria}}" style="display: {{cc.d}}; flex-direction: column; align-items: center; flex-shrink: 0; padding: 4px 16px 0; text-align: center">
@@ -464,6 +467,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-if>
       </sc-for>
     </ul>
+    </div>
     </div>
     <!-- This fire's incident chat: the same button as on the ignition candidate screen (Team chat) -->
     <div style="display: {{chat.rowD}}; margin: 16px 16px 0">
@@ -1275,7 +1279,9 @@ class Component extends DCLogic {
           : { title: fv ? (/^[A-Za-z]{2,5}-?\d{3,}$/.test(fv.place || '') ? (frow && frow.parent ? 'Near ' + frow.parent : 'Unnamed fire') : fv.place) : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held fire' : 'Active fire', tagD: 'none', pillD: RO ? 'none' : 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
-      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170) - 240) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: RO ? '16px' : '0', sbPadB: RO ? '8px' : '30px', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
+      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '8px' : '30px', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? 'inline-flex' : 'none',
+      pgScroll: (e) => { if (!RO) return; try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
+      mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - 240) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdrB: this._hdrB || 170,
       chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: 'Team chat', rowD: 'none', title: '', time: '', timeC: '#545458', last: '' };
         const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
@@ -1300,7 +1306,7 @@ class Component extends DCLogic {
         const u = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ area: us ? 'ac' : 'ha' }, v || {}); })();
         const area = I.ha != null ? (u.area === 'ha' ? Math.round(I.ha).toLocaleString() + ' ha' : Math.round(I.ha / 0.4047).toLocaleString() + ' ac') : '';
         const med = [t ? { v: t, l: HELD ? 'Final duration' : 'Time active' } : null, area ? { v: area, l: 'Burned area' } : null].filter(Boolean).map((m, i) => ({ ...m, sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' }));
-        return { d: 'flex', big, fs, bigD: pcT ? 'block' : 'none', tagD: pcT ? 'none' : 'inline-flex', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '12px' : '16px', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
+        return { d: 'flex', big, fs, bigD: pcT ? 'block' : 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: pcT ? '12px' : '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
       kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '1px solid rgba(60,60,67,0.14)' : '0' })) : [],
       k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
@@ -1335,7 +1341,7 @@ class Component extends DCLogic {
       cfgAria: 'Configure dispatch: ' + fmt(counts),
       mapW: 390, mapH: 844, no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : 38,
       full: !!s.full, toggleFull: () => { const st = this.state || {}; this.setState({ full: !st.full, open: false, cfg: false }); },
-      tipSafe: s.full ? 70 : (sent ? 186 : 192) + HD, clipT: s.full ? 0 : 128 + HD, clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? (RO ? 844 - (this._hdrB || 170) - 240 : Math.max(160, (this._sbMin || 250) - 28)) : 458), ctrlTop: (sent ? 266 : 243) + HD, hzTop: s.full ? -68 : (sent ? 12 : 16),
+      tipSafe: s.full ? 70 : (sent ? 186 : 192) + HD, clipT: s.full ? 0 : (RO && sent ? (this._hdrB || 170) : 128 + HD), clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? (RO ? 844 - (this._hdrB || 170) - 240 : Math.max(160, (this._sbMin || 250) - 28)) : 458), ctrlTop: (sent ? 266 : 243) + HD, hzTop: s.full ? -68 : (sent ? 12 : 16),
       downPE: (s.full || sent) ? 'none' : 'auto',
       topY: s.full ? '-150px' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: (s.full || sent) ? '560px' : '0px', navY: (s.full || sent) ? '140px' : '0px', downOp: (s.full || sent) ? 0 : 1,
       chevRot: open ? '180deg' : '0deg', sheetOpenStr: open ? 'true' : 'false', stationAria: sel.title + ', first on the fire line in ' + sum + ' minutes. Choose stations', crewsSel: freeSel + ' free crew' + (freeSel === 1 ? '' : 's'),

@@ -112,7 +112,7 @@ The one from the user preferences, used everywhere:
 
 ### Detail pages (being tried)
 
-- No blades: header, a map band, then all the information in one scrolling column, with the action buttons fixed at the bottom. A tap on the map opens it full screen.
+- No blades: only the header (name, place, kind band with the stage tag on its right) and the action buttons stay fixed; the map (a 240px band) and all the information scroll together in one column. A tap on the map opens it full screen.
 
 ### Blades and panels
 
