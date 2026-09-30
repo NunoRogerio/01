@@ -16,7 +16,7 @@
 <script src="fit.js?v=75"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=92"></script>
+<script src="i18n.js?v=93"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=27"></script>
 
@@ -264,52 +264,74 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
   </section>
 
-  <!-- Crews for this fire: the nearest stations as mini cards (tap to add or remove; the + tile lists them all), then each station's resources -->
-  <div class="rise" style="display: flex; flex-direction: column; padding: 24px 16px 0; animation-delay: 160ms">
-    <span style="display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px 8px; font-size: 15px; line-height: 20px; color: #6E6E73"><span>Stations</span><span>{{cw.count}}</span></span>
-    <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
-      <sc-for list="{{cw.cards}}" as="c" hint-placeholder-count="3">
-        <div role="listitem" style="display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0">
-          <button type="button" data-wf-kpicard="1" onClick="{{c.pick}}" aria-pressed="{{c.on}}" aria-label="{{c.aria}}" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: {{c.sh}}; border: 0; font: inherit; color: #000000; cursor: pointer; transition: box-shadow .2s ease">
-            <span aria-hidden="true" style="position: absolute; top: 8px; right: 8px; display: {{c.chkD}}; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--wf-y); color: #1C1C1E"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
-            <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; box-sizing: border-box; padding: 0 14px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">{{c.name}}</span>
-            <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{c.km}}</span><span style="font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{c.u}}</span></span>
-            <span style="margin-top: auto; padding-top: 8px; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{c.sub}}</span>
-          </button>
-        </div>
-      </sc-for>
-      <button type="button" class="mbtn" onClick="{{openSheet}}" aria-label="All stations near this fire" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+  <!-- Configure dispatch, station by station: each chosen station (or air support) is a card with what it sends; the grey card
+       below adds another (choose the station, then its resources, suggested or your own, Apply). Cancel or Send orders at the foot. -->
+  <div class="rise" style="display: flex; flex-direction: column; gap: 16px; padding: 24px 16px 0; animation-delay: 160ms">
+    <span style="display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px -8px; font-size: 15px; line-height: 20px; color: #6E6E73"><span style="font-weight: 700">Stations and resources</span><span>{{pl.count}}</span></span>
+    <sc-for list="{{pl.cards}}" as="p" hint-placeholder-count="0">
+      <button type="button" class="sqrow" onClick="{{p.edit}}" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 20px; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer">
+        <span aria-hidden="true" style="grid-row: 1 / span 3; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{p.icBg}}; color: #0079A6"><img src="{{p.crest}}" alt="" style="display: {{p.crestD}}; width: 40px; height: 40px; object-fit: contain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{p.airD}}"><path d="M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7"></path></svg></span>
+        <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{p.name}}</span>
+        <span aria-hidden="true" style="grid-row: 1 / span 3; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+        <span style="grid-column: 2; min-width: 0; font-size: 17px; line-height: 22px">{{p.sum}}</span>
+        <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{p.sub}}</span>
+      </button>
+    </sc-for>
+    <!-- Add a station: a grey card across the width -->
+    <button type="button" class="sqrow" onClick="{{pl.add}}" style="display: flex; align-items: center; justify-content: center; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer">{{pl.addLbl}}</button>
+  </div>
+
+  <div class="rise" style="margin-top: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 16px 16px 40px; animation-delay: 360ms">
+    <button type="button" class="btn wf-sec" onClick="{{pl.cancel}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
+    <button type="button" class="btn primary" onClick="{{pl.send}}" aria-disabled="{{pl.sendDis}}" style="opacity: {{pl.sendOp}}; transition: opacity .3s ease; height: 48px; font-size: 17px; font-weight: 600">{{sendLbl}}</button>
+  </div>
+  </div>
+
+
+  <!-- Add or edit a station of the dispatch: step 1 the stations (the best one tagged), step 2 its resources (suggested or your own), Apply -->
+  <div class="wf-glass" onClick="{{fl.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 72; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{fl.op}}; pointer-events: {{fl.pe}}; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-label="{{fl.title}}" aria-hidden="{{fl.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 73; display: flex; flex-direction: column; max-height: calc(100% - 48px); box-sizing: border-box; padding: 30px 0 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{fl.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding: 0 24px 16px">
+      <button type="button" class="mbtn" onClick="{{fl.back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></button>
+      <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+        <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fl.title}}</h2>
+        <span style="display: {{fl.subD}}; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fl.sub}}</span>
+      </span>
     </div>
-  </div>
-  <div class="rise" style="display: none; padding: 12px 16px 0; animation-delay: 240ms">
-    <span style="display: block; margin: 0 4px 6px; font-size: 15px; font-weight: 600; color: #3C3C43; opacity: {{pk.stLblOp}}; transform: translateY({{pk.stLblY}}); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1)">Select station</span>
-    <button type="button" class="{{pk.stCls}}" onClick="{{openSheet}}" aria-haspopup="listbox" aria-expanded="{{sheetOpenStr}}" aria-label="{{pk.stAria}}" style="animation-delay: 950ms; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span aria-hidden="true" style="position: absolute; left: 14px; right: 50px; top: 50%; font-size: 17px; font-weight: 600; line-height: 20px; color: #3C3C43; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; opacity: {{pk.stPhOp}}; transform: translateY(calc(-50% + {{pk.stPhY}})); transition: opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1)">1 · Select stations</span><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.stFillOp}}; transition: opacity .4s ease .1s">{{sel.title}}</span>
-        <sc-if value="{{sel.showBest}}" hint-placeholder-val="{{ true }}"><span style="opacity: {{pk.stFillOp}}; transition: opacity .4s ease .1s; flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: rgba(52,199,89,0.12); color: #1E7A34; font-size: 13px; font-weight: 600; line-height: 18px">Best</span></sc-if>
-      </span>
-      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{chevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 15px; line-height: 16px; color: {{sel.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.stFillOp}}; transition: opacity .4s ease .1s">{{sel.sub}}</span>
-    </button>
-  </div>
-
-  <div class="rise" style="padding: 24px 16px 0; animation-delay: 330ms">
-    <span style="display: block; margin: 0 4px 8px; font-size: 15px; font-weight: 700; line-height: 20px; color: #6E6E73">Resources per station</span>
-    <button type="button" class="{{pk.cfCls}}" onClick="{{openCfg}}" aria-disabled="{{pk.cfDis}}" aria-haspopup="dialog" aria-expanded="{{cfgOpenStr}}" aria-label="{{pk.cfAria}}" style="animation-delay: {{pk.cfDelay}}; opacity: {{pk.cfOp}}; transition: opacity .35s ease; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: auto auto; align-items: center; gap: 2px 0; width: 100%; min-height: 60px; padding: 10px 6px 10px 14px; box-sizing: border-box; border: 0; border-radius: 14px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px"><span aria-hidden="true" style="position: absolute; left: 14px; right: 50px; top: 50%; font-size: 17px; font-weight: 600; line-height: 20px; color: #3C3C43; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; opacity: {{pk.cfPhOp}}; transform: translateY(calc(-50% + {{pk.cfPhY}})); transition: opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1)">Choose crews and vehicles</span><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">Forces · {{unitTotal}} units</span>
-        <span style="opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s; flex-shrink: 0; height: 18px; padding: 0 7px; border-radius: 999px; background: {{cfgTagBg}}; color: {{cfgTagFg}}; font-size: 13px; font-weight: 600; line-height: 18px">{{cfgTag}}</span>
-      </span>
-      <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{cfgChevRot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></span>
-      <span style="grid-column: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{pk.cfFillOp}}; transition: opacity .4s ease .1s">{{cfgSummary}}</span>
-    </button>
-  </div>
-
-  <div class="rise" style="margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding: 12px 16px 40px; animation-delay: 360ms">
-    <button type="button" class="btn primary" onClick="{{sendAll}}" aria-disabled="{{pk.sendDis}}" style="opacity: {{pk.sendOp}}; transition: opacity .3s ease; height: 56px; font-size: 17px; font-weight: 600">
-      {{sendLbl}}
-    </button>
-  </div>
-  </div>
-
+    <!-- Step 1: the stations, fastest first -->
+    <div class="wf-snap" role="listbox" aria-label="Stations" style="display: {{fl.stD}}; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; border-top: 1px solid rgba(60,60,67,0.14)">
+      <sc-for list="{{fl.rows}}" as="r" hint-placeholder-count="0">
+        <button type="button" role="option" class="sqrow" data-sel="false" aria-disabled="{{r.dis}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px 24px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; opacity: {{r.op}}; cursor: {{r.cur}}">
+          <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.icBg}}; color: #0079A6"><img src="{{r.crest}}" alt="" style="display: {{r.crestD}}; width: 40px; height: 40px; object-fit: contain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{r.airD}}"><path d="M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7"></path></svg></span>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="min-width: 0; font-size: 17px; line-height: 22px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden"><span style="font-weight: 700">{{r.code}}</span> {{r.name}}</span></span>
+          <span style="grid-row: 1; grid-column: 3; align-self: start; font-size: 17px; line-height: 22px; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.etaC}}">{{r.eta}}</span>
+          <span style="grid-column: 2 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap"><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span><span style="display: {{r.tagD}}; flex-shrink: 0; height: 20px; padding: 0 8px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 13px; font-weight: 600; line-height: 20px">{{r.tag}}</span></span>
+        </button>
+      </sc-for>
+    </div>
+    <!-- Step 2: its resources -->
+    <div style="display: {{fl.resD}}; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 24px 8px">
+        <span style="height: 24px; padding: 0 10px; border-radius: 999px; background: {{fl.tagBg}}; color: {{fl.tagFg}}; font-size: 15px; font-weight: 600; line-height: 24px">{{fl.tag}}</span>
+        <button type="button" class="mbtn" onClick="{{fl.useRec}}" style="display: {{fl.useRecD}}; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Use suggested</button>
+      </div>
+      <div role="group" style="display: flex; flex-direction: column; margin: 0 16px; border-radius: 14px; background: #FFFFFF">
+        <sc-for list="{{fl.res}}" as="u" hint-placeholder-count="2">
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 0 16px; min-height: 64px; padding: 12px 16px; box-sizing: border-box; border-top: {{u.sep}}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.icon}}"></path></svg>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px">{{u.name}}</span><span style="display: {{u.avD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{u.avail}}</span></span>
+            <span style="display: flex; align-items: center; gap: 4px">
+              <button type="button" class="stepb" aria-label="{{u.lessLbl}}" aria-disabled="{{u.lessDis}}" onClick="{{u.less}}" style="opacity: {{u.lessOp}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg></button>
+              <span aria-live="polite" style="min-width: 28px; text-align: center; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums">{{u.n}}</span>
+              <button type="button" class="stepb" aria-label="{{u.moreLbl}}" aria-disabled="{{u.moreDis}}" onClick="{{u.more}}" style="opacity: {{u.moreOp}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12M12 6v12"></path></svg></button>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+      <button type="button" onClick="{{fl.remove}}" style="display: {{fl.rmD}}; align-items: center; justify-content: center; height: 48px; margin: 24px 16px 0; border: 0; border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.12); color: #D70015; -webkit-text-fill-color: #D70015; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{fl.rmLbl}}</button>
+      <button type="button" class="btn primary" onClick="{{fl.apply}}" style="flex-shrink: 0; height: 48px; margin: 24px 16px 0; font-size: 17px; font-weight: 600">Apply</button>
+    </div>
+  </section>
   <!-- Sending dispatch orders: each chosen station's coordinator gets its order in turn, then a confirmation and Done -->
   <section role="dialog" aria-modal="true" aria-labelledby="sendTitle" aria-hidden="{{snd.hidden}}" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; box-sizing: border-box; padding: 72px 16px 40px; background: #F2F2F7; transform: translateY({{snd.y}}); visibility: {{snd.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{snd.visDelay}}">
     <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
@@ -1473,6 +1495,51 @@ class Component extends DCLogic {
       mapUnits: RO ? [] : mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       hasRU: !!RU, noRU: !RU,
+      // Configure dispatch station by station (s.plan: [{ id, n }]; air support is id 'air' with its four aircraft kinds)
+      ...(() => {
+        const plan = Array.isArray(s.plan) ? s.plan : [], F = s.flow || null, byId = (id) => data.find((d) => d.id === id);
+        const capSt = (d) => d.real ? [99, 99] : [d.free != null ? Math.max(0, d.free) : 99, (tenders[d.id] || 0) + 2];
+        const recFor = (id) => { if (id === 'air') return REC.slice(2).map((n, i) => Math.min(n, airCap[i])); const d = byId(id), c = d ? capSt(d) : [0, 0], first = !plan.some((p) => p.id !== 'air' && p.id !== id);
+          return first ? [Math.min(REC[0], c[0]), Math.min(REC[1], c[1])] : [Math.min(1, c[0]), Math.min(1, c[1])]; };
+        const W = (i, n) => n + ' ' + words[i][n === 1 ? 0 : 1];
+        const sumOf = (id, n) => (id === 'air' ? n.map((v, i) => v ? W(i + 2, v) : '').filter(Boolean) : n.map((v, i) => v ? W(i, v) : '').filter(Boolean)).join('. ') || 'Nothing selected';
+        const nm = (d) => (d.code && d.code !== '—' ? d.code + '. ' : '') + d.name;
+        const cards = plan.map((p) => { const d = p.id === 'air' ? null : byId(p.id), crest = d ? crestOf(d) : '';
+          return { name: d ? nm(d) : 'Air support', sum: sumOf(p.id, p.n) + '.', sub: d ? (d.km != null ? d.km + DU + '. ' : '') + (d.eta != null ? '~' + d.eta + ' min to the fire line.' : '') : 'From the nearest air bases.',
+            crest, crestD: crest ? 'block' : 'none', airD: d ? 'none' : 'block', icBg: d ? 'transparent' : 'rgba(0,121,166,0.1)', aria: (d ? nm(d) : 'Air support') + '. ' + sumOf(p.id, p.n) + '. Change',
+            edit: () => this.setState({ flow: { step: 'res', id: p.id, draft: p.n.slice(), edit: true } }) }; });
+        const hasSt = plan.some((p) => p.id !== 'air');
+        const send = () => { if (!hasSt) return; const per = {}; plan.forEach((p) => { if (p.id !== 'air') per[p.id] = p.n.slice(0, 2); }); const a = plan.find((p) => p.id === 'air'); per.air = a ? a.n.slice() : [0, 0, 0, 0];
+          this.setState({ stations: plan.filter((p) => p.id !== 'air').map((p) => p.id), per, stPick: true, cfPick: true, open: false, cfg: false }, () => { setTimeout(() => { try { this._sendAll && this._sendAll(); } catch (x) {} }, 0); }); };
+        const on = !!F, step = F ? F.step : 'st', id = F ? F.id : null, dSel = id && id !== 'air' ? byId(id) : null;
+        const draft = F && F.draft ? F.draft : (id ? recFor(id) : []), recD = id ? recFor(id) : [], isRec = id ? draft.every((v, i) => v === recD[i]) : true;
+        const setD = (arr) => this.setState({ flow: { ...F, draft: arr } });
+        const resRows = !id ? [] : (id === 'air' ? [2, 3, 4, 5] : [0, 1]).map((k, j) => { const cap = id === 'air' ? airCap[j] : capSt(dSel || {})[j], n = draft[j] || 0, lessDis = n <= 0, moreDis = n >= cap, m = meta[k];
+          return { name: m.name, icon: m.icon, n, sep: j ? '1px solid rgba(60,60,67,0.14)' : '0', avail: cap >= 99 ? '' : cap === 0 ? 'None available.' : (cap - n) + ' of ' + cap + ' free.', avD: cap >= 99 ? 'none' : 'block',
+            less: () => { if (lessDis) return; const a = draft.slice(); a[j] = n - 1; setD(a); }, more: () => { if (moreDis) return; const a = draft.slice(); a[j] = n + 1; setD(a); },
+            lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1, lessLbl: 'Fewer ' + m.name.toLowerCase(), moreLbl: 'More ' + m.name.toLowerCase() }; });
+        const inPlan = (x) => plan.some((p) => p.id === x);
+        const stRows = [{ id: 'air', air: true }].concat(ordered.filter((d) => d.id !== 'none')).map((d) => { if (d.air) { const used = inPlan('air');
+            return { code: '', name: 'Air support', crest: '', crestD: 'none', airD: 'block', icBg: 'rgba(0,121,166,0.1)', eta: '', etaC: '#000000', sub: used ? 'Added.' : 'Helicopters and air tankers.', tagD: 'none', tag: '', tagBg: '', tagFg: '', dis: used ? 'true' : 'false', op: used ? 0.45 : 1, cur: used ? 'default' : 'pointer', aria: 'Air support',
+              pick: () => { if (!used) this.setState({ flow: { step: 'res', id: 'air', draft: recFor('air'), edit: false } }); } }; }
+          const busy = d.eta === null, used = inPlan(d.id), dis = busy || used, crest = crestOf(d), best = d.id === rec.id && !used;
+          return { code: d.code && d.code !== '—' ? d.code + '.' : '', name: d.name, crest, crestD: crest ? 'block' : 'none', airD: 'none', icBg: 'transparent', eta: busy ? 'Busy' : d.eta + ' min', etaC: busy ? '#6E6E73' : '#000000', sub: used ? 'Added.' : subOf(d),
+            tagD: best ? 'inline-block' : 'none', tag: 'Suggested', tagBg: 'rgba(52,199,89,0.12)', tagFg: '#1E7A34', dis: dis ? 'true' : 'false', op: dis ? 0.45 : 1, cur: dis ? 'default' : 'pointer', aria: nm(d) + (busy ? ', busy' : used ? ', added' : ', ' + d.eta + ' minutes'),
+            pick: () => { if (!dis) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ flow: { step: 'res', id: d.id, draft: recFor(d.id), edit: false } }); } } }; });
+        const close = () => this.setState({ flow: null });
+        return {
+          pl: { cards, count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: plan.length ? 'Add another station' : 'Add station and resources',
+            add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
+            cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
+          fl: { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close,
+            title: step === 'st' ? 'Choose a station' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'res' && dSel ? 'block' : 'none',
+            back: () => (step === 'res' && F && !F.edit ? this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }) : close()),
+            stD: step === 'st' ? 'flex' : 'none', resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
+            tag: isRec ? 'Suggested' : 'Your choice', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'rgba(118,118,128,0.12)', tagFg: isRec ? '#1E7A34' : '#3A3A3C', useRecD: isRec ? 'none' : 'inline-flex', useRec: () => setD(recD.slice()),
+            rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
+            remove: () => this.setState({ plan: plan.filter((p) => p.id !== id), flow: null }),
+            apply: () => { if (!id) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const nx = plan.some((p) => p.id === id) ? plan.map((p) => (p.id === id ? { id, n: draft.slice() } : p)) : plan.concat([{ id, n: draft.slice() }]); this.setState({ plan: nx, flow: null }); } } };
+      })(),
       acc: (() => {
         const setP = (key, i, v) => { const base = { ...PER, air: AIR.slice() }; const arr = base[key].slice(); arr[i] = v; base[key] = arr; this.setState({ per: base, cfPick: true }); };
         const row = (key, i, m, n, cap, rec) => { const lessDis = n <= 0, moreDis = n >= cap;
@@ -1495,7 +1562,7 @@ class Component extends DCLogic {
         stCls: a ? 'prep' : 'prep nudge', cfCls: b || !a ? 'prep' : 'prep nudge', cfOp: a ? 1 : 0.45, cfDis: a ? 'false' : 'true', cfDelay: '450ms', sendDis: a && b ? 'false' : 'true', sendOp: a && b ? 1 : 0.4 }; })(),
       sendLbl: chosenList.length > 1 ? 'Send orders' : 'Send order',
       // Sending: one order per chosen station, each to that station's coordinator, confirmed in turn; Done shows the dispatch.
-      sendAll: () => {
+      sendAll: this._sendAll = () => {
         if (this._sndT || !(s.stPick && s.cfPick)) return;
         const n = Math.max(1, this.wfSplit(chosenList, counts, PER).length);
         this.setState({ sending: 1, sndN: 0, open: false, cfg: false, full: false });
@@ -1536,11 +1603,11 @@ class Component extends DCLogic {
         const p2 = (n) => String(n).padStart(2, '0'), el = (dd ? dd + ' d ' + hh + ' h' : hh ? hh + ' h ' + mm + ' min' : mm + ' min');
         const pt = /^pt/i.test(document.documentElement.lang || ''), t0 = Math.round(Date.now() - Math.max(0, actMin) * 60000);
         const reg = frow && window.__wfPlaceUp ? window.__wfPlaceUp(frow.st, frow.co) : '';
-        return ign ? { title: fv.place, c: '#000000', sub: reg || 'Confirmed by satellite', kind: 'Active fire', tagD: RO || s.crew ? 'none' : 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
+        return ign ? { title: fv.place, c: '#000000', sub: reg || 'Confirmed by satellite', kind: s.crew ? 'Configure dispatch' : 'Active fire', tagD: RO || s.crew ? 'none' : 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
           : { title: fv ? (/^[A-Za-z]{2,5}-?\d{3,}$/.test(fv.place || '') ? (frow && frow.parent ? 'Near ' + frow.parent : 'Unnamed fire') : fv.place) : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held fire' : 'Active fire', tagD: 'none', pillD: RO ? 'none' : 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
-      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? 'inline-flex' : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
+      fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO && !s.crew ? 'inline-flex' : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
       pgScroll: (e) => { if (!RO) return; try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
       mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - MAPH) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdBack: (e) => { if (!s.crew) return; try { e.preventDefault(); } catch (x) {} this.setState({ crew: false, reinforce: false }); },   /* configuring crews: back returns to the fire page */
@@ -1552,7 +1619,7 @@ class Component extends DCLogic {
             sh: o ? '0 0 0 2px #3A3A3C, 0 2px 10px rgba(0,0,0,0.08)' : '0 2px 10px rgba(0,0,0,0.08)', aria: nm(d.name) + ', ' + km + ' km' + (o ? ', chosen' : ''),
             pick: () => { const cur = chosenList.map((q) => q.id), i = cur.indexOf(d.id); if (i >= 0) { if (cur.length > 1) cur.splice(i, 1); } else cur.push(d.id); try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stations: cur, stPick: true }); } }; }) }; })(),
       kp: this.wfPicker(), pkOpenKpi: () => this.setState({ pick: 'kpi' }),
-      hdrB: this._hdrB || 170, MAPH, tlTop, hdChatD: RO ? 'none' : 'flex', ulGap: RO ? '24px' : '2px', ulMt: RO ? '24px' : '16px', ulBd: RO ? '0' : '1px solid rgba(60,60,67,0.14)', backOrd: RO ? '-1' : '0', backLbl2: RO ? 'Back' : 'Done', backIcD: RO ? 'block' : 'none', kindD: 'inline', qualCls: RO || s.crew ? 'hd' : '', qualPr: RO || s.crew ? '10px' : '12px', qualR: RO || s.crew ? '26px' : '0', kindDot: HELD ? '#6F2B06' : '#E8590C', tagMl: 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const tk = !RO || !HELD ? null : HELD.took != null ? HELD.took : (I.startMs && HELD.at ? HELD.at - I.startMs : I.startMs && I.updMs && I.updMs > I.startMs ? I.updMs - I.startMs : null); const fin = tk != null && tk > 0 ? DUR(tk) : ''; /* how long it took to hold: the source's time, else start to held, else start to the last update */ return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: false, mapFireOnly: RO, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: 'note', tlOpenStr: 'false', tlToggle: null, tlCur: 'default', tlBarD: 'none', tlBar: [], tlDetD: 'none', startD: T && INFO && INFO.startMs ? 'inline' : 'none', startTxt: INFO && INFO.startMs ? (() => { const d = new Date(INFO.startMs); return 'Started ' + (new Date().toDateString() === d.toDateString() ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString([], { day: 'numeric', month: 'short' })); })() : '',   /* today: the time; before: the day (the time active says the rest) */ kindC: '#1C1C1E' }; })(), qualMr: RO || s.crew ? '-4px' : '-52px',
+      hdrB: this._hdrB || 170, MAPH, tlTop, hdChatD: RO ? 'none' : 'flex', ulGap: RO ? '24px' : '2px', ulMt: RO ? '24px' : '16px', ulBd: RO ? '0' : '1px solid rgba(60,60,67,0.14)', backOrd: RO ? '-1' : '0', backLbl2: RO ? 'Back' : 'Done', backIcD: RO ? 'block' : 'none', kindD: 'inline', qualCls: RO || s.crew ? 'hd' : '', qualPr: RO || s.crew ? '10px' : '12px', qualR: RO || s.crew ? '26px' : '0', kindDot: s.crew ? 'transparent' : HELD ? '#6F2B06' : '#E8590C', tagMl: 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const tk = !RO || !HELD ? null : HELD.took != null ? HELD.took : (I.startMs && HELD.at ? HELD.at - I.startMs : I.startMs && I.updMs && I.updMs > I.startMs ? I.updMs - I.startMs : null); const fin = tk != null && tk > 0 ? DUR(tk) : ''; /* how long it took to hold: the source's time, else start to held, else start to the last update */ return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: false, mapFireOnly: RO, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: 'note', tlOpenStr: 'false', tlToggle: null, tlCur: 'default', tlBarD: 'none', tlBar: [], tlDetD: 'none', startD: T && INFO && INFO.startMs ? 'inline' : 'none', startTxt: INFO && INFO.startMs ? (() => { const d = new Date(INFO.startMs); return 'Started ' + (new Date().toDateString() === d.toDateString() ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString([], { day: 'numeric', month: 'short' })); })() : '',   /* today: the time; before: the day (the time active says the rest) */ kindC: '#1C1C1E' }; })(), qualMr: RO || s.crew ? '-4px' : '-52px',
       chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: 'Team chat', rowD: 'none', title: '', time: '', timeC: '#545458', last: '' };
         const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
         const lm = ex ? C.lastMsg(ex) : null, who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? 'You' : (ex.people[lm.from] || {}).name || '') : '';
