@@ -975,7 +975,7 @@ class Component extends DCLogic {
             pick: () => this.setState({ ci: o.i, focusId: null, tab: null, dd: false, ddQ: '', confirm: false, full: false }) })),
           hDd: this.wfHandle('dd', 'up', () => this.setState({ dd: false })), ddDy: 0, ddDyT: '0s',
           ddToggle: () => { if (n > 1) this.setState({ dd: !s.dd }); }, ddClose: () => this.setState({ dd: false, ddQ: '' }),
-          ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', grabOp: dd ? 0 : 1, ddClipT: this.wfDrag('dd').y ? '0s' : '.5s', ddGrabT: dd ? 844 - 48 - 13 + Math.min(0, this.wfDrag('dd').y || 0) : (this._hdrB || 92) - 13, ddOp: dd ? 1 : 0, ddClip: dd ? 'inset(0px 0px ' + (-Math.min(0, this.wfDrag('dd').y || 0)) + 'px 0px round 0px 0px 28px 28px)' : 'inset(0px 0px 100% 0px round 0px 0px 28px 28px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
+          ddStr: dd ? 'true' : 'false', ddRot: dd ? '180deg' : '0deg', grabOp: dd ? 0 : 1, ddClipT: this.wfDrag('dd').y ? '0s' : '.5s', ddGrabT: dd ? 844 - 48 - 13 + Math.min(0, this.wfDrag('dd').y || 0) : (this._hdrB || 92) - 13, ddOp: dd ? 1 : 0, ddClip: dd ? 'inset(0px 0px ' + (-Math.min(0, this.wfDrag('dd').y || 0)) + 'px 0px round 0px 0px 28px 28px)' : 'inset(0px 0px ' + (844 - 48) + 'px 0px round 0px 0px 28px 28px)', ddPE: dd ? 'auto' : 'none', ddHidden: dd ? 'false' : 'true', ddVis: dd ? 'visible' : 'hidden', ddVisDelay: dd ? '0s' : '.45s'
         };
       })(),
       // The level above the place: county and state in the US, district in Portugal, else region and country
