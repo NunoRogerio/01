@@ -13,10 +13,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=3">
 <link rel="icon" href="icon-192.png?v=3">
-<script src="fit.js?v=66"></script>
+<script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=80"></script>
-<script src="i18n.js?v=65"></script>
+<script src="i18n.js?v=66"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
 
@@ -43,7 +43,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- Name, region, then the qualifier band in the map marker's navy: the same structure as the ignition candidate card -->
   <header style="position: relative; z-index: 6; display: flex; align-items: flex-start; gap: 8px; padding: 10px 16px 16px 8px; background: #F2F2F7; transform: translateY({{hdY}}); opacity: {{hdOp}}; pointer-events: {{hdPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-    <a href="Main.dc.html" data-wf-back="1" class="stback" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; color: #545458; text-decoration: none">
+    <a href="Main.dc.html" data-wf-back="1" class="stback" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 999px; color: #545458; text-decoration: none">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
     </a>
     <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; padding-top: 3px">
@@ -111,7 +111,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span style="width: 96px; flex-shrink: 0; font-size: 15px; color: #545458">{{r.k}}</span>
             <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
             <sc-if value="{{r.plain}}" hint-placeholder-val="{{ true }}"><span style="display: flex; flex-direction: column; min-width: 0; flex-grow: 1"><span style="font-size: 17px; line-height: 22px; overflow-wrap: anywhere">{{r.v}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{r.cpRows}}; opacity: {{r.cpOp}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; margin-top: 2px; font-size: 15px; line-height: 20px; color: #1E7A34">Copied to clipboard</span></span></span></sc-if>
-            <button type="button" onClick="{{r.copy}}" aria-label="{{r.copyAria}}" style="display: {{r.copyD}}; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin: -8px 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: {{r.copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.copyIc}}"></path></svg></button>
+            <button type="button" onClick="{{r.copy}}" aria-label="{{r.copyAria}}" style="display: {{r.copyD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -8px 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: {{r.copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.copyIc}}"></path></svg></button>
           </div>
         </sc-for>
       </div>

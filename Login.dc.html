@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=3">
 <link rel="icon" href="icon-192.png?v=3">
-<script src="fit.js?v=66"></script>
+<script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
-<script src="i18n.js?v=65"></script>
+<script src="i18n.js?v=66"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -56,7 +56,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
         <span id="userLbl" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Username</span>
         <!-- The chosen profile shows as its mini card right in the Username field (tap it to choose another) -->
         <button type="button" onClick="{{toggle}}" aria-haspopup="dialog" aria-expanded="{{openStr}}" aria-labelledby="userLbl userVal" style="display: flex; align-items: center; gap: 16px; min-height: 52px; padding: {{userPad}}; border: 0; background: transparent; font: inherit; color: #000000; text-align: left; cursor: pointer">
-          <span aria-hidden="true" style="position: relative; display: {{goD}}; align-self: flex-start; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden">{{selCode}}<span style="position: absolute; inset: 0; background-image: {{selPhoto}}; background-size: cover; background-position: center"></span></span>
+          <span aria-hidden="true" style="position: relative; display: {{goD}}; align-self: flex-start; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden">{{selCode}}<span style="position: absolute; inset: 0; background-image: {{selPhoto}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
             <span id="userVal" style="font-size: {{userFs}}; font-weight: {{userFw}}; line-height: 24px; color: {{userC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{userTxt}}</span>
             <span style="display: {{goB}}; font-size: 17px; line-height: 22px; color: #000000">{{selRole}}</span>
@@ -103,7 +103,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
         <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="position: relative; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
           <span style="display: flex; align-items: flex-start; gap: 16px; width: 100%">
             <span style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 40px; flex-shrink: 0">
-              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
+              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: {{p.badgeBg}}; color: {{p.badgeFg}}; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photoBg}}; background-size: cover; background-position: center"></span></span>
             </span>
             <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
               <span style="font-size: 17px; font-weight: 600; line-height: 24px">{{p.name}}</span>

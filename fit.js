@@ -290,7 +290,7 @@ window.__wfBlink=function(path,dur){
           var off=Math.min(90,r*.07+4),ang=L.a+L.s*t*.2+Math.sin(t*L.w+L.p)*.5;   // centres wander around the logo
           var x=cx+Math.cos(ang)*off*(.6+.4*Math.sin(t*L.v+L.q)),y=cy+Math.sin(ang)*off*(.6+.4*Math.cos(t*L.w+L.p));
           var rr=Math.max(0,r*(.965+.025*Math.sin(t*L.v+L.p))),at='circle at '+x.toFixed(1)+'px '+y.toFixed(1)+'px';
-          C.push([x,y,Math.max(0,rr-band*1.45)]);
+          C.push([x,y,Math.max(0,rr-band*1.05)]);   // where the colour reads as full (inside the soft edge), so the count ends just after the colour does
           m1.push('radial-gradient('+at+',#000 '+Math.max(0,rr-band*1.45)+'px,rgba(0,0,0,.5) '+Math.max(0,rr-band*1)+'px,transparent '+Math.max(1,rr-band*.5)+'px)');   // normal colour behind the front
           m2.push('radial-gradient('+at+',#000 '+Math.max(0,rr-band*.15)+'px,rgba(0,0,0,.5) '+Math.max(0,rr+band*.3)+'px,transparent '+Math.max(1,rr+band*.75)+'px)');   // the saturated glow reaching just past it
         });
