@@ -16,7 +16,7 @@
 <script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=80"></script>
-<script src="i18n.js?v=67"></script>
+<script src="i18n.js?v=68"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
 
@@ -245,6 +245,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 6px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
                 <span style="font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{m.l}}</span>
                 <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 600; color: #3A3A3C">{{m.u}}</span></span>
+                <span style="display: {{m.tagD}}; margin-top: 12px; max-width: 100%; box-sizing: border-box; padding: 2px 8px; border-radius: 999px; background: {{m.tagBg}}; color: {{m.tagFg}}; font-size: 13px; line-height: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.tag}}</span><span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
                 <svg role="img" aria-label="{{m.aria}}" width="56%" height="22" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{m.svgD}}; margin-top: 16px; overflow: visible">
                   <path d="{{m.area}}" fill="{{m.areaFill}}" stroke="none"></path>
                   <path d="{{m.line}}" fill="none" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
@@ -496,14 +497,17 @@ class Component extends DCLogic {
     const K = [
       { key: 'like', l: 'Likelihood', v: cur.conf + ' %', ch: lineCh(1, true, 'Likelihood as sources agreed') },
       { key: 'frp', l: 'Heat power', v: (frp != null ? frp : Math.round((1 + R(2) * 40) * 10) / 10) + ' MW', ch: barCh(2, 'Radiative power over the passes'), note: frp != null ? '' : 'Simulated' },
-      { key: 'det', l: 'Detections', v: String(nDet != null ? nDet : 1 + Math.floor(R(3) * 8)), ch: barCh(3, 'Detections within 3 km'), note: nDet != null ? '' : 'Simulated' },
+      // People at risk: a populated place within 5 km (from the satellite point's nearest place, e.g. "1.8 km north of Torrance")
+      (() => { const m = /([\d.]+)\s*km\b[^A-Za-z]*(?:[a-z]+\s+)*of\s+(.+)$/i.exec(String((L && L.near) || cur.locPlace || '')), km = m ? parseFloat(m[1]) : null, town = m ? m[2] : '';
+        if (km != null) return { key: 'pop', l: 'People at risk', v: km <= 5 ? 'Yes' : 'No', ch: none, sub: town + ', ' + (km < 10 ? km.toFixed(1) : Math.round(km)) + ' km' };
+        return { key: 'pop', l: 'People at risk', v: R(3) < 0.5 ? 'Yes' : 'No', ch: none, note: 'Simulated' }; })(),
       { key: 'ago', l: 'Detected', v: ago || Math.round(1 + R(4) * 11) + ' h', ch: none, note: ago ? '' : 'Simulated' },
       { key: 'eta', l: 'Nearest crew', v: '~' + Math.round(6 + R(5) * 20) + ' min', ch: none, note: 'Simulated' },
       { key: 'dng', l: 'Fire danger', v: DAN[dI], ch: steps(dI, 5, 'Fire danger ' + DAN[dI] + ' of 5 levels'), note: 'Simulated' }];
     let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-ign') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : K.map((q) => q.key);
     const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; K.sort((a, b) => ix(a.key) - ix(b.key));
     const kpis = K.map((m) => { const q = /^(\S+)\s+(.+)$/.exec(m.v), num = q ? q[1] : m.v, un = q ? q[2] : '', w = 106 - (un ? un.length * 8.6 + 3 : 0);
-      return { ...m.ch, ...m, n: num, u: un, uD: un ? 'inline' : 'none', k: Math.max(16, Math.min(30, Math.floor(w / Math.max(1, num.length * 0.6)))) + 'px', note: m.note || '', noteD: m.note ? 'block' : 'none', ...this.wfKpiDrag(m.key, 'ign') }; });
+      return { tag: '', sub: '', tagFg: '', tagBg: '', ...m.ch, ...m, tagD: m.tag ? 'block' : 'none', subD: m.sub ? 'block' : 'none', n: num, u: un, uD: un ? 'inline' : 'none', k: Math.max(16, Math.min(30, Math.floor(w / Math.max(1, num.length * 0.6)))) + 'px', note: m.note || '', noteD: m.note ? 'block' : 'none', ...this.wfKpiDrag(m.key, 'ign') }; });
     const det = tMs ? (() => { const d = new Date(tMs), today = new Date().toDateString() === d.toDateString(), hm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); return 'Detected ' + (today ? hm : d.toLocaleDateString([], { day: 'numeric', month: 'short' })); })() : '';
     // Weather and terrain: the fire model's reading at this point when it has one (Open-Meteo, terrain, fuel), else simulated and labelled
     let MI = null; try { if (window.__wfLiveMap && window.__wfFireModel && L && L.lat) { const M = window.__wfFireModel({ id: 'IGN-' + cur.id, st: cur.st, lat: L.lat, lon: L.lon, ha: 1, note: '' }); if (M && !M.failed && M.info) MI = M.info; } } catch (e) {}
