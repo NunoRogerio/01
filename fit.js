@@ -293,15 +293,15 @@ window.__wfBlink=function(path,dur){
       // so it says 100% exactly when the colour has reached the whole screen (both end together)
       var EDGE=[];(function(){var n=Math.ceil(W/40),m=Math.ceil(H/40),i;for(i=0;i<=n;i++){EDGE.push([W*i/n,0],[W*i/n,H]);}for(i=1;i<m;i++){EDGE.push([0,H*i/m],[W,H*i/m]);}})();
       var cov0=0;
-      var paint=function(r){
+      var paint=function(r,q){q=q||0;var qq=q*q,b=band*(1-.85*qq),sm=1-.95*qq,brt=1-.95*qq;   // towards the end the front gathers into a thin, round ring, so the colour settles just as the count reaches 98%
         var t=performance.now()/1000,m1=[],m2=[],C=[];
         LOB.forEach(function(L){
-          var off=Math.min(90,r*.07+4),ang=L.a+L.s*t*.2+Math.sin(t*L.w+L.p)*.5;   // centres wander around the logo
+          var off=Math.min(90,r*.07+4)*sm,ang=L.a+L.s*t*.2+Math.sin(t*L.w+L.p)*.5;   // centres wander around the logo
           var x=cx+Math.cos(ang)*off*(.6+.4*Math.sin(t*L.v+L.q)),y=cy+Math.sin(ang)*off*(.6+.4*Math.cos(t*L.w+L.p));
-          var rr=Math.max(0,r*(.965+.025*Math.sin(t*L.v+L.p))),at='circle at '+x.toFixed(1)+'px '+y.toFixed(1)+'px';
-          C.push([x,y,Math.max(0,rr-band*1.05)]);   // where the colour reads as full (inside the soft edge), so the count ends just after the colour does
-          m1.push('radial-gradient('+at+',#000 '+Math.max(0,rr-band*1.45)+'px,rgba(0,0,0,.5) '+Math.max(0,rr-band*1)+'px,transparent '+Math.max(1,rr-band*.5)+'px)');   // normal colour behind the front
-          m2.push('radial-gradient('+at+',#000 '+Math.max(0,rr-band*.15)+'px,rgba(0,0,0,.5) '+Math.max(0,rr+band*.3)+'px,transparent '+Math.max(1,rr+band*.75)+'px)');   // the saturated glow reaching just past it
+          var rr=Math.max(0,r*(.965+.025*brt*Math.sin(t*L.v+L.p))),at='circle at '+x.toFixed(1)+'px '+y.toFixed(1)+'px';
+          C.push([x,y,Math.max(0,rr-b*1.05)]);   // where the colour reads as full (inside the soft edge), so the count ends just after the colour does
+          m1.push('radial-gradient('+at+',#000 '+Math.max(0,rr-b*1.45)+'px,rgba(0,0,0,.5) '+Math.max(0,rr-b*1)+'px,transparent '+Math.max(1,rr-b*.5)+'px)');   // normal colour behind the front
+          m2.push('radial-gradient('+at+',#000 '+Math.max(0,rr-b*.15)+'px,rgba(0,0,0,.5) '+Math.max(0,rr+b*.3)+'px,transparent '+Math.max(1,rr+b*.75)+'px)');   // the saturated glow reaching just past it
         });
         norm.style.webkitMaskImage=norm.style.maskImage=m1.join(',');hot.style.webkitMaskImage=hot.style.maskImage=m2.join(',');
         var worst=0;for(var i=0;i<EDGE.length;i++){var e=EDGE[i],d=1e9;for(var j=0;j<C.length;j++){var g=Math.hypot(e[0]-C[j][0],e[1]-C[j][1])-C[j][2];if(g<d)d=g;}if(d>worst)worst=d;}
@@ -315,11 +315,13 @@ window.__wfBlink=function(path,dur){
       (function step(now){
         if(!el.parentNode)return;
         var tp=Math.min(1,(now-t1)/dur),ready=haveData()&&drawn(),goal=ready?tp:Math.min(tp,.88),dt=Math.min(64,now-last);last=now;
-        wave.p+=(goal-wave.p)*(1-Math.exp(-dt/220));
+        wave.p+=(goal-wave.p)*(1-Math.exp(-dt/220));if(goal>=1&&1-wave.p<.004)wave.p=1;
         // in step with the counter: at n% the front has covered n% of the way to the farthest corner, and at 100% the
         // normal colour has just reached every corner (the shape's smallest lobe included)
-        var q=Math.min(1,wave.p);paint(q*(R+band*1.5)/.94);
-        if(((wave.cov||0)>=1||wave.p>.995)&&ready){wave.p=1;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
+        // the front's full colour reaches every corner exactly at 98% (farthest corner, widest lobe drift, smallest breath),
+        // so at 98% the whole photo is at its normal colour and the wave is over; 98 to 100% only closes the count
+        var REND=(R+90*.05+band*.15*1.45)/(.965-.025*.05),q=Math.min(1,wave.p/.98);if(q<1)paint(q*REND,q);else if(!wave.full){wave.full=true;norm.style.webkitMaskImage=norm.style.maskImage='none';hot.style.opacity='0';}
+        if(wave.p>.995&&ready){wave.p=1;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
     var start=function(up){if(!up&&!im.src)im.src='assets/splash/'+ph[0];};
@@ -336,7 +338,7 @@ window.__wfBlink=function(path,dur){
     var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
     if(!ready)goal=Math.min(goal,90);   // the wave follows the counter, so the counter no longer waits for it
     // counts in jumps of 2 to 5, about every 1/28 of the loading time, never past where loading has got to
-    if(wave){pv=wave.done?100:Math.max(pv,Math.min(99,Math.floor((wave.cov||0)*100)));}   // with the colour wave, the counter reads how much of the screen it has reached
+    if(wave){pv=wave.done?100:Math.max(pv,Math.min(99,Math.floor(wave.p*100+1e-6)));}   // with the colour wave, the counter reads the wave's progress: 98% is the moment it has covered the whole screen
     else if((cold||soft)&&Date.now()-t0<2500){pv=0;}   // the photo is still arriving: the count starts with the colour
     else{if(pv<goal){pv=Math.min(goal>=100?100:Math.floor(goal),pv+2+Math.floor(Math.random()*4));}
     if(goal>=100&&pv>=98)pv=100;}
