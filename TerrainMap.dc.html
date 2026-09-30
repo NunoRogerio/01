@@ -26,6 +26,8 @@
 <x-dc>
 <helmet>
 <style>
+.wf-halo{text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)}html.wf-dark .wf-halo{text-shadow:0 0 2px #1C1C1E,0 0 6px #1C1C1E,0 0 12px rgba(28,28,30,0.9)}
+
 body{margin:0}
 .igpill{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);display:flex;flex-direction:column;border-radius:16px;background:rgba(255,255,255,0.9);border:1px solid rgba(60,60,67,0.154);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 28px -10px rgba(0,0,0,0.187);font:400 15px -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;letter-spacing:0;text-shadow:none;animation:igin .35s cubic-bezier(.2,.8,.2,1) both}
 .igpill::after{content:"";position:absolute;left:50%;bottom:-5px;width:8px;height:8px;margin-left:-4px;background:rgba(255,255,255,0.9);border-right:1px solid rgba(60,60,67,0.154);border-bottom:1px solid rgba(60,60,67,0.154);transform:rotate(45deg)}
@@ -215,15 +217,15 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-for>
     <!-- The pin's label is the map's title, above the legend, so nothing on the map sits under it (not on a small detail map) -->
     <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: {{pinTtlD}}; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px;  pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
-      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{pinLabel}}</span>
-      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{pinCoords}}</span>
+      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinLabel}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinCoords}}</span>
     </div>
   </sc-if>
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
     <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px;  pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
-      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{mapTtl}}</span>
-      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 2px #F2F2F7, 0 0 6px #F2F2F7, 0 0 12px rgba(242,242,247,0.9)">{{mapSub}}</span>
+      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{mapTtl}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{mapSub}}</span>
     </div>
   </sc-if>
 
