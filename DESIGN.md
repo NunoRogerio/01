@@ -241,3 +241,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Incidents list:** a switcher (All / Candidates / Fires) then the app's search field, which searches only what the switcher shows ("Search fires" when on Fires); the subtitle keeps the full counts.
 - **Under the status bar (installed app):** the status bar is translucent; the frame runs from the very top, so maps and blurs continue under the clock and the camera. The incidents list, open, rises to the top safe area (just under the status bar).
 - **Endurance by station:** the units on a fire are listed per station, one white card each, headed by the station (crest, name, distance, crews still free after those on this fire, or "All crews on this fire"); air support in its own card. No separate "Stations on this fire" block when units are shown.
+- **Open incidents list:** rises to 16px under the status bar; the summary line at the foot ("7 ignition candidates / 7 fires") folds away so the list takes its room.
+- **Map tiles:** a ring of tiles around the view loads ahead, so a swipe never uncovers grey squares.

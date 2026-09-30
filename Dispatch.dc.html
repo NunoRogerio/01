@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=70"></script>
+<script src="fit.js?v=71"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=93"></script>
 <script src="i18n.js?v=86"></script>
@@ -395,7 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <!-- One scrolling column: the conclusion, then everything else; the actions stay fixed below -->
     <div class="{{pgCls}}" data-wf-page="{{pgOn}}" onScroll="{{pgScroll}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
     <!-- A viewed fire: the map is the top of the page and scrolls away with it (a tap opens it full screen) -->
-    <div aria-hidden="true" style="display: {{pgMapD}}; flex-shrink: 0; height: {{MAPH}}px"></div>
+    <div style="display: {{pgMapD}}; position: relative; flex-shrink: 0; height: {{MAPH}}px"><button type="button" onClick="{{openMap}}" aria-label="Full screen" style="position: absolute; right: 8px; bottom: 4px; width: 64px; height: 64px; padding: 0; border: 0; background: transparent; cursor: pointer"></button></div>
     <div style="display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1; padding-top: {{pgPadT}}; background: #F2F2F7">
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
          (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
