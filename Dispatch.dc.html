@@ -273,7 +273,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <button type="button" data-wf-kpicard="1" onClick="{{c.pick}}" aria-pressed="{{c.on}}" aria-label="{{c.aria}}" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: {{c.sh}}; border: 0; font: inherit; color: #000000; cursor: pointer; transition: box-shadow .2s ease">
             <span aria-hidden="true" style="position: absolute; top: 8px; right: 8px; display: {{c.chkD}}; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--wf-y); color: #1C1C1E"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
             <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; box-sizing: border-box; padding: 0 14px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">{{c.name}}</span>
-            <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{c.km}}</span><span style="font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">km</span></span>
+            <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{c.km}}</span><span style="font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{c.u}}</span></span>
             <span style="margin-top: auto; padding-top: 8px; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{c.sub}}</span>
           </button>
         </div>
@@ -1057,7 +1057,8 @@ class Component extends DCLogic {
     const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
     return { du, live: true, rows: L.map((q, i) => {
       const xy = P(q.la, q.lo), drive = Math.max(1, Math.round(q.km * 1.35 / 50 * 60));   // road ≈ 1.35 × straight line, 50 km/h average
-      return { id: 'osm' + q.osm, ck: (q.t || 'n') + q.osm, code: 'S' + (i + 1), name: q.name, x: xy[0], y: xy[1], km: +(US ? q.km * 0.621 : q.km).toFixed(1), free: null, total: null, t: [2, drive, 5], real: true };
+      let h = 0; for (const ch of String(q.osm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const tot = 2 + (h % 4), fr = wide ? (h >> 3) % (tot + 1) : null;   /* crews free: example figures (no public feed), seeded so they stay put */
+      return { id: 'osm' + q.osm, ck: (q.t || 'n') + q.osm, code: 'S' + (i + 1), name: q.name, x: xy[0], y: xy[1], km: +(US ? q.km * 0.621 : q.km).toFixed(1), free: fr, total: wide ? tot : null, t: fr === 0 ? null : [2, drive, 5], busy: fr === 0 ? 'All crews out' : undefined, real: true };
     }) };
   }
   renderVals() {
@@ -1119,7 +1120,7 @@ class Component extends DCLogic {
     // Dispatch orders sent from this app for this fire, per station: [{ id, code, name, km, n: [crews, tenders, helicopters, air tankers, jets, swarms], at }]
     const ORD = this.wfOrders()[fireId] || [], reinforce = !!s.reinforce;
     const sentN = (id) => { const o = ORD.find((q) => q.id === id); return o ? o.n : null; };
-    const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC, reinforce);
+    const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC, reinforce || !!s.crew);   /* configuring crews: stations further away too, for the full list */
     const DU = NEAR.du;
     const data = (NEAR.rows.length ? NEAR.rows : NEAR.live ? [{ id: 'none', code: '—', name: NEAR.loading ? 'Finding recommended stations…' : 'No fire station found nearby', x: FIRE[0], y: FIRE[1], km: 0, free: null, total: null, t: null, busy: NEAR.loading ? 'OpenStreetMap' : 'OpenStreetMap has none mapped near this fire', real: true }] : [
       { id: 'st7', code: 'ST-7', name: 'Sierra Madre', x: 674, y: 566, km: 2.5, free: 0, total: 3, t: null, busy: 'All crews on F-0924-01' },
@@ -1142,7 +1143,7 @@ class Component extends DCLogic {
     const multi = chosenList.length > 1;
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
-    const subOf = (d) => (d.sentTxt ? 'On this fire: ' + d.sentTxt + ' · ' : '') + (d.id === 'none' ? d.busy : d.real ? d.km + DU : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free'));
+    const subOf = (d) => (d.sentTxt ? 'On this fire: ' + d.sentTxt + ' · ' : '') + (d.id === 'none' ? d.busy : d.real ? d.km + DU + (d.free != null ? '. ' + (d.free > 0 ? Math.max(0, d.free) + ' of ' + d.total + ' crews free' : 'All crews out') : '') : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free'));
     const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#7A5600' : '#545458');
     const sum = chosen.eta, T = chosen.t || [0, 0, 0], sumD = sum || 1;
     const sel = {
@@ -1521,10 +1522,10 @@ class Component extends DCLogic {
       mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - MAPH) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
       hdBack: (e) => { if (!s.crew) return; try { e.preventDefault(); } catch (x) {} this.setState({ crew: false, reinforce: false }); },   /* configuring crews: back returns to the fire page */
       cw: (() => { const on = (id) => chosenList.some((q) => q.id === id), L = data.filter((d) => d.eta !== null && d.id !== 'none').sort((a, b) => (a.km || 0) - (b.km || 0));
-        const shown = L.slice(0, 5).concat(chosenList.filter((q) => L.slice(0, 5).indexOf(q) < 0));
+        const sug = L.slice(0, 2), shown = sug.concat(chosenList.filter((q) => sug.indexOf(q) < 0));   /* two suggestions (nearest with crews free); the + lists the rest, further away */
         const nm = (n) => String(n || '').replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria de Bombeiros Volunt[aá]rios|Corpo de Bombeiros|Quartel)( d[aeo]s?)?\s+/i, '').replace(/\bFire (Station|Department)\b\s*(No\.?\s*)?/ig, '').replace(/\s+County\b/i, '').replace(/\s+/g, ' ').trim() || 'Station';
         return { count: chosenList.length + ' chosen', cards: shown.map((d) => { const o = on(d.id), km = d.km != null ? (d.km < 10 ? (+d.km).toFixed(1) : String(Math.round(d.km))) : '—';
-          return { name: nm(d.name), km, sub: d.free != null ? d.free + ' crew' + (d.free === 1 ? '' : 's') + ' free' : (d.eta != null ? '~' + d.eta + ' min' : 'Available'), on: o ? 'true' : 'false', chkD: o ? 'flex' : 'none',
+          return { name: nm(d.name), km, u: DU.trim(), sub: d.free != null ? Math.max(0, d.free) + ' crew' + (Math.max(0, d.free) === 1 ? '' : 's') + ' free' : (d.eta != null ? '~' + d.eta + ' min' : 'Available'), on: o ? 'true' : 'false', chkD: o ? 'flex' : 'none',
             sh: o ? '0 0 0 2px #3A3A3C, 0 2px 10px rgba(0,0,0,0.08)' : '0 2px 10px rgba(0,0,0,0.08)', aria: nm(d.name) + ', ' + km + ' km' + (o ? ', chosen' : ''),
             pick: () => { const cur = chosenList.map((q) => q.id), i = cur.indexOf(d.id); if (i >= 0) { if (cur.length > 1) cur.splice(i, 1); } else cur.push(d.id); try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stations: cur, stPick: true }); } }; }) }; })(),
       kp: this.wfPicker(), pkOpenKpi: () => this.setState({ pick: 'kpi' }),
