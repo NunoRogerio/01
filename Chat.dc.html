@@ -13,10 +13,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=78"></script>
+<script src="fit.js?v=80"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=94"></script>
+<script src="i18n.js?v=95"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=27"></script>
 <script src="trophy.js?v=14"></script>
@@ -97,7 +97,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
         <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
         <!-- Back to the screen before: the round back button at the right -->
-        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
+        <a href="Main.dc.html" data-wf-back="1" class="chbtn" onClick="{{back}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <button type="button" class="chrow" onClick="{{c.tog}}" aria-expanded="{{c.expStr}}" aria-label="{{c.pinAria}}" style="display: {{c.stateD}}; flex-direction: column; gap: 12px; margin: 0 16px 12px; padding: 12px 16px; border: 0; border-radius: 14px; background: {{c.bg}}; color: #000000; font: inherit; text-align: left; cursor: pointer; transition: background-color .6s ease">
@@ -295,7 +295,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== Resolution summary ===== -->
   <sc-if value="{{isSummary}}" hint-placeholder-val="{{ false }}">
     <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 12px 12px; flex-shrink: 0">
-      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
+      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.sumTitle}}</h1>
         <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
@@ -316,7 +316,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               </div>
             </div>
           </sc-for>
-          <button type="button" class="mbtn" onClick="{{sk.open}}" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <button type="button" class="mbtn" onClick="{{sk.open}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
       </section>
       <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 4px; border-radius: 14px; background: #FFFFFF">
@@ -358,9 +358,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <!-- Cards picker for the key figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
-    <section role="dialog" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 24px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px">
-        <div style="display: flex; align-items: center; gap: 12px; min-width: 0"><button type="button" class="chbtn" onClick="{{sk.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></button><h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.kf}}</h2></div>
+    <section role="dialog" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; padding-right: 16px">
+        <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="chbtn" onClick="{{sk.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; line-height: 32px">{{t.kf}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Choose the ones to show.</span></span></div>
         <button type="button" class="chbtn" onClick="{{sk.reset}}" style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{t.reset}}</button>
       </div>
       <div class="chscroll" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
@@ -374,7 +374,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== A firefighter's profile and achievements ===== -->
   <sc-if value="{{isPerson}}" hint-placeholder-val="{{ false }}">
     <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 12px; flex-shrink: 0">
-      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a>
+      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; color: #545458; text-decoration: none"><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
     </header>
     <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">

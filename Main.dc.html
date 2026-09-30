@@ -14,10 +14,10 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=78"></script>
+<script src="fit.js?v=80"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=94"></script>
+<script src="i18n.js?v=95"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=27"></script>
 
@@ -321,7 +321,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-if value="{{inCounties}}" hint-placeholder-val="{{ false }}">
         <div class="sqwrap" data-sel="{{allState.selA}}" style="display: flex; align-items: center; gap: 8px; padding: 12px 0 12px 16px; border-radius: 0; border-bottom: 1px solid rgba(60,60,67,0.14); background-color: {{allState.selBg}}; transition: background-color .15s ease">
           <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>
           </button>
           <button type="button" class="sqrow nosep" disabled="{{allState.dis}}" onClick="{{allState.pick}}" aria-label="{{allState.aria}}" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; align-content: center; gap: 2px 12px; min-height: 52px; padding: 0 32px 0 0; flex-grow: 1; min-width: 0; border-radius: 999px; border: 0; background-color: transparent; color: {{allState.fg}}; text-align: left; font: inherit; cursor: pointer">
             <span style="min-width: 0; line-height: 20px; font-size: 17px; font-weight: 600">{{allState.name}}</span>

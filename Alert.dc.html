@@ -13,10 +13,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=78"></script>
+<script src="fit.js?v=80"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=97"></script>
-<script src="i18n.js?v=94"></script>
+<script src="i18n.js?v=95"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=27"></script>
 
@@ -178,7 +178,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <header class="fade" style="position: relative; display: flex; align-items: flex-start; gap: 0; padding: 4px 12px 8px 12px">
         <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Ignition candidates</h1>
       <a href="Main.dc.html" data-wf-back="1" class="mbtn sqback" onClick="{{navBack}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: {{backC}}; text-decoration: none">
-        <svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
+        <svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>
       </a>
       <sc-if value="{{hasActive}}" hint-placeholder-val="{{ true }}">
         <button type="button" class="opt ddbtn" onClick="{{ddToggle}}" aria-haspopup="listbox" aria-expanded="{{ddStr}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 4px 8px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: {{curRow.cursor}}">
@@ -275,7 +275,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               </div>
             </div>
           </sc-for>
-          <button type="button" class="mbtn" onClick="{{pkOpenIgn}}" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <button type="button" class="mbtn" onClick="{{pkOpenIgn}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
       </section>
 
@@ -295,7 +295,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 </div>
               </div>
             </sc-for>
-            <button type="button" class="mbtn" onClick="{{d.add}}" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+            <button type="button" class="mbtn" onClick="{{d.add}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </section>
         </sc-for>
@@ -384,7 +384,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <!-- The actions fixed at the foot, as on a fire: Back and Team chat (primary). Confirm and Dismiss open from the status tag -->
     <div style="position: relative; z-index: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7; transform: translateY({{downY}}); opacity: {{downOp}}; pointer-events: {{downPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-      <a href="Main.dc.html" data-wf-back="1" class="btn wf-ter" onClick="{{navBack}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m15 6-6 6 6 6"></path></svg><span>Back</span></a>
+      <a href="Main.dc.html" data-wf-back="1" class="btn wf-ter" onClick="{{navBack}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg><span>Back</span></a>
       <a href="Chat.dc.html" class="btn primary" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: {{ig.chatD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>Team chat<span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a>
     </div>
   </sc-if>
@@ -462,9 +462,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- Cards picker: the group's cards with toggles (shared by every card group on this screen) -->
   <div class="wf-glass scrim" onClick="{{pk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{pk.op}}; pointer-events: {{pk.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-label="{{pk.title}}" aria-hidden="{{pk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 24px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{pk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px">
-      <div style="display: flex; align-items: center; gap: 12px; min-width: 0"><button type="button" class="mbtn" onClick="{{pk.close}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></button><h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{pk.title}}</h2></div>
+  <section role="dialog" aria-modal="true" aria-label="{{pk.title}}" aria-hidden="{{pk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{pk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; padding-right: 16px">
+      <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="mbtn" onClick="{{pk.close}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{pk.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Choose the ones to show.</span></span></div>
       <button type="button" class="mbtn" onClick="{{pk.reset}}" aria-label="Reset to the default cards" style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; cursor: pointer; flex-shrink: 0">Reset</button>
     </div>
     <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">

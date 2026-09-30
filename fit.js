@@ -578,20 +578,20 @@ window.__wfBlink=function(path,dur){
 })();
 
 // Round controls, every screen (close X, back, chat, bell, avatars, counts, map buttons): a press gives a light haptic and
-// swells the button by --wf-round-pop (40%) quickly, then lets it settle back slowly. Any round button made later gets it
+// swells the button by --wf-round-pop (30%) quickly, then lets it settle back slowly. Any round button made later gets it
 // for free: a button, link or role=button that is a circle up to 72px. Uses the separate 'scale' property, so a page's own
 // transforms and press styles stay as they are.
 (function(){
   document.addEventListener('pointerdown',function(e){
     var el=e.target&&e.target.closest?e.target.closest('button,a,[role=button]'):null;if(!el||!el.animate)return;
     var r=el.getBoundingClientRect(),pill=el.hasAttribute('data-round');if(!r.width)return;   // data-round: a pill that behaves like the round buttons
-    if(!pill){if(r.width>72||Math.abs(r.width-r.height)>2)return;var br=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;if(br<r.width/2-1)return;}
-    var k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop'))||1.4;
+    if(!pill){if(r.width>72||Math.abs(r.width-r.height)>2)return;var br=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;if(br<r.width*0.4)return;}   // round, or nearly (some screens give round buttons a 20px corner)
+    var k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop'))||1.3;
     try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}
-    // An X (close) button also turns a gentle quarter turn, as the notifications X does (unless the page already turns it)
+    // An X (close) button, and the + that adds cards, also turn a gentle quarter turn, as the notifications X does (unless the page already turns it)
     try{var sv=el.querySelector('svg'),pd=sv&&sv.querySelector('path'),d=pd?pd.getAttribute('d')||'':'';
-      if(sv&&/^M\s?[67][ ,]?[67]\s?l\s?1[02]/i.test(d)&&!/rotate/.test(sv.getAttribute('style')||'')){if(sv.__wfRot)sv.__wfRot.cancel();sv.__wfRot=sv.animate([{rotate:'0deg'},{rotate:'90deg'}],{duration:600,easing:'cubic-bezier(.25,.1,.25,1)',fill:'forwards'});setTimeout(function(){try{sv.__wfRot&&sv.__wfRot.cancel();}catch(x){}},1400);}}catch(x){}
+      if(sv&&(/^M\s?[67][ ,]?[67]\s?l\s?1[02]/i.test(d)||/^M12 5v14M5 12h14/.test(d))&&!/rotate/.test(sv.getAttribute('style')||'')){if(sv.__wfRot)sv.__wfRot.cancel();sv.__wfRot=sv.animate([{rotate:'0deg'},{rotate:'90deg'}],{duration:600,easing:'cubic-bezier(.25,.1,.25,1)',fill:'forwards'});setTimeout(function(){try{sv.__wfRot&&sv.__wfRot.cancel();}catch(x){}},1400);}}catch(x){}
     try{if(el.__wfPop)el.__wfPop.cancel();el.__wfPop=el.animate([{scale:'1',easing:'cubic-bezier(.2,.9,.3,1)'},{scale:String(k),offset:0.18,easing:'cubic-bezier(.4,0,.2,1)'},{scale:'1'}],{duration:480});}catch(x){}
   },{passive:true,capture:true});
-  try{document.documentElement.style.setProperty('--wf-round-pop','1.4');}catch(x){}
+  try{document.documentElement.style.setProperty('--wf-round-pop','1.3');}catch(x){}
 })();
