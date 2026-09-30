@@ -1061,7 +1061,10 @@ class Component extends DCLogic {
     clearTimeout(this._rgT); this._rgT = setTimeout(() => this.regionCheck(), 1000);
     // Remember the view right away: touch events can arrive faster than the screen updates, and each pinch step
     // must build on the last one (not on a view that has not been drawn yet), so the zoom follows the fingers smoothly.
-    const v = this.clampView(cx, cy, s); this._pv = Object.assign({}, this._pv || {}, v); this.setState(v);
+    const v = this.clampView(cx, cy, s); this._pv = Object.assign({}, this._pv || {}, v);
+    // One redraw per screen frame: touch events arrive faster than the phone draws (120 Hz screens send even more),
+    // so moves in between only update the remembered view and the next frame draws the latest one
+    this._pvNext = v; if (!this._pvRaf) this._pvRaf = requestAnimationFrame(() => { this._pvRaf = 0; const n = this._pvNext; this._pvNext = null; if (n) this.setState(n); });
   }
   zoomAt(lx, ly, f) {
     const v = this.view();
