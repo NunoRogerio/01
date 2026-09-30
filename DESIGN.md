@@ -325,3 +325,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Reset in card pickers:** disabled (faded to 40%, not tappable) while the cards are already the defaults; any change enables it; after a reset it is disabled again. Same in every picker (shared class .wf-reset).
 - **Status tags in qualifier bands (every variant: candidate, fire, dispatch, drone, station):** one size, the Unconfirmed one (32px tall, 6px 12px padding, 16px corners), with a 1px outline in the tag's own text colour at 20%. Unconfirmed keeps its dark tap-me outline and pulse instead.
 - **Fire page:** Location right under the map, as on the ignition candidate: place (parish, municipality, district, no repeats) and the GPS with its round copy button.
+- **Dialogs:** a dialog with Cancel needs no back button (at most an X, usually not even that). The resources step of Configure dispatch has none.
+- **Configure dispatch list:** the chosen stations scroll between the header and the fixed Cancel / Send order foot, however many are added; Add resources is disabled (faded, not tappable) when no station or air support is left to add.
