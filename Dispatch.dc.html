@@ -1338,7 +1338,8 @@ class Component extends DCLogic {
       // The order a firefighter reads it in: conditions now (weather, containment, spread), forces on scene, stations, history
       const CR = { 'Conditions': 0, 'Fire model': 0, 'Expected containment': 1, 'Perimeter': 3 };
       deployed.forEach((d) => { if (d.tl) d.g = 'hist'; else if (d.g === 'fire') { d.g = 'cond'; d.cr = CR[d.label] ?? 2; } });
-      { const FX = this.wfSimForces(fv, frow, INFO, RU, HELD); if (FX) deployed.push({ fx: true, item: false, g: 'forces', ...FX }); }
+      /* Endurance (water, shifts) only once crews are on it: a fire confirmed here with no orders yet has none */
+      if (!(frow && /^Confirmed from/.test(frow.note || '') && !ORD.length)) { const FX = this.wfSimForces(fv, frow, INFO, RU, HELD); if (FX) deployed.push({ fx: true, item: false, g: 'forces', ...FX }); }
       const HD = { cond: ['', ''], forces: ['', ''], hist: ['', ''], fire: ['', ''], res: ['', ''], st: ['Suggested stations', 'Within an ideal first attack · the likely first responders (estimate)'] };
       const out = []; let g0 = null;
       const ord = { cond: 0, forces: 1, res: 2, st: 3, hist: 5 }; deployed.sort((a, b) => (ord[a.g] ?? 2) - (ord[b.g] ?? 2) || (a.cr ?? 0) - (b.cr ?? 0));
