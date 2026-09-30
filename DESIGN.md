@@ -282,3 +282,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Chat state card:** collapsed by default: 32px icon, stage name (bold, stage colour), its summary, the thin stage bar; a chevron on the title line (no "Details"). A tap on the card expands or folds "In this stage / Since detection".
 - **Chat event cards:** the kicker (e.g. "Ignition detected. 17:18") is the bold title in the stage colour, 8px above the rest in normal text; icons 32px like the chat photos; station statuses are tags (grey for waiting, tinted for other states).
 - **Incidents blade header:** the area name (e.g. "California") is the title, in the former title style (17px bold); the line below keeps only the counts.
+- **Chat list rows:** place (title S) with the time, then the yellow unread count, then the chevron on the right; the stage and last message below on up to two lines.
