@@ -255,8 +255,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
        below adds another (choose the station, then its resources, suggested or your own, Apply). Cancel or Send orders at the foot. -->
   <div class="rise" style="display: flex; flex-direction: column; gap: 16px; padding: 24px 16px 0; animation-delay: 160ms">
     <span style="display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px -8px; font-size: 15px; line-height: 20px; color: #6E6E73"><span style="font-weight: 600">Stations and resources</span><span>{{pl.count}}</span></span>
+    <!-- Add a station first; each new station comes out from under it and pushes the others down -->
+    <!-- Add: the + tile's look (8px corners, same grey), a + before the words, medium grey -->
+    <button type="button" class="mbtn" onClick="{{pl.add}}" style="position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #6E6E73; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 5v14M5 12h14"></path></svg><span>{{pl.addLbl}}</span></button>
     <sc-for list="{{pl.cards}}" as="p" hint-placeholder-count="0">
-      <button type="button" class="sqrow" onClick="{{p.edit}}" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 20px; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer">
+      <button type="button" class="mbtn" data-wf-plan="{{p.key}}" onClick="{{p.edit}}" aria-label="{{p.aria}}" style="position: relative; z-index: 1; display: grid; grid-template-columns: 40px minmax(0, 1fr) 20px; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer">
         <span aria-hidden="true" style="grid-row: 1 / span 3; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{p.icBg}}; color: #0079A6"><img src="{{p.crest}}" alt="" style="display: {{p.crestD}}; width: 40px; height: 40px; object-fit: contain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{p.airD}}"><path d="M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7"></path></svg></span>
         <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{p.name}}</span>
         <span aria-hidden="true" style="grid-row: 1 / span 3; grid-column: 3; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
@@ -264,9 +267,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{p.sub}}</span>
       </button>
     </sc-for>
-    <!-- Add a station: a grey card across the width -->
-    <!-- Add: the + tile's look (8px corners, same grey), a + before the words, medium grey -->
-    <button type="button" class="mbtn" onClick="{{pl.add}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #6E6E73; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 5v14M5 12h14"></path></svg><span>{{pl.addLbl}}</span></button>
   </div>
 
   <div class="rise" style="margin-top: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 16px 16px 40px; animation-delay: 360ms">
@@ -739,7 +739,24 @@ class Component extends DCLogic {
       close: () => this.setState({ pick: null }) };
   }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
-  componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); }
+  componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); this.planFlip(); }
+  // Chosen stations: a new one comes out from under Add (newest on top) and settles with a light bounce; the ones already
+  // there slide down to make room (FLIP on their positions in the page's own pixels)
+  planFlip() {
+    const els = Array.prototype.slice.call(document.querySelectorAll('[data-wf-plan]')).filter((el) => el.offsetParent);
+    const prev = this._planTop || {}, next = {}, first = !this._planTop;
+    els.forEach((el) => { next[el.getAttribute('data-wf-plan')] = el.offsetTop; });
+    if (!first) els.forEach((el) => { const k = el.getAttribute('data-wf-plan'), y = next[k];
+      try {
+        if (!(k in prev)) { const h = el.offsetHeight + 16;
+          el.animate([{ transform: 'translateY(' + (-h) + 'px)', opacity: 0 }, { transform: 'translateY(' + (-h * 0.4) + 'px)', opacity: 1, offset: 0.35 }, { transform: 'translateY(6px)', offset: 0.78 }, { transform: 'translateY(0)' }],
+            { duration: 700, delay: 220, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'backwards' }); }
+        else if (Math.abs(prev[k] - y) > 1) { const d = prev[k] - y;
+          el.animate([{ transform: 'translateY(' + d + 'px)' }, { transform: 'translateY(' + d + 'px)', offset: 0.05 }, { transform: 'translateY(5px)', offset: 0.8 }, { transform: 'translateY(0)' }],
+            { duration: 700, delay: 220, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'backwards' }); }
+      } catch (e) {} });
+    this._planTop = els.length || !first ? next : null;
+  }
   // The forces blade, lowered, shows its title and the KPIs only; the rest comes up with a swipe up
   wfSbMeasure() { try { const b = document.querySelector('[data-sb]'); if (!b) return; const k = [].slice.call(b.querySelectorAll('[data-sb-kpi], [data-sb-kpi2]')).filter((n) => n.offsetParent !== null).pop() || b.querySelector('#sentTitle');
       const h = Math.round(k.getBoundingClientRect().bottom - b.getBoundingClientRect().top) / ((b.getBoundingClientRect().width / b.offsetWidth) || 1) + 30;
@@ -1351,7 +1368,7 @@ class Component extends DCLogic {
         const sumOf = (id, n) => (id === 'air' ? n.map((v, i) => v ? W(i + 2, v) : '').filter(Boolean) : n.map((v, i) => v ? W(i, v) : '').filter(Boolean)).join('. ') || 'Nothing selected';
         const nm = (d) => (d.code && d.code !== '—' ? d.code + '. ' : '') + d.name;
         const cards = plan.map((p) => { const d = p.id === 'air' ? null : byId(p.id), crest = d ? crestOf(d) : '';
-          return { name: d ? nm(d) : 'Air support', sum: sumOf(p.id, p.n) + '.', sub: d ? (d.km != null ? d.km + DU + '. ' : '') + (d.eta != null ? '~' + d.eta + ' min to the fire line.' : '') : 'From the nearest air bases.',
+          return { key: String(p.id), name: d ? nm(d) : 'Air support', sum: sumOf(p.id, p.n) + '.', sub: d ? (d.km != null ? d.km + DU + '. ' : '') + (d.eta != null ? '~' + d.eta + ' min to the fire line.' : '') : 'From the nearest air bases.',
             crest, crestD: crest ? 'block' : 'none', airD: d ? 'none' : 'block', icBg: d ? 'transparent' : 'rgba(0,121,166,0.1)', aria: (d ? nm(d) : 'Air support') + '. ' + sumOf(p.id, p.n) + '. Change',
             edit: () => this.setState({ flow: { step: 'res', id: p.id, draft: p.n.slice(), edit: true } }) }; });
         const hasSt = plan.some((p) => p.id !== 'air');
@@ -1375,7 +1392,7 @@ class Component extends DCLogic {
             pick: () => { if (!dis) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ flow: { step: 'res', id: d.id, draft: recFor(d.id), edit: false } }); } } }; });
         const close = () => this.setState({ flow: null });
         return {
-          pl: { avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(), cards, count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: plan.length ? 'Add another station' : 'Add station and resources',
+          pl: { avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(), cards: cards.slice().reverse(), count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: plan.length ? 'Add another station' : 'Add station and resources',
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
           fl: { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close,
