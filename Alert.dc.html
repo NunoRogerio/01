@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=85"></script>
+<script src="prefs.js?v=86"></script>
 <script src="i18n.js?v=74"></script>
 <script src="live.js?v=33"></script>
 <script src="chat.js?v=18"></script>
@@ -160,6 +160,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 .sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}.sqrow.nosep::after{display:none}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(255,255,255,.7)!important}}
 .sqrow:not([disabled]):active{opacity:.68}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
 
+.wf-page.morph>:not(:first-child){opacity:0!important;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: {{rootBg}}; transition: background-color .6s ease; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
@@ -227,10 +228,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0"><h2 id="ai" style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{curRow.place}}</h2><span style="flex-shrink: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #3A3A3C; white-space: nowrap; font-variant-numeric: tabular-nums">{{ig.ago}}</span></span>
         <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-top: 2px"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{region}}</span><span style="display: {{ig.detD}}; flex-shrink: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap">{{ig.det}}</span></span>
       </button>
-      <span class="wf-qual" style="margin-top: 12px; padding-right: 4px; border-radius: 18px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1.5H13L7 12.5Z" style="fill: var(--wf-y)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">Ignition candidate</span><span role="status" style="display: inline-flex; flex-shrink: 0; align-items: center; margin-left: auto; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: #F2F2F7; color: #3A3A3C; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">Unconfirmed</span></span>
+      <span class="wf-qual hd" style="margin-top: 12px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1.5H13L7 12.5Z" style="display: {{mo.triD}}; fill: var(--wf-y)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" style="display: {{mo.dotD}}" fill="#E8590C"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{mo.kind}}</span><button type="button" class="qtag mbtn" onClick="{{mo.open}}" aria-haspopup="dialog" aria-label="{{mo.aria}}" style="display: inline-flex; flex-shrink: 0; align-items: center; gap: 4px; margin-left: auto; box-sizing: border-box; border: 0; background: {{mo.bg}}; color: {{mo.fg}}; font: inherit; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: background-color .4s ease, color .4s ease">{{mo.tag}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{mo.chevD}}; margin-right: -2px"><path d="m6 9 6 6 6-6"></path></svg></button></span>
     </div>
 
-    <div class="wf-page" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+    <div class="wf-page {{mo.pageCls}}" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
       <!-- The map band: only this candidate, framed on it; a tap or the button opens it full screen -->
       <div style="position: relative; flex-shrink: 0; height: 234px; overflow: hidden">
         <dc-import name="TerrainMap" on-bg-tap="{{openMap}}" on-full="{{openMap}}" mode="pin" no-view="true" fire-only="true" loader="true" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" hint-size="390px,234px"></dc-import>
@@ -252,7 +253,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <path d="{{m.bars}}" fill="{{m.barC}}" stroke="none"></path>
                   <path d="{{m.bar2}}" fill="#3A3A3C" stroke="none"></path>
                 </svg>
-                <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 11px !important; line-height: 13px !important; opacity: 0.5; pointer-events: none">{{m.note}}</span>
+                <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 11px !important; line-height: 13px !important; opacity: 0.4; pointer-events: none">{{m.note}}</span>
               </div>
             </div>
           </sc-for>
@@ -272,7 +273,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <span style="display: {{m.numD}}; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                   <span style="display: {{m.txtD}}; margin-top: 4px; font-size: 17px; line-height: 22px; font-weight: 700; color: #3A3A3C">{{m.txt}}</span>
                   <span style="display: {{m.subD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.sub}}</span>
-                  <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 8px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 11px !important; line-height: 13px !important; opacity: 0.5; pointer-events: none">{{m.note}}</span>
+                  <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 8px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 11px !important; line-height: 13px !important; opacity: 0.4; pointer-events: none">{{m.note}}</span>
                 </div>
               </div>
             </sc-for>
@@ -363,12 +364,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </section>
     </div>
 
-    <!-- The four actions, 2 x 2, fixed at the foot: decide (confirm, dismiss), then leave (back) or talk (team chat) -->
-    <div style="position: relative; z-index: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7; transform: translateY({{downY}}); opacity: {{downOp}}; pointer-events: {{downPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-      <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmCur}}" style="display: flex; align-items: center; justify-content: center; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">Confirm fire</a>
-      <button type="button" class="btn wf-sec" onClick="{{openDz}}" aria-haspopup="dialog" style="height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap">Dismiss</button>
+    <!-- The actions fixed at the foot, as on a fire: Back and Team chat (primary). Confirm and Dismiss open from the status tag -->
+    <div style="position: relative; z-index: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7; transform: translateY({{downY}}); opacity: {{downOp}}; pointer-events: {{downPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
       <a href="Main.dc.html" data-wf-back="1" class="btn wf-ter" onClick="{{navBack}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m15 6-6 6 6 6"></path></svg><span>Back</span></a>
-      <a href="Chat.dc.html" class="btn wf-ter" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: {{ig.chatD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>Team chat<span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a>
+      <a href="Chat.dc.html" class="btn primary" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: {{ig.chatD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>Team chat<span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a>
     </div>
   </sc-if>
 
@@ -394,6 +393,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </sc-if>
 
 
+  <!-- The status tag's choices: confirm it is a fire (the page turns into the fire's page), or dismiss it (asks first) -->
+  <div class="scrim" onClick="{{mo.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{mo.op}}; pointer-events: {{mo.pe}}"></div>
+  <section class="sheet wf-dlg" role="dialog" aria-modal="true" aria-labelledby="soTitle" aria-hidden="{{mo.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{mo.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+    <h2 id="soTitle" style="margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #000000">Is this a fire?</h2>
+    <p style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.place}}. Unconfirmed.</p>
+    <div class="wf-dlg-acts">
+      <button type="button" class="btn wf-sec" onClick="{{mo.dismiss}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 600">Dismiss</button>
+      <button type="button" class="btn primary" onClick="{{mo.confirm}}" style="height: 48px; font-size: 17px; font-weight: 600">Confirm fire</button>
+    </div>
+  </section>
   <div class="scrim" onClick="{{closeDz}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{dzOp}}; pointer-events: {{dzPE}}"></div>
   <section class="sheet wf-dlg" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column;  background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}}); transition-duration: {{dzT}}">
     <h2 id="dzTitle" style="margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; color: #000000">Dismiss this candidate?</h2>
@@ -515,26 +524,26 @@ class Component extends DCLogic {
     const frp = L && L.frp > 0 ? L.frp : null, nDet = L && L.n > 0 ? L.n : null, dI = Math.floor(R(9) * 5), DAN = ['Low', 'Moderate', 'High', 'Very high', 'Extreme'];
     const K = [
       { key: 'like', l: 'Likelihood', v: cur.conf + ' %', ch: lineCh(1, true, 'Likelihood as sources agreed') },
-      { key: 'frp', l: 'Heat power', v: (frp != null ? frp : Math.round((1 + R(2) * 40) * 10) / 10) + ' MW', ch: barCh(2, 'Radiative power over the passes'), note: frp != null ? '' : 'Simulated' },
+      { key: 'frp', l: 'Heat power', v: (frp != null ? frp : Math.round((1 + R(2) * 40) * 10) / 10) + ' MW', ch: barCh(2, 'Radiative power over the passes'), note: frp != null ? '' : 'Estimate' },
       // People at risk: a populated place within 5 km (from the satellite point's nearest place, e.g. "1.8 km north of Torrance")
       (() => { const m = /([\d.]+)\s*km\b[^A-Za-z]*(?:[a-z]+\s+)*of\s+(.+)$/i.exec(String((L && L.near) || cur.locPlace || '')), km = m ? parseFloat(m[1]) : null, town = m ? m[2] : '';
         if (km != null) return { key: 'pop', l: 'People at risk', v: km <= 5 ? 'Yes' : 'No', ch: none, sub: town + ', ' + (km < 10 ? km.toFixed(1) : Math.round(km)) + ' km' };
-        return { key: 'pop', l: 'People at risk', v: R(3) < 0.5 ? 'Yes' : 'No', ch: none, note: 'Simulated' }; })(),
-      { key: 'ago', l: 'Detected', v: ago || Math.round(1 + R(4) * 11) + ' h', ch: none, note: ago ? '' : 'Simulated' },
-      { key: 'eta', l: 'Nearest crew', v: '~' + Math.round(6 + R(5) * 20) + ' min', ch: none, note: 'Simulated' },
-      { key: 'dng', l: 'Fire danger', v: DAN[dI], ch: steps(dI, 5, 'Fire danger ' + DAN[dI] + ' of 5 levels'), note: 'Simulated' }];
+        return { key: 'pop', l: 'People at risk', v: R(3) < 0.5 ? 'Yes' : 'No', ch: none, note: 'Estimate' }; })(),
+      { key: 'ago', l: 'Detected', v: ago || Math.round(1 + R(4) * 11) + ' h', ch: none, note: ago ? '' : 'Estimate' },
+      { key: 'eta', l: 'Nearest crew', v: '~' + Math.round(6 + R(5) * 20) + ' min', ch: none, note: 'Estimate' },
+      { key: 'dng', l: 'Fire danger', v: DAN[dI], ch: steps(dI, 5, 'Fire danger ' + DAN[dI] + ' of 5 levels'), note: 'Estimate' }];
     // Extra cards, off until added from the + tile: the nearest active fire (real, from the live fires), the satellite, the
     // closest road (simulated)
     { const F = (window.__wfLiveFires || []).filter((r) => !(r[9] && r[9].resolved) && isFinite(r[5]) && isFinite(r[6])).map((r) => [r, { lat: 34.19 - (r[6] - 662) / 2829, lon: (r[5] - 518) / 2345 - 118.13 }]), km = (a, b, c, d) => Math.hypot((a - c) * 111, (b - d) * 111 * Math.cos(a * Math.PI / 180));
       const nf = L && L.lat != null && F.length ? Math.min(...F.map((q) => km(L.lat, L.lon, q[1].lat, q[1].lon))) : null;
       K.push({ key: 'nfire', l: 'Nearest fire', v: nf != null ? (nf < 10 ? nf.toFixed(1) : Math.round(nf)) + ' km' : '—', ch: none, opt: true, note: nf != null ? '' : 'No data' },
         { key: 'sat', l: 'Satellite', v: String((L && L.sat) || 'VIIRS').replace(/^VIIRS\s*/, '') || 'VIIRS', ch: none, opt: true },
-        { key: 'road', l: 'Nearest road', v: (Math.round((0.1 + R(21) * 3) * 10) / 10) + ' km', ch: none, opt: true, note: 'Simulated' },
-        { key: 'conf', l: 'Confidence', v: Math.round(40 + R(22) * 58) + ' %', ch: none, opt: true, note: 'Simulated' },
-        { key: 'hits', l: 'Detections', v: String(1 + Math.floor(R(23) * 6)), ch: none, opt: true, note: 'Simulated' },
-        { key: 'homes', l: 'Nearest home', v: (Math.round((0.1 + R(24) * 2) * 10) / 10) + ' km', ch: none, opt: true, note: 'Simulated' },
-        { key: 'stn', l: 'Nearest station', v: (Math.round((1 + R(25) * 14) * 10) / 10) + ' km', ch: none, opt: true, note: 'Simulated' },
-        { key: 'prot', l: 'Protected area', v: R(26) < 0.3 ? 'Yes' : 'No', ch: none, opt: true, note: 'Simulated' }); }
+        { key: 'road', l: 'Nearest road', v: (Math.round((0.1 + R(21) * 3) * 10) / 10) + ' km', ch: none, opt: true, note: 'Estimate' },
+        { key: 'conf', l: 'Confidence', v: Math.round(40 + R(22) * 58) + ' %', ch: none, opt: true, note: 'Estimate' },
+        { key: 'hits', l: 'Detections', v: String(1 + Math.floor(R(23) * 6)), ch: none, opt: true, note: 'Estimate' },
+        { key: 'homes', l: 'Nearest home', v: (Math.round((0.1 + R(24) * 2) * 10) / 10) + ' km', ch: none, opt: true, note: 'Estimate' },
+        { key: 'stn', l: 'Nearest station', v: (Math.round((1 + R(25) * 14) * 10) / 10) + ' km', ch: none, opt: true, note: 'Estimate' },
+        { key: 'prot', l: 'Protected area', v: R(26) < 0.3 ? 'Yes' : 'No', ch: none, opt: true, note: 'Estimate' }); }
     let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-ign') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : K.map((q) => q.key);
     { const vis = this.wfGrpNote('ign', K); for (let i = K.length - 1; i >= 0; i--) if (!vis(K[i].key)) K.splice(i, 1); }
     const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; K.sort((a, b) => ix(a.key) - ix(b.key));
@@ -544,7 +553,7 @@ class Component extends DCLogic {
     // Weather and terrain: the fire model's reading at this point when it has one (Open-Meteo, terrain, fuel), else simulated and labelled
     let MI = null; try { if (window.__wfLiveMap && window.__wfFireModel && L && L.lat) { const M = window.__wfFireModel({ id: 'IGN-' + cur.id, st: cur.st, lat: L.lat, lon: L.lon, ha: 1, note: '' }); if (M && !M.failed && M.info) MI = M.info; } } catch (e) {}
     const SI = MI || { wind: Math.round(5 + R(11) * 25), from: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(R(12) * 8)], temp: Math.round(18 + R(13) * 17), rh: Math.round(15 + R(14) * 45), md: Math.round(4 + R(15) * 10), slope: Math.round(2 + R(16) * 28), fuel: ['Shrubland', 'Forest with understory', 'Grass', 'Broadleaf forest'][Math.floor(R(17) * 4)] };
-    const cond = this.wfCondCards(SI, { st: cur.st }, null, MI ? '' : 'Simulated');
+    const cond = this.wfCondCards(SI, { st: cur.st }, null, MI ? '' : 'Estimate');
     return { cond, kpis, ago: ago ? ago + ' ago' : '', det, detD: det ? 'block' : 'none', evMt: hasFig ? '8px' : '0', gpsBd: '1px solid rgba(60,60,67,0.12)', chatD: 'flex' };
   }
   // Conditions at the fire as cards (sim: a note for every card when the figures are simulated)
@@ -554,7 +563,7 @@ class Component extends DCLogic {
           const C0 = [{ key: 'wind', l: 'Wind', v: I.wind + ' km/h', sub: 'From ' + I.from }, { key: 'temp', l: 'Temperature', v: tC }, { key: 'rh', l: 'Humidity', v: I.rh + ' %' },
             { key: 'md', l: 'Fuel moisture', v: I.md + ' %' }, { key: 'slope', l: 'Slope', v: I.slope + ' °' }, { key: 'fuel', l: 'Fuel', v: '', txt: String(I.fuel || '').replace(/\s*\(assumed\)\s*$/i, ''), note: /\(assumed\)/i.test(String(I.fuel || '')) ? 'Estimate' : '' },
             // Extra cards, off until the user adds them (simulated where no feed gives them yet)
-            ...(() => { let sd = 0; for (const ch of String((frow && frow.id) || I.fuel || 'x') + I.wind + I.temp) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0; const R = (k) => { const q = Math.sin(sd * 0.0011 + k * 3.7) * 43758.5453; return q - Math.floor(q); }, SIM = 'Simulated';
+            ...(() => { let sd = 0; for (const ch of String((frow && frow.id) || I.fuel || 'x') + I.wind + I.temp) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0; const R = (k) => { const q = Math.sin(sd * 0.0011 + k * 3.7) * 43758.5453; return q - Math.floor(q); }, SIM = 'Estimate';
               const fwi = Math.round(Math.max(1, Math.min(60, (I.temp || 20) * 0.9 + (I.wind || 10) * 0.7 - (I.rh || 40) * 0.4 + R(1) * 8))), fwc = fwi < 11 ? 'Low' : fwi < 21 ? 'Moderate' : fwi < 33 ? 'High' : fwi < 50 ? 'Very high' : 'Extreme';
               return [{ key: 'gust', l: 'Gusts', v: Math.round((I.wind || 10) * (1.4 + R(2) * 0.4)) + ' km/h', opt: true, note: SIM }, { key: 'rain', l: 'Rain 24 h', v: (Math.round(R(3) * 30) / 10) + ' mm', opt: true, note: SIM },
                 { key: 'fwi', l: 'Fire weather', v: String(fwi), sub: fwc, opt: true, note: SIM },
@@ -1000,6 +1009,17 @@ class Component extends DCLogic {
       droneOnStr: droneOn ? 'true' : 'false', toggleDrone: () => this.setState({ droneToo: !droneOn }),
       trackBg: droneOn ? '#1E7A34' : 'rgba(120,120,128,0.16)', knobX: droneOn ? '20px' : '0px',
       openDz: () => this.setState({ dz: true, dd: false }), closeDz: () => this.setState({ dz: false }),
+      mo: (() => { const M = !!s.morph, O = !!s.so && !M;
+        return { kind: M ? 'Active fire' : 'Ignition candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : '#F2F2F7', fg: M ? '#B84A00' : '#3A3A3C', chevD: M ? 'none' : 'block', triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
+          aria: M ? 'Active fire. Not contained' : 'Unconfirmed. Confirm fire or dismiss', pageCls: M ? 'morph' : '',
+          op: O ? 1 : 0, pe: O ? 'auto' : 'none', hidden: O ? 'false' : 'true', y: O ? '0%' : '105%',
+          open: () => { if (!M) this.setState({ so: true, dd: false }); }, close: () => this.setState({ so: false }),
+          dismiss: () => { this.setState({ so: false }); setTimeout(() => this.setState({ dz: true }), 260); },
+          /* confirmed: the same page becomes the fire's page. The header turns into the fire's, the widgets under the map
+             fade, then the fire page takes over with the same header and map and fades its own widgets in */
+          confirm: () => { if (this._moDone) return; this._moDone = true; this.setState({ so: false, morph: true }); const id = cur.id;   /* confirmed as the page leaves, so this header keeps its candidate */
+            try { window.sessionStorage.setItem('wf-morph', String(Date.now())); } catch (e) {}
+            setTimeout(() => { this.wfConfirm(id); try { window.location.replace('Dispatch.dc.html'); } catch (e) {} }, 700); } }; })(),
       confirmDz: () => { if (this._dzDone) return; this._dzDone = true; const d = this.wfDismissed(); if (!d[cur.id]) { d[cur.id] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._dzDone = false; this.setState({ dz: false, ci: 0, focusId: null, tab: null, full: false }); }, 800); },
       dzY: dz ? 'calc(0% + ' + this.wfDrag('dz').y + 'px)' : '105%', dzT: this.wfDrag('dz').t === '0s' ? '0s' : '.5s', hDz: this.wfHandle('dz', 'down', () => this.setState({ dz: false })), dzOp: dz ? 1 : 0, dzPE: dz ? 'auto' : 'none', dzHidden: dz ? 'false' : 'true',
       dismiss, undo, restore, hasToast: !!s.toast && !!dismissed[s.toast], toastText: (s.toast || '') + ' dismissed',
