@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=79"></script>
+<script src="prefs.js?v=80"></script>
 <script src="i18n.js?v=59"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
@@ -1428,20 +1428,20 @@ class Component extends DCLogic {
           const ar = (v) => u.area === 'ha' ? v : v / 0.4047, fm = (v) => v >= 100 ? Math.round(v).toLocaleString() : v >= 10 ? String(Math.round(v)) : (Math.round(v * 10) / 10).toLocaleString();
           const per = bk === HR ? '/h' : bk === 6 * HR ? '/6 h' : '/day', last = ar(rate[nb - 1]), mx = Math.max(...rate);
           grow = { v: fm(last) + ' ' + u.area + per, rate, cum, nb, mx,
-            chR: { ...trend(rate, mx, '#B84A00', 'rgba(184,74,0,0.14)'), aria: 'Burned area added ' + (per === '/h' ? 'per hour' : per === '/day' ? 'per day' : 'every 6 hours') + ', latest ' + fm(last) + ' ' + u.area },
-            chC: { ...none, svgD: 'block', bars: barsOf(cum, HA, 0, nb), barC: '#B84A00', aria: 'Burned area grew to ' + area } };
+            chR: { ...trend(rate, mx, '#3A3A3C', (() => { const h = String(window.__wfY || '#E5FF00').replace('#', ''), n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16); return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',0.5)'; })()), aria: 'Burned area added ' + (per === '/h' ? 'per hour' : per === '/day' ? 'per day' : 'every 6 hours') + ', latest ' + fm(last) + ' ' + u.area },
+            chC: { ...none, svgD: 'block', bars: barsOf(cum, HA, 0, nb), barC: '#3A3A3C', aria: 'Burned area grew to ' + area } };
         }
         // Time active: the official stages over the same span, as an 8px bar (from the stage timeline, without the forecast)
         const chT = live && TL && TL.nowL > 0 ? { ...none, segD: 'flex', segs: TL.segs.slice(0, TL.segs.length - (TL.segs.length > 1 && /gradient/.test(TL.segs[TL.segs.length - 1].bg) ? 1 : 0)).map((q) => ({ w: +(q.w / TL.nowL * 100).toFixed(2), bg: q.bg, op: q.op })), aria: 'Stages since ' + clk(t0) + ': ' + TL.curName } : none;
         // Personnel: small bars building up to today's count (the first crews, then reinforcements), same span as the others
-        const P = Number(String(pers).replace(/\D/g, '')), pv = [...Array(12)].map((_, i) => Math.round(P * Math.min(1, 0.25 + i / 11 * 1.6))), chP = live && P ? { ...none, svgD: 'block', bars: barsOf(pv, P, 0, 12), barC: '#636366', aria: 'Personnel built up to ' + pers } : none;
+        const P = Number(String(pers).replace(/\D/g, '')), pv = [...Array(12)].map((_, i) => Math.round(P * Math.min(1, 0.25 + i / 11 * 1.6))), chP = live && P ? { ...none, svgD: 'block', bars: barsOf(pv, P, 0, 12), barC: '#3A3A3C', aria: 'Personnel built up to ' + pers } : none;
         const chB = live && pcT ? { ...trend([...Array(12)].map((_, i) => I.pc * Math.pow(i / 11, 1.6)), 100, '#1E7A34', 'rgba(52,199,89,0.14)'), aria: 'Containment rose to ' + I.pc + '%' } : none;
         // Order: how fast it spreads, how long it has burned, how much, who is on it. Time active needs no chart (the stages bar sits under the map)
         // Time active sits in the header now; three KPI cards in the user's own order (press, hold and slide to reorder)
         // Size class: the US scale (NWCG, A to G by acres), used for every region (Portugal publishes no size classes)
         const SC = (() => { if (!(HA > 0)) return null; const ac = HA / 0.4047, T = [0.25, 10, 100, 300, 1000, 5000], i = T.filter((x) => ac >= x).length, L = 'ABCDEFG'[i];
           const hs = [4, 7, 10, 13, 17, 22, 28], bars = hs.map((h, j) => 'M' + (j * 100 / 7 + 2).toFixed(2) + ' ' + (28 - h) + 'h' + (100 / 7 - 4).toFixed(2) + 'v' + h + 'h-' + (100 / 7 - 4).toFixed(2) + 'Z');
-          return { key: 'size', v: L, l: 'Size class', note: haEst ? 'Estimate' : '', ch: { ...none, svgD: 'block', bars: bars.filter((_, j) => j !== i).join(''), barC: 'rgba(118,118,128,0.22)', bar2: bars[i], bar2C: '#B84A00', aria: 'Size class ' + L + ' of A to G (NWCG)' } }; })();
+          return { key: 'size', v: L, l: 'Size class', note: haEst ? 'Estimate' : '', ch: { ...none, svgD: 'block', bars: bars.filter((_, j) => j !== i).join(''), barC: 'rgba(118,118,128,0.22)', bar2: bars[i], bar2C: '#3A3A3C', aria: 'Size class ' + L + ' of A to G (NWCG)' } }; })();
         const med0 = [grow ? { key: 'rate', v: grow.v, l: 'Spread rate', ch: grow.chR } : null, SC,
           { key: 'area', v: area, l: 'Burned area', ch: grow ? grow.chC : none, note: haEst ? 'Estimate' : HA == null ? 'Not published' : '' }, pers ? { key: 'pers', v: pers, l: 'Personnel', ch: chP } : null].filter(Boolean);
         { let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : ['rate', 'area', 'size', 'pers']; const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; med0.sort((a, b) => ix(a.key) - ix(b.key)); }

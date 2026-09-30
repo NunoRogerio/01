@@ -66,6 +66,7 @@
     o.push('html,body{background:#1E1E20!important;color:#E8E8ED}a{color:#409CFF}');
     o.push('.segblob{background:var(--wf-y)!important}.segopt[aria-checked=true],.segopt[aria-selected=true]{color:#1C1C1E!important}.segopt[aria-checked=false],.segopt[aria-selected=false]{color:#D1D1D6!important}');   // the accent is the same hi-vis yellow in both themes
     o.push('.wf-qual{background:#3A3A3C!important;color:#E8E8ED!important}');
+    o.push('[data-wf-kpicard] path[fill="#3A3A3C"]{fill:#D1D1D6}[data-wf-kpicard] path[stroke="#3A3A3C"]{stroke:#D1D1D6}');   // KPI micro charts: the dark grey reads light at night
     o.push('.sheet{background:#262629!important}.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder{color:#AEAEB2!important}');
     o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
     o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
