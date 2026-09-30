@@ -772,7 +772,7 @@ class Component extends DCLogic {
           // Conditions as cards, like the KPIs (press, hold and move to reorder; kept on the phone)
           const U = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units || {}; return { temp: v.temp || (frow && frow.st !== 'PT' && frow.st !== 'BRA' ? 'F' : 'C') }; })(), tC = U.temp === 'F' ? Math.round(I.temp * 9 / 5 + 32) + ' °F' : I.temp + ' °C';
           const C0 = [{ key: 'wind', l: 'Wind', v: I.wind + ' km/h', sub: 'From ' + I.from }, { key: 'temp', l: 'Temperature', v: tC }, { key: 'rh', l: 'Humidity', v: I.rh + ' %' },
-            { key: 'md', l: 'Fuel moisture', v: I.md + ' %' }, { key: 'slope', l: 'Slope', v: I.slope + ' °' }, { key: 'fuel', l: 'Fuel', v: '', txt: String(I.fuel || '') }];
+            { key: 'md', l: 'Fuel moisture', v: I.md + ' %' }, { key: 'slope', l: 'Slope', v: I.slope + ' °' }, { key: 'fuel', l: 'Fuel', v: '', txt: String(I.fuel || '').replace(/\s*\(assumed\)\s*$/i, ''), note: /\(assumed\)/i.test(String(I.fuel || '')) ? 'Estimate' : '' }];   // an assumed fuel type is an estimate: said by the card's vertical note
           // Terrain: the relief from the slope, and the cover from what burned (ICNF shares in Portugal) or from the fuel model
           { const sl = Number(I.slope) || 0, rel = sl < 5 ? 'Flat' : sl < 12 ? 'Rolling' : sl < 25 ? 'Hilly' : 'Mountainous';
             const B = INFO && INFO.burn, fu = String(I.fuel || '').toLowerCase();
@@ -781,7 +781,7 @@ class Component extends DCLogic {
             C0.splice(1, 0, { key: 'terr', l: 'Relief', v: '', txt: rel + (cov ? '. ' + cov + '.' : '.') }); }
           let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-cond') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : C0.map((q) => q.key);
           const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; C0.sort((a, b) => ix(a.key) - ix(b.key));
-          const mk = (m, grp) => { const q = /^(\S+)\s+(.+)$/.exec(m.v); return { ...m, n: q ? q[1] : m.v, u: q ? q[2] : '', uD: q ? 'inline' : 'none', numD: m.txt ? 'none' : 'flex', txtD: m.txt ? 'block' : 'none', txt: m.txt || '', subD: m.sub ? 'block' : 'none', sub: m.sub || '', ...this.wfKpiDrag(m.key, grp), note: '', noteD: 'none' }; };
+          const mk = (m, grp) => { const q = /^(\S+)\s+(.+)$/.exec(m.v); return { ...m, n: q ? q[1] : m.v, u: q ? q[2] : '', uD: q ? 'inline' : 'none', numD: m.txt ? 'none' : 'flex', txtD: m.txt ? 'block' : 'none', txt: m.txt || '', subD: m.sub ? 'block' : 'none', sub: m.sub || '', ...this.wfKpiDrag(m.key, grp), note: sim ? '' : (m.note || ''), noteD: !sim && m.note ? 'block' : 'none' }; };
           // Two sections: the ground (terrain, fuel, slope) and the weather (temperature, wind, fuel moisture, humidity)
           const T = ['terr', 'fuel', 'slope'], Wk = ['temp', 'wind', 'md', 'rh'];
           const pick = (keys, grp) => { let o = null; try { o = JSON.parse(localStorage.getItem('wf-order-' + grp) || 'null'); } catch (e) {} o = Array.isArray(o) ? o : keys; const ix2 = (k) => { const i = o.indexOf(k); return i < 0 ? 99 : i; };
@@ -1287,7 +1287,7 @@ class Component extends DCLogic {
       deployed.push({ src: true, item: false, text: [fireId, (fres && fres.src) || (frow && frow.info && frow.info.src) || ''].filter(Boolean).join('. ') + '.' }); }
     else deployed.push(...ordRows);
     const BRF = !!(frow && frow.st === 'BRA'), BI = BRF ? (frow.info || {}) : null;
-    const MAPH = 180;   // the detail page's map band: half height, framed on the fire; full screen from its button
+    const MAPH = 234;   // the detail page's map band: half height, framed on the fire; full screen from its button
     const tlTop = RO ? deployed.filter((d) => d.tl) : []; if (RO) for (let i = deployed.length - 1; i >= 0; i--) if (deployed[i].tl) deployed.splice(i, 1);   // the stages bar sits right under the map
     // Status colours, as in the fire's timeline: fighting / active deep orange, held green, out grey, forces on the way blue.
     const sentTitleC = TL && TL.curC ? TL.curC : HELD ? '#1E7A34' : (RO || BRF) ? '#B84A00' : '#0062CC';
