@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <script src="fit.js?v=67"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=82"></script>
+<script src="prefs.js?v=83"></script>
 <script src="i18n.js?v=71"></script>
 <script src="live.js?v=33"></script>
 <script src="chat.js?v=18"></script>
@@ -467,8 +467,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
                 <span style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 700; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
                 <span style="grid-column: 1 / -1; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
-                <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: {{u.barD}}; height: 16px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
-                  <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{u.pct}}%; border-radius: 999px; background: {{u.barC}}"></span>
+                <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: {{u.barD}}; height: 4px; margin-top: 8px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
+                  <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{u.pct}}%; border-radius: 999px; background: #3A3A3C"></span>
                 </span>
               </li>
             </sc-for>
@@ -520,8 +520,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: {{d.curC}}">{{d.curName}}</span>
             <span style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; white-space: nowrap; display: {{d.sinceD}}"><span style="font-weight: 400; color: #545458">{{d.sinceApprox}}</span><span data-tl-since="{{d.since}}"></span></span>
           </span>
-          <span role="img" aria-label="Stage timeline" style="position: relative; display: block; height: 16px">
-            <span style="display: flex; height: 16px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden"><sc-for list="{{d.segs}}" as="sg" hint-placeholder-count="0"><span style="flex: 0 0 {{sg.w}}%; height: 16px; background: {{sg.bg}}; opacity: {{sg.op}}"></span></sc-for></span>
+          <span role="img" aria-label="Stage timeline" style="position: relative; display: block; height: 4px">
+            <span style="display: flex; height: 4px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden"><sc-for list="{{d.segs}}" as="sg" hint-placeholder-count="0"><span style="flex: 0 0 {{sg.w}}%; height: 4px; background: {{sg.bg}}; opacity: {{sg.op}}"></span></sc-for></span>
             <span aria-hidden="true" style="position: absolute; left: {{d.nowL}}%; top: -4px; width: 3px; height: 24px; margin-left: -1.5px; border-radius: 2px; background: #000000; box-shadow: 0 0 0 1.5px #FFFFFF"></span>
           </span>
           <span style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; font-size: 15px; line-height: 19px; color: #545458"><span style="white-space: nowrap">{{d.left}}</span><span style="white-space: nowrap">{{d.right}}</span></span>
@@ -536,8 +536,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.label}}</span>
           <span style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; color: #000000; white-space: nowrap"><span style="font-weight: 400; color: #545458">{{d.pre}}</span>{{d.val}}<span style="font-weight: 400; color: #545458">{{d.post}}</span></span>
           <span style="grid-column: 1 / -1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.from}}</span>
-          <span style="grid-column: 1 / -1; position: relative; display: {{d.barD}}; height: 16px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.077); overflow: hidden">
-            <span class="bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{d.w}}%; border-radius: 999px; background: {{d.bar}}"></span>
+          <span style="grid-column: 1 / -1; position: relative; display: {{d.barD}}; height: 4px; margin-top: 4px; border-radius: 999px; background: rgba(60,60,67,0.077); overflow: hidden">
+            <span class="bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{d.w}}%; border-radius: 999px; background: #3A3A3C"></span>
           </span>
         </li>
         </sc-if>
