@@ -311,17 +311,17 @@ window.__wfBlink=function(path,dur){
       // While live data is still coming it glides to a stop short of the edges, then carries on; every change of pace
       // is smoothed over about a quarter of a second, so it never stutters.
       var t1=performance.now(),dur=Math.max(minMs-(Date.now()-t0),2000),last=t1;
-      wave={p:0,done:false};
+      wave={p:0,done:false};var END=1.1;   // the count runs on to 110% (shown as 100%): the colour covers the whole screen only at 110, so it never ends before the count
       (function step(now){
         if(!el.parentNode)return;
-        var tp=Math.min(1,(now-t1)/dur),ready=haveData()&&drawn(),goal=ready?tp:Math.min(tp,.88),dt=Math.min(64,now-last);last=now;
-        wave.p+=(goal-wave.p)*(1-Math.exp(-dt/220));if(goal>=1&&1-wave.p<.004)wave.p=1;
+        var tp=Math.min(END,(now-t1)/dur),ready=haveData()&&drawn(),goal=ready?tp:Math.min(tp,.88),dt=Math.min(64,now-last);last=now;
+        wave.p+=(goal-wave.p)*(1-Math.exp(-dt/220));if(goal>=END&&END-wave.p<.004)wave.p=END;
         // in step with the counter: at n% the front has covered n% of the way to the farthest corner, and at 100% the
         // normal colour has just reached every corner (the shape's smallest lobe included)
-        // the front's full colour reaches every corner exactly at 98% (farthest corner, widest lobe drift, smallest breath),
-        // so at 98% the whole photo is at its normal colour and the wave is over; 98 to 100% only closes the count
-        var REND=(R+90*.05+band*.15*1.45)/(.965-.025*.05),q=Math.min(1,wave.p/.98);if(q<1)paint(q*REND,q);else if(!wave.full){wave.full=true;norm.style.webkitMaskImage=norm.style.maskImage='none';hot.style.opacity='0';}
-        if(wave.p>.995&&ready){wave.p=1;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
+        // the front's full colour reaches every corner exactly at 110 on the count (100% shown), so the colour never finishes
+        // before the counter does
+        var REND=(R+90*.05+band*.15*1.45)/(.965-.025*.05),q=Math.min(1,wave.p/END);if(q<1)paint(q*REND,q);else if(!wave.full){wave.full=true;norm.style.webkitMaskImage=norm.style.maskImage='none';hot.style.opacity='0';}
+        if(wave.p>=END-.002&&ready){wave.p=END;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
     var start=function(up){if(!up&&!im.src)im.src='assets/splash/'+ph[0];};
@@ -338,7 +338,7 @@ window.__wfBlink=function(path,dur){
     var span=Math.max(minMs,1200),ready=drawn()&&haveData(),goal=Math.min(1,(Date.now()-t0)/span)*100;
     if(!ready)goal=Math.min(goal,90);   // the wave follows the counter, so the counter no longer waits for it
     // counts in jumps of 2 to 5, about every 1/28 of the loading time, never past where loading has got to
-    if(wave){pv=wave.done?100:Math.max(pv,Math.min(99,Math.floor(wave.p*100+1e-6)));}   // with the colour wave, the counter reads the wave's progress: 98% is the moment it has covered the whole screen
+    if(wave){pv=wave.done?100:Math.max(pv,Math.min(100,Math.floor(wave.p*100+1e-6)));}   // with the colour wave, the counter reads the wave's progress; it shows 100% from 100 to 110, and the wave covers the whole screen at 110
     else if((cold||soft)&&Date.now()-t0<2500){pv=0;}   // the photo is still arriving: the count starts with the colour
     else{if(pv<goal){pv=Math.min(goal>=100?100:Math.floor(goal),pv+2+Math.floor(Math.random()*4));}
     if(goal>=100&&pv>=98)pv=100;}
