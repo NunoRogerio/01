@@ -1293,7 +1293,7 @@ class Component extends DCLogic {
       if (RO && !HELD && (!M || M.failed)) { let sd = 0; for (const ch of String(fireId)) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0; const R = (k) => { const q = Math.sin(sd * 0.0017 + k * 5.13) * 43758.5453; return q - Math.floor(q); };
         const SI = { wind: Math.round(5 + R(1) * 25), from: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(R(2) * 8)], temp: Math.round(18 + R(3) * 17), rh: Math.round(15 + R(4) * 45), md: Math.round(4 + R(5) * 10), slope: Math.round(2 + R(6) * 28), fuel: ['Shrubland', 'Forest with understory', 'Grass', 'Broadleaf forest'][Math.floor(R(7) * 4)] };
         rows.push(...this.wfCondCards(SI, frow, INFO, 'Estimate')); }
-      else if (M.snaps && M.snaps.length) {   /* a model still without snapshots draws nothing yet */
+      else if (M && M.snaps && M.snaps.length) {   /* a model still without snapshots draws nothing yet */
         const S0 = M.snaps[0] || {}, Sh = M.snaps[hz] || S0, I = M.info || {};
         rows.push(M.assumed ? row('Perimeter', 'Estimated', (M.src.indexOf('ha reported') > 0 ? 'Drawn from the reported ' + M.src.replace(/^.*· /, '') : 'Drawn from a typical size for its state') + ' · no public polygon for this fire yet', '#875800') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
