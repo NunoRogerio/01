@@ -16,7 +16,7 @@
 <script src="fit.js?v=66"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=80"></script>
-<script src="i18n.js?v=63"></script>
+<script src="i18n.js?v=64"></script>
 <script src="live.js?v=32"></script>
 <script src="chat.js?v=18"></script>
 
@@ -27,6 +27,7 @@
 <x-dc>
 <helmet>
 <style>
+.wf-unit+.wf-unit{border-top:1px solid rgba(60,60,67,0.14)}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 a{color:#006A91}a:hover{color:#006A91}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -394,6 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </svg>
       <!-- Medium KPIs, each with its own micro chart under the label (2 × 2 when there are four) -->
       <!-- KPI cards: white, 16px corners, a light shadow. Press and hold a card, then slide it to put the KPIs in your own order (kept on this phone) -->
+      <span style="display: {{cc.medD}}; align-self: stretch; margin: 0 4px 8px; text-align: left; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Key figures</span>
       <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; flex-wrap: wrap; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: flex-start">
         <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="4">
           <div role="listitem" data-wf-kpi="{{m.key}}" data-g="kpi" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
@@ -434,7 +436,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="kpi wf-big">{{k2Val}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{k2Sub}}</span></span>
       </div>
     </div>
-    <ul aria-label="{{listAria}}" style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; margin: 16px 0 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">
+    <ul aria-label="{{listAria}}" style="display: flex; flex-direction: column; gap: {{ulGap}}; flex-shrink: 0; margin: {{ulMt}} 0 0; padding: 0; list-style: none; border-top: {{ulBd}}">
       <sc-for list="{{deployed}}" as="d" hint-placeholder-count="4">
         <sc-if value="{{d.head}}" hint-placeholder-val="{{ false }}">
         <li role="presentation" style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 16px 16px 8px; box-sizing: border-box">
@@ -443,23 +445,24 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </li>
         </sc-if>
         <sc-if value="{{d.fx}}" hint-placeholder-val="{{ false }}">
-        <li style="display: flex; flex-direction: column; flex-shrink: 0; padding: 16px 0 0; box-sizing: border-box; border-top: 1px solid rgba(60,60,67,0.14)">
-          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 16px">
-            <h3 style="margin: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">Endurance</h3>
+        <li style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
+          <!-- Section label as in the user preferences: label style, 8px to its content -->
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 4px 8px">
+            <h3 style="margin: 0; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">Endurance</h3>
             <span class="wf-note">Simulated</span>
           </span>
           <!-- What the coordinator watches: how many units are wearing out, not totals -->
-          <div style="display: flex; margin-top: 12px; padding: 0 16px">
+          <div style="display: flex; gap: 8px">
             <sc-for list="{{d.sum}}" as="k" hint-placeholder-count="2">
-              <div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; padding: 0 8px; border-left: {{k.sep}}; text-align: center">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1 1 0; min-width: 0; padding: 12px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center">
                 <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
-                <span class="kpi wf-big" style="--k: 34px; white-space: nowrap; color: {{k.c}}">{{k.v}}</span>
+                <span class="kpi wf-big" style="--k: 30px; white-space: nowrap; color: {{k.c}}">{{k.v}}</span>
               </div>
             </sc-for>
           </div>
-          <ul style="display: block; margin: 16px 0 0; padding: 0; list-style: none">
+          <ul style="display: block; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden">
             <sc-for list="{{d.units}}" as="u" hint-placeholder-count="4">
-              <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 12px 16px; border-top: 1px solid rgba(60,60,67,0.14)">
+              <li class="wf-unit" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 12px 16px">
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
                 <span style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 700; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
                 <span style="grid-column: 1 / -1; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
@@ -472,8 +475,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </li>
         </sc-if>
         <sc-if value="{{d.cx}}" hint-placeholder-val="{{ false }}">
-        <li role="presentation" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 16px 16px 8px; box-sizing: border-box">
-          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 12px"><h3 style="margin: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">{{d.title}}</h3><span class="wf-note" style="display: {{d.simD}}">{{d.sim}}</span></span>
+        <li role="presentation" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 4px 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note" style="display: {{d.simD}}">{{d.sim}}</span></span>
           <div role="list" aria-label="{{d.title}}. Press and hold a card, then move it to reorder" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
             <sc-for list="{{d.cards}}" as="m" hint-placeholder-count="6">
               <div role="listitem" data-wf-kpi="{{m.key}}" data-g="{{d.grp}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
@@ -490,10 +493,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </li>
         </sc-if>
         <sc-if value="{{d.stc}}" hint-placeholder-val="{{ false }}">
-        <li role="presentation" style="flex-shrink: 0; padding: 0 0 8px">
-          <div class="wf-hscroll" role="list" aria-label="Nearest stations" style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 0 16px">
+        <li role="presentation" style="flex-shrink: 0; padding: 0">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 20px 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note">{{d.note}}</span></span>
+          <div class="wf-hscroll" role="list" aria-label="Nearest stations" style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 0 16px 12px; margin-bottom: -12px">
             <sc-for list="{{d.cards}}" as="c" hint-placeholder-count="3">
-              <div role="listitem" aria-label="{{c.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex: 0 0 168px; box-sizing: border-box; padding: 12px 16px 16px; border-radius: 16px; background: #FFFFFF">
+              <div role="listitem" aria-label="{{c.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex: 0 0 168px; box-sizing: border-box; padding: 12px 16px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
                 <img src="{{c.crest}}" alt="" aria-hidden="true" style="display: {{c.crestD}}; width: 40px; height: 40px; margin-bottom: 8px; object-fit: contain">
                 <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{c.shD}}; flex-shrink: 0; margin: 0 0 6px -2px"><path d="M12 3.2 19.6 6V11.4C19.6 15.9 16.4 19.4 12 20.9 7.6 19.4 4.4 15.9 4.4 11.4V6Z" fill="rgba(100,181,246,0.5)" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path></svg>
                 <span class="wf-title-xs" style="max-width: 100%; font-size: 15px; font-weight: 600; line-height: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{c.name}}</span>
@@ -786,7 +790,7 @@ class Component extends DCLogic {
           const T = ['terr', 'fuel', 'slope'], Wk = ['temp', 'wind', 'md', 'rh'];
           const pick = (keys, grp) => { let o = null; try { o = JSON.parse(localStorage.getItem('wf-order-' + grp) || 'null'); } catch (e) {} o = Array.isArray(o) ? o : keys; const ix2 = (k) => { const i = o.indexOf(k); return i < 0 ? 99 : i; };
             return C0.filter((m) => keys.indexOf(m.key) >= 0).sort((a, b) => ix2(a.key) - ix2(b.key)).map((m) => mk(m, grp)); };
-          return [{ cx: true, item: false, label: 'Conditions', title: 'Terrain', grp: 'terr', sim, simD: sim ? 'inline' : 'none', cards: pick(T, 'terr') }, { cx: true, item: false, label: 'Conditions', title: 'Weather', grp: 'wx', sim, simD: sim ? 'inline' : 'none', cards: pick(Wk, 'wx') }];
+          return [{ cx: true, item: false, label: 'Conditions', title: 'Weather', grp: 'wx', sim, simD: sim ? 'inline' : 'none', cards: pick(Wk, 'wx') }, { cx: true, item: false, label: 'Conditions', title: 'Terrain', grp: 'terr', sim, simD: sim ? 'inline' : 'none', cards: pick(T, 'terr') }];
   }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
   componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); }
@@ -1192,7 +1196,7 @@ class Component extends DCLogic {
         const K = window.__wfCrest ? window.__wfCrest(r.ck, r.name) : { url: '' };
         return { crest: K.url || '', crestD: K.url ? 'block' : 'none', shD: K.url ? 'none' : 'block', name: r.name, sub: r.km + du + (drive ? '. ~' + drive + ' min.' : '.'), tag: free ? free + ' of ' + tot + ' free' : 'All out', tagFg: free ? '#1E7A34' : '#636366', tagBg: free ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)',
           aria: r.name + ', ' + r.km + du + (drive ? ', about ' + drive + ' minutes drive' : '') + '. ' + (free ? free + ' of ' + tot + ' crews free' : 'All crews out') + ' (simulated)' }; });
-      if (cards.length) ordRows.push({ stc: true, item: false, cards });
+      if (cards.length) { ordRows.pop(); ordRows.push({ stc: true, item: false, cards, title: 'Stations on this fire', note: 'Estimate' }); }
     }
     // Fire model (live fires): real "now" perimeter, +1/2/3 h prediction and expected containment.
     if (FMOD) {
@@ -1432,7 +1436,7 @@ class Component extends DCLogic {
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 -4px 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '16px' : '0', hdTagD: RO ? 'inline-flex' : 'none', backD: RO ? 'none' : 'flex', hdPadL: RO ? '4px' : '8px',
       pgScroll: (e) => { if (!RO) return; try { const L = document.querySelector('[data-wf-maplayer]'); this._pgY = e.currentTarget.scrollTop; if (L && !(this.state || {}).full) L.style.transform = 'translateY(' + (-this._pgY) + 'px)'; } catch (x) {} },
       mapTY: RO && !s.full ? -(this._pgY || 0) + 'px' : '0px', mapClip: RO && sent && !s.full ? 'inset(' + (this._hdrB || 170) + 'px 0 ' + (844 - (this._hdrB || 170) - MAPH) + 'px 0)' : 'none', sb: this.wfBlade(!!s.sentUp, (up) => { if (!RO) this.setState({ sentUp: up }); }), sentUpStr: s.sentUp ? 'true' : 'false', sbTr: s.sbDy != null && this._sb ? 'transform .5s cubic-bezier(.2,.8,.2,1)' : 'height .45s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1)', sentUpLabel: s.sentUp ? 'Lower the panel' : 'Raise the panel over the map', sentToggle: () => this.setState({ sentUp: !s.sentUp }),
-      hdrB: this._hdrB || 170, MAPH, tlTop, hdChatD: RO ? 'none' : 'flex', backOrd: RO ? '-1' : '0', backLbl2: RO ? 'Back' : 'Done', backIcD: RO ? 'block' : 'none', kindD: 'inline', qualPr: RO ? '4px' : '12px', qualR: RO ? '18px' : '0', kindDot: HELD ? '#6F2B06' : '#E8590C', tagMl: 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const fin = RO && HELD && HELD.took != null ? DUR(HELD.took) : ''; return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: false, mapFireOnly: RO, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: 'note', tlOpenStr: 'false', tlToggle: null, tlCur: 'default', tlBarD: 'none', tlBar: [], tlDetD: 'none', startD: T ? 'block' : 'none', startTxt: T ? T.left : '', kindC: '#1C1C1E' }; })(), qualMr: RO ? '-4px' : '-52px',
+      hdrB: this._hdrB || 170, MAPH, tlTop, hdChatD: RO ? 'none' : 'flex', ulGap: RO ? '24px' : '2px', ulMt: RO ? '24px' : '16px', ulBd: RO ? '0' : '1px solid rgba(60,60,67,0.14)', backOrd: RO ? '-1' : '0', backLbl2: RO ? 'Back' : 'Done', backIcD: RO ? 'block' : 'none', kindD: 'inline', qualPr: RO ? '4px' : '12px', qualR: RO ? '18px' : '0', kindDot: HELD ? '#6F2B06' : '#E8590C', tagMl: 'auto', ...(() => { const I = INFO || {}; const live = RO && !HELD && I.startMs; const fin = RO && HELD && HELD.took != null ? DUR(HELD.took) : ''; return { hdTimeD: live || fin ? 'inline' : 'none', hdLiveD: live ? 'inline' : 'none', hdT0: live ? I.startMs : 0, hdTimeTxt: fin, hdTimeAria: live ? 'Time active' : fin ? 'Final duration ' + fin : '' }; })(), mapNoLeg: false, mapFireOnly: RO, ...(() => { const T = tlTop[0], op = !!s.tlOpen; return { tlRole: 'note', tlOpenStr: 'false', tlToggle: null, tlCur: 'default', tlBarD: 'none', tlBar: [], tlDetD: 'none', startD: T ? 'block' : 'none', startTxt: T ? T.left : '', kindC: '#1C1C1E' }; })(), qualMr: RO ? '-4px' : '-52px',
       chat: (() => { const C = window.__wfChat; if (!C || !fv) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: 'Team chat', rowD: 'none', title: '', time: '', timeC: '#545458', last: '' };
         const inc = C.incFire({ id: fv.id, place: fv.place, note: fv.note, x: fv.x, y: fv.y, det: fv.det, st: frow ? frow.st : stC, co: frow ? frow.co : '', info: frow ? frow.info : null, res: frow ? frow.res : null }), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
         const lm = ex ? C.lastMsg(ex) : null, who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? 'You' : (ex.people[lm.from] || {}).name || '') : '';
