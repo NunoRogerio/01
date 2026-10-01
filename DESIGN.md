@@ -415,3 +415,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Map never shows past the world (Oct 1):** the street map ends at 85° north and south. Zoom-out stops when the world exactly fills the map's height, and the map cannot be dragged past its top or bottom edge, so no empty band ever shows above or below it. Sideways the world repeats, as before.
 - **Counts read in the singular for one:** 1 state, 1 county, 1 district.
 - **Unconfirmed tag (Oct 1):** 1px dark grey inset outline (as the primary buttons, was 1.4px), no dropdown arrow, the text centred. It still opens Confirm / Dismiss and keeps its pulse.
+- **Drone feed in the map band (Oct 1):** only the X, the Thermal / Visual switcher and maximize. The map button on the feed was removed: it competed with the video, and the X already returns to the map, from which full screen and the drone are one tap away.
