@@ -615,6 +615,9 @@ window.__wfBlink=function(path,dur){
     try{var bgc=(getComputedStyle(el).backgroundColor.match(/[\d.]+/g)||[]).map(Number),dkb=bgc.length>2&&(bgc[3]==null||bgc[3]>0.4)&&(0.299*bgc[0]+0.587*bgc[1]+0.114*bgc[2])<90;   // a dark round button (map controls, drone feed)
       if(dkb)el.classList.add('wf-dkbtn');
       var g=document.createElement('i'),dk=document.documentElement.classList.contains('wf-dark'),rad=pill?(r.height/2)+'px':'50%',W=r.width,H=r.height,X=r.left,Y=r.top,G=0.5;
+      // a dark button would hide its dark line while it swells (the line is drawn over it, dark on dark): the line starts at the swollen edge instead, so it shows from the first moment and still ends 50% beyond the button
+      if(dkb){var Wn=W*k,Hn=H*k;X-=(Wn-W)/2;Y-=(Hn-H)/2;W=Wn;H=Hn;G=(k+0.5)/k-1;}
+     
       g.setAttribute('aria-hidden','true');g.style.cssText='position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;border:'+(dkb?1:2)+'px solid '+(el.getAttribute('data-pulse')==='lime'?(getComputedStyle(document.documentElement).getPropertyValue('--wf-y').trim()||window.__wfY||'#E5FF00'):(dk?'#E8E8ED':'#3A3A3C'))+';border-radius:'+rad+';left:'+X+'px;top:'+Y+'px;width:'+W+'px;height:'+H+'px';
       document.body.appendChild(g);var a=g.animate([{left:X+'px',top:Y+'px',width:W+'px',height:H+'px',opacity:1},{left:(X-W*G/2)+'px',top:(Y-H*G/2)+'px',width:(W*(1+G))+'px',height:(H*(1+G))+'px',opacity:0}],{duration:600,easing:'cubic-bezier(.2,.6,.35,1)',fill:'forwards'});
       a.onfinish=function(){g.remove();};setTimeout(function(){if(g.parentNode)g.remove();},900);}catch(x){}
