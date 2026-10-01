@@ -686,3 +686,29 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   const k = Math.sqrt(GR * area(pts) / Math.max(1e-12, area(warped)));
   return warped.map((q, i) => { const o = pts[i], dx0 = o[0] - cx, dy0 = o[1] - cy, dx = (q[0] - cx) * k, dy = (q[1] - cy) * k, r0 = Math.hypot(dx0, dy0), r1 = Math.hypot(dx, dy);
     const f = r0 && r1 < r0 * 1.05 ? r0 * 1.05 / r1 : 1; return [cx + dx * f, cy + dy * f]; }); };
+
+// Scroll on return (app-wide): a screen or panel you come back to opens at its top, except when you came back with a back
+// control (data-wf-back, or a screen's own back through __wfBackOrHome), where the place you left is useful and kept.
+(function(){
+  var KEY='wf-back-nav', mark=function(){try{sessionStorage.setItem(KEY,String(Date.now()));}catch(x){}};
+  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(a)mark();},true);
+  var ob=window.__wfBackOrHome;if(typeof ob==='function'){window.__wfBackOrHome=function(){mark();return ob.apply(this,arguments);};}
+  var top=function(root){try{var L=(root||document).querySelectorAll('*');for(var i=0;i<L.length;i++){var el=L[i];if(el.closest&&el.closest('[data-wf-maproot]'))continue;if(el.scrollTop>0)el.scrollTop=0;if(el.scrollLeft>0&&el.getAttribute('role')!=='tablist')el.scrollLeft=0;}if(!root)window.scrollTo(0,0);}catch(x){}};
+  // the place on each screen, remembered when leaving it, for a return through a back control that reloads the screen
+  var SK='wf-scroll:'+location.pathname,keyOf=function(el){return el.getAttribute('data-wf-page')!=null?'page':(el.getAttribute('role')||el.tagName)+'|'+(el.getAttribute('aria-label')||'')+'|'+(el.id||'');};
+  addEventListener('pagehide',function(){try{var out=[],L=document.querySelectorAll('*');for(var i=0;i<L.length;i++){var el=L[i];if(el.scrollTop>0||el.scrollLeft>0)out.push([keyOf(el),el.scrollTop,el.scrollLeft]);}out.push(['win',scrollY,scrollX]);sessionStorage.setItem(SK,JSON.stringify(out));}catch(x){}});
+  var restore=function(){var A=[];try{A=JSON.parse(sessionStorage.getItem(SK)||'[]');}catch(x){}if(!A.length)return;var t0=Date.now();
+    (function step(){var left=0;A.forEach(function(q){if(q.done)return;if(q[0]==='win'){scrollTo(q[2],q[1]);q.done=1;return;}var L=document.querySelectorAll('*'),el=null;for(var i=0;i<L.length;i++){if((L[i].scrollHeight>L[i].clientHeight||L[i].scrollWidth>L[i].clientWidth)&&keyOf(L[i])===q[0]){el=L[i];break;}}
+      if(el&&el.scrollHeight-el.clientHeight>=q[1]-1&&el.scrollWidth-el.clientWidth>=q[2]-1){el.scrollTop=q[1];el.scrollLeft=q[2];q.done=1;}else left++;});
+      if(left&&Date.now()-t0<2500)setTimeout(step,80);})();};
+  var arrive=function(ev){var t=0;try{t=+sessionStorage.getItem(KEY)||0;sessionStorage.removeItem(KEY);}catch(x){}if(Date.now()-t<15000){if(!(ev&&ev.persisted))restore();return;}   /* came back with a back control: keep the place */
+    top();requestAnimationFrame(function(){top();});};
+  try{if('scrollRestoration' in history)history.scrollRestoration='manual';}catch(x){}
+  addEventListener('pageshow',arrive);
+  // Panels (dialogs, sheets, blades) that open again start at their top too
+  var shown=new WeakMap(),vis=function(el){var s=el.style||{};return el.getAttribute('aria-hidden')!=='true'&&s.display!=='none'&&s.visibility!=='hidden';};
+  var start=function(){try{new MutationObserver(function(M){for(var i=0;i<M.length;i++){var el=M[i].target;if(!el.getAttribute)continue;var r=el.getAttribute('role');if(r!=='dialog'&&r!=='alertdialog')continue;
+      var now=vis(el),was=shown.has(el)?shown.get(el):now;shown.set(el,now);if(now&&!was)top(el);}}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['aria-hidden','style']});
+    var D=document.querySelectorAll('[role=dialog],[role=alertdialog]');for(var j=0;j<D.length;j++)shown.set(D[j],vis(D[j]));}catch(x){}};
+  if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+})();
