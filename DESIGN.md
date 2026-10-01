@@ -540,3 +540,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Unit rows on the Crews tab (Oct 1):** the status tag sits on the first row, beside the unit name, anchored to the right of the card; the description runs under both.
 - **Area picker (Oct 1):** no "Select a region to explore." sentence under the title; the search box says it instead ("Select a region to explore") at every level.
 - **Report night ignition (Oct 1, experiment):** no longer a full-width subtle button under the time card; it is a tag inside the time card, just before the clock: the Resolving tag background (#E3EEFB), dark blue text (#1F64A6), the start time's text style (15px regular).
+- **Stage stack, upcoming stages (Oct 1):** the grey pills of stages still to come read "Next" (annotation style: 15px regular, mid grey) instead of "TBD".
