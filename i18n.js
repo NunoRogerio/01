@@ -2,7 +2,7 @@
 // Language: European Portuguese for the Portugal profile, English for all other profiles.
 // It translates the finished screens in place, so every page stays written in one language underneath.
 (function(){
-  // For now the language follows the profile: Rita Cardoso (Portugal) and Susana Vasconcellos (designer, Portugal) see the app in Portuguese; everyone else in English.
+  // For now the language follows the profile: Rita Cardoso (Portugal) sees the app in Portuguese; everyone else in English.
   var lang='en';
   // The profile sets the default; the preferences panel can switch a Portuguese profile to English (kept per profile).
   // Every profile can choose English, Portuguese or Japanese; the Portuguese profiles start in Portuguese.

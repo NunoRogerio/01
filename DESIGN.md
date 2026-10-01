@@ -511,3 +511,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Shadows:** every drop shadow in the app has 0, 0 offsets (blur only), legends included. Stage chips get a soft 0 0 8px shadow so the light upcoming ones separate from the background; upcoming greys #DADADF and #E4E4E8.
 - **Stack folding back** is animated like unfolding: the chips glide home one at a time (same timing), then fade.
 - **Fire map on the page is live:** touches on the map band reach the map (pan, zoom, its controls); the rest of the page scrolls as before.
+- **Demo profiles (Oct 1):** Susana Vasconcellos removed; the administrator is James Whitmore (JW, English, us-m1 photo), not a real person's name or photo.

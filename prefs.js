@@ -30,8 +30,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ca: ['MR', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', 'California region only', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     nv: ['DW', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', 'Nevada region only', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
-    design: ['SV', 'Susana Vasconcellos', 'Lead product designer', 'Forest Fire Watch', 'All regions', 'assets/faces/pt-f1.jpg', 'pt'],
-    admin: ['NR', 'Nuno Rogerio', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/faces/pt-m2.jpg', 'en']
+    admin: ['JW', 'James Whitmore', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/faces/us-m1.jpg', 'en']
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
@@ -234,7 +233,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   // Demo profiles are shown in their own service's uniform (illustrated portraits, avatar.js)
   var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1] };
   function uniform(r, name) { var k = KITS[r]; return k && window.__wfAvatar ? window.__wfAvatar(name, k[0], !!k[1]) : ''; }
-  var who = PEOPLE[role] || null;
+  var who = PEOPLE[role] || (role === 'design' ? PEOPLE.admin : null);   // a removed demo profile falls back to the administrator
   // A profile created on this phone (login screen, New profile) signs in with its area's role and shows as itself
   var cu = null; try { var cid = localStorage.getItem('wf-custom'); if (cid) cu = (JSON.parse(localStorage.getItem('wf-custom-profiles') || '[]') || []).find(function (x) { return x && x.id === cid && x.base === role; }) || null; } catch (e) {}
   window.__wfPrefs = {

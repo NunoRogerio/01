@@ -86,7 +86,7 @@
     'Jorge Medina': ['m', S.m3, H.blk, 'short', 'stubble'], 'Megan Price': ['f', S.f2, H.br, 'bun'], 'Eric Foster': ['m', S.f2, H.br, 'short'], 'Lisa Wong': ['f', S.ea2, H.blk, 'long'],
     'Brian Hayes': ['m', S.f1, H.lbr, 'short', 'stubble'], 'Amy Torres': ['f', S.m2, H.dbr, 'long'], 'Carlos Reyes': ['m', S.m3, H.blk, 'short', 'full'], 'Kate Sullivan': ['f', S.f1, H.red, 'bun'],
     // Demo profiles
-    'Nuno Rogerio': ['m', S.f2, H.gry, 'bald', 'full', '#2B2B2B'], 'Susana Vasconcellos': ['f', S.f1, H.aub, 'bun', '', '#8E2A2A'], 'Rita Cardoso': ['f', S.f3, H.dbr, 'bun'],
+    'James Whitmore': ['m', S.f1, H.br, 'short', '', '#2B2B2B'], 'Rita Cardoso': ['f', S.f3, H.dbr, 'bun'],
     'Marcus Reyes': ['m', S.m2, H.blk, 'short', 'stubble'], 'Dana Whitfield': ['f', S.f1, H.lbr, 'bun'], 'Rafael Nogueira': ['m', S.m2, H.blk, 'short', 'full']
   };
   // One colour per station, shared by every screen: the station's header tint and its people's portrait outline.
@@ -154,8 +154,8 @@
   window.__wfFacePick = function (team, g, taken) { var T = FACES[team]; if (!T) return null; var pool = T[g === 'f' ? 'f' : 'm'], free = pool.filter(function (k) { return (taken || []).indexOf(k) < 0; });
     var c = free.length ? free : pool; return c[Math.floor(Math.random() * c.length)]; };
   window.__wfFaceUrl = furl;
-  var STAFF = { 'Nuno Rogerio': 1, 'Susana Vasconcellos': 1 };   // the app's own team: a photo from DEMO below, else the illustrated portrait
-  var DEMO = { 'Nuno Rogerio': 'pt-m2', 'Susana Vasconcellos': 'pt-f1', 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3' };   // the demo profiles' own photos
+  var STAFF = { 'James Whitmore': 1 };   // the app's own team: a photo from DEMO below, else the illustrated portrait
+  var DEMO = { 'James Whitmore': 'us-m1', 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3' };   // the demo profiles' own photos
   var CACHE = {};
   // kit: 'pt' | 'anepc' | 'us' | 'calfire' | 'nv' | 'br'; chief: a coordinator or commander (helmet by rank)
   window.__wfAvatar = function (name, kit, chief) {
