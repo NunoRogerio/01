@@ -1155,19 +1155,23 @@ class Component extends DCLogic {
     const need = { 1: 1, 2: 2, 3: 4 }[hzK];
     const areas = { 1: '7', 2: '30', 3: '77' };
     const pkgs = { 1: '1 crew · 2 tenders, suggested for +1h', 2: '2 crews · 3 tenders · 1 helicopter, suggested for +2h', 3: '4 crews · 5 tenders · 2 helicopters, suggested for +3h' };
-    const fv = s.fv || null;
+    // A fire confirmed from a candidate always opens as the active fire page, however it was reached (a link that lost its
+    // 'Confirmed from' note, e.g. from the projection or a chat, must not fall back to the old 'Dispatch orders sent' view)
+    const fv = s.fv ? ((v) => (/^F-/.test(v.id || '') && !/^Confirmed from /.test(v.note || '') && !this.wfWorld().fires.some((f) => f.id === v.id) ? { ...v, note: 'Confirmed from ' + v.id.slice(2) } : v))(s.fv) : null;
     const HD = Math.max(0, (this._hdrB || 170) - 116);   // the header grew with the region line and qualifier band: the map's clip follows it
     const FIRE = fv ? [fv.x, fv.y] : [610, 290];
     const fireId = fv ? fv.id : 'F-0924-03';
     // A fire confirmed from a candidate reads like any live fire: its row is made from the candidate (where, when detected); the rest is simulated and labelled
-    const frow = fv ? (this.wfWorld().fires.find((f) => f.id === fv.id) || (() => { const m = /^F-(.+)$/.exec(fv.id || ''), c = m && this.wfWorld().cands.find((q) => q.id === m[1]); if (!c) return null;
-      const t0 = c.live && c.live.t ? Date.parse(c.live.t) : (fv.det || fv.t || Date.now());
+    const frow = fv ? (this.wfWorld().fires.find((f) => f.id === fv.id) || (() => { const m = /^F-(.+)$/.exec(fv.id || ''), c0 = m && this.wfWorld().cands.find((q) => q.id === m[1]);
+      /* the candidate may have left the feed since it was confirmed: the fire is still ours, made from what the link carries */
+      const c = c0 || (m && /^Confirmed from /.test(fv.note || '') ? { id: m[1], st: (this.wfScope && this.wfScope().st) || '', co: '', place: fv.place, x: fv.x, y: fv.y, live: null, src: '' } : null); if (!c) return null;
+      const t0 = c.live && c.live.t ? Date.parse(c.live.t) : (fv.det || this.wfConfirmed()[c.id] || fv.t || Date.now());
       return { id: fv.id, st: c.st, co: c.co, parent: c.co, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, ha: null, res: null, lat: c.live && c.live.lat, lon: c.live && c.live.lon,
         info: { src: 'Confirmed from ' + (c.src || c.id), st: 'Not contained', stEn: 'Not contained', tone: 'hot', startMs: t0, updMs: Date.now(), place: c.place, lat: c.live && c.live.lat, lon: c.live && c.live.lon } }; })() || null) : null;
     const fres = frow ? (frow.res || null) : null;
     // Active fires in Portugal and California: a read-only view of who is fighting the fire (no crew or station changes).
     // Live feed fires are read-only; a fire just confirmed from a candidate is ours to dispatch to.
-    const RO = !!(window.__wfLiveMap && fv && frow && (frow.st === 'PT' || frow.st === 'CA' || frow.st === 'BRA')) && !s.crew;   /* crew: a confirmed fire's crews being configured (the dispatch flow) */
+    const RO = !!(window.__wfLiveMap && fv && frow) && !s.crew;   /* every fire (live feed or confirmed here) opens as the active fire page, wherever it is: the old 'Dispatch orders sent' view is not used */   /* crew: a confirmed fire's crews being configured (the dispatch flow) */
     const FMOD = (window.__wfLiveMap && frow && window.__wfFireModel) ? (() => {
       const lat = 34.19 - (frow.y - 662) / 2829, lon = (frow.x - 518) / 2345 - 118.13;
       return { model: window.__wfFireModel({ id: frow.id, st: frow.st, lat, lon, ha: frow.ha, res: frow.res, note: frow.note }) };
