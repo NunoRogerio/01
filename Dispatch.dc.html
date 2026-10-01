@@ -1142,7 +1142,7 @@ class Component extends DCLogic {
     const prev = []; for (let i = first; i < stg; i++) { const Sd = C.STAGES[i]; prev.push({ l: Sd.en, c: Sd.c, bg: Sd.bg, ic: C.ICON[Sd.icon], t: dur(ms[i]) }); }
     prev.reverse();   // newest first: going down goes back in time
     // the stages still to come, at most four, above it in greys: the nearest the darkest, each further one lighter
-    const GR = [['#C7C7CC', '#2C2C2E'], ['#D1D1D6', '#3A3A3C'], ['#DCDCE0', '#48484A'], ['#E8E8EC', '#545458']];
+    const GR = [['#B4B4BA', '#1C1C1E'], ['#D1D1D6', '#3A3A3C'], ['#E0E0E5', '#48484A'], ['#EBEBEF', '#545458']];
     const next = []; for (let i = stg + 1; i < C.STAGES.length && next.length < 4; i++) { const Sd = C.STAGES[i], g = GR[next.length]; next.push({ l: Sd.en, c: g[1], bg: g[0], ic: C.ICON[Sd.icon], t: '' }); }
     const SC = C.STAGES[stg], cur = { l: label, t: cur0(dur(ms[stg])), ic: C.ICON[SC.icon] };
     function cur0(t) { return t ? 'for ' + t : ''; }
@@ -1151,17 +1151,17 @@ class Component extends DCLogic {
     const natW = (p) => 12 + 18 + 6 + tw(p.l, 600) + (p.t ? 6 + tw(p.t, 400) : 0) + 12;
     const cap = Math.min(window.innerWidth || 390, 600) - 32 - 6 - 16 - 14 - 8 - (() => { cv.font = '600 17px ' + FF; return Math.ceil(cv.measureText((o.hd && o.hd.kind) || 'Active fire').width); })() - 8;
     const deep = Math.max(prev.length, next.length);
-    const need = Math.max(natW(cur), ...prev.map((p, k) => natW(p) + 4 * (k + 1) - 16), ...next.map((p, k) => natW(p) + 4 * (k + 1) - 16));
-    const Wc = Math.min(cap, need), GROW = 8, wOf = (k) => Wc + 2 * GROW - 4 * (k + 1);   // k: 0 = next to the current chip
+    const need = Math.max(natW(cur), ...prev.map((p) => natW(p) + 8), ...next.map((p) => natW(p) + 8));
+    const Wc = Math.min(cap, need), GROW = 0, wOf = () => Wc - 8;   // the current chip keeps one size; every other chip is 8px narrower (4px each side), centred
     const lab = (p, w) => Math.max(40, w - 12 - 18 - 6 - (p.t ? 6 + tw(p.t, 400) : 0) - 12) + 'px';
     const n = prev.length, m = next.length, STEP = 40, TUCK = 14;
-    const chip = (p, k, up) => ({ l: p.l, t: p.t, c: p.c, ic: p.ic, tD: p.t ? 'inline' : 'none', lMw: lab(p, open ? wOf(k) : Wc), bg: p.bg,
-      w: (open ? wOf(k) : Wc) + 'px', r: (open ? (2 * (k + 1) - GROW) : 0) + 'px', z: 19 - k,
+    const chip = (p, k, up) => ({ l: p.l, t: p.t, c: p.c, ic: p.ic, tD: p.t ? 'inline' : 'none', lMw: lab(p, wOf(k)), bg: p.bg,
+      w: wOf(k) + 'px', r: '4px', z: 19 - k,
       y: open ? ((up ? -1 : 1) * (k + 1) * STEP) + 'px' : '0px', op: open ? 1 : 0,
       dl: (open ? k : ((up ? m : n) - 1 - k)) * 70 + 'ms' });
     const hs = {
-      w: Wc + 'px', ic: cur.ic, t: cur.t, tD: cur.t ? 'inline' : 'none', lMw: lab(cur, open ? Wc + 2 * GROW : Wc),
-      fg: SC.c, bg: SC.bg, grow: open ? '-' + GROW + 'px' : '0px', wOpen: (open ? Wc + 2 * GROW : Wc) + 'px', ring: open ? 'inset 0 0 0 2px ' + SC.c : 'none',
+      w: Wc + 'px', ic: cur.ic, t: cur.t, tD: cur.t ? 'inline' : 'none', lMw: lab(cur, Wc),
+      fg: SC.c, bg: SC.bg, grow: open ? '-' + GROW + 'px' : '0px', wOpen: Wc + 'px', ring: open ? 'inset 0 0 0 2px color-mix(in srgb, ' + SC.c + ' 50%, transparent)' : 'none',
       prev: prev.map((p, k) => chip(p, k, false)), next: next.map((p, k) => chip(p, k, true)),
       aria: 'Stage: ' + label + (cur.t ? ', ' + cur.t : '') + (n ? '. Earlier: ' + prev.map((p) => p.l + (p.t ? ' ' + p.t : '')).join(', ') : '') + (m ? '. Still to come: ' + next.map((p) => p.l).join(', ') : '') + (ch && ch.stage === stg ? '' : '. Times estimated'),
       tuck: TUCK + 'px'
