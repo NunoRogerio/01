@@ -165,6 +165,16 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: {{rootBg}}; transition: background-color .6s ease; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+  <!-- Evidence viewer: the satellite image, the drone feed or the photo, large, over a dark scrim; X or a tap outside closes it -->
+  <div aria-hidden="{{ex.hidden}}" onClick="{{ex.close}}" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; box-sizing: border-box; background: rgba(0,0,0,0.82); opacity: {{ex.op}}; pointer-events: {{ex.pe}}; transition: opacity .3s ease">
+    <button type="button" class="mbtn" onClick="{{ex.close}}" aria-label="Close" style="position: absolute; right: 16px; top: 64px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: #F2F2F7; color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    <div style="position: relative; width: 358px; height: {{ex.h}}px; border-radius: 16px; overflow: hidden; background: #1C1C1E; transform: scale({{ex.sc}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)">
+      <sc-if value="{{ex.img}}" hint-placeholder-val="{{ false }}"><img src="{{ex.src}}" alt="{{ex.alt}}" onError="{{ex.err}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><span aria-hidden="true" style="display: {{ex.ringD}}; position: absolute; left: {{ex.rx}}%; top: {{ex.ry}}%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
+      <sc-if value="{{ex.vid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ex.src}}" autoplay="" muted="" loop="" playsinline="" preload="auto" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>
+      <sc-if value="{{ex.smoke}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" viewBox="0 0 358 240" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%"><defs><filter id="wfSmkL" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter></defs><path d="M210 200c-12-40 20-60 10-100s20-60 60-80c-10 40-30 50-20 90s-10 70-50 90Z" fill="rgba(235,235,240,0.8)" filter="url(#wfSmkL)"></path></svg></sc-if>
+    </div>
+    <span style="max-width: 358px; font-size: 15px; line-height: 20px; color: #E8E8ED; text-align: center">{{ex.cap}}</span>
+  </div>
   <sc-if value="{{mapLayer}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
       <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-bg-tap="{{bgTap}}" close-x="true" mode="pin" pin-close="16" no-view="true" no-routes="true" st-names="true" cams="{{noCams}}" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
@@ -420,8 +430,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <!-- One container per source: the satellite pass, then any drone confirmation, citizen report or 911 call -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin: {{ig.evMt}} 16px 0">
           <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
-            <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
-              <li style="padding: 12px 16px; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">{{ev.title}}</li>
+            <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); cursor: {{ev.cur}}">
+              <!-- A thumbnail of the evidence itself, top right (8px in), the size of the + tile; the card or the thumbnail opens it -->
+              <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="display: {{ev.thD}}; position: absolute; top: 8px; right: 8px; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
+                <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" onError="{{ev.err}}" style="position: absolute; {{ev.imgSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
+                <sc-if value="{{ev.thVid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ev.src}}" autoplay="" muted="" loop="" playsinline="" preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>
+                <sc-if value="{{ev.thSmoke}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" viewBox="0 0 56 56" style="position: absolute; inset: 0; width: 100%; height: 100%"><defs><filter id="wfSmk" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter></defs><path d="M30 46c-2-8 4-12 2-20s4-12 10-16c-2 8-6 10-4 18s-2 14-8 18Z" fill="rgba(235,235,240,0.85)" filter="url(#wfSmk)"></path></svg></sc-if>
+              </button>
+              <li style="padding: 12px {{ev.padR}} 12px 16px; min-height: {{ev.minH}}; box-sizing: border-box; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">{{ev.title}}</li>
               <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2">
                 <li style="padding: 12px 16px; border-top: 0; font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</li>
               </sc-for>
@@ -1064,15 +1080,27 @@ class Component extends DCLogic {
         const sim = 'Simulation.';
         const h = String(cur.id || '').split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
         const t0 = cur.tMs || Date.now(), at = (min) => new Date(t0 + min * 60000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        const sat = { title: isLive ? 'Satellite: ' + String(cur.verdict || 'heat anomaly').toLowerCase() : cur.verdict,
+        // Satellite: the real daytime true-colour image of that day around the detection (NASA GIBS, VIIRS NOAA-20, ~300 m)
+        const LL = cur.L || {}, la = Number(LL.lat), lo = Number(LL.lon), dt = cur.tMs ? new Date(cur.tMs).toISOString().slice(0, 10) : '';
+        const gibs = (() => { if (!isFinite(la) || !isFinite(lo) || !dt) return null; const z = 9, n = 2 ** z, xf = (lo + 180) / 360 * n, r = la * Math.PI / 180, yf = (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n;
+          const u = (d) => 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_CorrectedReflectance_TrueColor/default/' + d + '/GoogleMapsCompatible_Level9/' + z + '/' + Math.floor(yf) + '/' + Math.floor(xf) + '.jpg';
+          return { src: u(dt), src2: u(new Date(Date.parse(dt) - 86400000).toISOString().slice(0, 10)), rx: +((xf % 1) * 100).toFixed(1), ry: +((yf % 1) * 100).toFixed(1) }; })();
+        const ERR = (alt) => (e) => { const t = e && e.target; if (t && alt && !t.dataset.wfF) { t.dataset.wfF = '1'; t.src = alt; } };   /* that day not ready yet: the day before */
+        const TH = { err: null, imgSt: 'inset: 0; width: 100%; height: 100%; object-fit: cover', padR: '16px', minH: 'auto', thD: 'none', thImg: false, thVid: false, thSmoke: false, ringD: 'none', src: '', thAria: '', cur: 'default', open: null };
+        const th = (o) => Object.assign({}, TH, { padR: '80px', minH: '72px', thD: 'block', cur: 'pointer' }, o);
+        const sat = { ...(isLive && gibs ? th({ thImg: true, src: gibs.src, err: ERR(gibs.src2), ringD: 'block', imgSt: 'left: ' + (28 - gibs.rx * 2.24).toFixed(1) + 'px; top: ' + (28 - gibs.ry * 2.24).toFixed(1) + 'px; width: 224px; height: 224px; max-width: none',   /* zoomed to the detection, centred */ thAria: 'Satellite image of the area. Open', open: () => this.setState({ exv: { kind: 'sat', src: gibs.src, src2: gibs.src2, rx: gibs.rx, ry: gibs.ry, cap: 'True colour, ' + dt + ' (VIIRS NOAA-20, daytime pass). The ring marks the heat detection. NASA GIBS.' } }) }) : TH),
+          title: isLive ? 'Satellite: ' + String(cur.verdict || 'heat anomaly').toLowerCase() : cur.verdict,
           rows: cur.reasons.filter(([t]) => !(droneSeen && /^Not confirmed on the ground/.test(t))).map(([t, ok]) => row(t, ok)), noteD: 'none', note: '' };
         const out = [sat];
         if (isLive) {
-          if (droneSeen) out.push({ title: 'Drone confirmation', rows: [row('Drone ' + (cur.drone || 'D-5') + ' over the ignition'), row('Smoke and a hot spot on the thermal feed')], noteD: 'block', note: sim });
-          if (h % 5 < 2) out.push({ title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
-          if ((h >> 3) % 5 < 2) out.push({ title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
+          if (droneSeen) out.push({ ...th({ thVid: true, src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', thAria: 'Drone thermal feed. Open', open: () => this.setState({ exv: { kind: 'vid', src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', cap: 'Drone ' + (cur.drone || 'D-5') + ', thermal feed over the ignition. Simulation.' } }) }), title: 'Drone confirmation', rows: [row('Drone ' + (cur.drone || 'D-5') + ' over the ignition'), row('Smoke and a hot spot on the thermal feed')], noteD: 'block', note: sim });
+          if (h % 5 < 2) out.push({ ...th({ thImg: true, thSmoke: true, src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', thAria: 'Shared photo. Open', open: () => this.setState({ exv: { kind: 'photo', src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', cap: 'Photo shared by a citizen. Simulation.' } }) }), title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
+          if ((h >> 3) % 5 < 2) out.push({ ...TH, title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
         }
-        return { evid: out, evCount: out.length === 1 ? '1 source' : out.length + ' sources' };
+        const X = s.exv || null;
+        const ex = { hidden: X ? 'false' : 'true', op: X ? 1 : 0, pe: X ? 'auto' : 'none', sc: X ? 1 : 0.94, h: X && X.kind === 'sat' ? 358 : 240, img: !!X && X.kind !== 'vid', vid: !!X && X.kind === 'vid', smoke: !!X && X.kind === 'photo',
+          src: X ? X.src : '', alt: X ? X.cap : '', cap: X ? X.cap : '', err: X && X.src2 ? ERR(X.src2) : null, ringD: X && X.kind === 'sat' ? 'block' : 'none', rx: X ? X.rx : 50, ry: X ? X.ry : 50, close: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ exv: null }); } };
+        return { ex, evid: out, evCount: out.length === 1 ? '1 source' : out.length + ' sources' };
       })(),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
