@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=92"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=112"></script>
+<script src="prefs.js?v=113"></script>
 <script src="i18n.js?v=109"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=34"></script>
@@ -221,7 +221,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </header>
   <!-- Two tabs over the map: Fire (the map and the fire's analysis) and Resources (everything about crews and orders, full width) -->
   <div role="tablist" aria-label="Fire page" class="wf-tabs" style="display: {{ft.d}}; margin: -4px 16px 0">
-    <span class="tabbar" aria-hidden="true" style="width: 50%; transform: translateX({{ft.x}})"></span>
+    <span class="tabbar" aria-hidden="true" style="left: 5%; width: 40%; transform: translateX({{ft.x}})"></span>
     <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" aria-label="{{ft.fireAria}}"><span style="position: relative">Situation<span aria-hidden="true" style="display: {{ft.fireDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
     <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}"><span style="position: relative">Crews<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
   </div>
@@ -1040,7 +1040,7 @@ class Component extends DCLogic {
     // Something that needs attention on the other tab: a red dot (no count) on its label
     const crewAlert = (o.deployed || []).some((d) => d.fx && ((d.sum || []).some((k) => k.c === '#B0001A') || (d.conf && !(d.groups || []).length)));
     const sitAlert = !!(o.cc && Array.isArray(o.cc.med) && o.cc.med.some((m) => m.key === 'pop' && /^(Yes|Sim)$/.test(String(m.n ?? m.v ?? ''))));
-    o.ft = { d: 'grid', x: res ? '100%' : '0%', fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
+    o.ft = { d: 'grid', x: res ? '125%' : '0%',   /* the bar is 80% of a tab, centred under it */ fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
       resDot: !res && crewAlert ? 'block' : 'none', fireDot: res && sitAlert ? 'block' : 'none',
       resAria: 'Crews' + (!res && crewAlert ? '. Needs attention' : ''), fireAria: 'Situation' + (res && sitAlert ? '. Needs attention' : '') };
     // Crews: only the crews section (the two wear-out alerts, then adding, editing and removing stations); everything else is Situation
