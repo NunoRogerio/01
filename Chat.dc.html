@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=103"></script>
+<script src="fit.js?v=104"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=124"></script>
+<script src="prefs.js?v=125"></script>
 <script src="i18n.js?v=118"></script>
 <script src="live.js?v=36"></script>
 <script src="chat.js?v=40"></script>
@@ -734,7 +734,7 @@ class Component extends DCLogic {
         const acts = (m.actions || []).filter((a) => !m.done || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
-            cls: done ? '' : a.primary ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? (window.__wfY || '#E5FF00') : '#2C2C2E', fg: a.primary ? '#1C1C1E' : (window.__wfY || '#E5FF00'), w: a.primary ? 600 : 500,
+            cls: done ? '' : a.primary ? 'chbtn' : 'chbtn wf-sec', bg: a.primary ? (window.__wfY || '#E5FF00') : 'var(--wf-sec-bg, #636366)', fg: a.primary ? '#1C1C1E' : 'var(--wf-sec-fg, #FFFFFF)', w: a.primary ? 600 : 500,
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;

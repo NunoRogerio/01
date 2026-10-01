@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=103"></script>
+<script src="fit.js?v=104"></script>
 <script src="avatar.js?v=8"></script>
 <script src="i18n.js?v=118"></script>
 
@@ -81,7 +81,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
   <div style="position: relative; z-index: 1; flex: 1 1 0; display: flex; flex-direction: column">
     <p style="display: {{offD}}; margin: 8px 16px 0; min-height: 36px; font-size: 15px; line-height: 18px; color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">{{hint}}</p>
 
-    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 56px 0 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none; box-shadow: inset 0 0 0 1px #3A3A3C">Log in</a>
+    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 56px 0 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none">Log in</a>
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 56px 0 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.6)">
@@ -168,7 +168,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
             <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 12px; border-radius: 12px; background: rgba(var(--wf-y-rgb), 0.16)">
               <span style="flex-grow: 1; min-width: 0; font-size: 15px; line-height: 20px; color: #1C1C1E">{{f.askTxt}}</span>
               <button type="button" onClick="{{f.no}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.14); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.noLbl}}</button>
-              <button type="button" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: inset 0 0 0 1px #3A3A3C">{{f.yesLbl}}</button>
+              <button type="button" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
             </div>
           </div>
         </sc-for>
@@ -179,7 +179,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
           </select>
         </label>
       </div>
-      <button type="button" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer; box-shadow: inset 0 0 0 1px #3A3A3C">{{cp.btn}}</button>
+      <button type="button" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">{{cp.btn}}</button>
       <!-- Editing: remove the profile; the app's shared confirmation dialog asks first (fit.js, __wfConfirm) -->
       <button type="button" onClick="{{cp.rmAsk}}" style="display: {{cp.rmD}}; align-items: center; justify-content: center; height: 48px; flex-shrink: 0; border: 0; border-radius: 999px; background: #D70015; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button>
       <p style="margin: -8px 4px 0; font-size: 15px; line-height: 20px; color: #545458">{{cp.note}}</p>

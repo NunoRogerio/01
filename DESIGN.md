@@ -82,8 +82,8 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 | Class | Look | Notes |
 |---|---|---|
-| `.wf-pri` (primary) | Lime | 48px tall |
-| `.wf-sec` (secondary) | Dark grey with a lime label | 48px tall |
+| `.wf-pri` (primary) | Lime, no outline | 48px tall |
+| `.wf-sec` (secondary) | Reflective mid grey (#636366) with a white label (6:1 contrast); dark theme #5A5A5E with a light label | 48px tall; quieter than the primary so the two can't be confused |
 | `.wf-ter` (subtle) | Faint lime | Full width inside its container, with 16px padding all round |
 | `.wf-cond` (condensed) | 32px tall | For compact surfaces (tooltips) |
 
@@ -456,3 +456,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Night ignitions on a fire (Oct 1):** the start time reads in the fire's own local time with AM / PM (the zone added when it differs from the phone's, e.g. "Started 3:46 AM PDT"), followed by the moon when the sun was down there and then. Under the time card, the subtle button "Report night ignition" opens a chat with an officer of the local force (county sheriff in the US, GNR SEPNA in Portugal), with the fire's card (place, start time, GPS) and "Reporting a night ignition, can you please investigate?" already sent; the officer answers and the chat goes on in character (Claude role play when a key is set).
 - **Crews KPIs (Oct 1):** five more cards in the Crews picker: Relief due within 3 h, Fresh crews, Longest shift, Water in tanks, Aircraft dropping (from the same scripted crew figures as the others).
 - **Night moon persists (Oct 1):** a night candidate keeps its moon, centred in the circle with no border, on every map where it appears, including its own detail map when selected and explored.
+- **Buttons (Oct 1):** primary lime has no dark outline; secondary (Cancel, Dismiss and the like) moves from black with lime text to a reflective mid grey with white text, everywhere (shared dialog, chat actions, sheets).
