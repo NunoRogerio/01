@@ -553,7 +553,9 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Full-screen map buttons (Oct 1, fix):** the page moved out of the way under a full-screen map takes no taps at all (its map layers were catching the taps meant for the full-screen buttons).
 - **Dark round buttons, pulse (Oct 1, later):** the pulse line is 2px, like the light buttons (it still starts at the swollen edge).
 - **Sign out screen (Oct 1):** plain black while the app refreshes: no logo, no words.
-- **Loading screen after log in (Oct 1; replaces the colour wave):** the forest photo starts in black and white and 20% darker, and evolves evenly with the counter to its full colour and normal lightness at 100%.
+- **Loading screen after log in (Oct 1):** the colour wave stays as it was; the black-and-white photo ahead of it starts 20% darker and brightens with the counter to its normal lightness at 100%.
 - **Switchers, even padding (Oct 1):** every segmented switcher keeps the same 10px between the yellow and the track on all four sides; options lose their own side padding to make room (incidents list switcher, projection switcher on the full-screen fire map).
 - **Grabber to text (Oct 1):** on the main screen the top blade's subtitle sits 21px above its grabber, the same as the bottom blade's first line below its grabber (was 36px); every grabber sits 8px from its blade's edge (checked on both blades).
 - **Full-screen area map (Oct 1):** the area card (e.g. Portugal, 20 districts) sits at the top right; the legend column starts at the top left on the same line.
+- **More data sources (Oct 1):** satellite candidates now also come from NASA FIRMS MODIS (Terra, Aqua) and Landsat (30 m, US and Canada), and from NOAA GOES-18/19 geostationary scans every 10 minutes over the Americas (the last hour; a GOES-only spot needs two scans). Listed in Preferences › data sources with NOAA GOES and Open-Meteo.
+- **Candidate projection uses terrain (Oct 1):** Copernicus elevation (through Open-Meteo) around the marker; each direction reaches further uphill and less downhill.

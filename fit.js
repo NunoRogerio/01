@@ -299,10 +299,9 @@ window.__wfBlink=function(path,dur){
       // so it says 100% exactly when the colour has reached the whole screen (both end together)
       var EDGE=[];(function(){var n=Math.ceil(W/40),m=Math.ceil(H/40),i;for(i=0;i<=n;i++){EDGE.push([W*i/n,0],[W*i/n,H]);}for(i=1;i<m;i++){EDGE.push([0,H*i/m],[W,H*i/m]);}})();
       var cov0=0;
-      // Oct 1: no wave any more. The whole photo starts in black and white and 20% darker, and evolves evenly with the counter:
-      // at n% it is n% of the way to its full colour and normal lightness (the colour layer fades in over the grey one).
-      var paint=function(r,q){q=Math.max(0,Math.min(1,q||0));norm.style.webkitMaskImage=norm.style.maskImage='none';norm.style.opacity=String(q);hot.style.opacity='0';cov0=Math.max(cov0,q);if(wave)wave.cov=cov0;};
-      var paintWave=function(r,q){q=q||0;var qq=q*q,b=band*(1-.85*qq),sm=1-.95*qq,brt=1-.95*qq;   // towards the end the front gathers into a thin, round ring, so the colour settles just as the count reaches 98%
+      var paint=function(r,q){q=q||0;
+        // the black-and-white photo ahead of the wave starts 20% darker and brightens with the count to its normal lightness at 100%
+        var gb=(0.8+0.2*Math.min(1,q))*(ph[3]||1);gray.style.filter='saturate(0) brightness('+gb.toFixed(3)+')';var qq=q*q,b=band*(1-.85*qq),sm=1-.95*qq,brt=1-.95*qq;   // towards the end the front gathers into a thin, round ring, so the colour settles just as the count reaches 98%
         var t=performance.now()/1000,m1=[],m2=[],C=[];
         LOB.forEach(function(L){
           var off=Math.min(90,r*.07+4)*sm,ang=L.a+L.s*t*.2+Math.sin(t*L.w+L.p)*.5;   // centres wander around the logo
@@ -329,8 +328,8 @@ window.__wfBlink=function(path,dur){
         // normal colour has just reached every corner (the shape's smallest lobe included)
         // the front's full colour reaches every corner exactly at 110 on the count (100% shown), so the colour never finishes
         // before the counter does
-        var REND=(R+90*.05+band*.15*1.45)/(.965-.025*.05),q=Math.min(1,wave.p/END);if(q<1)paint(q*REND,q);else if(!wave.full){wave.full=true;norm.style.webkitMaskImage=norm.style.maskImage='none';norm.style.opacity='1';hot.style.opacity='0';}
-        if(wave.p>=END-.002&&ready){wave.p=END;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';norm.style.opacity='1';return;}
+        var REND=(R+90*.05+band*.15*1.45)/(.965-.025*.05),q=Math.min(1,wave.p/END);if(q<1)paint(q*REND,q);else if(!wave.full){wave.full=true;norm.style.webkitMaskImage=norm.style.maskImage='none';hot.style.opacity='0';}
+        if(wave.p>=END-.002&&ready){wave.p=END;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
         requestAnimationFrame(step);})(t1);
     };
     var start=function(up){if(!up&&!im.src)im.src='assets/splash/'+ph[0];};

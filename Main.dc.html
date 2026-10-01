@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=117"></script>
+<script src="fit.js?v=118"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=142"></script>
 <script src="i18n.js?v=127"></script>
@@ -861,20 +861,22 @@ class Component extends DCLogic {
           if (pt && m < 1) return 'Carregado agora';
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         const items = [
-          ['NASA FIRMS', T('Satellite heat detections (VIIRS). Europe and the Americas', 'Deteções de calor por satélite (VIIRS). Europa e Américas'), c.tSat, false, 26, 'SAT'],
+          ['NASA FIRMS', T('Satellite heat detections (VIIRS, MODIS, Landsat). Europe and the Americas', 'Deteções de calor por satélite (VIIRS, MODIS, Landsat). Europa e Américas'), c.tSat, false, 26, 'SAT'],
+          ['NOAA GOES-18 and GOES-19', T('Geostationary heat detections every 10 minutes. The Americas', 'Deteções de calor geostacionárias a cada 10 minutos. Américas'), c.tSat, false, 1, null, 10],
           ['NIFC · WFIGS', T('Wildfire incidents. United States', 'Incêndios florestais. Estados Unidos'), c.tUS, false, 26, 'US'],
           ['Fogos.pt · ANEPC', T('Rural fire occurrences. Portugal', 'Ocorrências de incêndios rurais. Portugal'), c.tPT, false, 26, 'PT'],
           ['INPE · Programa Queimadas', T('Fire events. Brazil', 'Eventos de fogo. Brasil'), c.tBR, false, 27, 'BR'],
           ['BC Wildfire Service', T('Wildfires. British Columbia', 'Incêndios florestais. Colúmbia Britânica'), c.tCAN, false, 26, 'CAN'],
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27],
-          ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26]
-        ].map(([name, what, t, still, day, key]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
+          ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26],
+          ['Open-Meteo', T('Weather and forecast for the map and the projections; terrain (Copernicus elevation) for the projections', 'Meteorologia e previsão para o mapa e as projeções; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10]
+        ].map(([name, what, t, still, day, key, mon]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
           return { name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
           onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
-            return lang === 'ja' ? (yr ? '2026年' : '') + '9月' + day + '日に追加' : pt ? 'Adicionada a ' + day + ' set' + yr : 'Added ' + day + ' Sep' + yr; })() }; });
+            const m = mon || 9; return lang === 'ja' ? (yr ? '2026年' : '') + m + '月' + day + '日に追加' : pt ? 'Adicionada a ' + day + (m === 10 ? ' out' : ' set') + yr : 'Added ' + day + (m === 10 ? ' Oct' : ' Sep') + yr; })() }; });
         return { title: T('Manage data sources', 'Gerir fontes de dados'), count: String(items.length), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',

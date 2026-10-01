@@ -25,7 +25,7 @@ jobs:
           path: .ne-cache
           key: natural-earth-10m-geonames-v2
       - name: Install
-        run: pip install --quiet shapely
+        run: pip install --quiet shapely netCDF4 numpy
       - name: Build regions and hotspots
         env:
           FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
