@@ -330,7 +330,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <!-- When: the GPS component's twin, right under it (where, then when): the time on top, the date as annotation, a clock icon where the copy icon sits -->
       <div style="display: {{ig.timeD}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -48px 16px 0">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
-          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{ig.ago}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ig.det}}</span></span>
+          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{ig.ago}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ig.det}}<svg width="13" height="13" viewBox="0 0 24 24" role="img" aria-label="Night ignition" style="display: {{ig.detNightD}}; margin: 0 0 -1px 6px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span></span>
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #3C3C43"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z M12 7.5V12l3 2"></path></svg></span>
         </div>
       </div>
@@ -643,12 +643,14 @@ class Component extends DCLogic {
     const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }; K.sort((a, b) => ix(a.key) - ix(b.key));
     const kpis = K.map((m) => { const q = /^([~<>≈]?-?[\d.,]+%?)\s+(.+)$/.exec(m.v), num = q ? q[1] : m.v, un = q ? q[2] : '', w = 106 - (un ? un.length * 8.6 + 3 : 0);
       return { dot: '', tag: '', sub: '', tagFg: '', tagBg: '', ...m.ch, ...m, tagD: m.tag ? 'block' : 'none', subD: m.sub ? 'block' : 'none', n: num, u: un, uD: un ? 'inline' : 'none', k: Math.max(16, Math.min(30, Math.floor(w / Math.max(1, num.length * 0.6)))) + 'px', note: m.note || '', noteD: m.note ? 'block' : 'none', ...this.wfKpiDrag(m.key, 'ign') }; });
-    const det = tMs ? (() => { const d = new Date(tMs), today = new Date().toDateString() === d.toDateString(), hm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); return 'Detected ' + (today ? hm : d.toLocaleDateString([], { day: 'numeric', month: 'short' })); })() : '';
+    const LL0 = L && isFinite(L.lat) ? { lat: +L.lat, lon: +L.lon } : { lat: 34.19 - (cur.y - 662) / 2829, lon: (cur.x - 518) / 2345 - 118.13 };
+    const det = tMs ? (() => { const d = new Date(tMs), clk = window.__wfClock ? window.__wfClock(tMs, cur.st, LL0.lon) : d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); return 'Detected ' + (Date.now() - tMs < 20 * 3600000 ? clk : d.toLocaleDateString([], { day: 'numeric', month: 'short' }) + ', ' + clk); })() : '';   /* the clock at the candidate, with AM / PM, as on the fire page */
+    const detNight = !!(tMs && ((window.__wfNight && window.__wfNight(L)) || (window.__wfNightAt && window.__wfNightAt(tMs, LL0.lat, LL0.lon))));
     // Weather and terrain: the fire model's reading at this point when it has one (Open-Meteo, terrain, fuel), else simulated and labelled
     let MI = null; try { if (window.__wfLiveMap && window.__wfFireModel && L && L.lat) { const M = window.__wfFireModel({ id: 'IGN-' + cur.id, st: cur.st, lat: L.lat, lon: L.lon, ha: 1, note: '' }); if (M && !M.failed && M.info) MI = M.info; } } catch (e) {}
     const SI = MI || { wind: Math.round(5 + R(11) * 25), from: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(R(12) * 8)], temp: Math.round(18 + R(13) * 17), rh: Math.round(15 + R(14) * 45), md: Math.round(4 + R(15) * 10), slope: Math.round(2 + R(16) * 28), fuel: ['Shrubland', 'Forest with understory', 'Grass', 'Broadleaf forest'][Math.floor(R(17) * 4)] };
     const cond = this.wfCondCards(SI, { st: cur.st }, null, MI ? '' : 'Estimate');
-    return { cond, kpis, ago: ago ? ago + ' ago' : '', det, detD: det ? 'block' : 'none', timeD: ago || det ? 'flex' : 'none', evMt: hasFig ? '8px' : '0', gpsBd: '0', chatD: 'flex' };
+    return { cond, kpis, ago: ago ? ago + ' ago' : '', det, detD: det ? 'block' : 'none', detNightD: detNight ? 'inline-block' : 'none', timeD: ago || det ? 'flex' : 'none', evMt: hasFig ? '8px' : '0', gpsBd: '0', chatD: 'flex' };
   }
   // Conditions at the fire as cards (sim: a note for every card when the figures are simulated)
   wfCondCards(I, frow, INFO, sim) {

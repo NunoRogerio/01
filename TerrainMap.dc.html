@@ -226,10 +226,27 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinCoords}}</span>
     </div>
   </sc-if>
+  <sc-if value="{{hasMapHdr}}" hint-placeholder-val="{{ false }}">
+    <!-- A fire's full-screen map: a full-width header (16px from the sides, 16px padding top and bottom) with two groups:
+         the place (title) over its county, then the status band (kind with its dot, the stage tag on the right).
+         Upright the groups stack; in landscape they share one row, the place on the left and the status on the right.
+         The legend chips sit 32px below it. -->
+    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: {{hdrDir}}; align-items: {{hdrAlign}}; justify-content: space-between; gap: 16px; box-sizing: border-box; padding: 16px; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+      <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; overflow-wrap: anywhere">{{mapTtl}}</span>
+        <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
+      </span>
+      <span style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0; box-sizing: border-box; min-height: 44px; padding: 6px 6px 6px 16px; border-radius: 999px; background: rgba(118,118,128,0.12); width: {{hdrStW}}">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{mapDot}}"></path></svg>
+        <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapKind}}</span>
+        <span style="display: {{mapTagD}}; margin-left: auto; flex-shrink: 0; align-items: center; min-height: 32px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{mapTagBg}}; color: {{mapTagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{mapTag}}</span>
+      </span>
+    </div>
+  </sc-if>
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
     <!-- the title sits in its own solid container (the legend chips' surface and shadow) so the map never runs through it -->
-    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px); display: flex; flex-direction: column; justify-content: center; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px); display: flex; flex-direction: column; justify-content: center; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapTtl}}</span>
       <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
     </div>
@@ -292,6 +309,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
           <circle cx="20" cy="20" r="10" fill="none" stroke="#E8590C" stroke-width="1.5" style="display: {{pinCirD}}"><animate attributeName="r" values="10;21" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
           <circle cx="20" cy="20" r="{{pinTriR}}" fill="#E5FF00" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke" style="display: {{pinTriD}}; fill: var(--wf-y, #E5FF00); fill-opacity: 0.2"></circle>
           <circle cx="20" cy="20" r="9.3" fill="#E8590C" style="display: {{pinCirD}};"></circle>
+          <!-- a night detection: the black moon in the centre of the circle, no border, as on every map -->
+          <path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="translate(14.5 14.5) scale(0.5) rotate(-25 12 12) translate(1.5 0)" fill="#1C1C1E" style="display: {{pinMoonD}}"></path>
         </svg>
         </sc-if>
         <span class="{{fire.tip}}" role="tooltip"><b>{{fire.tt}}</b>{{fire.td}}</span>
@@ -308,7 +327,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
-  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: calc({{legR}}px - 8px); top: calc({{legTopC}}px - 6px); box-sizing: border-box; padding: 6px 8px 14px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
+  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: {{legRightCss}}; top: calc({{legTopC}}px - 6px); box-sizing: border-box; padding: 6px 8px 14px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{legBg}}; box-shadow: {{legSh}}; color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer">
         <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.glowD}}" fill="none" stroke="#E8590C" stroke-opacity="0.35" stroke-width="3" stroke-linecap="round" style="filter: blur(0.9px)"></path><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
@@ -443,7 +462,7 @@ class Component extends DCLogic {
       const step = (now) => {
         const dt = Math.min(34, now - last); last = now;
         const k = this.scaleK(), v = this.view();
-        this.setView(v.cx - vx * dt / k / v.s, v.cy - vy * dt / k / v.s, v.s);
+        this._moved = true; this.setView(v.cx - vx * dt / k / v.s, v.cy - vy * dt / k / v.s, v.s);
         const f = Math.exp(-dt / 190); vx *= f; vy *= f;                    // ~0.19 s time constant
         this._glide = Math.hypot(vx, vy) > 0.02 ? requestAnimationFrame(step) : 0;
         if (!this._glide && this._gest) this.endGest();
@@ -481,7 +500,7 @@ class Component extends DCLogic {
         if (this._tap && Math.hypot(e.clientX - this._tap.x, e.clientY - this._tap.y) > 8) this._tap = null;
         this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
         const n = performance.now(), T = this._trail || (this._trail = []); T.push([n, e.clientX, e.clientY]); while (T.length > 2 && n - T[0][0] > 80) T.shift();
-        this.setView(v.cx - (e.clientX - prev.x) / k / v.s, v.cy - (e.clientY - prev.y) / k / v.s, v.s);
+        this._moved = true; this.setView(v.cx - (e.clientX - prev.x) / k / v.s, v.cy - (e.clientY - prev.y) / k / v.s, v.s);
       } else if (ids.length === 2) {
         this._pinched = true; this._tap = null;
         const other = this.pts[ids.find((i) => String(i) !== String(e.pointerId))];
@@ -1169,7 +1188,7 @@ class Component extends DCLogic {
   // The page's own framing of this map (the place, pin or station it was opened on), before any pan or zoom
   homeView() { const b = this.base(), z0 = this.pinCloseOn() ? 1 : (Number(this.props.startZoom) || 1), px = Number(this.props.pinX), py = Number(this.props.pinY), hasPin = z0 !== 1 && isFinite(px) && isFinite(py) && this.props.pinX != null;
     return this.clampView(hasPin ? px - (px - b.cx) / z0 : b.cx, hasPin ? py - (py - b.cy) / z0 : b.cy, b.s * z0); }
-  goHome() { const v = this.homeView(); try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} this.stopGlide(); this._animUntil = Date.now() + 700; this._pv = Object.assign({}, this._pv || {}, v); this.setState({ ...v }); }
+  goHome() { this._moved = false; const v = this.homeView(); try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} this.stopGlide(); this._animUntil = Date.now() + 700; this._pv = Object.assign({}, this._pv || {}, v); this.setState({ ...v }); }
   flyTo(lat, lon, bb) {
     const G = this.geo(); if (!G || !G.P) return false;
     const c = G.P(lat, lon), w = this.win(), H = this.H();
@@ -1189,7 +1208,7 @@ class Component extends DCLogic {
     const mx = v.cx + (lx - W / 2) / v.s;
     const my = v.cy + (ly - H / 2) / v.s;
     const s2 = Math.min(this.zMax(), Math.max(this.zMin(), v.s * f));
-    this.setView(mx - (lx - W / 2) / s2, my - (ly - H / 2) / s2, s2);
+    this._moved = true; this.setView(mx - (lx - W / 2) / s2, my - (ly - H / 2) / s2, s2);
   }
   renderVals() {
     const LY = this.layers();
@@ -1445,7 +1464,7 @@ class Component extends DCLogic {
       ...(() => { const full = p.isFull === true || p.isFull === 'true', locked = p.locked === true || p.locked === 'true', ctl = full || typeof p.onFull === 'function';
         if (locked || !ctl) return { recD: 'none', goHomeFn: null, recDis: 'true', recOp: 0.4, recPE: 'none', ctrlDir: full ? 'row' : 'column' };
         const v = this.view(), h = this.homeView();
-        const moved = Math.abs(v.cx - h.cx) * v.s > 12 || Math.abs(v.cy - h.cy) * v.s > 12 || Math.abs(Math.log(v.s / h.s)) > 0.05;
+        const moved = !!this._moved && (Math.abs(v.cx - h.cx) * v.s > 12 || Math.abs(v.cy - h.cy) * v.s > 12 || Math.abs(Math.log(v.s / h.s)) > 0.05);   // enabled only once the person has moved the map themselves
         return { recD: 'flex', recDis: moved ? 'false' : 'true', recOp: moved ? 1 : 0.4, recPE: moved ? 'auto' : 'none', ctrlDir: full ? 'row' : 'column', goHomeFn: this._gh || (this._gh = () => this.goHome()) }; })(),
       fsRot: (p.isFull === true || p.isFull === 'true') ? '180deg' : '0deg', fsMaxD: (p.isFull === true || p.isFull === 'true') ? 'none' : 'inline', fsMinD: (p.isFull === true || p.isFull === 'true') ? 'inline' : 'none',
       fsXD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'inline' : 'none', fsCornD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'none' : 'inline',
@@ -1543,19 +1562,21 @@ class Component extends DCLogic {
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
-        const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0, TT = hasT ? 66 : 0;   // pin: the legend sits inside the title box, under its text
+        const HLAND = this.W() > this.H() * 1.2, HDR = p.mode !== 'pin' && !!p.mapTitle && !!p.mapKind, HDRH = HLAND ? 76 : 136;   /* the fire header: 16 + 44 + 16 in one row; upright 16 + 44 + 16 + 44 + 16 */
+        const FULL0 = p.isFull === true || p.isFull === 'true';
+        const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0 && !(FULL0 && p.mapTitle), TT = HDR ? HDRH + 32 : (FULL0 && p.mapTitle) ? (p.mapSub ? 76 : 54) + 32 : hasT ? 66 : 0;   /* full screen: the legend column 32px under the title box or the fire header */   // pin: the legend sits inside the title box, under its text
         const WX = this.wxRow(inT);
         const noLeg = p.noLegend === true || p.noLegend === 'true';   // a small detail map shows only the map and its full-screen button
-        return { ...WX, ...(noLeg || p.fireOnly === true || p.fireOnly === 'true' ? { wxOn: false } : {}), legend, legOn: legend.length > 0 && !noLeg, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle, mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : 54, legIn: 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
+        return { ...WX, ...(noLeg || p.fireOnly === true || p.fireOnly === 'true' ? { wxOn: false } : {}), legend, legOn: legend.length > 0 && !noLeg, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle && !p.mapKind, hasMapHdr: p.mode !== 'pin' && !!p.mapTitle && !!p.mapKind, mapKind: p.mapKind || '', mapDot: p.mapDot || '#E8590C', mapTag: p.mapTag || '', mapTagD: p.mapTag ? 'inline-flex' : 'none', mapTagBg: p.mapTagBg || 'transparent', mapTagFg: p.mapTagFg || '#1C1C1E', hdrDir: HLAND ? 'row' : 'column', hdrAlign: HLAND ? 'center' : 'stretch', hdrStW: HLAND ? 'auto' : '100%', mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : ((p.isFull === true || p.isFull === 'true') && p.mapSub ? 76 : 54), ttlPad: (p.isFull === true || p.isFull === 'true') ? '16px' : '8px 16px',   /* full screen: 16px above and below, like the fire header */ legIn: 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
           ...(() => { const full = p.isFull === true || p.isFull === 'true', L = ((p.mode === 'pin' || !!p.mapTitle) ? 32 : 16) + this.win().l;   /* full screen: the chips stack in a column at the top right (no sideways scroll, nothing under the title) */
-            return full ? { legLeftCss: 'auto', legDir: 'column', legAlign: 'flex-end', legOvx: 'visible' } : { legLeftCss: 'calc(' + L + 'px - 8px)', legDir: 'row', legAlign: 'center', legOvx: 'auto' }; })(),
+            return full ? { legLeftCss: 'calc(' + (16 + this.win().l) + 'px - 8px)', legRightCss: 'auto', legDir: 'column', legAlign: 'flex-start', legOvx: 'visible' } : { legLeftCss: 'calc(' + L + 'px - 8px)', legRightCss: 'calc(' + (16 + this.win().r) + 'px - 8px)', legDir: 'row', legAlign: 'center', legOvx: 'auto' }; })(),
           legGap: (p.isFull === true || p.isFull === 'true') ? '8px' : '6px', legPad: '0 12px 0 10px', legBg: '#F2F2F7', legSh: '0 2px 10px rgba(0,0,0,0.10)',   /* legend chips: solid, the same on every map (no see-through blur: lighter to draw, never changes colour) */ ttlTop: Math.round(Math.max(52, this.win().t) + 16), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? ((p.isFull === true || p.isFull === 'true') ? legend.length * 40 : 40) : 0),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;
             return { size: 40, outer: 44 }; })(),   // round map controls: 44px, the minimum comfortable touch target optIcon: optOpen ? 'm6 15 6-6 6 6' : 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', optLabel: optOpen ? 'Collapse map controls' : 'Map controls',
           optToggle: () => { window.__wfCtrlOpen = !window.__wfCtrlOpen; this.forceUpdate(); } }; })(),
-      linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)), pinOn: !(isRisk && on(p.linkCandidate)) && p.mode !== 'spread',
+      linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)), pinOn: !(isRisk && on(p.linkCandidate)) && p.mode !== 'spread', pinMoonD: (() => { if (p.mode !== 'pin') return 'none'; const L0 = (Array.isArray(p.ignitions) ? p.ignitions : []).find((g) => g && g.id === p.pinId); return L0 && window.__wfNight && window.__wfNight(L0.live) ? 'inline' : 'none'; })(),
       recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
       ignMarks: LY.cands && (isRisk && on(p.linkCandidate)) ? ((list) => (IGN_V ? IGN_V.map((q) => [q.g, q.i]) : list.map((g, i) => [g, i])).map(([g, gi]) => {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
