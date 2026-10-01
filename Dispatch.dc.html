@@ -219,6 +219,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </span>
         <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: {{hdChatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0 4px 0 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{chat.n}}</span></a>
   </header>
+  <!-- Two tabs over the map: Fire (the map and the fire's analysis) and Resources (everything about crews and orders, full width) -->
+  <div role="tablist" aria-label="Fire page" class="wf-seg" style="display: {{ft.d}}; margin: 0 16px 12px">
+    <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{ft.x}})"><span class="segblob"></span></span>
+    <button type="button" role="tab" class="segopt" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" style="font-size: 17px">Fire</button>
+    <button type="button" role="tab" class="segopt" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" style="font-size: 17px">Resources</button>
+  </div>
   </div>
 
   <div style="position: relative; z-index: 2; width: 390px; height: {{mapGap}}px; margin-top: 4px; flex-shrink: 0; pointer-events: none; transition: height .5s cubic-bezier(.2,.8,.2,1)">
@@ -1026,6 +1032,28 @@ class Component extends DCLogic {
     }) };
   }
   renderVals() {
+    // Fire page tabs: Fire keeps the map and the fire's analysis; Resources takes every crew, order and resource figure, full width
+    const o = this._renderVals0(), st = this.state || {};
+    if (o.pgMapD !== 'block') return Object.assign(o, { ft: { d: 'none', x: '0%', fireSel: 'true', resSel: 'false', goFire: () => {}, goRes: () => {} } });
+    const res = st.ftab === 'res', go = (t) => () => { if ((st.ftab || 'fire') === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
+    o.ft = { d: 'grid', x: res ? '100%' : '0%', fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res') };
+    const RES_G = { forces: 1, res: 1, st: 1 };
+    let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx || d.stc || RES_G[d.g] || (d.item && !d.g && !d.src) ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
+    o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
+    const RK = { pers: 1 };
+    if (o.cc && Array.isArray(o.cc.med)) { o.cc = Object.assign({}, o.cc, { med: o.cc.med.filter((m) => !!RK[m.key] === res) }); if (!o.cc.med.length && res) o.cc.medD = 'none'; }
+    if (res) {
+      o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none';
+      if (o.cc) o.cc = Object.assign({}, o.cc, { bigD: 'none', tagD: 'none', trD: 'none', bch: Object.assign({}, o.cc.bch || {}, { svgD: 'none' }) });
+      if (o.floc) o.floc = Object.assign({}, o.floc, { d: 'none' });
+      if (o.rh) o.rh = Object.assign({}, o.rh, { op: 0, pe: 'none' });
+    } else {
+      o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none';
+      if (o.rh) o.rh = Object.assign({}, o.rh, { go: go('res') });   // the Add resources pill opens the Resources tab
+    }
+    return o;
+  }
+  _renderVals0() {
     const s = this.state || {};
     let hz = s.hz != null ? s.hz : ((window.__wfLiveMap && s.fv) ? 0 : 2);   // live fires open on 'Now'
     const hzK = Math.max(1, hz);
