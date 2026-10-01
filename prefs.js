@@ -241,7 +241,10 @@
     try { n = parseInt(sessionStorage.getItem('wf-nt-unread') || '0', 10) || 0; } catch (e) {}
     var go = function (k) { return function () { try { sessionStorage.setItem(k, '1'); sessionStorage.setItem('wf-panel-return', location.href); } catch (e) {} try { location.href = 'Main.dc.html'; } catch (e) {} }; };
     return { code: me.code || '', photoBg: me.photo ? 'url("' + me.photo + '")' : 'none', ntN: n > 20 ? '20+' : String(n), ntD: n ? 'block' : 'none',
-      ntAria: n ? 'Notifications, ' + n + ' unread' : 'Notifications', openNt: go('wf-nt-open'), openPf: go('wf-prefs-open') };
+      ntAria: n ? 'Notifications, ' + n + ' unread' : 'Notifications', openNt: go('wf-nt-open'), openPf: go('wf-prefs-open'),
+      // screens that are not an incident (a station, the drone): the chat opens the list of incident chats, as on the main screen
+      ch: (function () { var C = window.__wfChat, u = 0; try { u = C && C.totalUnread ? C.totalUnread() : 0; } catch (e) {}
+        return { badgeD: u ? 'block' : 'none', n: C && C.badge ? C.badge(u) : String(u), aria: u ? 'Incident chats, ' + u + ' unread' : 'Incident chats', open: function () { if (C && C.openList) C.openList(); } }; })() };
   };
   function segGrow(th) {
     var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 60 / SEG.total;
