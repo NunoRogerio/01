@@ -223,9 +223,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
-    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px;  pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
-      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{mapTtl}}</span>
-      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{mapSub}}</span>
+    <!-- the title sits in its own solid container (the legend chips' surface and shadow) so the map never runs through it -->
+    <div style="position: absolute; z-index: 50; left: {{ttlL}}px; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px); display: flex; flex-direction: column; justify-content: center; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: 8px 16px; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapTtl}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
     </div>
   </sc-if>
 
