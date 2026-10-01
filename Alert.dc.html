@@ -16,7 +16,7 @@
 <script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=110"></script>
-<script src="i18n.js?v=106"></script>
+<script src="i18n.js?v=107"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=33"></script>
 
@@ -342,7 +342,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-for>
       <!-- Evidence: the media (photos, sensors, calls) when there is any, then what the sources say -->
       <section aria-label="Evidence" style="display: flex; flex-direction: column; flex-shrink: 0">
-        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 20px 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Evidence</h3><span class="wf-note">{{cur.agree}}</span></span>
+        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 20px 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Evidence</h3><span class="wf-note">{{evCount}}</span></span>
     <figure style="display: {{figD}}; color: #FFFFFF; position: relative; width: 358px; height: 248px; margin: 0 16px; flex-shrink: 0; overflow: hidden; border-radius: 16px; background: {{figBg}}; pointer-events: {{figPE}}">
         <sc-if value="{{tab.isImg}}" hint-placeholder-val="{{ true }}">
           <img src="{{tab.src}}" alt="{{tab.alt}}" style="display: block; width: 358px; height: 248px; object-fit: cover">
@@ -399,12 +399,18 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </sc-for>
         </div>
       </figure>
-        <ul style="display: flex; flex-direction: column; margin: {{ig.evMt}} 16px 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
-          <li style="padding: 12px 16px; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">{{cur.verdict}}</li>
-          <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
-            <li style="padding: 12px 16px; border-top: 0; font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</li>
+        <!-- One container per source: the satellite pass, then any drone confirmation, citizen report or 911 call -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin: {{ig.evMt}} 16px 0">
+          <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
+            <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+              <li style="padding: 12px 16px; font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">{{ev.title}}</li>
+              <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2">
+                <li style="padding: 12px 16px; border-top: 0; font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</li>
+              </sc-for>
+              <li class="wf-note" style="display: {{ev.noteD}}; padding: 0 16px 12px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ev.note}}</li>
+            </ul>
           </sc-for>
-        </ul>
+        </div>
       </section>
 
     </div>
@@ -1033,6 +1039,22 @@ class Component extends DCLogic {
         return { locPlace: place, locD: place ? 'block' : 'none', gps: G, gpsD: G ? 'flex' : 'none', copyIc: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', copyTxt: 'Copied to clipboard', copyRows: fresh ? '1fr' : '0fr', copyOp: fresh ? 1 : 0, copyC: done ? '#1E7A34' : '#3C3C43', copyAria: done ? 'Copied' : 'Copy coordinates',
           copyGps: () => { try { navigator.clipboard.writeText(G).catch(() => {}); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ copied: { v: G, t: Date.now() } }); setTimeout(() => this.forceUpdate(), 3100); } }; })(),
       reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#7A5600', color: ok ? '#3C3C43' : '#545458', sep: i ? '0' : '0' })),
+      ...(() => {   // Evidence: one container per source. The satellite pass is real; drone, citizen and 911 sources are simulated (marked so)
+        const isLive = !!(cur.live || cur.L), row = (t, ok = true) => ({ t, color: ok ? '#3C3C43' : '#545458' });
+        const droneSeen = !!cur.id && (this.wfVerifyId() === cur.id || (window.__wfDroneSeen || {})[cur.id]);
+        const sim = 'Simulation.';
+        const h = String(cur.id || '').split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
+        const t0 = cur.tMs || Date.now(), at = (min) => new Date(t0 + min * 60000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const sat = { title: isLive ? 'Satellite: ' + String(cur.verdict || 'heat anomaly').toLowerCase() : cur.verdict,
+          rows: cur.reasons.filter(([t]) => !(droneSeen && /^Not confirmed on the ground/.test(t))).map(([t, ok]) => row(t, ok)), noteD: 'none', note: '' };
+        const out = [sat];
+        if (isLive) {
+          if (droneSeen) out.push({ title: 'Drone confirmation', rows: [row('Drone ' + (cur.drone || 'D-5') + ' over the ignition'), row('Smoke and a hot spot on the thermal feed')], noteD: 'block', note: sim });
+          if (h % 5 < 2) out.push({ title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
+          if ((h >> 3) % 5 < 2) out.push({ title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
+        }
+        return { evid: out, evCount: out.length === 1 ? '1 source' : out.length + ' sources' };
+      })(),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent likelihood',
       pinLabel: 'Estimated ignition point',   // the place and '1 of n' are already in the header
       chipsVis: n > 1 ? 'visible' : 'hidden', chipsHidden: n > 1 ? 'false' : 'true',
@@ -1076,7 +1098,7 @@ class Component extends DCLogic {
       chat: (() => { const C = window.__wfChat, raw = SC.cands[ci]; if (!C || !raw) return { badgeD: 'none', n: '', aria: 'Chat', open: null, label: '', btnD: 'none' };
         const inc = C.incCand(raw), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
         return { badgeD: u ? 'block' : 'none', n: C.badge ? C.badge(u) : String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), label: 'Team chat', btnD: 'block' }; })(),
-      hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), goDrone: () => { this.wfSetVerify(cur.id); this.setState({ feed: cur.id }); },   // the drone's feed opens in place: in the map band, or floating over the full-screen map
+      hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), goDrone: () => { this.wfSetVerify(cur.id); window.__wfDroneSeen = Object.assign(window.__wfDroneSeen || {}, { [cur.id]: true }); this.setState({ feed: cur.id }); },   // the drone's feed opens in place: in the map band, or floating over the full-screen map
       ...(() => {   // the feed grows as a circle from the drone button and folds back into it; the full-screen window drags up and down
         const on = !!s.feed && s.feed === cur.id, closing = Date.now() - (this._feedOff || 0) < 650, inFull = !!s.full;
         const R = (o, x, y, r) => 'circle(' + r + 'px at ' + x + 'px ' + y + 'px)';
