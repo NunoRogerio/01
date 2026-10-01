@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=116"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=141"></script>
+<script src="prefs.js?v=142"></script>
 <script src="i18n.js?v=127"></script>
 <script src="live.js?v=38"></script>
 
@@ -112,6 +112,11 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <sc-for list="{{burnFx}}" as="bf" hint-placeholder-count="0">
         <path d="{{bf.front}}" fill="none" stroke="#E8590C" stroke-opacity="0.95" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#D9480F;#FF7A1A;#D9480F" dur="2.4s" repeatCount="indefinite"></animate></path>
       </sc-for>
+      <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
+           wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
+      <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
+        <path d="{{pgD}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-dasharray="{{pgDash}}" stroke-width="{{pgW}}" stroke-linejoin="round"></path>
+      </sc-if>
       <sc-if value="{{isSpread}}" hint-placeholder-val="{{ false }}">
         <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="{{lw.w12}}" stroke-linecap="round" stroke-dasharray="{{lw.d36}}"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="1.2s" repeatCount="indefinite"></animate></path>
         <path d="{{route}}" fill="none" stroke="#0079A6" stroke-width="{{lw.w16}}" stroke-linecap="round" stroke-dasharray="{{lw.d27}}" style="opacity: {{routeOp}}"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="0.9s" repeatCount="indefinite"></animate></path>
@@ -828,6 +833,8 @@ class Component extends DCLogic {
     let spanC = null;
     const NSs = this.nearSt(), PC = Number(p.pinClose);
     if (this.pinCloseOn()) { s0 = PC; fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = this.win().c; }   // close on the ignition, centred in the visible map
+    // A candidate's projection (+1 / +3 / +6 h): zoom out just enough that the whole projected shape fits around the marker
+    if (p.mode === 'pin' && Number(p.pinGrow) > 0) { const G = this.pinGrowShape(Number(p.pinX) || fx, Number(p.pinY) || fy, Number(p.pinGrow)); if (G) { const w1 = this.win(); fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = w1.c; s0 = Math.min(s0, (w1.cw / 2 - 28) / Math.max(1e-6, G.ex), (w1.h / 2 - 28) / Math.max(1e-6, G.ey)); } }
     else if (NSs.length && p.mode === 'pin') {   // fire maps frame the perimeter and projection instead (set by the screen)
       const w1 = this.win(), top = Math.max(52, w1.t) + 14 + 88 + 36, bot = w1.b - 40, left = w1.l + 56, right = this.W() - w1.r - 84;   // below the title box (with its legend) plus a distance label; above the credit   // clear of the legend, the map credit and the full-screen button
       // The pin stays in the middle of the clear area; zoom out just enough for every suggested station around it.
@@ -1073,6 +1080,51 @@ class Component extends DCLogic {
   // Weather at the centre of the map, in legend-style containers under the legend: only once the map covers less than
   // ~100 km across (a district or county, or closer), where one reading means something. Real data (Open-Meteo, current
   // conditions), fetched after the map settles; nothing is shown when it isn't available.
+  // Ignition candidate projection: if the candidate is a fire, the area it burns by +h hours. The hourly forecast at the marker
+  // (Open-Meteo: temperature, wind speed and direction) drives it hour by hour: the head runs downwind (faster with wind and
+  // heat), the back creeps upwind and the flanks widen; a gentle wobble (seeded by the place) keeps it from looking drawn by hand.
+  pinGrowVals(px, py, h, sc) {
+    const G = this.pinGrowShape(px, py, h); if (!G) return { pgOn: false, pgD: '', pgW: 1, pgDash: '6 5' };
+    const k = sc > 0 ? sc : 1;   // the map layer is scaled with CSS, so the edge is sized here to stay 1.6px on screen
+    return { pgOn: true, pgD: G.d, pgW: +(1.6 / k).toFixed(5), pgDash: +(6 / k).toFixed(5) + ' ' + +(5 / k).toFixed(5) };
+  }
+  pinGrowShape(px, py, h) {
+    const off = null;
+    if (!(h > 0) || !window.__wfLiveMap) return off;
+    const lat = 34.19 - (py - 662) / 2829, lon = (px - 518) / 2345 - 118.13;
+    if (!(Math.abs(lat) < 85)) return off;
+    const key = lat.toFixed(2) + ',' + lon.toFixed(2), C = window.__wfWxH || (window.__wfWxH = {}), d = C[key];
+    if (d === undefined) {
+      C[key] = null;
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) + '&hourly=temperature_2m,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&forecast_hours=7&timezone=auto')
+        .then((r) => r.ok ? r.json() : null).then((j) => { const H = j && j.hourly; C[key] = H && H.wind_speed_10m ? H : false; this.forceUpdate(); })
+        .catch(() => { C[key] = false; this.forceUpdate(); });
+    }
+    // without a forecast (offline, or still loading): a calm, mild hour, so the shape still shows what it is
+    const H = C[key] || null, hr = (k, a, dflt) => (H && H[a] && H[a][k] != null ? H[a][k] : dflt);
+    let fx = 0, fy = 0, back = 0, flank = 0;   // km: the head's travel (east, north), the back's creep, the flanks' half-width
+    for (let k = 0; k < h; k++) {
+      const ws = hr(k, 'wind_speed_10m', 8), T = hr(k, 'temperature_2m', 22), to = (hr(k, 'wind_direction_10m', 225) + 180) * Math.PI / 180;   // the wind blows towards dir + 180°
+      const tf = T >= 35 ? 1.5 : T >= 30 ? 1.3 : T >= 20 ? 1 : T >= 10 ? 0.75 : 0.5;
+      const head = (0.18 + 0.035 * ws) * tf;   // km in this hour
+      fx += head * Math.sin(to); fy += head * Math.cos(to); back += 0.12 * tf; flank += (0.1 + 0.012 * ws) * tf;
+    }
+    const L = Math.hypot(fx, fy) || 0.001, ux = fx / L, uy = fy / L;   // the downwind direction (east, north)
+    const a = (L + back) / 2, b = Math.max(flank, 0.15), cx = (L - back) / 2;   // an egg-shaped ellipse: head at the far end, back behind the marker
+    const kx = 2345 / (111.32 * Math.cos(lat * Math.PI / 180)), ky = 2829 / 111.32;   // km → map units
+    let seed = 7; for (const ch of key) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+    const rr = (i) => { const x = Math.sin(seed * 0.001 + i * 12.9898) * 43758.5453; return x - Math.floor(x); };
+    const ph = [rr(1) * 6.28, rr(2) * 6.28, rr(3) * 6.28], pts = []; let ex = 0, ey = 0;
+    for (let i = 0; i < 72; i++) {
+      const t = i / 72 * 2 * Math.PI, w = 1 + 0.07 * Math.sin(3 * t + ph[0]) + 0.05 * Math.sin(5 * t + ph[1]) + 0.03 * Math.sin(7 * t + ph[2]);
+      const head = Math.cos(t) > 0 ? 1 - 0.18 * Math.pow(Math.sin(t), 2) : 1;   // a rounder back, a fuller head
+      const along = cx + a * Math.cos(t) * w, across = b * Math.sin(t) * w * head;
+      const e = along * ux - across * uy, n = along * uy + across * ux;   // rotate into the downwind direction
+      ex = Math.max(ex, Math.abs(e * kx)); ey = Math.max(ey, Math.abs(n * ky));
+      pts.push((px + e * kx).toFixed(1) + ' ' + (py - n * ky).toFixed(1));
+    }
+    return { d: 'M' + pts.join('L') + 'Z', ex: ex, ey: ey };
+  }
   wxRow(inLegendBox) {
     const off = { wxOn: false, wx: [] };
     if (!window.__wfLiveMap || inLegendBox || this.props.noWeather) return off;
@@ -1578,7 +1630,7 @@ class Component extends DCLogic {
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
-      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: gFake },
+      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: gFake }, ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
       burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? (window.__wfLiveMap ? this.heatAreas(FIRES_V) : FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; })) : [],
       burnFx: !MANY && !window.__wfLiveMap && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;

@@ -190,6 +190,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // The glass overlay behind panels, one definition for the whole app: a slightly dark frosted layer, so the panel's edge
     // reads clearly against what is underneath. Change it here and every overlay changes.
     ':root{--wf-glass-bg:rgba(60,60,67,0.24);--wf-glass-blur:blur(10px) saturate(120%)}' +
+    // A page moved out of the way (pointer-events none, e.g. under a full-screen map) takes no taps anywhere inside it: the map's
+    // moving layers re-enable taps for their markers, which otherwise blocked the full-screen map's buttons above them
+    '.wf-page[style*="pointer-events: none"] *{pointer-events:none!important}' +
     '.wf-glass{background:var(--wf-glass-bg)!important;-webkit-backdrop-filter:var(--wf-glass-blur)!important;backdrop-filter:var(--wf-glass-blur)!important}' +
     // Grabbers (the grey line that opens and closes blades), one rule for the whole app: the line sits 8px from the blade's edge
     // and keeps 40px clear between it and the blade's content. gb = line at the bottom (top blades), gt = line at the top (bottom blades).
