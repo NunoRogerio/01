@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=119"></script>
+<script src="prefs.js?v=120"></script>
 <script src="i18n.js?v=111"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
@@ -564,6 +564,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  // A panel opened from an incident screen's header (bell or profile): once it has folded away, back to that screen
+  wfPanelReturn() { let r = ''; try { r = window.sessionStorage.getItem('wf-panel-return') || ''; window.sessionStorage.removeItem('wf-panel-return'); } catch (e) {} if (!r) return false;
+    setTimeout(() => { try { if (window.history.length > 1) window.history.back(); else window.location.href = r; } catch (e) {} }, 420); return true; }
   wfSlide(dir, apply) {
     if (this._sl) return; this._sl = true; const w = dir === 'fwd' ? -1 : 1;
     const raf = (f) => (typeof requestAnimationFrame === 'function' ? requestAnimationFrame(f) : setTimeout(f, 16));
@@ -892,7 +895,7 @@ class Component extends DCLogic {
             : T('The link carries your key: calls from invited phones use your credit. Send it privately, only to people you trust. To cut everyone off, replace the key in the Anthropic console.', 'A ligação leva a sua chave: as chamadas dos telemóveis convidados usam o seu crédito. Envie-a em privado, só a quem confia. Para cortar o acesso a todos, substitua a chave na consola Anthropic.') }; })(),
       openPrefs: () => { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {}   // user preferences always open at the top (lists and the area picker keep their place)
         const av = this.wfPfAvPos(); this.setState(av ? { pf: true, pfSpin: false, pfAvPos: av } : { pf: true, pfSpin: false }); clearTimeout(this._pfFixT); this._pfFixT = setTimeout(() => this.wfPfAvFix(), 620); },
-      closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); setTimeout(() => { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {} }, 520); }, 280); },
+      closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); if (this.wfPanelReturn()) return; setTimeout(() => { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {} }, 520); }, 280); },
       pfGroups: [
         group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', '日本']], (l) => { if (window.__wfSetLang) window.__wfSetLang(l); }),
         group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
@@ -985,7 +988,8 @@ class Component extends DCLogic {
   // Notifications for the chosen area. Ignition detections and fire states come from the live data; the station
   // updates (crews returning, stations available) are illustrative until a dispatch feed exists.
   wfNotes(CANDS, FIRES, scope, listFocus) {
-    const s = this.state || {}, open = !!s.ntOpen, now = Date.now();
+    if (this._ntBoot === undefined) { let f = false; try { f = window.sessionStorage.getItem('wf-nt-open') === '1'; window.sessionStorage.removeItem('wf-nt-open'); } catch (e) {} this._ntBoot = f; }   /* opened from an incident screen's bell */
+    const s = this.state || {}, open = s.ntOpen === undefined ? !!this._ntBoot : !!s.ntOpen, now = Date.now();
     const T0 = window.__wfNtT0 || (window.__wfNtT0 = now);
     let seen = 0; try { seen = +window.sessionStorage.getItem('wf-nt-seen') || 0; } catch (e) {} seen = Math.max(seen, (window.__wfMem || {}).ntSeen || 0);
     const TRI = 'M2.6 3H11.4L7 11Z', CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z', SQ = 'M2.7 12.2H11.3V7.2L7 2.1 2.7 7.2Z';
@@ -1017,11 +1021,11 @@ class Component extends DCLogic {
       items, none: items.length === 0, listD: items.length ? 'flex' : 'none', title: where, sub: 'Notifications. ' + (unread ? unread + ' unread' : items.length + (items.length === 1 ? ' update' : ' updates')) + '.', unread: unread > 20 ? '20+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
       ring: 'none',   // the bell stays still; the yellow count badge alone shows unread updates
       note: 'Station updates are examples until a dispatch feed is connected.', noteD: out.some((n) => n.kind === 'st') ? 'block' : 'none',
-      aria: unread ? 'Notifications, ' + unread + ' unread' : 'Notifications', str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
+      aria: (() => { try { window.sessionStorage.setItem('wf-nt-unread', String(unread)); } catch (e) {} return unread ? 'Notifications, ' + unread + ' unread' : 'Notifications'; })(), str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
       op: open ? 1 : 0, pe: open ? 'auto' : 'none', y: open ? '0%' : '-104%', dur: open ? '.55s' : '.45s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '.5s',
       inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg', dy: 0, cl: this.wfDrag('nt').y ? Math.max(0, -this.wfDrag('nt').y) : -80, clT: this.wfDrag('nt').y ? '0s' : '.3s', h: this.wfHandle('nt', 'up', () => this.setState({ ntOpen: false })),
       open: () => { this.setState({ ntOpen: true, scOpen: false }); },
-      close: () => { if (this._ntT) return; this.wfNtSeen(now); this.setState({ ntSpin: true }); this._ntT = setTimeout(() => { this._ntT = null; this.setState({ ntOpen: false, ntSpin: false }); }, 260); }
+      close: () => { if (this._ntT) return; this.wfNtSeen(now); this.setState({ ntSpin: true }); this._ntT = setTimeout(() => { this._ntT = null; this.setState({ ntOpen: false, ntSpin: false }); if (this.wfPanelReturn()) return; }, 260); }
     };
   }
   wfNtSeen(t) { window.__wfMem = Object.assign(window.__wfMem || {}, { ntSeen: t }); try { window.sessionStorage.setItem('wf-nt-seen', String(t)); } catch (e) {} }

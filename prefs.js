@@ -75,7 +75,7 @@
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
     o.push('html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:#E8E8ED!important}');
     o.push('html:root .wf-note{color:#AEAEB2!important}');
-    o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:inset 0 -1px 0 rgba(235,235,245,0.18)}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
+    o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
     o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
@@ -117,7 +117,7 @@
   'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over an 8px lime bar, rounded at both ends, that glides between them; shared by every tab set */
   '[data-wf-kpicard]>span:first-child[style*="min-height: 40px"]{min-height:32px!important}' +   // mini cards: the title sits 40% closer to its value (all cards)
-  '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:inset 0 -1px 0 rgba(60,60,67,0.18)}' +
+  '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:none}' +
   '.wf-tabs .tabopt{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 8px;border:0;background:transparent;font:inherit;font-size:17px;font-weight:400;color:#6E6E73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .3s ease}' +
   '.wf-tabs .tabopt[aria-selected=true]{color:#1C1C1E;font-weight:600}' +
   '.wf-tabs>.tabbar{position:absolute;z-index:2;bottom:0;height:8px;min-height:8px;border-radius:4px;background:var(--wf-y,#E5FF00);box-shadow:0 0 0 0.5px rgba(0,0,0,0.12);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform;pointer-events:none}' +
@@ -234,6 +234,15 @@
   // on arrival. Any thumb with class .seg or .segthumb gets it (for .segthumb the yellow is its .segblob child).
   var SEG = { grow: 6, lead: 140, total: 620 };
   window.__wfSeg = SEG;
+  // Header actions on incident screens (chat, notifications, profile), the same three round buttons as the main screen.
+  // Notifications and the profile open the main screen's panels; closing the panel comes straight back here.
+  window.__wfHdrAct = function () {
+    var P = window.__wfPrefs || {}, me = P.person || { code: 'NR', photo: '' }, n = 0;
+    try { n = parseInt(sessionStorage.getItem('wf-nt-unread') || '0', 10) || 0; } catch (e) {}
+    var go = function (k) { return function () { try { sessionStorage.setItem(k, '1'); sessionStorage.setItem('wf-panel-return', location.href); } catch (e) {} try { location.href = 'Main.dc.html'; } catch (e) {} }; };
+    return { code: me.code || '', photoBg: me.photo ? 'url("' + me.photo + '")' : 'none', ntN: n > 20 ? '20+' : String(n), ntD: n ? 'block' : 'none',
+      ntAria: n ? 'Notifications, ' + n + ' unread' : 'Notifications', openNt: go('wf-nt-open'), openPf: go('wf-prefs-open') };
+  };
   function segGrow(th) {
     var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 60 / SEG.total;
     if (!h || !el.animate) return;

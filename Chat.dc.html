@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=119"></script>
+<script src="prefs.js?v=120"></script>
 <script src="i18n.js?v=111"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
@@ -55,7 +55,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- Close with the round X, as the notifications panel (back to where you were) -->
       <a href="Main.dc.html" data-wf-back="1" class="chbtn" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
     </header>
-    <div role="tablist" aria-label="{{t.chats}}" class="wf-seg" style="flex-shrink: 0; margin: 0 16px 32px">
+    <div role="tablist" aria-label="{{t.chats}}" class="wf-seg" style="flex-shrink: 0; margin: 0 16px 40px">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{tabX}})"><span class="segblob"></span></span>
       <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
