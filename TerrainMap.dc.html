@@ -276,7 +276,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <sc-if value="{{pinOn}}" hint-placeholder-val="{{ false }}">
       <span class="tipwrap" tabindex="0" style="position: absolute; z-index: 24; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
         <sc-if value="{{pinSt}}" hint-placeholder-val="{{ false }}">
-          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><path transform="translate(8 8)" d="M4.6 3.6H19.4V12.2L12 20.9 4.6 12.2Z" fill="rgba(64,156,255,0.6)" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path></svg>
+          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><path transform="translate(8 8)" d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,0.6)" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path></svg>
         </sc-if>
         <sc-if value="{{pinFire}}" hint-placeholder-val="{{ true }}">
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1; overflow: visible">
@@ -1049,7 +1049,7 @@ class Component extends DCLogic {
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
       ['fires', 'Active fires', CIR, '#E8590C', 'none'],
       ['resolved', 'Resolved fires', CIR, '#6F2B06', 'none'],
-      ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M2.7 2.1H11.3V7.1L7 12.2 2.7 7.1Z', 'rgba(64,156,255,0.6)', '#3A3A3C']
+      ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M2.7 12.2H11.3V7.2L7 2.1 2.7 7.2Z', 'rgba(64,156,255,0.6)', '#3A3A3C']
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
@@ -1211,7 +1211,7 @@ class Component extends DCLogic {
     const stations = ST.map(([id, code, x, y, busy, nm, avail]) => {
       const on = !isRisk && id === selId;
       const o = at(x, y - 10, {
-        label: on && p.stationLabel ? p.stationLabel : code, icon: 'M4.6 3.6H19.4V12.2L12 20.9 4.6 12.2Z', fill: 'rgba(64,156,255,0.6)',
+        label: on && p.stationLabel ? p.stationLabel : code, icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)',
         bg: on ? 'rgba(0,113,227,0.95)' : 'rgba(255,255,255,0.78)',
         bd: on ? 'rgba(120,180,255,0.9)' : 'rgba(60,60,67,0.132)',
         fg: on ? '#FFFFFF' : '#F2F2F7', ic: on ? '#FFFFFF' : '#FFFFFF',
@@ -1238,7 +1238,7 @@ class Component extends DCLogic {
         const kmT = (k) => (k < 10 ? k.toFixed(1) : String(Math.round(k))) + ' km';
         const nmS = String(r[4] || 'Fire station').replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria de Bombeiros Volunt[aá]rios|Corpo de Bombeiros|Quartel)( d[aeo]s?)?\s+/i, '').replace(/^.*\bFire Station\b\s*(No\.?\s*)?/i, 'Station ').trim();   // short: the town (Portugal) or 'Station 2' (US)
         const SN = p.stNames === true || p.stNames === 'true';   /* ignition full map: the main screen's markers, the distance above, the card on a tap */
-        out.push(withTip(at(xy[0], xy[1] + 4, { aT: SN && near ? kmT(rOk ? RT.km : nk) : '', aN: SN && near ? String(r[4] || '').replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria de Bombeiros Volunt[aá]rios|Corpo de Bombeiros|Quartel)( d[aeo]s?)?\s+/i, '').replace(/\bFire (Station|Department)\b\s*(No\.?\s*)?/i, '').replace(/\s+County\b/i, '').replace(/\s+/g, ' ').trim() || 'Station' : '', label: near && !SN ? ((rOk ? kmT(RT.km) + ' · ' + RT.min + ' min' : '~' + kmT(nk * 1.35) + ' · ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min')) : '', icon: 'M4.6 3.6H19.4V12.2L12 20.9 4.6 12.2Z', fill: 'rgba(64,156,255,0.6)', bg: near && !SN ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near && !SN ? 'rgba(58,58,60,0.4)' : 'transparent', fg: near && !SN ? '#3A3A3C' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+        out.push(withTip(at(xy[0], xy[1] + 4, { aT: SN && near ? kmT(rOk ? RT.km : nk) : '', aN: SN && near ? String(r[4] || '').replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria de Bombeiros Volunt[aá]rios|Corpo de Bombeiros|Quartel)( d[aeo]s?)?\s+/i, '').replace(/\bFire (Station|Department)\b\s*(No\.?\s*)?/i, '').replace(/\s+County\b/i, '').replace(/\s+/g, ' ').trim() || 'Station' : '', label: near && !SN ? ((rOk ? kmT(RT.km) + ' · ' + RT.min + ' min' : '~' + kmT(nk * 1.35) + ' · ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min')) : '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: near && !SN ? 'rgba(255,255,255,0.92)' : 'transparent', bd: near && !SN ? 'rgba(58,58,60,0.4)' : 'transparent', fg: near && !SN ? '#3A3A3C' : '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
           pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), r[4] || 'Fire station', [r[5] || 'Location from OpenStreetMap'].concat(near ? [rOk ? 'By road ' + kmT(RT.km) + ' · about ' + RT.min + ' min drive to the ' + (p.mode === 'pin' ? 'ignition point' : 'fire') : RT && RT.fail ? 'About ' + kmT(nk * 1.35) + ' by road, ~' + Math.max(1, Math.round(nk * 1.35 / 50 * 60)) + ' min (estimate: ' + kmT(nk) + ' in a straight line; the road router did not answer)' : kmT(nk) + ' in a straight line · finding the road route…'] : []).join('\n')));
       }
       return out;
@@ -1251,7 +1251,7 @@ class Component extends DCLogic {
       const phone = t.phone || t['contact:phone'] || '';
       const td = [t.operator, addr, phone].filter(Boolean).join('\n') || 'Location from OpenStreetMap';
       const st = { id, type: ty || 'node', name: nm || t.official_name || '', lat: la, lon: lo, tags: t, x: xy[0], y: xy[1], kmX, kmY };
-      return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M4.6 3.6H19.4V12.2L12 20.9 4.6 12.2Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
+      return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
         pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), nm || 'Fire station', td);
     }).filter(onScreen).filter((o) => { const f = this.inScopeFn(); return !f || !o._st || f(o._st.x, o._st.y); }) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
