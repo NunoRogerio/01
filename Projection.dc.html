@@ -34,12 +34,15 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 <!-- Spread projection: the fire on its map with where it can be in 1, 3 and 6 hours (the fire model from live weather,
      terrain and fuel); opened from the incident chat's fire card. Back returns to the screen before. -->
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
-  <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 1">
-    <dc-import name="TerrainMap" mode="spread" fire-id="{{f.id}}" fire-x="{{f.x}}" fire-y="{{f.y}}" stations-st="{{f.st}}" fire-only="true" loader="true" no-routes="true" no-title="{{notFull}}" horizon="{{hz}}" fake-hz="{{fakeHz}}" w="390" h="844" clip-top="{{clipT}}" clip-bleed="{{zero}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" controls="side" radius="{{zero}}" attr-bottom="{{attr}}" on-full="{{toggleFull}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
-  </div>
+  <!-- Full screen only: the map as its own layer. On the page the map is a band that scrolls with everything else. -->
+  <sc-if value="{{full}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 7">
+      <dc-import name="TerrainMap" mode="spread" fire-id="{{f.id}}" fire-x="{{f.x}}" fire-y="{{f.y}}" stations-st="{{f.st}}" fire-only="true" loader="true" no-routes="true" horizon="{{hz}}" grow="{{grow}}" fake-hz="{{fakeHz}}" w="390" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" zoom="{{viewF.zoom}}" focus-x="{{viewF.fx}}" focus-y="{{viewF.fy}}" controls="side" radius="{{zero}}" attr-bottom="{{attrF}}" on-full="{{toggleFull}}" is-full="{{yes}}" close-x="true" hint-size="390px,844px"></dc-import>
+    </div>
+  </sc-if>
 
   <!-- Same header as the fire: the place, the level above, the kind band with the fire's state tag -->
-  <div style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY({{hdY}}); opacity: {{hdOp}}; pointer-events: {{hdPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+  <div style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
     <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0">
       <a href="Chat.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
@@ -51,16 +54,21 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <span class="wf-qual hd" style="margin-top: 12px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{tx.kind}}</span><span role="status" style="display: {{f.tagD}}; flex-shrink: 0; align-items: center; margin-left: auto; box-sizing: border-box; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{f.tag}}</span></span>
   </div>
 
-  <div aria-hidden="true" style="flex-grow: 1; min-height: 0"></div>
-
-  <!-- The horizon, then what the model expects at it, then Back and the fire -->
-  <div style="position: relative; z-index: 6; display: flex; flex-direction: column; gap: 56px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7; border-radius: 28px 28px 0 0; box-shadow: 0 -8px 24px rgba(0,0,0,0.08); transform: translateY({{downY}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+  <!-- Everything under the header scrolls as one page: the horizon (it stays at the top while scrolling), the map band twice
+       the old window (the current outline and, at +1/+3/+6 h, the projected shape in lime at 50%), the figures, then the fire -->
+  <div class="wf-page" style="position: relative; z-index: 5; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 32px">
+    <div style="position: sticky; top: 0; z-index: 3; flex-shrink: 0; padding: 16px; background: #F2F2F7">
     <div role="tablist" aria-label="{{tx.hz}}" class="wf-seg">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 4); transform: translateX({{segX}})"><span class="segblob"></span></span>
       <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}</button>
       </sc-for>
     </div>
+    </div>
+    <div style="position: relative; flex-shrink: 0; height: 600px; overflow: hidden">
+      <dc-import name="TerrainMap" mode="spread" fire-id="{{f.id}}" fire-x="{{f.x}}" fire-y="{{f.y}}" stations-st="{{f.st}}" fire-only="true" loader="true" no-routes="true" no-title="true" horizon="{{hz}}" grow="{{grow}}" fake-hz="{{fakeHz}}" w="390" h="600" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" locked="true" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" controls="side" radius="{{zero}}" attr-bottom="{{zero}}" on-full="{{toggleFull}}" is-full="{{no}}" hint-size="390px,600px"></dc-import>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px 16px 0">
     <div role="list" style="display: flex; gap: 8px">
       <sc-for list="{{kpis}}" as="m" hint-placeholder-count="3">
         <div role="listitem" data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; box-sizing: border-box; min-height: 110px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
@@ -72,8 +80,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </sc-for>
     </div>
     <p class="wf-note" style="margin: -4px 4px 0">{{note}}</p>
-    <div style="display: grid; grid-template-columns: 1fr; gap: 8px">
-      <a href="Dispatch.dc.html" class="btn primary" onClick="{{goFire}}" style="display: flex; align-items: center; justify-content: center; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">{{tx.fire}}</a>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 32px">
+      <a href="Dispatch.dc.html" class="btn wf-sec" onClick="{{goFire}}" style="display: flex; align-items: center; justify-content: center; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">{{tx.fire}}</a>
+    </div>
     </div>
   </div>
 </div>
@@ -93,32 +102,43 @@ class Component extends DCLogic {
     const HZ = [0, 1, 3, 6], hz = s.hz != null ? s.hz : 1;
     const snapAt = (h) => { if (!mdl) return null; for (let k = h; k > 0; k--) if (mdl.snaps[k]) return mdl.snaps[k]; return mdl.snaps[0]; };
     const S0 = snapAt(0), Sh = snapAt(hz);
-    // Framing: the fire and its furthest projection, in the map window between the header and the panel
+    // The projected shape: the current outline grown about its centre to 1.3× / 1.5× / 2× its area at +1 / +3 / +6 h
+    const GROW = { 0: 1, 1: 1.3, 3: 1.5, 6: 2 }, gk = GROW[hz] || 1;
+    // Framing: the current outline and its largest projection (2×), in the 390 × 600 band (and full screen)
     const P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
-    const pts = mdl ? [].concat.apply([], Object.keys(mdl.snaps).map((k) => mdl.snaps[k]).filter((q) => q && q.ring).map((q) => q.ring.map((p) => P(p[0], p[1])))) : [];
-    const view = pts.length ? (() => { const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-      return { zoom: Math.max(0.4, Math.min(3, Math.min(390 / (x1 - x0 + 120), 330 / (y1 - y0 + 100)))), fx: (x0 + x1) / 2, fy: (y0 + y1) / 2 }; })() : { zoom: 1.1, fx: v.x - 30, fy: v.y + 40 };
+    const ring0 = S0 && S0.ring && S0.ring.length ? S0.ring.map((p) => P(p[0], p[1])) : null;
+    const frame = (W, H) => { if (!ring0) return { zoom: 2.4, fx: v.x - 12, fy: v.y + 8 };
+      const cx = ring0.reduce((a, p) => a + p[0], 0) / ring0.length, cy = ring0.reduce((a, p) => a + p[1], 0) / ring0.length, k = Math.SQRT2;
+      const pts = ring0.map((p) => [cx + (p[0] - cx) * k, cy + (p[1] - cy) * k]), xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      return { zoom: Math.max(0.4, Math.min(4, Math.min(W / (x1 - x0 + 120), H / (y1 - y0 + 120)))), fx: (x0 + x1) / 2, fy: (y0 + y1) / 2 }; };
+    const view = frame(390, 600), viewF = frame(390, 600);
     const TN = { hot: ['#963B00', 'rgba(184,74,0,0.14)'], warn: ['#963B00', 'rgba(184,74,0,0.14)'], amber: ['#745200', 'rgba(122,86,0,0.14)'], ok: ['#186B2D', 'rgba(52,199,89,0.14)'], watch: ['#00606A', 'rgba(0,112,122,0.14)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || TN.hot;
-    const US = r ? /^[A-Z]{2}$/.test(r[0]) && r[0] !== 'PT' : false;
-    const area = (ha) => (ha == null ? '—' : US ? String(Math.round(ha * 2.471)) : (ha < 10 ? String(Math.round(ha * 10) / 10).replace('.', PT ? ',' : '.') : String(Math.round(ha))));
+    const US = r ? /^[A-Z]{2}$/.test(r[0]) && r[0] !== 'PT' : !PT;
+    const dec = (n) => String(n).replace('.', PT ? ',' : '.');
+    const area = (ha) => (ha == null ? '—' : US ? String(Math.round(ha * 2.471)) : (ha < 10 ? dec(Math.round(ha * 10) / 10) : String(Math.round(ha))));
     const aU = US ? 'acres' : 'ha';
-    const grow = S0 && Sh && hz ? Math.max(0, Sh.ha - S0.ha) : null;
+    // Always numbers: the model's area now, else the reported size, else an illustrative 12 ha (all marked Estimate)
+    const A0 = S0 && S0.ha > 0 ? S0.ha : (r && Number(r[8]) > 0 ? Number(r[8]) : 12), Ah = A0 * gk;
+    // Perimeter of an irregular outline ≈ 1.3 × a circle's of the same area; the burning share from the model, else a typical uncontained spread
+    const perKm = (ha) => 1.3 * 2 * Math.sqrt(Math.PI * ha * 10000) / 1000;
+    const act = Sh && Sh.active != null ? Number(Sh.active) : ({ 0: 40, 1: 55, 3: 65, 6: 75 })[hz];
+    const km = (n) => (US ? dec(Math.round(n * 0.6214 * 10) / 10) + ' mi' : dec(Math.round(n * 10) / 10) + ' km');
     const etr = mdl && mdl.etrAt ? new Date(mdl.etrAt) : null;
     const hhmm = (d) => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
     const kpis = [
-      { l: hz ? L('Area in ' + hz + ' h', 'Área em ' + hz + ' h') : L('Area now', 'Área agora'), n: Sh ? area(Sh.ha) : '—', u: Sh ? aU : '', sub: grow != null ? '+' + area(grow) + ' ' + aU : '' },
-      { l: L('Burning edge', 'Frente ativa'), n: Sh ? String(Sh.active) : '—', u: Sh ? '%' : '', sub: Sh ? L('of the perimeter', 'do perímetro') : '' },
-      { l: L('Held by', 'Dominado às'), n: etr ? hhmm(etr) : '—', u: '', sub: etr ? '' : mdl ? L('Not in 6 h', 'Não em 6 h') : '' }
+      { l: hz ? L('Area in ' + hz + ' h', 'Área em ' + hz + ' h') : L('Area now', 'Área agora'), n: area(Ah), u: aU, sub: hz ? '+' + area(Ah - A0) + ' ' + aU : L('Burned so far', 'Ardido até agora') },
+      { l: L('Burning edge', 'Frente ativa'), n: String(Math.round(act)), u: '%', sub: km(perKm(Ah) * act / 100) + L(' long', ' de extensão') },
+      { l: L('Held by', 'Dominado às'), n: etr ? hhmm(etr) : '6+', u: etr ? '' : 'h', sub: etr ? L('Model estimate', 'Estimativa do modelo') : L('Not in 6 h', 'Não em 6 h') }
     ].map((k) => ({ ...k, uD: k.u ? 'inline' : 'none', subD: k.sub ? 'block' : 'none' }));
     const F = !!s.full;
     return {
       f: { id: v.id, x: v.x, y: v.y, st: r ? r[0] : '', place: v.place || (r && r[3]) || 'Fire', region: (r && r[1]) || String(v.note || '').split(' · ')[0] || '', tag: I.stEn || I.st || '', tagD: (I.stEn || I.st) ? 'inline-flex' : 'none', tagBg: tn[1], tagFg: tn[0] },
       tx: { kind: L('Projection', 'Projeção'), hz: L('Projection horizon', 'Horizonte da projeção'), est: L('Estimate', 'Estimativa'), fire: L('View fire', 'Ver incêndio') },
-      hz, fakeHz: ({ 0: 0, 1: 1, 3: 2, 6: 3 })[hz], zero: 0, full: F, notFull: F ? 'false' : 'true', view, kpis,
+      hz, grow: gk, fakeHz: ({ 0: 0, 1: 1, 3: 2, 6: 3 })[hz], zero: 0, yes: true, no: false, full: F, view, viewF, kpis,
       tabs: HZ.map((h) => ({ label: h ? '+' + h + ' h' : L('Now', 'Agora'), sel: String(h === hz), w: h === hz ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ hz: h }); } })),
       segX: (HZ.indexOf(hz) * 100) + '%',
-      note: mdl ? L('Fire model from live wind, humidity, slope and fuel, with the crews reported on it. ', 'Modelo de fogo com vento, humidade, declive e combustível em direto e os meios reportados. ') + (mdl.src || '') + '.' : M && M.failed ? L('The fire model could not run (weather or terrain unreachable). The outline is illustrative.', 'O modelo de fogo não correu (tempo ou terreno inacessíveis). O contorno é ilustrativo.') : r ? L('Running the fire model…', 'A correr o modelo de fogo…') : L('Illustrative projection: this fire is not in the live feeds.', 'Projeção ilustrativa: este incêndio não está nos dados em direto.'),
-      clipT: F ? 0 : 196, clipB: F ? 0 : 332, ctrlTop: 60, attr: F ? 40 : 338, hdY: F ? '-220px' : '0px', hdOp: F ? 0 : 1, hdPE: F ? 'none' : 'auto', downY: F ? '110%' : '0px',
+      note: (hz ? L('In lime: where the fire can be in ' + hz + ' h, ' + Math.round((gk - 1) * 100) + '% more area than now. ', 'A lima: onde o fogo pode estar em ' + hz + ' h, mais ' + Math.round((gk - 1) * 100) + '% de área que agora. ') : '') + (mdl ? L('Fire model from live wind, humidity, slope and fuel, with the crews reported on it. ', 'Modelo de fogo com vento, humidade, declive e combustível em direto e os meios reportados. ') + (mdl.src || '') + '.' : M && M.failed ? L('The fire model could not run (weather or terrain unreachable). The outline is illustrative.', 'O modelo de fogo não correu (tempo ou terreno inacessíveis). O contorno é ilustrativo.') : r ? L('Running the fire model…', 'A correr o modelo de fogo…') : L('Illustrative projection: this fire is not in the live feeds.', 'Projeção ilustrativa: este incêndio não está nos dados em direto.')),
+      ctrlTop: 60, attrF: 40,
       toggleFull: () => this.setState({ full: !(this.state || {}).full }),
       goFire: () => { const fv = { id: v.id, place: v.place, note: v.note, x: v.x, y: v.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: fv }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(fv)); } catch (e) {} }
     };
