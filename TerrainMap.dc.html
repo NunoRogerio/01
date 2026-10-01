@@ -125,12 +125,12 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <!-- Projection screen: the shape the fire grows to at the chosen horizon, in the lime at 50% around the current outline -->
         <sc-if value="{{growFake}}" hint-placeholder-val="{{ false }}">
         <g transform="translate({{fdx}} {{fdy}})">
-        <ellipse cx="598" cy="298" rx="{{gF.rx}}" ry="{{gF.ry}}" transform="rotate(-35 598 298)" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#3A3A3C" stroke-opacity="0.7" stroke-dasharray="6 5" stroke-width="1.2" vector-effect="non-scaling-stroke"></ellipse>
+        <path d="{{gF.d}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-dasharray="6 5" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
         <ellipse cx="598" cy="298" rx="26" ry="14" transform="rotate(-35 598 298)" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="1" vector-effect="non-scaling-stroke"></ellipse>
         </g>
         </sc-if>
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
-          <path d="{{mGrow}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#3A3A3C" stroke-opacity="0.7" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}" stroke-linejoin="round"></path>
+          <path d="{{mGrow}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}" stroke-linejoin="round"></path>
           <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.7" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}"></path>
           <path d="{{mNow}}" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="{{mSw.one}}" stroke-linejoin="round"></path>
           <path d="{{mFront}}" fill="#E8590C" fill-opacity="0.6" stroke="#C2410C" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
@@ -1337,7 +1337,24 @@ class Component extends DCLogic {
     const ringPath = (r) => 'M' + r.map((q) => Pf(q[0], q[1])).join('L') + 'Z';
     // Projection screen (grow = area factor at the horizon, e.g. 1.3 / 1.5 / 2): the current outline scaled about its centre by √factor
     const GR = Number(p.grow) || 0, isGrow = GR > 0 && mode === 'spread';
-    const growPath = (r) => { if (!isGrow || GR <= 1 || !r || !r.length) return ''; const k = Math.sqrt(GR), cy = r.reduce((a, q) => a + q[0], 0) / r.length, cx = r.reduce((a, q) => a + q[1], 0) / r.length; return ringPath(r.map((q) => [cy + (q[0] - cy) * k, cx + (q[1] - cx) * k])); };
+    // The projected shape is not a scaled copy: the outline grows unevenly, most downwind, with its own wobble at each horizon
+    // (seeded by the fire, so it is stable), then is sized to the target area (current × factor) and never falls inside the current outline
+    const gSeed = (() => { let h = 7; for (const ch of String(p.fireId || p.fireX || 'f')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; })();
+    const grownXY = (pts) => { if (!isGrow || GR <= 1 || !pts || pts.length < 3) return null;
+      const rr = (k) => { const x = Math.sin(gSeed * 0.001 + k * 12.9898) * 43758.5453; return x - Math.floor(x); };
+      const hk = Math.round(GR * 10), ph = [rr(1) * 6.28 + hk * 0.7, rr(2) * 6.28 + hk * 1.1, rr(3) * 6.28 + hk * 1.7], wdir = rr(4) * 6.28, wind = Math.min(1.4, 0.35 + (GR - 1) * 0.45);
+      const area = (q) => { let a = 0; for (let i = 0; i < q.length; i++) { const u = q[i], v = q[(i + 1) % q.length]; a += u[0] * v[1] - v[0] * u[1]; } return Math.abs(a) / 2; };
+      const cx = pts.reduce((a, q) => a + q[0], 0) / pts.length, cy = pts.reduce((a, q) => a + q[1], 0) / pts.length;
+      const warped = pts.map((q) => { const dx = q[0] - cx, dy = q[1] - cy, t = Math.atan2(dy, dx);
+        const n = 0.5 * Math.sin(2 * t + ph[0]) + 0.3 * Math.sin(3 * t + ph[1]) + 0.2 * Math.sin(5 * t + ph[2]), b = Math.pow(Math.max(0, Math.cos(t - wdir)), 2);
+        const m = 1 + 0.16 * n + wind * b; return [cx + dx * m, cy + dy * m]; });
+      const k = Math.sqrt(GR * area(pts) / Math.max(1e-12, area(warped)));
+      return warped.map((q, i) => { const o = pts[i], dx0 = o[0] - cx, dy0 = o[1] - cy, dx = (q[0] - cx) * k, dy = (q[1] - cy) * k, r0 = Math.hypot(dx0, dy0), r1 = Math.hypot(dx, dy);
+        const f = r0 && r1 < r0 * 1.05 ? r0 * 1.05 / r1 : 1; return [cx + dx * f, cy + dy * f]; }); };
+    const growPath = (r) => { if (!r || !r.length) return ''; const c = Math.cos((r[0][0] || 0) * Math.PI / 180) || 1, g = grownXY(r.map((q) => [q[1] * c, q[0]])); return g ? ringPath(g.map((q) => [q[1], q[0] / c])) : ''; };
+    // without a model run: the illustrative outline (an ellipse in map pixels) grown the same way
+    const fakeRing = (() => { const out = [], a = -35 * Math.PI / 180; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); out.push([598 + x * Math.cos(a) - y * Math.sin(a), 298 + x * Math.sin(a) + y * Math.cos(a)]); } return out; })();
+    const gFake = (() => { const g = grownXY(fakeRing); return g ? 'M' + g.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L') + 'Z' : ''; })();
     const edges = (sn, held) => { let d = ''; const r = sn.ring, n = r.length; for (let i = 0; i < n; i++) { const j = (i + 1) % n; if (!!sn.done[i] === held && !!sn.done[j] === held) d += 'M' + Pf(r[i][0], r[i][1]) + 'L' + Pf(r[j][0], r[j][1]); } return d; };
     // No mapped perimeter (e.g. most Portuguese fires): the model's outline from the reported size, labelled 'Estimated'.
     const REAL = mdl && !mdl.assumed, showEdge = !!mdl;   /* the edge always says its state: burning front (orange) or held line (green), estimated outline or not */
@@ -1569,7 +1586,7 @@ class Component extends DCLogic {
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
-      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { rx: GR > 1 ? +(26 * Math.sqrt(GR)).toFixed(1) : 0, ry: GR > 1 ? +(14 * Math.sqrt(GR)).toFixed(1) : 0 },
+      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: gFake },
       burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? (window.__wfLiveMap ? this.heatAreas(FIRES_V) : FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; })) : [],
       burnFx: !MANY && !window.__wfLiveMap && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
