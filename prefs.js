@@ -151,7 +151,7 @@
     '.wf-title-xs{font-size:15px!important;font-weight:600!important;line-height:20px!important;color:#000000}' +
     // Condensed buttons (compact surfaces such as map tooltips): 32px tall, 15px semibold, same pill and roles
     ':root .wf-b.wf-cond{height:32px!important;min-height:32px!important;font-size:15px!important;line-height:20px!important;padding:0 12px!important}' +
-    ':root .wf-pri,:root .btn.primary{background:var(--wf-y)!important;color:#1C1C1E!important;-webkit-text-fill-color:#1C1C1E;border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
+    ':root .wf-pri,:root .btn.primary{background:var(--wf-y)!important;color:#1C1C1E!important;-webkit-text-fill-color:#1C1C1E;border-color:transparent!important;box-shadow:inset 0 0 0 2px #3A3A3C!important;animation:none!important}' +
     ':root .wf-danger{background:rgba(255,59,48,0.14)!important;color:#B0001A!important;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
