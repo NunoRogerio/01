@@ -1049,7 +1049,13 @@ class Component extends DCLogic {
     const res = st.ftab === 'res', go = (t) => () => { if ((st.ftab || 'fire') === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
     // Something that needs attention on the other tab: a red dot (no count) on its label
     const crewAlert = (o.deployed || []).some((d) => d.fx && ((d.sum || []).some((k) => k.c === '#B0001A') || (d.conf && !(d.groups || []).length)));
-    const sitAlert = !!(o.cc && Array.isArray(o.cc.med) && o.cc.med.some((m) => m.key === 'pop' && /^(Yes|Sim)$/.test(String(m.n ?? m.v ?? ''))));
+    // Situation needs attention only for something to act on that you have not seen yet: people at risk not evacuated, while you
+    // were on Crews. Seeing Situation with it clears the dot until it changes.
+    const sitNow = !!(o.cc && Array.isArray(o.cc.med) && o.cc.med.some((m) => m.key === 'pop' && m.tag === 'Not evacuated'));
+    let SEEN = {}; try { SEEN = JSON.parse(sessionStorage.getItem('wf-sit-seen') || '{}'); } catch (e) {}
+    if (sitNow && !res && !SEEN[o.fireId]) { SEEN[o.fireId] = 1; try { sessionStorage.setItem('wf-sit-seen', JSON.stringify(SEEN)); } catch (e) {} }
+    if (!sitNow && SEEN[o.fireId]) { delete SEEN[o.fireId]; try { sessionStorage.setItem('wf-sit-seen', JSON.stringify(SEEN)); } catch (e) {} }
+    const sitAlert = sitNow && !SEEN[o.fireId];
     // People at risk: the tag follows the fire's chat (evacuation ordered there = Evacuating); Not evacuated opens the chat with an Evacuation plan suggestion
     if (o.cc && Array.isArray(o.cc.med)) { let EV = {}; try { EV = JSON.parse(localStorage.getItem('wf-evac') || '{}'); } catch (e) {} const fid = o.fireId;
       o.cc = Object.assign({}, o.cc, { med: o.cc.med.map((m) => { const base = Object.assign({ tagRole: 'presentation', tagGo: null, tagAria: '', tagCur: 'default' }, m);
