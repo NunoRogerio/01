@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=114"></script>
+<script src="fit.js?v=115"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=141"></script>
 <script src="i18n.js?v=125"></script>
@@ -143,6 +143,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
 .ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 0 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
+.opt[style*="border-radius: 50%"]{border-radius:50%!important}   /* round buttons (chat, bell, close X, back) stay true circles, like the dark map buttons */
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 0 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
 .lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#545458}
