@@ -599,6 +599,7 @@ window.__wfBlink=function(path,dur){
 (function(){
   document.addEventListener('pointerdown',function(e){
     var el=e.target&&e.target.closest?e.target.closest('button,a,[role=button]'):null;if(!el||!el.animate)return;
+    var inner=el.querySelector&&el.querySelector('[data-round-in]');if(inner&&!el.disabled)el=inner;   // a row whose round end button (e.g. the drill-in arrow) reacts when the row is pressed
     var r=el.getBoundingClientRect(),pill=el.hasAttribute('data-round');if(!r.width)return;   // data-round: a pill that behaves like the round buttons
     if(!pill){if(r.width>72||Math.abs(r.width-r.height)>2)return;var br=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;if(br<r.width*0.4)return;}   // round, or nearly (some screens give round buttons a 20px corner)
     var k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop'))||1.3;

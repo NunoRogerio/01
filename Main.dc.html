@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=95"></script>
+<script src="fit.js?v=96"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=115"></script>
 <script src="i18n.js?v=111"></script>
@@ -355,7 +355,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="grid-row: 1; grid-column: 1; min-width: 0; line-height: 20px; font-size: 17px; font-weight: {{r.nameW}}">{{r.name}}</span>
           <span style="grid-row: {{r.numRow}}; grid-column: 2; text-align: right; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.candsC}}">{{r.cands}}</span>
           <span style="grid-row: {{r.numRow}}; grid-column: 3; text-align: right; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{r.firesC}}">{{r.fires}}</span>
-          <span aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 4; display: {{r.endD}}; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.end}}"></path></svg></span>
+          <span aria-hidden="true" data-round-in="1" style="grid-row: 1 / span 2; grid-column: 4; display: {{r.endD}}; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.end}}"></path></svg></span>
           <span style="display: {{r.subD}}; grid-row: 2; grid-column: {{r.subCol}}; min-width: 0; line-height: 18px; font-size: 15px; color: {{r.subC}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
           </button>
       </sc-for>
@@ -1078,7 +1078,7 @@ class Component extends DCLogic {
     const brObj = DATA.find((d) => d.id === browse);
     const atCountries = browse === '@', atUS = !brObj && !atCountries;
     const selCountry = stObj.country === 'US' ? 'US' : stObj.id === 'AMZ' ? 'BRA' : stObj.id;
-    const CHEV = 'm9 6 6 6-6 6', TICK = 'm5 12 5 5 9-10';
+    const CHEV = 'M5 12h14M13 6l6 6-6 6',   /* forward arrow with its stem (drill in), not a chevron */ TICK = 'm5 12 5 5 9-10';
     // Counts stay dark grey: colour on numbers is only for an ignition's likelihood percentage
     const NUMC = '#3C3C43';
     const num = (v) => ({ v, c: v > 0 ? '#000000' : '#8E8E93' });
