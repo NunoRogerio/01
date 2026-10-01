@@ -593,7 +593,7 @@ window.__wfBlink=function(path,dur){
 })();
 
 // Round controls, every screen (close X, back, chat, bell, avatars, counts, map buttons): a press gives a light haptic and
-// swells the button by --wf-round-pop (30%) quickly, then lets it settle back slowly, while a 1px outline pulses out once (to 140%, fading). Any round button made later gets it
+// swells the button by --wf-round-pop (30%) quickly, then lets it settle back slowly, while a 2px dark grey outline pulses out once (to 150%, fading). Any round button made later gets it
 // for free: a button, link or role=button that is a circle up to 72px. Uses the separate 'scale' property, so a page's own
 // transforms and press styles stay as they are.
 (function(){
@@ -607,13 +607,22 @@ window.__wfBlink=function(path,dur){
     try{var sv=el.querySelector('svg'),pd=sv&&sv.querySelector('path'),d=pd?pd.getAttribute('d')||'':'';
       if(sv&&(/^M\s?[67][ ,]?[67]\s?l\s?1[02]/i.test(d)||/^M12 5v14M5 12h14/.test(d))&&!/rotate/.test(sv.getAttribute('style')||'')){if(sv.__wfRot)sv.__wfRot.cancel();sv.__wfRot=sv.animate([{rotate:'0deg'},{rotate:'90deg'}],{duration:600,easing:'cubic-bezier(.25,.1,.25,1)',fill:'forwards'});setTimeout(function(){try{sv.__wfRot&&sv.__wfRot.cancel();}catch(x){}},1400);}}catch(x){}
     try{if(el.__wfPop)el.__wfPop.cancel();el.__wfPop=el.animate([{scale:'1',easing:'cubic-bezier(.2,.9,.3,1)'},{scale:String(k),offset:0.18,easing:'cubic-bezier(.4,0,.2,1)'},{scale:'1'}],{duration:480});}catch(x){}
-    // and a 1px outline pulses out once from its edge: fully visible at the start, 40% larger at the end, where it has faded out
-    try{var g=document.createElement('i'),dk=document.documentElement.classList.contains('wf-dark'),rad=pill?(r.height/2)+'px':'50%',W=r.width,H=r.height,X=r.left,Y=r.top,G=0.4;
-      g.setAttribute('aria-hidden','true');g.style.cssText='position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;border:1px solid '+(dk?'#E8E8ED':'#000000')+';border-radius:'+rad+';left:'+X+'px;top:'+Y+'px;width:'+W+'px;height:'+H+'px';
+    // and a 2px dark grey outline pulses out once from its edge: fully visible at the start, 50% larger at the end, where it has faded out
+    try{var g=document.createElement('i'),dk=document.documentElement.classList.contains('wf-dark'),rad=pill?(r.height/2)+'px':'50%',W=r.width,H=r.height,X=r.left,Y=r.top,G=0.5;
+      g.setAttribute('aria-hidden','true');g.style.cssText='position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;border:2px solid '+(dk?'#E8E8ED':'#3A3A3C')+';border-radius:'+rad+';left:'+X+'px;top:'+Y+'px;width:'+W+'px;height:'+H+'px';
       document.body.appendChild(g);var a=g.animate([{left:X+'px',top:Y+'px',width:W+'px',height:H+'px',opacity:1},{left:(X-W*G/2)+'px',top:(Y-H*G/2)+'px',width:(W*(1+G))+'px',height:(H*(1+G))+'px',opacity:0}],{duration:600,easing:'cubic-bezier(.2,.6,.35,1)',fill:'forwards'});
       a.onfinish=function(){g.remove();};setTimeout(function(){if(g.parentNode)g.remove();},900);}catch(x){}
   },{passive:true,capture:true});
   try{document.documentElement.style.setProperty('--wf-round-pop','1.3');}catch(x){}
+  // A round button that is a plain link (the main screen's chat, for one) would leave the page before the swell and pulse
+  // show: when no screen code handled the tap, the page changes a moment later instead (after every handler has run).
+  window.addEventListener('click',function(e){
+    if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+    var el=e.target&&e.target.closest?e.target.closest('a[href]'):null;if(!el||el.target||el.hasAttribute('download')||el.hasAttribute('data-wf-back'))return;
+    var h=el.getAttribute('href')||'';if(!h||h.charAt(0)==='#'||/^(mailto|tel|javascript):/i.test(h))return;
+    var r=el.getBoundingClientRect();if(!el.hasAttribute('data-round')){if(!r.width||r.width>72||Math.abs(r.width-r.height)>2)return;var br=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;if(br<r.width*0.4)return;}
+    e.preventDefault();var to=el.href;setTimeout(function(){try{location.href=to;}catch(x){}},260);
+  });
 })();
 // Installed iPhone app: the status bar is opaque (iOS 26 cuts a strip off the bottom of the screen when the page runs
 // under it, WebKit bug 301108), so the page always reaches the bottom edge. iOS paints the bar from the screen's own
