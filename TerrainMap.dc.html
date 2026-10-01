@@ -827,6 +827,13 @@ class Component extends DCLogic {
       const t = Math.max(0, Math.min(1, (s - zm) / Math.max(1e-9, b.s - zm))), mid = b.cy - (H / 2 - w.c) / b.s, slack = t * w.h / s;   // at the area's view: one screen of play; at the limit: none
       const vis = cy - off; cy = Math.min(mid + slack, Math.max(mid - slack, vis)) + off;
     }
+    // The street map ends at 85° north and south (the tiles stop there): never zoom out so far that the world is shorter
+    // than the map, and never drag past its top or bottom edge, so no empty band ever shows above or below the world
+    if (window.__wfLiveMap) {
+      const yT = (34.19 - 85) * 2829 + 662, yB = (34.19 + 85) * 2829 + 662, sMin = H / (yB - yT);
+      if (s < sMin) s = sMin;
+      const h2 = H / (2 * s); cy = Math.min(yB - h2, Math.max(yT + h2, cy));
+    }
     return { cx, cy, s };
   }
   // Real heat areas for the live map: the VIIRS detections (375 m pixels) near the visible fires, clustered by

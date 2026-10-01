@@ -1056,6 +1056,7 @@ class Component extends DCLogic {
       return { ...st, n: names.length, counties, ...SC.count(st.id, null) };
     });
     const usD = DATA.filter((d) => d.country === 'US'), ptD = DATA.find((d) => d.id === 'PT');
+    const unitN = (d) => { const n = d ? d.n : 0, u = unitOf(d); return n + (n === 1 ? u.replace(/ies$/, 'y').replace(/s$/, '') : u); };   /* 1 state, 1 county, 1 district */
     const unitOf = (d) => d && (d.id === 'US' || d.id === 'AMZ' || d.id === 'BRA') ? ' states' : d && d.id === 'PT' ? ' districts' : d && d.country === 'US' ? ' counties' : ' regions';
     const sumOf = (arr) => arr.reduce((a, d) => ({ fires: a.fires + (d.fires || 0), cands: a.cands + (d.cands || 0), top: Math.max(a.top, d.top || 0) }), { fires: 0, cands: 0, top: 0 });
     const ISO3 = {"Albania":"ALB","Andorra":"AND","Austria":"AUT","Belarus":"BLR","Belgium":"BEL","Bosnia and Herzegovina":"BIH","Bulgaria":"BGR","Croatia":"HRV","Cyprus":"CYP","Czechia":"CZE","Denmark":"DNK","Estonia":"EST","Finland":"FIN","France":"FRA","Germany":"DEU","Greece":"GRC","Hungary":"HUN","Iceland":"ISL","Ireland":"IRL","Italy":"ITA","Kosovo":"KOS","Latvia":"LVA","Liechtenstein":"LIE","Lithuania":"LTU","Luxembourg":"LUX","Malta":"MLT","Moldova":"MDA","Monaco":"MCO","Montenegro":"MNE","Netherlands":"NLD","North Macedonia":"MKD","Norway":"NOR","Poland":"POL","Romania":"ROU","Russia":"RUS","San Marino":"SMR","Serbia":"SRB","Slovakia":"SVK","Slovenia":"SVN","Spain":"ESP","Sweden":"SWE","Switzerland":"CHE","Turkey":"TUR","Ukraine":"UKR","United Kingdom":"GBR","Vatican City":"VAT","Antigua and Barbuda":"ATG","Argentina":"ARG","Bahamas":"BHS","Barbados":"BRB","Belize":"BLZ","Bolivia":"BOL","Brazil":"BRA","Canada":"CAN","Chile":"CHL","Colombia":"COL","Costa Rica":"CRI","Cuba":"CUB","Dominica":"DMA","Dominican Republic":"DOM","Ecuador":"ECU","El Salvador":"SLV","Grenada":"GRD","Guatemala":"GTM","Guyana":"GUY","Haiti":"HTI","Honduras":"HND","Jamaica":"JAM","Mexico":"MEX","Nicaragua":"NIC","Panama":"PAN","Paraguay":"PRY","Peru":"PER","Saint Kitts and Nevis":"KNA","Saint Lucia":"LCA","Saint Vincent and the Grenadines":"VCT","Suriname":"SUR","Trinidad and Tobago":"TTO","Uruguay":"URY","Venezuela":"VEN"};
@@ -1078,7 +1079,7 @@ class Component extends DCLogic {
     const coObj = selCounty ? stObj.counties.find((c) => c.name === selCounty) : null;
     const scope = coObj
       ? { title: coObj.name, parent: stObj.name, fires: coObj.fires, cands: coObj.cands }
-      : { title: stObj.name, parent: stObj.n + unitOf(stObj), fires: stObj.fires, cands: stObj.cands };
+      : { title: stObj.name, parent: unitN(stObj), fires: stObj.fires, cands: stObj.cands };
     const scOpen = !!s.scOpen;
     const lock = this.wfLock();
     const browse = lock || (s.scBrowse === undefined ? selState : s.scBrowse);
@@ -1136,7 +1137,7 @@ class Component extends DCLogic {
       const F = SC.W.fires.filter((f) => f.info && inA && inA(f, 'AMZ') && !f.info.resolved), D = F.filter((f) => f.info.deforFire), ha = D.reduce((a, f) => a + (f.info.ha || 0), 0);
       return { on: F.length > 0, n: D.length.toLocaleString(), ha: Math.round(ha).toLocaleString(), line: D.length + ' of ' + F.length + ' active fires in the Legal Amazon burn mostly on land cleared in recent years, the clearing-then-burning pattern that turns forest into pasture and cropland.' }; })();
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
-    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: brObj.n + unitOf(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: NUMC, candsC: NUMC,
+    const allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: unitN(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: NUMC, candsC: NUMC,
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
       aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' ignition candidates',
       pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + (usD.length === 1 ? ' state' : ' states'), ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: NUMC, candsC: NUMC,
