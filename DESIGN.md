@@ -423,3 +423,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Legend on full-screen maps (Oct 1):** the chips stack in a column at the top right, under the map's title: no sideways scrolling, nothing over the title. Small maps keep the scrolling row.
 - **Dispatch pill stays (Oct 1):** "Please dispatch resources" stays on both tabs until orders are actually sent (choosing resources is not enough); on the Crews tab a tap opens Add resources.
 - **Card picker subtitle (Oct 1):** "Show or hide KPIs." then "Drag to reorder.", both in normal text.
+- **Find a place watermark (Oct 1):** 17% grey (5% stronger). Only the eye blinks, a plain close and open every 3 s; the symbol itself never moves. It is centred in the free space between the note above and the keyboard (or the panel's bottom when the keyboard is down).
