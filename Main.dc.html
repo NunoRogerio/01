@@ -17,7 +17,7 @@
 <script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=121"></script>
-<script src="i18n.js?v=112"></script>
+<script src="i18n.js?v=113"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
 
@@ -197,7 +197,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
         <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 32px">{{scope.title}}</span>
       </span>
-      <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap">{{scope.parent}}</span>
+      <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap"><b style="display: {{scope.pND}}; font-weight: 700">{{scope.pN}} </b>{{scope.pW}}</span>
     </button>
     <span aria-hidden="true" style="flex: 1 1 auto"></span>
     <a href="Chat.dc.html" class="opt" onClick="{{ch.open}}" aria-label="{{ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{ch.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{ch.n}}</span></a>
@@ -221,8 +221,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hList.down}}" onPointerMove="{{hList.move}}" onPointerUp="{{hList.up}}" onPointerCancel="{{hList.cancel}}" onKeyDown="{{hList.key}}" class="wf-grab gt" style="display: flex; align-items: flex-start; justify-content: center; box-sizing: border-box; margin-bottom: -25px; padding-top: 8px; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 72px; height: 5px; border-radius: 999px; background: transparent"></span></div>
       <!-- Incidents: one table for ignition candidates, one for fires with their state -->
       <div style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 0 16px 40px">
-        <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{incTitle}}</span>
-        <span style="font-size: 17px; line-height: 22px; color: #000000">{{incSub}}</span>
+        <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{incTitle}}</span>
+        <span aria-label="{{incSub}}" style="font-size: 17px; line-height: 22px; color: #000000"><b style="font-weight: 700">{{incN1}}</b> <span>{{incW1}}</span> <b style="font-weight: 700">{{incN2}}</b> <span>{{incW2}}</span></span>
       </div>
       <!-- Filter then find (fixed above the scrolling list): the switcher sets what the list shows (both, candidates only, fires only); the search looks only in that. One group: 16px between them, 56px to the list -->
       <div style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 0 16px 56px">
@@ -294,7 +294,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
           <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 32px">{{scope.title}}</span>
         </span>
-        <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap">{{scope.parent}}</span>
+        <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap"><b style="display: {{scope.pND}}; font-weight: 700">{{scope.pN}} </b>{{scope.pW}}</span>
       </button>
       <span aria-hidden="true" style="flex: 1 1 auto"></span>
       <a href="Chat.dc.html" class="opt" onClick="{{ch.open}}" aria-label="{{ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{ch.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{ch.n}}</span></a>
@@ -1085,6 +1085,7 @@ class Component extends DCLogic {
     const scope = coObj
       ? { title: coObj.name, parent: stObj.name, fires: coObj.fires, cands: coObj.cands }
       : { title: stObj.name, parent: unitN(stObj), fires: stObj.fires, cands: stObj.cands };
+    { const m = /^(\d[\d.,]*)\s+(.*)$/.exec(String(scope.parent || '')); scope.pN = m ? m[1] : ''; scope.pW = m ? m[2] : (scope.parent || ''); scope.pND = m ? 'inline' : 'none'; }   /* a count in the subtitle is bold (58 counties) */
     const scOpen = !!s.scOpen;
     const lock = this.wfLock();
     const browse = lock || (s.scBrowse === undefined ? selState : s.scBrowse);
@@ -1220,7 +1221,8 @@ class Component extends DCLogic {
           _iL: iL, _fL: fL }; })(),
       ...((ignListAll, fireListAll) => { const st1 = this.state || {}, q1 = String(st1.liQ || '').trim().toLowerCase(), K1 = st1.liK || 'all', hit1 = (it) => !q1 || [it.place, it.sub, it.val].some((v) => String(v || '').toLowerCase().indexOf(q1) >= 0);
         const ignList = K1 === 'fire' ? [] : ignListAll.filter(hit1), fireList = K1 === 'ign' ? [] : fireListAll.filter(hit1);
-        return { ignShown: ignList, fireShown: fireList, noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' ignition candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' fire' + (fireListAll.length === 1 ? '' : 's') }; })(ignList, fireList),
+        return { ignShown: ignList, fireShown: fireList, noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' ignition candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' fire' + (fireListAll.length === 1 ? '' : 's'),
+        /* the counts in bold: number, words, number, words */ incN1: String(ignListAll.length), incW1: ignListAll.length === 1 ? 'ignition candidate.' : 'ignition candidates.', incN2: String(fireListAll.length), incW2: fireListAll.length === 1 ? 'fire' : 'fires' }; })(ignList, fireList),
       ff,
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
       cardTitle: (N === 1 && NF === 0) ? 'Ignition candidate' : N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'),

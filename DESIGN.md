@@ -424,3 +424,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Dispatch pill stays (Oct 1):** "Please dispatch resources" stays on both tabs until orders are actually sent (choosing resources is not enough); on the Crews tab a tap opens Add resources.
 - **Card picker subtitle (Oct 1):** "Show or hide KPIs." then "Drag to reorder.", both in normal text.
 - **Find a place watermark (Oct 1):** 17% grey (5% stronger). Only the eye blinks, a plain close and open every 3 s; the symbol itself never moves. It is centred in the free space between the note above and the keyboard (or the panel's bottom when the keyboard is down).
+- **Blade titles in title M (Oct 1):** the incidents blade's title (the area) uses title M (26px semibold), as the titles of every other screen and panel.
+- **Counts in bold (Oct 1):** in subtitles, the numbers are bold and the words regular: "**60** ignition candidates. **58** fires", "**58** counties". Apply to every similar count line.
