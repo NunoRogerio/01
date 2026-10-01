@@ -644,9 +644,31 @@
     c.updated = Date.now(); c.seenAt = Date.now(); c.idleAt = Date.now(); save(); emit();
   }
   // The in-app answer to a message (also used when a Claude answer was lost because the screen was left mid-call)
+  // What the fire's Crews tab shows (water left, crews due relief), saved by the fire screen: the coordinators answer from it
+  function crewState(c) { var M = {}; try { M = JSON.parse(localStorage.getItem('wf-crew') || '{}'); } catch (e) {}
+    for (var id in M) { if (id === c.incId || keyOf({ id: id, kind: 'fire' }) === c.key) return M[id]; } return null; }
+  function whoFor(c, name) { var a = String(name || '').toLowerCase(); for (var i = 0; i < c.people.length; i++) { var o = String(c.people[i].org || '').toLowerCase(); if (o && (a.indexOf(o) >= 0 || o.indexOf(a) >= 0 || a.indexOf(shortStation(name).toLowerCase()) >= 0 && shortStation(name).toLowerCase() === o)) return i; } return -1; }
+  var NUM = { en: ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'], pt: ['nenhum', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito'] };
+  function nw(n, pt) { var w = (pt ? NUM.pt : NUM.en)[n] || String(n); return w.charAt(0).toUpperCase() + w.slice(1); }
+  // Water or relief asked in a fire's chat: each station with a problem answers for its own units, with the same numbers
+  function crewReply(c, it) {
+    var S = crewState(c); if (!S || !S.st || !S.st.length || c.stage < 3 || c.stage > 5) return false;
+    var key = it === 'water' ? 'low' : 'tired', tot = it === 'water' ? 'tenders' : 'crews', bad = S.st.filter(function (x) { return x[key] && x[key].length; }), d = 2000;
+    if (!bad.length) { var any = S.st.filter(function (x) { return x[tot]; }); if (!any.length) return false; var w0 = whoFor(c, any[0].name);
+      say(c, w0 >= 0 ? w0 : 0, it === 'water' ? 'All ' + any.reduce(function (a, x) { return a + x.tenders; }, 0) + ' water tenders above 20%. No one needs to refill yet.' : 'Every crew is within its shift. No one due for relief yet.',
+        it === 'water' ? 'Os ' + any.reduce(function (a, x) { return a + x.tenders; }, 0) + ' autotanques acima de 20%. Ninguém precisa de reabastecer já.' : 'Todas as equipas dentro do turno. Ninguém para render já.', d, 1); return true; }
+    bad.forEach(function (x, j) { var w = whoFor(c, x.name); if (w < 0) w = Math.min(c.people.length - 1, j); var k = x[key].length, n = x[tot];
+      var en = it === 'water' ? nw(k) + ' of our ' + n + ' water tender' + (n === 1 ? '' : 's') + ' below 20%: ' + x.low.join(', ') + '. ' + (k === 1 ? 'It is' : 'They are') + ' heading to refill.'
+        : nw(k) + ' of our ' + n + ' crew' + (n === 1 ? '' : 's') + ' past 12 h on shift: ' + x.tired.join(', ') + '. ' + (k === 1 ? 'It needs' : 'They need') + ' relief.';
+      var pt = it === 'water' ? nw(k, 1) + ' dos nossos ' + n + ' autotanques abaixo de 20%: ' + x.low.join(', ') + '. ' + (k === 1 ? 'Vai' : 'Vão') + ' reabastecer.'
+        : nw(k, 1) + ' das nossas ' + n + ' equipas com mais de 12 h de turno: ' + x.tired.join(', ') + '. ' + (k === 1 ? 'Precisa' : 'Precisam') + ' de ser rendida' + (k === 1 ? '' : 's') + '.';
+      say(c, w, en, pt, d + j * 2600, vary(c, 1, 4, 'w' + j + c.beat)); });
+    c.beat++; return true;
+  }
   function ruleReply(c, text) {
       (function (c) {
       var it = intentOf(text), named = responder(c, text), n = c.people.length;
+      if ((it === 'water' || (it === 'safety' && /fatigue|tired|rest|relief|cansa|descans|rend/i.test(text))) && crewReply(c, it === 'water' ? 'water' : 'relief')) return;
       var byTopic = { safety: 1, water: 2, homes: 1, wind: 0, eta: 0, need: 1, status: 0, order: 0, thanks: 0, other: c.beat % n };
       var who = named >= 0 ? named : Math.min(n - 1, byTopic[it] != null ? byTopic[it] : 0);
       var a = reply(c, who, it, text); c.beat++;
@@ -768,6 +790,7 @@
       'Stage timeline: ' + tl + '.\n' +
       'Burnt area now: about ' + areaTxt(c) + '. Wind from the south-west, about 18 km/h gusting 30; the head runs north-east; homes about 1 km north-east.\n' +
       'Air support: ' + (c.air ? c.air.name + ' (' + c.air.st + ')' : c.flags.airNo ? 'declined by the fire owner for now' : 'none') + '. Evacuation: ' + (c.evac ? c.evac.people + ' residents moved out' : 'none ordered') + '.\n' +
+      (function () { var S = crewState(c); return S && S.st && S.st.length ? 'Units right now (exact; never contradict them): ' + S.st.map(function (x) { return x.name + ': ' + x.tenders + ' water tender(s)' + (x.low.length ? ', below 20% water: ' + x.low.join(', ') : ', all above 20%') + '; ' + x.crews + ' crew(s)' + (x.tired.length ? ', past 12 h needing relief: ' + x.tired.join(', ') : ''); }).join('. ') + '. When water or relief comes up, each station with a problem answers for its own units.\n' : ''; })() +
       'Team (answer only as these people; index in #):\n' + team + '\n\nRecent chat, oldest first:\n' + tr;
   }
   var AI_SYS = 'You role-play the crew coordinators of fire stations in a wildfire incident chat. This is a realistic training simulation inside a fire command app; the person writing to you is the fire owner (incident commander) who makes all decisions. ' +

@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=111"></script>
+<script src="prefs.js?v=112"></script>
 <script src="i18n.js?v=109"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=33"></script>
+<script src="chat.js?v=34"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -1370,6 +1370,10 @@ class Component extends DCLogic {
           const crewsHere = g.units.filter((u) => u.k === 0).length, tot = Math.max(crewsHere, 2 + (hh % 4)), free = Math.max(0, tot - crewsHere);
           const K = window.__wfCrest ? window.__wfCrest(r.ck || '', r.name) : { url: '' };
           return { crest: K.url || '', crestD: K.url ? 'block' : 'none', shD: K.url ? 'none' : 'block', name: r.name, sub: (r.km != null ? r.km + duf + '. ' : '') + (free ? free + ' of ' + tot + ' crews free' : 'All crews on this fire') + '.', units: g.units }; });
+        // The fire's chat answers from these same figures (water and relief), so the coordinators say what the Crews tab shows
+        try { const M = JSON.parse(localStorage.getItem('wf-crew') || '{}'); M[fireId] = { t: Date.now(), st: gOut.map((g) => { const w = g.units.filter((u) => u.k === 1), cr = g.units.filter((u) => u.k === 0);
+          return { name: g.name, tenders: w.length, low: w.filter((u) => u.tag === 'Low water').map((u) => u.name), crews: cr.length, tired: cr.filter((u) => u.tag === 'Needs relief').map((u) => u.name) }; }) };
+          localStorage.setItem('wf-crew', JSON.stringify(M)); } catch (x) {}
         if (airU.length) gOut.push({ crest: '', crestD: 'none', shD: 'none', name: stC === 'PT' ? 'Meios aéreos' : 'Air support', sub: airU.length + (airU.length === 1 ? ' aircraft.' : ' aircraft.'), units: airU });
         const GC = s.gpC || {};   // folded station cards (all open by default)
         gOut.forEach((g) => { const k = g.name, open = !GC[k], issue = (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A');   /* a folded station with a crew needing relief or a tender low on water gets the red dot */
