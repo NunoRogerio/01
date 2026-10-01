@@ -1,5 +1,14 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 window.__wfNight = function (L) { if (!L) return false; if (L.night != null) return !!L.night; return !!(window.__wfSunAlt && L.lat != null && L.t && window.__wfSunAlt(L.lat, L.lon, Date.parse(L.t)) < -0.833); };   /* a detection made with the sun below the horizon (see live.js) */
+/* The clock at the incident's own place, with AM / PM (e.g. "4:05 AM"); the zone is added when it differs from the phone's ("4:05 AM PDT") */
+window.__wfTzOf = function (st, lon) { var Z = { PT: 'Europe/Lisbon', BRA: 'America/Sao_Paulo', AMZ: 'America/Manaus', ESP: 'Europe/Madrid', FRA: 'Europe/Paris', ITA: 'Europe/Rome', GRC: 'Europe/Athens', CAN: 'America/Toronto', MEX: 'America/Mexico_City', CHL: 'America/Santiago', ARG: 'America/Argentina/Buenos_Aires',
+  CA: 'America/Los_Angeles', NV: 'America/Los_Angeles', OR: 'America/Los_Angeles', WA: 'America/Los_Angeles', AZ: 'America/Phoenix', UT: 'America/Denver', CO: 'America/Denver', NM: 'America/Denver', WY: 'America/Denver', MT: 'America/Denver', ID: 'America/Boise', AK: 'America/Anchorage', HI: 'Pacific/Honolulu',
+  TX: 'America/Chicago', OK: 'America/Chicago', KS: 'America/Chicago', NE: 'America/Chicago', SD: 'America/Chicago', ND: 'America/Chicago', MN: 'America/Chicago', IA: 'America/Chicago', MO: 'America/Chicago', AR: 'America/Chicago', LA: 'America/Chicago', MS: 'America/Chicago', AL: 'America/Chicago', TN: 'America/Chicago', WI: 'America/Chicago', IL: 'America/Chicago' };
+  if (Z[st]) return Z[st]; if (/^[A-Z]{2}$/.test(st || '')) return 'America/New_York'; if (isFinite(lon)) { var o = -Math.round(lon / 15); return o === 0 ? 'Etc/GMT' : 'Etc/GMT' + (o > 0 ? '+' : '') + o; } return undefined; };
+window.__wfClock = function (ms, st, lon) { var tz = window.__wfTzOf(st, lon), mine = ''; try { mine = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) {}
+  var o = { hour: 'numeric', minute: '2-digit', hour12: true }; if (tz) o.timeZone = tz; if (tz && tz !== mine) o.timeZoneName = 'short';
+  try { return new Date(ms).toLocaleTimeString('en-US', o); } catch (e) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); } };
+window.__wfNightAt = function (ms, lat, lon) { return !!(window.__wfSunAlt && isFinite(lat) && isFinite(lon) && ms && window.__wfSunAlt(lat, lon, ms) < -0.833); };   /* the sun below the horizon there and then */
 window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^[A-Za-z]{2,5}-?\d{3,}$/.test(p) || /^unnamed$/i.test(p) ? 'Unnamed fire' : p; };   /* a fire known only by its incident code (LAC-350855) is called Unnamed fire on every screen */
 // User preferences: theme (light / dark) and text size (condensed / normal / comfortable).
 // The screens are written with inline light-theme colours and pixel font sizes, so the preferences are applied as
@@ -119,11 +128,11 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over an 8px lime bar, rounded at both ends, that glides between them; shared by every tab set */
   '[data-wf-kpicard]>span:first-child[style*="min-height: 40px"]{min-height:32px!important}' +   // mini cards: the title sits 40% closer to its value (all cards)
-  '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:none}' +
+  '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:none;margin-bottom:24px!important}' +
   '.wf-tabs .tabopt{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 8px;border:0;background:transparent;font:inherit;font-size:17px;font-weight:400;color:#6E6E73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .3s ease}' +
   '.wf-tabs .tabopt[aria-selected=true]{color:#1C1C1E;font-weight:600}' +
-  '.wf-tabs::before{content:"";position:absolute;z-index:1;left:0;right:0;bottom:0;height:8px;border-radius:4px;background:rgba(118,118,128,0.12);pointer-events:none}' +   /* the track: full width of the tabs, the band's grey, under the lime bar */
-  '.wf-tabs>.tabbar{position:absolute;z-index:2;bottom:0;height:8px;min-height:8px;border-radius:4px;background:var(--wf-y,#E5FF00);box-shadow:0 0 0 0.5px rgba(0,0,0,0.12);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform;pointer-events:none}' +
+  '.wf-tabs::before{content:"";position:absolute;z-index:1;left:0;right:0;bottom:0;height:12px;border-radius:6px;background:rgba(118,118,128,0.12);pointer-events:none}' +   /* the track: full width of the tabs, the band's grey, under the lime bar */
+  '.wf-tabs>.tabbar{position:absolute;z-index:2;bottom:2px;height:8px;min-height:8px;border-radius:4px;background:var(--wf-y,#E5FF00);box-shadow:0 0 0 0.5px rgba(0,0,0,0.12);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform;pointer-events:none}' +
   '.wf-seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:52px;padding:10px;box-sizing:border-box;border-radius:999px;background:rgba(118,118,128,0.12)}' +
   '.wf-seg>.segthumb{position:absolute;top:10px;bottom:10px;left:10px;transition:transform .42s cubic-bezier(.4,0,.2,1) .14s;will-change:transform}' +
   '.wf-seg>.segthumb>.segblob{position:absolute;inset:0;border-radius:999px;background:var(--wf-y)}' +

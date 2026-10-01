@@ -523,6 +523,8 @@ window.__wfBlink=function(path,dur){
   function haptic(){try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}}
   document.addEventListener('touchstart',function(e){
     if(e.touches.length!==1)return;var t=e.target;if(!t||!t.closest)return;
+    var gc=t.closest('[data-grab-close]'),gb=gc&&gc.closest('[data-swipe]');   // a dialog's grabber: drags the dialog down even when its list scrolls; a tap on it closes (its own onClick)
+    if(gb){var p0=e.touches[0];S={el:gb,mode:'close',dir:gb.getAttribute('data-swipe'),x:p0.clientX,y:p0.clientY,t:performance.now(),sc:null,on:false,dy:0,k:1,fired:false};try{var r0=gb.closest('[data-wfroot]');if(r0)S.k=r0.getBoundingClientRect().width/((window.__wfVP||{}).w||390)||1;}catch(x){}return;}
     if(t.closest('.wf-grab,input,textarea,select,[data-noswipe]'))return;   // the grabber keeps its own drag; fields keep theirs
     var el=t.closest('[data-swipe],[data-pull]');if(!el)return;
     if(scroller(t,el)||inner(el))return;   // scrolling content: the grabber alone swipes this blade

@@ -78,6 +78,7 @@
   // their own service's uniform; coordinators wear the command helmet.
   var PHOTO_ST = { CA: 'us', PT: 'pt' };   // only Portugal and California chats show photos (a team of 8 each); the rest show initials
   function photoOf(c, name) {
+    if (c && c.police) return '';   // the officer is not a firefighter: initials, no fire service photo
     var team = c && PHOTO_ST[c.st];
     if (!team || !name || !window.__wfFacePick) return '';
     // each person in this chat gets a random photo of their gender from the team, never one already used in this chat
@@ -647,6 +648,7 @@
   function send(key, text) {
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
+    if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (!c.dismissed && c.stage < 7 && c.people.length) {
       var rules = function (c) { ruleReply(c, text); };
@@ -1038,6 +1040,62 @@
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
   function typing(c) { if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
 
+  // ---- reporting a night ignition to the local police -------------------------------------------------------------------
+  // A fire that started with the sun down is suspicious: one tap opens a chat with an officer of the local force (a county
+  // sheriff's deputy in the US, the GNR's nature protection service in Portugal), with the fire's card (place, start time,
+  // GPS) and the report already sent; the officer answers and the conversation goes on in character.
+  function policeOf(st, reg) { var cc = ccOf(st);
+    if (cc === 'us') return { org: (reg ? reg.replace(/ County$/, '') + ' County' : 'County') + ' Sheriff', roleEn: 'Deputy sheriff', rolePt: 'Xerife adjunto' };
+    if (cc === 'pt') return { org: 'GNR · SEPNA', roleEn: 'GNR officer, nature protection', rolePt: 'Militar da GNR, proteção da natureza' };
+    if (cc === 'br') return { org: 'Polícia Militar Ambiental', roleEn: 'Environmental police officer', rolePt: 'Polícia militar ambiental' };
+    return { org: 'Local police', roleEn: 'Police officer', rolePt: 'Agente da polícia' }; }
+  function police(inc) {
+    var db = load(), k = 'p:' + inc.id;
+    if (db.chats[k]) return db.chats[k];
+    var now = Date.now(), P = policeOf(inc.st, inc.reg);
+    var ch = { key: k, kind: 'dm', police: true, incId: inc.id, place: P.org, reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
+      stage: 0, startStage: 0, started: now, vNow: now, vAt: now, hist: [{ s: 0, vt: now }], people: [], stations: [], forces: [], air: null, evac: null,
+      msgs: [], queue: [], seenAt: now, beat: 0, flags: {}, closed: false, dismissed: false, updated: now, face: {}, used: {}, step: 0 };
+    var nm = pickNames(ch, 1, 'police')[0];
+    ch.people = [{ name: nm, code: initials(nm), org: P.org, kind: 'lead', roleEn: P.roleEn, rolePt: P.rolePt }];
+    ch.topic = { id: inc.id, kind: 'fire', place: inc.place, reg: inc.reg || '', st: inc.st || '', lat: inc.lat, lon: inc.lon, x: inc.x, y: inc.y };
+    var bodyEn = [inc.reg, inc.startTxt ? 'Started ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.', bodyPt = [inc.reg, inc.startTxt ? 'Início ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.';
+    ch.msgs.push({ id: newId(), kind: 'card', from: 'me', topic: true, tag: { en: 'Night ignition', pt: 'Ignição noturna' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + inc.place, pt: 'Incêndio. ' + inc.place }, body: { en: bodyEn, pt: bodyPt }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic, t: now, vt: now });
+    mine(ch, 'Reporting a night ignition, can you please investigate?', 'Reporto uma ignição noturna, podem investigar, por favor?');
+    say(ch, 0, 'Copy that. A fire starting at ' + (inc.startTxt || 'that hour') + ' with nobody around is worth a look. I am sending a unit to ' + inc.place + ' now, about ' + ch.eta + ' min out. We will secure the point of origin, check the access roads and note any vehicles seen in the area. Please ask the crews to disturb the origin as little as they can.',
+      'Entendido. Um fogo que começa ' + (inc.startTxt ? 'às ' + inc.startTxt : 'a essa hora') + ', sem ninguém por perto, merece ser visto. Vou enviar uma patrulha para ' + inc.place + ', cerca de ' + ch.eta + ' min. Vamos preservar o ponto de início, ver os acessos e registar viaturas avistadas na zona. Peço que as equipas mexam o mínimo possível no ponto de início.', 2600, 2);
+    db.chats[k] = ch; save(); emit(); return ch;
+  }
+  function policeReply(c, text) {
+    var t = String(text).toLowerCase(), b = c.beat++;
+    if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Anytime. I will message you as soon as we have something.', 'Às ordens. Dou notícias assim que tivermos alguma coisa.', 1800, 1); return; }
+    if (/quanto|when|eta|minut|how long|chegam|arriv|where are/.test(t)) { say(c, 0, 'The unit is about ' + Math.max(4, c.eta - 8) + ' min from the scene.', 'A patrulha está a cerca de ' + Math.max(4, c.eta - 8) + ' min do local.', 2000, 1); return; }
+    if (/suspe|arson|fogo posto|criminos|intencional|deliber|someone|alguém/.test(t)) { say(c, 0, 'Too early to say. Night starts are often deliberate, but lightning, power lines and machinery happen too. The origin will tell us more, so please keep it untouched.', 'Ainda é cedo para dizer. Os inícios noturnos são muitas vezes intencionais, mas também há trovoada, linhas elétricas e máquinas. O ponto de início vai dizer-nos mais, por isso peço que fique intacto.', 2400, 2); return; }
+    if (/witness|testemunh|saw|viu|vehicle|carro|viatura|car\b/.test(t)) { say(c, 0, 'Noted. If your crews saw anyone or any vehicle near the origin, send me the time and a description and I will pass it on.', 'Registado. Se as equipas viram alguém ou alguma viatura perto do ponto de início, envie-me a hora e a descrição e eu passo a informação.', 2200, 2); return; }
+    var L0 = [['Understood. I am logging it in the report.', 'Entendido. Fica registado no auto.'], ['Copy. The unit is working on it.', 'Entendido. A patrulha está a tratar disso.'], ['Noted, thank you for the detail.', 'Registado, obrigado pelo detalhe.']][b % 3];
+    say(c, 0, L0[0], L0[1], 1800, 1);
+  }
+  var POL_SYS = 'You role-play a police officer of the local force (given in the brief) in a phone chat inside a wildfire command app. This is a realistic training simulation. The person writing to you is the fire owner (incident commander), who has just reported an ignition that started at night and asked you to investigate. ' +
+    'Stay in character: a calm, professional officer talking to a colleague from another service; plain, human sentences. Short question, short answer (1 or 2 sentences); a fuller question gets 3 to 5 sentences. ' +
+    'Be plausible: securing the point of origin, access roads, witnesses, vehicles, cameras, power lines, lightning, earlier fires in the area; never name a culprit or a cause without evidence, never invent other people in the chat. No emojis, no markdown. Everything you write must be in LANGUAGE. ' +
+    'Answer with JSON only: {"replies":[{"who":0,"text":"<message>","minutes":<minutes before this message, 1 to 20>}]} with one reply.';
+  function policeBrief(c) {
+    var P = c.people[0] || {}, pt = PT();
+    var tr = c.msgs.slice(-24).map(function (m) { var at = '[' + hhmm(m.vt || m.t) + '] ';
+      if (m.kind === 'msg') return at + (m.from === 'me' ? 'FIRE OWNER' : P.name) + ': ' + (pt ? m.pt || m.en : m.en);
+      if (m.kind === 'card') return at + 'CARD: ' + [m.tag && m.tag.en, m.title && m.title.en, m.body && m.body.en].filter(Boolean).join(' · ');
+      return ''; }).filter(Boolean).join('\n');
+    return 'You are ' + P.name + ', ' + P.roleEn + ' (' + P.org + '). The fire: ' + c.reg + '. A unit was sent, about ' + c.eta + ' min out when you first answered.\n\nChat so far, oldest first:\n' + tr;
+  }
+  function policeAi(c, text) {
+    var key = c.key; c.pending = { who: 0, at: Date.now(), q: text }; INF[key] = 1;
+    aiCall(POL_SYS.replace('LANGUAGE', PT() ? 'European Portuguese (pt-PT)' : 'English'), policeBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now.', 500, function (err, txt) {
+      delete INF[key]; var c2 = load().chats[key]; if (!c2) return;
+      if (err) { c2.pending = null; policeReply(c2, text); save(); emit(); return; }
+      aiDeliver(key, txt, function (c3) { policeReply(c3, text); });
+    });
+  }
+
   // Building the incident descriptor from a screen's candidate or fire object
   function xyToLL(x, y) { return { lat: 34.19 - (y - 662) / 2829, lon: (x - 518) / 2345 - 118.13 }; }
   function incCand(c) {
@@ -1065,6 +1123,8 @@
     badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
     totalUnread: function () { var db = load(); return Object.keys(db.chats).reduce(function (a, k) { return a + unread(db.chats[k]); }, 0); },
     nearby: function (key) { var c = load().chats[key]; return c ? nearby(c, 50) : []; }, setTopic: setTopic,
+    police: function (inc) { var c = police(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
+    policeChat: function (id) { return load().chats['p:' + id] || null; },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
