@@ -570,7 +570,7 @@ class Component extends DCLogic {
     document.addEventListener('pointerdown', this._popOut, true);
     // Phone turned sideways: the map fills the screen; turned back upright, it returns to how it was
     this._orient = () => { const p = this.props; if (typeof p.onFull !== 'function' || window.__wfDesk) return; const land = window.innerWidth > window.innerHeight, full = p.isFull === true || p.isFull === 'true';
-      if (land && !full) { this._autoFull = true; p.onFull(); } else if (!land && full && this._autoFull) { this._autoFull = false; p.onFull(); } else if (!land) this._autoFull = false; };
+      if (land && !full) { this._autoFull = true; p.onFull(); } else if (!land && full && this._autoFull) { this._autoFull = false; p.onFull(); } else if (!land) this._autoFull = false; this.forceUpdate(); };
     window.addEventListener('resize', this._orient); window.addEventListener('orientationchange', this._orient); setTimeout(this._orient, 300); }
   componentDidUpdate(prev) {
     this._pv = null;
@@ -1353,7 +1353,7 @@ class Component extends DCLogic {
       routeLines: this.recMode() && !(p.fireOnly === true || p.fireOnly === 'true') && !(p.noRoutes === true || p.noRoutes === 'true') ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
       camLines: isPin ? (Array.isArray(p.cams) ? p.cams : []).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
       camMarks: isPin ? (Array.isArray(p.cams) ? p.cams : []).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Evidence source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
-      hasFull: typeof p.onFull === 'function',
+      hasFull: typeof p.onFull === 'function' && (window.__wfDesk || window.innerWidth <= window.innerHeight),   // phone in landscape: no maximize / minimize button; turning the phone upright is the way back
       ...(() => {
         const st = this.mapStyle(), open = !!(this.state || {}).msOpen;
         // 'standard' = live OpenStreetMap street map (default); 'vector' = the design's own drawn map.
