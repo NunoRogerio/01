@@ -636,3 +636,14 @@ window.__wfBlink=function(path,dur){
   // the loading screen leaving is the one change to watch for
   window.addEventListener('load',function(){probe();var iv=setInterval(function(){probe();if(!photo())clearInterval(iv);},300);});
 })();
+// Mini cards: the title sits 40% closer to its value (12px under a one-line title instead of 20px, via the 32px title box
+// in prefs.js). A title that wraps to two lines tightens its leading to fit the same 32px, so values line up across a row.
+(function(){
+  var T=0;
+  function fix(){T=0;try{document.querySelectorAll('[data-wf-kpicard]').forEach(function(c){var l=c.firstElementChild;if(!l||l.tagName!=='SPAN'||!/min-height:\s*40px/.test(l.getAttribute('style')||''))return;
+      if(l.style.getPropertyValue('line-height')==='16px')l.style.removeProperty('line-height');
+      var r=document.createRange();r.selectNodeContents(l);if(r.getBoundingClientRect().height>26)l.style.setProperty('line-height','16px','important');});}catch(e){}}
+  function soon(){if(!T)T=setTimeout(fix,80);}
+  try{new MutationObserver(soon).observe(document.documentElement,{childList:true,subtree:true,characterData:true});}catch(e){}
+  window.addEventListener('resize',soon);window.addEventListener('load',soon);
+})();

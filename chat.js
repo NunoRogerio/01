@@ -496,8 +496,16 @@
     } else if (a === 'declineAir') {
       c.flags.airNo = true; me('Not yet. Hold with ground crews for now.', 'Ainda não. Segurem com meios terrestres por agora.');
       if (P[1]) say(c, 1, 'Understood. We will try, but it is spreading fast.', 'Compreendido. Vamos tentar, mas está a progredir rápido.', 3000, 3);
+    } else if (a === 'evacPlan') {
+      // From the fire screen's People at risk card: ask the team for an evacuation plan; the nearest coordinator takes it on
+      c.flags.evac = true; me('Evacuation plan for the people at risk, please.', 'Plano de evacuação para as pessoas em risco, por favor.');
+      c.evac = c.evac || { people: 60 + hash(c.key + 'ev') % 180 };
+      try { var EV = JSON.parse(localStorage.getItem('wf-evac') || '{}'); EV[c.incId] = Date.now(); localStorage.setItem('wf-evac', JSON.stringify(EV)); } catch (x) {}
+      say(c, 0, "Understood. We're taking measures and evacuating the people at risk " + (c.place ? 'in ' + c.place + ' ' : '') + 'now, ' + c.evac.people + ' residents, with ' + (us ? "the sheriff's deputies" : 'the local police') + '. I will report when everyone is out.',
+        'Entendido. Estamos a tomar medidas e a evacuar as pessoas em risco ' + (c.place ? 'em ' + c.place + ' ' : '') + 'agora, ' + c.evac.people + ' moradores, com ' + (us ? 'os xerifes' : 'a GNR') + '. Informo quando estiverem todos fora.', 2400, 2);
     } else if (a === 'evac') {
       c.flags.evac = true; me('Evacuation order for the homes north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.');
+      try { var EV2 = JSON.parse(localStorage.getItem('wf-evac') || '{}'); EV2[c.incId] = Date.now(); localStorage.setItem('wf-evac', JSON.stringify(EV2)); } catch (x) {}   // the fire screen's People at risk then reads Evacuating
       c.evac = { people: 60 + hash(c.key + 'ev') % 180 };
       card(c, { tag: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, tagC: '#B3001B', title: { en: 'Homes north-east of the fire', pt: 'Casas a nordeste do incêndio' }, body: { en: 'Sent to civil protection and ' + (us ? "the sheriff's department" : 'the local police'), pt: 'Enviada à proteção civil e às forças de segurança locais' } }, 800, 1);
       sys(c, us ? "Sheriff's deputies moving " + c.evac.people + ' residents to the evacuation center' : 'Local police (GNR) moving ' + c.evac.people + ' residents to the parish hall', us ? 'Xerifes a encaminhar ' + c.evac.people + ' moradores para o centro de evacuação' : 'GNR a encaminhar ' + c.evac.people + ' moradores para a junta de freguesia', 5000, 14);

@@ -116,6 +116,7 @@
     '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
   'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over a 4px lime bar, rounded at both ends, that glides between them; shared by every tab set */
+  '[data-wf-kpicard]>span:first-child[style*="min-height: 40px"]{min-height:32px!important}' +   // mini cards: the title sits 40% closer to its value (all cards)
   '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:inset 0 -1px 0 rgba(60,60,67,0.18)}' +
   '.wf-tabs .tabopt{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 8px;border:0;background:transparent;font:inherit;font-size:17px;font-weight:400;color:#6E6E73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .3s ease}' +
   '.wf-tabs .tabopt[aria-selected=true]{color:#1C1C1E;font-weight:600}' +

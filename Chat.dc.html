@@ -13,12 +13,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=92"></script>
+<script src="fit.js?v=94"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=113"></script>
+<script src="prefs.js?v=114"></script>
 <script src="i18n.js?v=109"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=34"></script>
+<script src="chat.js?v=35"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -720,6 +720,10 @@ class Component extends DCLogic {
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); openPerson(p.name)(); } }));
     const ty = C.typing(c);
     const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), go: () => run(a.key) }));
+    // Opened from the fire screen's People at risk card (Not evacuated): Evacuation plan leads the suggestions until it is used
+    (() => { let sg = null; try { sg = JSON.parse(sessionStorage.getItem('wf-chat-sugg') || 'null'); } catch (e) {}
+      if (sg && sg.s === 'evac' && sg.fire && (sg.fire === c.incId || ('F-' + c.incId) === sg.fire) && !c.flags.evac && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 5)
+        acts0.unshift({ label: L('Evacuation plan', 'Plano de evacuação'), go: () => { try { sessionStorage.removeItem('wf-chat-sugg'); } catch (e) {} run('evacPlan'); } }); })();
     // Quick replies fill the suggestions up to five: questions the team answers (status, safety, water, homes, wind…), by stage
     const QR = c.kind === 'dm' ? (c.step === 0 ? [['Can you send a crew?', 'Podem enviar uma equipa?'], ['Who is free now?', 'Quem está livre agora?']] : c.step === 1 ? [['Main road, north side', 'Estrada principal, lado norte'], ['I will send the location', 'Envio a localização']] : [['How long until you arrive?', 'Quanto tempo até chegarem?'], ['Is the water enough?', 'A água chega?'], ['Thank you', 'Obrigado']])
       : c.stage <= 1 ? [['Can you see smoke?', 'Veem fumo?'], ['How long to get there?', 'Quanto tempo até lá?'], ['Crews ready?', 'Equipas prontas?']]
