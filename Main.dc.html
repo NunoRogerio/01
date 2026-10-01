@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=105"></script>
+<script src="fit.js?v=106"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=133"></script>
 <script src="i18n.js?v=120"></script>
@@ -262,7 +262,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-for list="{{fireShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin-bottom: 2px; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
-            <span style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: {{it.valBg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{it.valC}}">{{it.val}}</span>
+            <span data-wf-eqw="fire-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: {{it.valBg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{it.valC}}">{{it.val}}</span>
             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
             <span style="display: {{it.sub2D}}; grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub2}}</span>
           </a>
@@ -398,7 +398,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="scrim {{glass}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 39; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{nt.op}}; pointer-events: {{nt.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-panel" role="dialog" data-swipe="up" data-swipe-key="nt" aria-modal="true" aria-labelledby="ntTitle" aria-hidden="{{nt.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{nt.y}}); clip-path: inset(0 0 {{nt.cl}}px 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{nt.cl}}px 0 round 0 0 28px 28px); visibility: {{nt.vis}}; pointer-events: {{nt.pe}}; transition: transform {{nt.dur}} {{nt.ease}}, clip-path {{nt.clT}} ease, -webkit-clip-path {{nt.clT}} ease, visibility 0s linear {{nt.visDelay}}">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 24px 12px; flex-shrink: 0">
-      <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px">
+      <!-- The blade's type icon before its title (as the station crest before a station's name), not a button -->
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin: 6px 0 0 8px"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg>
+      <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px 4px 4px">
         <h2 id="ntTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{nt.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{nt.sub}}</span>
       </span>
@@ -433,7 +435,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="scrim {{glass}}" aria-hidden="true" onClick="{{cb.close}}" style="position: absolute; inset: 0; z-index: 39; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{cb.op}}; pointer-events: {{cb.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-panel" role="dialog" data-swipe="up" data-swipe-key="cb" aria-modal="true" aria-labelledby="cbTitle" aria-hidden="{{cb.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 8px 40px rgba(0,0,0,0.14); transform: translateY({{cb.y}}); clip-path: inset(0 0 {{cb.cl}}px 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{cb.cl}}px 0 round 0 0 28px 28px); visibility: {{cb.vis}}; pointer-events: {{cb.pe}}; transition: transform {{cb.dur}} {{cb.ease}}, clip-path {{cb.clT}} ease, -webkit-clip-path {{cb.clT}} ease, visibility 0s linear {{cb.visDelay}}">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 24px 12px; flex-shrink: 0">
-      <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px">
+      <!-- The blade's type icon before its title (as the station crest before a station's name), not a button -->
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin: 6px 0 0 8px"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>
+      <span style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 4px 8px 4px 4px">
         <h2 id="cbTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{cb.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cb.sub}}</span>
       </span>
@@ -1059,8 +1063,8 @@ class Component extends DCLogic {
     const stNote = (f) => ({ kind: 'fire', stage: f.info.stEn, title: f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) });
     const fA = pickF(fireSt); if (fA) out.push({ t: T0 - 11 * 60000, ...stNote(fA) });
     if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', title: 'Likelihood rose to ' + cs[1].conf + '%', text: cs[1].place + '. Another satellite pass agrees', href: 'Alert.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
-    const fB = pickF(FIRES); if (fB) out.push({ t: T0 - 26 * 60000, kind: 'st', title: 'Returning to base', text: 'Leaving ' + fB.place + '. Back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(fB) });
-    const fC = pickF(FIRES); if (fC) out.push({ t: T0 - 47 * 60000, kind: 'st', title: 'Station available again', text: 'Crews released from ' + fC.place + ' can take new dispatches', href: 'Dispatch.dc.html', pick: goFire(fC) });
+    const fB = pickF(FIRES); if (fB) out.push({ t: T0 - 26 * 60000, kind: 'st', unit: 'truck', title: 'Returning to base', text: 'Leaving ' + fB.place + '. Back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(fB) });
+    const fC = pickF(FIRES); if (fC) out.push({ t: T0 - 47 * 60000, kind: 'st', unit: 'crew', title: 'Station available again', text: 'Crews released from ' + fC.place + ' can take new dispatches', href: 'Dispatch.dc.html', pick: goFire(fC) });
     const fD = pickF(fireSt); if (fD) out.push({ t: T0 - 72 * 60000, ...stNote(fD) });
     const unread = out.filter((n) => n.t > seen).length;
     const items = out.map((n, i) => {
@@ -1071,6 +1075,10 @@ class Component extends DCLogic {
       const ty = n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 20%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
         : SG ? { vb: '0 0 24 24', d: CH.ICON[SG.icon], f: 'none', s: SG.c, sw: 1.8, bg: SG.bg }
         : n.kind === 'fire' ? { vb: '0 0 14 14', d: CIR, f: '#E8590C', s: 'none', sw: 0, bg: '#FCE9E1' }
+        /* station updates by what they are about: a vehicle returning (truck), crews released (crew), an aircraft (helicopter); the station's house otherwise */
+        : n.unit === 'truck' && CH && CH.ICON ? { vb: '0 0 24 24', d: CH.ICON.route, f: 'none', s: '#3A3A3C', sw: 1.8, bg: '#E3EEFB' }
+        : n.unit === 'crew' ? { vb: '0 0 24 24', d: 'M9 11.2a3.6 3.6 0 1 0 0-7.2a3.6 3.6 0 0 0 0 7.2Z M2.5 20.5a6.5 6.5 0 0 1 13 0 M15.8 4.3a3.6 3.6 0 0 1 0 6.6 M18.2 14.3a6.5 6.5 0 0 1 3.3 6.2', f: 'none', s: '#3A3A3C', sw: 1.8, bg: '#E3EEFB' }
+        : n.unit === 'air' ? { vb: '0 0 24 24', d: 'M3 6.5h18 M12 6.5v3 M6.5 9.5h8.5a4 4 0 0 1 4 4v.5a3 3 0 0 1-3 3H9.5a3 3 0 0 1-3-3Z M2.5 12h4 M10 17v2.5 M15 17v2.5 M8 19.5h9', f: 'none', s: '#3A3A3C', sw: 1.8, bg: '#E3EEFB' }
         : { vb: '0 0 14 14', d: SQ, f: 'rgba(64,156,255,0.6)', s: '#3A3A3C', sw: 1.3, bg: '#E3EEFB' };
       return { ty, title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
         sep: i ? '0' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),

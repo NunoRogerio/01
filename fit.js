@@ -507,8 +507,8 @@ window.__wfBlink=function(path,dur){
 //   (through its [data-pull-go] control);
 // - a blade marked data-pull="toggle" (raises and lowers, its [data-pull-go] control says aria-expanded) is raised by a
 //   swipe up and lowered by a swipe down, from anywhere on it.
-// Taps are untouched. Rule: the whole-surface swipe only applies to blades with no internal scroll. A blade whose
-// content scrolls (a list, a long panel) is swiped by its grabber only, so scrolling up and down never closes it. The page can show the drag itself through window.__wfSwipeDrag(key, dy); otherwise the
+// Taps are untouched. Rule: on a blade whose content scrolls (a list, a long panel) a swipe on the content scrolls it and
+// never closes the blade; its grabber and its empty spaces (header, footer, space around and below the rows) swipe the blade. The page can show the drag itself through window.__wfSwipeDrag(key, dy); otherwise the
 // blade is moved directly and settles back smoothly.
 (function(){
   var S=null;
@@ -527,9 +527,9 @@ window.__wfBlink=function(path,dur){
     if(gb){var p0=e.touches[0];S={el:gb,mode:'close',dir:gb.getAttribute('data-swipe'),x:p0.clientX,y:p0.clientY,t:performance.now(),sc:null,on:false,dy:0,k:1,fired:false};try{var r0=gb.closest('[data-wfroot]');if(r0)S.k=r0.getBoundingClientRect().width/((window.__wfVP||{}).w||390)||1;}catch(x){}return;}
     if(t.closest('.wf-grab,input,textarea,select,[data-noswipe]'))return;   // the grabber keeps its own drag; fields keep theirs
     var el=t.closest('[data-swipe],[data-pull]');if(!el)return;
-    if(scroller(t,el)||inner(el))return;   // scrolling content: the grabber alone swipes this blade
+    var sc0=scroller(t,el);if(sc0&&t!==sc0)return;   // on the scrolling content itself (its rows) the swipe scrolls; the blade's empty spaces (around the list, below its last row) still swipe the blade
     var mode=el.hasAttribute('data-swipe')?'close':'pull',p=e.touches[0];
-    S={el:el,mode:mode,dir:el.getAttribute(mode==='close'?'data-swipe':'data-pull'),x:p.clientX,y:p.clientY,t:performance.now(),sc:scroller(t,el),on:false,dy:0,k:1,fired:false};
+    S={el:el,mode:mode,dir:el.getAttribute(mode==='close'?'data-swipe':'data-pull'),x:p.clientX,y:p.clientY,t:performance.now(),sc:sc0,on:false,dy:0,k:1,fired:false};
     try{var r=el.closest('[data-wfroot]');if(r)S.k=r.getBoundingClientRect().width/((window.__wfVP||{}).w||390)||1;}catch(x){}
   },{passive:true,capture:true});
   document.addEventListener('touchmove',function(e){
@@ -659,4 +659,15 @@ window.__wfBlink=function(path,dur){
   function soon(){if(!T)T=setTimeout(fix,80);}
   try{new MutationObserver(soon).observe(document.documentElement,{childList:true,subtree:true,characterData:true});}catch(e){}
   window.addEventListener('resize',soon);window.addEventListener('load',soon);
+})();
+
+// Equal widths: every element marked data-wf-eqw="<group>" (e.g. the status tags of a list) takes the width of the widest
+// in its group, measured after rendering and translation, so tags line up whatever their language.
+(function(){
+  var busy=false;
+  function run(){busy=false;var g={},l=document.querySelectorAll('[data-wf-eqw]');for(var i=0;i<l.length;i++){var k=l[i].getAttribute('data-wf-eqw');(g[k]=g[k]||[]).push(l[i]);}
+    Object.keys(g).forEach(function(k){var a=g[k],m=0;a.forEach(function(e){e.style.minWidth='';});a.forEach(function(e){m=Math.max(m,e.offsetWidth);});if(m)a.forEach(function(e){e.style.minWidth=m+'px';});});}
+  function later(){if(busy)return;busy=true;requestAnimationFrame(run);}
+  function start(){try{new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t&&t.nodeType===1&&t.hasAttribute&&t.hasAttribute('data-wf-eqw')&&ms[i].type==='attributes')continue;later();return;}}).observe(document.body,{subtree:true,childList:true,characterData:true});}catch(x){}later();}
+  if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();
