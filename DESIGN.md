@@ -457,3 +457,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Crews KPIs (Oct 1):** five more cards in the Crews picker: Relief due within 3 h, Fresh crews, Longest shift, Water in tanks, Aircraft dropping (from the same scripted crew figures as the others).
 - **Night moon persists (Oct 1):** a night candidate keeps its moon, centred in the circle with no border, on every map where it appears, including its own detail map when selected and explored.
 - **Buttons (Oct 1):** primary lime has no dark outline; secondary (Cancel, Dismiss and the like) moves from black with lime text to a reflective mid grey with white text, everywhere (shared dialog, chat actions, sheets).
+- **Big numbers on map cards (Oct 1):** at most 45px (30% below the old 64px), whatever room the card has; they still shrink to fit when the number is long.

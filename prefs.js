@@ -181,7 +181,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-qual.top{min-height:56px;padding:8px 8px 8px 16px;border-radius:14px 14px 0 0}.wf-qual.top>span{flex-grow:1;min-width:0;overflow:hidden;text-overflow:ellipsis}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
     // The XS version of the likelihood KPI (map tooltip panels): same look, sized to lead the card without growing it
-    '.wf-like-xs{color:#3A3A3C!important;font-size:var(--wf-fs,64px)!important;line-height:1!important;font-weight:700!important;letter-spacing:-.03em;font-variant-numeric:tabular-nums}' +
+    '.wf-like-xs{color:#3A3A3C!important;font-size:min(var(--wf-fs,45px),45px)!important;line-height:1!important;font-weight:700!important;letter-spacing:-.03em;font-variant-numeric:tabular-nums}' +
     // The glass overlay behind panels, one definition for the whole app: a slightly dark frosted layer, so the panel's edge
     // reads clearly against what is underneath. Change it here and every overlay changes.
     ':root{--wf-glass-bg:rgba(60,60,67,0.24);--wf-glass-blur:blur(10px) saturate(120%)}' +
