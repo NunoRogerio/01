@@ -78,7 +78,7 @@
   // their own service's uniform; coordinators wear the command helmet.
   var PHOTO_ST = { CA: 'us', PT: 'pt' };   // only Portugal and California chats show photos (a team of 8 each); the rest show initials
   function photoOf(c, name) {
-    if (c && c.police) return '';   // the officer is not a firefighter: initials, no fire service photo
+    if (c && c.police) return CAPTAIN_PHOTO;   // the police captain: a real photo (Unsplash), not a fire service face
     var team = c && PHOTO_ST[c.st];
     if (!team || !name || !window.__wfFacePick) return '';
     // each person in this chat gets a random photo of their gender from the team, never one already used in this chat
@@ -1044,40 +1044,52 @@
   // A fire that started with the sun down is suspicious: one tap opens a chat with an officer of the local force (a county
   // sheriff's deputy in the US, the GNR's nature protection service in Portugal), with the fire's card (place, start time,
   // GPS) and the report already sent; the officer answers and the conversation goes on in character.
+  // Photo: Arthur Ogleznev on Unsplash (Unsplash License), https://unsplash.com/photos/X1JI5iiZsmY
+  var CAPTAIN_PHOTO = 'https://images.unsplash.com/photo-1744132116978-bbf797a1e689?w=240&h=240&fit=crop&crop=faces&q=80';
   function policeOf(st, reg) { var cc = ccOf(st);
-    if (cc === 'us') return { org: (reg ? reg.replace(/ County$/, '') + ' County' : 'County') + ' Sheriff', roleEn: 'Deputy sheriff', rolePt: 'Xerife adjunto' };
-    if (cc === 'pt') return { org: 'GNR · SEPNA', roleEn: 'GNR officer, nature protection', rolePt: 'Militar da GNR, proteção da natureza' };
-    if (cc === 'br') return { org: 'Polícia Militar Ambiental', roleEn: 'Environmental police officer', rolePt: 'Polícia militar ambiental' };
-    return { org: 'Local police', roleEn: 'Police officer', rolePt: 'Agente da polícia' }; }
+    if (cc === 'us') return { org: (reg ? reg.replace(/ County$/, '') + ' County' : 'County') + ' Sheriff', roleEn: 'Captain', rolePt: 'Capitão', name: 'Jordan Reyes' };
+    if (cc === 'pt') return { org: 'GNR. SEPNA', roleEn: 'Captain', rolePt: 'Capitão', name: 'Capitão Martins' };
+    if (cc === 'br') return { org: 'Polícia Militar Ambiental', roleEn: 'Captain', rolePt: 'Capitão', name: 'Capitão Souza' };
+    return { org: 'Local police', roleEn: 'Captain', rolePt: 'Capitão', name: 'Captain Jordan Reyes' }; }
   function police(inc) {
     var db = load(), k = 'p:' + inc.id;
-    if (db.chats[k]) return db.chats[k];
+    if (db.chats[k] && !db.chats[k].v2) delete db.chats[k];   // a report made before the captain's investigation: started again
+    if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.place = 'Night ignition report'; o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = 'Captain'; o.people[0].rolePt = 'Capitão'; o.people[0].org = P0.org; } save(); return o; }
     var now = Date.now(), P = policeOf(inc.st, inc.reg);
-    var ch = { key: k, kind: 'dm', police: true, incId: inc.id, place: P.org, reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
+    var ch = { key: k, kind: 'dm', police: true, v2: true, incId: inc.id, place: 'Night ignition report', reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
       stage: 0, startStage: 0, started: now, vNow: now, vAt: now, hist: [{ s: 0, vt: now }], people: [], stations: [], forces: [], air: null, evac: null,
       msgs: [], queue: [], seenAt: now, beat: 0, flags: {}, closed: false, dismissed: false, updated: now, face: {}, used: {}, step: 0 };
-    var nm = pickNames(ch, 1, 'police')[0];
-    ch.people = [{ name: nm, code: initials(nm), org: P.org, kind: 'lead', roleEn: P.roleEn, rolePt: P.rolePt }];
+    var nm = P.name || pickNames(ch, 1, 'police')[0];
+    ch.people = [{ name: nm, code: initials(nm.replace(/^Capit[aã]o |^Captain /, '')), org: P.org, kind: 'lead', roleEn: P.roleEn, rolePt: P.rolePt }];
     ch.topic = { id: inc.id, kind: 'fire', place: inc.place, reg: inc.reg || '', st: inc.st || '', lat: inc.lat, lon: inc.lon, x: inc.x, y: inc.y };
     var bodyEn = [inc.reg, inc.startTxt ? 'Started ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.', bodyPt = [inc.reg, inc.startTxt ? 'Início ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.';
     ch.msgs.push({ id: newId(), kind: 'card', from: 'me', topic: true, tag: { en: 'Night ignition', pt: 'Ignição noturna' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + inc.place, pt: 'Incêndio. ' + inc.place }, body: { en: bodyEn, pt: bodyPt }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic, t: now, vt: now });
     mine(ch, 'Reporting a night ignition, can you please investigate?', 'Reporto uma ignição noturna, podem investigar, por favor?');
-    say(ch, 0, 'Copy that. A fire starting at ' + (inc.startTxt || 'that hour') + ' with nobody around is worth a look. I am sending a unit to ' + inc.place + ' now, about ' + ch.eta + ' min out. We will secure the point of origin, check the access roads and note any vehicles seen in the area. Please ask the crews to disturb the origin as little as they can.',
-      'Entendido. Um fogo que começa ' + (inc.startTxt ? 'às ' + inc.startTxt : 'a essa hora') + ', sem ninguém por perto, merece ser visto. Vou enviar uma patrulha para ' + inc.place + ', cerca de ' + ch.eta + ' min. Vamos preservar o ponto de início, ver os acessos e registar viaturas avistadas na zona. Peço que as equipas mexam o mínimo possível no ponto de início.', 2600, 2);
+    say(ch, 0, 'Thank you for reporting it. I have opened a case for the night ignition at ' + inc.place + (inc.startTxt ? ', started ' + inc.startTxt : '') + '. A few questions to start: how was it detected, and did your crews see anyone or any vehicle near the point of origin?',
+      'Obrigado pela participação. Abri um processo para a ignição noturna em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
     db.chats[k] = ch; save(); emit(); return ch;
   }
   function policeReply(c, text) {
-    var t = String(text).toLowerCase(), b = c.beat++;
-    if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Anytime. I will message you as soon as we have something.', 'Às ordens. Dou notícias assim que tivermos alguma coisa.', 1800, 1); return; }
-    if (/quanto|when|eta|minut|how long|chegam|arriv|where are/.test(t)) { say(c, 0, 'The unit is about ' + Math.max(4, c.eta - 8) + ' min from the scene.', 'A patrulha está a cerca de ' + Math.max(4, c.eta - 8) + ' min do local.', 2000, 1); return; }
-    if (/suspe|arson|fogo posto|criminos|intencional|deliber|someone|alguém/.test(t)) { say(c, 0, 'Too early to say. Night starts are often deliberate, but lightning, power lines and machinery happen too. The origin will tell us more, so please keep it untouched.', 'Ainda é cedo para dizer. Os inícios noturnos são muitas vezes intencionais, mas também há trovoada, linhas elétricas e máquinas. O ponto de início vai dizer-nos mais, por isso peço que fique intacto.', 2400, 2); return; }
-    if (/witness|testemunh|saw|viu|vehicle|carro|viatura|car\b/.test(t)) { say(c, 0, 'Noted. If your crews saw anyone or any vehicle near the origin, send me the time and a description and I will pass it on.', 'Registado. Se as equipas viram alguém ou alguma viatura perto do ponto de início, envie-me a hora e a descrição e eu passo a informação.', 2200, 2); return; }
-    var L0 = [['Understood. I am logging it in the report.', 'Entendido. Fica registado no auto.'], ['Copy. The unit is working on it.', 'Entendido. A patrulha está a tratar disso.'], ['Noted, thank you for the detail.', 'Registado, obrigado pelo detalhe.']][b % 3];
-    say(c, 0, L0[0], L0[1], 1800, 1);
+    var t = String(text).toLowerCase(), q = c.step || 0;
+    if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Thank you. I will keep you posted on the case, and please send anything new that your crews find.', 'Obrigado. Vou dando notícias do processo, e envie-me qualquer novidade que as equipas encontrem.', 1800, 1); return; }
+    // The captain works through the questions an investigator needs answered, one at a time, acknowledging each answer
+    var ack = /sat[eé]lit|satellite|camera|câmara|detet|detect/.test(t) ? ['Noted, detected by ' + (/camera|câmara/.test(t) ? 'camera' : 'satellite') + '.', 'Registado, detetado por ' + (/camera|câmara/.test(t) ? 'câmara' : 'satélite') + '.']
+      : /ningu|no one|nobody|não vi|none seen|ninguém/.test(t) ? ['Noted, nobody seen near the origin.', 'Registado, ninguém visto junto ao ponto de início.']
+      : /vehic|viatura|carro|car\b|truck|carrinha/.test(t) ? ['That matters. Send me the time and a description of the vehicle as soon as you have it.', 'Isso é importante. Envie-me a hora e a descrição da viatura assim que a tiver.']
+      : /lightning|trovoada|raio|storm/.test(t) ? ['Noted on the weather.', 'Registado quanto ao tempo.']
+      : /preserv|intact|untouched|intacto|preservad/.test(t) ? ['Good, thank you for keeping the origin intact.', 'Ótimo, obrigado por manter o ponto de início intacto.']
+      : /suspe|arson|fogo posto|intencional|deliber/.test(t) ? ['Too early to say. A start at that hour with no lightning is often deliberate, but power lines and machinery happen too.', 'Ainda é cedo para dizer. Um início a essa hora sem trovoada é muitas vezes intencional, mas também há linhas elétricas e máquinas.']
+      : ['Understood, it is in the case notes.', 'Entendido, fica nas notas do processo.'];
+    var NEXT = [['Was there any lightning or a storm in the area last night?', 'Houve trovoada ou tempestade na zona esta noite?'],
+      ['Are there power lines, a road or a track close to the point of origin?', 'Há linhas elétricas, estrada ou caminho perto do ponto de início?'],
+      ['Can your crews keep the point of origin untouched until our investigators get there?', 'As equipas conseguem manter o ponto de início intacto até os nossos investigadores lá chegarem?'],
+      ['If anyone has photos of the first minutes, please send them. They help the investigation.', 'Se alguém tiver fotografias dos primeiros minutos, envie-as, por favor. Ajudam a investigação.']];
+    var nx = NEXT[q] || null; c.step = q + 1;
+    say(c, 0, ack[0] + (nx ? ' ' + nx[0] : ' That is all I need for now.'), ack[1] + (nx ? ' ' + nx[1] : ' Por agora é tudo o que preciso.'), 2000, 2);
   }
-  var POL_SYS = 'You role-play a police officer of the local force (given in the brief) in a phone chat inside a wildfire command app. This is a realistic training simulation. The person writing to you is the fire owner (incident commander), who has just reported an ignition that started at night and asked you to investigate. ' +
-    'Stay in character: a calm, professional officer talking to a colleague from another service; plain, human sentences. Short question, short answer (1 or 2 sentences); a fuller question gets 3 to 5 sentences. ' +
-    'Be plausible: securing the point of origin, access roads, witnesses, vehicles, cameras, power lines, lightning, earlier fires in the area; never name a culprit or a cause without evidence, never invent other people in the chat. No emojis, no markdown. Everything you write must be in LANGUAGE. ' +
+  var POL_SYS = 'You role-play a police captain of the local force (given in the brief) in a phone chat inside a wildfire command app. This is a realistic training simulation. The person writing to you is the fire owner (incident commander), who has reported an ignition that started at night and asked the police to investigate. ' +
+    'You are not a firefighter: you never fight the fire, send crews, talk about driving to the scene or give fire tactics. Your topic is the investigation of a suspicious night ignition: how and when it was detected, people or vehicles seen, access roads and tracks, power lines, lightning and weather, earlier fires in the area, preserving the point of origin, photos, witnesses. ' +
+    'Lead the conversation like an investigator: acknowledge what the fire owner tells you and ask one clear follow-up question at a time. Calm, professional, plain human sentences; 1 to 3 sentences. Never name a culprit or a cause without evidence, never invent other people in the chat. No emojis, no markdown. Everything you write must be in LANGUAGE. ' +
     'Answer with JSON only: {"replies":[{"who":0,"text":"<message>","minutes":<minutes before this message, 1 to 20>}]} with one reply.';
   function policeBrief(c) {
     var P = c.people[0] || {}, pt = PT();
@@ -1085,7 +1097,7 @@
       if (m.kind === 'msg') return at + (m.from === 'me' ? 'FIRE OWNER' : P.name) + ': ' + (pt ? m.pt || m.en : m.en);
       if (m.kind === 'card') return at + 'CARD: ' + [m.tag && m.tag.en, m.title && m.title.en, m.body && m.body.en].filter(Boolean).join(' · ');
       return ''; }).filter(Boolean).join('\n');
-    return 'You are ' + P.name + ', ' + P.roleEn + ' (' + P.org + '). The fire: ' + c.reg + '. A unit was sent, about ' + c.eta + ' min out when you first answered.\n\nChat so far, oldest first:\n' + tr;
+    return 'You are ' + P.name + ', police captain (' + P.org + '), investigating a night ignition. The fire: ' + c.reg + '.\n\nChat so far, oldest first:\n' + tr;
   }
   function policeAi(c, text) {
     var key = c.key; c.pending = { who: 0, at: Date.now(), q: text }; INF[key] = 1;

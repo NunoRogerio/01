@@ -18,7 +18,7 @@
 <script src="prefs.js?v=128"></script>
 <script src="i18n.js?v=119"></script>
 <script src="live.js?v=37"></script>
-<script src="chat.js?v=40"></script>
+<script src="chat.js?v=41"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -74,7 +74,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
       <!-- Key figures: three per row, a grey + tile at the end adds or removes cards; simulated figures say so along the right edge -->
       <div style="display: flex; flex-direction: column; padding: 0 16px">
-        <span style="margin: 0 4px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Key figures</span>
+        <span style="margin: 0 0 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Key figures</span>
         <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
           <sc-for list="{{kpis}}" as="m" hint-placeholder-count="3">
             <div role="listitem" style="display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0">
