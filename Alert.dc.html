@@ -270,7 +270,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
         </div>
       </sc-for>
-      <p style="display: {{ddNoneD}}; margin: 40px 16px; font-size: 17px; line-height: 22px; color: #000000">No candidates match.</p>
+      <p style="display: {{ddNoneD}}; margin: 56px 16px; font-size: 17px; line-height: 22px; color: #000000">No candidates match.</p>
     </div>
     <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hDd.down}}" onPointerMove="{{hDd.move}}" onPointerUp="{{hDd.up}}" onPointerCancel="{{hDd.cancel}}" onKeyDown="{{hDd.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; flex-shrink: 0; cursor: grab; touch-action: none; margin-top: auto"><span aria-hidden="true" style="width: 72px; height: 5px; border-radius: 999px; background: transparent"></span></div>
   </div>
@@ -296,7 +296,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="wf-qual hd" style="margin-top: 16px; overflow: visible"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.6a4.4 4.4 0 1 1 0 8.8a4.4 4.4 0 1 1 0-8.8Z" style="display: {{mo.triD}}; fill: var(--wf-y, #E5FF00); fill-opacity: 0.2" fill="#E5FF00" stroke="#3A3A3C" stroke-width="1.8"></path><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" style="display: {{mo.dotD}}" fill="#E8590C"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{mo.kind}}</span><button type="button" class="qtag mbtn" onClick="{{mo.open}}" aria-haspopup="dialog" aria-label="{{mo.aria}}" style="position: relative; box-shadow: {{mo.ring}}; --wf-pr: 999px; display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; text-align: center; gap: 4px; margin-left: auto; box-sizing: border-box; border: 0; background: {{mo.bg}}; color: {{mo.fg}}; font: inherit; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: background-color .4s ease, color .4s ease"><span class="wf-pulse" aria-hidden="true" style="display: {{mo.pulseD}}"></span>{{mo.tag}}</button></span>
     </div>
 
-    <div class="wf-page {{mo.pageCls}}" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 40px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 48px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+    <div class="wf-page {{mo.pageCls}}" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 48px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
       <!-- The map band: only this candidate, framed on it; a tap or the button opens it full screen -->
       <div style="position: relative; flex-shrink: 0; height: 234px; overflow: hidden">
         <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-full="{{openMap}}" mode="pin" pin-close="16" start-zoom="3" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" hint-size="390px,234px"></dc-import>
@@ -320,7 +320,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
 
       <!-- The GPS component, right under the map: one white line, the coordinates and a plain copy icon (no circle); 16px under the map -->
-      <div style="display: {{gpsD}}; flex-direction: column; align-self: stretch; flex-shrink: 0; margin: -8px 16px 0">
+      <div style="display: {{gpsD}}; flex-direction: column; align-self: stretch; flex-shrink: 0; margin: -24px 16px 0">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{copyRows}}; opacity: {{copyOp}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 15px; line-height: 20px; color: #1E7A34">{{copyTxt}}</span></span></span>
           <button type="button" class="mbtn" onClick="{{copyGps}}" aria-label="{{copyAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{copyIc}}"></path></svg></button>
@@ -328,7 +328,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
 
 <!-- When: the GPS component's twin, right under it (where, then when): the time on top, the date as annotation, a clock icon where the copy icon sits -->
-      <div style="display: {{ig.timeD}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -24px 16px 0">
+      <div style="display: {{ig.timeD}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -40px 16px 0">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{ig.ago}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ig.det}}</span></span>
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #3C3C43"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z M12 7.5V12l3 2"></path></svg></span>
@@ -468,12 +468,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="pop" style="display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.18); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.4) inset">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.06" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
       </span>
-      <h2 style="margin: 40px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
+      <h2 style="margin: 56px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
       <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
-      <a href="Main.dc.html" class="btn primary" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; align-self: stretch; margin-top: 40px; padding: 0 16px">
+      <a href="Main.dc.html" class="btn primary" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; align-self: stretch; margin-top: 56px; padding: 0 16px">
         Map
       </a>
-      <button type="button" onClick="{{restore}}" class="btn wf-sec" style="align-self: stretch; margin-top: 40px; padding: 0 16px; border: 0; cursor: pointer">Restore demo alerts</button>
+      <button type="button" onClick="{{restore}}" class="btn wf-sec" style="align-self: stretch; margin-top: 56px; padding: 0 16px; border: 0; cursor: pointer">Restore demo alerts</button>
     </div>
   </sc-if>
 

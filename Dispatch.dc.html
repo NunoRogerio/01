@@ -263,7 +263,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Configure dispatch, station by station: each chosen station (or air support) is a card with what it sends; the grey card
        below adds another (choose the station, then its resources, suggested or your own, Apply). Cancel or Send orders at the foot. -->
   <!-- The chosen stations scroll between the header and the fixed Cancel / Send order foot, however many there are -->
-  <div class="rise" style="position: relative; display: flex; flex-direction: column; gap: 40px; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 24px 16px 16px; animation-delay: 160ms">
+  <div class="rise" style="position: relative; display: flex; flex-direction: column; gap: 56px; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 24px 16px 16px; animation-delay: 160ms">
     <span style="display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px -8px; font-size: 15px; line-height: 20px; color: #6E6E73"><span style="font-weight: 600">Stations and resources</span><span>{{pl.count}}</span></span>
     <!-- Add a station first; each new station comes out from under it and pushes the others down -->
     <!-- Add: 16px corners like the Please assign crews card, the + tiles' grey, a + before the words, medium grey -->
@@ -328,11 +328,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-for>
       </div>
       <!-- The app's pair: Cancel (secondary) then Apply (primary); Remove below, the app's remove button (red, white text), asking first like Remove profile -->
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; flex-shrink: 0; margin: 40px 16px 0">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; flex-shrink: 0; margin: 56px 16px 0">
         <button type="button" class="btn wf-sec" onClick="{{fl.close}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
         <button type="button" class="btn primary" onClick="{{fl.apply}}" style="height: 48px; font-size: 17px; font-weight: 600">Apply</button>
       </div>
-      <button type="button" onClick="{{fl.remove}}" style="display: {{fl.rmD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 40px 16px 0; border: 0; border-radius: 999px; background: #D70015; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">Remove</button>
+      <button type="button" onClick="{{fl.remove}}" style="display: {{fl.rmD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 56px 16px 0; border: 0; border-radius: 999px; background: #D70015; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">Remove</button>
     </div>
   </section>
   <!-- Sending dispatch orders: each chosen station's coordinator gets its order in turn, then a confirmation and Done -->
@@ -343,11 +343,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; opacity: {{snd.doneOp}}; transform: scale({{snd.doneS}}); transition: opacity .3s ease .25s, transform .45s cubic-bezier(.3,1.4,.4,1) .25s"><path d="m4.5 12.5 5 5L19.5 7"></path></svg></span>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{snd.sub}}</span>
     </div>
-    <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 4px; margin: 40px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden; opacity: {{snd.barOp}}; transition: opacity .4s ease .2s">
+    <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 4px; margin: 56px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden; opacity: {{snd.barOp}}; transition: opacity .4s ease .2s">
       <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{snd.pct}}%; border-radius: 999px; background: {{snd.barC}}; transition: width .6s cubic-bezier(.3,.9,.25,1), background-color .3s ease"></span>
     </span>
     <!-- One card per station (and air support), 16px apart -->
-    <ul class="wf-snap" style="display: flex; flex-direction: column; gap: 40px; flex-shrink: 1; min-height: 0; margin: 12px -12px 0; padding: 12px; list-style: none; overflow-y: auto; scrollbar-width: none">
+    <ul class="wf-snap" style="display: flex; flex-direction: column; gap: 56px; flex-shrink: 1; min-height: 0; margin: 12px -12px 0; padding: 12px; list-style: none; overflow-y: auto; scrollbar-width: none">
       <sc-for list="{{snd.rows}}" as="o" hint-placeholder-count="2">
         <li style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: 0 0 12px rgba(0,0,0,0.08), 0 0 2px rgba(0,0,0,0.06)">
           <!-- Header: the crest (or the air support badge) sits on the top of the name; the units below line up with it: icons in the crest's column, names under the station's text -->
@@ -415,21 +415,21 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Medium KPIs, each with its own micro chart under the label (2 × 2 when there are four) -->
       <!-- KPI cards: white, 16px corners, a light shadow. Press and hold a card, then slide it to put the KPIs in your own order (kept on this phone) -->
       <!-- The GPS, just under the map: one line with its copy icon (the place is already the page title); 4px under where a label would start -->
-      <div style="display: {{floc.d}}; align-self: stretch; margin: -8px 0 40px; text-align: left">
+      <div style="display: {{floc.d}}; align-self: stretch; margin: -8px 0 56px; text-align: left">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{floc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{floc.rows}}; opacity: {{floc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 15px; line-height: 20px; color: #1E7A34">Copied to clipboard</span></span></span>
           <button type="button" class="mbtn" onClick="{{floc.copy}}" aria-label="{{floc.aria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{floc.c}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{floc.ic}}"></path></svg></button>
         </div>
       </div>
 <!-- When: the GPS component's twin, right under it (where, then when): the time on top, the date as annotation, a clock icon where the copy icon sits -->
-      <div style="display: {{hdTimeD2}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -24px 0 40px">
+      <div style="display: {{hdTimeD2}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -40px 0 56px">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums"><span style="display: {{hdLiveD}}" data-tl-since="{{hdT0}}"></span>{{hdTimeTxt}}<span style="display: {{hdLiveD}}"> active</span></span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{startTxt}}</span></span>
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #3C3C43"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z M12 7.5V12l3 2"></path></svg></span>
         </div>
       </div>
       <!-- A fire confirmed from a candidate: the entry to assign its crews (opens the dispatch configuration; Done comes back here) -->
-      <div style="display: {{rs.d}}; align-self: stretch; margin: 0 0 40px; text-align: left">
+      <div style="display: {{rs.d}}; align-self: stretch; margin: 0 0 56px; text-align: left">
         <span style="display: block; margin: 0 4px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Resources</span>
         <!-- Assign crews in place: tap the card, it shrinks 20% to show the grey surface under it, then slides away under that
              surface's edge like a safety cover, uncovering Add resources (N); chosen stations fill the surface, newest on top -->
