@@ -1,0 +1,155 @@
+### ipma_rcm 200 24302 bytes application/json
+{"dataPrev": "2026-10-01", "dataRun": "2026-09-30", "fileDate": "2026-10-01 09:35:02", "local": {"0101": {"data": {"rcm": 1}, "dico": "0101", "latitude": 40.58, "longitude": -8.44}, "0102": {"data": {"rcm": 1}, "dico": "0102", "latitude": 40.6909, "longitude": -8.4784}, "0103": {"data": {"rcm": 1}, "dico": "0103", "latitude": 40.44, "longitude": -8.44}, "0104": {"data": {"rcm": 1}, "dico": "0104", "latitude": 40.93, "longitude": -8.26}, "0105": {"data": {"rcm": 1}, "dico": "0105", "latitude": 40.6413, "longitude": -8.6535}, "0106": {"data": {"rcm": 1}, "dico": "0106", "latitude": 41.0409, "longitude": -8.2707}, "0107": {"data": {"rcm": 1}, "dico": "0107", "latitude": 41.01, "longitude": -8.64}, "0108": {"data": {"rcm": 1}, "dico": "0108", "latitude": 40.754, "longitude": -8.572}, "0109": {"data": {"rcm": 1}, "dico": "0109", "latitude": 40.93, "longitude": -8.55}, "0110": {"data": {"rcm": 1}, "dico": "0110", "latitude": 40.6, "longitude": -8.67}, "0111": {"data": {"rcm": 1}, "dico": "0111", "latitude": 40.3783, "longitude": -8.4503}, "0112": {"data": {"rcm": 1}, "dico": "0112", "latitude": 40.74, "longitude": -8.64}, "0113": {"data": {"rcm": 1}, "dico": "0113", "latitude": 40.84, "longitude": -8.48}, "0114": {"data": {"rcm": 1}, "dico": "0114", "latitude": 40.5157, "longitude": -8.4941}, "0115": {"data": {"rcm": 1}, "dico": "0115", "latitude": 40.8596, "longitude": -8.6254}, "0116": {"data": {"rcm": 1}, "dico": "0116", "latitude": 40.9, "longitude": -8.49}, "0117": {"data": {"rcm": 1}, "dico": "0117", "latitude": 40.7334, "longitude": -8.3713}, "0118": {"data": {"rcm": 2}, "dico": "0118", "latitude": 40.5535, "longitude": -8.6833}, "0119": {"data": {"rcm": 1}, "dico": "0119", "latitude": 40.85, "longitude": -8.39}, "0201": {"data": {"rcm": 2}, "dico": "0201", "latitude": 37.88, "longitude": -8.17}, "0202": {"data": {"rcm": 3}, "dico": "0202", "latitude": 37.5108, "longitude": -8.056}, "0203": {"data": {"rcm": 2}, "dico": "0203", "latitude": 38.26, "longitude": -8.0}, "0204": {"data": {"rcm": 1}, "dico": "0204", "latitude": 38.13, "longitude": -6.98}, "0205": {"data": {"rcm": 2}, "dico": "0205", "latitude": 38.02, "longitude": -7.87}, "0206": {"data": {"rcm": 2}, "dico": "0206", "latitude": 38.07, "longitude": -7.93}, "0207": {"data": {"rcm": 2}, "dico": "0207", "latitude": 38.17, "longitude": -7.89}, "0208": {"data": {"rcm": 2}, "dico": "0208", "latitude": 38.06, "longitude": -8.11}, "0209": {"data": {"rcm": 2}, "dico": "0209", "latitude": 37.6428, "longitude": -7.6605}, "0210": {"data": {"rcm": 1}, "dico": "0210", "latitude": 38.14, "longitude": -7.45}, "0211": {"data": {"rcm": 3}, "dico": "0211", "latitude": 37.5978, "longitude": -8.639}, "0212": {"data": {"rcm": 2}, "dico": "0212", "latitude": 37.65, "longitude": -8.22}, "0213": {"data": {"rcm": 2}, "dico": "0213", "latitude": 37.95, "longitude": -7.6}, "0214": {"data": {"rcm": 2}, "dico": "0214", "latitude": 38.21, "longitude": -7.8}, "0301": {"data": {"rcm": 1}, "dico": "0301", "latitude": 41
+
+### ipma_places 200 10071 bytes application/json
+{
+    "owner": "IPMA",
+    "country": "PT",
+    "data": [
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "AVR",
+            "idConcelho": 5,
+            "globalIdLocal": 1010500,
+            "latitude": "40.6413",
+            "idDistrito": 1,
+            "local": "Aveiro",
+            "longitude": "-8.6535"
+        },
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "BJA",
+            "idConcelho": 5,
+            "globalIdLocal": 1020500,
+            "latitude": "38.0200",
+            "idDistrito": 2,
+            "local": "Beja",
+            "longitude": "-7.8700"
+        },
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "BRG",
+            "idConcelho": 3,
+            "globalIdLocal": 1030300,
+            "latitude": "41.5475",
+            "idDistrito": 3,
+            "local": "Braga",
+            "longitude": "-8.4227"
+        },
+        {
+
+            "idRegiao": 1,
+            "idAreaAviso": "BRG",
+            "globalIdLocal": 1030800,
+            "idConcelho": 8,
+            "latitude": "41.4434",
+            "idDistrito": 3,
+            "local": "Guimarães",
+            "longitude": "-8.2938"
+        
+        },
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "BGC",
+            "idConcelho": 2,
+            "globalIdLocal": 1040200,
+            "latitude": "41.8076",
+            "idDistrito": 4,
+            "local": "Bragan\u00e7a",
+            "longitude": "-6.7606"
+        },
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "CBO",
+            "idConcelho": 2,
+            "globalIdLocal": 1050200,
+            "latitude": "39.8217",
+            "idDistrito": 5,
+            "local": "Castelo Branco",
+            "longitude": "-7.4957"
+        },
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "CBR",
+            "idConcelho": 3,
+            "globalIdLocal": 1060300,
+            "latitude": "40.2081",
+            "idDistrito": 6,
+            "local": "Coimbra",
+            "longitude": "-8.4194"
+        },
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "EVR",
+            "idConcelho": 5,
+            "globalIdLocal": 1070500,
+            "latitude": "38.5701",
+            "idDistrito": 7,
+            "local": "\u00c9vora",
+            "longitude": "-7.9104"
+        },
+        {
+            "idRegiao": 1,
+            "idAreaAviso": "FAR",
+            "idConcelho": 5,
+            "globalIdLocal": 1080500,
+            "latitude": "37.0146",
+            "idDistrito": 8,
+            "local": "Faro",
+            "longitude": "-7.9331"
+        },
+        {
+        
+            "idRegiao": 1,
+            "idAreaAviso": "FAR",
+            "globalIdLocal": 1081505,
+            "idConcelho": 15,
+            "latitude": "37.0168",
+            "idDistrito": 8,
+            "local": "Sagres",
+            "longitude": "-8.9403"
+        
+        },
+        {
+
+            "idRegiao": 1,
+            "idAreaAviso": "FAR",
+            "globalIdLocal": 1081
+
+### cwfis_wfs 200 436 bytes text/xml;charset=UTF-8
+<?xml version="1.0" ?>
+<ServiceExceptionReport
+   version="1.2.0"
+   xmlns="http://www.opengis.net/ogc"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.opengis.net/ogc http://schemas.opengis.net/wfs/1.0.0/OGC-exception.xsd">
+   <ServiceException code="InvalidParameterValue" locator="typeName">
+      Feature type public:activefires_current unknown
+</ServiceException></ServiceExceptionReport>
+
+### cwfis_dir ERROR HTTP Error 404: Not Found
+
+### calfire_list 200 4677 bytes application/json; charset=utf-8
+[{"Name":"Timber Fire ","Final":false,"Updated":"2026-10-01T15:37:03Z","Started":"2026-08-09T03:35:00Z","AdminUnit":"Monterey County Sheriff's Department;Unified Command: Los Padres National Forest","AdminUnitUrl":null,"County":"Monterey","Location":"Southeast of Loma Vista","AcresBurned":25351.9,"PercentContained":88.0,"ControlStatement":null,"AgencyNames":"","Longitude":-121.72983,"Latitude":36.224857,"Type":"Wildfire","UniqueId":"b7e4a30e-67ab-4964-882e-751da30b44e0","Url":"https://www.fire.ca.gov/incidents/2026/8/8/timber-fire/","ExtinguishedDate":"","ExtinguishedDateOnly":"","StartedDateOnly":"2026-08-09","IsActive":true,"CalFireIncident":false,"NotificationDesired":false},{"Name":"Dome Fire ","Final":false,"Updated":"2026-10-01T18:54:03Z","Started":"2026-09-15T15:28:00Z","AdminUnit":"National Park Service","AdminUnitUrl":null,"County":"Mariposa","Location":"North of Wawona Dome, Yosemite National Park ","AcresBurned":5898.7,"PercentContained":40.0,"ControlStatement":null,"AgencyNames":"","Longitude":-119.61289,"Latitude":37.57,"Type":"Wildfire","UniqueId":"4883092e-485f-429d-878d-819f01172840","Url":"https://www.fire.ca.gov/incidents/2026/9/15/dome-fire/","ExtinguishedDate":"","ExtinguishedDateOnly":"","StartedDateOnly":"2026-09-15","IsActive":true,"CalFireIncident":false,"NotificationDesired":false},{"Name":"Mineral Fire ","Final":false,"Updated":"2026-09-28T04:52:32Z","Started":"2026-09-20T13:07:10Z","AdminUnit":"CAL FIRE Nevada-Yuba-Placer Unit;Placer County Sheriff's Office","AdminUnitUrl":null,"County":"Placer","Location":"Iowa Hill Rd west of Iowa Hill","AcresBurned":19.0,"PercentContained":92.0,"ControlStatement":null,"AgencyNames":"","Longitude":-120.871037,"Latitude":39.105732,"Type":"Wildfire","UniqueId":"b5ad4146-8e14-47de-ab04-4dd1ddc88f6e","Url":"https://www.fire.ca.gov/incidents/2026/9/20/mineral-fire/","ExtinguishedDate":"","ExtinguishedDateOnly":"","StartedDateOnly":"2026-09-20","IsActive":true,"CalFireIncident":true,"NotificationDesired":false},{"Name":"Juniper Fire","Final":false,"Updated":"2026-09-30T16:18:29Z","Started":"2026-09-25T20:34:50Z","AdminUnit":"BLM - California Desert District","AdminUnitUrl":null,"County":"San Bernardino","Location":"Bowen Ranch Road and Juniper Flats Road, Apple Valley","AcresBurned":73.0,"PercentContained":70.0,"ControlStatement":null,"AgencyNames":"","Longitude":-117.1638398,"Latitude":34.3968294,"Type":"Wildfire","UniqueId":"172a0cf6-6745-4cc1-bd58-98af7a8aac4e","Url":"https://www.fire.ca.gov/incidents/2026/9/25/juniper-fire/","ExtinguishedDate":"","ExtinguishedDateOnly":"","StartedDateOnly":"2026-09-25","IsActive":true,"CalFireIncident":false,"NotificationDesired":false},{"Name":"Blind Fire","Final":false,"Updated":"2026-09-30T16:18:26Z","Started":"2026-09-26T21:58:38Z","AdminUnit":"BLM - Central California District","AdminUnitUrl":null,"County":"Mono","Location":"CA-120 near Black Lake Road, West of Benton","AcresBurned":43.0,"PercentContained":20.0,"ControlStatement":null,"AgencyNames"
+
+### calfire_geo 200 5399 bytes application/json; charset=utf-8
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-121.72983,36.224857]},"properties":{"Name":"Timber Fire ","Final":false,"Updated":"2026-10-01T15:37:03Z","Started":"2026-08-09T03:35:00Z","AdminUnit":"Monterey County Sheriff's Department;Unified Command: Los Padres National Forest","AdminUnitUrl":null,"County":"Monterey","Location":"Southeast of Loma Vista","AcresBurned":25351.9,"PercentContained":88.0,"ControlStatement":null,"AgencyNames":"","Longitude":-121.72983,"Latitude":36.224857,"Type":"Wildfire","UniqueId":"b7e4a30e-67ab-4964-882e-751da30b44e0","Url":"https://www.fire.ca.gov/incidents/2026/8/8/timber-fire/","ExtinguishedDate":"","ExtinguishedDateOnly":"","StartedDateOnly":"2026-08-09","IsActive":true,"CalFireIncident":false,"NotificationDesired":false}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-119.61289,37.57]},"properties":{"Name":"Dome Fire ","Final":false,"Updated":"2026-10-01T18:54:03Z","Started":"2026-09-15T15:28:00Z","AdminUnit":"National Park Service","AdminUnitUrl":null,"County":"Mariposa","Location":"North of Wawona Dome, Yosemite National Park ","AcresBurned":5898.7,"PercentContained":40.0,"ControlStatement":null,"AgencyNames":"","Longitude":-119.61289,"Latitude":37.57,"Type":"Wildfire","UniqueId":"4883092e-485f-429d-878d-819f01172840","Url":"https://www.fire.ca.gov/incidents/2026/9/15/dome-fire/","ExtinguishedDate":"","ExtinguishedDateOnly":"","StartedDateOnly":"2026-09-15","IsActive":true,"CalFireIncident":false,"NotificationDesired":false}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-120.871037,39.105732]},"properties":{"Name":"Mineral Fire ","Final":false,"Updated":"2026-09-28T04:52:32Z","Started":"2026-09-20T13:07:10Z","AdminUnit":"CAL FIRE Nevada-Yuba-Placer Unit;Placer County Sheriff's Office","AdminUnitUrl":null,"County":"Placer","Location":"Iowa Hill Rd west of Iowa Hill","AcresBurned":19.0,"PercentContained":92.0,"ControlStatement":null,"AgencyNames":"","Longitude":-120.871037,"Latitude":39.105732,"Type":"Wildfire","UniqueId":"b5ad4146-8e14-47de-ab04-4dd1ddc88f6e","Url":"https://www.fire.ca.gov/incidents/2026/9/20/mineral-fire/","ExtinguishedDate":"","ExtinguishedDateOnly":"","StartedDateOnly":"2026-09-20","IsActive":true,"CalFireIncident":true,"NotificationDesired":false}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-117.1638398,34.3968294]},"properties":{"Name":"Juniper Fire","Final":false,"Updated":"2026-09-30T16:18:29Z","Started":"2026-09-25T20:34:50Z","AdminUnit":"BLM - California Desert District","AdminUnitUrl":null,"County":"San Bernardino","Location":"Bowen Ranch Road and Juniper Flats Road, Apple Valley","AcresBurned":73.0,"PercentContained":70.0,"ControlStatement":null,"AgencyNames":"","Longitude":-117.1638398,"Latitude":34.3968294,"Type":"Wildfire","UniqueId":"172a0cf6-6745-4cc1-bd58-98af7a8aac4e","Url":"https://www.fire.ca.gov/incidents/2026/9/25/juniper-fire/","ExtinguishedDate":"","ExtinguishedDateOnly"
+
+### effis_ba_rest 200 21264 bytes application/json
+{"count":12054,"next":"http://api.effis.emergency.copernicus.eu/rest/2/burntareas/current/?country=PT&limit=3&offset=3","previous":null,"results":[{"id":793960,"centroid":{"type":"Point","coordinates":[-7.390319045254071,41.30329590570984]},"bbox":[-7.391243272026761,41.302176250973666,-7.389242637683271,41.30439311248239],"shape":{"type":"MultiPolygon","coordinates":[[[[-7.389538688762327,41.30434762373066],[-7.389635583641997,41.304366636362325],[-7.389733780434922,41.30438179928058],[-7.389833279123362,41.30439311248239],[-7.389932417438666,41.30438639523943],[-7.390031195295321,41.3043616475558],[-7.39011915135301,41.304324342728506],[-7.390196285580541,41.30427448078653],[-7.390269153755343,41.30421813730933],[-7.390337755869182,41.30415531230569],[-7.390404562033277,41.30409461502923],[-7.390469572258311,41.304036045483585],[-7.390534088348665,41.30397575404732],[-7.390598110301342,41.30391374072123],[-7.390668193902384,41.30385608103683],[-7.390744339147965,41.303802774982],[-7.390821472335982,41.30375291256467],[-7.390899593475392,41.30370649378261],[-7.390971158712478,41.30365399942955],[-7.391036168045103,41.303595429519],[-7.391084474101778,41.30352896413138],[-7.391116076921503,41.303454603288394],[-7.391137038299814,41.30337670065888],[-7.391147358275627,41.30329525624735],[-7.391166029787219,41.30321775954315],[-7.391193052804056,41.30314421054352],[-7.391216617549164,41.30305860860866],[-7.391236724033136,41.302960953737696],[-7.391243272026761,41.30287474969054],[-7.391236261580514,41.30279999647073],[-7.391221887752253,41.30272473922438],[-7.391200150569799,41.30264897794705],[-7.391181197275521,41.302574532563014],[-7.391165027857083,41.30250140307462],[-7.391146568708283,41.30242867951679],[-7.391125819836611,41.302356361888066],[-7.391086258761116,41.302285569911476],[-7.391027885543815,41.30221630356227],[-7.390947649565517,41.30217986393181],[-7.39084555072861,41.302176250973666],[-7.390746415951043,41.30218296901563],[-7.390650245184228,41.30220001806834],[-7.390554074371113,41.30221706702841],[-7.390457903511689,41.302234115895835],[-7.390367974367806,41.30226453357491],[-7.390284286893284,41.30230832008343],[-7.39020666086985,41.302356460248156],[-7.390135096296436,41.302408954082914],[-7.390080728315453,41.30247106535596],[-7.390043556957488,41.302542794093],[-7.39001702670284,41.30261806472033],[-7.390001137587934,41.302696877244415],[-7.389971823456484,41.30277083191143],[-7.389929084264454,41.30283992871207],[-7.389875703776746,41.302905483574584],[-7.389811681967458,41.302967496483355],[-7.389750443850287,41.3030308252978],[-7.389691989430375,41.303095470022754],[-7.389649249782211,41.303164566698044],[-7.389622224951014,41.303238115341586],[-7.389587702862298,41.30332746834724],[-7.389545683471455,41.30343262570483],[-7.389503303740365,41.30351975267254],[-7.389460563689177,41.303588849253615],[-7.389415039730607,41.303656629860164],[-7.389366731857747,41.30372309448886],[-7.389309264519545,41.30379118269068],[-7.38
+
+### effis_ba_rest2 200 4691 bytes application/json
+{"count":128954,"next":"http://api.effis.emergency.copernicus.eu/rest/2/burntareas/current/?limit=2&offset=2","previous":null,"results":[{"id":794020,"centroid":{"type":"Point","coordinates":[-3.151042092672578,57.18975829123305]},"bbox":[-3.152944753853246,57.18877235181332,-3.148760668686856,57.19073211192837],"shape":{"type":"MultiPolygon","coordinates":[[[[-3.149732575665058,57.19073211192837],[-3.149688447144853,57.19060791000767],[-3.149552605615673,57.19049297257642],[-3.149379733794281,57.1904075075844],[-3.149195442188563,57.19049045326858],[-3.149038490836043,57.19058350289577],[-3.148804793900358,57.19059424276268],[-3.148760668686856,57.19047004049149],[-3.148967889444204,57.19038477939639],[-3.149147768444222,57.19028941382197],[-3.149304718394483,57.19019636408792],[-3.149457254927187,57.190090893975935],[-3.149609790647959,57.18998542369899],[-3.149766738301255,57.189892373446334],[-3.150001294535434,57.189817214827364],[-3.150208509143019,57.18973195185781],[-3.150420135772291,57.18965910873735],[-3.150627348629677,57.189573845129566],[-3.150784292221307,57.18948079371641],[-3.150959749611384,57.18937300562929],[-3.151166959782741,57.18928774120642],[-3.151387408577885,57.18923973685034],[-3.151571689682265,57.18915678823529],[-3.151783310659576,57.1890839429907],[-3.151990517503772,57.188998677311055],[-3.152206550248028,57.18893825150803],[-3.152390828196176,57.18885530178474],[-3.152575105364265,57.18877235181332],[-3.152785003835203,57.1888283390749],[-3.152829139804302,57.18895253980376],[-3.152900617085558,57.18908684389818],[-3.152944753853246,57.18921104458568],[-3.152851326161023,57.189349145438754],[-3.152675874197937,57.18945693599413],[-3.152500421276586,57.18956472632907],[-3.152270284905809,57.18965230943914],[-3.151998705453979,57.189756945348556],[-3.151745638994552,57.189846844106256],[-3.151511085940577,57.189922005813564],[-3.151276531984413,57.189997167113],[-3.15109224635546,57.19008011538603],[-3.150935301194811,57.19017316720189],[-3.150751014017627,57.190256115017185],[-3.150539384787939,57.190328958716194],[-3.15038685036044,57.19043443006958],[-3.150234315121007,57.19053990125802],[-3.150054437698433,57.190635268312484],[-3.149732575665058,57.19073211192837]]]]},"country":"UK","countryful":"United Kingdom","province":"Aberdeen City and Aberdeenshire","commune":"Aberdeenshire","firedate":"2026-09-26T11:21:00+02:00","area_ha":2,"broadlea":"0.00000000","conifer":"0.00000000","mixed":"0.00000000","scleroph":"0.00000000","transit":"0.00000000","othernatlc":"100.00000000","agriareas":"0.00000000","artifsurf":"0.00000000","otherlc":"0.00000000","percna2k":"0.00000000","lastupdate":"2026-10-01T14:05:12.479280+02:00","lastfiredate":null,"noneu":true},{"id":794019,"centroid":{"type":"Point","coordinates":[-3.149057079069104,57.19213491391726]},"bbox":[-3.149937488529548,57.191344291715545,-3.148122611941576,57.193025677097],"shape":{"type":"MultiPolygon","coordinates":[[[[-3.148552295446933,57.193025677097],[-3.148
+
+### effis_wms_caps 200 197173 bytes application/vnd.ogc.wms_xml; charset=UTF-8
+<?xml version='1.0' encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd"
+ [
+<!ELEMENT VendorSpecificCapabilities (inspire_vs:ExtendedCapabilities)><!ELEMENT inspire_vs:ExtendedCapabilities ((inspire_common:MetadataUrl, inspire_common:SupportedLanguages, inspire_common:ResponseLanguage) | (inspire_common:ResourceLocator+, inspire_common:ResourceType, inspire_common:TemporalReference+, inspire_common:Conformity+, inspire_common:MetadataPointOfContact+, inspire_common:MetadataDate, inspire_common:SpatialDataServiceType, inspire_common:MandatoryKeyword+, inspire_common:Keyword*, inspire_common:SupportedLanguages, inspire_common:ResponseLanguage, inspire_common:MetadataUrl?))><!ATTLIST inspire_vs:ExtendedCapabilities xmlns:inspire_vs CDATA #FIXED "http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" ><!ELEMENT inspire_common:MetadataUrl (inspire_common:URL, inspire_common:MediaType*)><!ATTLIST inspire_common:MetadataUrl xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:xsi CDATA #FIXED "http://www.w3.org/2001/XMLSchema-instance" xsi:type CDATA #FIXED "inspire_common:resourceLocatorType" ><!ELEMENT inspire_common:URL (#PCDATA)><!ATTLIST inspire_common:URL xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0"><!ELEMENT inspire_common:MediaType (#PCDATA)><!ATTLIST inspire_common:MediaType xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0"><!ELEMENT inspire_common:SupportedLanguages (inspire_common:DefaultLanguage, inspire_common:SupportedLanguage*)><!ATTLIST inspire_common:SupportedLanguages xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0" ><!ELEMENT inspire_common:DefaultLanguage (inspire_common:Language)><!ATTLIST inspire_common:DefaultLanguage xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0" ><!ELEMENT inspire_common:SupportedLanguage (inspire_common:Language)><!ATTLIST inspire_common:SupportedLanguage xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0" ><!ELEMENT inspire_common:ResponseLanguage (inspire_common:Language)><!ATTLIST inspire_common:ResponseLanguage xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0" ><!ELEMENT inspire_common:Language (#PCDATA)><!ATTLIST inspire_common:Language xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0" ><!ELEMENT inspire_common:ResourceLocator (inspire_common:URL, inspire_common:MediaType*)><!ATTLIST inspire_common:ResourceLocator xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0"><!ELEMENT inspire_common:ResourceType (#PCDATA)> <!ATTLIST inspire_common:ResourceType xmlns:inspire_common CDATA #FIXED "http://inspire.ec.europa.eu/schemas/common/1.0" ><!ELEMENT inspire_common:TemporalReference (inspire_common:DateOfCreation?, inspire_common:DateOf
+
+NAMES: ecmwf.fwi, mf025.fwi, nasa_geos5.fwi, gwis.globfire.finalperim, nrt.ba, nrt.ba.poly, nrt.ba.point.near, nrt.ba.point.far, nrt.ba.bbox, query.nrt.ba, nrt.ba.query, nrt.ba.today, nrt.ba.poly.today, nrt.ba.point.today, nrt.ba.bbox.today, nrt.ba.week, nrt.ba.poly.week, nrt.ba.point.week, nrt.ba.bbox.week, nrt.ba.month, nrt.ba.poly.month, nrt.ba.point.month, nrt.ba.bbox.month, nrt.ba.season, nrt.ba.poly.season, nrt.ba.point.season, nrt.ba.bbox.season, mcd64a1.fire_frequency, mcd64a1.fire_frequency.query
+
+### effis_wfs_caps ERROR The read operation timed out
+
+### aq 200 403 bytes application/json; charset=utf-8
+{"latitude":38.7,"longitude":-9.099999,"generationtime_ms":0.41866302490234375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT","elevation":0.0,"current_units":{"time":"iso8601","interval":"seconds","pm2_5":"μg/m³","pm10":"μg/m³","european_aqi":"EAQI","us_aqi":"USAQI"},"current":{"time":"2026-10-01T22:00","interval":3600,"pm2_5":5.3,"pm10":10.4,"european_aqi":24,"us_aqi":37}}
