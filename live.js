@@ -49,7 +49,7 @@ window.__wfRegionUp = function (st, co) {
   var DIST={};PT_DISTRICTS.forEach(function(d){DIST[plain(d)]=d;});
   // ANEPC occurrence states (Fogos.pt statusCode) -> English + tone for the state tag
   var PT_STATE={3:['Despacho','Dispatched','warn'],4:['Despacho de 1º Alerta','First alert','warn'],5:['Em Curso','Ongoing','hot'],6:['Chegada ao TO','Crews arriving','warn'],
-    7:['Em Resolução','Resolving','amber'],8:['Conclusão','Concluding','ok'],9:['Vigilância','Surveillance','watch'],10:['Encerrada','Closed','off'],11:['Falso Alarme','False alarm','off'],12:['Falso Alerta','False alarm','off']};
+    7:['Em Resolução','Resolving','blue'],8:['Conclusão','Concluding','ok'],9:['Vigilância','Surveillance','watch'],10:['Encerrada','Closed','off'],11:['Falso Alarme','False alarm','off'],12:['Falso Alerta','False alarm','off']};
   // Fogos.pt / ANEPC fire types ("natureza")
   var PT_TYPE={'mato':'Scrubland','povoamento florestal':'Forest stand','agricola':'Agricultural','queimada':'Controlled burn','queima':'Debris burning','consolidacao de rescaldo':'Mop-up','incendio urbano':'Urban'};
   DIST['acores']='Açores';DIST['regiao autonoma dos acores']='Açores';DIST['madeira']='Madeira';DIST['regiao autonoma da madeira']='Madeira';

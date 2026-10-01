@@ -497,3 +497,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Station map tooltip:** the crest sits half as far from the state tab above it and from the station name below it as before.
 - **Resource lists as cards (Oct 1):** a station's vehicles, crews and aircraft are each their own white card (16px corners), 8px apart, not rows in one container. Same for people in a crew or command-team dialog.
 - **Chat in people dialogs:** no X (the grabber closes it) and no foot "Chat with …" button: the chat is a round primary (lime) button with the chat icon, inside the crew chief's card; for the command team (a group chat) it sits at the title's right, where the X was. Unread count as a badge on it.
+- **Resolving is light blue (Oct 1):** the Resolving stage (ANEPC "Em resolução") uses a positive light blue everywhere (stage icon #1F64A6 on #E3EEFB; status tag #185A93 on 14% blue), not amber. Amber stays for partial US containment.
+- **Stage chips:** no outlines and no drop shadows; overlapping chips separate by their colours.

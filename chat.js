@@ -21,7 +21,7 @@
     { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#9A4A00', bg: '#FCEFE3', icon: 'alert' },
     { en: 'Ongoing', pt: 'Em curso', c: '#B8360A', bg: '#FCE9E1', icon: 'route' },
     { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3141B', bg: '#FBE7E7', icon: 'flame' },
-    { en: 'Resolving', pt: 'Em resolução', c: '#875800', bg: '#FAF0DA', icon: 'shield' },
+    { en: 'Resolving', pt: 'Em resolução', c: '#1F64A6', bg: '#E3EEFB', icon: 'shield' },
     { en: 'Concluding', pt: 'Em conclusão', c: '#186B2D', bg: '#E4F3E8', icon: 'drop' },
     { en: 'Surveillance', pt: 'Vigilância', c: '#00606A', bg: '#DFF1F2', icon: 'eye' },
     { en: 'Closed', pt: 'Encerrada', c: '#3A3A3C', bg: '#ECECEF', icon: 'done' }
@@ -1116,7 +1116,7 @@
   }
   function incFire(f) {
     var ll = xyToLL(f.x, f.y), I = f.info || {};
-    var sc = /^F-/.test(f.id || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);   // just confirmed from a candidate: 1st alert
+    var sc = /^F-/.test(f.id || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);   // just confirmed from a candidate: 1st alert
     if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6;   // fought for hours: crews are on scene
     var src = I.src ? (I.stEn || 'Active') + ' · ' + I.src : '';
     return { kind: 'fire', id: f.id, place: f.place, reg: f.co || '', st: f.st || '', lat: ll.lat, lon: ll.lon, note: src || f.note || '', sc: sc, x: f.x, y: f.y, det: f.det || null, startMs: I.startMs || null, curMs: I.heldMs || null, ha: I.ha || null, res: f.res || null };
