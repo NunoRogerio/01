@@ -500,7 +500,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </section>
 
   <sc-if value="{{fullImg}}" hint-placeholder-val="{{ false }}">
-    <div class="fsin" role="dialog" aria-modal="true" aria-label="Evidence full screen" style="position: absolute; inset: 0; z-index: 60; background: #000000">
+    <div class="fsin" role="dialog" aria-modal="true" aria-label="Evidence full screen" style="position: absolute; inset: -2px; z-index: 60; background: #000000">
       <sc-if value="{{tab.isImg}}" hint-placeholder-val="{{ true }}">
         <img src="{{tab.src}}" alt="{{tab.alt}}" style="position: absolute; left: 0; top: {{fs.top}}px; width: 390px; height: {{fs.h}}px">
         <span class="lock" aria-hidden="true" style="position: absolute; left: {{fsBox.left}}px; top: {{fsBox.top}}px; width: {{fsBox.width}}px; height: {{fsBox.height}}px">
