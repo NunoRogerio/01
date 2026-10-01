@@ -100,14 +100,15 @@ window.__wfBlink=function(path,dur){
   var last='';
   function fit(){
     var iw=window.innerWidth,ih=window.innerHeight,r=document.documentElement.style,s,vp;
-    if(fluid){
+    var flu=fluid||(!DESK&&!!window.__wfFluidLand&&iw>ih);   // a fixed screen can ask to fill the screen in landscape (the candidate's full-screen map)
+    if(flu){
       s=Math.min(Math.min(iw,ih)/W,MAXS);
       var ins=insets();
       vp={w:Math.round(iw/s),h:Math.round(ih/s)+TOP,land:iw>ih,s:s,sl:Math.round(ins[0]/s),sr:Math.round(ins[1]/s)};
       r.setProperty('--wf-w',vp.w+'px');r.setProperty('--wf-h',vp.h+'px');
     }else{
       s=Math.min(iw/W,ih/VH);
-      vp={w:W,h:H,land:false,s:s,sl:0,sr:0};
+      vp={w:W,h:H,land:false,s:s,sl:0,sr:0};r.removeProperty('--wf-w');r.removeProperty('--wf-h');
     }
     r.setProperty('--fit',String(s));
     window.__wfVP=vp;
