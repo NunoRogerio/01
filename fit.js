@@ -227,7 +227,7 @@ window.__wfBlink=function(path,dur){
   var handS=function(h){return h?h.s+RATE*Math.max(0,Date.now()-h.t)/1000:1;};
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}
   // The black-and-white forest, as the loading screen starts: used by the sign-in screen to hand over without a gap.
-  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:saturate(0) brightness('+(0.7*(ph[3]||1)).toFixed(2)+')';return d;};   // no colour at all, 12% darker than before (0.8 -> 0.7)
+  var grayLayer=function(ph){var d=document.createElement('div');d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:saturate(0) brightness('+(0.8*(ph[3]||1)).toFixed(2)+')';return d;};   // no colour at all, 20% darker than the photo; it reaches full colour and lightness at 100%
   // Places the loading screen's logo, name, line of text and credit exactly where sign in had them (lay, measured there)
   var LOADTXT='Loading live data';
   var handLayout=function(o,lay,first){if(!lay)return false;o.classList.add('hand');
@@ -283,7 +283,7 @@ window.__wfBlink=function(path,dur){
     var mk=function(f){var d=document.createElement('div');d.className='wl';d.style.cssText='position:absolute;inset:0;background:url(assets/splash/'+ph[0]+') center/cover;filter:'+(ph[3]<1?f.replace('none','')+' brightness('+ph[3]+')':f);return d;};
     // one steady zoom-in for the whole loading screen (after log in it is the one already running, carried on from sign in)
     var zoom=ZOOM||document.createElement('div');if(!ZOOM)zoom.style.cssText='position:absolute;inset:0;transform:scale(1);transition:transform 30s linear;will-change:transform';
-    var gray=mk('saturate(0) brightness(.7)'),norm=mk('none'),hot=mk('saturate(1.6) contrast(1.03) brightness(1.03)');
+    var gray=mk('saturate(0) brightness(.8)'),norm=mk('none'),hot=mk('saturate(1.6) contrast(1.03) brightness(1.03)');
     zoom.appendChild(gray);zoom.appendChild(hot);zoom.appendChild(norm);
     im.onload=function(){if(!el.parentNode)return;
       if(!ZOOM)bg.appendChild(zoom);el.classList.add('photo');if(!el.classList.contains('hand'))el.querySelector('.cap').textContent=ph[1]+' · Photo: '+ph[2]+' / Unsplash';
@@ -299,7 +299,10 @@ window.__wfBlink=function(path,dur){
       // so it says 100% exactly when the colour has reached the whole screen (both end together)
       var EDGE=[];(function(){var n=Math.ceil(W/40),m=Math.ceil(H/40),i;for(i=0;i<=n;i++){EDGE.push([W*i/n,0],[W*i/n,H]);}for(i=1;i<m;i++){EDGE.push([0,H*i/m],[W,H*i/m]);}})();
       var cov0=0;
-      var paint=function(r,q){q=q||0;var qq=q*q,b=band*(1-.85*qq),sm=1-.95*qq,brt=1-.95*qq;   // towards the end the front gathers into a thin, round ring, so the colour settles just as the count reaches 98%
+      // Oct 1: no wave any more. The whole photo starts in black and white and 20% darker, and evolves evenly with the counter:
+      // at n% it is n% of the way to its full colour and normal lightness (the colour layer fades in over the grey one).
+      var paint=function(r,q){q=Math.max(0,Math.min(1,q||0));norm.style.webkitMaskImage=norm.style.maskImage='none';norm.style.opacity=String(q);hot.style.opacity='0';cov0=Math.max(cov0,q);if(wave)wave.cov=cov0;};
+      var paintWave=function(r,q){q=q||0;var qq=q*q,b=band*(1-.85*qq),sm=1-.95*qq,brt=1-.95*qq;   // towards the end the front gathers into a thin, round ring, so the colour settles just as the count reaches 98%
         var t=performance.now()/1000,m1=[],m2=[],C=[];
         LOB.forEach(function(L){
           var off=Math.min(90,r*.07+4)*sm,ang=L.a+L.s*t*.2+Math.sin(t*L.w+L.p)*.5;   // centres wander around the logo
@@ -326,8 +329,8 @@ window.__wfBlink=function(path,dur){
         // normal colour has just reached every corner (the shape's smallest lobe included)
         // the front's full colour reaches every corner exactly at 110 on the count (100% shown), so the colour never finishes
         // before the counter does
-        var REND=(R+90*.05+band*.15*1.45)/(.965-.025*.05),q=Math.min(1,wave.p/END);if(q<1)paint(q*REND,q);else if(!wave.full){wave.full=true;norm.style.webkitMaskImage=norm.style.maskImage='none';hot.style.opacity='0';}
-        if(wave.p>=END-.002&&ready){wave.p=END;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';return;}
+        var REND=(R+90*.05+band*.15*1.45)/(.965-.025*.05),q=Math.min(1,wave.p/END);if(q<1)paint(q*REND,q);else if(!wave.full){wave.full=true;norm.style.webkitMaskImage=norm.style.maskImage='none';norm.style.opacity='1';hot.style.opacity='0';}
+        if(wave.p>=END-.002&&ready){wave.p=END;wave.cov=1;wave.done=true;wave.at=Date.now();norm.style.webkitMaskImage=norm.style.maskImage='none';norm.style.opacity='1';return;}
         requestAnimationFrame(step);})(t1);
     };
     var start=function(up){if(!up&&!im.src)im.src='assets/splash/'+ph[0];};
@@ -596,7 +599,7 @@ window.__wfBlink=function(path,dur){
 })();
 
 // Round controls, every screen (close X, back, chat, bell, avatars, counts, map buttons): a press gives a light haptic and
-// swells the button by --wf-round-pop (30%) quickly, then lets it settle back slowly, while a 2px dark grey outline pulses out once (to 150%, fading); on a dark button the outline is 1px and the button does not dim. Any round button made later gets it
+// swells the button by --wf-round-pop (30%) quickly, then lets it settle back slowly, while a 2px dark grey outline pulses out once (to 150%, fading); on a dark button the outline is the same 2px, starts at the swollen edge, and the button does not dim. Any round button made later gets it
 // for free: a button, link or role=button that is a circle up to 72px. Uses the separate 'scale' property, so a page's own
 // transforms and press styles stay as they are.
 (function(){
@@ -618,7 +621,7 @@ window.__wfBlink=function(path,dur){
       // a dark button would hide its dark line while it swells (the line is drawn over it, dark on dark): the line starts at the swollen edge instead, so it shows from the first moment and still ends 50% beyond the button
       if(dkb){var Wn=W*k,Hn=H*k;X-=(Wn-W)/2;Y-=(Hn-H)/2;W=Wn;H=Hn;G=(k+0.5)/k-1;}
      
-      g.setAttribute('aria-hidden','true');g.style.cssText='position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;border:'+(dkb?1:2)+'px solid '+(dk?'#E8E8ED':'#3A3A3C')+';border-radius:'+rad+';left:'+X+'px;top:'+Y+'px;width:'+W+'px;height:'+H+'px';
+      g.setAttribute('aria-hidden','true');g.style.cssText='position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;border:2px solid '+(dk?'#E8E8ED':'#3A3A3C')+';border-radius:'+rad+';left:'+X+'px;top:'+Y+'px;width:'+W+'px;height:'+H+'px';
       document.body.appendChild(g);var a=g.animate([{left:X+'px',top:Y+'px',width:W+'px',height:H+'px',opacity:1},{left:(X-W*G/2)+'px',top:(Y-H*G/2)+'px',width:(W*(1+G))+'px',height:(H*(1+G))+'px',opacity:0}],{duration:600,easing:'cubic-bezier(.2,.6,.35,1)',fill:'forwards'});
       a.onfinish=function(){g.remove();};setTimeout(function(){if(g.parentNode)g.remove();},900);}catch(x){}
   },{passive:true,capture:true});
