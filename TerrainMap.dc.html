@@ -65,7 +65,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 .wf-pinpulse{transform-box:fill-box;transform-origin:center;animation:wfPinPulse 1.6s linear infinite}@keyframes wfPinPulse{0%{transform:scale(1);opacity:1}100%{transform:scale(2.31);opacity:0}}
 </style>
 </helmet>
-<div ref="{{setEl}}" data-wf-maproot="1" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: none; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div ref="{{setEl}}" data-wf-maproot="1" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onLostPointerCapture="{{onLost}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: none; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
   <!-- While a finger moves the map, these layers move as one picture (a CSS transform); the full redraw follows a few times a second and on release -->
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
@@ -447,6 +447,9 @@ class Component extends DCLogic {
     this.onDown = (e) => {
       if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
       this.stopGlide();
+      // A new touch's first finger starts a fresh gesture: drop any pointer whose 'up' never arrived (iOS can lose one when
+      // a panel or tooltip appears mid-touch); a leftover pointer made a one-finger swipe zoom like a pinch.
+      if (e.isPrimary) this.pts = {};
       if (!Object.keys(this.pts).length) { this._pinched = false; this._trail = []; this._gest = true; }
       try { this.el.setPointerCapture(e.pointerId); } catch (err) {}
       this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -477,6 +480,7 @@ class Component extends DCLogic {
         if (d0 > 0) this.zoomAt(mid.x, mid.y, d1 / d0);
       }
     };
+    this.onLost = (e) => { if (this.pts[e.pointerId]) this.onUp(e); };   // capture lost without an 'up': forget that pointer
     this.onUp = (e) => {
       delete this.pts[e.pointerId];
       if (Object.keys(this.pts).length) return;
@@ -1308,7 +1312,7 @@ class Component extends DCLogic {
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' || p.noTitle === true || p.noTitle === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       legDown: this.legDown, legMove: this.legMove, legUp: this.legUp, legClick: this.legClick,
-      setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, stop: this.stop,
+      setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, onLost: this.onLost, stop: this.stop,
       zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
       cursor: (this.state || {}).dragging ? 'grabbing' : 'grab',
       w: W, h: H, s: +s.toFixed(4), tx: +tx.toFixed(1), ty: +ty.toFixed(1),
