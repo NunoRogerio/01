@@ -89,6 +89,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
     o.push('html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:#E8E8ED!important}');
     o.push('html:root .wf-note{color:#AEAEB2!important}');
+    o.push('.wf-rm{background:rgba(255,69,58,0.3)!important;color:#FF8A80!important;-webkit-text-fill-color:#FF8A80!important}');   // Remove: red tint with red text, 5:1 at night too
     o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-tabs::before{background:#3A3A3C}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
     o.push('html:root{--wf-band-solid:#3A3A3C;--wf-sec-bg:#5A5A5E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(90,90,94,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
