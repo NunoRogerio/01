@@ -16,7 +16,7 @@
 <script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=121"></script>
-<script src="i18n.js?v=114"></script>
+<script src="i18n.js?v=116"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
 
@@ -1628,9 +1628,9 @@ class Component extends DCLogic {
             less: () => { if (lessDis) return; const a = draft.slice(); a[j] = n - 1; setD(a); }, more: () => { if (moreDis) return; const a = draft.slice(); a[j] = n + 1; setD(a); },
             lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1, lessLbl: 'Fewer ' + m.name.toLowerCase(), moreLbl: 'More ' + m.name.toLowerCase() }; }).filter((r) => id === 'air' || r.cap > 0);   /* a station lists only the unit types it keeps */
         const inPlan = (x) => plan.some((p) => p.id === x);
-        const stRows = [{ id: 'air', air: true }].concat(ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id))).filter((d) => !(d.air && inPlan('air'))).map((d) => { if (d.air) { const used = inPlan('air');
+        const stRows = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).concat([{ id: 'air', air: true }]).filter((d) => !(d.air && inPlan('air')))   /* stations first (start with a station), air support last */.map((d) => { if (d.air) { const used = inPlan('air');
             const ae = this.wfAirEta(FIRE);
-            return { code: '', name: 'Air support', crest: this.wfAirBadge(), crestD: 'block', airD: 'none', icBg: 'transparent', eta: ae ? '~' + ae + ' min' : '', etaC: '#000000', sub: used ? 'Added.' : 'Helicopters and air tankers.', tagD: 'none', tag: '', tagBg: '', tagFg: '', dis: used ? 'true' : 'false', op: used ? 0.45 : 1, cur: used ? 'default' : 'pointer', aria: 'Air support',
+            return { code: '', name: 'Air support', crest: this.wfAirBadge(), crestD: 'block', airD: 'none', icBg: 'transparent', eta: ae ? '~' + ae + ' min' : '', etaC: '#000000', sub: used ? 'Added.' : 'Helicopters, air tankers and drone swarms.', tagD: 'none', tag: '', tagBg: '', tagFg: '', dis: used ? 'true' : 'false', op: used ? 0.45 : 1, cur: used ? 'default' : 'pointer', aria: 'Air support',
               pick: () => { if (!used) this.setState({ flow: { step: 'res', id: 'air', draft: recFor('air'), edit: false } }); } }; }
           const busy = d.eta === null, used = inPlan(d.id), dis = busy || used, crest = crestOf(d), best = d.id === rec.id && !used;
           const code = d.code && d.code !== '—' ? d.code + '. ' : '';
@@ -1651,7 +1651,7 @@ class Component extends DCLogic {
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
           fl: { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close,
-            title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'res' && dSel ? 'block' : 'none',
+            title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'st' ? 'Start by choosing a station.' : step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'st' || (step === 'res' && dSel) ? 'block' : 'none',
             back: () => (step === 'res' && F && !F.edit ? this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }) : close()),
             stD: step === 'st' ? 'flex' : 'none', backD: step === 'res' ? 'none' : 'flex',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
             tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCls: isRec ? '' : 'mbtn', recPE: isRec ? 'none' : 'auto', recTab: isRec ? '-1' : '0',   /* Suggested is a plain tag: no touch effect, nothing to tap; only Reset is a button */ recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
