@@ -535,3 +535,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Round button press, dark ones too (Oct 1):** every round button, dark glass ones included (map controls, drone feed), presses exactly like the chat and notifications buttons at the top: swell, 2px dark grey outline pulsing to 150% and fading, quarter turn on X and +. No lime pulse anywhere.
 - **Search boxes (Oct 1):** every search field is 20% narrower than its full row, left-aligned (Find a place keeps its X at the right edge).
 - **Selected list item (Oct 1):** a 1px dark grey outline (was 2px), in every list (area picker, chosen stations).
+- **Station tooltip tag (Oct 1):** the tag at the top of a station tooltip ("1 fire", "Available") is always at least as wide as "Available", so busy and free stations show the same tag width.
