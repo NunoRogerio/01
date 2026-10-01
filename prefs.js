@@ -75,7 +75,7 @@
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
     o.push('html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:#E8E8ED!important}');
     o.push('html:root .wf-note{color:#AEAEB2!important}');
-    o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
+    o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-tabs::before{background:#3A3A3C}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
     o.push('html:root{--wf-sec-bg:#48484A;--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
@@ -120,6 +120,7 @@
   '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:none}' +
   '.wf-tabs .tabopt{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 8px;border:0;background:transparent;font:inherit;font-size:17px;font-weight:400;color:#6E6E73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .3s ease}' +
   '.wf-tabs .tabopt[aria-selected=true]{color:#1C1C1E;font-weight:600}' +
+  '.wf-tabs::before{content:"";position:absolute;z-index:1;left:0;right:0;bottom:0;height:8px;border-radius:4px;background:rgba(118,118,128,0.12);pointer-events:none}' +   /* the track: full width of the tabs, the band's grey, under the lime bar */
   '.wf-tabs>.tabbar{position:absolute;z-index:2;bottom:0;height:8px;min-height:8px;border-radius:4px;background:var(--wf-y,#E5FF00);box-shadow:0 0 0 0.5px rgba(0,0,0,0.12);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform;pointer-events:none}' +
   '.wf-seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:52px;padding:10px;box-sizing:border-box;border-radius:999px;background:rgba(118,118,128,0.12)}' +
   '.wf-seg>.segthumb{position:absolute;top:10px;bottom:10px;left:10px;transition:transform .42s cubic-bezier(.4,0,.2,1) .14s;will-change:transform}' +
@@ -164,7 +165,7 @@
     '.wf-stag{min-width:132px;justify-content:center;text-align:center}' +
     '.wf-qual{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;border-radius:0;background:rgba(118,118,128,0.12);color:#1C1C1E;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
     '.wf-qual svg{flex-shrink:0;scale:1.2}' +
-    '.wf-qual.hd{min-height:52px;padding:0 10px 0 16px!important;border-radius:26px!important}.wf-qual.hd [role=status],.wf-qual.hd .qtag{min-height:32px!important;padding:6px 12px!important;border-radius:16px!important;box-sizing:border-box;box-shadow:0 0 0 1.4px color-mix(in srgb,currentColor 20%,transparent)}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
+    '.wf-qual.hd{min-height:52px;padding:0 10px 0 16px!important;border-radius:26px!important}.wf-qual.hd [role=status],.wf-qual.hd .qtag{min-height:32px!important;padding:6px 12px!important;border-radius:16px!important;box-sizing:border-box}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
     // On a card the band is the top row, edge to edge, with the round X at its end
     '.wf-qual.top{min-height:56px;padding:8px 8px 8px 16px;border-radius:14px 14px 0 0}.wf-qual.top>span{flex-grow:1;min-width:0;overflow:hidden;text-overflow:ellipsis}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +

@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=102"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=121"></script>
-<script src="i18n.js?v=116"></script>
+<script src="prefs.js?v=122"></script>
+<script src="i18n.js?v=117"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
 
@@ -184,7 +184,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <dc-import name="TerrainMap" on-bg-tap="{{bgTap}}" close-x="{{mapCloseX}}" mode="spread" stations-st="{{fireSt}}" legend-offset="{{legOff}}" ctrl-offset="{{ctrlOff}}" fire-x="{{fireX}}" fire-y="{{fireY}}" fire-id="{{fireId}}" map-title="{{mapTtl}}" no-legend="{{mapNoLeg}}" fire-only="{{mapFireOnly}}" loader="true" map-sub="{{mapSub}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" horizon="{{hzNum}}" station="{{sel.id}}" station-label="{{sel.mapLabel}}" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" link-candidate="{{no}}" tip-safe-top="{{tipSafe}}" units="{{mapUnits}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" locked="{{bandLocked}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
   </div>
 
-  <div data-wf-hdr="1" style="position: relative; z-index: 23; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+  <div data-wf-hdr="1" style="position: relative; z-index: 23; transform: translate3d(0, {{topY}}, 0); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
   <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7; border-radius: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08)"></span>
   <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
   <header class="{{hdrCls}}" style="position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 12px; row-gap: 12px; min-width: 0; padding: 4px 16px 12px 16px">
@@ -514,27 +514,21 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-if>
         <sc-if value="{{d.fx}}" hint-placeholder-val="{{ false }}">
         <li data-wf-res="1" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
-          <!-- Section label as in the user preferences: label style, 8px to its content -->
-          <!-- No section title (the tab names it); the estimate note keeps its place on the right -->
-          <span style="display: {{d.sumD}}; justify-content: flex-end; margin: 0 4px 8px"><span class="wf-note">Estimate</span></span>
-          <!-- What is on this fire: stations, crews and vehicles, as mini cards -->
-          <div style="display: {{d.cntD}}; gap: 8px; margin-bottom: 8px">
-            <sc-for list="{{d.cnt}}" as="k" hint-placeholder-count="3">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; flex: 1 1 0; min-width: 0; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center">
-                <span style="display: flex; align-items: center; justify-content: center; min-height: 40px; margin-bottom: 12px; font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
-                <span class="kpi wf-big" style="--k: 30px; white-space: nowrap; color: #3A3A3C">{{k.v}}</span>
+          <!-- What is on this fire and what the coordinator watches (stations, crews, vehicles, people, relief, water) as one
+               card group, the same cards as Key figures on Situation: title at the top, press and hold to reorder, + to choose -->
+          <div role="list" aria-label="Crews. Press and hold a card, then move it to reorder" style="display: {{d.kcD}}; flex-wrap: wrap; gap: 8px; align-items: stretch">
+            <sc-for list="{{d.kc}}" as="m" hint-placeholder-count="3">
+              <div role="listitem" data-wf-kpi="{{m.key}}" data-g="crew" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
+                <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
+                  <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center; overflow-wrap: anywhere">{{m.l}}</span>
+                  <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}; color: {{m.c}}">{{m.v}}</span></span>
+                </div>
               </div>
             </sc-for>
+            <button type="button" class="mbtn" onClick="{{d.kcAdd}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
-          <!-- What the coordinator watches: how many units are wearing out, not totals -->
-          <div style="display: {{d.sumD}}; gap: 8px; margin-bottom: 8px">
-            <sc-for list="{{d.sum}}" as="k" hint-placeholder-count="2">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; flex: 1 1 0; min-width: 0; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center">
-                <span style="display: flex; align-items: center; justify-content: center; min-height: 40px; margin-bottom: 12px; font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
-                <span class="kpi wf-big" style="--k: 30px; white-space: nowrap; color: {{k.c}}">{{k.v}}</span>
-              </div>
-            </sc-for>
-          </div>
+          <!-- The estimate note closes the group, on the right and a little faint -->
+          <span style="display: {{d.estD}}; justify-content: flex-end; margin: 8px 4px 0"><span class="wf-note" style="opacity: 0.6">Estimate</span></span>
           <!-- A fire confirmed here: resources are added in this section. Add resources (grey, like the + tiles) replaces the
                tiles while there is nothing yet; the tiles come in with the first station. Chosen stations wait under it until Send order. -->
           <button type="button" class="mbtn wf-reset" onClick="{{pl.add}}" aria-disabled="{{pl.addDis}}" style="position: relative; z-index: 2; margin-top: {{d.addMt}}; display: {{d.addD}}; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #6E6E73; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 5v14M5 12h14"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-start; text-align: left"><span>Add resources</span><span style="display: {{pl.availD}}; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{pl.avail}}</span></span></button>
@@ -746,7 +740,7 @@ class Component extends DCLogic {
     }
     units.sort((a, b) => a.o - b.o || a.k - b.k);   // what needs action first
     const sum = crews ? [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B0001A' : '#3A3A3C' }] : [];
-    if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders below 20% water', c: low ? '#B0001A' : '#3A3A3C' });
+    if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders low on water', c: low ? '#B0001A' : '#3A3A3C' });
     return { sum: sum.map((k, i) => ({ ...k, sep: i ? '0' : '0' })), units };
   }
   wfDrag(key) { const st = this.state || {}; const on = st.hdK === key; return { y: on ? st.hdY : 0, t: on ? '0s' : '.3s' }; }
@@ -823,7 +817,7 @@ class Component extends DCLogic {
   wfGrpNote(grp, all) { this._grpAll = this._grpAll || {}; this._grpAll[grp] = all.map((m) => ({ key: m.key, l: m.l, opt: !!m.opt })); const H = this.wfHidden(grp); return (k) => H.indexOf(k) < 0; }
   wfPicker() {
     const st = this.state || {}, g = st.pick || null, all = (this._grpAll || {})[g] || [], H = g ? this.wfHidden(g) : [];
-    const TT = { kpi: 'Key figures', wx: 'Weather', terr: 'Terrain', ign: 'Key figures' };
+    const TT = { kpi: 'Key figures', wx: 'Weather', terr: 'Terrain', ign: 'Key figures', crew: 'Crews' };
     const tog = (k) => () => { const h = this.wfHidden(g), i = h.indexOf(k); if (i < 0 && all.filter((m) => h.indexOf(m.key) < 0).length <= 1) return; if (i >= 0) h.splice(i, 1); else h.push(k);   /* the last card on stays: a group is never empty */ try { localStorage.setItem('wf-hide-' + g, JSON.stringify(h)); localStorage.setItem('wf-seen-' + g, JSON.stringify(all.map((m) => m.key))); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); };
     return { on: !!g, title: TT[g] || '', y: g ? '0%' : '105%', op: g ? 1 : 0, pe: g ? 'auto' : 'none', hidden: g ? 'false' : 'true',
       rows: (() => { const S0 = window.__wfPickSort ? window.__wfPickSort(g, all, (k) => H.indexOf(k) < 0) : all, OK = S0.filter((m) => H.indexOf(m.key) < 0).map((m) => m.key);   /* on cards first, in screen order (long press to reorder); off cards A to Z */
@@ -1113,6 +1107,15 @@ class Component extends DCLogic {
     // Crews: only the crews section (the two wear-out alerts, then adding, editing and removing stations); everything else is Situation
     let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
     o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
+    // Crews cards: one group like Key figures (order and hidden cards kept on the phone, + opens the list with toggles)
+    o.deployed = o.deployed.map((d) => { if (!d.fx) return d;
+      const all = [{ key: 'st', l: 'Stations', c: '#3A3A3C' }, { key: 'cr', l: 'Crews', c: '#3A3A3C' }, { key: 'veh', l: 'Vehicles', c: '#3A3A3C' }, { key: 'ppl', l: 'People', c: '#3A3A3C' }]
+        .map((q, i) => ((d.cnt || [])[i] ? { ...q, v: d.cnt[i].v } : null)).filter(Boolean)
+        .concat((d.sum || []).map((k) => ({ key: /relief/i.test(k.l) ? 'relief' : /water/i.test(k.l) ? 'water' : k.l, l: k.l, v: k.v, c: k.c || '#3A3A3C' })));
+      const vis = this.wfGrpNote('crew', all); let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-crew') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : all.map((m) => m.key);
+      const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }, colW = 98;
+      const kc = all.filter((m) => vis(m.key)).sort((a, b) => ix(a.key) - ix(b.key)).map((m) => ({ ...m, k: Math.max(16, Math.min(30, Math.floor(colW / Math.max(1, String(m.v).length * 0.6)))) + 'px', ...this.wfKpiDrag(m.key, 'crew') }));
+      return { ...d, kc, kcD: all.length ? 'flex' : 'none', kcAdd: () => this.setState({ pick: 'crew' }), estD: (d.sum || []).length ? 'flex' : 'none', addMt: all.length && d.addD === 'flex' ? '56px' : (d.addMt || '0') }; });
     if (res) {
       o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none'; o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none'; o.ulMt = '40px';   /* Crews tab: its first element 56px under the tabs (16px page padding + 40) */
       if (o.cc) o.cc = Object.assign({}, o.cc, { d: 'none' });
@@ -1642,7 +1645,7 @@ class Component extends DCLogic {
         const close = () => this.setState({ flow: null });
         // Resources on a fire confirmed here: tiles only once there is a station (from the plan until the order is sent), Add always
         deployed.forEach((d) => { if (!d.fx) return; const st = plan.filter((p) => p.id !== 'air'), c = st.reduce((a, p) => a + (p.n[0] || 0), 0), t = st.reduce((a, p) => a + (p.n[1] || 0), 0);
-          if (d.conf && !inlSent) d.sum = st.length ? [{ v: '0 of ' + c, l: 'Crews need relief', c: '#3A3A3C' }].concat(t ? [{ v: '0 of ' + t, l: 'Tenders below 20% water', c: '#3A3A3C' }] : []) : [];
+          if (d.conf && !inlSent) d.sum = st.length ? [{ v: '0 of ' + c, l: 'Crews need relief', c: '#3A3A3C' }].concat(t ? [{ v: '0 of ' + t, l: 'Tenders low on water', c: '#3A3A3C' }] : []) : [];
           d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf ? 'flex' : 'none'; d.addMt = d.sumD === 'flex' ? '48px' : '0';   /* 56px under the tiles (they keep 8px under them) */ d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
         return {
           pl: { ...(() => {   // Add crews says how many stations are still free to choose (not how many are assigned)
