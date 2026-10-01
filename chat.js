@@ -18,13 +18,14 @@
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
   var STAGES = [
     { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#3A3A3C', bg: '#ECECEF', icon: 'cand' },   // as on the map: the dark outline circle, neutral tint
-    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#9A4A00', bg: '#FCEFE3', icon: 'alert' },
-    { en: 'Ongoing', pt: 'Em curso', c: '#B8360A', bg: '#FCE9E1', icon: 'route' },
-    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3141B', bg: '#FBE7E7', icon: 'flame' },
+    // The stages run along one spectrum: lime (first alert), yellow-orange, red-orange, blue, light green, dark green, grey (closed)
+    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#4F5C00', bg: '#EEF9A8', icon: 'alert' },
+    { en: 'Ongoing', pt: 'Em curso', c: '#8A4B00', bg: '#FDE7C4', icon: 'route' },
+    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3261E', bg: '#FBE1DC', icon: 'flame' },
     { en: 'Resolving', pt: 'Em resolução', c: '#1F64A6', bg: '#E3EEFB', icon: 'shield' },
-    { en: 'Concluding', pt: 'Em conclusão', c: '#186B2D', bg: '#E4F3E8', icon: 'drop' },
-    { en: 'Surveillance', pt: 'Vigilância', c: '#00606A', bg: '#DFF1F2', icon: 'eye' },
-    { en: 'Closed', pt: 'Encerrada', c: '#3A3A3C', bg: '#ECECEF', icon: 'done' }
+    { en: 'Concluding', pt: 'Em conclusão', c: '#2F6B12', bg: '#E2F2D2', icon: 'drop' },
+    { en: 'Surveillance', pt: 'Vigilância', c: '#14532D', bg: '#CFE5D6', icon: 'eye' },
+    { en: 'Closed', pt: 'Encerrada', c: '#48484A', bg: '#E0E0E5', icon: 'done' }
   ];
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#545458', bg: '#ECECEF', icon: 'x' };
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)

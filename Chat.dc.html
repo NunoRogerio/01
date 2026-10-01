@@ -18,7 +18,7 @@
 <script src="prefs.js?v=134"></script>
 <script src="i18n.js?v=120"></script>
 <script src="live.js?v=38"></script>
-<script src="chat.js?v=42"></script>
+<script src="chat.js?v=43"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -627,7 +627,7 @@ class Component extends DCLogic {
 
     // Forces
     const stTxt = { standby: [L('Standby', 'Prevenção'), 'rgba(135,88,0,0.12)', '#875800'], enroute: [L('En route', 'A caminho'), 'rgba(184,54,10,0.12)', '#B8360A'], onscene: [L('On scene', 'No local'), 'rgba(179,20,27,0.10)', '#B3141B'],
-      watch: [L('On watch', 'Em vigilância'), 'rgba(0,112,122,0.12)', '#00606A'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
+      watch: [L('On watch', 'Em vigilância'), 'rgba(20,83,45,0.14)', '#14532D'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
     const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby');
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
@@ -746,7 +746,7 @@ class Component extends DCLogic {
             ? (c.stations || []).map((x, i) => (m.rows || [])[i] || { a: x.short, b: (x.km < 10 ? (+x.km || 0).toFixed(1) : Math.round(x.km)) + ' km · ~' + (x.min || 0) + ' min', r: { en: 'Standby', pt: 'Prevenção' }, rc: '#875800', i })
             : (m.rows || [])).map((r0, i) => {
             // A station row always says what that station is doing now (the same state as Forces and the stage), never a stale snapshot
-            const FS = { standby: [{ en: 'Standby', pt: 'Prevenção' }, '#875800'], enroute: [{ en: 'En route', pt: 'A caminho' }, '#B8360A'], onscene: [{ en: 'On scene', pt: 'No local' }, '#B3141B'], watch: [{ en: 'On watch', pt: 'Em vigilância' }, '#00606A'], released: [{ en: 'Released', pt: 'Libertado' }, '#48484A'] };
+            const FS = { standby: [{ en: 'Standby', pt: 'Prevenção' }, '#875800'], enroute: [{ en: 'En route', pt: 'A caminho' }, '#B8360A'], onscene: [{ en: 'On scene', pt: 'No local' }, '#B3141B'], watch: [{ en: 'On watch', pt: 'Em vigilância' }, '#14532D'], released: [{ en: 'Released', pt: 'Libertado' }, '#48484A'] };
             const fo = m.stage === 1 && (c.forces || []).find((x) => x.si === (r0.i != null ? r0.i : i)), fx = fo && FS[fo.st];
             return fx ? Object.assign({}, r0, { r: fx[0], rc: fx[1] }) : r0; }).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '0' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
