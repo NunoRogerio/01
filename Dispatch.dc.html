@@ -222,8 +222,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Two tabs over the map: Fire (the map and the fire's analysis) and Resources (everything about crews and orders, full width) -->
   <div role="tablist" aria-label="Fire page" class="wf-tabs" style="display: {{ft.d}}; margin: -4px 16px 0">
     <span class="tabbar" aria-hidden="true" style="width: 50%; transform: translateX({{ft.x}})"></span>
-    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" aria-label="{{ft.fireAria}}"><span style="position: relative">Situation<span aria-hidden="true" style="display: {{ft.fireDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #FF3B30"></span></span></button>
-    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}"><span style="position: relative">Crews<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #FF3B30"></span></span></button>
+    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" aria-label="{{ft.fireAria}}"><span style="position: relative">Situation<span aria-hidden="true" style="display: {{ft.fireDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
+    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}"><span style="position: relative">Crews<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
   </div>
   </div>
 
@@ -534,10 +534,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <!-- One card per station on this fire: the station heads it (crest, name, distance and crews still free), its units under it.
                The head folds the units away and back (chevron down when folded, up when open). -->
           <sc-for list="{{d.groups}}" as="gp" hint-placeholder-count="2">
-            <ul style="display: block; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden">
+            <ul data-wf-gp="{{gp.gk}}" style="position: relative; display: block; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden">
+              <span aria-hidden="true" style="display: {{gp.dotD}}; position: absolute; top: 4px; right: 4px; z-index: 2; width: 12px; height: 12px; border-radius: 50%; background: #E6352B; pointer-events: none"></span>
               <li><button type="button" class="mbtn" onClick="{{gp.tog}}" aria-expanded="{{gp.exp}}" aria-label="{{gp.aria}}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
                 <img src="{{gp.crest}}" alt="" style="display: {{gp.crestD}}; width: 36px; height: 36px; flex-shrink: 0; object-fit: contain">
-                <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span aria-hidden="true" style="display: {{gp.dotD}}; flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #FF3B30"></span></span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
+                <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{gp.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
               </button></li>
               <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none">
@@ -1373,7 +1374,13 @@ class Component extends DCLogic {
         const GC = s.gpC || {};   // folded station cards (all open by default)
         gOut.forEach((g) => { const k = g.name, open = !GC[k], issue = (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A');   /* a folded station with a crew needing relief or a tender low on water gets the red dot */
           Object.assign(g, { dotD: !open && issue ? 'block' : 'none', exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg', aria: g.name + (!open && issue ? '. Needs attention' : '') + (open ? '. Fold' : '. Unfold'),
-          tog: () => { try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} this.setState({ gpC: { ...((this.state || {}).gpC || {}), [k]: open } }); } }); });
+          gk: String(gOut.indexOf(g)),
+          tog: () => { try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} const set = () => this.setState({ gpC: { ...((this.state || {}).gpC || {}), [k]: open } });
+            if (open) { set(); return; }   // folding: in place
+            // unfolding: the card first glides up to 32px under the tabs, then opens downwards into view (and settles there once it has grown)
+            const lift = () => { try { const sc = document.querySelector('[data-wf-page="1"]'), el = sc && sc.querySelector('[data-wf-gp="' + gOut.indexOf(g) + '"]'); if (!sc || !el) return false; const k2 = sc.getBoundingClientRect().height / (sc.offsetHeight || 1) || 1;
+              const top = Math.max(0, sc.scrollTop + (el.getBoundingClientRect().top - sc.getBoundingClientRect().top) / k2 - 32); if (Math.abs(top - sc.scrollTop) < 2) return false; sc.scrollTo({ top, behavior: 'smooth' }); return true; } catch (x) { return false; } };
+            const moved = lift(); setTimeout(set, moved ? 280 : 0); setTimeout(lift, moved ? 760 : 480); } }); });
         deployed.push({ fx: true, item: false, g: 'forces', ...FX, groups: gOut, conf: confF });
         for (let i = ordRows.length - 1; i >= 0; i--) if (ordRows[i].stc) ordRows.splice(i, 1);   /* the stations now head their own units */
       } }
