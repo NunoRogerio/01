@@ -1003,10 +1003,16 @@ class Component extends DCLogic {
     const out = Object.assign(d, v || {});
     // Every legend chip toggles its layer, on every map (nothing is forced on: a chip that does nothing reads as broken)
     if (this.props.fireOnly === true || this.props.fireOnly === 'true') out.stations = false;   // a fire's detail map: only its perimeter (no stations chip there)
+    // The main map (areas and incidents) opens with fire stations hidden; its Fire stations chip shows them (its own setting, so other maps keep theirs)
+    else if ((this.props.mode || 'risk') === 'risk') out.stations = out.stationsMain === true;
     return out;
   }
   toggleLayer(k) {
-    const v = this.layers(); v[k] = !v[k]; window.__wfLayers = v;
+    // store only what was tapped: the main map's stations chip has its own key, so other maps keep their stations setting
+    let raw = window.__wfLayers; if (!raw) { try { raw = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
+    const v = Object.assign({}, raw || {}), main = k === 'stations' && (this.props.mode || 'risk') === 'risk';
+    v[main ? 'stationsMain' : k] = !this.layers()[k];
+    window.__wfLayers = v;
     try { window.sessionStorage.setItem('wf-layers', JSON.stringify(v)); } catch (e) {}
     this.forceUpdate();
   }
