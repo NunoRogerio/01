@@ -149,14 +149,17 @@ window.__wfRegionUp = function (st, co) {
     try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
   }
   // Replace one source's fires (US, Portugal or British Columbia) and keep the others'.
-  var srcOf=function(r){return r[0]==='PT'?'PT':r[0]==='CAN'?'CAN':r[0]==='BRA'?'BR':'US';};
+  var srcOf=function(r){return r[0]==='PT'?'PT':r[0]==='CAN'?'CAN':r[0]==='BRA'?'BR':/^CF-/.test(r[2]||'')?'CF':'US';};
   // Data sources the user switched off (Preferences › Current data sources): their fires or candidates are kept but not
   // shown anywhere. SAT = NASA FIRMS candidates; US, PT, BR, CAN = the fire feeds. Kept per phone.
   var DSOFF={};try{DSOFF=JSON.parse(localStorage.getItem('wf-ds-off')||'{}')||{};}catch(e){}
   var ONLY=window.__wfOnly||null;
   function dsApply(sync){
     var on=function(r){return !ONLY||!!ONLY[r[0]];};
-    if(window.__wfLiveFiresAll)window.__wfLiveFires=window.__wfLiveFiresAll.filter(function(r){return !DSOFF[srcOf(r)]&&on(r);});
+    if(window.__wfLiveFiresAll){var L=window.__wfLiveFiresAll.filter(function(r){return !DSOFF[srcOf(r)]&&on(r);});
+      // CAL FIRE adds the California fires the federal list (NIFC) lacks: one within ~4 km of a NIFC fire is the same fire
+      var nifc=L.filter(function(r){return r[0]==='CA'&&srcOf(r)==='US';});
+      window.__wfLiveFires=L.filter(function(r){return srcOf(r)!=='CF'||!nifc.some(function(q){return Math.hypot(q[5]-r[5],q[6]-r[6])<100;});});}
     if(window.__wfLiveCandsAll)window.__wfLiveCands=DSOFF.SAT?[]:window.__wfLiveCandsAll.filter(on);
     window.__wfWorld=null;window.__wfGeo=null;
     if(sync){try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
@@ -213,6 +216,19 @@ window.__wfRegionUp = function (st, co) {
       out.push({r:['BRA',e.state,e.id,e.place,note,xy[0],xy[1],null,e.ha,info],w:(obs?0:1e7)+(e.ha||0)});
     });
     window.__wfBRGeo=geo;idbPut(KEY+'|br',geo);
+    return out;
+  }
+  // CAL FIRE: California's own incident list (active wildfires). Shown where NIFC has no fire at that spot (see dsApply).
+  function buildCF(js){
+    var out=[];
+    (js&&js.incidents||[]).forEach(function(i){
+      if(i.lat==null||i.lon==null)return;var pc=i.pc!=null?Math.round(i.pc):null;if(pc!=null&&pc>=90)return;
+      var ac=i.acres!=null?Math.round(i.acres):null,xy=toXY(i.lat,i.lon),t0=i.start?Date.parse(i.start):null,tu=i.upd?Date.parse(i.upd):null;
+      var note=(pc!=null?'Contained '+pc+'%':'Active')+(ac?' · '+ac.toLocaleString('en-US')+' ac':'');
+      var info={src:'CAL FIRE',st:'Active',stEn:pc?pc+'% contained':'Not contained',tone:pc>=50?'amber':'hot',pc:pc,beh:'',cause:'',startMs:t0,updMs:tu,ac:ac,ha:ac?+(ac*0.4047).toFixed(1):null,
+        resolved:false,heldMs:null,heldSrc:'',place:[i.county?i.county+' County':'','CA'].filter(Boolean).join(' · '),url:i.url||''};
+      out.push({r:['CA',i.county||'','CF-'+(i.id||out.length),title(String(i.name||'Fire').replace(/\s+Fire$/i,'')+' Fire'),note,xy[0],xy[1],null,info.ha,info,i.loc||''],w:ac||0});
+    });
     return out;
   }
   // British Columbia Wildfire Service: active fires with crews / aviation / heavy equipment counts.
@@ -313,6 +329,13 @@ window.__wfRegionUp = function (st, co) {
   function getJSON(u){return fetch(u).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});}
   function officialPerimeter(f){
     if(/^BR-/.test(f.id)){var G=(window.__wfBRGeo||{})[f.id];return Promise.resolve(G&&G.ring&&G.ring.length>3?{ring:G.ring,src:'Burned area · INPE fire event'}:null);}
+    // Portugal: the EFFIS (Copernicus) burnt area mapped at this fire, last 30 days: the nearest shape within 3 km of the fire's point
+    if(f.st==='PT'&&f.lat!=null&&f.lon!=null){
+      window.__wfPTBurnt=window.__wfPTBurnt||fetch('data/pt-burnt.json?t='+Math.floor(Date.now()/9e5)).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+      return window.__wfPTBurnt.then(function(js){var best=null,bd=3;(js&&js.areas||[]).forEach(function(a){
+        var d=Math.hypot((a.lat-f.lat)*111.32,(a.lon-f.lon)*111.32*Math.cos(f.lat*Math.PI/180));if(d<bd&&a.ring&&a.ring.length>3){bd=d;best=a;}});
+        return best?{ring:best.ring,src:'Burned area · EFFIS (Copernicus)'+(best.ha?', '+best.ha+' ha':'')}:null;});
+    }
     var q=null;
     if(/^BC-/.test(f.id))q='https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/BCWS_FirePerimeters_PublicView/FeatureServer/0/query?where='+encodeURIComponent("FIRE_NUMBER='"+f.id.slice(3)+"'")+'&outFields=FIRE_SIZE_HECTARES,TRACK_DATE&outSR=4326&geometryPrecision=5&f=geojson';
     else if(/^[A-Z]{2}$/.test(f.st)&&f.st!=='PT')q='https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_Current/FeatureServer/0/query?where='+encodeURIComponent("attr_UniqueFireIdentifier='"+f.id+"'")+'&outFields=poly_GISAcres,poly_PolygonDateTime&outSR=4326&geometryPrecision=5&f=geojson';
@@ -477,6 +500,10 @@ window.__wfRegionUp = function (st, co) {
   if(!fresh('tBR')&&(!ONLY||ONLY.BRA||ONLY.AMZ)){
     fetch('data/br-fires.json?t='+tick).then(jsonOk).then(buildBR).then(function(rows){publishPart('BR',rows);})
       .catch(function(e){console.warn('[live fires] Brazil feed failed',e);});
+  }
+  if(!fresh('tCF')&&(!ONLY||ONLY.CA)){
+    fetch('data/calfire.json?t='+tick).then(jsonOk).then(buildCF).then(function(rows){publishPart('CF',rows);})
+      .catch(function(e){console.warn('[live fires] CAL FIRE feed failed',e);});
   }
   if(!fresh('tCAN')&&(!ONLY||ONLY.CAN||ONLY.BC)){
     fetch('data/bc-fires.json?t='+tick).then(jsonOk).then(buildBC).then(function(rows){publishPart('CAN',rows);})

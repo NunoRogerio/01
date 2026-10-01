@@ -17,8 +17,8 @@
 <script src="fit.js?v=119"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=142"></script>
-<script src="i18n.js?v=127"></script>
-<script src="live.js?v=38"></script>
+<script src="i18n.js?v=128"></script>
+<script src="live.js?v=39"></script>
 <script src="chat.js?v=46"></script>
 
 <title>Incidents</title>
@@ -864,12 +864,15 @@ class Component extends DCLogic {
           ['NASA FIRMS', T('Satellite heat detections (VIIRS, MODIS, Landsat). Europe and the Americas', 'Deteções de calor por satélite (VIIRS, MODIS, Landsat). Europa e Américas'), c.tSat, false, 26, 'SAT'],
           ['NOAA GOES-18 and GOES-19', T('Geostationary heat detections every 10 minutes. The Americas', 'Deteções de calor geostacionárias a cada 10 minutos. Américas'), c.tSat, false, 1, null, 10],
           ['NIFC · WFIGS', T('Wildfire incidents. United States', 'Incêndios florestais. Estados Unidos'), c.tUS, false, 26, 'US'],
+          ['CAL FIRE', T('Wildfire incidents the federal list lacks. California', 'Incêndios florestais em falta na lista federal. Califórnia'), c.tCF, false, 1, 'CF', 10],
+          ['EFFIS · Copernicus', T('Mapped burnt areas of the last 30 days. Portugal', 'Áreas ardidas mapeadas nos últimos 30 dias. Portugal'), null, true, 1, null, 10],
+          ['IPMA', T('Official fire danger by municipality, today. Portugal', 'Perigo de incêndio oficial por concelho, hoje. Portugal'), null, true, 1, null, 10],
           ['Fogos.pt · ANEPC', T('Rural fire occurrences. Portugal', 'Ocorrências de incêndios rurais. Portugal'), c.tPT, false, 26, 'PT'],
           ['INPE · Programa Queimadas', T('Fire events. Brazil', 'Eventos de fogo. Brasil'), c.tBR, false, 27, 'BR'],
           ['BC Wildfire Service', T('Wildfires. British Columbia', 'Incêndios florestais. Colúmbia Britânica'), c.tCAN, false, 26, 'CAN'],
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27],
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26],
-          ['Open-Meteo', T('Weather and forecast for the map and the projections; terrain (Copernicus elevation) for the projections', 'Meteorologia e previsão para o mapa e as projeções; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10]
+          ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10]
         ].map(([name, what, t, still, day, key, mon]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
           return { name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
           onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
