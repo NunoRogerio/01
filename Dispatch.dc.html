@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=102"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=122"></script>
-<script src="i18n.js?v=117"></script>
-<script src="live.js?v=35"></script>
-<script src="chat.js?v=38"></script>
+<script src="prefs.js?v=123"></script>
+<script src="i18n.js?v=118"></script>
+<script src="live.js?v=36"></script>
+<script src="chat.js?v=39"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -193,7 +193,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none; color: {{hd.c}}">{{hd.title}}</h1></span>
       <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-top: 2px"><span title="{{hd.sub}}" style="flex: 1 1 auto; min-width: 0; font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span></span>
       <!-- What it is: the qualifier band, as on the ignition candidate card, in the map marker's deep orange -->
-      <span class="wf-qual {{qualCls}}" role="{{tlRole}}" aria-expanded="{{tlOpenStr}}" onClick="{{tlToggle}}" style="margin-top: 16px; margin-left: {{qualMl}}; margin-right: {{qualMr}}; padding-right: {{qualPr}}; border-radius: {{qualR}}; color: {{kindC}}; cursor: {{tlCur}}"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{kindDot}}"></path><path d="M2.7 12.2H11.3V7.2L7 2.1 2.7 7.2Z" style="display: {{stIcD}}" fill="rgba(64,156,255,0.6)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span style="display: {{kindD}}; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis">{{hd.kind}}</span><span role="status" aria-label="{{hd.kind}}. {{cc.tag}}" style="display: {{hdTagD}}; flex-shrink: 0; align-items: center; margin-left: {{tagMl}}; margin-right: 0; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{cc.tag}}</span><span role="status" style="display: {{crTagD}}; flex-shrink: 0; align-items: center; margin-left: auto; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; color: #1C1C1E; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{pl.avail}}</span></span>
+      <span class="wf-qual {{qualCls}}" role="{{tlRole}}" aria-expanded="{{tlOpenStr}}" onClick="{{tlToggle}}" style="margin-top: 16px; margin-left: {{qualMl}}; margin-right: {{qualMr}}; padding-right: {{qualPr}}; border-radius: {{qualR}}; color: {{kindC}}; cursor: {{tlCur}}"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{kindDot}}"></path><path d="M2.7 12.2H11.3V7.2L7 2.1 2.7 7.2Z" style="display: {{stIcD}}" fill="rgba(64,156,255,0.6)" stroke="#3A3A3C" stroke-width="1.3" stroke-linejoin="round"></path></svg><span style="display: {{kindD}}; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis">{{hd.kind}}</span><span role="status" aria-label="{{hd.kind}}. {{cc.tag}}" style="display: {{hdTagD}}; flex-shrink: 0; align-items: center; margin-left: {{tagMl}}; margin-right: 0; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{cc.tag}}</span><span role="status" style="display: {{crTagD}}; flex-shrink: 0; align-items: center; margin-left: auto; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: #FFFFFF; color: #1C1C1E; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{pl.avail}}</span></span>
       <!-- Under the band: when the fire started (the stages bar and details were dropped for this one line) -->
       <!-- The stages as a thin bar under the band; a tap on the band or the bar shows the stage details -->
       <span role="img" aria-label="Stages over time" onClick="{{tlToggle}}" style="display: {{tlBarD}}; height: 4px; margin: 4px{{qualMr}} 0 {{qualMl}}; border-radius: 2px; background: rgba(60,60,67,0.12); overflow: hidden; cursor: pointer"><sc-for list="{{tlBar}}" as="sg" hint-placeholder-count="0"><span style="flex: 0 0 {{sg.w}}%; background: {{sg.bg}}; opacity: {{sg.op}}"></span></sc-for></span>
@@ -341,7 +341,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
       <!-- Once every order is through, the bar fades away and a big green check mark sits on the title's row -->
       <span style="display: flex; align-items: center; gap: 12px"><h2 id="sendTitle" style="flex-grow: 1; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; opacity: {{snd.doneOp}}; transform: scale({{snd.doneS}}); transition: opacity .3s ease .25s, transform .45s cubic-bezier(.3,1.4,.4,1) .25s"><path d="m4.5 12.5 5 5L19.5 7"></path></svg></span>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#186B2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; opacity: {{snd.doneOp}}; transform: scale({{snd.doneS}}); transition: opacity .3s ease .25s, transform .45s cubic-bezier(.3,1.4,.4,1) .25s"><path d="m4.5 12.5 5 5L19.5 7"></path></svg></span>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{snd.sub}}</span>
     </div>
     <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 4px; margin: 56px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden; opacity: {{snd.barOp}}; transition: opacity .4s ease .2s">
@@ -359,7 +359,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
           <span aria-hidden="true" style="position: relative; align-self: center; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px">
             <span class="sndspin" style="position: absolute; inset: 3px; border-radius: 50%; border: 2px solid rgba(60,60,67,0.18); border-top-color: #3A3A3C; opacity: {{o.spinOp}}; transition: opacity .2s ease"></span>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; inset: 0; opacity: {{o.tickOp}}; transform: scale({{o.tickS}}); transition: opacity .25s ease, transform .35s cubic-bezier(.3,.9,.25,1)"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#186B2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; inset: 0; opacity: {{o.tickOp}}; transform: scale({{o.tickS}}); transition: opacity .25s ease, transform .35s cubic-bezier(.3,.9,.25,1)"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
           </span>
           </div>
           <!-- Separator between the header and what the station sends, card edge to card edge -->
@@ -408,7 +408,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="display: {{cc.bigD}}; font-size: 15px; line-height: 20px; color: #6E6E73">Containment</span>
       <span class="wf-like-xs" style="display: {{cc.bigD}}; margin-top: -2px; max-width: 100%; white-space: nowrap; --wf-fs: {{cc.fs}}px">{{cc.big}}</span>
       <!-- No % published (ANEPC gives stages): the stage is a colour-matched tag, not a big number -->
-      <span role="status" style="display: {{cc.tagD}}; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 8px; padding: 4px 12px; border-radius: 16px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700">{{cc.tag}}</span>
+      <span role="status" style="display: {{cc.tagD}}; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 8px; padding: 4px 12px; border-radius: 16px; background: {{cc.tagBg}}; color: {{cc.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600">{{cc.tag}}</span>
       <svg role="img" aria-label="{{cc.bch.aria}}" width="200" height="28" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{cc.bch.svgD}}; margin-top: 8px; max-width: 100%; overflow: visible">
         <path d="{{cc.bch.area}}" fill="{{cc.bch.areaFill}}" stroke="none"></path>
         <path d="{{cc.bch.line}}" fill="none" stroke="{{cc.bch.lineC}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
@@ -418,7 +418,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- The GPS, just under the map: one line with its copy icon (the place is already the page title); 4px under where a label would start -->
       <div style="display: {{floc.d}}; align-self: stretch; margin: -4px 0 56px; text-align: left">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
-          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{floc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{floc.rows}}; opacity: {{floc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 15px; line-height: 20px; color: #1E7A34">Copied to clipboard</span></span></span>
+          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{floc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{floc.rows}}; opacity: {{floc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 15px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span></span>
           <button type="button" class="mbtn" onClick="{{floc.copy}}" aria-label="{{floc.aria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{floc.c}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{floc.ic}}"></path></svg></button>
         </div>
       </div>
@@ -561,7 +561,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
                 <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
                 <span style="grid-column: 2; display: flex; align-items: center; gap: 12px; margin-top: 6px">
-                <span class="wf-stag" style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 700; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
+                <span class="wf-stag" style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
                 <svg role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" width="30" height="28" viewBox="0 0 30 28" style="display: {{u.batD}}; flex-shrink: 0"><path d="{{u.batLo}}" fill="#C7C7CC"></path><path d="{{u.batHi}}" fill="#000000"></path></svg></span>
                 <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
                   <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{u.pct}}%; border-radius: 999px; background: #3A3A3C"></span>
@@ -718,7 +718,7 @@ class Component extends DCLogic {
     let crews = Math.max(1, Math.min(10, Math.round(people / (cppl + 1)))), tankers = Math.max(1, Math.min(8, Math.round(veh * 0.4))), engines = 0, airN = air;   /* the crews' own vehicles are the engines */
     if (CNT) { crews = CNT.c; tankers = CNT.t; engines = 0; airN = CNT.a; }   // what was ordered from here
     const DUR = window.__wfDur || ((ms) => Math.round(ms / 60000) + ' min');
-    const T = { ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], warn: ['#7A5600', 'rgba(204,153,0,0.16)'], bad: ['#B0001A', 'rgba(215,0,21,0.12)'], blue: ['#0062CC', 'rgba(0,113,227,0.12)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'] };
+    const T = { ok: ['#186B2D', 'rgba(52,199,89,0.14)'], warn: ['#745200', 'rgba(204,153,0,0.16)'], bad: ['#B0001A', 'rgba(215,0,21,0.12)'], blue: ['#0062CC', 'rgba(0,113,227,0.12)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'] };
     const units = []; let tired = 0, low = 0;
     // Crews: arrived at different times since the start; relief is due at 12 h on shift
     for (let i = 0; i < crews; i++) {
@@ -1098,7 +1098,7 @@ class Component extends DCLogic {
     if (o.cc && Array.isArray(o.cc.med)) { let EV = {}; try { EV = JSON.parse(localStorage.getItem('wf-evac') || '{}'); } catch (e) {} const fid = o.fireId;
       o.cc = Object.assign({}, o.cc, { med: o.cc.med.map((m) => { const base = Object.assign({ tagRole: 'presentation', tagGo: null, tagAria: '', tagCur: 'default' }, m);
         if (m.key !== 'pop' || !m.tag) return base;
-        if (fid && EV[fid] && m.tag === 'Not evacuated') return Object.assign(base, { tag: 'Evacuating', tagFg: '#7A5600', tagBg: 'rgba(204,153,0,0.16)' });
+        if (fid && EV[fid] && m.tag === 'Not evacuated') return Object.assign(base, { tag: 'Evacuating', tagFg: '#745200', tagBg: 'rgba(204,153,0,0.16)' });
         if (m.tag !== 'Not evacuated' || !o.chat || !o.chat.open) return base;
         return Object.assign(base, { tagRole: 'button', tagCur: 'pointer', tagAria: 'Not evacuated. Open the chat to ask for an evacuation plan', tagGo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { sessionStorage.setItem('wf-chat-sugg', JSON.stringify({ fire: fid, s: 'evac', t: Date.now() })); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} o.chat.open(); } }); }) }); }
     o.ft = { d: 'grid', x: res ? '125%' : '0%',   /* the bar is 80% of a tab, centred under it */ fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
@@ -1159,7 +1159,7 @@ class Component extends DCLogic {
       const OPT = { Boats: 1, 'Management teams': 1, 'Structure protection': 1 };
       const items = [['Personnel', fres.man], ['Crews', fres.crews], ['Ground vehicles', fres.terrain], ['Heavy equipment', fres.heavy], ['Aircraft', fres.aerial], ['Boats', fres.water], ['Management teams', fres.imt], ['Structure protection', fres.structure]]
         .filter(([k, v]) => v != null && (!OPT[k] || v > 0)).map(([k, v]) => ({ k, v: (fres.estF && fres.estF[{ Personnel: 'man', 'Ground vehicles': 'terrain', Aircraft: 'aerial' }[k]] ? '~' : '') + Number(v).toLocaleString() }));
-      return { tag: fres.est ? 'Estimate' : fres.estF ? 'Partly estimated' : 'Real data', tagBg: fres.estF ? 'rgba(135,88,0,0.12)' : 'rgba(52,199,89,0.12)', tagFg: fres.estF ? '#875800' : '#1E7A34', src: fres.src || '', cols: Math.max(1, Math.min(4, items.length)), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
+      return { tag: fres.est ? 'Estimate' : fres.estF ? 'Partly estimated' : 'Real data', tagBg: fres.estF ? 'rgba(135,88,0,0.12)' : 'rgba(52,199,89,0.12)', tagFg: fres.estF ? '#875800' : '#186B2D', src: fres.src || '', cols: Math.max(1, Math.min(4, items.length)), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
     })() : { src: '', cols: 1, items: [], foot: '' };
     const actMin = (() => {
       const T0 = window.__wfT0 || (window.__wfT0 = Date.now());
@@ -1208,7 +1208,7 @@ class Component extends DCLogic {
     const freeSel = chosenList.reduce((a, d) => a + (d.free || 0), 0);
     const clock = (m) => { const t = 14 * 60 + 42 + m; const h = Math.floor(t / 60); return (h % 12 || 12) + ':' + String(t % 60).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
     const subOf = (d) => (d.sentTxt ? 'On this fire: ' + d.sentTxt + '. ' : '') + (d.id === 'none' ? d.busy : d.real ? d.km + DU + (d.free != null ? '. ' + (d.free > 0 ? Math.max(0, d.free) + ' of ' + d.total + ' crews free' : 'All crews out') : '') : d.eta === null ? d.busy : (d.free < need ? d.km + ' mi · only ' + d.free + ' of ' + need + ' crews needed' : d.km + ' mi · ' + d.free + ' of ' + d.total + ' crews free'));
-    const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#7A5600' : '#545458');
+    const colorOf = (d) => d.real ? '#545458' : d.eta === null ? '#545458' : (d.free < need ? '#745200' : '#545458');
     const sum = chosen.eta, T = chosen.t || [0, 0, 0], sumD = sum || 1;
     const sel = {
       ...chosen,
@@ -1217,7 +1217,7 @@ class Component extends DCLogic {
       codes: chosenList.map((d) => d.code).join(' + '),
       title: multi ? 'Stations: ' + chosenList.map((d) => d.code).join(', ') : (chosen.real ? chosen.name : 'Station: ' + chosen.code + ' · ' + chosen.name),
       sub: multi ? (chosen.real ? chosenList.length + ' stations' : freeSel + ' free crews') + ' · first on the line in ' + (chosen.real ? 'est. ' : '') + chosen.eta + ' min' : (chosen.real ? (chosen.id === rec.id ? 'Closest station · ' : '') + subOf(chosen) : chosen.id === rec.id ? 'Closest with ' + need + ' free crews · ' + chosen.km + ' mi' : subOf(chosen)),
-      subColor: multi ? (freeSel < need ? '#7A5600' : '#545458') : (chosen.id === rec.id ? '#545458' : colorOf(chosen)),
+      subColor: multi ? (freeSel < need ? '#745200' : '#545458') : (chosen.id === rec.id ? '#545458' : colorOf(chosen)),
       at: sum != null ? clock(sum) : '—',
       t1: T[0], t2: T[1], t3: T[2],
       p1: Math.round(T[0] / sumD * 100), p2: Math.round(T[1] / sumD * 100), p3: 100 - Math.round(T[0] / sumD * 100) - Math.round(T[1] / sumD * 100),
@@ -1261,14 +1261,14 @@ class Component extends DCLogic {
       next[i] = Math.max(0, Math.min(avail3[i], next[i] + d));
       this.setState({ counts: next, cfPick: true });
     };
-    const units = RU ? RU.map(([name, n, icon]) => ({ name, icon, n: Number(n).toLocaleString(), from: 'On scene · ' + fres.src, availText: 'Real data', availColor: '#1E7A34', nColor: '#000000',
+    const units = RU ? RU.map(([name, n, icon]) => ({ name, icon, n: Number(n).toLocaleString(), from: 'On scene · ' + fres.src, availText: 'Real data', availColor: '#186B2D', nColor: '#000000',
       bg: 'rgba(60,60,67,0.044)', bd: 'rgba(60,60,67,0.11)', less: () => {}, more: () => {}, lessDis: 'true', moreDis: 'true', lessOp: 0, moreOp: 0, lessLabel: name, moreLabel: name })) : meta.map((m, i) => {
       const n = counts[i], a = avail3[i];
       const lessDis = n <= 0, moreDis = n >= a;
       return {
         ...m, n,
         availText: a === 0 ? 'None available' : (n >= a ? 'All ' + a + ' assigned' : (a - n) + ' of ' + a + ' still free'),
-        availColor: n >= a ? '#7A5600' : '#1E7A34',
+        availColor: n >= a ? '#745200' : '#186B2D',
         nColor: '#000000',
         bg: n > 0 ? 'rgba(60,60,67,0.044)' : 'rgba(60,60,67,0.017)',
         bd: n > 0 ? 'rgba(60,60,67,0.11)' : 'rgba(60,60,67,0.055)',
@@ -1336,7 +1336,7 @@ class Component extends DCLogic {
       const cards = (NW.rows || []).slice(0, nSt).map((r) => { let h = 0; for (const ch of String(r.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
         const tot = 2 + (h % 4), free = (h >> 3) % (tot + 1), drive = r.t ? r.t[1] : null;
         const K = window.__wfCrest ? window.__wfCrest(r.ck, r.name) : { url: '' };
-        return { crest: K.url || '', crestD: K.url ? 'block' : 'none', shD: K.url ? 'none' : 'block', name: r.name, sub: r.km + du + (drive ? '. ~' + drive + ' min.' : '.'), tag: free ? free + ' of ' + tot + ' free' : 'All out', tagFg: free ? '#1E7A34' : '#636366', tagBg: free ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)',
+        return { crest: K.url || '', crestD: K.url ? 'block' : 'none', shD: K.url ? 'none' : 'block', name: r.name, sub: r.km + du + (drive ? '. ~' + drive + ' min.' : '.'), tag: free ? free + ' of ' + tot + ' free' : 'All out', tagFg: free ? '#186B2D' : '#636366', tagBg: free ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)',
           aria: r.name + ', ' + r.km + du + (drive ? ', about ' + drive + ' minutes drive' : '') + '. ' + (free ? free + ' of ' + tot + ' crews free' : 'All crews out') + ' (simulated)' }; });
       if (cards.length) { ordRows.pop(); ordRows.push({ stc: true, item: false, cards, title: 'Stations on this fire', note: 'Estimate' }); }
     }
@@ -1352,7 +1352,7 @@ class Component extends DCLogic {
         const st = HELD.official && HELD.label ? ' · now ' + HELD.label.toLowerCase() : '';
         const pct = tk != null && since != null && tk + since > 0 ? Math.max(4, Math.min(96, Math.round(100 * tk / (tk + since)))) : null;
         const r = row(tk != null ? 'Active for ' + DUR(tk) : HELD.official ? 'Held' : 'Edge fully contained', since != null && since > 0 ? 'Held for ' + DUR(since) : '',
-          HELD.official ? (INFO && INFO.startMs ? 'Started ' + clk(INFO.startMs) + (at ? ' · held ' + (approx ? 'by ' : '') + clk(at) : '') + st : (tk == null ? (INFO && INFO.startMs && INFO.updMs && INFO.updMs > INFO.startMs ? 'Resolved in about ' + DUR(INFO.updMs - INFO.startMs) + ' (estimate, to the last update)' : 'Resolution time not published') + st : st.slice(3))) : 'Per the fire model · official state ' + (INFO ? INFO.st : '—'), '#1E7A34');
+          HELD.official ? (INFO && INFO.startMs ? 'Started ' + clk(INFO.startMs) + (at ? ' · held ' + (approx ? 'by ' : '') + clk(at) : '') + st : (tk == null ? (INFO && INFO.startMs && INFO.updMs && INFO.updMs > INFO.startMs ? 'Resolved in about ' + DUR(INFO.updMs - INFO.startMs) + ' (estimate, to the last update)' : 'Resolution time not published') + st : st.slice(3))) : 'Per the fire model · official state ' + (INFO ? INFO.st : '—'), '#186B2D');
         return { ...r, icon: 'M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', bg: 'rgba(52,199,89,0.12)', w: pct != null ? 100 : 0, bar: pct != null ? 'linear-gradient(to right, #E86A00 0 ' + pct + '%, #34C759 ' + pct + '% 100%)' : '' };
       };
       if (HELD && (!M || M.failed)) { /* held: no model needed */ }
@@ -1366,7 +1366,7 @@ class Component extends DCLogic {
         rows.push(M.assumed ? row('Perimeter', 'Estimated', (M.src.indexOf('ha reported') > 0 ? 'Drawn from the reported ' + M.src.replace(/^.*· /, '') : 'Drawn from a typical size for its state') + ' · no public polygon for this fire yet', '#875800') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
-        if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources not published' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#1E7A34'));
+        if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources not published' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#186B2D'));
         if (RO) {
           rows.push(...this.wfCondCards(I, frow, INFO, ''));
         } else rows.push(row('Conditions', 'Wind ' + I.wind + ' km/h ' + I.from, I.temp + ' °C · humidity ' + I.rh + '% · fuel moisture ' + I.md + '% · slope ' + I.slope + '° · ' + I.fuel + ' · head ' + I.head + ' m/min', '#0079A6'));
@@ -1382,7 +1382,7 @@ class Component extends DCLogic {
       const I = INFO; if (!RO || !I || !I.startMs) return null;
       const now = Date.now(), t0 = I.startMs, M = FMOD && FMOD.model && !FMOD.model.failed ? FMOD.model : null;
       // One colour per stage, reused for the panel title: burning deep orange, resolving amber, held green, watch teal, closed grey.
-      const C = { hot: '#B84A00', amber: '#7A5600', ok: '#1E7A34', watch: '#00707A', off: '#636366' };
+      const C = { hot: '#963B00', amber: '#745200', ok: '#186B2D', watch: '#00606A', off: '#636366' };
       let st = [], cur = 0, note = '';
       if (frow.st === 'PT') {
         const sc = I.sc || 5, P = [['Em curso', [3, 4, 5, 6], 'hot'], ['Em resolução', [7], 'amber'], ['Em conclusão', [8], 'ok'], ['Vigilância', [9], 'watch'], ['Encerrada', [10, 11, 12], 'off']];
@@ -1437,7 +1437,7 @@ class Component extends DCLogic {
         const ground = FX.units.filter((u) => u.k !== 2), airU = FX.units.filter((u) => u.k === 2);
         // The other unit types a station sends (hand crews, dozers, ambulances, evacuation vans or patrol engines): ordered ones,
         // or on a viewed fire those the station keeps (seeded, about one in two goes out)
-        const KX = this.wfKinds(stC), TX = { ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'], warn: ['#7A5600', 'rgba(204,153,0,0.16)'] };
+        const KX = this.wfKinds(stC), TX = { ok: ['#186B2D', 'rgba(52,199,89,0.14)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'], warn: ['#745200', 'rgba(204,153,0,0.16)'] };
         const extra = (sid, k, n) => { const out = []; for (let i = 0; i < n; i++) { let hh = 3; for (const ch of String(sid) + k + i) hh = (hh * 31 + ch.charCodeAt(0)) >>> 0; const K = KX[k];
             const st = k === 6 ? (stC === 'PT' ? ['On the line', TX.ok] : ['Cutting line', TX.ok]) : k === 7 ? ['Building line', TX.ok] : k === 8 ? ['Standing by', TX.grey] : stC === 'PT' ? (this.wfEvacOn && this.wfEvacOn() ? ['Evacuating', TX.warn] : ['Standing by', TX.grey]) : ['Patrolling', TX.ok];
             const on = 1 + (hh % 9), pct = Math.max(0, Math.round(100 * (1 - on / 12)));
@@ -1493,7 +1493,7 @@ class Component extends DCLogic {
     const MAPH = 234;   // the detail page's map band: half height, framed on the fire; full screen from its button
     const tlTop = RO ? deployed.filter((d) => d.tl) : []; if (RO) for (let i = deployed.length - 1; i >= 0; i--) if (deployed[i].tl) deployed.splice(i, 1);   // the stages bar sits right under the map
     // Status colours, as in the fire's timeline: fighting / active deep orange, held green, out grey, forces on the way blue.
-    const sentTitleC = TL && TL.curC ? TL.curC : HELD ? '#1E7A34' : (RO || BRF) ? '#B84A00' : '#0062CC';
+    const sentTitleC = TL && TL.curC ? TL.curC : HELD ? '#186B2D' : (RO || BRF) ? '#963B00' : '#0062CC';
     const K = BRF ? { k1L: 'Burned area', k1V: BI.ha != null ? Math.round(BI.ha).toLocaleString() : '—', k1S: BI.ha != null ? ' ha' : '', k2L: 'Active fronts', k2V: BI.facts && BI.facts[0] ? BI.facts[0][1] : '—', k2S: '' } : RO ? { k1L: 'Personnel', k1V: fres && fres.man != null ? Number(fres.man).toLocaleString() : '—', k1S: '',
       k2L: RU && RU[1] ? RU[1][0] : 'Status', k2V: RU && RU[1] ? Number(RU[1][1]).toLocaleString() : ((fres && fres.status) || '—'), k2S: '' }
       // Orders sent from this app: how many stations and units (no invented arrival times)
@@ -1555,7 +1555,7 @@ class Component extends DCLogic {
         const place = parts.filter((q, i, arr) => q && arr.indexOf(q) === i).join(', ');   // parish, municipality, district (no repeats)
         const cp = (this.state && this.state.copied) || null, done = !!(cp && cp.v === G), fresh = done && Date.now() - cp.t < 3000;
         return { d: G ? 'block' : 'none', place, placeD: place ? 'block' : 'none', bd: place ? '0' : '0', gps: G, rows: fresh ? '1fr' : '0fr', op: fresh ? 1 : 0,
-          c: done ? '#1E7A34' : '#3C3C43', ic: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', aria: done ? 'Copied' : 'Copy coordinates',
+          c: done ? '#186B2D' : '#3C3C43', ic: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', aria: done ? 'Copied' : 'Copy coordinates',
           copy: () => { try { navigator.clipboard.writeText(G).catch(() => {}); } catch (e) {} this.setState({ copied: { v: G, t: Date.now() } }); setTimeout(() => { try { this.forceUpdate(); } catch (e) {} }, 3100); } }; })(),
       // Floating "Add resources" pill: a fire confirmed here with nothing ordered yet, while Resources is out of view; it scrolls down to it
       rh: (() => { const on = !!(RO && frow && /^Confirmed from/.test(frow.note || '') && !ORD.length && !s.full);   /* stays until orders are actually dispatched (on either tab, while resources are being chosen too) */
@@ -1640,7 +1640,7 @@ class Component extends DCLogic {
           const busy = d.eta === null, used = inPlan(d.id), dis = busy || used, crest = crestOf(d), best = d.id === rec.id && !used;
           const code = d.code && d.code !== '—' ? d.code + '. ' : '';
           return { code: '', name: d.name, crest, crestD: crest ? 'block' : 'none', airD: 'none', icBg: 'transparent', eta: busy ? 'Busy' : d.eta + ' min', etaC: busy ? '#6E6E73' : '#000000', sub: code + (used ? 'Added.' : subOf(d)),
-            tagD: best ? 'inline-block' : 'none', tag: 'Suggested', tagBg: 'rgba(52,199,89,0.12)', tagFg: '#1E7A34', dis: dis ? 'true' : 'false', op: dis ? 0.45 : 1, cur: dis ? 'default' : 'pointer', aria: nm(d) + (busy ? ', busy' : used ? ', added' : ', ' + d.eta + ' minutes'),
+            tagD: best ? 'inline-block' : 'none', tag: 'Suggested', tagBg: 'rgba(52,199,89,0.12)', tagFg: '#186B2D', dis: dis ? 'true' : 'false', op: dis ? 0.45 : 1, cur: dis ? 'default' : 'pointer', aria: nm(d) + (busy ? ', busy' : used ? ', added' : ', ' + d.eta + ' minutes'),
             pick: () => { if (!dis) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ flow: { step: 'res', id: d.id, draft: recFor(d.id), edit: false } }); } } }; });
         const close = () => this.setState({ flow: null });
         // Resources on a fire confirmed here: tiles only once there is a station (from the plan until the order is sent), Add always
@@ -1659,7 +1659,7 @@ class Component extends DCLogic {
             title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'st' ? stRows.length + ' available. Start by choosing a station.' : step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'st' || (step === 'res' && dSel) ? 'block' : 'none',
             back: () => (step === 'res' && F && !F.edit ? this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }) : close()),
             stD: step === 'st' ? 'flex' : 'none', backD: 'none',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
-            tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCls: isRec ? '' : 'mbtn', recPE: isRec ? 'none' : 'auto', recTab: isRec ? '-1' : '0',   /* Suggested is a plain tag: no touch effect, nothing to tap; only Reset is a button */ recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
+            tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#186B2D' : '#000000', recDis: isRec ? 'true' : 'false', recCls: isRec ? '' : 'mbtn', recPE: isRec ? 'none' : 'auto', recTab: isRec ? '-1' : '0',   /* Suggested is a plain tag: no touch effect, nothing to tap; only Reset is a button */ recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
             remove: () => { const go = () => { const nx = plan.filter((p) => p.id !== id);
                 if (inlSent) { const all = this.wfOrders(); all[fireId] = (all[fireId] || []).filter((o) => o.id !== id); try { window.localStorage.setItem('wf-orders', JSON.stringify(all)); } catch (x) {} }   /* stood down: off this fire's orders */
@@ -1672,7 +1672,7 @@ class Component extends DCLogic {
         const row = (key, i, m, n, cap, rec) => { const lessDis = n <= 0, moreDis = n >= cap;
           return { name: m.name, icon: m.icon, ic: '#000000', n,
             availText: realSt ? (key === 'air' ? m.from : '') : cap === 0 ? 'None available' : n >= cap ? 'All ' + cap + ' assigned' : (cap - n) + ' of ' + cap + ' free',
-            availColor: !realSt && n >= cap ? '#7A5600' : '#545458', avD: realSt && key !== 'air' ? 'none' : 'block', nColor: '#000000',
+            availColor: !realSt && n >= cap ? '#745200' : '#545458', avD: realSt && key !== 'air' ? 'none' : 'block', nColor: '#000000',
             less: () => { if (!lessDis) setP(key, i, n - 1); }, more: () => { if (!moreDis) setP(key, i, n + 1); },
             lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1,
             lessLabel: 'Fewer ' + m.name.toLowerCase() + ', ' + n + ' selected', moreLabel: 'More ' + m.name.toLowerCase() + ', ' + n + ' selected' }; };
@@ -1723,7 +1723,7 @@ class Component extends DCLogic {
             this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
       })(), undoSend: () => this.setState({ reinforce: true, stPick: false, cfPick: false, per: null, exp: null, stations: null, station: null, counts: null, adjust: false, open: false, cfg: false, full: false, sentUp: false }),
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
-      pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#1E7A34' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
+      pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#186B2D' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
       /* arriving from a candidate just confirmed on its own page: the header is already there (no fade in) */
       hdrCls: (() => { if (this._moIn == null) { let t = 0; try { t = Number(window.sessionStorage.getItem('wf-morph')) || 0; window.sessionStorage.removeItem('wf-morph'); } catch (e) {} this._moIn = Date.now() - t < 5000; } return this._moIn ? '' : 'fade'; })(),
       hzShow: 'none',   // projection horizon (+1h/+2h/+3h) hidden for now; its place in the flow is still to be decided
@@ -1776,7 +1776,7 @@ class Component extends DCLogic {
         const I = INFO || {}, now = Date.now(), us = frow && frow.st !== 'PT' && frow.st !== 'BRA';
         // Containment: the % contained where the source publishes it (NIFC), else the official stage (ANEPC publishes stages only)
         const pcT = !HELD && us && I.pc != null ? I.pc + '%' : '', stage = I.stEn || I.st || (HELD ? 'Contained' : 'Not contained'), big = pcT || stage;
-        const TN = { hot: ['#B84A00', 'rgba(184,74,0,0.14)'], warn: ['#B84A00', 'rgba(184,74,0,0.14)'], amber: ['#7A5600', 'rgba(122,86,0,0.14)'], ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], watch: ['#00707A', 'rgba(0,112,122,0.14)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || (HELD ? TN.ok : TN.hot);
+        const TN = { hot: ['#963B00', 'rgba(184,74,0,0.14)'], warn: ['#963B00', 'rgba(184,74,0,0.14)'], amber: ['#745200', 'rgba(122,86,0,0.14)'], ok: ['#186B2D', 'rgba(52,199,89,0.14)'], watch: ['#00606A', 'rgba(0,112,122,0.14)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || (HELD ? TN.ok : TN.hot);
         const n = String(big).length, fs = Math.max(26, Math.min(64, Math.floor(330 / ((n * 0.6) || 1))));
         const t = HELD ? (HELD.took != null ? DUR(HELD.took) : '') : I.startMs ? DUR(now - I.startMs) : '';
         const u = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ area: us ? 'ac' : 'ha' }, v || {}); })();
@@ -1833,7 +1833,7 @@ class Component extends DCLogic {
           // evacuations per fire, so this card is simulated (seeded by the fire) and labelled; a held fire puts nobody at risk.
           (() => { let sd = 0; for (const ch of String(fireId)) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0; const r1 = (Math.sin(sd * 0.0021) * 43758.5453) % 1, q1 = Math.abs(r1), r2 = Math.abs((Math.sin(sd * 0.0037 + 3) * 43758.5453) % 1);
             if (HELD) return { key: 'pop', v: 'No', l: 'People at risk', ch: none };
-            const yes = q1 < 0.6, E = [['Not evacuated', '#B00020', 'rgba(215,0,21,0.12)'], ['Evacuating', '#7A5600', 'rgba(204,153,0,0.16)'], ['Evacuated', '#1E7A34', 'rgba(52,199,89,0.14)']][Math.floor(r2 * 3)];
+            const yes = q1 < 0.6, E = [['Not evacuated', '#B00020', 'rgba(215,0,21,0.12)'], ['Evacuating', '#745200', 'rgba(204,153,0,0.16)'], ['Evacuated', '#186B2D', 'rgba(52,199,89,0.14)']][Math.floor(r2 * 3)];
             return { key: 'pop', v: yes ? 'Yes' : 'No', l: 'People at risk', ch: none, note: 'Estimate', tag: yes ? E[0] : '', tagFg: E[1], tagBg: E[2] }; })(),
           // Head spread: how fast the head of the fire advances (fire model, m/min)
           (() => { const Mm = FMOD && FMOD.model && !FMOD.model.failed ? FMOD.model : null, hd = Mm && Mm.info && Mm.info.head; if (HELD) return { key: 'head', v: '—', l: 'Head spread', ch: none };
@@ -1895,8 +1895,8 @@ class Component extends DCLogic {
         const anyCh = med.some((m) => m.ch.svgD !== 'none' || m.ch.segD !== 'none') || chB.svgD !== 'none';
         return { d: 'flex', bch: none, trD: anyCh ? 'block' : 'none', axis: anyCh ? 'Since ' + clk(t0) + '. Estimated from today\'s figures.' : '', big, fs, bigD: 'none', tagD: 'none', tag: stage, tagBg: tn[1], tagFg: tn[0], medMt: '0', med, medD: med.length ? 'flex' : 'none', aria: 'Containment ' + big + med.map((m) => '. ' + m.l + ' ' + m.v).join('') }; })(),
       kpiPx: RO && RU && window.__wfKpiPx ? window.__wfKpiPx(RU.map((r) => Number(r[1]).toLocaleString() + ((fres && fres.estF) ? '~' : '')), RU.length > 4 ? 4 : RU.length) : '44px',
-      kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#1E7A34', w: RU.length > 4 ? '84px' : '0px', sep: i ? '0' : '0' })) : [],
-      k1C: BRF ? '#3A3A3C' : RO ? '#1E7A34' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      kpiRow: RO && RU ? RU.map((r, i) => ({ v: Number(r[1]).toLocaleString(), l: r[0], c: i ? '#000000' : '#186B2D', w: RU.length > 4 ? '84px' : '0px', sep: i ? '0' : '0' })) : [],
+      k1C: BRF ? '#3A3A3C' : RO ? '#186B2D' : '#000000', unitsTxt: BRF || RO ? '' : (() => { const u = deployed.reduce((a, d) => a + ((!d.item || d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0); return u ? ' · ' + u + ' units' : ''; })(), sentIc: HELD ? 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c1.8.8 3 2.6 3 4.7' : 'm5 12.5 4.5 4.5L19 7.5', sentIcC: sentTitleC, sentTitleC, sentTitle: HELD ? 'Resources on scene' : BRF ? 'Fire situation' : RO ? 'Fighting' : 'Dispatch orders sent', listAria: RO ? 'Resources on scene and nearest fire stations' : 'Forces on the way', adjD: canRf && !HELD ? 'flex' : 'none', sentCols: canRf && !HELD ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
       k1L: K ? K.k1L : 'First on the line', k1V: K ? K.k1V : (deployed.length ? deployed[0].eta : '–'), k1S: K ? K.k1S : ' min · ' + (deployed.length ? deployed[0].at : ''),
       k2L: K ? K.k2L : 'All on scene', k2V: K ? K.k2V : maxEta, k2S: K ? K.k2S : ' min · ' + clock(maxEta),
       // KPI numbers share one size; the words go centred under the number ('Contained 30%' -> '30%' over 'contained').
@@ -1913,7 +1913,7 @@ class Component extends DCLogic {
       closeSheet: () => this.setState({ open: false, cfg: false }),
       ...panelVals('st', open, s.ogS || { t: 468, b: 528 }), ...panelVals('cf', cfg, s.ogC || { t: 602, b: 662 }), scrimOp: 0, scrimPE: (open || cfg) ? 'auto' : 'none', sheetHidden: open ? 'false' : 'true',
       units, unitTotal, firstEta: etas.length ? Math.min(...etas) : '–', recSummary: fmt(REC.map((n, i) => Math.min(n, avail3[i]))),
-      cfgSummary: fmt(counts), cfgTag: isRecCfg ? 'Suggested' : 'Your choice', cfgTagBg: isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(0,113,227,0.12)', cfgTagFg: isRecCfg ? '#1E7A34' : '#0060C7',
+      cfgSummary: fmt(counts), cfgTag: isRecCfg ? 'Suggested' : 'Your choice', cfgTagBg: isRecCfg ? 'rgba(52,199,89,0.12)' : 'rgba(0,113,227,0.12)', cfgTagFg: isRecCfg ? '#186B2D' : '#0060C7',
       drone: s.droneOff
         ? { flying: false, idle: true, status: 'At base', sub: 'Altadena pad · 4 min away', fg: '#545458', bg: 'rgba(60,60,67,0.017)', bd: 'rgba(60,60,67,0.055)' }
         : { flying: true, idle: false, status: 'On route · 3 min to scene', sub: 'Live video and thermal on arrival', fg: '#0079A6', bg: 'rgba(0,121,166,0.05)', bd: 'rgba(0,121,166,0.22)' },

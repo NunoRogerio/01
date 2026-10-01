@@ -71,7 +71,7 @@ window.__wfRegionUp = function (st, co) {
       var info={src:'NIFC · WFIGS',st:S[0],stEn:S[1],tone:S[2],pc:pc!=null?Math.round(pc):null,beh:p.FireBehaviorGeneral||'',cause:p.FireCause||'',
         startMs:p.FireDiscoveryDateTime||null,updMs:p.ModifiedOnDateTime_dt||null,ac:p.IncidentSize!=null?Math.round(p.IncidentSize):null,ha:p.IncidentSize?+(p.IncidentSize*0.4047).toFixed(1):null,
         resolved:S[0]!=='Active',heldMs:p.ContainmentDateTime||p.ControlDateTime||p.FireOutDateTime||null,heldSrc:'containment report',tCont:p.ContainmentDateTime||null,tCtrl:p.ControlDateTime||null,tOut:p.FireOutDateTime||null,place:[p.POOCounty?p.POOCounty+' County':'',st].filter(Boolean).join(' · ')};
-      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),title(p.IncidentName||'Unnamed'),note,xy[0],xy[1],res,info.ha,info,p.POOCity?title(p.POOCity):''],w:p.IncidentSize||0});
+      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),(window.__wfFireName?window.__wfFireName(title(p.IncidentName||'')):title(p.IncidentName||'Unnamed fire')),note,xy[0],xy[1],res,info.ha,info,p.POOCity?title(p.POOCity):''],w:p.IncidentSize||0});
     });
     return out;
   }
@@ -113,6 +113,12 @@ window.__wfRegionUp = function (st, co) {
     return out;
   }
   // hotspots.json: {points:[[st,co,lat,lon,conf,sat,isoTime,frp,n],...]}  ->  candidate rows
+  // Night detection: the sun was below the horizon at the spot when the satellite saw the heat (solar altitude from the
+  // detection's own time and place; no extra data). Used for the small moon on the candidate's marker.
+  function sunAlt(lat,lon,ms){if(!(ms>0))return 0;var r=Math.PI/180,n=(ms-Date.UTC(2000,0,1,12))/864e5,L=(280.46+0.9856474*n)%360,g=((357.528+0.9856003*n)%360)*r;
+    var lam=(L+1.915*Math.sin(g)+0.02*Math.sin(2*g))*r,eps=(23.439-4e-7*n)*r,dec=Math.asin(Math.sin(eps)*Math.sin(lam)),ra=Math.atan2(Math.cos(eps)*Math.sin(lam),Math.cos(lam));
+    var ha=((280.46061837+360.98564736629*n)%360+lon)*r-ra,la=lat*r;return Math.asin(Math.sin(la)*Math.sin(dec)+Math.cos(la)*Math.cos(dec)*Math.cos(ha))/r;}
+  window.__wfSunAlt=sunAlt;
   function buildCands(js){
     return (js&&js.points||[]).map(function(p){
       var lat=p[2],lon=p[3],xy=toXY(lat,lon);
@@ -123,7 +129,7 @@ window.__wfRegionUp = function (st, co) {
       var DW={N:'north',NE:'northeast',E:'east',SE:'southeast',S:'south',SW:'southwest',W:'west',NW:'northwest'};
       var nearTxt=nm?(km>=1.5?(km<10?km.toFixed(1).replace(/\.0$/,''):Math.round(km))+' km '+(DW[dir]||dir)+' of '+nm:'In '+nm):'';
       var id='HS-'+Math.round((lat+90)*100)+'-'+Math.round((lon+180)*100);
-      return [p[0],p[1],id,place,p[4],'sat:'+p[5],ago(Date.parse(p[6])),xy[0],xy[1],{lat:lat,lon:lon,frp:p[7],sat:p[5],t:p[6],n:p[8],ll:ll,near:nearTxt}];
+      return [p[0],p[1],id,place,p[4],'sat:'+p[5],ago(Date.parse(p[6])),xy[0],xy[1],{lat:lat,lon:lon,frp:p[7],sat:p[5],t:p[6],n:p[8],ll:ll,near:nearTxt,night:sunAlt(lat,lon,Date.parse(p[6]))<-0.833}];
     });
   }
   // One cache, with its own timestamp per source (US fires, Portugal fires, satellite), so a source that
@@ -429,7 +435,7 @@ window.__wfRegionUp = function (st, co) {
   };
 
   var c=readCache(),now=Date.now();
-  if(c.rows){window.__wfLiveFiresAll=c.rows;dsApply(false);}if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
+  if(c.rows){if(window.__wfFireName)c.rows.forEach(function(r){if(r&&r[0]!=='PT'&&typeof r[3]==='string')r[3]=window.__wfFireName(r[3]);});window.__wfLiveFiresAll=c.rows;dsApply(false);}if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
   var fresh=function(k){return c[k]&&now-c[k]<TTL;};
   var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};

@@ -1,4 +1,6 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
+window.__wfNight = function (L) { if (!L) return false; if (L.night != null) return !!L.night; return !!(window.__wfSunAlt && L.lat != null && L.t && window.__wfSunAlt(L.lat, L.lon, Date.parse(L.t)) < -0.833); };   /* a detection made with the sun below the horizon (see live.js) */
+window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^[A-Za-z]{2,5}-?\d{3,}$/.test(p) || /^unnamed$/i.test(p) ? 'Unnamed fire' : p; };   /* a fire known only by its incident code (LAC-350855) is called Unnamed fire on every screen */
 // User preferences: theme (light / dark) and text size (condensed / normal / comfortable).
 // The screens are written with inline light-theme colours and pixel font sizes, so the preferences are applied as
 // one override style sheet: every known colour and size is matched where the browser writes it and swapped.

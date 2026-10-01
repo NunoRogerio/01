@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=102"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=122"></script>
-<script src="i18n.js?v=117"></script>
-<script src="live.js?v=35"></script>
-<script src="chat.js?v=38"></script>
+<script src="prefs.js?v=123"></script>
+<script src="i18n.js?v=118"></script>
+<script src="live.js?v=36"></script>
+<script src="chat.js?v=39"></script>
 
 <title>Projection</title>
 <script src="./support.js"></script>
@@ -48,7 +48,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <span style="display: block; margin-top: 2px; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.region}}</span>
       </div>
     </div>
-    <span class="wf-qual hd" style="margin-top: 12px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{tx.kind}}</span><span role="status" style="display: {{f.tagD}}; flex-shrink: 0; align-items: center; margin-left: auto; box-sizing: border-box; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap">{{f.tag}}</span></span>
+    <span class="wf-qual hd" style="margin-top: 12px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="#E8590C"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{tx.kind}}</span><span role="status" style="display: {{f.tagD}}; flex-shrink: 0; align-items: center; margin-left: auto; box-sizing: border-box; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{f.tag}}</span></span>
   </div>
 
   <div aria-hidden="true" style="flex-grow: 1; min-height: 0"></div>
@@ -98,7 +98,7 @@ class Component extends DCLogic {
     const pts = mdl ? [].concat.apply([], Object.keys(mdl.snaps).map((k) => mdl.snaps[k]).filter((q) => q && q.ring).map((q) => q.ring.map((p) => P(p[0], p[1])))) : [];
     const view = pts.length ? (() => { const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
       return { zoom: Math.max(0.4, Math.min(3, Math.min(390 / (x1 - x0 + 120), 330 / (y1 - y0 + 100)))), fx: (x0 + x1) / 2, fy: (y0 + y1) / 2 }; })() : { zoom: 1.1, fx: v.x - 30, fy: v.y + 40 };
-    const TN = { hot: ['#B84A00', 'rgba(184,74,0,0.14)'], warn: ['#B84A00', 'rgba(184,74,0,0.14)'], amber: ['#7A5600', 'rgba(122,86,0,0.14)'], ok: ['#1E7A34', 'rgba(52,199,89,0.14)'], watch: ['#00707A', 'rgba(0,112,122,0.14)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || TN.hot;
+    const TN = { hot: ['#963B00', 'rgba(184,74,0,0.14)'], warn: ['#963B00', 'rgba(184,74,0,0.14)'], amber: ['#745200', 'rgba(122,86,0,0.14)'], ok: ['#186B2D', 'rgba(52,199,89,0.14)'], watch: ['#00606A', 'rgba(0,112,122,0.14)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || TN.hot;
     const US = r ? /^[A-Z]{2}$/.test(r[0]) && r[0] !== 'PT' : false;
     const area = (ha) => (ha == null ? '—' : US ? String(Math.round(ha * 2.471)) : (ha < 10 ? String(Math.round(ha * 10) / 10).replace('.', PT ? ',' : '.') : String(Math.round(ha))));
     const aU = US ? 'acres' : 'ha';

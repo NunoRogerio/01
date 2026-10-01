@@ -22,8 +22,8 @@
     { en: 'Ongoing', pt: 'Em curso', c: '#B8360A', bg: '#FCE9E1', icon: 'route' },
     { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3141B', bg: '#FBE7E7', icon: 'flame' },
     { en: 'Resolving', pt: 'Em resolução', c: '#875800', bg: '#FAF0DA', icon: 'shield' },
-    { en: 'Concluding', pt: 'Em conclusão', c: '#1E7A34', bg: '#E4F3E8', icon: 'drop' },
-    { en: 'Surveillance', pt: 'Vigilância', c: '#00707A', bg: '#DFF1F2', icon: 'eye' },
+    { en: 'Concluding', pt: 'Em conclusão', c: '#186B2D', bg: '#E4F3E8', icon: 'drop' },
+    { en: 'Surveillance', pt: 'Vigilância', c: '#00606A', bg: '#DFF1F2', icon: 'eye' },
     { en: 'Closed', pt: 'Encerrada', c: '#3A3A3C', bg: '#ECECEF', icon: 'done' }
   ];
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#545458', bg: '#ECECEF', icon: 'x' };
@@ -92,7 +92,7 @@
 
   // ---- storage --------------------------------------------------------------------------------------------------
   var DB = null;
-  function load() { if (DB) return DB; try { DB = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; return DB; }
+  function load() { if (DB) return DB; try { DB = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
   function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
   function emit() { try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} }
   window.addEventListener('storage', function (e) { if (e.key === KEY) { DB = null; emit(); } });
@@ -161,7 +161,7 @@
     if (db.chats[k]) return db.chats[k];
     var now = Date.now();
     var stage = inc.kind === 'cand' ? 0 : stageFromCode(inc.sc);
-    var ch = { key: k, kind: inc.kind, incId: inc.id, place: inc.place || '', reg: inc.reg || '', st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0,
+    var ch = { key: k, kind: inc.kind, incId: inc.id, place: (window.__wfFireName ? window.__wfFireName(inc.place || '') : inc.place || ''), reg: inc.reg || '', st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0,
       x: inc.x, y: inc.y, note: inc.note || '', conf: inc.conf || null, src: inc.src || '', det: inc.det || null,
       stage: stage, startStage: stage, started: now, vNow: now, vAt: now, hist: [], people: [], stations: [], forces: [], air: null, evac: null,
       msgs: [], queue: [], seenAt: 0, beat: 0, flags: {}, closed: false, dismissed: false, updated: now };
@@ -271,7 +271,7 @@
     if (s >= 1) {
       me('Confirming the fire.', 'Confirmo o incêndio.', at(1));
       var c1 = cardAt(1, at(1) + 20000);
-      if (c1.rows) c1.rows.forEach(function (r, i) { r.r = s >= 2 ? (i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }) : r.r; r.rc = s >= 2 ? (i < 2 ? '#1E7A34' : '#875800') : r.rc; });
+      if (c1.rows) c1.rows.forEach(function (r, i) { r.r = s >= 2 ? (i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }) : r.r; r.rc = s >= 2 ? (i < 2 ? '#186B2D' : '#875800') : r.rc; });
       msg(1, 'Available now.', 'Disponíveis agora.', at(1) + MIN);
     }
     if (s >= 2) {
@@ -317,7 +317,7 @@
   function closePast(c) {
     var t7 = (c.hist.find(function (h) { return h.s === 7; }) || {}).vt || Date.now() - 86400000, now = Date.now(), P = c.people;
     var add = function (m, vt) { m.id = newId(); m.t = now - 1000; m.vt = vt; c.msgs.push(m); };
-    add({ kind: 'card', tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, close: true, done: 'close',
+    add({ kind: 'card', tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00606A', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, close: true, done: 'close',
       checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
       actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }, t7 - 3 * MIN);
     add({ kind: 'msg', from: 'me', en: 'Declaring the fire closed. Thank you all.', pt: 'Declaro o incêndio encerrado. Obrigado a todos.' }, t7 - MIN);
@@ -325,7 +325,7 @@
     (c.forces || []).forEach(function (f) { f.st = 'released'; }); if (c.air) c.air.st = 'released';
     var sc = stageCard(c, 7); sc.kind = 'card'; add(sc, t7);
     if (P[0]) add({ kind: 'msg', from: 0, en: 'Thanks everyone. Good work.', pt: 'Obrigado a todos. Bom trabalho.' }, t7 + 2 * MIN);
-    add({ kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#1E7A34' }, t7 + 3 * MIN);
+    add({ kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#186B2D' }, t7 + 3 * MIN);
     c.msgs.sort(function (a, b) { return a.vt - b.vt; });
     c.msgs.forEach(function (m) { m.t = Math.min(m.vt || m.t, now - DAY / 2); });   // a past fire: its messages belong to its own days
     c.sum = stats(c); award(c); c.seenAt = now; c.updated = t7;
@@ -472,7 +472,7 @@
       c.forces = c.stations.map(function (s, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
       c.forces.forEach(function (f) { f.st = f.si < 2 || f.extra ? 'enroute' : 'standby'; });
       var cm = c.msgs.filter(function (x) { return x.kind === 'card' && x.stage === 1; }).pop();
-      if (cm && cm.rows) cm.rows.forEach(function (r, i) { r.r = i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = i < 2 ? '#1E7A34' : '#875800'; });
+      if (cm && cm.rows) cm.rows.forEach(function (r, i) { r.r = i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = i < 2 ? '#186B2D' : '#875800'; });
       setStage(c, 2, 1500, 2);
     } else if (a === 'more') {
       c.flags.more = true; var r = c.reserve; me('Calling ' + r.short + ' as well.', 'Chamo também ' + r.short + '.');
@@ -522,7 +522,7 @@
       setStage(c, nx, 800, 0);
     } else if (a === 'closeCheck') {
       c.flags.closeCard = true;
-      card(c, { close: true, tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00707A', title: { en: 'Close fire', pt: 'Encerrar incêndio' },
+      card(c, { close: true, tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00606A', title: { en: 'Close fire', pt: 'Encerrar incêndio' },
         checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.flags.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.flags.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
         actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }, 400, 0);
     } else if (a === 'close') {
@@ -636,7 +636,7 @@
     setStage(c, 2, d + 3000, 2);
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
   }
-  function sentRows(c, rows) { rows.forEach(function (r, i) { var on = (c.sentIdx || []).indexOf(i) >= 0; r.r = on ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = on ? '#1E7A34' : '#875800'; }); }
+  function sentRows(c, rows) { rows.forEach(function (r, i) { var on = (c.sentIdx || []).indexOf(i) >= 0; r.r = on ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = on ? '#186B2D' : '#875800'; }); }
   // Orders sent from the dispatch screen for a fire whose chat is not open yet: kept until the chat is created
   function pend(inc, orders) {
     var db = load(), k = keyOf(inc);
@@ -965,7 +965,7 @@
           if (c.stage < 7) entry(c, c.stage, 0);
           else {
             if (c.people[0]) say(c, 0, 'Thanks everyone. Good work.', 'Obrigado a todos. Bom trabalho.', 2500, 1);
-            push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#1E7A34' }, 4000, 0);
+            push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#186B2D' }, 4000, 0);
           }
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
         else c.msgs.push(m);

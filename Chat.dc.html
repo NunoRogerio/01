@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=102"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=122"></script>
-<script src="i18n.js?v=117"></script>
-<script src="live.js?v=35"></script>
-<script src="chat.js?v=38"></script>
+<script src="prefs.js?v=123"></script>
+<script src="i18n.js?v=118"></script>
+<script src="live.js?v=36"></script>
+<script src="chat.js?v=39"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -178,7 +178,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{m.hasChecks}}" hint-placeholder-val="{{ false }}">
               <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0 16px 12px; list-style: none">
                 <sc-for list="{{m.checks}}" as="k" hint-placeholder-count="3">
-                  <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15px; line-height: 20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>{{k.t}}</li>
+                  <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 15px; line-height: 20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186B2D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>{{k.t}}</li>
                 </sc-for>
               </ul>
             </sc-if>
@@ -421,7 +421,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <article style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
             <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-              <span style="font-size: 15px; line-height: 20px; color: #1E7A34">{{a.kicker}}</span>
+              <span style="font-size: 15px; line-height: 20px; color: #186B2D">{{a.kicker}}</span>
               <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{a.place}}</span>
               <span style="font-size: 17px; line-height: 22px; color: #000000">{{a.line}}</span>
             </span>
@@ -622,7 +622,7 @@ class Component extends DCLogic {
 
     // Forces
     const stTxt = { standby: [L('Standby', 'Prevenção'), 'rgba(135,88,0,0.12)', '#875800'], enroute: [L('En route', 'A caminho'), 'rgba(184,54,10,0.12)', '#B8360A'], onscene: [L('On scene', 'No local'), 'rgba(179,20,27,0.10)', '#B3141B'],
-      watch: [L('On watch', 'Em vigilância'), 'rgba(0,112,122,0.12)', '#00707A'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
+      watch: [L('On watch', 'Em vigilância'), 'rgba(0,112,122,0.12)', '#00606A'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
     const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby');
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
@@ -644,7 +644,7 @@ class Component extends DCLogic {
       go: () => { const k = C.simulate(srcKey); if (!k) return; try { sessionStorage.setItem('wf-chat-open', k); if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: k, fromList: true, stack: [], sheet: false, hTab: 'all' }); } };
     const cmp = (mine, real, better, fmt, time) => { if (!B || mine == null || real == null) return { cmp: '', cmpD: 'none', cmpC: '#545458' }; const d = mine - real, good = better === 'less' ? d <= 0 : d >= 0;
       const w = time ? (d < 0 ? L('faster', 'mais rápido') : L('slower', 'mais lento')) : (d < 0 ? L('less', 'menos') : L('more', 'mais'));
-      return { cmp: Math.abs(d) < 1e-6 ? L('Same as the real fire', 'Igual ao real') : fmt(Math.abs(d)) + ' ' + w + L(' than the real fire', ' que o real'), cmpD: 'block', cmpC: good ? '#1E7A34' : '#B3141B' }; };
+      return { cmp: Math.abs(d) < 1e-6 ? L('Same as the real fire', 'Igual ao real') : fmt(Math.abs(d)) + ' ' + w + L(' than the real fire', ' que o real'), cmpD: 'block', cmpC: good ? '#186B2D' : '#B3141B' }; };
     const benchTxt = B ? L('Real fire: resolved in ', 'Incêndio real: resolvido em ') + C.dur(B.res) + ' · ' + (B.us ? B.acres + ' acres' : String(B.ha).replace('.', PTL ? ',' : '.') + ' ha') : '';
     // ----- resolution summary -----
     if (s.view === 'summary') {
@@ -654,7 +654,7 @@ class Component extends DCLogic {
         sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: B ? L('Drill complete', 'Simulação concluída') : L('Fire resolved', 'Incêndio resolvido'), headline: c.place, closedAt: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + (Z.est ? '~' : '') + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
           note: B ? L('Training drill against the real fire of ', 'Simulação contra o incêndio real de ') + dayTxt(B.t) + L('. Crew replies are role-played, and drills do not go into firefighters’ profiles.', '. As respostas das equipas são encenadas e as simulações não entram nos perfis dos bombeiros.') : '', noteD: B ? 'block' : 'none',
           get kPx() { return window.__wfKpiPx ? window.__wfKpiPx(this.kpis.map((k) => k.v), 2, 318) : '44px'; },
-          kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Response time', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Final duration', 'Duração final'), c: '#1E7A34', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
+          kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Response time', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Final duration', 'Duração final'), c: '#186B2D', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
             { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800', ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC', cmp: '', cmpD: 'none', cmpC: '#545458' }],
           forcesSub: (Z.est ? '~' : '') + Z.people + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + Z.veh + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
           me: { name: me.name, code: me.code, photo: photo(me) }, goOwner: openPerson(me.name) },
@@ -741,7 +741,7 @@ class Component extends DCLogic {
             ? (c.stations || []).map((x, i) => (m.rows || [])[i] || { a: x.short, b: (x.km < 10 ? (+x.km || 0).toFixed(1) : Math.round(x.km)) + ' km · ~' + (x.min || 0) + ' min', r: { en: 'Standby', pt: 'Prevenção' }, rc: '#875800', i })
             : (m.rows || [])).map((r0, i) => {
             // A station row always says what that station is doing now (the same state as Forces and the stage), never a stale snapshot
-            const FS = { standby: [{ en: 'Standby', pt: 'Prevenção' }, '#875800'], enroute: [{ en: 'En route', pt: 'A caminho' }, '#B8360A'], onscene: [{ en: 'On scene', pt: 'No local' }, '#B3141B'], watch: [{ en: 'On watch', pt: 'Em vigilância' }, '#00707A'], released: [{ en: 'Released', pt: 'Libertado' }, '#48484A'] };
+            const FS = { standby: [{ en: 'Standby', pt: 'Prevenção' }, '#875800'], enroute: [{ en: 'En route', pt: 'A caminho' }, '#B8360A'], onscene: [{ en: 'On scene', pt: 'No local' }, '#B3141B'], watch: [{ en: 'On watch', pt: 'Em vigilância' }, '#00606A'], released: [{ en: 'Released', pt: 'Libertado' }, '#48484A'] };
             const fo = m.stage === 1 && (c.forces || []).find((x) => x.si === (r0.i != null ? r0.i : i)), fx = fo && FS[fo.st];
             return fx ? Object.assign({}, r0, { r: fx[0], rc: fx[1] }) : r0; }).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '0' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
@@ -754,7 +754,7 @@ class Component extends DCLogic {
       }
     });
     // The team: you, the fire owner, then the crew coordinator of each station
-    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#1E7A34' }]
+    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
       .concat(c.people.map((p, i) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
