@@ -181,7 +181,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-stag{min-width:132px;justify-content:center;text-align:center}' +
     '.wf-qual{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;border-radius:0;background:rgba(118,118,128,0.12);color:#1C1C1E;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
     '.wf-qual svg{flex-shrink:0;scale:1.2}' +
-    '.wf-qual.hd{min-height:52px;padding:0 10px 0 16px!important;border-radius:26px!important}.wf-qual.hd [role=status],.wf-qual.hd .qtag{min-height:32px!important;padding:6px 12px!important;border-radius:16px!important;box-sizing:border-box}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
+    '.wf-qual.hd{min-height:52px;padding:0 4px 0 16px!important;border-radius:26px!important}.wf-qual.hd [role=status],.wf-qual.hd .qtag{min-height:44px!important;padding:12px 16px!important;border-radius:22px!important;box-sizing:border-box}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
     // On a card the band is the top row, edge to edge, with the round X at its end
     '.wf-qual.top{min-height:56px;padding:8px 8px 8px 16px;border-radius:14px 14px 0 0}.wf-qual.top>span{flex-grow:1;min-width:0;overflow:hidden;text-overflow:ellipsis}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
