@@ -150,9 +150,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <span style="margin: 8px 16px 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
         <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 16px; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{rs.emptyTxt}}</p></sc-if>
-        <ul style="display: {{rs.listD}}; flex-direction: column; margin: 0 16px; padding: 0; list-style: none; border-top: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <ul style="display: {{rs.listD}}; flex-direction: column; gap: 8px; margin: 0 16px; padding: 0; list-style: none">
           <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
-            <li>
+            <!-- each vehicle, crew or aircraft is its own white card, 8px apart -->
+            <li style="border-radius: 16px; background: #FFFFFF; overflow: hidden">
               <button type="button" class="strow2" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto {{r.chevW}}; gap: 2px 12px; align-items: center; width: 100%; min-height: 60px; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
@@ -196,20 +197,23 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{sq.sub}}</span>
       </div>
-      <button type="button" class="mbtn" onClick="{{sq.close}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+      <!-- No X: the grabber closes the dialog. The command team's group chat (the primary action) sits here as a round primary button -->
+      <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{sq.hdChatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{sq.bN}}</span></button>
     </div>
-    <ul style="display: flex; flex-direction: column; min-height: 0; margin: 0 -16px; padding: 0; list-style: none; overflow-y: auto; border-top: 0">
+    <ul style="display: flex; flex-direction: column; gap: 8px; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto">
       <sc-for list="{{sq.people}}" as="p" hint-placeholder-count="5">
-        <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 16px; box-sizing: border-box">
+        <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
             <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
             <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
           </span>
+          <!-- The crew chief's card carries the chat (the screen's primary action): a round primary button with the chat icon -->
+          <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{p.chatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-left: auto; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -8px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #FFFFFF; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{sq.bN}}</span></button>
         </li>
       </sc-for>
     </ul>
-    <button type="button" class="btn primary" onClick="{{sq.chat}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 48px; margin: 56px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg>{{sq.chatLbl}}<span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -6px; right: -2px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; -webkit-text-fill-color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{sq.bN}}</span></button>
+    
   </section>
 
   <!-- Cards picker: the key figures with toggles -->
@@ -416,7 +420,7 @@ class Component extends DCLogic {
     const sqK = s0.sq || '', sqC = /^c\d+$/.test(sqK) ? crews[Number(sqK.slice(1))] : null, sqOn = sqK === 'cmd' || !!sqC;
     const sq = { y: sqOn ? '0%' : '105%', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
       title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.veh + '.' : org,
-      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700 })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700 }))).map((p) => ({ ...p, code: ini(p.name), photo: photo(p.name) })),
+      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700 })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700 }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 ? 'flex' : 'none' })), hdChatD: sqC ? 'none' : 'flex',
       chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat, ...bdg(unr(sqC ? 'crew-' + S.id + '-' + sqC.name : 'cmd-' + S.id)),
       chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
 
