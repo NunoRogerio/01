@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=110"></script>
-<script src="i18n.js?v=107"></script>
+<script src="prefs.js?v=111"></script>
+<script src="i18n.js?v=108"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=33"></script>
 
@@ -220,10 +220,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: {{hdChatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0 4px 0 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{chat.n}}</span></a>
   </header>
   <!-- Two tabs over the map: Fire (the map and the fire's analysis) and Resources (everything about crews and orders, full width) -->
-  <div role="tablist" aria-label="Fire page" class="wf-seg" style="display: {{ft.d}}; margin: 0 16px 12px">
-    <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{ft.x}})"><span class="segblob"></span></span>
-    <button type="button" role="tab" class="segopt" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" style="font-size: 17px">Fire</button>
-    <button type="button" role="tab" class="segopt" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" style="font-size: 17px">Resources</button>
+  <div role="tablist" aria-label="Fire page" class="wf-tabs" style="display: {{ft.d}}; margin: -4px 16px 0">
+    <span class="tabbar" aria-hidden="true" style="width: 50%; transform: translateX({{ft.x}})"></span>
+    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}">Situation</button>
+    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}">Crews</button>
   </div>
   </div>
 
@@ -501,7 +501,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <li data-wf-res="1" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
           <!-- Section label as in the user preferences: label style, 8px to its content -->
           <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 4px 8px">
-            <h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Resources</h3>
+            <h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Crews</h3>
             <span class="wf-note" style="display: {{d.sumD}}">Estimate</span>
           </span>
           <!-- What the coordinator watches: how many units are wearing out, not totals -->
@@ -629,7 +629,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- Actions: side by side on one row for a viewed fire (saves a row), stacked otherwise -->
     <div style="position: relative; display: flex; flex-direction: {{actDir}}; gap: {{actGap}}; flex-shrink: 0; padding: 16px 16px 0">
     <!-- A fire confirmed here with no resources yet: a floating pill takes you down to Resources, where they are added -->
-    <button type="button" class="mbtn" onClick="{{rh.go}}" aria-label="Add resources. Go to Resources" style="position: absolute; left: 50%; bottom: calc(100% + 12px); z-index: 5; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; box-sizing: border-box; border: 0; border-radius: 999px; background: #FFFFFF; box-shadow: 0 0 0 1.4px #3A3A3C, 0 6px 20px rgba(0,0,0,0.16); color: #000000; font: inherit; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer; opacity: {{rh.op}}; pointer-events: {{rh.pe}}; transform: translate(-50%, {{rh.y}}); transition: opacity .3s ease, transform .4s cubic-bezier(.2,.8,.2,1)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>Add resources</button>
+    <button type="button" class="mbtn" onClick="{{rh.go}}" aria-label="Add crews. Go to Crews" style="position: absolute; left: 50%; bottom: calc(100% + 12px); z-index: 5; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; box-sizing: border-box; border: 0; border-radius: 999px; background: #FFFFFF; box-shadow: 0 0 0 1.4px #3A3A3C, 0 6px 20px rgba(0,0,0,0.16); color: #000000; font: inherit; font-size: 17px; font-weight: 600; white-space: nowrap; cursor: pointer; opacity: {{rh.op}}; pointer-events: {{rh.pe}}; transform: translate(-50%, {{rh.y}}); transition: opacity .3s ease, transform .4s cubic-bezier(.2,.8,.2,1)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>Add crews</button>
     <!-- This fire's incident chat: the same button as on the ignition candidate screen (Team chat) -->
     <div style="display: {{chat.rowD}}; flex: 1 1 0; min-width: 0">
       <a href="Chat.dc.html" class="btn primary" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box; font-size: 17px; font-weight: 600; text-decoration: none; white-space: nowrap; position: relative"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>{{chat.label}}<span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a>
@@ -1032,25 +1032,20 @@ class Component extends DCLogic {
     }) };
   }
   renderVals() {
-    // Fire page tabs: Fire keeps the map and the fire's analysis; Resources takes every crew, order and resource figure, full width
+    // Fire page tabs: Situation keeps the map and the fire's analysis; Crews holds the crews' alerts and station management, full width
     const o = this._renderVals0(), st = this.state || {};
     if (o.pgMapD !== 'block') return Object.assign(o, { ft: { d: 'none', x: '0%', fireSel: 'true', resSel: 'false', goFire: () => {}, goRes: () => {} } });
     const res = st.ftab === 'res', go = (t) => () => { if ((st.ftab || 'fire') === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
     o.ft = { d: 'grid', x: res ? '100%' : '0%', fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res') };
-    const RES_G = { forces: 1, res: 1, st: 1 };
-    let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx || d.stc || RES_G[d.g] || (d.item && !d.g && !d.src) ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
+    // Crews: only the crews section (the two wear-out alerts, then adding, editing and removing stations); everything else is Situation
+    let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
     o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
-    const RK = { pers: 1 };
-    if (o.cc && Array.isArray(o.cc.med)) { o.cc = Object.assign({}, o.cc, { med: o.cc.med.filter((m) => !!RK[m.key] === res) }); if (!o.cc.med.length && res) o.cc.medD = 'none'; }
     if (res) {
-      o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none';
-      if (o.cc) o.cc = Object.assign({}, o.cc, { bigD: 'none', tagD: 'none', trD: 'none', bch: Object.assign({}, o.cc.bch || {}, { svgD: 'none' }) });
+      o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none'; o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none';
+      if (o.cc) o.cc = Object.assign({}, o.cc, { d: 'none' });
       if (o.floc) o.floc = Object.assign({}, o.floc, { d: 'none' });
       if (o.rh) o.rh = Object.assign({}, o.rh, { op: 0, pe: 'none' });
-    } else {
-      o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none';
-      if (o.rh) o.rh = Object.assign({}, o.rh, { go: go('res') });   // the Add resources pill opens the Resources tab
-    }
+    } else if (o.rh) o.rh = Object.assign({}, o.rh, { go: go('res') });   // the Add crews pill opens the Crews tab
     return o;
   }
   _renderVals0() {
@@ -1538,7 +1533,7 @@ class Component extends DCLogic {
           if (d.conf && !inlSent) d.sum = st.length ? [{ v: '0 of ' + c, l: 'Crews need relief', c: '#3A3A3C' }].concat(t ? [{ v: '0 of ' + t, l: 'Tenders below 20% water', c: '#3A3A3C' }] : []) : [];
           d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf ? 'flex' : 'none'; d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
         return {
-          pl: { addCnt: 'Add resources (' + (ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length + (inPlan('air') ? 0 : 1)) + ')', inlCards: (s.inlPh || 0) >= 3 ? cards.slice().reverse() : [], inlActD: (s.inlPh || 0) >= 3 && plan.length && !inlSent ? 'grid' : 'none', resCards: confP && !inlSent ? cards.slice().reverse() : [], resActD: confP && !inlSent && plan.length ? 'grid' : 'none', avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(),
+          pl: { addCnt: 'Add crews (' + (ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length + (inPlan('air') ? 0 : 1)) + ')', inlCards: (s.inlPh || 0) >= 3 ? cards.slice().reverse() : [], inlActD: (s.inlPh || 0) >= 3 && plan.length && !inlSent ? 'grid' : 'none', resCards: confP && !inlSent ? cards.slice().reverse() : [], resActD: confP && !inlSent && plan.length ? 'grid' : 'none', avail: (() => { const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length; return n + ' available'; })(),
             addDis: ordered.some((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)) || !inPlan('air') ? 'false' : 'true',   /* nothing left to add: Add is disabled */ cards: cards.slice().reverse(), count: plan.length ? plan.length + (plan.length === 1 ? ' chosen' : ' chosen') : '', addLbl: 'Add resources',
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
