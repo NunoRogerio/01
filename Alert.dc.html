@@ -180,6 +180,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1">
       <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-bg-tap="{{bgTap}}" close-x="true" pin-grow="{{cp.h}}" mode="pin" pin-close="16" locked="true" no-view="true" no-routes="true" st-names="true" cams="{{noCams}}" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-left="{{mapCL}}" clip-right="{{mapCR}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
     </div>
+    <!-- The projection switcher on the full-screen map too, in the dark map-control style (dark glass, white options, the
+         hi-vis yellow on the chosen one), lined up with the map's buttons at the bottom, left of them -->
+    <div role="tablist" aria-label="Projection" class="wf-seg" data-wf-cpfull="1" style="position: absolute; left: 16px; right: 136px; top: -200px; z-index: 30; display: {{cp.fullD}}; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 4); transform: translateX({{cp.x}})"><span class="segblob"></span></span>
+      <sc-for list="{{cp.tabs}}" as="tb" hint-placeholder-count="4">
+        <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fg}}">{{tb.label}}</button>
+      </sc-for>
+    </div>
   </sc-if>
     <!-- On the full-screen map the feed keeps the band's size and floats over the map; it comes out from behind the drone button the
          same way, and drags anywhere (portrait or landscape) -->
@@ -896,8 +904,13 @@ class Component extends DCLogic {
     // Projection switcher under the candidate's map, as on a fire's page: Now (the marker only) / +1 h / +3 h / +6 h, where the map
     // shows the shape the ignition would burn if it is a fire, grown from the marker by the forecast wind and temperature there
     const on = o.gpsD && o.gpsD !== 'none', HZ = [0, 1, 3, 6], h = on ? ((this.state || {}).chz || 0) : 0;
-    o.cp = { d: on ? 'grid' : 'none', gpsMt: on ? '0' : '-40px', h: String(h), x: (HZ.indexOf(h) * 100) + '%',
-      tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, pick: () => { if (((this.state || {}).chz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chz: k }); } })) };
+    o.cp = { d: on ? 'grid' : 'none', fullD: on && o.downPE === 'none' ? 'grid' : 'none', gpsMt: on ? '0' : '-40px', h: String(h), x: (HZ.indexOf(h) * 100) + '%',
+      tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fg: k === h ? '#1C1C1E' : '#FFFFFF', pick: () => { if (((this.state || {}).chz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chz: k }); } })) };
+    // full screen: line the switcher up with the map's buttons (same centre line), left of the first one, once laid out
+    clearTimeout(this._cpT); this._cpT = setTimeout(() => { try { const sw = document.querySelector('[data-wf-cpfull]'); if (!sw || sw.offsetParent === null) return;
+      const host = sw.parentElement.getBoundingClientRect(), bs = [...sw.parentElement.querySelectorAll('button.mbtn')].filter((b) => /Send drone|Close map|Exit full screen|Full screen/.test(b.getAttribute('aria-label') || '') && b.offsetWidth).map((b) => b.getBoundingClientRect()).filter((r) => r.bottom > host.top + host.height / 2);
+      if (!bs.length) return; const left = Math.min(...bs.map((r) => r.left)), mid = (bs[0].top + bs[0].bottom) / 2, k = host.width / (sw.parentElement.offsetWidth || host.width) || 1;
+      sw.style.top = ((mid - host.top) / k - sw.offsetHeight / 2) + 'px'; sw.style.right = ((host.right - left) / k + 8) + 'px'; } catch (e) {} }, 60);
     return o;
   }
   _renderVals0() {
