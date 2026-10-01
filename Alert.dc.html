@@ -1122,7 +1122,7 @@ class Component extends DCLogic {
       mapIgn: [cur].map((c) => ({ id: c.id, x: c.x, y: c.y, place: c.place, conf: c.conf, src: c.src })),   // only this candidate and its suggested stations
       mapFires: [], noCams: [],
       cycleTo: (id) => this.setState({ focusId: id, confirm: false }),
-      ...(() => { const V = window.__wfVP || {}, L = !!V.land; return { mapW: L ? V.w : 390, mapH: L ? V.h : 844, fsW: L ? V.w : 390, fsH: L ? V.h : 844, mapCL: L ? (V.sl || 0) : 0, mapCR: L ? (V.sr || 0) : 0 }; })(), zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
+      ...(() => { const V = window.__wfVP || {}, L = !!V.land; return { mapW: L ? V.w : 390, mapH: L ? V.h : 844, fsW: L ? V.w : 390, fsH: L ? V.h : 844, mapCL: L ? (V.sl || 0) : 0, mapCR: L ? Math.min(V.sr || 0, 16) : 0 }; })(), zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
       full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && onMap, figD: hasFig ? 'block' : 'none', panelMt: hasFig ? '-28px' : '8px', ddTop: this._hdrB || 92, panelSh: hasFig ? '0 -4px 16px rgba(0,0,0,0.08)' : 'none',
       openMap: () => this.setState({ tab: 'map', full: true, dd: false }),
       toggleFull: () => { const st = this.state || {}; this.setState(st.full && st.tab === 'map' ? { full: false, tab: null } : { full: !st.full }); },   // reads the live state: the map may hold an older copy of this handler
@@ -1168,8 +1168,8 @@ class Component extends DCLogic {
         const bf = mk(bOn, 'translate(252px, 162px) scale(0.1788)', 'none');   /* starts as a 64 x 36 feed centred on the drone button (300, 196 in the band) */
         // full screen: 16px from the sides, its bottom above the map controls; the drone button sits 46px above the bottom, at x 300
         // Portrait or landscape: placed from the live screen size and its safe areas (landscape full screen is as wide and tall as the phone turned)
-        const VP = window.__wfVP || {}, LND = !!VP.land, RW = LND ? (VP.w || 844) : 390, RH = LND ? (VP.h || 390) : (this._rootH || 844), SL = LND ? (VP.sl || 0) : 0, SR = LND ? (VP.sr || 0) : 0;
-        const top0 = RH - (LND ? 24 : 76) - 202, left0 = 16 + SL, cx = RW - SR - 90;   /* cx: the drone button's centre */
+        const VP = window.__wfVP || {}, LND = !!VP.land, RW = LND ? (VP.w || 844) : 390, RH = LND ? (VP.h || 390) : (this._rootH || 844), SL = LND ? (VP.sl || 0) : 0, SR = 0, CR = LND ? Math.min(VP.sr || 0, 16) : 0;   /* the feed may go to 8px from the right edge; the controls sit 32px from it */
+        const top0 = RH - (LND ? 24 : 76) - 202, left0 = 16 + SL, cx = RW - CR - 90;   /* cx: the drone button's centre */
         const dxMin = 8 - left0, dxMax = RW - SR - 358 - 8 - left0, dyMin = (LND ? 8 : 64) - top0, dyMax = RH - 202 - 8 - top0;
         const dx = Math.max(dxMin, Math.min(dxMax, this._fdx || 0)), dy = Math.max(dyMin, Math.min(dyMax, this._fdy || 0));
         this._fB = { dxMin, dxMax, dyMin, dyMax };
