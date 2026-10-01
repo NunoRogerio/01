@@ -515,3 +515,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - **Demo profile list (Oct 1):** no snapping; it scrolls freely with the phone's own momentum, and the list ends with a normal 32px margin.
 - **Invite link (Oct 1):** no Copy button: Share is full width; the grey link box shows the whole link plus one row holding the copy icon on the right, and a tap anywhere on the box copies it. The dark tooltip (as on chat people) says "Copied to clipboard" above the icon and the icon turns to a check for 1.8 s.
+- **Confirm fire? dialog (Oct 1):** a full-width primary "Chat with the team first" sits above Dismiss fire | Confirm fire (24px apart) and opens the candidate's team chat, so the team can talk before deciding.
+- **Ignition candidate stage (Oct 1):** the stage spectrum starts on the lightest lime (#F7FCDC, a shade lighter than First alert) with dark grey text and the outline circle, not grey; it applies wherever the stage tag shows.
+- **Fire map band (Oct 1):** a tap that moves a hair still reaches the map's buttons and legend; a new touch forgets fingers left over from a pinch, so the map keeps answering after a zoom.

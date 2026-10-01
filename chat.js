@@ -17,7 +17,7 @@
 
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
   var STAGES = [
-    { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#3A3A3C', bg: '#ECECEF', icon: 'cand' },   // as on the map: the dark outline circle, neutral tint
+    { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#3A3A3C', bg: '#F7FCDC', icon: 'cand' },   // the dark outline circle as on the map, on the spectrum's lightest lime (a shade lighter than First alert)
     // The stages run along one spectrum: lime (first alert), yellow-orange, red-orange, blue, light green, dark green, grey (closed)
     { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#4F5C00', bg: '#EEF9A8', icon: 'alert' },
     { en: 'Ongoing', pt: 'Em curso', c: '#8A4B00', bg: '#FDE7C4', icon: 'route' },
