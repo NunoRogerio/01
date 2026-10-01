@@ -561,7 +561,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{gp.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
               </button></li>
-              <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none">
+              <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">   <!-- a full-width line between the station and its units -->
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">
               <!-- Unit row: the icon in the crest's column; the name and its description in full, then the status on its own line: the tag (one width for all) and the eight level bars -->
               <li class="wf-unit" style="display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 2px 16px; padding: 12px 16px">
@@ -570,7 +570,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
                 <span style="grid-column: 2; display: flex; align-items: center; gap: 12px; margin-top: 6px">
                 <span class="wf-stag" style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
-                <svg role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" width="30" height="28" viewBox="0 0 30 28" style="display: {{u.batD}}; flex-shrink: 0"><path d="{{u.batLo}}" fill="#C7C7CC"></path><path d="{{u.batHi}}" fill="#000000"></path></svg></span>
+                <svg role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" width="30" height="28" viewBox="0 0 30 28" style="display: none; flex-shrink: 0"><path d="{{u.batLo}}" fill="#C7C7CC"></path><path d="{{u.batHi}}" fill="#000000"></path></svg></span>
                 <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
                   <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{u.pct}}%; border-radius: 999px; background: #3A3A3C"></span>
                 </span>
@@ -1131,9 +1131,11 @@ class Component extends DCLogic {
     o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
     // Crews cards: one group like Key figures (order and hidden cards kept on the phone, + opens the list with toggles)
     o.deployed = o.deployed.map((d) => { if (!d.fx) return d;
+      // Crews, Vehicles and People by default; the rest are optional (off until switched on in the picker). No Stations card.
+      try { if (!localStorage.getItem('wf-crew-v2')) { ['wf-hide-crew', 'wf-seen-crew', 'wf-order-crew'].forEach((k) => localStorage.removeItem(k)); localStorage.setItem('wf-crew-v2', '1'); } } catch (e) {}
       const all = [{ key: 'st', l: 'Stations', c: '#3A3A3C' }, { key: 'cr', l: 'Crews', c: '#3A3A3C' }, { key: 'veh', l: 'Vehicles', c: '#3A3A3C' }, { key: 'ppl', l: 'People', c: '#3A3A3C' }]
-        .map((q, i) => ((d.cnt || [])[i] ? { ...q, v: d.cnt[i].v } : null)).filter(Boolean)
-        .concat((d.sum || []).map((k) => ({ key: k.key ? k.key : /relief/i.test(k.l) ? 'relief' : /water/i.test(k.l) ? 'water' : k.l, l: k.l, v: k.v, c: k.c || '#3A3A3C' })));
+        .map((q, i) => ((d.cnt || [])[i] ? { ...q, v: d.cnt[i].v } : null)).filter((q) => q && q.key !== 'st')
+        .concat((d.sum || []).map((k) => ({ key: k.key ? k.key : /relief/i.test(k.l) ? 'relief' : /water/i.test(k.l) ? 'water' : k.l, l: k.l, v: k.v, c: k.c || '#3A3A3C', opt: true })));
       const vis = this.wfGrpNote('crew', all); let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-crew') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : all.map((m) => m.key);
       const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }, colW = 98;
       const kc = all.filter((m) => vis(m.key)).sort((a, b) => ix(a.key) - ix(b.key)).map((m) => ({ ...m, k: Math.max(16, Math.min(30, Math.floor(colW / Math.max(1, String(m.v).length * 0.6)))) + 'px', ...this.wfKpiDrag(m.key, 'crew') }));
