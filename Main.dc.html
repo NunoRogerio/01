@@ -433,7 +433,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- Top row, fixed (outside the scroll): the small brand (symbol and name, medium grey) on the left, aligned with the close button on the right;
          then 40px of space and the profile card at full width -->
     <!-- Brand centred (8% larger), balanced by an empty 40px column on the left -->
-    <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; flex-shrink: 0; margin-top: {{pfAv.rowDy}}px; padding: 0 16px 16px; opacity: {{pfInOp}}; transition: opacity .3s ease {{pfInDelay}}">
+    <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; flex-shrink: 0; margin-top: {{pfAv.rowDy}}px; padding: 0 {{pfAv.rowPr}}px 16px 16px; opacity: {{pfInOp}}; transition: opacity .3s ease {{pfInDelay}}">
       <span aria-hidden="true"></span>
       <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; justify-self: center; gap: 8px; min-width: 0; transform: scale(1.08); color: #6E6E73; font-size: 17px; font-weight: 600; letter-spacing: 0.02em; line-height: 22px; white-space: nowrap">
         <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
@@ -664,10 +664,13 @@ class Component extends DCLogic {
       return { top: Math.round((q.top - O.top) / k), left: Math.round((q.left - O.left) / k) }; } catch (x) { return null; } }
   // Keeps the fixed profile picture exactly on its spot: measured from the top bar before opening, then checked against the
   // panel's own spacer once the panel has settled (and again when the screen size changes), so it can never drift off.
-  wfPfAvFix() { try { const ov = document.querySelector('[data-pf-av]'), sp = document.querySelector('[data-pf-av-spot]'); if (!ov || !sp || !this.state.pf) return;
-      const O = ov.offsetParent.getBoundingClientRect(), R = document.querySelector('[data-wfroot]').getBoundingClientRect(), k = R.width / ((window.__wfVP || {}).w || 390) || 1, q = sp.getBoundingClientRect();
-      const av = { top: Math.round((q.top - O.top) / k), left: Math.round((q.left - O.left) / k) }, c = this.state.pfAvPos || {};
-      if (Math.abs((c.top || 0) - av.top) > 1 || Math.abs((c.left || 0) - av.left) > 1) this.setState({ pfAvPos: av }); } catch (x) {} }
+  wfPfAvFix() { try { const ov = document.querySelector('[data-pf-av]'), sp = document.querySelector('[data-pf-av-spot]'); if (!ov || !sp) return;
+      // The X never moves from the profile picture's spot: the panel's top row (Forest Fire Watch and the spot) is moved to it
+      // instead. Measured with offsets (not screen rects), so the panel's slide does not matter and it is right before it shows.
+      const P = ov.offsetParent; let t = 0, l = 0, e = sp; while (e && e !== P) { t += e.offsetTop; l += e.offsetLeft; e = e.offsetParent; } if (e !== P) return;
+      const c = this.state || {}, av = c.pfAvPos || this._pfAvLast; if (!av) return;
+      const dy = av.top - t, dx = l - av.left, rd = (c.pfRowDy != null ? c.pfRowDy : 11) + dy, rp = (c.pfRowPr != null ? c.pfRowPr : 16) + dx;
+      if (Math.abs(dy) > 0.5 || Math.abs(dx) > 0.5) this.setState({ pfRowDy: rd, pfRowPr: rp }); } catch (x) {} }
   // The top blade's real height (it grows with its header: larger text, longer names, a resized screen); the panels that
   // fold into it (area picker, search) and the map's top edge follow it instead of a fixed 163px
   wfTopWatch() { const m = () => { const e = document.querySelector('[data-wf-topbg]'); if (!e) return; const h = Math.round(e.offsetHeight); if (h > 40 && h !== this._tbh) { this._tbh = h; try { this.forceUpdate(); } catch (x) {} } };
@@ -785,7 +788,7 @@ class Component extends DCLogic {
     return {
       me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
       // the fixed profile picture: where the top bar has it (measured on open), shown while the panel is open or closing
-      pfAv: (() => { const P = s.pfAvPos || this._pfAvLast || { top: 15, left: ((window.__wfVP || {}).w || 390) - 56 }; this._pfAvLast = P; return { top: P.top, left: P.left, rowDy: 11, op: pf ? 1 : 0, delay: pf ? '.15s' : '0s', ring: pf ? 1 : 0 }; })(),
+      pfAv: (() => { const P = s.pfAvPos || this._pfAvLast || { top: 15, left: ((window.__wfVP || {}).w || 390) - 56 }; this._pfAvLast = P; return { top: P.top, left: P.left, rowDy: s.pfRowDy != null ? s.pfRowDy : 11, rowPr: s.pfRowPr != null ? s.pfRowPr : 16, op: pf ? 1 : 0, delay: pf ? '.15s' : '0s', ring: pf ? 1 : 0 }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none', pfScrimOp: pf ? 1 : 0, pfDy: 0, pfCl: this.wfDrag('pf').y ? Math.max(0, -this.wfDrag('pf').y) : -80, pfClT: this.wfDrag('pf').y ? '0s' : '.3s', hPf: this.wfHandle('pf', 'up', () => this.setState({ pf: false })),
       pfY: pf ? '0%' : '-104%', pfDur: boot ? '0s' : pf ? '.55s' : '.45s', pfEase: pf ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)',
       pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
@@ -894,7 +897,7 @@ class Component extends DCLogic {
           note: !key ? T('Save your Anthropic key above first: the link carries it.', 'Guarde primeiro a sua chave Anthropic acima: a ligação leva-a consigo.')
             : T('The link carries your key: calls from invited phones use your credit. Send it privately, only to people you trust. To cut everyone off, replace the key in the Anthropic console.', 'A ligação leva a sua chave: as chamadas dos telemóveis convidados usam o seu crédito. Envie-a em privado, só a quem confia. Para cortar o acesso a todos, substitua a chave na consola Anthropic.') }; })(),
       openPrefs: () => { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {}   // user preferences always open at the top (lists and the area picker keep their place)
-        const av = this.wfPfAvPos(); this.setState(av ? { pf: true, pfSpin: false, pfAvPos: av } : { pf: true, pfSpin: false }); clearTimeout(this._pfFixT); this._pfFixT = setTimeout(() => this.wfPfAvFix(), 620); },
+        const av = this.wfPfAvPos(); this.setState(av ? { pfAvPos: av } : {}, () => { this.wfPfAvFix(); this.setState({ pf: true, pfSpin: false }); }); },
       closePrefs: () => { if (this._pfT) return; this.setState({ pfSpin: true }); this._pfT = setTimeout(() => { this._pfT = null; this.setState({ pf: false, pfSpin: false }); if (this.wfPanelReturn()) return; setTimeout(() => { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {} }, 520); }, 280); },
       pfGroups: [
         group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', '日本']], (l) => { if (window.__wfSetLang) window.__wfSetLang(l); }),
