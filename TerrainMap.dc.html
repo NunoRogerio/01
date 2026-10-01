@@ -338,7 +338,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: {{legRightCss}}; top: calc({{legTopC}}px - 6px); box-sizing: border-box; padding: 6px 8px 14px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{legBg}}; box-shadow: {{legSh}}; color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer">
-        <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.glowD}}" fill="none" stroke="#E8590C" stroke-opacity="0.35" stroke-width="3" stroke-linecap="round" style="filter: blur(0.9px)"></path><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
+        <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.glowD}}" fill="none" stroke="#E8590C" stroke-opacity="0.35" stroke-width="3" stroke-linecap="round" style="filter: blur(0.9px)"></path><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}<span style="display: {{lg.nD}}; margin-left: 8px; font-weight: 600; color: #3A3A3C; font-variant-numeric: tabular-nums">{{lg.n}}</span>
       </button>
     </sc-for>
   </div>
@@ -1098,7 +1098,7 @@ class Component extends DCLogic {
       { d: I.h, rot: 0, txt: Math.round(d.relative_humidity_2m) + '%', aria: 'Humidity ' + Math.round(d.relative_humidity_2m) + '%' },
       { d: I.w, rot: ((d.wind_direction_10m || 0) + 180) % 360, txt: WS + ' ' + from, aria: 'Wind ' + WS + ' from ' + from }] };
   }
-  legendItems(has) {
+  legendItems(has, NC) {
     const LY = this.layers(), Y10 = ((h) => { h = String(h || '#E5FF00').replace('#', ''); return 'rgba(' + [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',') + ',0.2)'; })(window.__wfY), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
       ['cands', 'Ignition candidates', 'M7 2.6a4.4 4.4 0 1 1 0 8.8a4.4 4.4 0 1 1 0-8.8Z', Y10, '#3A3A3C'],
@@ -1112,9 +1112,10 @@ class Component extends DCLogic {
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
             const C = false, off = (c) => (on ? c : 'none');
-      return { label, d, sw: k === 'cands' ? 1.8 : (k === 'burn' || k === 'active' || k === 'held') ? 1 : 1.3, glowD: k === 'active' && on ? 'M1.5 8.3C4 2.8 9 9.8 12.5 3.3' : '', fill: on ? fill : 'none', stroke: on || stroke === 'none' ? stroke : '#8E8E93', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
+      const n = NC && NC[k] != null ? String(NC[k]) : '';
+      return { n, nD: n ? 'inline' : 'none', label, d, sw: k === 'cands' ? 1.8 : (k === 'burn' || k === 'active' || k === 'held') ? 1 : 1.3, glowD: k === 'active' && on ? 'M1.5 8.3C4 2.8 9 9.8 12.5 3.3' : '', fill: on ? fill : 'none', stroke: on || stroke === 'none' ? stroke : '#8E8E93', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
-        aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
+        aria: label + (n ? ', ' + n : '') + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
     });
   }
   // The widest view the map serves: the whole state or country of the selected area (California, Portugal), never just
@@ -1580,7 +1581,12 @@ class Component extends DCLogic {
       burnFx: !MANY && !window.__wfLiveMap && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
-        const legend = this.legendItems(has); const optOpen = !!window.__wfCtrlOpen;
+        /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */
+        const NC = isRisk ? (() => { const F = Array.isArray(p.fires) ? p.fires : [], nRes = F.filter((g) => g.info && g.info.resolved).length;
+          const sk = (p.scopeSt || '') + '|' + (p.scopeCo || ''), SFc = this.stationFile(); let nSt = this._stCnt && this._stCnt.k === sk ? this._stCnt.n : null;
+          if (nSt == null && SFc && SFc.pts) { const inSc = this.inScopeFn(); nSt = inSc ? SFc.pts.filter((q) => inSc(q[0], q[1])).length : SFc.pts.length; this._stCnt = { k: sk, n: nSt }; }
+          return { cands: Array.isArray(p.ignitions) ? p.ignitions.length : null, fires: F.length - nRes, resolved: nRes, stations: nSt }; })() : {};
+        const legend = this.legendItems(has, NC); const optOpen = !!window.__wfCtrlOpen;
         const HLAND = this.W() > this.H() * 1.2, HDR = p.mode !== 'pin' && !!p.mapTitle && !!p.mapKind, HDRH = HLAND ? 76 : 136;   /* the fire header: 16 + 44 + 16 in one row; upright 16 + 44 + 16 + 44 + 16 */
         const FULL0 = p.isFull === true || p.isFull === 'true';
         const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0 && !(FULL0 && p.mapTitle), TT = HDR ? HDRH + 32 : (FULL0 && p.mapTitle) ? (p.mapSub ? 76 : 54) + 32 : hasT ? 66 : 0;   /* full screen: the legend column 32px under the title box or the fire header */   // pin: the legend sits inside the title box, under its text

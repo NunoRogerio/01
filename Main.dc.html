@@ -1342,7 +1342,7 @@ class Component extends DCLogic {
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
       ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,
       /* full screen: the map is titled with the place in view and the level above it (county > state > country; a country has none) */
-      mapTtl: s.full ? scope.title : '', mapSub: s.full ? (coObj ? stObj.name : stObj.id === 'US' || stObj.id === stObj.country || stObj.id === 'PT' ? '' : stObj.country === 'US' ? 'United States' : stObj.country === 'BRA' ? 'Brazil' : ((DATA.find((d) => d.id === stObj.country) || {}).name || '')) : '',
+      mapTtl: s.full ? scope.title : '', mapSub: s.full ? (coObj ? stObj.name : stObj.n ? stObj.n + ((stObj.id === 'US' || stObj.id === 'AMZ' || stObj.id === 'BRA') ? ' states' : stObj.id === 'PT' ? ' districts' : stObj.country === 'US' ? ' counties' : ' regions') : '') : '',   /* full-screen map card: the area and how many subdivisions it has ("58 counties") */
       full: !!s.full, toggleFull: () => this.setState({ full: !s.full, list: false }),
       padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : (this._tbh || 163)), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : L.barH + 23, ctrlTop: 422,
       clipL: L.side && !s.full ? L.colL + L.colW : L.sl, clipR: Math.min(L.sr || 0, 16),   /* landscape: the right side has no camera, so the map's controls and legend sit 32px from that edge (16 + 16) */
