@@ -203,7 +203,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
     <sc-if value="{{isHist}}" hint-placeholder-val="{{ false }}">
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 12px 16px 32px; background: #F2F2F7; border-top: 0">
-      <sc-if value="{{sim.can}}" hint-placeholder-val="{{ true }}"><button type="button" class="chbtn wf-b wf-pri" onClick="{{sim.go}}" style="border: 0; font: inherit; cursor: pointer">{{sim.label}}</button></sc-if>
       <span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{histTxt}}</span>
       <div role="tablist" aria-label="{{t.hist}}" class="wf-seg" style="">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{hTabX}})"><span class="segblob"></span></span>
