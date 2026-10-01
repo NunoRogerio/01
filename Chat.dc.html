@@ -349,8 +349,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-for>
       </section>
-      <!-- One group: the title (title M) and its subtitle, then the cards, 16px apart throughout -->
-      <section style="display: flex; flex-direction: column; gap: 16px">
+      <!-- One group: the title (title M) and its subtitle, then the cards, 24px apart throughout -->
+      <section style="display: flex; flex-direction: column; gap: 24px">
         <div style="display: flex; flex-direction: column; gap: 2px; padding: 0"><h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
           <article style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden">
@@ -417,7 +417,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <button type="button" class="mbtn" onClick="{{sk.open}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
       </section>
-      <section style="display: flex; flex-direction: column; gap: 16px">
+      <section style="display: flex; flex-direction: column; gap: 24px">
         <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.ach}}</h2>
         <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
         <sc-for list="{{pp.ach}}" as="a" hint-placeholder-count="2">
