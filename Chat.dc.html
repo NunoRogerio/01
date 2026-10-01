@@ -18,7 +18,7 @@
 <script src="prefs.js?v=118"></script>
 <script src="i18n.js?v=111"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=37"></script>
+<script src="chat.js?v=38"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -401,8 +401,18 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <h1 style="margin: 8px 0 0; font-size: 26px; font-weight: 600; line-height: 32px">{{pp.name}}</h1>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{pp.role}}</span>
       </section>
-      <section style="--k: {{pp.kPx}}; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 16px 8px; border-radius: 14px; background: #FFFFFF">
-        <sc-for list="{{pp.kpis}}" as="k" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span class="wf-big" style=" font-variant-numeric: tabular-nums; white-space: nowrap">{{k.v}}</span><span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{k.l}}</span></div></sc-for>
+      <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column">
+        <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
+          <sc-for list="{{sk.cards}}" as="m" hint-placeholder-count="3">
+            <div role="listitem" data-wf-kpi="{{m.key}}" data-g="pp" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none">
+              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 104px; padding: 12px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center">
+                <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.l}}</span>
+                <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.u}}</span></span>
+              </div>
+            </div>
+          </sc-for>
+          <button type="button" class="mbtn" onClick="{{sk.open}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+        </div>
       </section>
       <section style="display: flex; flex-direction: column; gap: 8px">
         <h2 style="margin: 0; padding: 0 4px; font-size: 17px; font-weight: 600; line-height: 22px">{{t.ach}}</h2>
@@ -418,7 +428,28 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </article>
         </sc-for>
       </section>
+      <!-- The station this person serves at, with a link to its page -->
+      <a href="Station.dc.html" class="chrow" onClick="{{pp.goStation}}" aria-label="{{pp.stName}}. Open the station" style="display: {{pp.stD}}; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF; color: #000000; text-decoration: none">
+        <img src="{{pp.stCrest}}" alt="" style="display: {{pp.stCrestD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain">
+        <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px">{{pp.stName}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{pp.stSub}}</span></span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{pp.stLinkD}}; flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg>
+      </a>
     </div>
+    <!-- Grabber: a swipe up (or a tap) dismisses the profile, back to where it was opened (the team list) -->
+    <div role="button" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 72px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
+    <!-- Cards picker for this person figures: back arrow, Reset, toggles (changes apply at once) -->
+    <div class="wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
+    <section role="dialog" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; padding-right: 16px">
+        <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="chbtn" onClick="{{sk.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; line-height: 32px">{{t.kf}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Choose the ones to show.</span></span></div>
+        <button type="button" class="chbtn wf-reset wf-rpill" onClick="{{sk.reset}}" aria-disabled="{{sk.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; margin-top: 6px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{t.reset}}</button>
+      </div>
+      <div class="chscroll" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
+        <sc-for list="{{sk.rows}}" as="r" hint-placeholder-count="10">
+          <button type="button" role="switch" aria-checked="{{r.onStr}}" onClick="{{r.tog}}" data-pk-row="{{r.key}}" data-pk-on="{{r.onStr}}" onPointerDown="{{r.down}}" onPointerMove="{{r.move}}" onPointerUp="{{r.up}}" onPointerCancel="{{r.up}}" style="position: relative; touch-action: pan-y; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 0 16px; border: 0; border-bottom: 0; background: #FFFFFF; color: #000000; font: inherit; font-size: 17px; text-align: left; opacity: {{r.op}}; cursor: pointer">{{r.name}}<span aria-hidden="true" style="position: relative; display: block; flex-shrink: 0; width: 64px; height: 25px; border-radius: 999px; background: {{r.swBg}}; transition: background-color .3s ease"><span style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></span></button>
+        </sc-for>
+      </div>
+    </section>
   </sc-if>
 </div>
 </x-dc>
@@ -472,7 +503,7 @@ class Component extends DCLogic {
     }
   }
   // Views inside this screen stack up, so every back returns to the one you came from
-  go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person }]), view, sheet: false, ...(extra || {}) }); }
+  go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person, team: !!(extra && extra.fromTeam) }]), view, sheet: false, ...(extra || {}) }); }
   renderVals() {
     const s = this.state || {}, C = window.__wfChat;
     const L = (en, pt) => (C ? C.L(en, pt) : en);
@@ -512,10 +543,28 @@ class Component extends DCLogic {
     if (s.view === 'person' && s.person) {
       const P = C.person(s.person), A = P.ach || [];
       const resTot = A.reduce((a, r) => a + (r.res || 0), 0), popTot = A.reduce((a, r) => a + (r.pop || 0), 0);
-      return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(),
+      // Their figures as the app's mini cards (title, value), trimmed and reordered with the + tile like every card group
+      const haTot = A.reduce((a, r) => a + (r.us ? (r.acres || 0) : (r.ha || 0)), 0), usA = A.some((r) => r.us), fast = A.length ? Math.min(...A.map((r) => r.res || Infinity)) : null;
+      const sk = this.cardSet('pp', [
+        { key: 'res', l: L('Fires resolved', 'Incêndios resolvidos'), v: String(A.length) },
+        { key: 'inc', l: L('On incidents', 'Em incidentes'), v: A.length ? C.dur(resTot).replace(/ \d+ min$/, '') : '0' },
+        { key: 'pop', l: L('People protected', 'Pessoas protegidas'), v: String(popTot) },
+        { key: 'area', l: L('Area burnt', 'Área ardida'), v: (Math.round(haTot * 10) / 10) + ' ' + (usA ? 'acres' : 'ha'), opt: true },
+        { key: 'fast', l: L('Fastest resolution', 'Resolução mais rápida'), v: fast && isFinite(fast) ? C.dur(fast) : '—', opt: true },
+        { key: 'sts', l: L('Stations', 'Quartéis'), v: String(new Set(A.map((r) => r.station).filter(Boolean)).size || (P.station ? 1 : 0)), opt: true }]);
+      // A swipe up on the grabber (or a tap) dismisses the profile, as the back does
+      const self = this, ppH = { down: (e) => { let k = 1; try { k = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect().height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._ppd = { y: e.clientY, k, dy: 0 }; },
+        move: (e) => { const h = self._ppd; if (!h) return; h.dy = Math.min(0, (e.clientY - h.y) / h.k); self.setState({ ppDy: h.dy }); },
+        up: () => { const h = self._ppd; self._ppd = null; if (!h) return; const d = Math.abs(h.dy); if (d < 6 || d > 60) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} self.popFn()(); } else self.setState({ ppDy: 0 }); },
+        cancel: () => { self._ppd = null; self.setState({ ppDy: 0 }); } };
+      return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), sk, ppH, ppY: (s.ppDy || 0) + 'px', ppT: self._ppd ? '0s' : '.3s',
         pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? L('Fire owner', 'Responsável pelo incêndio') + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
-          get kPx() { return window.__wfKpiPx ? window.__wfKpiPx(this.kpis.map((k) => k.v), 3, 342) : '44px'; },
-          kpis: [{ v: String(A.length), l: L('Fires resolved', 'Incêndios resolvidos') }, { v: A.length ? C.dur(resTot).replace(/ \d+ min$/, '') : '0', l: L('On incidents', 'Em incidentes') }, { v: String(popTot), l: L('People protected', 'Pessoas protegidas') }],
+          // The station this person serves at: its crest and name, and a link to the station page
+          ...(() => { const S = P.st || null; if (!S || !S.name) return { stD: 'none', stName: '', stSub: '', stCrest: '', stCrestD: 'none', stLinkD: 'none', goStation: null };
+            const ch = S.chat ? C.get(S.chat) : null, cr = ch && C.crest ? C.crest(ch, S.short).url : '';
+            const m = /^([nwr])(\d+)$/.exec(S.ck || ''), st = m ? { id: Number(m[2]), type: m[1] === 'w' ? 'way' : m[1] === 'r' ? 'relation' : 'node', name: S.name, lat: S.la, lon: S.lo, tags: { name: S.name }, partial: true } : null;
+            return { stD: 'flex', stName: S.name, stSub: S.km != null ? (Math.round(S.km * 10) / 10) + ' km from this fire.' : L('Fire station.', 'Quartel de bombeiros.'), stCrest: cr, stCrestD: cr ? 'block' : 'none', stLinkD: st ? 'flex' : 'none',
+              goStation: (e) => { if (!st) { if (e && e.preventDefault) e.preventDefault(); return; } window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (x) {} } }; })(),
           none: !A.length, ach: A.map((r) => ({ kicker: L('Fire resolved', 'Incêndio resolvido') + ' · ' + dayTxt(r.vt), place: r.place + (r.reg ? ', ' + r.reg : ''),
             line: L(r.roleEn, r.rolePt) + (r.station ? ' · ' + r.station : '') + ' · ' + L('resolved in ', 'resolvido em ') + C.dur(r.res) + ' · ' + (r.us ? r.acres + ' acres' : String(r.ha).replace('.', PTL ? ',' : '.') + ' ha') })) } };
     }
@@ -623,20 +672,7 @@ class Component extends DCLogic {
             { key: 'veh', l: L('Vehicles', 'Veículos'), v: (Z.est ? '~' : '') + Z.veh, opt: true },
             { key: 'air', l: L('Aircraft', 'Meios aéreos'), v: String(Z.air), opt: true },
             { key: 'rate', l: L('Burn rate', 'Ritmo de área ardida'), v: (Math.round(burn * 10) / 10) + ' ' + (Z.us ? 'ac/h' : 'ha/h'), opt: true }];
-          let hid = null, ord = null; try { hid = JSON.parse(localStorage.getItem('wf-hide-sum') || 'null'); ord = JSON.parse(localStorage.getItem('wf-order-sum') || 'null'); } catch (e) {}
-          hid = Array.isArray(hid) ? hid : base.filter((m) => m.opt).map((m) => m.key); ord = Array.isArray(ord) ? ord : base.map((m) => m.key);
-          const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; };
-          const cards = base.filter((m) => hid.indexOf(m.key) < 0).sort((a, b) => ix(a.key) - ix(b.key)).map((m) => { const q = /^([~<>≈]?-?[\d.,]+%?)\s+([a-z/]+)$/i.exec(m.v);
-            return { ...m, n: q ? q[1] : m.v, u: q ? q[2] : '', uD: q ? 'inline' : 'none', cmpD: m.cmp ? 'block' : 'none', cmp: m.cmp || '', cmpC: m.cmpC || '#6E6E73', ...this.wfKpiDrag(m.key, 'sum') }; });
-          const on = !!s.skPick, save = (h) => { try { localStorage.setItem('wf-hide-sum', JSON.stringify(h)); } catch (e) {} this.forceUpdate(); };
-          return { cards, open: () => this.setState({ skPick: true }), close: () => this.setState({ skPick: false }),
-            y: on ? '0%' : '105%', op: on ? 1 : 0, pe: on ? 'auto' : 'none', hidden: on ? 'false' : 'true',
-            resetDis: (() => { let o = null; try { o = localStorage.getItem('wf-order-sum'); } catch (e) {} const opt = base.filter((m) => m.opt).map((m) => m.key); return !o && hid.length === opt.length && opt.every((k) => hid.indexOf(k) >= 0) ? 'true' : 'false'; })(),
-            reset: () => { try { localStorage.removeItem('wf-hide-sum'); localStorage.removeItem('wf-order-sum'); } catch (e) {} this.forceUpdate(); },
-            rows: (() => { const S0 = window.__wfPickSort ? window.__wfPickSort('sum', base, (k) => hid.indexOf(k) < 0) : base, OK = S0.filter((m) => hid.indexOf(m.key) < 0).map((m) => m.key);   /* on first in screen order (long press to reorder), off A to Z */
-              return S0.map((m) => { const vis = hid.indexOf(m.key) < 0, last = vis && base.filter((q) => hid.indexOf(q.key) < 0).length <= 1;
-              return { name: m.l, onStr: String(vis), swBg: vis ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.16)', swX: vis ? '24px' : '0px', op: last ? 0.4 : 1,
-                key: m.key, ...(window.__wfPickDrag ? window.__wfPickDrag(this, 'sum', m.key, OK) : {}), tog: () => { if (last) return; const h = hid.slice(), i = h.indexOf(m.key); if (i >= 0) h.splice(i, 1); else h.push(m.key); save(h); } }; }); })() };
+          return this.cardSet('sum', base);
         })() };
     }
 
@@ -718,7 +754,7 @@ class Component extends DCLogic {
     // The team: you, the fire owner, then the crew coordinator of each station
     const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#1E7A34' }]
       .concat(c.people.map((p, i) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
-      .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); openPerson(p.name)(); } }));
+      .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
     const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), go: () => run(a.key) }));
     // Opened from the fire screen's People at risk card (Not evacuated): Evacuation plan leads the suggestions until it is used
@@ -803,8 +839,26 @@ class Component extends DCLogic {
     };
   }
   // The candidate's key figures and header lines. Real where the source gives them (likelihood, radiative power, detections,
+  // A group of mini cards the user can trim and reorder (+ tile, picker, long press), kept per group on this phone
+  cardSet(grp, base) {
+    const s = this.state || {};
+    let hid = null, ord = null; try { hid = JSON.parse(localStorage.getItem('wf-hide-' + grp) || 'null'); ord = JSON.parse(localStorage.getItem('wf-order-' + grp) || 'null'); } catch (e) {}
+    hid = Array.isArray(hid) ? hid : base.filter((m) => m.opt).map((m) => m.key); ord = Array.isArray(ord) ? ord : base.map((m) => m.key);
+    const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; };
+    const cards = base.filter((m) => hid.indexOf(m.key) < 0).sort((a, b) => ix(a.key) - ix(b.key)).map((m) => { const q = /^([~<>≈]?-?[\d.,]+%?)\s+([a-z/]+)$/i.exec(m.v);
+      return { ...m, n: q ? q[1] : m.v, u: q ? q[2] : '', uD: q ? 'inline' : 'none', cmpD: m.cmp ? 'block' : 'none', cmp: m.cmp || '', cmpC: m.cmpC || '#6E6E73', ...this.wfKpiDrag(m.key, grp) }; });
+    const on = s.skPick === grp || (grp === 'sum' && s.skPick === true), save = (h) => { try { localStorage.setItem('wf-hide-' + grp, JSON.stringify(h)); } catch (e) {} this.forceUpdate(); };
+    return { cards, open: () => this.setState({ skPick: grp }), close: () => this.setState({ skPick: false }),
+      y: on ? '0%' : '105%', op: on ? 1 : 0, pe: on ? 'auto' : 'none', hidden: on ? 'false' : 'true',
+      resetDis: (() => { let o = null; try { o = localStorage.getItem('wf-order-' + grp); } catch (e) {} const opt = base.filter((m) => m.opt).map((m) => m.key); return !o && hid.length === opt.length && opt.every((k) => hid.indexOf(k) >= 0) ? 'true' : 'false'; })(),
+      reset: () => { try { localStorage.removeItem('wf-hide-' + grp); localStorage.removeItem('wf-order-' + grp); } catch (e) {} this.forceUpdate(); },
+      rows: (() => { const S0 = window.__wfPickSort ? window.__wfPickSort(grp, base, (k) => hid.indexOf(k) < 0) : base, OK = S0.filter((m) => hid.indexOf(m.key) < 0).map((m) => m.key);
+        return S0.map((m) => { const vis = hid.indexOf(m.key) < 0, last = vis && base.filter((q) => hid.indexOf(q.key) < 0).length <= 1;
+          return { name: m.l, onStr: String(vis), swBg: vis ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.16)', swX: vis ? '24px' : '0px', op: last ? 0.4 : 1,
+            key: m.key, ...(window.__wfPickDrag ? window.__wfPickDrag(this, grp, m.key, OK) : {}), tog: () => { if (last) return; const h = hid.slice(), i = h.indexOf(m.key); if (i >= 0) h.splice(i, 1); else h.push(m.key); save(h); } }; }); })() };
+  }
   popFn() {
-    return (e) => { if (e && e.preventDefault) e.preventDefault(); const st = (this.state || {}).stack || []; const prev = st[st.length - 1] || { view: 'chat' }; this.setState({ view: prev.view, person: prev.person, stack: st.slice(0, -1), ...(prev.tab ? { tab: prev.tab, key: prev.view === 'list' ? '' : (this.state || {}).key } : {}) }); if (prev.view === 'list') { try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} } this._n = -1; };
+    return (e) => { if (e && e.preventDefault) e.preventDefault(); const st = (this.state || {}).stack || []; const prev = st[st.length - 1] || { view: 'chat' }; this.setState({ view: prev.view, person: prev.person, stack: st.slice(0, -1), team: !!prev.team, tmDy: 0, ppDy: 0, ...(prev.tab ? { tab: prev.tab, key: prev.view === 'list' ? '' : (this.state || {}).key } : {}) }); if (prev.view === 'list') { try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} } this._n = -1; };
   }
 }
 </script>
