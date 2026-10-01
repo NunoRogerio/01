@@ -222,8 +222,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Two tabs over the map: Fire (the map and the fire's analysis) and Resources (everything about crews and orders, full width) -->
   <div role="tablist" aria-label="Fire page" class="wf-tabs" style="display: {{ft.d}}; margin: -4px 16px 0">
     <span class="tabbar" aria-hidden="true" style="width: 50%; transform: translateX({{ft.x}})"></span>
-    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}">Situation</button>
-    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}">Crews</button>
+    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" aria-label="{{ft.fireAria}}"><span style="position: relative">Situation<span aria-hidden="true" style="display: {{ft.fireDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #FF3B30"></span></span></button>
+    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}"><span style="position: relative">Crews<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #FF3B30"></span></span></button>
   </div>
   </div>
 
@@ -1036,7 +1036,12 @@ class Component extends DCLogic {
     const o = this._renderVals0(), st = this.state || {};
     if (o.pgMapD !== 'block') return Object.assign(o, { ft: { d: 'none', x: '0%', fireSel: 'true', resSel: 'false', goFire: () => {}, goRes: () => {} } });
     const res = st.ftab === 'res', go = (t) => () => { if ((st.ftab || 'fire') === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
-    o.ft = { d: 'grid', x: res ? '100%' : '0%', fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res') };
+    // Something that needs attention on the other tab: a red dot (no count) on its label
+    const crewAlert = (o.deployed || []).some((d) => d.fx && ((d.sum || []).some((k) => k.c === '#B0001A') || (d.conf && !(d.groups || []).length)));
+    const sitAlert = !!(o.cc && Array.isArray(o.cc.med) && o.cc.med.some((m) => m.key === 'pop' && /^(Yes|Sim)$/.test(String(m.n ?? m.v ?? ''))));
+    o.ft = { d: 'grid', x: res ? '100%' : '0%', fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
+      resDot: !res && crewAlert ? 'block' : 'none', fireDot: res && sitAlert ? 'block' : 'none',
+      resAria: 'Crews' + (!res && crewAlert ? '. Needs attention' : ''), fireAria: 'Situation' + (res && sitAlert ? '. Needs attention' : '') };
     // Crews: only the crews section (the two wear-out alerts, then adding, editing and removing stations); everything else is Situation
     let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
     o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
