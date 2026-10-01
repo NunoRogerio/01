@@ -192,7 +192,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <span aria-hidden="true" data-wf-topbg="1" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 0 16px rgba(0,0,0,0.08)"></span>
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
-  <header class="fade" data-pull="down" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 32px 12px">
+  <!-- 21px from the subtitle to the grabber, the same as from the bottom blade's grabber to its first line (was 36px) -->
+  <header class="fade" data-pull="down" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 12px 16px 12px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px 15px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 6px; height: 34px; max-width: 100%; min-width: 0">
