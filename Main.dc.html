@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=115"></script>
+<script src="fit.js?v=116"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=141"></script>
 <script src="i18n.js?v=125"></script>
@@ -973,11 +973,11 @@ class Component extends DCLogic {
     const run = (qq) => {
       clearTimeout(this._psT); if (qq.trim().length < 2) { this._psR = { q: qq, list: [], st: '' }; this.forceUpdate(); return; }
       this._psT = setTimeout(() => {
-        const cc = [...new Set(only.map((k) => (k === 'PT' ? 'pt' : 'us')))].join(','), lang = window.__wfLang === 'pt' ? 'pt' : 'en';
+        const cc = [...new Set(only.map((k) => (k === 'PT' ? 'pt' : k === 'BRA' || k === 'AMZ' ? 'br' : 'us')))].join(','), lang = window.__wfLang === 'pt' ? 'pt' : 'en';
         const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=12&countrycodes=' + cc + '&accept-language=' + lang + '&q=' + encodeURIComponent(qq);
         this._psR = { q: qq, list: (this._psR || {}).list || [], st: 'busy' }; this.forceUpdate();
         fetch(url).then((r) => r.json()).then((J) => {
-          const list = (J || []).filter((x) => { const a = x.address || {}; return a.country_code === 'pt' ? only.indexOf('PT') >= 0 : (a.state === 'California' || a.state === 'Califórnia') && only.indexOf('CA') >= 0; }).slice(0, 8).map((x) => {
+          const list = (J || []).filter((x) => { const a = x.address || {}; return a.country_code === 'pt' ? only.indexOf('PT') >= 0 : a.country_code === 'br' ? (only.indexOf('BRA') >= 0 || (only.indexOf('AMZ') >= 0 && (window.__wfAMZ || []).indexOf(a.state) >= 0)) : (a.state === 'California' || a.state === 'Califórnia') && only.indexOf('CA') >= 0; }).slice(0, 8).map((x) => {
             const a = x.address || {}, nm = x.name || String(x.display_name).split(',')[0], sub = [...new Set([a.city || a.town || a.village || a.municipality, a.county, a.state, only.length > 1 ? a.country : ''].filter((v) => v && v !== nm))].slice(0, 3).join(', ');
             const b = (x.boundingbox || []).map(Number);
             return { name: nm, sub, lat: +x.lat, lon: +x.lon, bb: b.length === 4 ? b : null };
@@ -995,7 +995,7 @@ class Component extends DCLogic {
       }, 350);
     };
     const res = (R.q === q ? R.list : R.list).map((r) => ({ ...r, go: go(r), aria: r.name + (r.sub ? ', ' + r.sub : '') + '. Show on the map' }));
-    const where = only.map((k) => (k === 'PT' ? 'Portugal' : 'California')).join(' and ');
+    const where = [...new Set(only.map((k) => (k === 'PT' ? 'Portugal' : k === 'BRA' ? 'Brazil' : k === 'AMZ' ? (only.indexOf('BRA') >= 0 ? 'Brazil' : 'Amazônia Legal') : 'California')))].join(', ').replace(/, ([^,]+)$/, ' and $1');
     const dragUp = this.wfDrag('ps').y, dragC = dragUp ? Math.max(0, -dragUp) + 'px' : null;
     const msg = q.trim().length < 2 ? 'Towns, villages and places in ' + where + '.' : R.st === 'busy' && !res.length ? 'Searching…' : R.st === 'none' ? 'No places found.' : R.st === 'off' ? 'Search needs a connection.' : '';
     return { wmD: res.length ? 'none' : 'block', str: on ? 'true' : 'false', op: on ? 1 : 0, pe: on ? 'auto' : 'none', hidden: on ? 'false' : 'true', clip: on ? (dragC || '0px') : Math.max(0, this.wfLayout().vh - 48 - (this._tbh || 163)) + 'px', vis: on || s.psShown ? 'visible' : 'hidden', inOp: on ? 1 : 0, inDelay: on ? '.18s' : '0s', xRot: on ? '0deg' : '-90deg',

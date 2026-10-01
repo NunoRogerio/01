@@ -673,7 +673,12 @@ window.__wfBlink=function(path,dur){
 (function(){
   var busy=false;
   function run(){busy=false;var g={},l=document.querySelectorAll('[data-wf-eqw]');for(var i=0;i<l.length;i++){var k=l[i].getAttribute('data-wf-eqw');(g[k]=g[k]||[]).push(l[i]);}
-    Object.keys(g).forEach(function(k){var a=g[k],m=0;a.forEach(function(e){var w=e.style.minWidth;e.style.minWidth='';var o=e.offsetWidth;e.style.minWidth=w;m=Math.max(m,o);});if(m)a.forEach(function(e){if(e.style.minWidth!==m+'px')e.style.minWidth=m+'px';});});}   // a group still hidden measures 0 and is left as is; showing it (a style or class change) measures again
+    // measured in one pass (all minimums lifted together, then every width read with a single layout), so long lists
+    // (thousands of rows, e.g. Brazil) don't force one layout per tag
+    if(!l.length)return;var W={},old=[];for(var j=0;j<l.length;j++){old.push(l[j].style.minWidth);l[j].style.minWidth='';}
+    Object.keys(g).forEach(function(k){var m=0;g[k].forEach(function(e){m=Math.max(m,e.offsetWidth);});W[k]=m;});
+    for(j=0;j<l.length;j++)l[j].style.minWidth=old[j];
+    Object.keys(g).forEach(function(k){var m=W[k];if(m)g[k].forEach(function(e){if(e.style.minWidth!==m+'px')e.style.minWidth=m+'px';});});}   // a group still hidden measures 0 and is left as is; showing it (a style or class change) measures again
   function later(){if(busy)return;busy=true;requestAnimationFrame(run);}
   function start(){try{new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t&&t.nodeType===1&&t.hasAttribute&&t.hasAttribute('data-wf-eqw')&&ms[i].type==='attributes')continue;later();return;}}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['style','class','hidden','aria-hidden']});}catch(x){}later();window.addEventListener('resize',later);}
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);

@@ -7,8 +7,8 @@
 // Replaces the design's sample fires, and the sample ignition candidates once satellite data exists.
 window.__wfLiveMap = true;
 // Regions with live data. Everything else is paused (no fires, no candidates, not in the area picker) until it is
-// added back here: for now Portugal and California only.
-window.__wfOnly = { PT: 1, CA: 1 };
+// added back here: Portugal, California and Brazil (with its Amazônia Legal area).
+window.__wfOnly = { PT: 1, CA: 1, BRA: 1, AMZ: 1 };
 // The level above a place, for the line under an item's name: county and state in the US, district in Portugal,
 // else region and country (from the regions file). One definition for candidates, fires and stations.
 // The region at a point (stations carry only coordinates): the smallest region box that holds it
