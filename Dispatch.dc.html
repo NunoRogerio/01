@@ -575,7 +575,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="grid-row: 1 / span 2; justify-self: center"><path d="{{u.ic}}"></path></svg>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
                 <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
-                <span style="grid-column: 2; display: flex; align-items: center; gap: 12px; margin-top: 6px">
+                <span style="grid-column: 2; display: {{u.tagRowD}}; align-items: center; gap: 12px; margin-top: 6px">
                 <span class="wf-stag" style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
                 <svg role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" width="30" height="28" viewBox="0 0 30 28" style="display: none; flex-shrink: 0"><path d="{{u.batLo}}" fill="#C7C7CC"></path><path d="{{u.batHi}}" fill="#000000"></path></svg></span>
                 <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
@@ -725,7 +725,7 @@ class Component extends DCLogic {
   // published or estimated counts, seeded by the fire so it stays the same between visits and moves on with the clock.
   // What matters to the coordinator: who needs relief (12 h shift), which tankers run low on water, what aircraft are doing.
   wfSimForces(fv, frow, INFO, RU, HELD, CNT) {
-    if (!fv || !frow || HELD) return null;
+    if (!fv || !frow) return null;
     const pt = frow.st === 'PT', now = Date.now(), I = INFO || {}, t0 = I.startMs || now - 6 * 3600000, age = Math.max(0.5, (now - t0) / 3600000);
     let h = 0; for (const c of String(fv.id)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
     const rnd = () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; };
@@ -756,6 +756,8 @@ class Component extends DCLogic {
       units.push({ k: 2, drop: x < 0.35, name: (heli ? (pt ? 'Helicóptero H' : 'Helicopter H-') : (pt ? 'Canadair C' : 'Air tanker T-')) + (i + 1), tag: ph[0], tagFg: ph[1][0], tagBg: ph[1][1], sub: ph[2], barD: 'none', pct: 0, barC: '', meterAria: '', o: 1 });
     }
     units.sort((a, b) => a.o - b.o || a.k - b.k);   // what needs action first
+    // A held or resolved fire: the units that fought it, without their live state (no shift, water or drop status) and no figures
+    if (HELD) return { sum: [], units: units.map((u) => ({ ...u, tag: '', sub: u.k === 0 ? (pt ? 'VFCI. ' : 'Type 3. ') + (u.ppl || cppl) + ' firefighters.' : u.k === 1 ? (/VTTF|tender/i.test(u.name) ? (pt ? '10,000 L.' : '7,500 L.') : (pt ? '3,000 L.' : '2,800 L.')) : (/heli/i.test(u.name) ? 'Helicopter.' : 'Air tanker.'), o: u.k })).sort((a, b) => a.k - b.k) };
     const sum = crews ? [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B0001A' : '#3A3A3C' }] : [];
     if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders low on water', c: low ? '#B0001A' : '#3A3A3C' });
     // Five more crew figures, from the same units: relief coming up, the longest shift, fresh crews, water in the tanks, aircraft dropping
@@ -1552,7 +1554,7 @@ class Component extends DCLogic {
           gOut.forEach((g) => (g.units || []).forEach((u) => { const nm = String(u.name || '');
             u.ic = u.ic0 ? u.ic0 : u.k === 0 ? IC.crew : u.k === 1 ? (/tender|VTTF|autotanque/i.test(nm) ? IC.tender : IC.engine) : (/heli/i.test(nm) ? IC.heli : IC.plane);
             const hasB = u.k === 0 || u.k === 1 || u.bat, on = !hasB ? 0 : Math.max(0, Math.min(8, Math.round((Number(u.pct) || 0) / 100 * 8)));   /* eight bars: black = left, light grey = used */
-            u.batD = hasB ? 'block' : 'none'; u.batHi = seg(0, on); u.batLo = seg(on, 8); })); }
+            u.batD = hasB ? 'block' : 'none'; u.batHi = seg(0, on); u.batLo = seg(on, 8); u.tagRowD = u.tag ? 'flex' : 'none'; })); }
         gOut.forEach((g) => { const k = g.name, open = !GC[k], issue = (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A');   /* a folded station with a crew needing relief or a tender low on water gets the red dot */
           Object.assign(g, { dotD: !open && issue ? 'block' : 'none', exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg', aria: g.name + (!open && issue ? '. Needs attention' : '') + (open ? '. Fold' : '. Unfold'),
           gk: String(gOut.indexOf(g)),
@@ -1564,7 +1566,8 @@ class Component extends DCLogic {
             const moved = lift(); setTimeout(set, moved ? 280 : 0); setTimeout(lift, moved ? 760 : 480); } }); });
         const allU = gOut.reduce((a, g) => a.concat(g.units || []), []), nSt = gOut.filter((g) => !/^(Air support|Meios aéreos)$/.test(g.name)).length;
         const gU = allU.filter((u) => u.k !== 2), cnt = allU.length ? [{ l: 'Stations', v: String(nSt) }, { l: 'Crews', v: String(gU.filter((u) => u.k === 0 || u.kind === 6).length) }, { l: 'Vehicles', v: String(gU.length) }, { l: 'People', v: String(gU.reduce((a, u) => a + (u.ppl || 0), 0)) }] : [];
-        deployed.push({ fx: true, item: false, g: 'forces', ...FX, groups: gOut, conf: confF, cnt, cntD: cnt.length ? 'flex' : 'none' });
+        if (HELD) gOut.forEach((g) => { g.units = (g.units || []).map((u) => ({ ...u, tag: '', tagRowD: 'none' })); g.sub = g.units.length + (g.units.length === 1 ? ' unit' : ' units') + ' on this fire.'; g.dotD = 'none'; });
+        deployed.push({ fx: true, item: false, g: 'forces', ...FX, groups: gOut, conf: confF, held: !!HELD, cnt: HELD ? [] : cnt, cntD: cnt.length && !HELD ? 'flex' : 'none' });
         for (let i = ordRows.length - 1; i >= 0; i--) if (ordRows[i].stc) ordRows.splice(i, 1);   /* the stations now head their own units */
       } }
       const HD = { cond: ['', ''], forces: ['', ''], hist: ['', ''], fire: ['', ''], res: ['', ''], st: ['Suggested stations', 'Within an ideal first attack · the likely first responders (estimate)'] };
@@ -1733,7 +1736,7 @@ class Component extends DCLogic {
         // Resources on a fire confirmed here: tiles only once there is a station (from the plan until the order is sent), Add always
         deployed.forEach((d) => { if (!d.fx) return; const st = plan.filter((p) => p.id !== 'air'), c = st.reduce((a, p) => a + (p.n[0] || 0), 0), t = st.reduce((a, p) => a + (p.n[1] || 0), 0);
           if (d.conf && !inlSent) d.sum = st.length ? [{ v: '0 of ' + c, l: 'Crews need relief', c: '#3A3A3C' }].concat(t ? [{ v: '0 of ' + t, l: 'Tenders low on water', c: '#3A3A3C' }] : []) : [];
-          d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf ? 'flex' : 'none'; d.addMt = d.sumD === 'flex' ? '48px' : '0';   /* 56px under the tiles (they keep 8px under them) */ d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
+          d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf && !d.held ? 'flex' : 'none'; d.addMt = d.sumD === 'flex' ? '48px' : '0';   /* 56px under the tiles (they keep 8px under them) */ d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
         return {
           pl: { ...(() => {   // Add crews says how many stations are still free to choose (not how many are assigned)
               const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length, air = !inPlan('air');
