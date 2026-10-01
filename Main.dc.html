@@ -413,10 +413,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <ul style="display: {{nt.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 16px 0 0; list-style: none; border-top: 0">
         <sc-for list="{{nt.items}}" as="n" hint-placeholder-count="5">
           <li style="border-bottom: 0">
-            <a href="{{n.href}}" class="chrow" onPointerDown="{{n.pick}}" onClick="{{n.pick}}" aria-label="{{n.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; min-height: 84px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; color: #000000; text-decoration: none">
-              <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{n.title}}</span>
+            <a href="{{n.href}}" class="chrow" onPointerDown="{{n.pick}}" onClick="{{n.pick}}" aria-label="{{n.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 84px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; color: #000000; text-decoration: none">
+              <!-- The update's type: candidate marker, the fire's stage icon, or the station -->
+              <span aria-hidden="true" style="grid-row: 1 / span 2; align-self: start; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{n.ty.bg}}"><svg width="22" height="22" viewBox="{{n.ty.vb}}"><path d="{{n.ty.d}}" fill="{{n.ty.f}}" stroke="{{n.ty.s}}" stroke-width="{{n.ty.sw}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg></span>
+              <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{n.title}}</span>
               <span style="justify-self: end; display: flex; align-items: center; gap: 6px; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap"><span aria-hidden="true" style="display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: var(--wf-y); box-shadow: 0 0 0 1px rgba(0,0,0,0.12)"></span>{{n.age}}</span>
-              <span style="grid-column: 1 / span 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{n.text}}</span>
+              <span style="grid-column: 2 / span 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{n.text}}</span>
             </a>
           </li>
         </sc-for>
@@ -1054,7 +1056,7 @@ class Component extends DCLogic {
     // One notification per place: two fires with the same name read as a duplicate
     const used = new Set(), pickF = (L) => { const f = L.find((q) => !used.has(q.place)); if (f) used.add(f.place); return f; };
     const fireSt = FIRES.filter((f) => f.info && f.info.stEn);
-    const stNote = (f) => ({ kind: 'fire', title: f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) });
+    const stNote = (f) => ({ kind: 'fire', stage: f.info.stEn, title: f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) });
     const fA = pickF(fireSt); if (fA) out.push({ t: T0 - 11 * 60000, ...stNote(fA) });
     if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', title: 'Likelihood rose to ' + cs[1].conf + '%', text: cs[1].place + '. Another satellite pass agrees', href: 'Alert.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
     const fB = pickF(FIRES); if (fB) out.push({ t: T0 - 26 * 60000, kind: 'st', title: 'Returning to base', text: 'Leaving ' + fB.place + '. Back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(fB) });
@@ -1064,7 +1066,13 @@ class Component extends DCLogic {
     const items = out.map((n, i) => {
       const un = n.t > seen;
       const ic = n.kind === 'ign' ? [CIR, 'color-mix(in srgb, var(--wf-y, #E5FF00) 20%, transparent)', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
-      return { title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
+      // The type, as an icon in its own round (like the chat timeline): the ignition candidate's marker, the fire's stage icon (in the stage's colour), the station's house
+      const CH = window.__wfChat, SG = n.kind === 'fire' && CH && CH.STAGES ? CH.STAGES.find((q) => String(n.stage || '').toLowerCase().indexOf(q.en.toLowerCase()) >= 0 || q.en.toLowerCase().indexOf(String(n.stage || '').toLowerCase()) >= 0) : null;
+      const ty = n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 20%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
+        : SG ? { vb: '0 0 24 24', d: CH.ICON[SG.icon], f: 'none', s: SG.c, sw: 1.8, bg: SG.bg }
+        : n.kind === 'fire' ? { vb: '0 0 14 14', d: CIR, f: '#E8590C', s: 'none', sw: 0, bg: '#FCE9E1' }
+        : { vb: '0 0 14 14', d: SQ, f: 'rgba(64,156,255,0.6)', s: '#3A3A3C', sw: 1.3, bg: '#E3EEFB' };
+      return { ty, title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
         sep: i ? '0' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
     });
