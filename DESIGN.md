@@ -559,3 +559,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Full-screen area map (Oct 1):** the area card (e.g. Portugal, 20 districts) sits at the top right; the legend column starts at the top left on the same line.
 - **More data sources (Oct 1):** satellite candidates now also come from NASA FIRMS MODIS (Terra, Aqua) and Landsat (30 m, US and Canada), and from NOAA GOES-18/19 geostationary scans every 10 minutes over the Americas (the last hour; a GOES-only spot needs two scans). Listed in Preferences › data sources with NOAA GOES and Open-Meteo.
 - **Candidate projection uses terrain (Oct 1):** Copernicus elevation (through Open-Meteo) around the marker; each direction reaches further uphill and less downhill.
+- **Chat keeps its place:** every chat opens where you left it (remembered per chat on the phone), the one exception to "opens at its top"; left at the end, it opens at the end and follows new messages. Sending a message goes to the end.
+- **Team of this fire:** each member is its own white card (16px corners), 8px apart, no dividers.

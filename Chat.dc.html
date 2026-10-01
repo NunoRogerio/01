@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=118"></script>
+<script src="fit.js?v=119"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=142"></script>
 <script src="i18n.js?v=127"></script>
@@ -123,7 +123,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
     <!-- The chat surface: a shade darker than the header and the composer, so they read apart without shadows; the list's edge fade sits on it -->
     <div class="chsurf" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0">
-    <div class="chscroll" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
+    <div class="chscroll" data-wf-keepscroll="1" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
       <sc-for list="{{items}}" as="m" hint-placeholder-count="4">
         <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
         <sc-if value="{{m.isSys}}" hint-placeholder-val="{{ false }}">
@@ -239,9 +239,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <button type="button" class="chbtn" onClick="{{tm.close}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg class="chx" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{tm.xRot}})"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
       </header>
-      <div role="list" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; margin: 0 16px; border-radius: 16px; background: #FFFFFF">
+      <!-- One card per member, 8px apart (related cards in one group) -->
+      <div role="list" class="chscroll" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px">
         <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
-          <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 64px; padding: 10px 16px; border: 0; border-top: {{p.sep}}; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+          <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 64px; padding: 10px 16px; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
             <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
             <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
               <span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
@@ -495,6 +496,16 @@ class Component extends DCLogic {
     });
   }
   // Keep the newest message fully above the input while you are reading the end; after the layout settles too
+  // Every chat keeps the place you left it (on this phone); at the end, it follows new messages
+  restorePos(el, key) { let p = null; try { p = JSON.parse(localStorage.getItem('wf-chat-pos') || '{}')[key]; } catch (e) {}
+    if (!p || p.b) { this._stick = true; this.pin(); return; }
+    this._stick = false; this._restoring = true; const t0 = Date.now();
+    const step = () => { if (this._sc !== el || this._posKey !== key) { this._restoring = false; return; } el.scrollTop = p.t;
+      if (el.scrollHeight - el.clientHeight >= p.t - 1 || Date.now() - t0 > 1500) { this._restoring = false; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; } else requestAnimationFrame(step); };
+    step(); }
+  savePos(el, key) { clearTimeout(this._posT); this._posT = setTimeout(() => { try { const m = JSON.parse(localStorage.getItem('wf-chat-pos') || '{}'); delete m[key];
+    m[key] = { t: Math.round(el.scrollTop), b: el.scrollHeight - el.scrollTop - el.clientHeight < 60 }; const ks = Object.keys(m); ks.slice(0, Math.max(0, ks.length - 60)).forEach((k) => delete m[k]);
+    localStorage.setItem('wf-chat-pos', JSON.stringify(m)); } catch (e) {} }, 150); }
   pin() { const el = this._sc; if (!el || !this._stick) return; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; }); }
   componentDidUpdate() {
     this.fitRows();
@@ -504,8 +515,9 @@ class Component extends DCLogic {
       if (c && C.unread(c) > 0 && document.visibilityState !== 'hidden') C.seen(s.key);
       // Declared resolved: the chat stays; the resolution summary opens only from the trophy card or the state card
       const el = this._sc, n = c ? c.msgs.length : 0;
-      if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { this.pin(); this._n = n; this._typ = !!(c && C.typing(c)); }
-    }
+      if (el && (el !== this._posEl || s.key !== this._posKey)) { this._posEl = el; this._posKey = s.key; this._n = n; this._typ = !!(c && C.typing(c)); this.restorePos(el, s.key); }
+      else if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { this.pin(); this._n = n; this._typ = !!(c && C.typing(c)); }
+    } else { this._posEl = null; }
   }
   // Views inside this screen stack up, so every back returns to the one you came from
   go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person, team: !!(extra && extra.fromTeam) }]), view, sheet: false, ...(extra || {}) }); }
@@ -808,7 +820,7 @@ class Component extends DCLogic {
       acts, actD: acts.length ? 'flex' : 'none', 
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? (window.__wfY || '#E5FF00') : '#E5E5EA', sendOp: (s.draft || '').trim() ? 1 : 0.3, sendDis: (s.draft || '').trim() ? 'false' : 'true',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
-      setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; if ((this.state || {}).avTip) this.setState({ avTip: null }); this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; },
+      setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; if ((this.state || {}).avTip) this.setState({ avTip: null }); if (this._restoring) return; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; const k = (this.state || {}).key; if (k && (this.state || {}).view === 'chat') this.savePos(el, k); },
       back: (e) => { if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false, sheet: false, tab: c.closed ? 'resolved' : (this.state || {}).tab }); } }
     };
   }

@@ -701,13 +701,14 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   return warped.map((q, i) => { const o = pts[i], dx0 = o[0] - cx, dy0 = o[1] - cy, dx = (q[0] - cx) * k, dy = (q[1] - cy) * k, r0 = Math.hypot(dx0, dy0), r1 = Math.hypot(dx, dy);
     const f = r0 && r1 < r0 * 1.05 ? r0 * 1.05 / r1 : 1; return [cx + dx * f, cy + dy * f]; }); };
 
-// Scroll on return (app-wide): a screen or panel you come back to opens at its top, except when you came back with a back
+// Scroll on return (app-wide): a screen or panel you come back to opens at its top (the chat excepted: data-wf-keepscroll
+// keeps its place), except when you came back with a back
 // control (data-wf-back, or a screen's own back through __wfBackOrHome), where the place you left is useful and kept.
 (function(){
   var KEY='wf-back-nav', mark=function(){try{sessionStorage.setItem(KEY,String(Date.now()));}catch(x){}};
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(a)mark();},true);
   var ob=window.__wfBackOrHome;if(typeof ob==='function'){window.__wfBackOrHome=function(){mark();return ob.apply(this,arguments);};}
-  var top=function(root){try{var L=(root||document).querySelectorAll('*');for(var i=0;i<L.length;i++){var el=L[i];if(el.closest&&el.closest('[data-wf-maproot]'))continue;if(el.scrollTop>0)el.scrollTop=0;if(el.scrollLeft>0&&el.getAttribute('role')!=='tablist')el.scrollLeft=0;}if(!root)window.scrollTo(0,0);}catch(x){}};
+  var top=function(root){try{var L=(root||document).querySelectorAll('*');for(var i=0;i<L.length;i++){var el=L[i];if(el.closest&&el.closest('[data-wf-maproot],[data-wf-keepscroll]'))continue;if(el.scrollTop>0)el.scrollTop=0;if(el.scrollLeft>0&&el.getAttribute('role')!=='tablist')el.scrollLeft=0;}if(!root)window.scrollTo(0,0);}catch(x){}};
   // the place on each screen, remembered when leaving it, for a return through a back control that reloads the screen
   var SK='wf-scroll:'+location.pathname,keyOf=function(el){return el.getAttribute('data-wf-page')!=null?'page':(el.getAttribute('role')||el.tagName)+'|'+(el.getAttribute('aria-label')||'')+'|'+(el.id||'');};
   addEventListener('pagehide',function(){try{var out=[],L=document.querySelectorAll('*');for(var i=0;i<L.length;i++){var el=L[i];if(el.scrollTop>0||el.scrollLeft>0)out.push([keyOf(el),el.scrollTop,el.scrollLeft]);}out.push(['win',scrollY,scrollX]);sessionStorage.setItem(SK,JSON.stringify(out));}catch(x){}});
