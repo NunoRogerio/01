@@ -189,10 +189,11 @@ a{color:#0062CC}a:hover{color:#004FA3}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   // Background: aerial forest photos, a random new one every 8 s with a slow cross-fade and drift.
-  // Profile list magnet: after a gentle swipe, up or down, once a card comes within 150px of the line (and always, once it comes to rest), 16px below the top
+  // Profile list magnet (switched off: the list scrolls freely): after a gentle swipe, up or down, once a card comes within 150px of the line (and always, once it comes to rest), 16px below the top
   // (even while it is still coasting) it glides in smoothly and comes to rest exactly on the line.
   // A vigorous swipe is left to the phone's own momentum and never snaps.
   snapList() {
+    return;   /* the profile list scrolls freely with the phone's own momentum: no snapping (Oct 1) */
     const L = document.querySelector('#dc-root [role=listbox]'); if (!L || L.__snap) return; L.__snap = true;
     const FIELD = 150, FAST = 0.55;
     let samples = [], trail = [], raf = 0, mode = 'off', held = null, dirV = 0, quiet = 0;   // held: the card already sitting on the line has no pull
@@ -266,7 +267,7 @@ class Component extends DCLogic {
   openPanel() {
     clearTimeout(this._pt); const fc = this.fieldClip();
     this.setState({ open: true, phase: 'from', fromClip: fc });
-    requestAnimationFrame(() => requestAnimationFrame(() => { const L = document.querySelector('#dc-root [role=listbox]'); this.setState({ phase: 'in', padB: L && L.__pad ? L.__pad() : 32 }); }));
+    requestAnimationFrame(() => requestAnimationFrame(() => { const L = document.querySelector('#dc-root [role=listbox]'); this.setState({ phase: 'in', padB: 32 }); }));
   }
   // Close: the button turns a full circle first, then the panel folds into the sign-in field while it
   // dissolves, so the frosted field underneath appears softly instead of snapping in.
