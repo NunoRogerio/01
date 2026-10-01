@@ -160,6 +160,8 @@
     '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
     // Qualifier band (what an item is: ignition detection, active fire, fire station): not a button. Full width, square
     // corners, the map marker's colour, the marker itself before the label. One definition for the whole app.
+    /* Status tags in lists: one width for every tag, set by the longest expected label (e.g. Building line), text centred; a longer translation still grows it */
+    '.wf-stag{min-width:132px;justify-content:center;text-align:center}' +
     '.wf-qual{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;border-radius:0;background:rgba(118,118,128,0.12);color:#1C1C1E;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
     '.wf-qual svg{flex-shrink:0;scale:1.2}' +
     '.wf-qual.hd{min-height:52px;padding:0 10px 0 16px!important;border-radius:26px!important}.wf-qual.hd [role=status],.wf-qual.hd .qtag{min-height:32px!important;padding:6px 12px!important;border-radius:16px!important;box-sizing:border-box;box-shadow:0 0 0 1.4px color-mix(in srgb,currentColor 20%,transparent)}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
@@ -313,8 +315,8 @@
     if (el.__wfFadeEl || el.__wfFadeTop) { fadeEdge(el, el.parentElement, 'top', false); fadeEdge(el, el.parentElement, 'bottom', false); }   // overlays of the old fade
     var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY) && !!el.offsetParent;
     var more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1, less = sc && el.scrollTop > 1;
-    var h = Math.round(Math.min(FH, el.clientHeight * 0.3));
-    var g = !(less || more) ? '' : 'linear-gradient(to bottom, ' + (less ? 'transparent 0, #000 ' + h + 'px' : '#000 0') + ', ' + (more ? '#000 calc(100% - ' + h + 'px), transparent 100%' : '#000 100%') + ')';
+    var h = Math.round(Math.min(FH, el.clientHeight * 0.3)), ht = el.classList.contains('wf-snap') ? Math.min(h, 32) : h;   // snapping lists: the top fade fits the 32px band items rest under, never over an item
+    var g = !(less || more) ? '' : 'linear-gradient(to bottom, ' + (less ? 'transparent 0, #000 ' + ht + 'px' : '#000 0') + ', ' + (more ? '#000 calc(100% - ' + h + 'px), transparent 100%' : '#000 100%') + ')';
     if (g !== el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = g; el.__wfM = g; }
   }
   function fadeEdge(el, par, side, on) {

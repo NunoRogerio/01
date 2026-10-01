@@ -365,7 +365,7 @@ window.__wfBlink=function(path,dur){
 // The last position of the list always stays reachable.
 (function(){
   function stops(L){
-    var max=L.scrollHeight-L.clientHeight,out=[],k=L.children,off=parseFloat(L.getAttribute('data-snap-off'))||0;
+    var max=L.scrollHeight-L.clientHeight,out=[],k=L.children,off=L.hasAttribute('data-snap-off')?(parseFloat(L.getAttribute('data-snap-off'))||0):32;   // items come to rest 32px under the list's top, clear of the top fade
     for(var i=0;i<k.length;i++){var c=k[i];if(!c.offsetHeight)continue;out.push(Math.max(0,Math.min(max,(c.offsetParent===L?c.offsetTop:c.offsetTop-L.offsetTop)-off)));}
     out.push(max);return out;
   }

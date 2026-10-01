@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=100"></script>
+<script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=118"></script>
+<script src="prefs.js?v=119"></script>
 <script src="i18n.js?v=111"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
@@ -336,32 +336,37 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Sending dispatch orders: each chosen station's coordinator gets its order in turn, then a confirmation and Done -->
   <section role="dialog" aria-modal="true" aria-labelledby="sendTitle" aria-hidden="{{snd.hidden}}" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; box-sizing: border-box; padding: 72px 16px 40px; background: #F2F2F7; transform: translateY({{snd.y}}); visibility: {{snd.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{snd.visDelay}}">
     <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
-      <h2 id="sendTitle" style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2>
+      <!-- Once every order is through, the bar fades away and a big green check mark sits on the title's row -->
+      <span style="display: flex; align-items: center; gap: 12px"><h2 id="sendTitle" style="flex-grow: 1; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; opacity: {{snd.doneOp}}; transform: scale({{snd.doneS}}); transition: opacity .3s ease .25s, transform .45s cubic-bezier(.3,1.4,.4,1) .25s"><path d="m4.5 12.5 5 5L19.5 7"></path></svg></span>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{snd.sub}}</span>
     </div>
-    <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 4px; margin: 32px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
+    <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{snd.pct}}" style="position: relative; display: block; height: 4px; margin: 32px 4px 0; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden; opacity: {{snd.barOp}}; transition: opacity .4s ease .2s">
       <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{snd.pct}}%; border-radius: 999px; background: {{snd.barC}}; transition: width .6s cubic-bezier(.3,.9,.25,1), background-color .3s ease"></span>
     </span>
     <!-- One card per station (and air support), 16px apart -->
     <ul class="wf-snap" style="display: flex; flex-direction: column; gap: 32px; flex-shrink: 1; min-height: 0; margin: 12px -12px 0; padding: 12px; list-style: none; overflow-y: auto; scrollbar-width: none">
       <sc-for list="{{snd.rows}}" as="o" hint-placeholder-count="2">
         <li style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; overflow: hidden; box-shadow: 0 0 12px rgba(0,0,0,0.08), 0 0 2px rgba(0,0,0,0.06)">
-          <div style="display: flex; align-items: center; gap: 16px; min-height: 68px; padding: 12px 16px; box-sizing: border-box; background-color: {{o.hdBg}}"><img src="{{o.crest}}" data-crest="{{o.name}}" alt="" style="display: {{o.crestD}}; width: 40px; height: 40px; flex-shrink: 0; object-fit: contain">
-          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+          <!-- Header: the crest (or the air support badge) sits on the top of the name; the units below line up with it: icons in the crest's column, names under the station's text -->
+          <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 28px; align-items: start; gap: 16px; padding: 16px; box-sizing: border-box; background-color: {{o.hdBg}}"><img src="{{o.crest}}" data-crest="{{o.name}}" alt="" style="display: {{o.crestD}}; width: 44px; height: 44px; object-fit: contain">
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
             <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
             <span style="font-size: 17px; line-height: 22px; color: {{o.stC}}">{{o.state}}</span>
           </span>
-          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0">
-            <span class="sndspin" style="position: absolute; inset: 2px; border-radius: 50%; border: 2px solid rgba(60,60,67,0.18); border-top-color: #0062CC; opacity: {{o.spinOp}}; transition: opacity .2s ease"></span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; inset: 0; opacity: {{o.tickOp}}; transform: scale({{o.tickS}}); transition: opacity .25s ease, transform .35s cubic-bezier(.3,.9,.25,1)"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
+          <span aria-hidden="true" style="position: relative; align-self: center; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px">
+            <span class="sndspin" style="position: absolute; inset: 3px; border-radius: 50%; border: 2px solid rgba(60,60,67,0.18); border-top-color: #3A3A3C; opacity: {{o.spinOp}}; transition: opacity .2s ease"></span>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E7A34" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; inset: 0; opacity: {{o.tickOp}}; transform: scale({{o.tickS}}); transition: opacity .25s ease, transform .35s cubic-bezier(.3,.9,.25,1)"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
           </span>
           </div>
-          <!-- What this station sends -->
-          <ul style="display: flex; flex-direction: column; margin: 0; padding: 0 0 8px; list-style: none">
+          <!-- Separator between the header and what the station sends, card edge to card edge -->
+          <div aria-hidden="true" style="height: 1px; flex-shrink: 0; background: rgba(60,60,67,0.14)"></div>
+          <!-- What this station sends: each unit icon fills the crest's 40px column -->
+          <ul style="display: flex; flex-direction: column; margin: 0; padding: 8px 0; list-style: none">
             <sc-for list="{{o.units}}" as="u" hint-placeholder-count="2">
-              <li style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px 0 40px; box-sizing: border-box; border-top: 0">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{u.c}}" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-left: -28px"><path d="{{u.icon}}"></path></svg>
-                <span style="flex-grow: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{u.label}}</span>
+              <li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 16px; min-height: 56px; padding: 0 16px; box-sizing: border-box">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="{{u.c}}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="justify-self: center"><path d="{{u.icon}}"></path></svg>
+                <span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{u.label}}</span>
                 <span style="font-size: 17px; font-weight: 600; color: #000000; font-variant-numeric: tabular-nums">{{u.n}}</span>
               </li>
             </sc-for>
@@ -543,20 +548,21 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <sc-for list="{{d.groups}}" as="gp" hint-placeholder-count="2">
             <ul data-wf-gp="{{gp.gk}}" style="position: relative; display: block; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden">
               <span aria-hidden="true" style="display: {{gp.dotD}}; position: absolute; top: 4px; right: 4px; z-index: 2; width: 12px; height: 12px; border-radius: 50%; background: #E6352B; pointer-events: none"></span>
-              <li><button type="button" class="mbtn" onClick="{{gp.tog}}" aria-expanded="{{gp.exp}}" aria-label="{{gp.aria}}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
-                <img src="{{gp.crest}}" alt="" style="display: {{gp.crestD}}; width: 36px; height: 36px; flex-shrink: 0; object-fit: contain">
+              <li><button type="button" class="mbtn" onClick="{{gp.tog}}" aria-expanded="{{gp.exp}}" aria-label="{{gp.aria}}" style="display: flex; align-items: center; gap: 16px; width: 100%; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+                <img src="{{gp.crest}}" alt="" style="display: {{gp.crestD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain">
                 <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{gp.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
               </button></li>
               <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none">
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">
-              <li class="wf-unit" style="display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 12px 16px">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.ic}}"></path></svg>
+              <!-- Unit row: the icon in the crest's column; the name and its description in full, then the status on its own line: the tag (one width for all) and the eight level bars -->
+              <li class="wf-unit" style="display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 2px 16px; padding: 12px 16px">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="grid-row: 1 / span 2; justify-self: center"><path d="{{u.ic}}"></path></svg>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
-                <span style="justify-self: end; display: inline-flex; align-items: center; gap: 8px">
-                <svg role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" width="30" height="16" viewBox="0 0 30 16" style="display: {{u.batD}}; flex-shrink: 0"><rect x="0.75" y="0.75" width="25.5" height="14.5" rx="4" fill="none" stroke="#8E8E93" stroke-width="1.5"></rect><path d="M28 5.5v5" stroke="#8E8E93" stroke-width="2" stroke-linecap="round"></path><path d="{{u.batLo}}" stroke="#C7C7CC" stroke-width="2" stroke-linecap="round"></path><path d="{{u.batHi}}" stroke="#3A3A3C" stroke-width="2" stroke-linecap="round"></path></svg>
-                <span style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 700; line-height: 20px; white-space: nowrap">{{u.tag}}</span></span>
-                <span style="grid-column: 2 / -1; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
+                <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
+                <span style="grid-column: 2; display: flex; align-items: center; gap: 12px; margin-top: 6px">
+                <span class="wf-stag" style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 700; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
+                <svg role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" width="30" height="28" viewBox="0 0 30 28" style="display: {{u.batD}}; flex-shrink: 0"><path d="{{u.batLo}}" fill="#C7C7CC"></path><path d="{{u.batHi}}" fill="#000000"></path></svg></span>
                 <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
                   <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{u.pct}}%; border-radius: 999px; background: #3A3A3C"></span>
                 </span>
@@ -991,6 +997,8 @@ class Component extends DCLogic {
   // 6 to 9 are the extra unit types only some stations keep (seeded by the station, so they stay put). Crew sizes follow
   // real practice: NWCG minimum staffing in the US (Type 3 engine 3, Type 6 engine 2, tactical water tender 2, hand crew
   // 18 to 22), ANEPC in Portugal (an ECIN is 5 firefighters in a VFCI, a VLCI 3, a VTTF 2).
+  // Air support badge: gold aviator wings around a navy shield with a white star (stands where a station has its crest)
+  wfAirBadge() { return 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><g id="w" fill="#D9A520" stroke="#6B4E00" stroke-width="0.8" stroke-linejoin="round"><path d="M14.5 11.5C9.5 9.3 4.5 8.4.6 8.9c2.6 2.8 6 4.4 9.6 5.2-3.2.6-5.8 1.8-7.8 3.4 3.6.9 7.1.7 10.2-.2-2.1 1.5-3.9 3.4-5.2 5.9 3.2-.3 5.9-1.6 8-3.4Z"/></g><use href="#w" transform="translate(40 0) scale(-1 1)"/><path d="M20 6 28 9.3V18.8c0 5.6-3.2 10-8 12.7-4.8-2.7-8-7.1-8-12.7V9.3Z" fill="#1B2E57" stroke="#FFFFFF" stroke-width="1.3" stroke-linejoin="round"/><path d="M20 12.2l1.6 3.25 3.6.52-2.6 2.53.6 3.57L20 20.4l-3.2 1.67.6-3.57-2.6-2.53 3.6-.52Z" fill="#FFFFFF"/></svg>'); }
   wfKinds(st) {
     const pt = st === 'PT';
     return pt ? {
@@ -1010,7 +1018,10 @@ class Component extends DCLogic {
     };
   }
   // Extra unit types a station keeps (index 6 to 9): 1 or 0, seeded by the station
-  wfExtraCap(id, st) { const K = this.wfKinds(st); return [6, 7, 8, 9].map((k) => { let h = 7; for (const ch of String(id) + ':' + k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return (h % 100) < (K[k].p || 0) * 100 ? 1 : 0; }); }
+  // Extra unit types a station keeps (index 6 to 9), seeded by the station so they stay put: a hand crew and an ambulance
+  // at most one each; dozers and patrol engines (VLCI / evacuation vans in Portugal) one or two
+  wfSeed(id, k) { let h = 7; for (const ch of String(id) + ':' + k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }
+  wfExtraCap(id, st) { const K = this.wfKinds(st); return [6, 7, 8, 9].map((k) => { const h = this.wfSeed(id, k); if ((h % 100) >= (K[k].p || 0) * 100) return 0; return k === 7 || k === 9 ? 1 + ((h >> 8) % 2) : 1; }); }
   wfSplit(list, counts, per) {
     const out = [], get = (d) => { let o = out.find((q) => q.id === d.id); if (!o) { o = { id: d.id, ck: d.ck || '', code: d.code || '', name: d.name, km: d.km, n: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }; out.push(o); } return o; };
     const st = list.filter((d) => d.id !== 'none');
@@ -1226,9 +1237,9 @@ class Component extends DCLogic {
     const isRecCfg = !s.per;
     const meta = [
       { name: 'Ground crews', from: chosenList.map((d) => d.code).join(', ') + ' · ' + chosen.eta + ' min', icon: 'M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM17 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z', eta: chosen.eta },
-      { name: 'Water tenders', from: chosen.code + ' + aid · ' + (chosen.eta + 3) + ' min', icon: 'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11ZM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5', eta: chosen.eta + 3 },
-      { name: 'Helicopters', from: 'Helibase · 9 min', icon: 'M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7', eta: 9 },
-      { name: 'Air tankers', from: 'Fox Field · 18 min', icon: 'M2 13h20M12 13V8l-2-3h4l-2 3M5 13l-2 4M19 13l2 4M9 13l-1 5h8l-1-5', eta: 18 },
+      { name: 'Water tenders', from: chosen.code + ' + aid · ' + (chosen.eta + 3) + ' min', icon: 'M5.5 6.5h6a3 3 0 0 1 3 3v.5a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3v-.5a3 3 0 0 1 3-3Z M8.5 7.9c.8 1 1.3 1.7 1.3 2.3a1.3 1.3 0 0 1-2.6 0c0-.6.5-1.3 1.3-2.3Z M2.5 15.5h1.8M8.6 15.5h6.8M19.6 15.5h1.4v-3.3L18.6 8.5h-3.1v7 M6.5 13v2.5 M4.4 16.8a2 2 0 1 0 4 0a2 2 0 1 0-4 0 M15.4 16.8a2 2 0 1 0 4 0a2 2 0 1 0-4 0', eta: chosen.eta + 3 },
+      { name: 'Helicopters', from: 'Helibase · 9 min', icon: 'M3 5h16M11 5v3 M6.5 8H13a5 5 0 0 1 5 5 2.5 2.5 0 0 1-2.5 2.5H9A4.5 4.5 0 0 1 4.5 11 3 3 0 0 1 6.5 8Z M17.8 12H22.5M22.5 10v4 M8 15.5v3M14.5 15.5v3M5 18.5h12.5', eta: 9 },
+      { name: 'Air tankers', from: 'Fox Field · 18 min', icon: 'M12 2c.8 0 1.3.9 1.3 2v5.5h8.2v2.3l-8.2 1.4v5.4l2.9 1.8V22H7.8v-1.6l2.9-1.8v-5.4l-8.2-1.4V9.5h8.2V4c0-1.1.5-2 1.3-2Z M6 9.5V7.5M18 9.5V7.5 M4.5 7.5h3M16.5 7.5h3', eta: 18 },
       { name: 'Jet tanker', from: 'San Bernardino · 26 min', icon: 'M12 2c1 0 1.5 1.5 1.5 3v4.5L21 14v2l-7.5-2.5V18l2.5 2v1.5L12 20.5l-4 1V20l2.5-2v-4.5L3 16v-2l7.5-4.5V5c0-1.5.5-3 1.5-3Z', eta: 26 },
       { name: 'Drone swarms', from: 'ST-5 swarm unit · 6 min', icon: 'M4.4 6a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M10.4 4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M16.4 6a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M2.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M10.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M18.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M5.4 18a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M10.4 20a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0M15.4 18a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0', eta: 6 }
     ];
@@ -1434,17 +1445,17 @@ class Component extends DCLogic {
         try { const M = JSON.parse(localStorage.getItem('wf-crew') || '{}'); M[fireId] = { t: Date.now(), st: gOut.map((g) => { const w = g.units.filter((u) => u.k === 1), cr = g.units.filter((u) => u.k === 0);
           return { name: g.name, tenders: w.length, low: w.filter((u) => u.tag === 'Low water').map((u) => u.name), crews: cr.length, tired: cr.filter((u) => u.tag === 'Needs relief').map((u) => u.name) }; }) };
           localStorage.setItem('wf-crew', JSON.stringify(M)); } catch (x) {}
-        if (airU.length) gOut.push({ crest: '', crestD: 'none', shD: 'none', name: stC === 'PT' ? 'Meios aéreos' : 'Air support', sub: airU.length + (airU.length === 1 ? ' aircraft.' : ' aircraft.'), units: airU });
+        if (airU.length) gOut.push({ crest: this.wfAirBadge(), crestD: 'block', shD: 'none', name: stC === 'PT' ? 'Meios aéreos' : 'Air support', sub: airU.length + (airU.length === 1 ? ' aircraft.' : ' aircraft.'), units: airU });
         const GC = s.gpC || {};   // folded station cards (all open by default)
         { const IC = { crew: 'M8.5 7.2a3.5 3.5 0 0 1 7 0M7 7.2h10M12 7.2v0M9.2 8.6a2.8 2.8 0 0 0 5.6 0M5.5 20.5v-1.8a4.5 4.5 0 0 1 4.5-4.5h4a4.5 4.5 0 0 1 4.5 4.5v1.8',
-            tender: 'M2.5 7.5h11v9h-11Z M13.5 10.5h4l3 3v3h-7 M5.3 18.4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M15.3 18.4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M8 9.6c.9 1.1 1.7 2 1.7 2.9a1.7 1.7 0 0 1-3.4 0c0-.9.8-1.8 1.7-2.9Z',
+            tender: 'M5.5 6.5h6a3 3 0 0 1 3 3v.5a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3v-.5a3 3 0 0 1 3-3Z M8.5 7.9c.8 1 1.3 1.7 1.3 2.3a1.3 1.3 0 0 1-2.6 0c0-.6.5-1.3 1.3-2.3Z M2.5 15.5h1.8M8.6 15.5h6.8M19.6 15.5h1.4v-3.3L18.6 8.5h-3.1v7 M6.5 13v2.5 M4.4 16.8a2 2 0 1 0 4 0a2 2 0 1 0-4 0 M15.4 16.8a2 2 0 1 0 4 0a2 2 0 1 0-4 0',
             engine: 'M2.5 7.5h11v9h-11Z M13.5 10.5h4l3 3v3h-7 M5.3 18.4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M15.3 18.4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M2.5 5.5l9-1.5M5 5.1l.4 2.4M8.5 4.5l.4 2.4',
-            heli: 'M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7', plane: 'M12 2.5c.9 0 1.4 1.4 1.4 2.8v4.3l7.1 4.2v1.9l-7.1-2.3v4.1l2.3 1.8v1.4L12 19.8l-3.7.9v-1.4l2.3-1.8v-4.1l-7.1 2.3v-1.9l7.1-4.2V5.3c0-1.4.5-2.8 1.4-2.8Z' };
-          const seg = (n0, n1) => { let d = ''; for (let i = n0; i < n1; i++) d += 'M' + (5 + i * 3.5) + ' 5v6'; return d || 'M0 0'; };
+            heli: 'M3 5h16M11 5v3 M6.5 8H13a5 5 0 0 1 5 5 2.5 2.5 0 0 1-2.5 2.5H9A4.5 4.5 0 0 1 4.5 11 3 3 0 0 1 6.5 8Z M17.8 12H22.5M22.5 10v4 M8 15.5v3M14.5 15.5v3M5 18.5h12.5', tanker: 'M12 2c.8 0 1.3.9 1.3 2v5.5h8.2v2.3l-8.2 1.4v5.4l2.9 1.8V22H7.8v-1.6l2.9-1.8v-5.4l-8.2-1.4V9.5h8.2V4c0-1.1.5-2 1.3-2Z M6 9.5V7.5M18 9.5V7.5 M4.5 7.5h3M16.5 7.5h3', plane: 'M12 2.5c.9 0 1.4 1.4 1.4 2.8v4.3l7.1 4.2v1.9l-7.1-2.3v4.1l2.3 1.8v1.4L12 19.8l-3.7.9v-1.4l2.3-1.8v-4.1l-7.1 2.3v-1.9l7.1-4.2V5.3c0-1.4.5-2.8 1.4-2.8Z' };
+          const seg = (n0, n1) => { let d = ''; for (let i = n0; i < n1; i++) d += 'M' + (i * 4) + ' 0h2v28h-2Z'; return d || 'M0 0'; };   /* eight 2px bars, 2px apart, as tall as the status tag */
           gOut.forEach((g) => (g.units || []).forEach((u) => { const nm = String(u.name || '');
             u.ic = u.ic0 ? u.ic0 : u.k === 0 ? IC.crew : u.k === 1 ? (/tender|VTTF|autotanque/i.test(nm) ? IC.tender : IC.engine) : (/heli/i.test(nm) ? IC.heli : IC.plane);
-            const hasB = u.k === 0 || u.k === 1 || u.bat, on = !hasB ? 0 : Math.max(0, Math.min(6, Math.round((Number(u.pct) || 0) / 100 * 6)));   /* six segments: dark = left, mid grey = used */
-            u.batD = hasB ? 'block' : 'none'; u.batHi = seg(0, on); u.batLo = seg(on, 6); })); }
+            const hasB = u.k === 0 || u.k === 1 || u.bat, on = !hasB ? 0 : Math.max(0, Math.min(8, Math.round((Number(u.pct) || 0) / 100 * 8)));   /* eight bars: black = left, light grey = used */
+            u.batD = hasB ? 'block' : 'none'; u.batHi = seg(0, on); u.batLo = seg(on, 8); })); }
         gOut.forEach((g) => { const k = g.name, open = !GC[k], issue = (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A');   /* a folded station with a crew needing relief or a tender low on water gets the red dot */
           Object.assign(g, { dotD: !open && issue ? 'block' : 'none', exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg', aria: g.name + (!open && issue ? '. Needs attention' : '') + (open ? '. Fold' : '. Unfold'),
           gk: String(gOut.indexOf(g)),
@@ -1580,14 +1591,19 @@ class Component extends DCLogic {
         const KST = [0, 1, 6, 7, 8, 9], fromN = (n) => KST.map((k) => (n || [])[k] || 0), toN = (d) => { const a = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; KST.forEach((k, j) => { a[k] = d[j] || 0; }); return a; };   /* station drafts: one slot per kind it can send */
         const plan = Array.isArray(s.plan) ? s.plan : (confP && ORD.length ? ORD.map((o) => ({ id: o.id, n: o.id === 'air' ? (o.n || []).slice(2, 6) : fromN(o.n) })) : []), F = s.flow || null, byId = (id) => data.find((d) => d.id === id);
         const capSt = (d) => (d.real ? [99, 99] : [d.free != null ? Math.max(0, d.free) : 99, (tenders[d.id] || 0) + 2]).concat(this.wfExtraCap(d.id || '', stC));
-        const recFor = (id) => { if (id === 'air') return REC.slice(2).map((n, i) => Math.min(n, airCap[i])); const d = byId(id), c = d ? capSt(d) : [0, 0], first = !plan.some((p) => p.id !== 'air' && p.id !== id);
-          return (first ? [Math.min(REC[0], c[0]), Math.min(REC[1], c[1])] : [Math.min(1, c[0]), Math.min(1, c[1])]).concat([0, 0, 0, 0]); };
+        // Suggested order, as an initial attack on a wildland fire is made up in practice (CAL FIRE / ANEPC): engines and a
+        // water tender from each station, plus what the station keeps: its hand crew, a dozer, a patrol engine, and an
+        // ambulance from the first station only. Numbers differ by station (seeded, so a station always suggests the same).
+        // Air support suggests a helicopter, air tankers and a drone swarm.
+        const recFor = (id) => { if (id === 'air') return REC.slice(2).map((n, i) => Math.min(Math.max(n, [1, 2, 0, 1][i]), airCap[i])); const d = byId(id), c = d ? capSt(d) : [0, 0, 0, 0, 0, 0], first = !plan.some((p) => p.id !== 'air' && p.id !== id), h = this.wfSeed(id, 'rec');
+          const eng = first ? Math.max(REC[0], 2 + (h % 2)) : 1 + (h % 3), ten = first ? Math.max(1, REC[1] - 1) : (h >> 4) % 2;
+          return [Math.min(eng, c[0]), Math.min(ten, c[1]), Math.min(1, c[2] || 0), Math.min(1, c[3] || 0), first ? Math.min(1, c[4] || 0) : 0, stC === 'PT' ? 0 : Math.min(1 + ((h >> 6) % 2), c[5] || 0)]; };   /* Portugal's evacuation vans only when asked */
         const W = (i, n) => n + ' ' + words[i][n === 1 ? 0 : 1];
         const sumOf = (id, n) => (id === 'air' ? n.map((v, i) => v ? W(i + 2, v) : '').filter(Boolean) : n.map((v, i) => v ? W(KST[i], v) : '').filter(Boolean)).join('. ') || 'Select resources';
         const nm = (d) => (d.code && d.code !== '—' ? d.code + '. ' : '') + d.name;
         const cards = plan.map((p) => { const d = p.id === 'air' ? null : byId(p.id), crest = d ? crestOf(d) : '';
           return { key: String(p.id), name: d ? nm(d) : 'Air support', sum: sumOf(p.id, p.n) + '.', sub: d ? (d.km != null ? d.km + DU + '. ' : '') + (d.eta != null ? '~' + d.eta + ' min to the fire line.' : '') : 'From the nearest air bases.',
-            crest, crestD: crest ? 'block' : 'none', airD: d ? 'none' : 'block', icBg: d ? 'transparent' : 'rgba(0,121,166,0.1)', aria: (d ? nm(d) : 'Air support') + '. ' + sumOf(p.id, p.n) + '. Change',
+            crest: d ? crest : this.wfAirBadge(), crestD: crest || !d ? 'block' : 'none', airD: 'none', icBg: 'transparent', aria: (d ? nm(d) : 'Air support') + '. ' + sumOf(p.id, p.n) + '. Change',
             edit: () => this.setState({ flow: { step: 'res', id: p.id, draft: p.n.slice(), edit: true } }) }; });
         const hasSt = plan.some((p) => p.id !== 'air');
         // The order already went out from the fire page: the cards stay still (no Cancel / Send order) and each change is sent at once
@@ -1609,7 +1625,7 @@ class Component extends DCLogic {
         const inPlan = (x) => plan.some((p) => p.id === x);
         const stRows = [{ id: 'air', air: true }].concat(ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id))).filter((d) => !(d.air && inPlan('air'))).map((d) => { if (d.air) { const used = inPlan('air');
             const ae = this.wfAirEta(FIRE);
-            return { code: '', name: 'Air support', crest: '', crestD: 'none', airD: 'block', icBg: 'rgba(0,121,166,0.1)', eta: ae ? '~' + ae + ' min' : '', etaC: '#000000', sub: used ? 'Added.' : 'Helicopters and air tankers.', tagD: 'none', tag: '', tagBg: '', tagFg: '', dis: used ? 'true' : 'false', op: used ? 0.45 : 1, cur: used ? 'default' : 'pointer', aria: 'Air support',
+            return { code: '', name: 'Air support', crest: this.wfAirBadge(), crestD: 'block', airD: 'none', icBg: 'transparent', eta: ae ? '~' + ae + ' min' : '', etaC: '#000000', sub: used ? 'Added.' : 'Helicopters and air tankers.', tagD: 'none', tag: '', tagBg: '', tagFg: '', dis: used ? 'true' : 'false', op: used ? 0.45 : 1, cur: used ? 'default' : 'pointer', aria: 'Air support',
               pick: () => { if (!used) this.setState({ flow: { step: 'res', id: 'air', draft: recFor('air'), edit: false } }); } }; }
           const busy = d.eta === null, used = inPlan(d.id), dis = busy || used, crest = crestOf(d), best = d.id === rec.id && !used;
           const code = d.code && d.code !== '—' ? d.code + '. ' : '';
@@ -1674,9 +1690,9 @@ class Component extends DCLogic {
         const SP = this.wfSplit(sendList, counts, PER), on = !!s.sending, n = Math.max(1, SP.length), k = Math.min(n, s.sndN || 0), all = on && k >= n;
         return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
           title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: '#000000',
-          sub: 'To station coordinators · ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: all ? '#34C759' : '#0062CC',
-          rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, SCL = window.__wfStationCol || ['#34C759'], TNT = window.__wfTint || ((h, a) => 'rgba(52, 199, 89, ' + a + ')'); return { crest: crestOf(d), crestD: crestOf(d) ? 'block' : 'none', hdBg: d.id === 'air' ? 'rgba(0, 113, 227, 0.06)' : 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '0' : '0',
-            units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 ? '#0079A6' : '#000000', n: q.x })),
+          sub: 'To station coordinators. ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: '#3A3A3C', barOp: all ? 0 : 1, doneOp: all ? 1 : 0, doneS: all ? 1 : 0.5,
+          rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, cr = d.id === 'air' ? this.wfAirBadge() : crestOf(d); return { crest: cr, crestD: cr ? 'block' : 'none', hdBg: 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '0' : '0',
+            units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 && q.t < 6 ? '#0079A6' : '#000000', n: q.x })),
             state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: '#000000', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           redo: () => { this._replace = null; if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
