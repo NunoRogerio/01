@@ -13,12 +13,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=106"></script>
+<script src="fit.js?v=108"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=134"></script>
+<script src="prefs.js?v=135"></script>
 <script src="i18n.js?v=120"></script>
 <script src="live.js?v=38"></script>
-<script src="chat.js?v=43"></script>
+<script src="chat.js?v=44"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -143,20 +143,20 @@ a{color:#0062CC}a:hover{color:#004FA3}
 .primary>span{flex-grow:0!important;text-align:center!important}
 .ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
 .ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#0062CC}
-.ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 2px 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 0 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
-a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
+a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 0 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
 .lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#545458}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
 .kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#545458}
-.tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
+.tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 0 30px rgba(0,0,0,.14)}
 .igpill::after{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1)}
 .tip b,.ctip b{color:#000}
-.sheet{border-radius:38px 38px 0 0;background:#F2F2F7!important;box-shadow:0 -8px 40px rgba(0,0,0,.12)!important}
+.sheet{border-radius:38px 38px 0 0;background:#F2F2F7!important;box-shadow:0 0 40px rgba(0,0,0,.12)!important}
 .navi{border-radius:999px}
-nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 8px 30px rgba(0,0,0,.10)!important}
+nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 0 30px rgba(0,0,0,.10)!important}
 .fsin{color:#FFFFFF}
 .sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}.sqrow.nosep::after{display:none}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(255,255,255,.7)!important}}
 .sqrow:not([disabled]):active{opacity:.68}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
@@ -182,13 +182,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </sc-if>
     <!-- On the full-screen map the feed keeps the band's size and floats over the map; it comes out from behind the drone button the
          same way, and drags anywhere (portrait or landscape) -->
-    <figure aria-hidden="{{ff.hidden}}" onPointerDown="{{ff.down}}" onPointerMove="{{ff.move}}" onPointerUp="{{ff.up}}" onPointerCancel="{{ff.up}}" style="position: absolute; left: {{ff.left}}px; top: {{ff.top}}px; width: 358px; height: 202px; z-index: 40; margin: 0; overflow: hidden; border-radius: 16px; background: #1C1C1E; color: #FFFFFF; box-shadow: 0 8px 28px rgba(0,0,0,0.28); touch-action: none; cursor: grab; transform-origin: 0 0; transform: {{ff.tf}}; opacity: {{ff.op}}; pointer-events: {{ff.pe}}; transition: transform {{ff.tT}}, opacity {{ff.opT}}">
+    <figure aria-hidden="{{ff.hidden}}" onPointerDown="{{ff.down}}" onPointerMove="{{ff.move}}" onPointerUp="{{ff.up}}" onPointerCancel="{{ff.up}}" style="position: absolute; left: {{ff.left}}px; top: {{ff.top}}px; width: 358px; height: 202px; z-index: 40; margin: 0; overflow: hidden; border-radius: 16px; background: #1C1C1E; color: #FFFFFF; box-shadow: 0 0 28px rgba(0,0,0,0.28); touch-action: none; cursor: grab; transform-origin: 0 0; transform: {{ff.tf}}; opacity: {{ff.op}}; pointer-events: {{ff.pe}}; transition: transform {{ff.tT}}, opacity {{ff.opT}}">
       <sc-if value="{{ff.vid}}" hint-placeholder-val="{{ false }}">
         <video ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{visualOp}}; transition: opacity .45s ease"></video>
         <video ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{thermalOp}}; transition: opacity .45s ease"></video>
       </sc-if>
       <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; margin: -22px 0 0 -22px; pointer-events: none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>
-      <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
+      <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
       <button type="button" class="mbtn" data-pulse="lime" onClick="{{closeFeed}}" aria-label="Close drone feed" style="position: absolute; right: 16px; top: 16px; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #FFFFFF; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{feedXRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
       <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 16px; bottom: 16px; width: 200px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
@@ -204,7 +204,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <video ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{thermalOp}}; transition: opacity .45s ease"></video>
       </sc-if>
       <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; margin: -22px 0 0 -22px; pointer-events: none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>
-      <span style="position: absolute; left: 18px; top: 66px; display: flex; align-items: center; gap: 6px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
+      <span style="position: absolute; left: 18px; top: 66px; display: flex; align-items: center; gap: 6px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
       <button type="button" class="mbtn" data-pulse="lime" onClick="{{closeFeed}}" aria-label="Close drone feed" style="position: absolute; right: 18px; top: 66px; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #FFFFFF; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{feedXRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
       <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 18px; bottom: 42px; width: 200px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
@@ -233,7 +233,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 4px 4px 0 8px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{chat.n}}</span></a>
       </sc-if>
       <sc-if value="{{noActive}}" hint-placeholder-val="{{ false }}">
-        <span style="display: flex; flex-direction: column; padding: 4px 8px; color: #FFFFFF; text-shadow: 0 1px 10px rgba(0,0,0,0.45)"><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">Ignition candidates</span><span style="font-size: 17px; line-height: 22px; color: rgba(255,255,255,0.85)">{{scopeName}}</span></span>
+        <span style="display: flex; flex-direction: column; padding: 4px 8px; color: #FFFFFF; text-shadow: 0 0 10px rgba(0,0,0,0.45)"><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">Ignition candidates</span><span style="font-size: 17px; line-height: 22px; color: rgba(255,255,255,0.85)">{{scopeName}}</span></span>
       </sc-if>
   </header>
   </div>
@@ -241,7 +241,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="wf-glass scrim" onClick="{{ddClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 5; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{ddOp}}; pointer-events: {{ddPE}}"></div>
   <!-- Other candidates: a panel from the top of the screen (as the area picker): the active candidate as its title with a round X,
        the app's search, then the list with the active one highlighted in white; only the list scrolls, so its edge fade stays inside it -->
-  <div data-wf-dd="1" data-swipe="up" role="dialog" aria-modal="true" aria-label="Ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: 48px; border-radius: 0 0 28px 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.14); z-index: 7; display: flex; flex-direction: column; gap: 0; box-sizing: border-box; padding: 56px 0 4px; overflow: hidden; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path {{ddClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{ddClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
+  <div data-wf-dd="1" data-swipe="up" role="dialog" aria-modal="true" aria-label="Ignition candidates" aria-hidden="{{ddHidden}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: 48px; border-radius: 0 0 28px 28px; box-shadow: 0 0 60px rgba(0,0,0,0.14); z-index: 7; display: flex; flex-direction: column; gap: 0; box-sizing: border-box; padding: 56px 0 4px; overflow: hidden; background: #F2F2F7; clip-path: {{ddClip}}; -webkit-clip-path: {{ddClip}}; pointer-events: {{ddPE}}; translate: 0 {{ddDy}}px; visibility: {{ddVis}}; transition: clip-path {{ddClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{ddClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ddVisDelay}}, translate {{ddDyT}} ease">
     <div style="display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; padding: 4px 16px 40px">
       <button type="button" class="opt" data-swipe-go="1" onClick="{{ddClose}}" aria-label="{{curRow.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex: 1 1 auto; min-width: 0; padding: 4px 0 0; border: 0; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="max-width: 100%; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{curRow.place}}</span>
@@ -281,7 +281,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- An ignition candidate reads like a fire detail: fixed header (place, level above, time since detection; the kind band
          with its status tag; when it was detected), then one scrolling page (map, key figures, evidence, location), and the
          four actions fixed at the foot, 2 x 2 -->
-    <div data-wf-ighdr="1" style="position: relative; z-index: 4; flex-shrink: 0; padding: 4px 16px 12px; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
+    <div data-wf-ighdr="1" style="position: relative; z-index: 4; flex-shrink: 0; padding: 4px 16px 12px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08); transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
       <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
       <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
       <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 12px; row-gap: 12px; min-width: 0">
@@ -302,13 +302,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-full="{{openMap}}" mode="pin" pin-close="16" start-zoom="3" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" hint-size="390px,234px"></dc-import>
         <!-- The drone's live feed in the map band: a container 16px inside the band on every side (the map shows around it). It
              comes out from behind the drone button at the feed's proportions, gliding and growing to its place; X folds it back -->
-        <figure aria-hidden="{{bf.hidden}}" style="position: absolute; left: 16px; top: 16px; width: 358px; height: 202px; z-index: 30; margin: 0; overflow: hidden; border-radius: 16px; background: #1C1C1E; color: #FFFFFF; box-shadow: 0 8px 24px rgba(0,0,0,0.24); transform-origin: 0 0; transform: {{bf.tf}}; opacity: {{bf.op}}; pointer-events: {{bf.pe}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity {{bf.opT}}">
+        <figure aria-hidden="{{bf.hidden}}" style="position: absolute; left: 16px; top: 16px; width: 358px; height: 202px; z-index: 30; margin: 0; overflow: hidden; border-radius: 16px; background: #1C1C1E; color: #FFFFFF; box-shadow: 0 0 24px rgba(0,0,0,0.24); transform-origin: 0 0; transform: {{bf.tf}}; opacity: {{bf.op}}; pointer-events: {{bf.pe}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity {{bf.opT}}">
           <sc-if value="{{bf.vid}}" hint-placeholder-val="{{ false }}">
             <video ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{visualOp}}; transition: opacity .45s ease"></video>
             <video ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{thermalOp}}; transition: opacity .45s ease"></video>
           </sc-if>
           <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; margin: -22px 0 0 -22px; pointer-events: none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>
-          <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
+          <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
           <button type="button" class="mbtn" data-pulse="lime" onClick="{{closeFeed}}" aria-label="Close drone feed" style="position: absolute; right: 16px; top: 16px; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #FFFFFF; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{feedXRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
           <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 16px; bottom: 16px; width: 200px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
             <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
@@ -321,7 +321,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
       <!-- The GPS component, right under the map: one white line, the coordinates and a plain copy icon (no circle); 16px under the map -->
       <div style="display: {{gpsD}}; flex-direction: column; align-self: stretch; flex-shrink: 0; margin: -40px 16px 0">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{copyRows}}; opacity: {{copyOp}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 15px; line-height: 20px; color: #186B2D">{{copyTxt}}</span></span></span>
           <button type="button" class="mbtn" onClick="{{copyGps}}" aria-label="{{copyAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{copyIc}}"></path></svg></button>
         </div>
@@ -329,7 +329,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
 <!-- When: the GPS component's twin, right under it (where, then when): the time on top, the date as annotation, a clock icon where the copy icon sits -->
       <div style="display: {{ig.timeD}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -48px 16px 0">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{ig.ago}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ig.det}}<svg width="13" height="13" viewBox="0 0 24 24" role="img" aria-label="Night ignition" style="display: {{ig.detNightD}}; margin: 0 0 -1px 6px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span></span>
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #3C3C43"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z M12 7.5V12l3 2"></path></svg></span>
         </div>
@@ -341,7 +341,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px">
           <sc-for list="{{ig.kpis}}" as="m" hint-placeholder-count="6">
             <div role="listitem" data-wf-kpi="{{m.key}}" data-g="ign" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
-              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
+              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
                 <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center; overflow-wrap: anywhere">{{m.l}}</span>
                 <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                 <span style="display: {{m.tagD}}; margin-top: 12px; max-width: 100%; box-sizing: border-box; padding: 2px 8px; border-radius: 999px; background: {{m.tagBg}}; color: {{m.tagFg}}; font-size: 13px; line-height: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.tag}}</span><span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
@@ -366,7 +366,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div role="list" aria-label="{{d.title}}. Press and hold a card, then move it to reorder" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
             <sc-for list="{{d.cards}}" as="m" hint-placeholder-count="6">
               <div role="listitem" data-wf-kpi="{{m.key}}" data-g="{{d.grp}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
-                <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; flex-grow: 1; box-sizing: border-box; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease; text-align: center">
+                <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; flex-grow: 1; box-sizing: border-box; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease; text-align: center">
                   <span role="tooltip" aria-hidden="true" style="position: absolute; left: 50%; bottom: calc(100% + 6px); z-index: 5; transform: translate(-50%, {{m.tipY}}); opacity: {{m.tipOp}}; padding: 6px 12px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; white-space: nowrap; pointer-events: none; transition: opacity .2s ease, transform .2s ease">{{m.l}}</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin: 2px 0 12px; transform: rotate({{m.icRot}}deg)"><path d="{{m.ic}}"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{m.l}}</span>
                   <span style="display: {{m.numD}}; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                   <span style="display: {{m.txtD}}; margin-top: 0; font-size: 17px; line-height: 22px; font-weight: 700; color: #3A3A3C">{{m.txt}}</span>
@@ -395,7 +395,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span class="pop" style="position: absolute; left: {{box.left}}px; top: {{box.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap; animation-delay: 650ms">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>{{tab.score}}
           </span>
-          <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500; text-shadow: 0 1px 6px rgba(0,0,0,0.6)">
+          <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500; text-shadow: 0 0 6px rgba(0,0,0,0.6)">
             <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
           </figcaption>
           <button type="button" class="fsbtn" aria-label="View full screen" onClick="{{openFull}}" style="position: absolute; right: 12px; top: 8px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; background-color: rgba(0,0,0,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #FFFFFF; cursor: pointer">
@@ -441,7 +441,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <!-- One container per source: the satellite pass, then any drone confirmation, citizen report or 911 call -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin: {{ig.evMt}} 16px 0">
           <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
-            <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); cursor: {{ev.cur}}">
+            <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); cursor: {{ev.cur}}">
               <!-- A thumbnail of the evidence itself, top right (8px in), the size of the + tile; the card or the thumbnail opens it -->
               <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="display: {{ev.thD}}; position: absolute; top: 8px; right: 8px; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
                 <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.imgSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
@@ -468,8 +468,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="pop" style="display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.18); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.4) inset">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.06" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
       </span>
-      <h2 style="margin: 56px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; text-shadow: 0 1px 10px rgba(0,0,0,0.45)">No active alerts</h2>
-      <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 1px 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
+      <h2 style="margin: 56px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; text-shadow: 0 0 10px rgba(0,0,0,0.45)">No active alerts</h2>
+      <p style="margin: -6px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,0.9); text-shadow: 0 0 8px rgba(0,0,0,0.5)">All clear in {{scopeName}}. New candidates will appear here.</p>
       <a href="Main.dc.html" class="btn primary" onPointerDown="{{navBack}}" onClick="{{navBack}}" style="display: flex; align-items: center; justify-content: center; align-self: stretch; margin-top: 56px; padding: 0 16px">
         Map
       </a>
@@ -487,7 +487,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- The status tag's choices: confirm it is a fire (the page turns into the fire's page), or dismiss it (asks first) -->
   <div class="scrim" onClick="{{mo.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{mo.op}}; pointer-events: {{mo.pe}}"></div>
-  <section class="sheet wf-dlg" role="dialog" aria-modal="true" aria-labelledby="soTitle" aria-hidden="{{mo.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{mo.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
+  <section class="sheet wf-dlg" role="dialog" aria-modal="true" aria-labelledby="soTitle" aria-hidden="{{mo.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column; background: #FFFFFF; border-top: 0; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{mo.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
     <h2 id="soTitle" style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; color: #000000">Confirm fire?</h2>
     <p style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.place}}</p>
     <div class="wf-dlg-acts">
@@ -496,7 +496,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
   </section>
   <div class="scrim" onClick="{{closeDz}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,0.32); opacity: {{dzOp}}; pointer-events: {{dzPE}}"></div>
-  <section class="sheet wf-dlg" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column;  background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{dzY}}); transition-duration: {{dzT}}">
+  <section class="sheet wf-dlg" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="dzTitle" aria-describedby="dzBody" aria-hidden="{{dzHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; display: flex; flex-direction: column;  background: #FFFFFF; border-top: 0; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{dzY}}); transition-duration: {{dzT}}">
     <h2 id="dzTitle" style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; color: #000000">Dismiss this candidate?</h2>
     <p id="dzBody" style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.id}} at {{cur.place}} will be closed and removed from the map.</p>
     <div class="wf-dlg-acts">
@@ -536,7 +536,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- Cards picker: the group's cards with toggles (shared by every card group on this screen) -->
   <div class="wf-glass scrim" onClick="{{pk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{pk.op}}; pointer-events: {{pk.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-label="{{pk.title}}" aria-hidden="{{pk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 53px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{pk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
+  <section role="dialog" aria-modal="true" aria-label="{{pk.title}}" aria-hidden="{{pk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 53px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{pk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down (on it, or anywhere when the list does not scroll) closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{pk.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 72px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 40px; padding: 0 16px">
@@ -583,7 +583,7 @@ class Component extends DCLogic {
         self._kpT = setTimeout(() => { const d = self._kd; if (!d || d.key !== key) return; d.lifted = true; const L = cards(); d.idx = L.indexOf(d.el); d.to = d.idx;
           d.slots = L.map((c) => { const r = c.getBoundingClientRect(); return [(r.left + r.width / 2) / d.k, (r.top + r.height / 2) / d.k]; });
           try { d.el.setPointerCapture(d.pid); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
-          const kc = d.el.querySelector('[data-wf-kpicard]'); if (kc) kc.style.boxShadow = '0 8px 24px rgba(0,0,0,0.16)';
+          const kc = d.el.querySelector('[data-wf-kpicard]'); if (kc) kc.style.boxShadow = '0 0 24px rgba(0,0,0,0.16)';
           d.el.style.zIndex = '3'; d.el.style.transition = 'none'; d.el.style.transform = 'scale(1.04)'; window.__wfKpiLift = true; }, 250); },
       move: (e) => { const d = self._kd; if (!d || d.key !== key) return;
         if (!d.lifted) { if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 8) { clearTimeout(self._kpT); self._kd = null; } return; }
@@ -1128,7 +1128,7 @@ class Component extends DCLogic {
       mapFires: [], noCams: [],
       cycleTo: (id) => this.setState({ focusId: id, confirm: false }),
       ...(() => { const V = window.__wfVP || {}, L = !!V.land; return { mapW: L ? V.w : 390, mapH: L ? V.h : 844, fsW: L ? V.w : 390, fsH: L ? V.h : 844, mapCL: L ? (V.sl || 0) : 0, mapCR: L ? Math.min(V.sr || 0, 16) : 0 }; })(), zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
-      full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && onMap, figD: hasFig ? 'block' : 'none', panelMt: hasFig ? '-28px' : '8px', ddTop: this._hdrB || 92, panelSh: hasFig ? '0 -4px 16px rgba(0,0,0,0.08)' : 'none',
+      full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && onMap, figD: hasFig ? 'block' : 'none', panelMt: hasFig ? '-28px' : '8px', ddTop: this._hdrB || 92, panelSh: hasFig ? '0 0 16px rgba(0,0,0,0.08)' : 'none',
       openMap: () => this.setState({ tab: 'map', full: true, dd: false }),
       toggleFull: () => { const st = this.state || {}; this.setState(st.full && st.tab === 'map' ? { full: false, tab: null } : { full: !st.full }); },   // reads the live state: the map may hold an older copy of this handler
       figBg: tab.isMap ? 'transparent' : '#1C1C1E', figPE: tab.isMap ? 'none' : 'auto',

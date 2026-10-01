@@ -148,7 +148,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     /* Reset in the card pickers: disabled (faded, not tappable) while the cards are already the defaults */
     '.wf-reset{transition:opacity .25s ease}.wf-reset[aria-disabled="true"]{opacity:.4;pointer-events:none}.wf-rpill[aria-disabled="false"]{background:var(--wf-y)!important;color:#000000!important}' +
     '.wf-pulse{position:absolute;inset:-1.4px;border-radius:var(--wf-pr,17.4px);outline:1.4px solid transparent;outline-offset:-1.4px;pointer-events:none;animation:wfPulse 1.6s linear infinite}@keyframes wfPulse{0%{outline-offset:-1.4px;outline-color:var(--wf-pc,#3A3A3C)}88%{outline-offset:9.3px;outline-color:color-mix(in srgb,var(--wf-pc,#3A3A3C) 0%,transparent)}100%{outline-offset:9.3px;outline-color:transparent}}@media (prefers-reduced-motion: reduce){.wf-pulse{animation:none}}' +
-    'html{--wf-panel-r:28px;--wf-panel-sh:0 8px 40px rgba(0,0,0,.14);--wf-safe-b:48px}' +   // shared panel: radius, shadow, 48px clear of the home indicator
+    'html{--wf-panel-r:28px;--wf-panel-sh:0 0 40px rgba(0,0,0,.14);--wf-safe-b:48px}' +   // shared panel: radius, shadow, 48px clear of the home indicator
     'html .wf-panel{bottom:var(--wf-safe-b)!important;border-radius:0 0 var(--wf-panel-r) var(--wf-panel-r)!important;box-shadow:var(--wf-panel-sh)!important}' +
     // dialogs: a panel that runs to the bottom edge, 24px inside, with its buttons kept 48px clear of the home indicator; no light around it
     'html .wf-dlg{left:0!important;right:0!important;bottom:0!important;padding:30px 24px calc(32px + var(--wf-safe-b))!important;border-radius:28px 28px 0 0!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
@@ -435,7 +435,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
         D = { el: el, y0: e.clientY, x0: e.clientX, k: k, lifted: false, pid: e.pointerId };
         clearTimeout(comp.__pkT); comp.__pkT = setTimeout(function () { if (!D) return; D.lifted = true; window.__wfPkLift = true; var L = rows(el); D.idx = L.indexOf(el); D.to = D.idx; D.h = el.offsetHeight;
           try { el.setPointerCapture(D.pid); } catch (x) {} try { (window.__wfHaptic || function () { if (navigator.vibrate) navigator.vibrate(12); })(); } catch (x) {}
-          el.style.zIndex = '3'; el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.16)'; el.style.transition = 'box-shadow .2s ease'; }, 250); },
+          el.style.zIndex = '3'; el.style.boxShadow = '0 0 24px rgba(0,0,0,0.16)'; el.style.transition = 'box-shadow .2s ease'; }, 250); },
       move: function (e) { if (!D) return; var dy = (e.clientY - D.y0) / D.k;
         if (!D.lifted) { if (Math.abs(dy) > 8 || Math.abs(e.clientX - D.x0) > 8) { clearTimeout(comp.__pkT); D = null; } return; }
         var L = rows(D.el), n = L.length, to = Math.max(0, Math.min(n - 1, D.idx + Math.round(dy / D.h)));

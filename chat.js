@@ -1122,6 +1122,13 @@
     var src = I.src ? (I.stEn || 'Active') + ' · ' + I.src : '';
     return { kind: 'fire', id: f.id, place: f.place, reg: f.co || '', st: f.st || '', lat: ll.lat, lon: ll.lon, note: src || f.note || '', sc: sc, x: f.x, y: f.y, det: f.det || null, startMs: I.startMs || null, curMs: I.heldMs || null, ha: I.ha || null, res: f.res || null };
   }
+  // The fire's stage as one shared component (tags in lists, bands, map tooltips, headers): its stage on the chat's
+  // spectrum (ANEPC code, else the feed's tone), the label the source gives (e.g. "45% contained"), and the stage's colours and icon
+  function stageIdx(f) { var I = (f && f.info) || {}, sc = /^F-/.test((f && f.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
+    if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6; return stageFromCode(sc); }
+  function stageTag(f) { var i = stageIdx(f), S = STAGES[i] || STAGES[2], I = (f && f.info) || {}, conf = /^Confirmed from /.test((f && f.note) || '');
+    return { i: i, label: I.stEn || I.st || (conf ? 'Confirmed' : 'Active'), fg: S.c, bg: S.bg, ic: ICON[S.icon], en: S.en }; }
+  window.__wfStageTag = stageTag;
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,

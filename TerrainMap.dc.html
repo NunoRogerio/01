@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=106"></script>
+<script src="fit.js?v=108"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=134"></script>
+<script src="prefs.js?v=135"></script>
 <script src="i18n.js?v=120"></script>
 <script src="live.js?v=38"></script>
 
@@ -156,19 +156,19 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
 
   <sc-for list="{{stateLabels}}" as="sl" hint-placeholder-count="0">
-    <span style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
+    <span style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
   </sc-for>
   <sc-for list="{{countyLabels}}" as="cl" hint-placeholder-count="0">
-    <span style="position: absolute; left: {{cl.left}}px; top: {{cl.top}}px; transform: translate(-50%, -50%); font-size: {{cl.size}}px; font-weight: {{cl.weight}}; letter-spacing: 0.01em; color: {{cl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{cl.label}}</span>
+    <span style="position: absolute; left: {{cl.left}}px; top: {{cl.top}}px; transform: translate(-50%, -50%); font-size: {{cl.size}}px; font-weight: {{cl.weight}}; letter-spacing: 0.01em; color: {{cl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{cl.label}}</span>
   </sc-for>
   <sc-for list="{{cityLabels}}" as="ct" hint-placeholder-count="0">
-    <span style="position: absolute; left: {{ct.left}}px; top: {{ct.top}}px; display: flex; align-items: center; transform: translate(-50%, -50%); font-size: {{ct.size}}px; font-weight: {{ct.weight}}; font-style: {{ct.style}}; color: {{ct.fg}}; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{ct.label}}</span>
+    <span style="position: absolute; left: {{ct.left}}px; top: {{ct.top}}px; display: flex; align-items: center; transform: translate(-50%, -50%); font-size: {{ct.size}}px; font-weight: {{ct.weight}}; font-style: {{ct.style}}; color: {{ct.fg}}; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{ct.label}}</span>
   </sc-for>
   <sc-if value="{{showSea}}" hint-placeholder-val="{{ false }}">
     <span style="position: absolute; left: {{sea.left}}px; top: {{sea.top}}px; transform: translate(-50%, -50%); font-size: 15px; font-style: italic; letter-spacing: 0.04em; color: #3E7CB1; white-space: nowrap; pointer-events: none; transition: {{mv}}">Pacific Ocean</span>
   </sc-if>
   <sc-for list="{{villages}}" as="v" hint-placeholder-count="7">
-    <span style="position: absolute; left: {{v.left}}px; top: {{v.top}}px; transform: translate(-50%, 8px); font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: #000000; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{v.label}}</span>
+    <span style="position: absolute; left: {{v.left}}px; top: {{v.top}}px; transform: translate(-50%, 8px); font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: #000000; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{v.label}}</span>
   </sc-for>
 
   <sc-for list="{{zones}}" as="z" hint-placeholder-count="2">
@@ -200,7 +200,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-for>
 
   <sc-for list="{{sensors}}" as="m" hint-placeholder-count="5">
-    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; transform: translate(-4px, -50%); display: flex; align-items: center; gap: 5px; height: 22px; font-size: 13px; font-weight: 600; color: #006A91; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; transition: {{mv}}">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; transform: translate(-4px, -50%); display: flex; align-items: center; gap: 5px; height: 22px; font-size: 13px; font-weight: 600; color: #006A91; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; transition: {{mv}}">
       <span style="width: 8px; height: 8px; scale: 1.1; border-radius: 50%; background: #0079A6; box-shadow: 0 0 0 3px rgba(0,121,166,0.18), 0 0 10px rgba(0,121,166,0.8)"></span>{{m.label}}
       <span class="{{m.tip}}" role="tooltip"><b>{{m.tt}}</b>{{m.td}}</span>
     </span>
@@ -347,7 +347,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <!-- Weather at the map centre, in the legend's containers, under the legend -->
   <div role="group" aria-label="Weather at the map centre" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{srchL}}px; right: {{legR}}px; top: {{wxTop}}px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; pointer-events: auto">
     <sc-for list="{{wx}}" as="w" hint-placeholder-count="3">
-      <span role="img" aria-label="{{w.aria}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 2px 10px rgba(0,0,0,0.10); color: #3C3C43; font-size: 15px; line-height: 32px; white-space: nowrap; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
+      <span role="img" aria-label="{{w.aria}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 12px 0 10px; border-radius: 999px; background: rgba(242,242,247,0.94); box-shadow: 0 0 10px rgba(0,0,0,0.10); color: #3C3C43; font-size: 15px; line-height: 32px; white-space: nowrap; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{w.rot}}deg)"><path d="{{w.d}}"></path></svg>{{w.txt}}
       </span>
     </sc-for>
@@ -431,7 +431,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </div>
 
-  <span class="wf-note" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; color: #6E6E73; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 1px 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+  <span class="wf-note" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; color: #6E6E73; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"onBgTap":{"editor":null},"$preview":{"width":366,"height":380}}'>
@@ -1600,7 +1600,7 @@ class Component extends DCLogic {
         return { ...WX, ...(noLeg || p.fireOnly === true || p.fireOnly === 'true' ? { wxOn: false } : {}), legend, legOn: legend.length > 0 && !noLeg, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle && !p.mapKind, hasMapHdr: p.mode !== 'pin' && !!p.mapTitle && !!p.mapKind, mapKind: p.mapKind || '', mapDot: p.mapDot || '#E8590C', mapTag: p.mapTag || '', mapTagD: p.mapTag ? 'inline-flex' : 'none', mapTagBg: p.mapTagBg || 'transparent', mapTagFg: p.mapTagFg || '#1C1C1E', hdrDir: HLAND ? 'row' : 'column', hdrAlign: HLAND ? 'center' : 'stretch', hdrStW: HLAND ? 'auto' : '100%', mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : ((p.isFull === true || p.isFull === 'true') && p.mapSub ? 76 : 54), ttlPad: (p.isFull === true || p.isFull === 'true') ? '16px' : '8px 16px',   /* full screen: 16px above and below, like the fire header */ legIn: 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
           ...(() => { const full = p.isFull === true || p.isFull === 'true', L = ((p.mode === 'pin' || !!p.mapTitle) ? 32 : 16) + this.win().l;   /* full screen: the chips stack in a column at the top right (no sideways scroll, nothing under the title) */
             return full ? { legLeftCss: 'calc(' + (16 + this.win().l) + 'px - 8px)', legRightCss: 'auto', legDir: 'column', legAlign: 'flex-start', legOvx: 'visible' } : { legLeftCss: 'calc(' + L + 'px - 8px)', legRightCss: 'calc(' + (16 + this.win().r) + 'px - 8px)', legDir: 'row', legAlign: 'center', legOvx: 'auto' }; })(),
-          legGap: (p.isFull === true || p.isFull === 'true') ? '8px' : '6px', legPad: '0 12px 0 10px', legBg: '#F2F2F7', legSh: '0 2px 10px rgba(0,0,0,0.10)',   /* legend chips: solid, the same on every map (no see-through blur: lighter to draw, never changes colour) */ ttlTop: Math.round(Math.max(52, this.win().t) + 16), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? ((p.isFull === true || p.isFull === 'true') ? legend.length * 40 : 40) : 0),
+          legGap: (p.isFull === true || p.isFull === 'true') ? '8px' : '6px', legPad: '0 12px 0 10px', legBg: '#F2F2F7', legSh: '0 0 10px rgba(0,0,0,0.10)',   /* legend chips: solid, the same on every map (no see-through blur: lighter to draw, never changes colour) */ ttlTop: Math.round(Math.max(52, this.win().t) + 16), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? ((p.isFull === true || p.isFull === 'true') ? legend.length * 40 : 40) : 0),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;
@@ -1672,7 +1672,7 @@ class Component extends DCLogic {
     // The one number that leads: the burned area (real data only; '–' when the source gives none), with the time active as its annotation
     const kpiNum = held ? (held.took != null ? D(held.took) : '–') : I.startMs ? D(now - I.startMs) : '–', kpiUnit = '', kpiLbl = held ? 'Final duration' : 'Time active';   // no time published: the KPI group becomes one annotation line
     const noT = kpiNum === '–', kpiSub = '', kpiTT = '';
-    const TN = { hot: ['#963B00', 'rgba(184,74,0,0.14)'], warn: ['#963B00', 'rgba(184,74,0,0.14)'], amber: ['#745200', 'rgba(122,86,0,0.14)'], blue: ['#185A93', 'rgba(31,111,178,0.14)'], ok: ['#186B2D', 'rgba(52,199,89,0.14)'], watch: ['#14532D', 'rgba(20,83,45,0.16)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }, tn = TN[I.tone] || (held ? TN.ok : TN.hot);
+    const TN = { hot: ['#963B00', 'rgba(184,74,0,0.14)'], warn: ['#963B00', 'rgba(184,74,0,0.14)'], amber: ['#745200', 'rgba(122,86,0,0.14)'], blue: ['#185A93', 'rgba(31,111,178,0.14)'], ok: ['#186B2D', 'rgba(52,199,89,0.14)'], watch: ['#14532D', 'rgba(20,83,45,0.16)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }; let tn = TN[I.tone] || (held ? TN.ok : TN.hot); { const T = window.__wfStageTag && g ? window.__wfStageTag(g) : null; if (T) tn = [T.fg, T.bg]; }   /* the shared stage tag colours */;
     const hEst = 250 + time.length * 26 + (held ? 60 : 0) + (fz.length ? 58 : 20) + (I.ha != null ? 26 : 0);
     const win = this.win(), H = this.H(), top0 = Math.max(win.t, 8) + 8, bot0 = Math.min(win.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 8;
     const above = (y - top0) > (bot0 - y);

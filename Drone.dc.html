@@ -13,12 +13,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=106"></script>
+<script src="fit.js?v=108"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=134"></script>
+<script src="prefs.js?v=135"></script>
 <script src="i18n.js?v=120"></script>
 <script src="live.js?v=38"></script>
-<script src="chat.js?v=43"></script>
+<script src="chat.js?v=44"></script>
 
 <title>Drone verification</title>
 <script src="./support.js"></script>
@@ -140,20 +140,20 @@ a{color:#0062CC}a:hover{color:#004FA3}
 .primary>span{flex-grow:0!important;text-align:center!important}
 .ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
 .ghost:hover{background:rgba(118,118,128,.18);border-color:transparent;color:#0062CC}
-.ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 2px 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.ghost.round{color:#000;background:rgba(255,255,255,.85);border-color:rgba(60,60,67,.08);box-shadow:0 0 10px rgba(0,0,0,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost.round:hover{color:#000}
 .opt,.card,.ddopt{border-radius:20px!important}
-a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 6px 24px rgba(0,0,0,.10)!important}
+a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 0 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
 .lbl{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#545458}
 .kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
 .kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#545458}
-.tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 10px 30px rgba(0,0,0,.14)}
+.tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 0 30px rgba(0,0,0,.14)}
 .igpill::after{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1)}
 .tip b,.ctip b{color:#000}
-.sheet{border-radius:38px 38px 0 0;background:#F2F2F7!important;box-shadow:0 -8px 40px rgba(0,0,0,.12)!important}
+.sheet{border-radius:38px 38px 0 0;background:#F2F2F7!important;box-shadow:0 0 40px rgba(0,0,0,.12)!important}
 .navi{border-radius:999px}
-nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 8px 30px rgba(0,0,0,.10)!important}
+nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 0 30px rgba(0,0,0,.10)!important}
 .fsin{color:#FFFFFF}
 .sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqback:active{opacity:.6}
 
@@ -162,7 +162,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
   <!-- Same fixed header as a fire or an ignition: what it is and where on top, the drone's progress on the right, the kind band with its status tag -->
-  <div style="position: relative; z-index: 4; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 4px 16px rgba(0,0,0,0.08)">
+  <div style="position: relative; z-index: 4; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08)">
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
     <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 12px; row-gap: 12px; min-width: 0">
@@ -188,7 +188,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <path d="M195 109v10M195 143v10M173 131h10M207 131h10" stroke-opacity="0.55"></path>
       </g>
     </svg>
-    <span style="position: absolute; left: 16px; top: 28px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 1px 8px rgba(0,0,0,0.7)">
+    <span style="position: absolute; left: 16px; top: 28px; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.7)">
       <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>Live · 400 ft
     </span>
     <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); width: 240px; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
@@ -202,17 +202,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="wf-page" style="position: relative; z-index: 2; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 24px 16px 16px; background: #F2F2F7">
     <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px"><span style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73; white-space: nowrap">Key figures</span><span class="wf-note" style="font-size: 13px; line-height: 18px; color: #6E6E73; white-space: nowrap">Estimate</span></div>
     <div role="list" style="display: flex; gap: 8px">
-      <div role="listitem" data-wf-kpicard="1" style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+      <div role="listitem" data-wf-kpicard="1" style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
         <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">Area</span>
         <button type="button" class="unitbtn" onClick="{{toggleArea}}" aria-label="{{areaAria}}" style="display: flex; align-items: baseline; gap: 3px; max-width: 100%; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; white-space: nowrap; cursor: pointer"><span class="kpi wf-big" style="--k: 26px">{{areaV}}</span><span style="font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{areaU}}</span></button>
         <svg role="img" aria-label="{{areaChart.aria}}" width="56%" height="22" viewBox="0 0 84 24" preserveAspectRatio="none" style="flex-shrink: 0; margin-top: auto; padding-top: 8px; overflow: visible"><path d="{{areaChart.area}}" fill="rgba(229,255,0,0.5)" stroke="none"></path><path d="{{areaChart.line}}" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path><path d="{{areaChart.dot}}" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" vector-effect="non-scaling-stroke"></path><path d="{{areaChart.dot}}" fill="none" stroke="#3A3A3C" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg>
       </div>
-      <div role="listitem" data-wf-kpicard="1" style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+      <div role="listitem" data-wf-kpicard="1" style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
         <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">Peak</span>
         <button type="button" class="unitbtn" onClick="{{toggleTemp}}" aria-label="{{tempAria}}" style="display: flex; align-items: baseline; gap: 3px; max-width: 100%; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; white-space: nowrap; cursor: pointer"><span class="kpi wf-big" style="--k: 26px">{{tempV}}</span><span style="font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{tempU}}</span></button>
         <svg role="img" aria-label="{{tempChart.aria}}" width="56%" height="22" viewBox="0 0 84 24" preserveAspectRatio="none" style="flex-shrink: 0; margin-top: auto; padding-top: 8px; overflow: visible"><path d="{{tempChart.area}}" fill="rgba(229,255,0,0.5)" stroke="none"></path><path d="{{tempChart.line}}" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path><path d="{{tempChart.dot}}" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" vector-effect="non-scaling-stroke"></path><path d="{{tempChart.dot}}" fill="none" stroke="#3A3A3C" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg>
       </div>
-      <div role="listitem" data-wf-kpicard="1" style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+      <div role="listitem" data-wf-kpicard="1" style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; min-height: 122px; padding: 12px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
         <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">Spread</span>
         <span style="display: flex; align-items: baseline; gap: 3px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">SW</span></span>
         <div role="list" aria-label="Spread direction, next 24 hours" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; margin-top: auto; padding-top: 8px">
@@ -230,7 +230,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 
   <div class="scrim" onClick="{{closeFa}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{faOp}}; pointer-events: {{faPE}}"></div>
-  <section class="sheet wf-dlg" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column;  background: #FFFFFF; border-top: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{faY}}); transition-duration: {{faT}}">
+  <section class="sheet wf-dlg" data-swipe="down" role="alertdialog" aria-modal="true" aria-labelledby="faTitle" aria-describedby="faBody" aria-hidden="{{faHidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column;  background: #FFFFFF; border-top: 0; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{faY}}); transition-duration: {{faT}}">
     <h2 id="faTitle" style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; color: #000000">Dismiss this candidate?</h2>
     <p id="faBody" style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{vId}} at {{vPlace}} will be closed and drone D-3 will return to base.</p>
     <div class="wf-dlg-acts">

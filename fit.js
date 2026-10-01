@@ -191,21 +191,21 @@ window.__wfBlink=function(path,dur){
     '#wf-load .bg.on{opacity:1;transform:scale(1)}'+
     '#wf-load .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.25) 60%,rgba(0,0,0,.62) 100%);opacity:0;transition:opacity .7s ease}'+
     '#wf-load.photo .shade{opacity:1}#wf-load .in{position:relative}'+
-    '#wf-load.photo .name{background:none;color:var(--wf-y);animation:none;text-shadow:0 1px 12px rgba(0,0,0,.45)}'+
-    '#wf-load.photo .sub{color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
-    '#wf-load.photo .base{fill:var(--wf-y)}#wf-load.photo .ground{stroke:var(--wf-y)}#wf-load.photo svg{filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}'+
+    '#wf-load.photo .name{background:none;color:var(--wf-y);animation:none;text-shadow:0 0 12px rgba(0,0,0,.45)}'+
+    '#wf-load.photo .sub{color:rgba(255,255,255,.85);text-shadow:0 0 8px rgba(0,0,0,.5)}'+
+    '#wf-load.photo .base{fill:var(--wf-y)}#wf-load.photo .ground{stroke:var(--wf-y)}#wf-load.photo svg{filter:drop-shadow(0 0 10px rgba(0,0,0,.35))}'+
     '#wf-load .cap{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));text-align:center;font:400 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:rgba(255,255,255,.8);opacity:0;transition:opacity .7s ease .3s}'+
     '#wf-load.photo .cap{opacity:1}'+
     /* the loading counter, 0% to 100% */
     '#wf-load .pct{margin-top:-6px;font:600 51px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#8E8E93}'+
-    '#wf-load.photo .pct{color:var(--wf-y);text-shadow:0 1px 8px rgba(0,0,0,.5)}'+
+    '#wf-load.photo .pct{color:var(--wf-y);text-shadow:0 0 8px rgba(0,0,0,.5)}'+
     /* after log in (hand): the sign-in screen's own layout carries on. Logo, name and line of text stay exactly where and
        as big as they were, the line changes to 'Loading live data', the counter takes the fields' place at the centre */
     '#wf-load.hand{display:block}#wf-load.hand .in{position:absolute;inset:0;display:block;opacity:1;animation:none}'+
     '#wf-load.hand .in>svg,#wf-load.hand .name,#wf-load.hand .sub,#wf-load.hand .cap{position:absolute;margin:0;box-sizing:border-box;text-align:center;white-space:nowrap}'+
-    '#wf-load.hand svg{filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))}'+
-    '#wf-load.hand .name{letter-spacing:.02em;text-shadow:0 1px 10px rgba(0,0,0,.45)}'+
-    '#wf-load.hand .sub{display:grid;color:#FFFFFF;text-shadow:0 1px 8px rgba(0,0,0,.5)}#wf-load.hand .sub>span{grid-area:1/1;transition:opacity .45s cubic-bezier(.4,0,.2,1)}'+
+    '#wf-load.hand svg{filter:drop-shadow(0 0 8px rgba(0,0,0,.35))}'+
+    '#wf-load.hand .name{letter-spacing:.02em;text-shadow:0 0 10px rgba(0,0,0,.45)}'+
+    '#wf-load.hand .sub{display:grid;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}#wf-load.hand .sub>span{grid-area:1/1;transition:opacity .45s cubic-bezier(.4,0,.2,1)}'+
     '#wf-load.hand .pct{position:absolute;left:0;right:0;top:50%;margin:0;transform:translateY(-50%);text-align:center;font-size:143px;line-height:1}'+
     '#wf-load.hand .cap{bottom:auto;color:rgba(255,255,255,.72);transition:none}'+
     '#wf-load.hand .shade{background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)}';
@@ -581,7 +581,7 @@ window.__wfBlink=function(path,dur){
     var w=document.createElement('div');w.className='wf-cfm';w.style.cssText='position:absolute;inset:0;z-index:90';
     var sc=document.createElement('div');sc.setAttribute('aria-hidden','true');sc.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,0.32);opacity:0;transition:opacity .35s ease';
     var p=document.createElement('section');p.className='wf-dlg';p.setAttribute('role','alertdialog');p.setAttribute('aria-modal','true');p.setAttribute('data-swipe','down');
-    p.style.cssText='position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;box-sizing:border-box;padding:30px 24px 80px;border-radius:28px 28px 0 0;background:#F2F2F7;box-shadow:0 8px 40px rgba(0,0,0,.14);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);font-family:inherit';
+    p.style.cssText='position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;box-sizing:border-box;padding:30px 24px 80px;border-radius:28px 28px 0 0;background:#F2F2F7;box-shadow:0 0 40px rgba(0,0,0,.14);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);font-family:inherit';
     var h=document.createElement('h2');h.textContent=o.title||'';h.style.cssText='margin:0;font-size:26px;line-height:32px;font-weight:600;letter-spacing:-0.01em;color:#000000';
     var b=document.createElement('p');b.textContent=o.body||'';b.style.cssText='margin:2px 0 0;font-size:17px;line-height:22px;color:#000000';if(!o.body)b.style.display='none';
     var a=document.createElement('div');a.style.cssText='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px';
@@ -666,8 +666,8 @@ window.__wfBlink=function(path,dur){
 (function(){
   var busy=false;
   function run(){busy=false;var g={},l=document.querySelectorAll('[data-wf-eqw]');for(var i=0;i<l.length;i++){var k=l[i].getAttribute('data-wf-eqw');(g[k]=g[k]||[]).push(l[i]);}
-    Object.keys(g).forEach(function(k){var a=g[k],m=0;a.forEach(function(e){e.style.minWidth='';});a.forEach(function(e){m=Math.max(m,e.offsetWidth);});if(m)a.forEach(function(e){e.style.minWidth=m+'px';});});}
+    Object.keys(g).forEach(function(k){var a=g[k],m=0;a.forEach(function(e){var w=e.style.minWidth;e.style.minWidth='';var o=e.offsetWidth;e.style.minWidth=w;m=Math.max(m,o);});if(m)a.forEach(function(e){if(e.style.minWidth!==m+'px')e.style.minWidth=m+'px';});});}   // a group still hidden measures 0 and is left as is; showing it (a style or class change) measures again
   function later(){if(busy)return;busy=true;requestAnimationFrame(run);}
-  function start(){try{new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t&&t.nodeType===1&&t.hasAttribute&&t.hasAttribute('data-wf-eqw')&&ms[i].type==='attributes')continue;later();return;}}).observe(document.body,{subtree:true,childList:true,characterData:true});}catch(x){}later();}
+  function start(){try{new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t&&t.nodeType===1&&t.hasAttribute&&t.hasAttribute('data-wf-eqw')&&ms[i].type==='attributes')continue;later();return;}}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['style','class','hidden','aria-hidden']});}catch(x){}later();window.addEventListener('resize',later);}
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();
