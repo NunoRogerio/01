@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=104"></script>
+<script src="fit.js?v=105"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=127"></script>
 <script src="i18n.js?v=118"></script>
@@ -162,7 +162,7 @@ a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:r
 nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 8px 30px rgba(0,0,0,.10)!important}
 .fsin{color:#FFFFFF}
 /* consistency pass: tokens from Main.dc.html */
-.sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}.sqrow.nosep::after{display:none}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(255,255,255,.7)!important}}
+.sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}.sqrow.nosep::after{display:none}.sqrow.sqcard{border-radius:16px!important;background-color:#FFFFFF!important}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(255,255,255,.7)!important}}
 .sqrow:not([disabled]):not(div):not(li):active{opacity:.68}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
 .sqtop::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:rgba(60,60,67,0.14);pointer-events:none}
 @media (hover:hover){.sqrow.sqrow[aria-disabled=true][data-sel]:hover{background-color:transparent!important}}
@@ -288,14 +288,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- Add or edit a station of the dispatch: step 1 the stations (the best one tagged), step 2 its resources (suggested or your own), Apply -->
   <div class="wf-glass" onClick="{{fl.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 72; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{fl.op}}; pointer-events: {{fl.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-label="{{fl.title}}" aria-hidden="{{fl.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 73; display: flex; flex-direction: column; max-height: calc(100% - 48px); box-sizing: border-box; padding: 53px 0 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{fl.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
+  <section role="dialog" aria-modal="true" aria-label="{{fl.title}}" aria-hidden="{{fl.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 73; display: flex; flex-direction: column; max-height: calc(100% - 48px - max(var(--wf-top, 0px), env(safe-area-inset-top, 0px))); box-sizing: border-box; padding: 53px 0 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{fl.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{fl.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 72px; height: 5px; border-radius: 999px; background: rgba(60,60,67,0.3)"></span></div>
-    <!-- No back (Cancel and a tap outside close it); the title and subtitle line up with the list's text column (16 + 40px crest + 16) -->
-    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding: 0 16px 16px 72px">
+    <!-- The title and subtitle line up with the left edge of the white containers below; 40px to the first element -->
+    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding: 0 16px 40px 16px">
       <button type="button" class="mbtn" onClick="{{fl.back}}" aria-label="Back" style="display: {{fl.backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
       <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-        <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fl.title}}</h2>
+        <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{fl.title}}</h2>
         <span style="display: {{fl.subD}}; font-size: 17px; line-height: 22px; color: #000000">{{fl.sub}}</span>
       </span>
     </div>
@@ -303,7 +303,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div class="wf-snap" role="listbox" aria-label="Stations" style="display: {{fl.stD}}; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; border-top: 0">
       <sc-for list="{{fl.rows}}" as="r" hint-placeholder-count="0">
         <!-- A station row, airy like the app's other lists: the name in bold (two lines at most), 8px, then the code, distance and crews in grey; the ETA on the right on the name's first line, Suggested on the right on the grey line; 20px above and below, a full-width line between rows. Busy or already added stations are not listed. -->
-        <button type="button" role="option" class="sqrow" data-sel="false" aria-disabled="{{r.dis}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 8px 16px; min-height: 84px; padding: 20px 16px; margin-bottom: 2px; box-sizing: border-box; border: 0; border-radius: 0; background-color: transparent; color: #000000; text-align: left; font: inherit; opacity: {{r.op}}; cursor: {{r.cur}}">
+        <button type="button" role="option" class="sqrow nosep sqcard" data-sel="false" aria-disabled="{{r.dis}}" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 8px 16px; min-height: 84px; padding: 16px; margin: 0 16px 8px; box-sizing: border-box; border: 0; border-radius: 16px; background-color: #FFFFFF; color: #000000; text-align: left; font: inherit; opacity: {{r.op}}; cursor: {{r.cur}}">
           <span aria-hidden="true" style="grid-row: 1 / span 2; align-self: start; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.icBg}}; color: #0079A6"><img src="{{r.crest}}" alt="" style="display: {{r.crestD}}; width: 40px; height: 40px; object-fit: contain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{r.airD}}"><path d="M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7"></path></svg></span>
           <span style="min-width: 0; font-size: 17px; line-height: 22px; font-weight: 700; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{r.name}}</span>
           <span style="grid-row: 1; grid-column: 3; align-self: start; justify-self: end; font-size: 17px; line-height: 22px; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.etaC}}">{{r.eta}}</span>
@@ -319,8 +319,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <div role="group" style="display: flex; flex-direction: column; margin: 0 16px; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{fl.res}}" as="u" hint-placeholder-count="2">
-          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 0 16px; min-height: 64px; padding: 12px 16px; box-sizing: border-box; border-top: {{u.sep}}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.icon}}"></path></svg>
+          <div style="display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: 0 16px; min-height: 72px; padding: 16px; box-sizing: border-box; border-top: {{u.sep}}">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{u.icon}}"></path></svg>
             <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px">{{u.name}}</span><span style="display: {{u.avD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{u.avail}}</span></span>
             <span style="display: flex; align-items: center; gap: 4px">
               <button type="button" class="stepb" aria-label="{{u.lessLbl}}" aria-disabled="{{u.lessDis}}" onClick="{{u.less}}" style="opacity: {{u.lessOp}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg></button>
@@ -330,12 +330,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </sc-for>
       </div>
-      <!-- The app's pair: Cancel (secondary) then Apply (primary); Remove below, the app's remove button (red, white text), asking first like Remove profile -->
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; flex-shrink: 0; margin: 56px 16px 0">
-        <button type="button" class="btn wf-sec" onClick="{{fl.close}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
-        <button type="button" class="btn primary" onClick="{{fl.apply}}" style="height: 48px; font-size: 17px; font-weight: 600">Apply</button>
-      </div>
-      <button type="button" onClick="{{fl.remove}}" style="display: {{fl.rmD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 56px 16px 0; border: 0; border-radius: 999px; background: #D70015; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">Remove</button>
+      <!-- Remove, the app's remove button (red, white text), asking first like Remove profile; at the end of the list -->
+      <button type="button" onClick="{{fl.remove}}" style="display: {{fl.rmD}}; align-items: center; justify-content: center; flex-shrink: 0; height: 48px; margin: 56px 16px 16px; border: 0; border-radius: 999px; background: #D70015; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">Remove</button>
+    </div>
+    <!-- The app's pair, fixed at the foot while the resources scroll: Cancel (secondary) then Apply (primary) -->
+    <div style="display: {{fl.resGD}}; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; flex-shrink: 0; padding: 16px 16px 0">
+      <button type="button" class="btn wf-sec" onClick="{{fl.close}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
+      <button type="button" class="btn primary" onClick="{{fl.apply}}" style="height: 48px; font-size: 17px; font-weight: 600">Apply</button>
     </div>
   </section>
   <!-- Sending dispatch orders: each chosen station's coordinator gets its order in turn, then a confirmation and Done -->
@@ -1643,7 +1644,7 @@ class Component extends DCLogic {
         const draft = F && F.draft ? F.draft : (id ? recFor(id) : []), recD = id ? recFor(id) : [], isRec = id ? draft.every((v, i) => v === recD[i]) : true;
         const setD = (arr) => this.setState({ flow: { ...F, draft: arr } });
         const KR = this.wfKinds(stC), resRows = !id ? [] : (id === 'air' ? [2, 3, 4, 5] : KST).map((k, j) => { const cap = id === 'air' ? airCap[j] : capSt(dSel || {})[j], n = draft[j] || 0, lessDis = n <= 0, moreDis = n >= cap, m = meta[k], each = id === 'air' ? '' : (KR[k] || {}).each || '';
-          return { cap, name: m.name, icon: m.icon, n, sep: j ? '0' : '0', avail: ((cap >= 99 ? '' : (cap - n) + ' of ' + cap + ' free. ') + each).trim(), avD: cap >= 99 && !each ? 'none' : 'block',
+          return { cap, name: m.name, icon: m.icon, n, sep: j ? '1px solid rgba(60,60,67,0.14)' : '0',   /* a full-width line between resource rows */ avail: ((cap >= 99 ? '' : (cap - n) + ' of ' + cap + ' free. ') + each).trim(), avD: cap >= 99 && !each ? 'none' : 'block',
             less: () => { if (lessDis) return; const a = draft.slice(); a[j] = n - 1; setD(a); }, more: () => { if (moreDis) return; const a = draft.slice(); a[j] = n + 1; setD(a); },
             lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1, lessLbl: 'Fewer ' + m.name.toLowerCase(), moreLbl: 'More ' + m.name.toLowerCase() }; }).filter((r) => id === 'air' || r.cap > 0);   /* a station lists only the unit types it keeps */
         const inPlan = (x) => plan.some((p) => p.id === x);
@@ -1672,7 +1673,7 @@ class Component extends DCLogic {
           fl: { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close,
             title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'st' ? stRows.length + ' available. Start by choosing a station.' : step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'st' || (step === 'res' && dSel) ? 'block' : 'none',
             back: () => (step === 'res' && F && !F.edit ? this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }) : close()),
-            stD: step === 'st' ? 'flex' : 'none', backD: 'none',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
+            stD: step === 'st' ? 'flex' : 'none', backD: 'none',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', resGD: step === 'res' ? 'grid' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
             tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#186B2D' : '#000000', recDis: isRec ? 'true' : 'false', recCls: isRec ? '' : 'mbtn', recPE: isRec ? 'none' : 'auto', recTab: isRec ? '-1' : '0',   /* Suggested is a plain tag: no touch effect, nothing to tap; only Reset is a button */ recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
             remove: () => { const go = () => { const nx = plan.filter((p) => p.id !== id);
