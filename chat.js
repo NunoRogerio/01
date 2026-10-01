@@ -118,10 +118,11 @@
         .sort(function (a, b) { return a.km - b.km; });
       // Every fire gets a team: the nearest stations within 80 km, else the nearest ones at all (up to 250 km)
       var near = all.filter(function (q) { return q.km < 80; }); if (near.length < 3) near = all.filter(function (q) { return q.km < 250; });
+      if (near.length < 2) near = all.slice(0, 2);   // never fewer than two stations (and two station chiefs)
       near = near.slice(0, 4);
-      if (!near.length) {   // no station data for this place: local stations named after the area, marked as such
+      if (near.length < 2) {   // no (or too little) station data for this place: local stations named after the area, marked as such
         var nm0 = (cc === 'pt' || cc === 'br') ? ['Bombeiros Voluntários', 'Bombeiros Municipais', 'Corpo de Bombeiros'] : ['Fire Station 1', 'Fire Station 2', 'Fire Station 3'];
-        near = nm0.map(function (n, i) { return { ck: 'loc' + i, name: n, km: 6 + i * 7, local: true }; });
+        near = near.concat(nm0.slice(0, 3 - near.length).map(function (n, i) { return { ck: 'loc' + i, name: n, km: 6 + i * 7, local: true }; }));
       }
       cb(near.map(function (q) { var min = Math.round(q.km * 1.3 / 50 * 60) + 3; return { ck: q.ck, name: q.name, short: shortStation(q.name), km: q.km, min: min, la: q.la, lo: q.lo }; }));
     };
@@ -1181,5 +1182,16 @@
         if (c.closed) c.sum = stats(c);
         save(); emit(); }); });
   }
+  // Never fewer than two stations and two station chiefs in an open chat: older chats with one get the next nearest
+  function healTwo() {
+    var d = load();
+    Object.keys(d.chats).forEach(function (k) { var c0 = d.chats[k]; if (!c0 || c0.kind === 'dm' || /^p:/.test(k) || c0.dismissed || c0.closed || !c0.people || !c0.people.length || (c0.stations || []).length >= 2) return;
+      stationsFor(c0.st, c0.lat, c0.lon, function (S) { var dd = load(), c = dd.chats[k]; if (!c || (c.stations || []).length >= 2) return;
+        var have = {}; c.stations.forEach(function (s) { have[s.ck || s.name] = 1; });
+        S.filter(function (s) { return !have[s.ck || s.name]; }).slice(0, 2 - c.stations.length).forEach(function (s) {
+          var n = pickNames(c, 1, 'more')[0]; c.people.push({ name: n, code: initials(n), org: s.short, kind: 'lead' }); c.stations.push(s); });
+        save(); emit(); }); });
+  }
   if (role) setTimeout(heal, 900);
+  if (role) setTimeout(healTwo, 1200);
 })();

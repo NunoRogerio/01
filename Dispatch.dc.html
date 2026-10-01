@@ -18,7 +18,7 @@
 <script src="prefs.js?v=142"></script>
 <script src="i18n.js?v=127"></script>
 <script src="live.js?v=38"></script>
-<script src="chat.js?v=45"></script>
+<script src="chat.js?v=46"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -1107,6 +1107,13 @@ class Component extends DCLogic {
     let km = Infinity; B.forEach(([la, lo]) => { const q = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((lo - lon) * rad / 2) ** 2; km = Math.min(km, 12742 * Math.asin(Math.sqrt(q))); });
     return km > 400 ? null : Math.round(km / 220 * 60 + 8);
   }
+  // The incident chat this dispatch belongs to: the one it was opened from, else the chat of this fire or candidate
+  wfChatFor(fv) {
+    const C = window.__wfChat; if (!C) return null;
+    try { const k = sessionStorage.getItem('wf-chat-return'); const c = k && C.get(k); if (c) return c; } catch (e) {}
+    if (!fv) return null;
+    return C.find({ id: fv.id, kind: 'fire' }) || C.find({ id: fv.id, kind: 'cand' }) || null;
+  }
   wfNearRows(fv, FIRE, US, st, wide) {
     const du = US ? ' mi' : ' km';
     if (!window.__wfLiveMap) return { rows: [], du, live: false };
@@ -1124,12 +1131,22 @@ class Component extends DCLogic {
     const hav = (la, lo) => { const a = Math.sin((la - lat) * rad / 2) ** 2 + Math.cos(lat * rad) * Math.cos(la * rad) * Math.sin((lo - lon) * rad / 2) ** 2; return 12742 * Math.asin(Math.sqrt(a)); };
     const box = file.rows.filter((r) => Math.abs(r[2] - lat) < 1 && Math.abs(r[3] - lon) < 1.5);
     const all = (box.length ? box : file.rows).map((r) => ({ osm: r[0], t: r[1], name: r[4] || 'Fire station', la: r[2], lo: r[3], km: hav(r[2], r[3]) })).sort((a, b) => a.km - b.km);
-    const close = all.filter((q) => q.km <= 10).slice(0, 3), L = wide ? all.filter((q) => q.km <= 40).slice(0, 8) : close.length >= 3 ? close : all.slice(0, 3);   /* always at least three stations to choose from (the nearest) */   // reinforcing: stations further away too
+    // The incident chat's stations come first and are the ones offered: their coordinators said they are available, so the
+    // dispatch lists every one of them (at least two), with crews free; further stations follow only when reinforcing
+    const CH = this.wfChatFor(fv), hs = (x) => { let h = 0; for (const c of String(x)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+    const pinned = ((CH && CH.stations) || []).filter((q) => q && q.name).map((q, i) => {
+      const r = file.rows.find((r) => (r[1] || 'n') + r[0] === q.ck);
+      if (r) return { osm: r[0], t: r[1], ck: q.ck, name: r[4] || q.name, la: r[2], lo: r[3], km: hav(r[2], r[3]), chat: true };
+      const b = (hs(q.ck || q.name) % 360) * rad, k = +q.km || 6 + i * 7;   /* a local station without coordinates: placed at its distance */
+      return { osm: q.ck || 'loc' + i, t: '', ck: q.ck || 'loc' + i, name: q.name, la: lat + k * Math.cos(b) / 110.57, lo: lon + k * Math.sin(b) / (111.32 * Math.cos(lat * rad)), km: k, chat: true }; });
+    const pin = (q) => pinned.some((p) => p.ck === (q.t || 'n') + q.osm);
+    const close = all.filter((q) => q.km <= 10).slice(0, 3), L = pinned.length ? (wide ? pinned.concat(all.filter((q) => q.km <= 40 && !pin(q))).slice(0, Math.max(8, pinned.length)) : pinned)
+      : wide ? all.filter((q) => q.km <= 40).slice(0, 8) : close.length >= 3 ? close : all.slice(0, 3);   /* always at least three stations to choose from (the nearest) */   // reinforcing: stations further away too
     const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
     return { du, live: true, rows: L.map((q, i) => {
       const xy = P(q.la, q.lo), drive = Math.max(1, Math.round(q.km * 1.35 / 50 * 60));   // road ≈ 1.35 × straight line, 50 km/h average
-      let h = 0; for (const ch of String(q.osm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const tot = 2 + (h % 4), fr = wide ? (h >> 3) % (tot + 1) : null;   /* crews free: example figures (no public feed), seeded so they stay put */
-      return { id: 'osm' + q.osm, ck: (q.t || 'n') + q.osm, code: 'S' + (i + 1), name: q.name, x: xy[0], y: xy[1], km: +(US ? q.km * 0.621 : q.km).toFixed(1), free: fr, total: wide ? tot : null, t: fr === 0 ? null : [2, drive, 5], busy: fr === 0 ? 'All crews out' : undefined, real: true };
+      let h = 0; for (const ch of String(q.osm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const tot = 2 + (h % 4), fr = wide ? (q.chat ? 1 + (h >> 3) % tot : (h >> 3) % (tot + 1)) : null;   /* crews free: example figures (no public feed), seeded so they stay put */
+      return { id: 'osm' + q.osm, ck: q.ck || (q.t || 'n') + q.osm, code: 'S' + (i + 1), name: q.name, x: xy[0], y: xy[1], km: +(US ? q.km * 0.621 : q.km).toFixed(1), free: fr, total: wide ? tot : null, t: fr === 0 ? null : [2, drive, 5], busy: fr === 0 ? 'All crews out' : undefined, real: true };
     }) };
   }
   // The fire's stage chip in the header band: the time in the current stage before its name ("2 d Surveillance"). A tap on the

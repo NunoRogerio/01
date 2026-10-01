@@ -561,3 +561,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Candidate projection uses terrain (Oct 1):** Copernicus elevation (through Open-Meteo) around the marker; each direction reaches further uphill and less downhill.
 - **Chat keeps its place:** every chat opens where you left it (remembered per chat on the phone), the one exception to "opens at its top"; left at the end, it opens at the end and follows new messages. Sending a message goes to the end.
 - **Team of this fire:** each member is its own white card (16px corners), 8px apart, no dividers.
+- **Stations in a fire's chat and its dispatch agree:** the dispatch offers exactly the stations whose coordinators are in the incident chat (with crews free, since they said they are available), further stations only after them when reinforcing. Never fewer than two stations and two station chiefs in a chat.
