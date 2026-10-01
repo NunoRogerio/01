@@ -147,8 +147,11 @@
   }
   function forceFor(c, si, st) {
     var s = c.stations[si], P = c.people[si];
-    var crew = pickNames(c, si === 0 ? 4 : si === 1 ? 4 : 3, 'crew' + si);
-    return { si: si, ck: s.ck || '', station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: vehiclesFor(c, s, si), st: st || 'standby' };
+    // As many people as the vehicles really carry (the coordinator is one of them): a VFCI 5, a VLCI 3, a VTTF 2;
+    // a Type 3 engine 3, a Type 6 brush patrol 2, a water tender 2 (ANEPC; NWCG minimum staffing)
+    var veh = vehiclesFor(c, s, si), seats = veh.reduce(function (a, v) { return a + (/VFCI|CCF|BRP|ABTF/.test(v) ? 5 : /VLCI|VLHR|BFP|UR-/.test(v) ? 3 : /VTTF|Nodriza|CCGC|AT-|Tender/.test(v) ? 2 : /Brush Patrol/.test(v) ? 2 : /^Engine/.test(v) ? 3 : 3); }, 0);
+    var crew = pickNames(c, Math.max(1, seats - 1), 'crew' + si);
+    return { si: si, ck: s.ck || '', station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: veh, st: st || 'standby' };
   }
   function setForces(c, from, to) { (c.forces || []).forEach(function (f) { if (!from || from.indexOf(f.st) >= 0) f.st = to; }); }
 
