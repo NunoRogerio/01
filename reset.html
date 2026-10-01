@@ -26,10 +26,15 @@ p{margin:0;font-size:16px;line-height:1.4;color:#6C6C70}
 (function(){
   var msg=document.getElementById('msg');
   var FILES=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html',
-    'Station.dc.html','index.html','fit.js','i18n.js','prefs.js','live.js','support.js','manifest.webmanifest'];
+    'Station.dc.html','Chat.dc.html','Projection.dc.html','index.html','fit.js','i18n.js','prefs.js','live.js','chat.js',
+    'avatar.js','trophy.js','support.js','manifest.webmanifest'];
+  // reset.html?out=1 (Sign out in the user settings): the same refresh to the newest version, but the phone keeps its
+  // saved settings and profiles; only the sign-in and this visit's state are cleared.
+  var OUT=/[?&]out=1/.test(location.search);
+  if(OUT){document.querySelector('h1').textContent='Signing out';msg.textContent='Loading the newest version…';}
   function wait(p,ms){return Promise.race([p,new Promise(function(r){setTimeout(r,ms);})]);}
   var jobs=[];
-  try{localStorage.clear();}catch(e){}
+  try{if(OUT){localStorage.removeItem('wf-role');localStorage.removeItem('wf-last-user');}else localStorage.clear();}catch(e){}
   try{sessionStorage.clear();}catch(e){}
   try{if(window.indexedDB)jobs.push(new Promise(function(r){var q=indexedDB.deleteDatabase('wf-cache');q.onsuccess=q.onerror=q.onblocked=function(){r();};}));}catch(e){}
   try{if(window.caches)jobs.push(caches.keys().then(function(k){return Promise.all(k.map(function(n){return caches.delete(n);}));}));}catch(e){}
