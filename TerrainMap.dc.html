@@ -16,7 +16,7 @@
 <script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=121"></script>
-<script src="i18n.js?v=111"></script>
+<script src="i18n.js?v=112"></script>
 <script src="live.js?v=35"></script>
 
 <title>Terrain map</title>
@@ -123,10 +123,14 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
           <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.7" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}"></path>
-          <path d="{{mNow}}" fill="#3A3A3C" fill-opacity="0.4" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
+          <path d="{{mNow}}" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="{{mSw.one}}" stroke-linejoin="round"></path>
           <path d="{{mFront}}" fill="#E8590C" fill-opacity="0.6" stroke="#C2410C" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
-          <path d="{{mHeld}}" fill="none" stroke="#1E7A34" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="{{mActive}}" fill="none" stroke="#E8590C" stroke-width="{{mSw.edge}}" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="{{mHeld}}" fill="none" stroke="#1E7A34" stroke-width="{{mSw.one}}" stroke-linecap="round" stroke-linejoin="round"></path>
+          <!-- Burning edge: a 1px line with a soft glow in its own orange on the outer side only (as if it were burning); the glow is
+               three widening strokes, fainter as they grow, clipped to outside the burned area -->
+          <defs><clipPath id="{{mOutId}}" clipPathUnits="userSpaceOnUse"><path d="{{mOut}}" clip-rule="evenodd"></path></clipPath></defs>
+          <g clip-path="url(#{{mOutId}})" fill="none" stroke="#E8590C" stroke-linecap="round" stroke-linejoin="round"><path d="{{mActive}}" stroke-opacity="0.1" stroke-width="{{mSw.g3}}"></path><path d="{{mActive}}" stroke-opacity="0.16" stroke-width="{{mSw.g2}}"></path><path d="{{mActive}}" stroke-opacity="0.24" stroke-width="{{mSw.g1}}"></path></g>
+          <path d="{{mActive}}" fill="none" stroke="#E8590C" stroke-width="{{mSw.one}}" stroke-linecap="round" stroke-linejoin="round"></path>
         </sc-if>
       </sc-if>
       <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
@@ -301,10 +305,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
-  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: calc({{legL}}px - 8px); right: calc({{legR}}px - 8px); top: calc({{legTopC}}px - 6px); box-sizing: border-box; padding: 6px 8px 14px; display: flex; gap: {{legGap}}; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
+  <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: calc({{legR}}px - 8px); top: calc({{legTopC}}px - 6px); box-sizing: border-box; padding: 6px 8px 14px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{legBg}}; box-shadow: {{legSh}}; color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer">
-        <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
+        <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.glowD}}" fill="none" stroke="#E8590C" stroke-opacity="0.35" stroke-width="3" stroke-linecap="round" style="filter: blur(0.9px)"></path><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
       </button>
     </sc-for>
   </div>
@@ -1074,7 +1078,7 @@ class Component extends DCLogic {
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
             const C = false, off = (c) => (on ? c : 'none');
-      return { label, d, sw: k === 'cands' ? 1.8 : 1.3, fill: on ? fill : 'none', stroke: on || stroke === 'none' ? stroke : '#8E8E93', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
+      return { label, d, sw: k === 'cands' ? 1.8 : (k === 'burn' || k === 'active' || k === 'held') ? 1 : 1.3, glowD: k === 'active' && on ? 'M1.5 8.3C4 2.8 9 9.8 12.5 3.3' : '', fill: on ? fill : 'none', stroke: on || stroke === 'none' ? stroke : '#8E8E93', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
         aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
     });
@@ -1305,10 +1309,11 @@ class Component extends DCLogic {
       // strokes sit inside the CSS-scaled map layer, so size them in screen pixels by dividing by the zoom
       // INPE's newest fire fronts (Brazil): where the fire burned on its latest day
       mFront: (() => { const G = p.fireId && (window.__wfBRGeo || {})[p.fireId]; return G && G.front && G.front.ring && LY.active && !hz ? ringPath(G.front.ring) : ''; })(),
-      mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } } : ((G) => G && G.ring && window.__wfLiveMap && mode === 'spread'
+      mSw: { thin: +(1.5 / s).toFixed(5), one: +(1 / s).toFixed(5), g1: +(3 / s).toFixed(5), g2: +(6 / s).toFixed(5), g3: +(10 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) },
+      mOut: 'M-3000000 -3000000H3000000V3000000H-3000000Z' + ringPath(snapH.ring), mOutId: 'wfOut' + String(p.fireId || 'f').replace(/[^A-Za-z0-9]/g, '') } : ((G) => G && G.ring && window.__wfLiveMap && mode === 'spread'
       // no model yet (or weather unreachable): still draw INPE's burned outline and newest fronts for Brazilian fires
-      ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(G.ring) : '', mFut: '', mActive: '', mHeld: '', mFront: G.front && G.front.ring && LY.active ? ringPath(G.front.ring) : '', mSw: { thin: +(1.5 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) } }
-      : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId || !!(MD && MD.failed), mNow: '', mFut: '', mActive: '', mHeld: '', mFront: '', mSw: { thin: 1, edge: 1, dash: '6 5' } })(p.fireId && (window.__wfBRGeo || {})[p.fireId]);
+      ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(G.ring) : '', mFut: '', mActive: '', mHeld: '', mFront: G.front && G.front.ring && LY.active ? ringPath(G.front.ring) : '', mSw: { thin: +(1.5 / s).toFixed(5), one: +(1 / s).toFixed(5), g1: 1, g2: 1, g3: 1, edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) }, mOut: '', mOutId: 'wfOutx' }
+      : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId || !!(MD && MD.failed), mNow: '', mFut: '', mActive: '', mHeld: '', mFront: '', mSw: { thin: 1, one: 1, g1: 1, g2: 1, g3: 1, edge: 1, dash: '6 5' }, mOut: '', mOutId: 'wfOutx' })(p.fireId && (window.__wfBRGeo || {})[p.fireId]);
 
     const hzF = p.fakeHz != null && p.fakeHz !== '' ? Number(p.fakeHz) : hz;   /* the illustrative rings are +1, +2, +3 steps; a screen with other horizons maps onto them */
     const ring = (h) => ({ fill: h === hzF ? 0.30 : (h < hzF ? 0.16 : 0.05), stroke: h === hzF ? 1 : 0.45, w: h === hzF ? 2.5 : 1.2 });
@@ -1534,7 +1539,9 @@ class Component extends DCLogic {
         const WX = this.wxRow(inT);
         const noLeg = p.noLegend === true || p.noLegend === 'true';   // a small detail map shows only the map and its full-screen button
         return { ...WX, ...(noLeg || p.fireOnly === true || p.fireOnly === 'true' ? { wxOn: false } : {}), legend, legOn: legend.length > 0 && !noLeg, ttlOp: 1, hasMapTtl: p.mode !== 'pin' && !!p.mapTitle, mapTtl: p.mapTitle || '', mapSub: p.mapSub || '', ttlH: inT ? 88 : 54, legIn: 0,   // title box inset 16 + its padding 16 + border 1, minus the legend's own 10
-          legGap: '6px', legPad: '0 12px 0 10px', legBg: '#F2F2F7', legSh: '0 2px 10px rgba(0,0,0,0.10)',   /* legend chips: solid, the same on every map (no see-through blur: lighter to draw, never changes colour) */ ttlTop: Math.round(Math.max(52, this.win().t) + 16), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? 40 : 0),
+          ...(() => { const full = p.isFull === true || p.isFull === 'true', L = ((p.mode === 'pin' || !!p.mapTitle) ? 32 : 16) + this.win().l;   /* full screen: the chips stack in a column at the top right (no sideways scroll, nothing under the title) */
+            return full ? { legLeftCss: 'auto', legDir: 'column', legAlign: 'flex-end', legOvx: 'visible' } : { legLeftCss: 'calc(' + L + 'px - 8px)', legDir: 'row', legAlign: 'center', legOvx: 'auto' }; })(),
+          legGap: (p.isFull === true || p.isFull === 'true') ? '8px' : '6px', legPad: '0 12px 0 10px', legBg: '#F2F2F7', legSh: '0 2px 10px rgba(0,0,0,0.10)',   /* legend chips: solid, the same on every map (no see-through blur: lighter to draw, never changes colour) */ ttlTop: Math.round(Math.max(52, this.win().t) + 16), ttlL: 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)), wxTop: Math.round(Math.max(52, this.win().t) + 16 + TT + (Number(p.legendOffset) || 0)) + (legend.length ? ((p.isFull === true || p.isFull === 'true') ? legend.length * 40 : 40) : 0),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;

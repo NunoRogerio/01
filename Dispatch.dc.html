@@ -16,7 +16,7 @@
 <script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=121"></script>
-<script src="i18n.js?v=111"></script>
+<script src="i18n.js?v=112"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
 
@@ -671,7 +671,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="wf-glass scrim" onClick="{{kp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{kp.op}}; pointer-events: {{kp.pe}}; transition: opacity .35s ease"></div>
   <section role="dialog" aria-modal="true" aria-label="{{kp.title}}" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 40px; padding-right: 16px">
-      <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="mbtn" onClick="{{kp.close}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{kp.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Choose the ones to show.</span></span></div>
+      <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><button type="button" class="mbtn" onClick="{{kp.close}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{kp.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
       <button type="button" class="mbtn wf-reset wf-rpill" onClick="{{kp.reset}}" aria-label="Reset to the default cards" aria-disabled="{{kp.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; margin-top: 6px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; cursor: pointer; flex-shrink: 0">Reset</button>
     </div>
     <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">
@@ -1115,7 +1115,7 @@ class Component extends DCLogic {
       o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none'; o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none';
       if (o.cc) o.cc = Object.assign({}, o.cc, { d: 'none' });
       if (o.floc) o.floc = Object.assign({}, o.floc, { d: 'none' });
-      if (o.rh) o.rh = Object.assign({}, o.rh, { op: 0, pe: 'none' });
+      if (o.rh && o.pl && o.pl.add) o.rh = Object.assign({}, o.rh, { go: o.pl.add });   // on the Crews tab the pill stays and opens Add resources
     } else if (o.rh) o.rh = Object.assign({}, o.rh, { go: go('res') });   // the Add crews pill opens the Crews tab
     return o;
   }
@@ -1553,7 +1553,7 @@ class Component extends DCLogic {
           c: done ? '#1E7A34' : '#3C3C43', ic: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', aria: done ? 'Copied' : 'Copy coordinates',
           copy: () => { try { navigator.clipboard.writeText(G).catch(() => {}); } catch (e) {} this.setState({ copied: { v: G, t: Date.now() } }); setTimeout(() => { try { this.forceUpdate(); } catch (e) {} }, 3100); } }; })(),
       // Floating "Add resources" pill: a fire confirmed here with nothing ordered yet, while Resources is out of view; it scrolls down to it
-      rh: (() => { const on = !!(RO && frow && /^Confirmed from/.test(frow.note || '') && !ORD.length && !s.full && !s.resIn && !(Array.isArray(s.plan) && s.plan.length));
+      rh: (() => { const on = !!(RO && frow && /^Confirmed from/.test(frow.note || '') && !ORD.length && !s.full);   /* stays until orders are actually dispatched (on either tab, while resources are being chosen too) */
         return { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0px' : '12px',
           go: () => { try { const sc = document.querySelector('[data-wf-page="1"]'), el = document.querySelector('[data-wf-res]'); if (!sc || !el) return;
             const k = sc.getBoundingClientRect().height / (sc.offsetHeight || 1) || 1, top = sc.scrollTop + (el.getBoundingClientRect().top - sc.getBoundingClientRect().top) / k - 16;
