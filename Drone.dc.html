@@ -16,9 +16,9 @@
 <script src="fit.js?v=91"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=110"></script>
-<script src="i18n.js?v=105"></script>
+<script src="i18n.js?v=106"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=32"></script>
+<script src="chat.js?v=33"></script>
 
 <title>Drone verification</title>
 <script src="./support.js"></script>
@@ -221,8 +221,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
   <!-- Same buttons, words and order as the Confirm fire? choice: Dismiss (secondary) then Confirm (primary) -->
   <div style="position: relative; z-index: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7">
-    <button type="button" class="btn wf-sec" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap">Dismiss</button>
-    <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmHere}}" style="display: flex; align-items: center; justify-content: center; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">Confirm</a>
+    <button type="button" class="btn wf-sec" onClick="{{openFa}}" aria-haspopup="dialog" style="height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap">Dismiss fire</button>
+    <a href="Dispatch.dc.html" class="btn primary" onClick="{{confirmHere}}" style="display: flex; align-items: center; justify-content: center; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">Confirm fire</a>
   </div>
 
   <div class="scrim" onClick="{{closeFa}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.32); opacity: {{faOp}}; pointer-events: {{faPE}}"></div>
