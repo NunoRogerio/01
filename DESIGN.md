@@ -533,7 +533,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Full-screen map card (Oct 1):** under a state or country it reads how many subdivisions the area has ("58 counties", "20 districts", "27 states"); under a county, its state. The country name is gone.
 - **Legend counts (Oct 1):** each marker chip on the main map shows its count in the area after the label, semibold dark grey (Ignition candidates 9, Active fires, Resolved fires, Fire stations).
 - **Round button press, dark ones too (Oct 1):** every round button, dark glass ones included (map controls, drone feed), presses exactly like the chat and notifications buttons at the top: swell, 2px dark grey outline pulsing to 150% and fading, quarter turn on X and +. No lime pulse anywhere.
-- **Search boxes (Oct 1):** every search field is 20% narrower than its full row, left-aligned (Find a place keeps its X at the right edge).
+- **Search boxes (Oct 1):** every search field is 20% narrower than its full row and centred in its container (Find a place: centred in the space beside its X, which stays at the right edge).
 - **Selected list item (Oct 1):** a 1px dark grey outline (was 2px), in every list (area picker, chosen stations).
 - **Station tooltip tag (Oct 1):** the tag at the top of a station tooltip ("1 fire", "Available") is always at least as wide as "Available", so busy and free stations show the same tag width.
 - **Dark round buttons, press (Oct 1, later; refines the round button press above):** no edge line of their own (their dark glass is already the pulse colour); on press they swell like the chat button at the top and pulse a 1px dark grey outline (light buttons keep 2px), and they do not dim while held.
