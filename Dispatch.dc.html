@@ -1115,7 +1115,7 @@ class Component extends DCLogic {
       o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none'; o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none';
       if (o.cc) o.cc = Object.assign({}, o.cc, { d: 'none' });
       if (o.floc) o.floc = Object.assign({}, o.floc, { d: 'none' });
-      if (o.rh && o.pl && o.pl.add) o.rh = Object.assign({}, o.rh, { go: o.pl.add });   // on the Crews tab the pill stays and opens Add resources
+      if (o.rh) o.rh = Object.assign({}, o.rh, { op: 0, pe: 'none' });   // not on the Crews tab (that is where resources are added); back on Situation it shows again until orders are sent
     } else if (o.rh) o.rh = Object.assign({}, o.rh, { go: go('res') });   // the Add crews pill opens the Crews tab
     return o;
   }
