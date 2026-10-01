@@ -17,7 +17,7 @@
 
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
   var STAGES = [
-    { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#3A3A3C', bg: '#ECECEF', icon: 'cand' },   // as on the map: the hi-vis triangle, dark outline, neutral tint
+    { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#3A3A3C', bg: '#ECECEF', icon: 'cand' },   // as on the map: the dark outline circle, neutral tint
     { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#9A4A00', bg: '#FCEFE3', icon: 'alert' },
     { en: 'Ongoing', pt: 'Em curso', c: '#B8360A', bg: '#FCE9E1', icon: 'route' },
     { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3141B', bg: '#FBE7E7', icon: 'flame' },
@@ -27,9 +27,9 @@
     { en: 'Closed', pt: 'Encerrada', c: '#3A3A3C', bg: '#ECECEF', icon: 'done' }
   ];
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#545458', bg: '#ECECEF', icon: 'x' };
-  // 24-unit stroke icons (the candidate triangle is filled, like its map legend)
+  // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
   var ICON = {
-    cand: 'M4 5.5h16L12 19.5Z',
+    cand: 'M12 5.5a6.5 6.5 0 1 1 0 13a6.5 6.5 0 1 1 0-13Z',
     alert: 'M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z M10 20.5a2 2 0 0 0 4 0',
     route: 'M2.5 7h11v9.5h-11Z M13.5 10h4l3 3.2v3.3h-7 M5.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0 M15.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
     flame: 'M12 2.8c1.2 3.6 5.2 5.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.6 1.4-3.8 2-5.2c.9 1.5 1.5 2 2.5 2.1c-.1-2.6-.4-4.6.7-7.3Z',

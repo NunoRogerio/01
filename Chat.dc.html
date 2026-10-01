@@ -18,7 +18,7 @@
 <script src="prefs.js?v=110"></script>
 <script src="i18n.js?v=105"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=31"></script>
+<script src="chat.js?v=32"></script>
 <script src="trophy.js?v=14"></script>
 
 <title>Chats</title>
@@ -499,7 +499,7 @@ class Component extends DCLogic {
     const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
     const lite = (h, k) => { const c = rgb(h); return 'rgb(' + c.map((v) => Math.round(v + (255 - v) * k)).join(',') + ')'; };
     const tone = (S) => DK ? { c: lite(S.c, 0.45), bg: 'rgba(' + rgb(S.c).join(',') + ',0.28)' } : { c: S.c, bg: S.bg };
-    const iconFor = (S) => { const k = tone(S), Y = window.__wfY || '#E5FF00'; if (S.icon === 'cand') return { d: C.ICON.cand, c: DK ? '#E8E8ED' : '#3A3A3C', bg: DK ? 'rgba(118,118,128,0.28)' : '#ECECEF', fill: Y, fillW: Y, sw: '#3A3A3C', circ: DK ? 'rgba(118,118,128,0.28)' : '#FFFFFF' };   /* the candidate as on the map: hi-vis triangle, dark outline */
+    const iconFor = (S) => { const k = tone(S), Y = window.__wfY || '#E5FF00'; if (S.icon === 'cand') return { d: C.ICON.cand, c: DK ? '#E8E8ED' : '#3A3A3C', bg: DK ? 'rgba(118,118,128,0.28)' : '#ECECEF', fill: 'none', fillW: 'none', sw: DK ? '#E8E8ED' : '#3A3A3C', circ: DK ? 'rgba(118,118,128,0.28)' : '#FFFFFF' };   /* the candidate as on the map: dark outline circle, no fill */
       return { d: C.ICON[S.icon], c: k.c, bg: k.bg, fill: 'none', fillW: 'none', sw: '#FFFFFF', circ: k.c }; };
     const ago = (tm) => { const m = Math.round((Date.now() - tm) / 60000); if (m < 1) return L('now', 'agora'); if (m < 60) return L(m + ' min ago', 'há ' + m + ' min'); const d = new Date(tm), n = new Date(); return d.toDateString() === n.toDateString() ? C.hhmm(tm) : d.toLocaleDateString(L('en-GB', 'pt-PT'), { day: 'numeric', month: 'short' }); };
     const dayTxt = (tm) => new Date(tm).toLocaleDateString(L('en-GB', 'pt-PT'), { weekday: 'short', day: 'numeric', month: 'short' });
@@ -734,7 +734,7 @@ class Component extends DCLogic {
           title: L('Set the topic', 'Definir o tópico'), sub: L('Incidents within 50 km of the station.', 'Incidentes a 50 km do quartel.'), noneD: on && !N.length ? 'block' : 'none', none: L('No fires or ignition candidates within 50 km.', 'Sem incêndios nem candidatos a ignição a 50 km.'),
           rows: N.map((o, i) => { const fire = o.kind === 'fire', S0 = C.STAGES[fire ? 3 : 0], Y = window.__wfY || '#E5FF00';
             return { place: o.inc.place, sub: (fire ? L('Fire', 'Incêndio') : L('Ignition candidate', 'Candidato a ignição') + (o.inc.conf ? '. ' + o.inc.conf + '%' : '')) + (o.inc.reg ? '. ' + o.inc.reg : '') + '.', km: (o.km < 10 ? o.km.toFixed(1) : Math.round(o.km)) + ' km', sep: i ? '0' : '0',
-              icD: C.ICON[S0.icon], icC: fire ? S0.c : '#3A3A3C', icFill: fire ? 'none' : Y, icBg: fire ? S0.bg : '#ECECEF', aria: o.inc.place + ', ' + Math.round(o.km) + ' km',
+              icD: C.ICON[S0.icon], icC: fire ? S0.c : '#3A3A3C', icFill: 'none', icBg: fire ? S0.bg : '#ECECEF', aria: o.inc.place + ', ' + Math.round(o.km) + ' km',
               pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stick = true; this.setState({ topicPick: false }); C.setTopic(c.key, o.inc); } }; }) }; })(),
       tm: (() => { const on = !!s.team, n = team.length; return { n: String(n), word: L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros'), aria: n + L(n === 1 ? ' member. Open the team' : ' members. Open the team', n === 1 ? ' membro. Abrir a equipa' : ' membros. Abrir a equipa'), sub: n + L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros') + '.',   /* the same words as the button that opened it */
         open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), h: this.shHandle('team', 'tmDy'),

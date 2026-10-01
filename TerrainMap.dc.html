@@ -238,7 +238,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
       <span class="tipwrap" tabindex="0" aria-label="{{om.aria}}" style="position: absolute; left: {{om.left}}px; top: {{om.top}}px; width: 28px; height: 28px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: {{mvI}}">
-        <svg width="16" height="15" viewBox="0 0 16 15" aria-hidden="true" style="overflow: visible; scale: 1.54;"><polygon points="1,1.5 15,1.5 8,13.5" fill="{{om.c}}" stroke="#3A3A3C" stroke-width="1" stroke-linejoin="round"></polygon></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="overflow: visible; scale: 1.54;"><circle cx="8" cy="8" r="5.6" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"></circle></svg>
         <span class="{{om.tip}}" role="tooltip"><b>{{om.tt}}</b>{{om.td}}</span>
       </span>
     </sc-for>
@@ -246,12 +246,12 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mvI}}">
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
           <svg class="mk" width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 0.77; overflow: visible">
-            <g transform="translate(48 47.5)"><polygon points="-19,-11 19,-11 0,22" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
-            <defs><mask id="wfIgMS" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><polygon points="29,36.5 67,36.5 48,69.5" fill="#000" stroke-linejoin="round"></polygon></mask></defs><polygon points="29,36.5 67,36.5 48,69.5" fill="{{ig.c}}"></polygon><polygon points="29,36.5 67,36.5 48,69.5" fill="none" stroke="#3A3A3C" stroke-width="{{ig.bdW2}}" stroke-linejoin="round" mask="url(#wfIgMS)"></polygon>
+            <g transform="translate(48 48)"><circle r="11" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></circle></g>
+            <defs><mask id="wfIgMS" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="48" cy="48" r="11" fill="#000"></circle></mask></defs><circle cx="48" cy="48" r="11" fill="none" stroke="#3A3A3C" stroke-width="{{ig.bdW2}}" mask="url(#wfIgMS)"></circle>
           </svg>
           <span class="igpill" role="tooltip">
             <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 10px; white-space: nowrap">
-              <svg width="10" height="9" viewBox="0 0 10 9" aria-hidden="true" style="flex-shrink: 0"><polygon points="0.5,0.8 9.5,0.8 5,8.4" fill="{{ig.c}}" stroke-linejoin="round"></polygon></svg><span style="font-weight: 600; color: #000000">{{ig.pos}}</span><span class="igname"><span style="font-weight: 600; color: #000000">· {{ig.place}}</span><span style="color: #545458; font-variant-numeric: tabular-nums">{{ig.conf}}%</span></span>
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style="flex-shrink: 0"><circle cx="5" cy="5" r="4" fill="none" stroke="#3A3A3C" stroke-width="1.6"></circle></svg><span style="font-weight: 600; color: #000000">{{ig.pos}}</span><span class="igname"><span style="font-weight: 600; color: #000000">· {{ig.place}}</span><span style="color: #545458; font-variant-numeric: tabular-nums">{{ig.conf}}%</span></span>
             </span>
             <span class="igmore"><span style="display: block; padding: 0 12px 10px; width: 206px; box-sizing: border-box; white-space: normal; font-size: 15px; line-height: 1.45; color: #3C3C43"><b style="display: block; margin-bottom: 2px; font-weight: 600; color: #000000">{{ig.tt}}</b>{{ig.td}}</span></span>
           </span>
@@ -259,13 +259,13 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
           <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
-            <g transform="translate(32 32.7)"><polygon points="-16,-10.3 16,-10.3 0,17.7" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></polygon></g>
-            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><polygon points="16,22.4 48,22.4 32,50.4" fill="#000" stroke-linejoin="round"></polygon></mask></defs><polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}"></polygon><polygon points="16,22.4 48,22.4 32,50.4" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" stroke-linejoin="round" mask="url(#wfIgMN)"></polygon>
+            <g transform="translate(32 32)"><circle r="11" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></circle></g>
+            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="32" cy="32" r="11" fill="#000"></circle></mask></defs><circle cx="32" cy="32" r="11" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" mask="url(#wfIgMN)"></circle>
           </svg>
           </sc-if>
           <sc-if value="{{ig.still}}" hint-placeholder-val="{{ false }}">
           <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
-            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><polygon points="16,22.4 48,22.4 32,50.4" fill="#000" stroke-linejoin="round"></polygon></mask></defs><polygon points="16,22.4 48,22.4 32,50.4" fill="{{ig.c}}"></polygon><polygon points="16,22.4 48,22.4 32,50.4" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" stroke-linejoin="round" mask="url(#wfIgMN)"></polygon>
+            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="32" cy="32" r="11" fill="#000"></circle></mask></defs><circle cx="32" cy="32" r="11" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" mask="url(#wfIgMN)"></circle>
           </svg>
           </sc-if>
           <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
@@ -280,10 +280,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
         <sc-if value="{{pinFire}}" hint-placeholder-val="{{ true }}">
         <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1; overflow: visible">
-          <!-- the candidate pulses as on the main map: its dark outline grows from the triangle and fades -->
-          <polygon class="wf-pinpulse" points="{{pinTriPts}}" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke" style="display: {{pinTriD}}"></polygon>
+          <!-- the ignition pulses as on the main map: its dark outline circle grows and fades -->
+          <circle class="wf-pinpulse" cx="20" cy="20" r="{{pinTriR}}" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke" style="display: {{pinTriD}}"></circle>
           <circle cx="20" cy="20" r="10" fill="none" stroke="#E8590C" stroke-width="1.5" style="display: {{pinCirD}}"><animate attributeName="r" values="10;21" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
-          <polygon points="{{pinTriPts}}" fill="{{pinC}}" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round" style="display: {{pinTriD}};"></polygon>
+          <circle cx="20" cy="20" r="{{pinTriR}}" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke" style="display: {{pinTriD}};"></circle>
           <circle cx="20" cy="20" r="9.3" fill="#E8590C" style="display: {{pinCirD}};"></circle>
         </svg>
         </sc-if>
@@ -304,7 +304,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <div role="group" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: calc({{legL}}px - 8px); right: calc({{legR}}px - 8px); top: calc({{legTopC}}px - 6px); box-sizing: border-box; padding: 6px 8px 14px; display: flex; gap: {{legGap}}; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{legBg}}; box-shadow: {{legSh}}; color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer">
-        <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="1.3" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
+        <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}
       </button>
     </sc-for>
   </div>
@@ -1043,7 +1043,7 @@ class Component extends DCLogic {
   legendItems(has) {
     const LY = this.layers(), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
-      ['cands', 'Ignition candidates', 'M1 1.5H13L7 12.5Z', (window.__wfY || '#E5FF00'), '#3A3A3C'],
+      ['cands', 'Ignition candidates', 'M7 2.6a4.4 4.4 0 1 1 0 8.8a4.4 4.4 0 1 1 0-8.8Z', 'none', '#3A3A3C'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#1E7A34'],
@@ -1053,9 +1053,8 @@ class Component extends DCLogic {
     ];
     return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
       const on = LY[k];
-      // Candidates: three triangles, low to high confidence
-      const C = false, off = (c) => (on ? c : 'none');
-      return { label, d, fill: on ? fill : 'none', stroke: on || stroke === 'none' ? stroke : '#8E8E93', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
+            const C = false, off = (c) => (on ? c : 'none');
+      return { label, d, sw: k === 'cands' ? 1.8 : 1.3, fill: on ? fill : 'none', stroke: on || stroke === 'none' ? stroke : '#8E8E93', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
         aria: label + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
     });
@@ -1309,7 +1308,7 @@ class Component extends DCLogic {
       isRisk, isSpread: mode === 'spread', isPin,
       // An ignition candidate's pin is 30% smaller than a fire's estimated ignition point
       ...(() => { const cand = Array.isArray(p.ignitions) && p.ignitions.some((q) => q.id === p.pinId);
-        return cand ? { pinTriPts: '6.7,9.15 33.3,9.15 20,31.55', pinTriR: 5.6, pinTriAnim: '5.6;13.3' } : { pinTriPts: '1,4.5 39,4.5 20,36.5', pinTriR: 8, pinTriAnim: '8;19' }; })(),
+        return cand ? { pinTriR: 8.6 } : { pinTriR: 11.2 }; })(),   /* ignitions are dark outline circles, no fill */
       pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g ? (window.__wfY || '#E5FF00') : '#E86A00'; })(),
       pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinTriD: p.mode === 'spread' ? 'none' : 'inline', pinCirD: p.mode === 'spread' && !(modelVals.hasModel && modelVals.mNow) ? 'inline' : 'none'   /* a drawn perimeter replaces the dot */, pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w25: +(2.5 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w50: +(5 * k).toFixed(5), w70: +(7 * k).toFixed(5), o12: +(12 * k).toFixed(5) + ';0',
@@ -1621,7 +1620,7 @@ class Component extends DCLogic {
     // and fires, and stations too (their outline grows from 2px to 4px). SVG units: candidates are drawn at 0.77 scale, stations at 20px for 24 units.
     const PS = (this.state || {}).pop, on = (kind, key) => !!PS && PS.kind === kind && PS.key === key;
     (OUT.fireMarks || []).forEach((m, i) => { const k = m._g ? m._g.id : i, o = on('fire', k); m.sel = sel('fire', k); m.bdW = o ? 4 : 0; });
-    (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 2.6; m.bdW2 = o ? 10.4 : 2.6; m.po = o ? 'stroke' : 'normal'; });
+    (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 5.2; m.bdW2 = o ? 10.4 : 5.2;   /* the candidate's outline: 2px, 4px when selected, outside the circle */ m.po = o ? 'stroke' : 'normal'; });
     (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? '#3A3A3C' : 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
@@ -1646,8 +1645,8 @@ class Component extends DCLogic {
     const stReg = P.kind === 'st' && m._st && m._st.lat != null && window.__wfRegionAt ? String(window.__wfRegionAt(m._st.lat, m._st.lon) || '').replace(/, [^,]+$/, '') : '';
     const PW = 180, WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
     // 24px between the panel and the selected marker's outer edge (its 4px border included). Where that edge sits relative to the anchor:
-    // fire circle: anchor is its top, 28px marker + 4px ring; candidate: centre, triangle 7.4px above and 14.2px below plus the ring; station: the pill's bottom, house icon 13px above it
-    const EU = P.kind === 'ign' ? -11.4 : P.kind === 'st' ? -23 : (m.flameD === 'block' ? -0.25 : 0), ED = P.kind === 'ign' ? 18.2 : P.kind === 'st' ? -3 : (m.flameD === 'block' ? 28.25 : 10);
+    // fire circle: anchor is its top, 28px marker + 4px ring; candidate: centre, circle 8.5px round plus its 4px ring; station: the pill's bottom, house icon 13px above it
+    const EU = P.kind === 'ign' ? -12.5 : P.kind === 'st' ? -23 : (m.flameD === 'block' ? -0.25 : 0), ED = P.kind === 'ign' ? 12.5 : P.kind === 'st' ? -3 : (m.flameD === 'block' ? 28.25 : 10);
     const GU = 24 - EU, GD = 24 + ED;
     const PH = this._popH || (P.kind === 'ign' ? 236 : FD ? 250 : 150), up = y - GU - topLim, dn = botLim - (y + GD);
     const goUp = up >= PH ? true : dn >= PH ? false : up >= dn;

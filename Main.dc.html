@@ -19,7 +19,7 @@
 <script src="prefs.js?v=110"></script>
 <script src="i18n.js?v=105"></script>
 <script src="live.js?v=35"></script>
-<script src="chat.js?v=31"></script>
+<script src="chat.js?v=32"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -1004,7 +1004,7 @@ class Component extends DCLogic {
     const unread = out.filter((n) => n.t > seen).length;
     const items = out.map((n, i) => {
       const un = n.t > seen;
-      const ic = n.kind === 'ign' ? [TRI, n.c, 'rgba(0,0,0,0.25)'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
+      const ic = n.kind === 'ign' ? [CIR, 'none', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
       return { title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
         sep: i ? '0' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
