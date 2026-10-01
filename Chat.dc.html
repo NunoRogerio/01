@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=105"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=128"></script>
+<script src="prefs.js?v=129"></script>
 <script src="i18n.js?v=119"></script>
 <script src="live.js?v=37"></script>
 <script src="chat.js?v=41"></script>
@@ -349,8 +349,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-for>
       </section>
-      <section style="display: flex; flex-direction: column; gap: 56px">
-        <div style="display: flex; flex-direction: column; gap: 2px; padding: 0"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
+      <!-- One group: the title (title M) and its subtitle, then the cards, 16px apart throughout -->
+      <section style="display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 0"><h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
           <article style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden">
             <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: transparent; color: #000000"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 24px">{{f.station}}</span><span style="font-size: 15px; line-height: 20px; color: #545458">{{f.veh}}</span></div></div>
@@ -365,7 +366,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </article>
         </sc-for>
         <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
-          <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: 16px; background: #FFFFFF"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{x.sub}}</span></div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 16px; background: #FFFFFF"><img src="{{x.icon}}" alt="" style="display: {{x.iconD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{x.name}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{x.sub}}</span></span></div>
         </sc-for>
         <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; overflow: hidden">{{sum.me.code}}<span style="position: absolute; inset: 0; background-image: {{sum.me.photo}}; background-size: cover; background-position: center"></span></span>
@@ -416,8 +417,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <button type="button" class="mbtn" onClick="{{sk.open}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
       </section>
-      <section style="display: flex; flex-direction: column; gap: 8px">
-        <h2 style="margin: 0; padding: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.ach}}</h2>
+      <section style="display: flex; flex-direction: column; gap: 16px">
+        <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.ach}}</h2>
         <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
         <sc-for list="{{pp.ach}}" as="a" hint-placeholder-count="2">
           <article style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 16px; background: #FFFFFF">
@@ -631,10 +632,10 @@ class Component extends DCLogic {
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
       return { hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
-        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '0' : '0', aria: p.name + ', ' + p.role, go: openPerson(p.name) })) }; });
+        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '0' : '1px solid rgba(60,60,67,0.14)', aria: p.name + ', ' + p.role, go: openPerson(p.name)   /* a full-width line between the station and its people */ })) }; });
     const extras = [];
-    if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2] }); }
-    if (c.evac) extras.push({ name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
+    if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2], icon: window.__wfHeliBadge ? window.__wfHeliBadge() : '', iconD: 'block' }); }
+    if (c.evac) extras.push({ icon: '', iconD: 'none', name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
     const live = FF.filter((f) => f.st !== 'standby');
     // Published counts win over the scenario's (the named crews stay illustrative)
     const RR = c.realRes, EE = (RR && RR.estF) || {}, fk = RR ? [{ v: (EE.man ? '~' : '') + RR.man, l: L('Personnel', 'Operacionais') }, { v: (EE.terrain ? '~' : '') + RR.terrain, l: L('Ground vehicles', 'Meios terrestres') }, { v: (EE.aerial ? '~' : '') + RR.aerial, l: L('Aircraft', 'Meios aéreos') }]
