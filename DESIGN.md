@@ -526,3 +526,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Secondary button (Oct 1, every one in the app):** grey 10% lighter, #737376 with white text (4.7:1); at night #6A6A6E with #F2F2F7; the disabled formula follows the same grey, faded. Sign out is a secondary button.
 - **Orders sent (Oct 1):** the round back sits above the title as on other screens; the primary is "Return" ("Voltar") instead of Done, and both go back to the page you came from (the fire page, the chat, or the map).
 - **Shared elements inherit (standing rule, Oct 1):** a change to a common element (a button type, tag, card, dialog) applies to every sibling and related use across the app, now and in future work.
+- **Crews tab stations (Oct 1):** folded by default; unfold one with its chevron; leaving the page and coming back folds them all again.
