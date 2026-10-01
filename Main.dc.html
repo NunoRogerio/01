@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=108"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=137"></script>
+<script src="prefs.js?v=138"></script>
 <script src="i18n.js?v=121"></script>
 <script src="live.js?v=38"></script>
 <script src="chat.js?v=44"></script>
@@ -528,13 +528,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <button type="button" role="switch" class="wf-tog" aria-checked="{{ai.onStr}}" aria-label="{{ai.title}}" onClick="{{ai.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{ai.swBg}}; opacity: {{ai.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{ai.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
             </div>
             <label style="display: flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{ai.ph}}</span><input id="wf-ai-key-in" type="password" autocomplete="off" spellcheck="false" value="{{ai.draft}}" onInput="{{ai.onInput}}" placeholder="{{ai.ph}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"><!-- Saved key: a check in the primary colour on the right --><span aria-hidden="true" style="display: {{ai.okD}}; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 8px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2.57" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></label>
-            <div style="display: flex; flex-direction: column; gap: 24px">   <!-- grouped actions, 24px apart -->
-              <div style="display: flex; gap: 16px">
-                <button type="button" class="btn wf-sec" onClick="{{ai.remove}}" style="display: {{ai.cxD}}; flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.cxTxt}}</button>
-                <button type="button" class="btn primary" onClick="{{ai.save}}" style="flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.saveTxt}}</button>
-              </div>
-              <!-- The app's Remove: full-width red, white text, asks first -->
-              <button type="button" class="wf-rm" onClick="{{ai.remove}}" style="display: {{ai.rmD}}; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: rgba(215,0,21,0.3); color: #99000E; -webkit-text-fill-color: #99000E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{ai.rmTxt}}</button>
+            <!-- One row, 24px apart: Remove (left) | Replace key, or Cancel | Save while replacing; Remove asks first -->
+            <div style="display: flex; gap: 24px">
+              <button type="button" class="wf-rm" onClick="{{ai.remove}}" style="display: {{ai.rmD}}; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: rgba(215,0,21,0.2); color: #99000E; -webkit-text-fill-color: #99000E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{ai.rmTxt}}</button>
+              <button type="button" class="btn wf-sec" onClick="{{ai.remove}}" style="display: {{ai.cxD}}; flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.cxTxt}}</button>
+              <button type="button" class="btn primary" onClick="{{ai.save}}" style="flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.saveTxt}}</button>
             </div>
             <span style="font-size: 15px; line-height: 20px; color: {{ai.noteC}}">{{ai.note}}</span>
           </div>
@@ -542,11 +540,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div style="display: {{inv.d}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px; border-top: 0">
             <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{inv.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{inv.sub}}</span></span>
             <sc-if value="{{inv.hasLink}}" hint-placeholder-val="{{ false }}">
-              <span style="display: block; padding: 10px 12px; border-radius: 10px; background: rgba(118,118,128,0.12); font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: all; user-select: all; max-height: 54px; overflow: hidden">{{inv.link}}</span>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
-                <button type="button" class="opt wf-b wf-sec" onClick="{{inv.share}}" style="border: 0; font: inherit; cursor: pointer">{{inv.shareTxt}}</button>
-                <button type="button" class="opt wf-b wf-ter" onClick="{{inv.copy}}" style="border: 0; font: inherit; cursor: pointer">{{inv.copyTxt}}</button>
+              <!-- The whole grey box copies the link (no Copy button); its last row holds the copy icon, and a dark tooltip confirms -->
+              <div role="button" tabindex="0" class="mbtn" onClick="{{inv.copy}}" aria-label="{{inv.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 10px 12px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
+                <span style="font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: none; user-select: none">{{inv.link}}</span>
+                <span style="position: relative; display: flex; justify-content: flex-end; height: 22px; margin-top: 4px">
+                  <span role="status" aria-live="polite" style="position: absolute; right: -6px; bottom: calc(100% + 6px); z-index: 5; padding: 6px 12px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; white-space: nowrap; pointer-events: none; opacity: {{inv.tipOp}}; transform: translateY({{inv.tipY}}); transition: opacity .2s ease, transform .2s ease">{{inv.tipTxt}}</span>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{inv.copyIc}}"></path></svg>
+                </span>
               </div>
+              <button type="button" class="opt wf-b wf-sec" onClick="{{inv.share}}" style="border: 0; font: inherit; cursor: pointer">{{inv.shareTxt}}</button>
             </sc-if>
             <button type="button" class="opt wf-b {{inv.cls}}" onClick="{{inv.make}}" disabled="{{inv.dis}}" aria-disabled="{{inv.disStr}}" style="display: {{inv.makeD}}; border: 0; font: inherit; cursor: pointer">{{inv.makeTxt}}</button>
             <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{inv.note}}</span>
@@ -939,11 +941,12 @@ class Component extends DCLogic {
           return new URL('./', location.href).href + '#invite=' + payload; };
         const link = s.invLink || '';
         const copy = () => { const done = () => { this.setState({ invCopied: true }); setTimeout(() => this.setState({ invCopied: false }), 1800); };
-          try { navigator.clipboard.writeText(link).then(done, () => {}); } catch (e) {} };
+          const old = () => { try { const t = document.createElement('textarea'); t.value = link; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0;left:0;top:0'; document.body.appendChild(t); t.select(); const ok = document.execCommand('copy'); t.remove(); if (ok) done(); } catch (e) {} };   /* older phones: the classic copy */
+          try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} try { navigator.clipboard.writeText(link).then(done, old); } catch (e) { old(); } };
         return { d: 'flex', title: T('Invite people', 'Convidar pessoas'),
           sub: T('Send a link that opens the app with Claude role-play already switched on.', 'Envie uma ligação que abre a aplicação com a encenação do Claude já ligada.'),
           hasLink: !!link, link, makeD: link ? 'none' : 'block', dis: !key, disStr: key ? 'false' : 'true', cls: key ? 'wf-pri' : 'wf-sec wf-dis',   /* disabled: the secondary button, faded */
-          makeTxt: T('Create invite link', 'Criar ligação de convite'), shareTxt: T('Share', 'Partilhar'), copyTxt: s.invCopied ? T('Copied', 'Copiado') : T('Copy', 'Copiar'),
+          makeTxt: T('Create invite link', 'Criar ligação de convite'), shareTxt: T('Share', 'Partilhar'), copyTxt: s.invCopied ? T('Copied', 'Copiado') : T('Copy', 'Copiar'), copyAria: T('Copy link', 'Copiar ligação'), tipTxt: T('Copied to clipboard', 'Copiado para a área de transferência'), tipOp: s.invCopied ? 1 : 0, tipY: s.invCopied ? '0px' : '4px', copyIc: s.invCopied ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10',
           make: () => { if (!key) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ invLink: mk() }); },
           share: () => { try { if (navigator.share) { navigator.share({ title: 'Fire Watch', text: T('Join me on Fire Watch. Claude role-play is switched on for you.', 'Junte-se a mim no Fire Watch. A encenação do Claude já está ligada para si.'), url: link }).catch(() => {}); return; } } catch (e) {} copy(); },
           copy,
