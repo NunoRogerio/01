@@ -431,3 +431,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Fire page sections (Oct 1):** Key figures, Weather and Terrain are separate groups: 56px between them (the section list's gap and its top margin, were 24px).
 - **GPS card under the map (Oct 1):** 16px below the map band, the same as its distance to the screen's left and right edges, on the candidate and fire pages (was 32px and 12px).
 - **Choose resources (Oct 1):** subtitle "Start by choosing a station."; the stations come first and Air support is the last option ("Helicopters, air tankers and drone swarms.").
+- **Choose resources sheet (Oct 1):** no back button (Cancel and a tap outside close it); the title and subtitle line up with the list's text column (72px); subtitle "N available. Start by choosing a station.", wrapping instead of being cut.
+- **Crews tab while choosing resources (Oct 1):** first element 56px under the tabs; tile titles keep two lines' room so their numbers line up ("0 of 4" level with "0 of 1" under a two-line title); Add resources 56px under the tiles; the chosen stations end 56px above Cancel and Send order, which stay fixed at the foot (Crews tab only).
+- **Dialog titles (Oct 1, every dialog):** title M (26px semibold), as page titles; the item it concerns stays under it in normal text (e.g. "Confirm fire?" over "Santa Clarita"). The shared dialog (fit.js) and the screens' own dialogs.
+- **Cards in sequence (Oct 1):** 8px between small cards, across and down (KPI grids, the GPS and time cards, stacked station cards).
+- **Dispatch pill tint (Oct 1):** the glass carries a subtle red tint (a pale red at 62%) under the red words.

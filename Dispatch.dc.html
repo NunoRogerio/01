@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=101"></script>
+<script src="fit.js?v=102"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=121"></script>
 <script src="i18n.js?v=116"></script>
@@ -289,11 +289,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Add or edit a station of the dispatch: step 1 the stations (the best one tagged), step 2 its resources (suggested or your own), Apply -->
   <div class="wf-glass" onClick="{{fl.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 72; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{fl.op}}; pointer-events: {{fl.pe}}; transition: opacity .35s ease"></div>
   <section role="dialog" aria-modal="true" aria-label="{{fl.title}}" aria-hidden="{{fl.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 73; display: flex; flex-direction: column; max-height: calc(100% - 48px); box-sizing: border-box; padding: 30px 0 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{fl.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding: 0 24px 16px">
+    <!-- No back (Cancel and a tap outside close it); the title and subtitle line up with the list's text column (16 + 40px crest + 16) -->
+    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding: 0 16px 16px 72px">
       <button type="button" class="mbtn" onClick="{{fl.back}}" aria-label="Back" style="display: {{fl.backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
       <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
         <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fl.title}}</h2>
-        <span style="display: {{fl.subD}}; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{fl.sub}}</span>
+        <span style="display: {{fl.subD}}; font-size: 17px; line-height: 22px; color: #000000">{{fl.sub}}</span>
       </span>
     </div>
     <!-- Step 1: the stations, fastest first -->
@@ -422,7 +423,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </div>
       </div>
 <!-- When: the GPS component's twin, right under it (where, then when): the time on top, the date as annotation, a clock icon where the copy icon sits -->
-      <div style="display: {{hdTimeD2}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -40px 0 56px">
+      <div style="display: {{hdTimeD2}}; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -48px 0 56px">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums"><span style="display: {{hdLiveD}}" data-tl-since="{{hdT0}}"></span>{{hdTimeTxt}}<span style="display: {{hdLiveD}}"> active</span></span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{startTxt}}</span></span>
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #3C3C43"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z M12 7.5V12l3 2"></path></svg></span>
@@ -520,7 +521,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div style="display: {{d.cntD}}; gap: 8px; margin-bottom: 8px">
             <sc-for list="{{d.cnt}}" as="k" hint-placeholder-count="3">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; flex: 1 1 0; min-width: 0; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center">
-                <span style="margin-bottom: 12px; font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
+                <span style="display: flex; align-items: center; justify-content: center; min-height: 40px; margin-bottom: 12px; font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
                 <span class="kpi wf-big" style="--k: 30px; white-space: nowrap; color: #3A3A3C">{{k.v}}</span>
               </div>
             </sc-for>
@@ -529,15 +530,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div style="display: {{d.sumD}}; gap: 8px; margin-bottom: 8px">
             <sc-for list="{{d.sum}}" as="k" hint-placeholder-count="2">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; flex: 1 1 0; min-width: 0; padding: 12px 8px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center">
-                <span style="margin-bottom: 12px; font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
+                <span style="display: flex; align-items: center; justify-content: center; min-height: 40px; margin-bottom: 12px; font-size: 15px; line-height: 20px; color: #6E6E73">{{k.l}}</span>
                 <span class="kpi wf-big" style="--k: 30px; white-space: nowrap; color: {{k.c}}">{{k.v}}</span>
               </div>
             </sc-for>
           </div>
           <!-- A fire confirmed here: resources are added in this section. Add resources (grey, like the + tiles) replaces the
                tiles while there is nothing yet; the tiles come in with the first station. Chosen stations wait under it until Send order. -->
-          <button type="button" class="mbtn wf-reset" onClick="{{pl.add}}" aria-disabled="{{pl.addDis}}" style="position: relative; z-index: 2; display: {{d.addD}}; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #6E6E73; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 5v14M5 12h14"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-start; text-align: left"><span>Add resources</span><span style="display: {{pl.availD}}; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{pl.avail}}</span></span></button>
-          <div style="display: {{d.planD}}; flex-direction: column; gap: 8px; margin-top: 8px">
+          <button type="button" class="mbtn wf-reset" onClick="{{pl.add}}" aria-disabled="{{pl.addDis}}" style="position: relative; z-index: 2; margin-top: {{d.addMt}}; display: {{d.addD}}; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #6E6E73; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 5v14M5 12h14"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-start; text-align: left"><span>Add resources</span><span style="display: {{pl.availD}}; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{pl.avail}}</span></span></button>
+          <div style="display: {{d.planD}}; flex-direction: column; gap: 8px; margin: 8px 0 56px">
             <sc-for list="{{pl.resCards}}" as="p" hint-placeholder-count="0">
               <button type="button" class="mbtn" data-wf-plan="{{p.key}}" onClick="{{p.edit}}" aria-label="{{p.aria}}" style="position: relative; flex-shrink: 0; z-index: 1; display: grid; grid-template-columns: 40px minmax(0, 1fr) 20px; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer">
                 <span aria-hidden="true" style="grid-row: 1 / span 3; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{p.icBg}}; color: #0079A6"><img src="{{p.crest}}" alt="" style="display: {{p.crestD}}; width: 40px; height: 40px; object-fit: contain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{p.airD}}"><path d="M3 6h18M12 6v4M6 10h9a4 4 0 0 1 0 8H9l-3-4ZM19 14h2M10 21h7"></path></svg></span>
@@ -547,10 +548,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{p.sub}}</span>
               </button>
             </sc-for>
-          </div>
-          <div style="display: {{pl.resActD}}; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px">
-            <button type="button" class="btn wf-sec" onClick="{{pl.cancel}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
-            <button type="button" class="btn primary" onClick="{{pl.send}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{pl.sendOp}}">{{sendLbl}}</button>
           </div>
           <!-- One card per station on this fire: the station heads it (crest, name, distance and crews still free), its units under it.
                The head folds the units away and back (chevron down when folded, up when open). -->
@@ -655,7 +652,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- Actions: side by side on one row for a viewed fire (saves a row), stacked otherwise -->
     <div style="position: relative; display: flex; flex-direction: {{actDir}}; gap: {{actGap}}; flex-shrink: 0; padding: 16px 16px 0">
     <!-- A fire confirmed here with no resources yet: a floating glass pill (no outline, the content behind it slightly darkened) says so in the red of the Crews tab dot, and takes you to the Crews tab -->
-    <button type="button" class="mbtn" onClick="{{rh.go}}" aria-label="Please dispatch resources. Opens the Crews tab" style="position: absolute; left: 50%; bottom: calc(100% + 52px); z-index: 5; display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 20px 0 24px; box-sizing: border-box; border: 0; border-radius: 999px; background: rgba(242,242,247,0.5); -webkit-backdrop-filter: blur(10px) saturate(140%) brightness(0.9); backdrop-filter: blur(10px) saturate(140%) brightness(0.9); box-shadow: 0 6px 20px rgba(0,0,0,0.12); color: #E6352B; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer; opacity: {{rh.op}}; pointer-events: {{rh.pe}}; transform: translate(-50%, {{rh.y}}); transition: opacity .3s ease, transform .4s cubic-bezier(.2,.8,.2,1)">Please dispatch resources<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+    <button type="button" class="mbtn" onClick="{{rh.go}}" aria-label="Please dispatch resources. Opens the Crews tab" style="position: absolute; left: 50%; bottom: calc(100% + 52px); z-index: 5; display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 20px 0 24px; box-sizing: border-box; border: 0; border-radius: 999px; background: rgba(252,236,235,0.62); -webkit-backdrop-filter: blur(10px) saturate(140%) brightness(0.9); backdrop-filter: blur(10px) saturate(140%) brightness(0.9); box-shadow: 0 6px 20px rgba(0,0,0,0.12); color: #E6352B; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer; opacity: {{rh.op}}; pointer-events: {{rh.pe}}; transform: translate(-50%, {{rh.y}}); transition: opacity .3s ease, transform .4s cubic-bezier(.2,.8,.2,1)">Please dispatch resources<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+    <!-- Choosing resources on the Crews tab: Cancel and Send order stay fixed at the foot, the chosen stations scroll above them -->
+    <div style="display: {{pl.resActD}}; flex: 1 1 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+      <button type="button" class="btn wf-sec" onClick="{{pl.cancel}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
+      <button type="button" class="btn primary" onClick="{{pl.send}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{pl.sendOp}}">{{sendLbl}}</button>
+    </div>
     <!-- Reinforcing now happens in the incident chat; Done is a tertiary (subtle) button -->
     <!-- Done after sending orders; on a viewed fire there is no back here (it sits before the title) -->
     <div style="display: {{doneD}}; flex: 1 1 0; min-width: 0; order: {{backOrd}}">
@@ -1112,11 +1114,11 @@ class Component extends DCLogic {
     let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
     o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
     if (res) {
-      o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none'; o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none';
+      o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none'; o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none'; o.ulMt = '40px';   /* Crews tab: its first element 56px under the tabs (16px page padding + 40) */
       if (o.cc) o.cc = Object.assign({}, o.cc, { d: 'none' });
       if (o.floc) o.floc = Object.assign({}, o.floc, { d: 'none' });
       if (o.rh) o.rh = Object.assign({}, o.rh, { op: 0, pe: 'none' });   // not on the Crews tab (that is where resources are added); back on Situation it shows again until orders are sent
-    } else if (o.rh) o.rh = Object.assign({}, o.rh, { go: go('res') });   // the Add crews pill opens the Crews tab
+    } else { if (o.rh) o.rh = Object.assign({}, o.rh, { go: go('res') }); if (o.pl) o.pl = Object.assign({}, o.pl, { resActD: 'none' }); }   /* Cancel / Send order only on the Crews tab */   // the Add crews pill opens the Crews tab
     return o;
   }
   _renderVals0() {
@@ -1641,7 +1643,7 @@ class Component extends DCLogic {
         // Resources on a fire confirmed here: tiles only once there is a station (from the plan until the order is sent), Add always
         deployed.forEach((d) => { if (!d.fx) return; const st = plan.filter((p) => p.id !== 'air'), c = st.reduce((a, p) => a + (p.n[0] || 0), 0), t = st.reduce((a, p) => a + (p.n[1] || 0), 0);
           if (d.conf && !inlSent) d.sum = st.length ? [{ v: '0 of ' + c, l: 'Crews need relief', c: '#3A3A3C' }].concat(t ? [{ v: '0 of ' + t, l: 'Tenders below 20% water', c: '#3A3A3C' }] : []) : [];
-          d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf ? 'flex' : 'none'; d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
+          d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf ? 'flex' : 'none'; d.addMt = d.sumD === 'flex' ? '48px' : '0';   /* 56px under the tiles (they keep 8px under them) */ d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
         return {
           pl: { ...(() => {   // Add crews says how many stations are still free to choose (not how many are assigned)
               const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length, air = !inPlan('air');
@@ -1651,9 +1653,9 @@ class Component extends DCLogic {
             add: () => this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }), send, sendDis: hasSt ? 'false' : 'true', sendOp: hasSt ? 1 : 0.4,
             cancel: () => this.setState({ crew: false, reinforce: false, plan: [], flow: null }) },
           fl: { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close,
-            title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'st' ? 'Start by choosing a station.' : step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'st' || (step === 'res' && dSel) ? 'block' : 'none',
+            title: step === 'st' ? 'Choose resources' : (id === 'air' ? 'Air support' : dSel ? nm(dSel) : ''), sub: step === 'st' ? stRows.length + ' available. Start by choosing a station.' : step === 'res' && dSel && dSel.eta != null ? '~' + dSel.eta + ' min to the fire line.' : '', subD: step === 'st' || (step === 'res' && dSel) ? 'block' : 'none',
             back: () => (step === 'res' && F && !F.edit ? this.setState({ flow: { step: 'st', id: null, draft: null, edit: false } }) : close()),
-            stD: step === 'st' ? 'flex' : 'none', backD: step === 'res' ? 'none' : 'flex',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
+            stD: step === 'st' ? 'flex' : 'none', backD: 'none',   /* a dialog with Cancel needs no back */ resD: step === 'res' ? 'flex' : 'none', rows: on && step === 'st' ? stRows : [], res: step === 'res' ? resRows : [],
             tag: isRec ? 'Suggested' : 'Reset', tagBg: isRec ? 'rgba(52,199,89,0.12)' : 'var(--wf-y)', tagFg: isRec ? '#1E7A34' : '#000000', recDis: isRec ? 'true' : 'false', recCls: isRec ? '' : 'mbtn', recPE: isRec ? 'none' : 'auto', recTab: isRec ? '-1' : '0',   /* Suggested is a plain tag: no touch effect, nothing to tap; only Reset is a button */ recCur: isRec ? 'default' : 'pointer', useRec: () => { if (!isRec) setD(recD.slice()); },
             rmD: F && F.edit ? 'flex' : 'none', rmLbl: id === 'air' ? 'Remove air support' : 'Remove station',
             remove: () => { const go = () => { const nx = plan.filter((p) => p.id !== id);
