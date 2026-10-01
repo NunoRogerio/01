@@ -13,10 +13,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=109"></script>
+<script src="fit.js?v=110"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=138"></script>
-<script src="i18n.js?v=122"></script>
+<script src="prefs.js?v=139"></script>
+<script src="i18n.js?v=123"></script>
 <script src="live.js?v=38"></script>
 <script src="chat.js?v=45"></script>
 
@@ -351,6 +351,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section role="dialog" aria-modal="true" aria-labelledby="sendTitle" aria-hidden="{{snd.hidden}}" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; box-sizing: border-box; padding: 72px 16px 40px; background: #F2F2F7; transform: translateY({{snd.y}}); visibility: {{snd.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{snd.visDelay}}">
     <div style="display: flex; flex-direction: column; gap: 2px; padding: 0">
       <!-- Once every order is through, the bar fades away (each station card carries its own check mark) -->
+      <!-- Back above the title, as on every screen: returns like Return below -->
+      <a href="Main.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" onClick="{{snd.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-bottom: 16px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <span style="display: flex; align-items: center; gap: 12px"><h2 id="sendTitle" style="flex-grow: 1; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2></span>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{snd.sub}}</span>
     </div>
@@ -388,10 +390,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </ul>
     <span class="wf-note" style="margin: 8px 4px 0; color: #000000">Demo: no real order is sent</span>
-    <!-- One row, the app's pair: Reconfigure (secondary, back to the configuration with the same stations and forces; nothing is kept until Done) on the left, Done (primary) on the right -->
+    <!-- One row, the app's pair: Reconfigure (secondary, back to the configuration with the same stations and forces; nothing is kept until Return) on the left, Return (primary: back to the page you came from) on the right -->
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: auto; padding-top: 16px">
       <button type="button" class="btn wf-sec" onClick="{{snd.redo}}" style="height: 48px; font-size: 17px; font-weight: 600">Reconfigure</button>
-      <button type="button" class="btn primary" onClick="{{snd.done}}" disabled="{{snd.notDone}}" style="height: 48px; font-size: 17px; font-weight: 600">Done</button>
+      <button type="button" class="btn primary" onClick="{{snd.done}}" disabled="{{snd.notDone}}" style="height: 48px; font-size: 17px; font-weight: 600">Return</button>
     </div>
   </section>
 
@@ -1817,7 +1819,7 @@ class Component extends DCLogic {
       },
       snd: (() => {
         const SP = this.wfSplit(sendList, counts, PER), on = !!s.sending, n = Math.max(1, SP.length), k = Math.min(n, s.sndN || 0), all = on && k >= n;
-        return { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
+        const SN = { hidden: on ? 'false' : 'true', y: on ? '0%' : '100%', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.6s',
           title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: '#000000',
           sub: 'To station coordinators. ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: '#3A3A3C', barOp: all ? 0 : 1, doneOp: all ? 1 : 0, doneS: all ? 1 : 0.5,
           rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, cr = d.id === 'air' ? this.wfAirBadge() : crestOf(d); return { crest: cr, crestD: cr ? 'block' : 'none', hdBg: 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '0' : '0',
@@ -1826,7 +1828,7 @@ class Component extends DCLogic {
           redo: () => { this._replace = null; if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
-          done: () => { if (!all) return; if (this._replace) { const A = this.wfOrders(); A[fireId] = (A[fireId] || []).filter((o) => o.id !== this._replace); try { window.localStorage.setItem('wf-orders', JSON.stringify(A)); } catch (x) {} this._replace = null; }
+          done: (e, force) => { if (!all && force !== true) return; if (this._replace) { const A = this.wfOrders(); A[fireId] = (A[fireId] || []).filter((o) => o.id !== this._replace); try { window.localStorage.setItem('wf-orders', JSON.stringify(A)); } catch (x) {} this._replace = null; }
             this.wfSaveOrder(fireId, sendList, counts, DU, PER);
             // Came from an incident chat: the orders are posted there and you go back to the conversation
             let back = ''; try { back = sessionStorage.getItem('wf-chat-return') || ''; } catch (e) {}
@@ -1840,6 +1842,8 @@ class Component extends DCLogic {
               try { window.location.href = 'Chat.dc.html'; } catch (e) {} return; }
             if (s.crew || (frow && /^Confirmed from/.test(frow.note || ''))) { this.setState({ sending: 0, sndN: 0, crew: false, reinforce: false, stPick: false, cfPick: false, open: false, cfg: false }); return; }   /* crews configured from the fire page: Done goes back to it */
             this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
+        SN.back = () => SN.done(null, true);   /* the round back by the title: Return, also before every order is through */
+        return SN;
       })(), undoSend: () => this.setState({ reinforce: true, stPick: false, cfPick: false, per: null, exp: null, stations: null, station: null, counts: null, adjust: false, open: false, cfg: false, full: false, sentUp: false }),
       activeFor, activeAria: HELD ? 'Held' + (HELD.at ? ' since ' + new Date(HELD.at).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ', for ' + DUR(Date.now() - HELD.at) : '') + (HELD.took != null ? '. Active for ' + DUR(HELD.took) + ' before it was held' : '') : activeAria,
       pillTxt: HELD ? (HELD.at ? 'Held since ' + (new Date().toDateString() === new Date(HELD.at).toDateString() ? new Date(HELD.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : new Date(HELD.at).toLocaleDateString([], { day: 'numeric', month: 'short' })) : 'Held') : activeFor + ' active', pillBg: HELD ? 'rgba(52,199,89,0.14)' : 'rgba(232,106,0,0.14)', pillFg: HELD ? '#186B2D' : '#A34800', pillDot: HELD ? 'none' : 'inline-block',
