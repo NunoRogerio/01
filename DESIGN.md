@@ -554,3 +554,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Dark round buttons, pulse (Oct 1, later):** the pulse line is 2px, like the light buttons (it still starts at the swollen edge).
 - **Sign out screen (Oct 1):** plain black while the app refreshes: no logo, no words.
 - **Loading screen after log in (Oct 1; replaces the colour wave):** the forest photo starts in black and white and 20% darker, and evolves evenly with the counter to its full colour and normal lightness at 100%.
+- **Switchers, even padding (Oct 1):** every segmented switcher keeps the same 10px between the yellow and the track on all four sides; options lose their own side padding to make room (incidents list switcher, projection switcher on the full-screen fire map).
