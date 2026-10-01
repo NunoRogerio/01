@@ -224,8 +224,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{incTitle}}</span>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{incSub}}</span>
       </div>
-      <!-- Filter then find (fixed above the scrolling list): the switcher sets what the list shows (both, candidates only, fires only); the search looks only in that -->
-      <div style="display: flex; flex-direction: column; gap: 32px; flex-shrink: 0; padding: 0 16px 38px">
+      <!-- Filter then find (fixed above the scrolling list): the switcher sets what the list shows (both, candidates only, fires only); the search looks only in that. One group: 16px between them, 40px to the list -->
+      <div style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 0 16px 40px">
         <div role="tablist" aria-label="Show" class="wf-seg">
           <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 3); transform: translateX({{li.x}})"><span class="segblob"></span></span>
           <sc-for list="{{li.tabs}}" as="tb" hint-placeholder-count="3">
@@ -442,7 +442,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" data-swipe-go="1" data-pf-av-spot="1" onClick="{{closePrefs}}" tabindex="-1" aria-hidden="true" style="visibility: hidden; flex-shrink: 0; width: 44px; height: 44px; padding: 0; border: 0"></button>
     </div>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
-    <div data-wf-fadetop="1" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 8px 16px 0; opacity: {{pfInOp}}; transform: translateY({{pfInY}}); transition: opacity .3s ease {{pfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pfInDelay}}">
+    <div data-wf-fadetop="1" style="display: flex; flex-direction: column; gap: 40px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 8px 16px 0; opacity: {{pfInOp}}; transform: translateY({{pfInY}}); transition: opacity .3s ease {{pfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pfInDelay}}">
       <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 20px 16px 16px; border-radius: 14px; background: #FFFFFF">
         <div style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
@@ -486,7 +486,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <button type="button" role="switch" class="wf-tog" aria-checked="{{ai.onStr}}" aria-label="{{ai.title}}" onClick="{{ai.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{ai.swBg}}; opacity: {{ai.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{ai.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
             </div>
             <label style="display: flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{ai.ph}}</span><input id="wf-ai-key-in" type="password" autocomplete="off" spellcheck="false" value="{{ai.draft}}" onInput="{{ai.onInput}}" placeholder="{{ai.ph}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"><!-- Saved key: a check in the primary colour on the right --><span aria-hidden="true" style="display: {{ai.okD}}; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 8px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2.57" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></label>
-            <div style="display: flex; flex-direction: column; gap: 32px">
+            <div style="display: flex; flex-direction: column; gap: 40px">
               <div style="display: flex; gap: 16px">
                 <button type="button" class="btn wf-sec" onClick="{{ai.remove}}" style="display: {{ai.cxD}}; flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.cxTxt}}</button>
                 <button type="button" class="btn primary" onClick="{{ai.save}}" style="flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.saveTxt}}</button>

@@ -58,14 +58,14 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   </div>
 
   <!-- Everything under the header scrolls as one page, the map band included -->
-  <div class="wf-page" style="position: relative; z-index: 5; display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px">
+  <div class="wf-page" style="position: relative; z-index: 5; display: flex; flex-direction: column; gap: 40px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px">
     <sc-if value="{{hasMap}}" hint-placeholder-val="{{ false }}">
       <div style="position: relative; flex-shrink: 0; height: 234px; overflow: hidden">
         <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" no-routes="true" no-title="true" no-legend="true" hint-size="390px,234px"></dc-import>
       </div>
     </sc-if>
     <sc-if value="{{none}}" hint-placeholder-val="{{ false }}">
-      <p style="margin: 32px 16px 0; font-size: 17px; line-height: 22px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
+      <p style="margin: 40px 16px 0; font-size: 17px; line-height: 22px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
     </sc-if>
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
       <!-- Key figures: three per row, a grey + tile at the end adds or removes cards; simulated figures say so along the right edge -->
@@ -185,7 +185,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- People sheet: a crew or the command team, each person with their role; the button opens the chat (crew chief, or the team as a group) -->
   <div class="wf-glass" onClick="{{sq.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{sq.op}}; pointer-events: {{sq.pe}}; transition: opacity .35s ease"></div>
   <section role="dialog" aria-modal="true" aria-label="{{sq.title}}" aria-hidden="{{sq.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{sq.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0 0 0 8px; margin-bottom: 32px">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0 0 0 8px; margin-bottom: 40px">
       <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
         <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{sq.sub}}</span>
@@ -203,7 +203,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </li>
       </sc-for>
     </ul>
-    <button type="button" class="btn primary" onClick="{{sq.chat}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 48px; margin: 32px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg>{{sq.chatLbl}}<span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{sq.bN}}</span></button>
+    <button type="button" class="btn primary" onClick="{{sq.chat}}" style="position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 48px; margin: 40px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5Z"></path></svg>{{sq.chatLbl}}<span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -6px; right: -2px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; -webkit-text-fill-color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{sq.bN}}</span></button>
   </section>
 
   <!-- Cards picker: the key figures with toggles -->

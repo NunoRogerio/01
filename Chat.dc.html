@@ -61,8 +61,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
       </sc-for>
     </div>
-    <div class="chscroll" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 8px 16px 40px">
-      <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 32px 8px; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{t.none}}</p></sc-if>
+    <div class="chscroll" style="display: flex; flex-direction: column; gap: 40px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 8px 16px 40px">
+      <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 40px 8px; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{t.none}}</p></sc-if>
       <sc-for list="{{groups}}" as="g" hint-placeholder-count="1">
         <!-- Calm list, like the incidents list: rows edge to edge between full-width dividers, the place in Title S, grey
              annotation on up to two lines (stage and last message), the time then the unread count (yellow) on the right, a chevron -->
@@ -82,7 +82,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
         </ul>
       </sc-for>
-      <p class="wf-note" style="margin: 32px 4px 0">{{listNote}}</p>
+      <p class="wf-note" style="margin: 40px 4px 0">{{listNote}}</p>
     </div>
   </sc-if>
 
@@ -257,7 +257,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- ===== Topic picker: the incidents within 50 km of this station (fires, then ignition candidates), nearest first ===== -->
     <div class="wf-glass" onClick="{{tp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{tp.op}}; pointer-events: {{tp.pe}}; transition: opacity .35s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{tp.title}}" aria-hidden="{{tp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: calc(100% - 48px); box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 -20px 60px rgba(0,0,0,0.132); transform: translateY({{tp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)">
-      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 32px">
+      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 40px">
         <button type="button" class="chbtn" onClick="{{tp.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
         <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-top: 6px"><h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{tp.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{tp.sub}}</span></span>
       </div>
@@ -283,7 +283,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{t.fireCardSub}}</span>
         </div>
       </header>
-      <div class="chscroll" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 16px">
+      <div class="chscroll" style="display: flex; flex-direction: column; gap: 40px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 16px">
         <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
           <!-- Spread projection -->
           <section aria-label="{{t.proj}}" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: #FFFFFF">
@@ -320,7 +320,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
       </div>
     </header>
-    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 40px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
       <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.headline}}" sub="{{sum.closedAt}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
       <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column">
@@ -349,7 +349,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-for>
       </section>
-      <section style="display: flex; flex-direction: column; gap: 32px">
+      <section style="display: flex; flex-direction: column; gap: 40px">
         <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
           <article style="display: flex; flex-direction: column; border-radius: 14px; background: #FFFFFF; overflow: hidden">
@@ -395,7 +395,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 12px; flex-shrink: 0">
       <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
     </header>
-    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 32px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 40px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 88px; height: 88px; border-radius: 50%; background: #E5E5EA; font-size: 28px; font-weight: 600; overflow: hidden">{{pp.code}}<span style="position: absolute; inset: 0; background-image: {{pp.photo}}; background-size: cover; background-position: center"></span></span>
         <h1 style="margin: 8px 0 0; font-size: 26px; font-weight: 600; line-height: 32px">{{pp.name}}</h1>
