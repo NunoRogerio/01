@@ -51,7 +51,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 12px; row-gap: 12px; min-width: 0">
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <div style="grid-column: 1 / -1; grid-row: 2; display: flex; flex-direction: column; min-width: 0">
-    <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{st.title}}</h1></span>
+    <span style="display: flex; align-items: center; gap: 12px; min-width: 0"><img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="display: {{st.crestD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{st.title}}</h1></span>
     <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-top: 2px"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.region}}</span></span>
     <span style="display: {{st.kindD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{st.kind}}</span>
       </div>
@@ -66,6 +66,34 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <sc-if value="{{hasMap}}" hint-placeholder-val="{{ false }}">
       <div style="position: relative; flex-shrink: 0; height: 234px; overflow: hidden">
         <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" locked="true" start-zoom="4" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" no-routes="true" no-title="true" no-legend="true" hint-size="390px,234px"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
+      <!-- Under the map, as on the incident screens: the GPS component (coordinates, Directions, copy), then the fires near the station, 8px apart -->
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: -40px; padding: 0 16px">
+        <div style="display: flex; align-items: center; gap: 16px; min-height: 56px; padding: 6px 8px 6px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08)">
+          <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{loc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{loc.rows}}; opacity: {{loc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 15px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span></span>
+          <!-- Directions: an arrow going up and turning right, 16px left of the copy icon -->
+          <a href="{{loc.dir}}" target="_blank" rel="noopener" class="mbtn" aria-label="Directions" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: -22px; border-radius: 50%; color: #3C3C43; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 20.5V13a3.5 3.5 0 0 1 3.5-3.5H19"></path><path d="m15.5 6 3.5 3.5-3.5 3.5"></path></svg></a>
+          <button type="button" class="mbtn" onClick="{{loc.copy}}" aria-label="{{loc.copyAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{loc.copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{loc.copyIc}}"></path></svg></button>
+        </div>
+        <!-- Fires near this station, in a white card: the list, or that there are none within 60 km -->
+        <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden">
+          <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; font-size: 17px; line-height: 22px; color: #000000">{{noFiresTxt}}</p></sc-if>
+          <ul style="display: {{firesD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 0">
+            <sc-for list="{{fires}}" as="f" hint-placeholder-count="2">
+              <li style="border-top: {{f.sep}}">
+                <a href="Dispatch.dc.html" class="stfire" onClick="{{f.go}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; align-items: center; min-height: 60px; padding: 16px; box-sizing: border-box; color: #000000; text-decoration: none">
+                  <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
+                  <span style="justify-self: end; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{f.km}}</span>
+                  <span style="min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.state}}</span>
+                  <span style="justify-self: end; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{f.eta}}</span>
+                </a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+        <p class="wf-note" style="display: {{firesD}}; margin: 0">{{firesNote}}</p>
       </div>
     </sc-if>
     <sc-if value="{{none}}" hint-placeholder-val="{{ false }}">
@@ -90,30 +118,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
       </div>
 
-      <!-- Fires near this station: a calm list, like the incidents -->
-      <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Fires near this station</span>
-        <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 20px; font-size: 17px; line-height: 22px; color: #000000">{{noFiresTxt}}</p></sc-if>
-        <ul style="display: {{firesD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 0">
-          <sc-for list="{{fires}}" as="f" hint-placeholder-count="2">
-            <li>
-              <a href="Dispatch.dc.html" class="stfire" onClick="{{f.go}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 20px; gap: 2px 8px; align-items: center; min-height: 60px; padding: 16px; box-sizing: border-box; color: #000000; text-decoration: none">
-                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
-                <span style="justify-self: end; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{f.km}}</span>
-                <span aria-hidden="true" style="grid-row: 1; grid-column: 3; align-self: center; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
-                <span style="min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.state}}</span>
-                <span style="justify-self: end; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{f.eta}}</span>
-              </a>
-            </li>
-          </sc-for>
-        </ul>
-        <p class="wf-note" style="display: {{firesD}}; margin: 8px 20px 0">{{firesNote}}</p>
-      </div>
-
       <!-- Command: the station's coordination team, one row; the chat opens a group with you and the whole team -->
       <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{tx.cmd}}</span>
-        <div style="display: flex; align-items: center; gap: 12px; padding: 0 16px 0 0; border-top: 0">
+        <span style="margin: 0 16px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.cmd}}</span>
+        <div style="display: flex; align-items: center; gap: 12px; margin: 0 16px; padding: 0 16px 0 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <button type="button" class="strow2" onClick="{{cmd.open}}" aria-haspopup="dialog" aria-label="{{cmd.aria}}" style="display: flex; align-items: center; gap: 12px; flex-grow: 1; min-width: 0; min-height: 60px; padding: 16px 0 16px 16px; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
             <span aria-hidden="true" style="display: flex; flex-shrink: 0; padding-left: 8px">
               <sc-for list="{{cmd.faces}}" as="p" hint-placeholder-count="3">
@@ -131,7 +139,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
       <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
       <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73">{{tx.res}}</span>
+        <span style="margin: 0 16px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.res}}</span>
         <div style="padding: 0 16px 8px">
           <div role="tablist" aria-label="{{tx.res}}" class="wf-seg">
             <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 3); transform: translateX({{rs.x}})"><span class="segblob"></span></span>
@@ -140,9 +148,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </sc-for>
           </div>
         </div>
-        <span style="margin: 0 20px 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
-        <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px 20px; border-top: 0; font-size: 17px; line-height: 22px; color: #000000">{{rs.emptyTxt}}</p></sc-if>
-        <ul style="display: {{rs.listD}}; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 0">
+        <span style="margin: 8px 16px 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
+        <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 16px; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{rs.emptyTxt}}</p></sc-if>
+        <ul style="display: {{rs.listD}}; flex-direction: column; margin: 0 16px; padding: 0; list-style: none; border-top: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
             <li>
               <button type="button" class="strow2" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto {{r.chevW}}; gap: 2px 12px; align-items: center; width: 100%; min-height: 60px; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
@@ -157,34 +165,26 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </ul>
       </div>
 
-      <!-- The station itself: crest and name, then its details as label and value rows -->
+      <!-- The station's other details (operator, address, phone...), only when it has any; the crest, name, type and location are already above -->
       <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 20px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Station</span>
-        <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 0">
-          <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 12px 16px; box-sizing: border-box">
-            <img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain">
-            <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; overflow-wrap: anywhere">{{st.name}}</span><span style="display: {{st.crestNoteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{st.crestNote}}</span></span>
-          </li>
-          <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+        <span style="display: {{rowsD}}; margin: 0 16px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Details</span>
+        <ul style="display: {{rowsD}}; flex-direction: column; margin: 0 16px; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="2">
             <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 16px; box-sizing: border-box">
               <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
                 <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{r.k}}</span>
                 <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
                 <sc-if value="{{r.plain}}" hint-placeholder-val="{{ true }}"><span style="font-size: 17px; line-height: 22px; overflow-wrap: anywhere">{{r.v}}</span></sc-if>
               </span>
-              <button type="button" class="mbtn" onClick="{{r.copy}}" aria-label="{{r.copyAria}}" style="display: {{r.copyD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{r.copyC}}; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.copyIc}}"></path></svg></button>
             </li>
           </sc-for>
         </ul>
-        <p class="wf-note" style="margin: 8px 20px 0">{{tx.note}} <a href="{{st.osm}}" target="_blank" rel="noopener" style="color: inherit">{{st.osmLbl}}</a>.</p>
+        <p class="wf-note" style="margin: 16px 16px 0">{{tx.note}} <a href="{{st.osm}}" target="_blank" rel="noopener" style="color: inherit">{{st.osmLbl}}</a>.</p>
       </div>
     </sc-if>
   </div>
 
-  <!-- The station's main action fixed at the foot (Call, else Directions); Back sits before the title -->
-  <div style="position: relative; z-index: 6; display: grid; grid-template-columns: 1fr; gap: 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7">
-    <a href="{{st.act}}" class="btn primary" target="{{st.actTarget}}" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 0; font-size: 17px; font-weight: 600; white-space: nowrap; text-decoration: none">{{st.actLbl}}</a>
-  </div>
+  <!-- No foot button: Directions sits in the location card, Call in the details -->
 
   <!-- People sheet: a crew or the command team, each person with their role; the button opens the chat (crew chief, or the team as a group) -->
   <div class="wf-glass" onClick="{{sq.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{sq.op}}; pointer-events: {{sq.pe}}; transition: opacity .35s ease"></div>
@@ -275,7 +275,7 @@ class Component extends DCLogic {
     const tx = { cmd: L('Command', 'Comando'), cmdTeam: L('Command team', 'Equipa de coordenação'), groupChat: L('Group chat', 'Conversa de grupo'), res: L('Resources', 'Recursos'),
       note: L('Resources, crews, people and the extra figures are simulated for this demonstration. Station details from OpenStreetMap contributors.', 'Recursos, equipas, pessoas e os indicadores extra são simulados para esta demonstração. Dados do quartel dos contribuidores do OpenStreetMap.') };
     const closed = { y: '105%', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: '', close: () => {}, chat: () => {}, reset: () => {} };
-    if (!S) return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Incident chats', open: null } }, none: true, some: false, hasMap: false, fullLayer: false, back, tx, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], fires: [], noFires: false, firesD: 'none', kpis: [], kp: closed, sq: closed, cmd: { faces: [] }, rs: { tabs: [], rows: [] } };
+    if (!S) return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Incident chats', open: null } }, none: true, some: false, hasMap: false, fullLayer: false, back, tx, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], rowsD: 'none', loc: { gps: '', rows: '0fr', op: 0, copyIc: '', copyC: '', copyAria: '', dir: '', copy: null }, fires: [], noFires: false, firesD: 'none', kpis: [], kp: closed, sq: closed, cmd: { faces: [] }, rs: { tabs: [], rows: [] } };
     const name = S.name || T.official_name || 'Fire station';
     const op = T.operator || '';
     const blob = (name + ' ' + op).toLowerCase();
@@ -297,17 +297,21 @@ class Component extends DCLogic {
     const cp = (this.state && this.state.copied) || null;   // the check stays on the copied row; the label fades after 3 s
     const add = (k, v, href, copy) => { const done = !!(copy && cp && cp.v === v), fresh = done && Date.now() - cp.t < 3000; if (v) rows.push({ k, v, cpRows: fresh ? '1fr' : '0fr', cpOp: fresh ? 1 : 0, href: href || '', link: !!href, plain: !href, copyD: copy ? 'flex' : 'none', copyIc: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', copyC: done ? '#186B2D' : '#3C3C43', copyAria: done ? 'Copied' : 'Copy coordinates',
       copy: () => { try { navigator.clipboard.writeText(v).catch(() => {}); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ copied: { v, t: Date.now() } }); setTimeout(() => this.forceUpdate(), 3100); } }); };
-    add('Operator', op); add('Type', kind); add('Code', T['fire_station:code'] || T.ref); add('Address', addr);
+    add('Operator', op); add('Code', T['fire_station:code'] || T.ref); add('Address', addr);   // the type is already in the band at the top
     add('Phone', phone, phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : ''); add('Email', mail, mail ? 'mailto:' + mail : '');
     add('Website', web.replace(/^https?:\/\//, '').replace(/\/$/, ''), web ? (/^https?:/.test(web) ? web : 'https://' + web) : '');
-    add('Hours', T.opening_hours); add('Since', T.start_date); add('Location', coords, '', true);   // the GPS gets a copy button, as on the candidate card
+    add('Hours', T.opening_hours); add('Since', T.start_date);   // the location is the GPS card under the map
+    const gps = Math.abs(S.lat).toFixed(2) + '°' + (S.lat >= 0 ? 'N' : 'S') + ' ' + Math.abs(S.lon).toFixed(2) + '°' + (S.lon >= 0 ? 'E' : 'W');
+    const lc = (() => { const done = !!(cp && cp.v === gps), fresh = done && Date.now() - cp.t < 3000; return { gps, rows: fresh ? '1fr' : '0fr', op: fresh ? 1 : 0, copyIc: done ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', copyC: done ? '#186B2D' : '#3C3C43', copyAria: done ? 'Copied' : 'Copy coordinates',
+      dir: 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon,
+      copy: () => { try { navigator.clipboard.writeText(gps).catch(() => {}); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ copied: { v: gps, t: Date.now() } }); setTimeout(() => this.forceUpdate(), 3100); } }; })();
     // Fires near the station: live fires from the same feeds as the map, by straight-line distance.
     const kmX = S.kmX || 0, kmY = S.kmY || 0, live = Array.isArray(window.__wfLiveFires) ? window.__wfLiveFires : [];
     const near = kmX && kmY ? live.map((r) => ({ r, km: Math.hypot((r[5] - S.x) * kmX, (r[6] - S.y) * kmY) })).filter((q) => q.km <= 60).sort((a, b) => a.km - b.km) : [];
     const fires = near.slice(0, 5).map((q, i) => {
       const r = q.r, info = r[9] || {}, active = !info.resolved;
       const min = Math.round(q.km * 1.3 / 50 * 60);
-      return { place: r[3] || r[2], state: (info.stEn || info.st || (active ? 'Active' : 'Resolved')) + (r[8] ? ' · ' + Math.round(r[8]).toLocaleString('en-US') + ' ha' : ''),
+      return { sep: i ? '1px solid rgba(60,60,67,0.14)' : '0', place: r[3] || r[2], state: (info.stEn || info.st || (active ? 'Active' : 'Resolved')) + (r[8] ? ' · ' + Math.round(r[8]).toLocaleString('en-US') + ' ha' : ''),
         km: q.km < 10 ? q.km.toFixed(1) + ' km' : Math.round(q.km) + ' km', eta: '~' + (min < 60 ? min + ' min' : Math.floor(min / 60) + ' h ' + String(min % 60).padStart(2, '0')),
         go: () => { const v = { id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     });
@@ -422,13 +426,13 @@ class Component extends DCLogic {
       ...(() => { const Fu = !!(this.state || {}).full; return { full: Fu, fullLayer: Fu, toggleFull: () => this.setState({ full: !(this.state || {}).full }) }; })(),
       ctrlTop: 60, zoom: 0.9, zoomFull: 1.08, attrFull: 40,
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
-          return { crest: K.url, crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
+          return { crest: K.url, crestD: K.url ? 'block' : 'none', crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
         title: name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria de Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
         ...(n25 ? { tag: n25 + (n25 === 1 ? ' fire' : ' fires'), tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: 'rgba(52,199,89,0.14)', tagFg: '#186B2D' }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
         ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
-      rows, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
+      rows, rowsD: rows.length ? 'flex' : 'none', loc: lc, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'
     };
   }

@@ -377,7 +377,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     <div style="display: {{pop.dockD}}; justify-content: center; margin-top: 0"><span role="status" style="display: inline-flex; align-items: center; justify-content: center; max-width: calc(100% - 24px); box-sizing: border-box; min-height: 32px; padding: 6px 16px; border-radius: 0 0 14px 14px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pop.tagTxt}}</span></div>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px {{pop.stPadB}}">
-        <img src="{{pop.stCrest}}" data-crest="{{pop.stCrN}}" alt="" style="display: {{pop.stCrestD}}; width: 54%; height: auto; aspect-ratio: 1; object-fit: contain; margin: 4px 0 12px">
+        <img src="{{pop.stCrest}}" data-crest="{{pop.stCrN}}" alt="" style="display: {{pop.stCrestD}}; width: 54%; height: auto; max-height: 140px; object-fit: contain; margin: 1px 0 9px">
         <span style="display: {{pop.stKD}}; font-size: 15px; line-height: 20px; color: #6E6E73">Distance</span>
         <span class="wf-like-xs" style="display: {{pop.stKD}}; margin-top: 2px; white-space: nowrap; --wf-fs: {{pop.stFs}}px">{{pop.stKm}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: {{pop.ttMt}}">{{pop.tt}}</b>
