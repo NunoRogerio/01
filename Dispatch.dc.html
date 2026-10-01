@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=108"></script>
+<script src="fit.js?v=109"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=138"></script>
 <script src="i18n.js?v=122"></script>
@@ -1016,6 +1016,13 @@ class Component extends DCLogic {
       window.__wfMem = Object.assign(window.__wfMem || {}, { flip: v }); try { window.sessionStorage.setItem('wf-flip', JSON.stringify(v)); } catch (e) {}
     } catch (e) {}
   }
+  /* the +6 h projected shape in map pixels (as the map draws it), so the small fire map can frame it; none once the fire is held */
+  wfGrow6(ring, P, held, seed) { if (held || !window.__wfGrowXY || !ring || ring.length < 3) return []; const c = Math.cos((ring[0][0] || 0) * Math.PI / 180) || 1;
+    const g = window.__wfGrowXY(ring.map((q) => [q[1] * c, q[0]]), 3.6, seed || 'f'); return g ? g.map((q) => P(q[1], q[0] / c)) : []; }
+  /* small fire map framing: the current outline as before, zoomed out just enough that the +6 h shape fits whole in the clear part of the band */
+  wfBandFit(pts, g6, z0, cx0, cy0) { if (!g6 || !g6.length) return { z: z0, cx: cx0, cy: cy0 }; const all = pts.concat(g6), xs = all.map((q) => q[0]), ys = all.map((q) => q[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), MH = 234;
+    const z = Math.max(0.0015, Math.min(z0, 358 * 0.9 / Math.max(4, x1 - x0), (MH - 72) * 0.9 / Math.max(4, y1 - y0))); return { z, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 }; }
   wfSetFireView(f) { const v = { id: f.id, place: f.place, note: f.note, x: f.x, y: f.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} }
   wfTakeFireView() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fireview') || 'null'); window.sessionStorage.removeItem('wf-fireview'); } catch (e) {} const m = window.__wfMem || {}; v = v || m.fireView; m.fireView = null; if (v && Date.now() - v.t < 20000) { try { window.sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v, adjust: false, open: false, cfg: false, stPick: false, cfPick: false, stations: null, counts: null, per: null, exp: null }); return true; } return false; }
   wfRestoreFire() { if (this.state.fv) return; let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fire-cur') || 'null'); } catch (e) {} if (v && v.id) { this.setState({ fv: v }); return; } if (window.__wfBackOrHome) { try { window.location.replace('Main.dc.html'); } catch (e) {} } }
@@ -1162,7 +1169,7 @@ class Component extends DCLogic {
       dl: (open ? k : ((up ? m : n) - 1 - k)) * 70 + 'ms', odl: ((open ? k : ((up ? m : n) - 1 - k)) * 70 + (open ? 0 : 300)) + 'ms' });   /* folding back: they glide home first, then fade (same timing as unfolding) */
     const hs = {
       w: Wc + 'px', ic: cur.ic, t: cur.t, tD: cur.t ? 'inline' : 'none', lMw: lab(cur, Wc),
-      fg: SC.c, bg: SC.bg, grow: open ? '-' + GROW + 'px' : '0px', wOpen: Wc + 'px', ring: open ? 'inset 0 0 0 2px color-mix(in srgb, ' + SC.c + ' 50%, transparent), 0 0 8px rgba(0,0,0,0.14)' : 'none',
+      fg: SC.c, bg: SC.bg, grow: open ? '-' + GROW + 'px' : '0px', wOpen: Wc + 'px', ring: open ? 'inset 0 0 0 2px color-mix(in srgb, ' + SC.c + ' 50%, transparent)' : 'none',
       prev: prev.map((p, k) => chip(p, k, false)), next: next.map((p, k) => chip(p, k, true)),
       aria: 'Stage: ' + label + (cur.t ? ', ' + cur.t : '') + (n ? '. Earlier: ' + prev.map((p) => p.l + (p.t ? ' ' + p.t : '')).join(', ') : '') + (m ? '. Still to come: ' + next.map((p) => p.l).join(', ') : '') + (ch && ch.stage === stg ? '' : '. Times estimated'),
       tuck: TUCK + 'px'
@@ -1689,17 +1696,20 @@ class Component extends DCLogic {
         // between Now / +1h / +2h / +3h never leaves the projection outside the map.
         const M = FMOD.model, P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
         const pts = [].concat.apply([], Object.values(RO && M.snaps[0] ? { 0: M.snaps[0] } : M.snaps).filter((q) => q && q.ring && q.ring.length).map((q) => q.ring.map((r) => P(r[0], r[1]))));
+        const RING6 = M.snaps[0] && M.snaps[0].ring ? this.wfGrow6(M.snaps[0].ring, P, HELD, fireId) : [];
         if (!pts.length) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
         // Detail band: the fire's shape fills about 60% of the width, framed in the clear part under the legend, whatever its size (as on Timber)
-        return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; const zB = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 72) * 0.92 / bh))); if (RO && !s.full) return { zoom: +zB.toFixed(4), fx: Math.round(cx), fy: +(cy - 28 / zB).toFixed(2) }; if (RO) { const zF = Math.max(zB, Math.min(20, Math.min(390 * 0.62 / bw, 605 * 0.72 / bh))); return { zoom: +zF.toFixed(4), fx: Math.round(cx), fy: +(cy - 65 / zF).toFixed(2) }; }   /* full screen: zoomed into the current perimeter (62% of the width or 72% of the clear height under the title and legend), centred in that clear part, never further out than the band */
+        return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; const zB = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 72) * 0.92 / bh))); if (RO && !s.full) { const F = this.wfBandFit(pts, RING6, zB, cx, cy); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy - 28 / F.z).toFixed(2) }; } if (RO) { const zF = Math.max(zB, Math.min(20, Math.min(390 * 0.62 / bw, 605 * 0.72 / bh))); return { zoom: +zF.toFixed(4), fx: Math.round(cx), fy: +(cy - 65 / zF).toFixed(2) }; }   /* full screen: zoomed into the current perimeter (62% of the width or 72% of the clear height under the title and legend), centred in that clear part, never further out than the band */
           const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: Math.round(cy) }; })();
       })() : (window.__wfLiveMap && fv && BRF && ((window.__wfBRGeo || {})[fv.id] || {}).ring) ? (() => {
-        const P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662], pts = window.__wfBRGeo[fv.id].ring.map((q) => P(q[0], q[1]));
+        const P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662], pts = window.__wfBRGeo[fv.id].ring.map((q) => P(q[0], q[1])); const RING6 = this.wfGrow6(window.__wfBRGeo[fv.id].ring, P, HELD, fireId);
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
-        return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; const zB = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 72) * 0.92 / bh))); if (RO && !s.full) return { zoom: +zB.toFixed(4), fx: Math.round(cx), fy: +(cy - 28 / zB).toFixed(2) }; if (RO) { const zF = Math.max(zB, Math.min(20, Math.min(390 * 0.62 / bw, 605 * 0.72 / bh))); return { zoom: +zF.toFixed(4), fx: Math.round(cx), fy: +(cy - 65 / zF).toFixed(2) }; }   /* full screen: zoomed into the current perimeter (62% of the width or 72% of the clear height under the title and legend), centred in that clear part, never further out than the band */
+        return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; const zB = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 72) * 0.92 / bh))); if (RO && !s.full) { const F = this.wfBandFit(pts, RING6, zB, cx, cy); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy - 28 / F.z).toFixed(2) }; } if (RO) { const zF = Math.max(zB, Math.min(20, Math.min(390 * 0.62 / bw, 605 * 0.72 / bh))); return { zoom: +zF.toFixed(4), fx: Math.round(cx), fy: +(cy - 65 / zF).toFixed(2) }; }   /* full screen: zoomed into the current perimeter (62% of the width or 72% of the clear height under the title and legend), centred in that clear part, never further out than the band */
           const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: Math.round(cy) }; })();
-      })() : (window.__wfLiveMap && fv && RO) ? { zoom: 3, fx: FIRE[0], fy: FIRE[1] } : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
+      })() : (window.__wfLiveMap && fv && RO) ? (() => { if (s.full) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };   /* no outline published: the map's illustrative one; the small map frames its +6 h shape too */
+        const ox = (Number(FIRE[0]) || 610) - 610, oy = (Number(FIRE[1]) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); ring.push([598 + ox + x * Math.cos(a) - y * Math.sin(a), 298 + oy + x * Math.sin(a) + y * Math.cos(a)]); }
+        const g = HELD || !window.__wfGrowXY ? null : window.__wfGrowXY(ring, 3.6, fireId); const F = this.wfBandFit(ring, g || [], 3, FIRE[0], FIRE[1]); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy - (g ? 28 / F.z : 0)).toFixed(2) }; })() : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
       mapUnits: RO ? [] : mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),
       hasRU: !!RU, noRU: !RU,
@@ -1856,13 +1866,13 @@ class Component extends DCLogic {
             sh: o ? '0 0 0 2px #3A3A3C, 0 0 10px rgba(0,0,0,0.08)' : '0 0 10px rgba(0,0,0,0.08)', aria: nm(d.name) + ', ' + km + ' km' + (o ? ', chosen' : ''),
             pick: () => { const cur = chosenList.map((q) => q.id), i = cur.indexOf(d.id); if (i >= 0) { if (cur.length > 1) cur.splice(i, 1); } else cur.push(d.id); try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stations: cur, stPick: true }); } }; }) }; })(),
       kp: this.wfPicker(), pkOpenKpi: () => this.setState({ pick: 'kpi' }),
-      hdrB: this._hdrB || 170, MAPH, tlTop, bandLocked: 'false', thruCls: '',   /* the fire's map on the page pans and zooms too (needed for the projection) */ bandDown: (e) => { const sp = e.currentTarget.closest('section') || e.currentTarget, pe0 = sp.style.pointerEvents; sp.style.pointerEvents = 'none'; const under = document.elementFromPoint(e.clientX, e.clientY); sp.style.pointerEvents = pe0;
+      hdrB: this._hdrB || 170, MAPH, tlTop, bandLocked: 'true',   /* every small map is locked: no pan or zoom (full screen pans and zooms); taps reach its legend and buttons */ thruCls: '',   /* the fire's map on the page pans and zooms too (needed for the projection) */ bandDown: (e) => { const sp = e.currentTarget.closest('section') || e.currentTarget, pe0 = sp.style.pointerEvents; sp.style.pointerEvents = 'none'; const under = document.elementFromPoint(e.clientX, e.clientY); sp.style.pointerEvents = pe0;
         const t = under && under.closest && under.closest('[data-wf-maproot]') ? under : null, leg = t && t.closest('[aria-label^="Map legend"]'), root = t && t.closest('[data-wf-maproot]');
         /* a primary pointer starts a new touch: forget fingers whose up never arrived (a pinch left them behind and the map stopped answering) */
         if (e.isPrimary) { const B0 = this._band; if (B0 && B0.mode === 'map' && B0.fwd) { const r0 = B0.root || document.querySelector('[data-wf-maproot]'); Object.keys(B0.fwd).forEach((k) => { try { r0 && r0.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: +k, pointerType: 'touch', clientX: e.clientX, clientY: e.clientY })); } catch (x) {} }); } this._bandP = {}; this._band = null; }
         const P = this._bandP || (this._bandP = {}); P[e.pointerId] = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, prim: e.isPrimary };
         if (Object.keys(P).length === 1) this._band = { id: e.pointerId, x: e.clientX, y: e.clientY, t, leg, root, sl: leg ? leg.scrollLeft : 0, moved: false, mode: null };
-        const B = this._band; if (B && Object.keys(P).length === 2 && B.mode !== 'page' && B.mode !== 'leg') { B.moved = true; this.bandToMap('pointerdown', true); } },
+        const B = this._band; if (B && Object.keys(P).length === 2) B.moved = true; },
       /* hands the band's touches to the map (sideways drag, pinch): the map gets them as its own pointer events */
       bandToMap: this.bandToMap = (type, all, id) => { const B = this._band, P = this._bandP || {}; const root = (B && B.root) || document.querySelector('[data-wf-maproot]'); if (!root) return;
         if (type === 'pointerdown') B.mode = 'map';
@@ -1875,7 +1885,7 @@ class Component extends DCLogic {
         if (Math.hypot(dx, dy) > 8) B.moved = true;
         if (!B.mode && B.moved) B.mode = Math.abs(dx) > Math.abs(dy) ? (B.leg ? 'leg' : 'map0') : 'page';
         if (B.mode === 'leg') { const z = B.leg.getBoundingClientRect().width / (B.leg.offsetWidth || 1) || 1; B.leg.scrollLeft = B.sl - dx / z; }
-        else if (B.mode === 'map0') { this.bandToMap('pointerdown', false, e.pointerId); this.bandToMap('pointermove', false, e.pointerId); } },
+        },
       bandUp: (e) => { const B = this._band, P = this._bandP || {}; if (B && B.mode === 'map' && B.fwd && B.fwd[e.pointerId]) this.bandToMap('pointerup', false, e.pointerId); delete P[e.pointerId];
         if (Object.keys(P).length) return; this._band = null; if (!B || B.id !== e.pointerId || B.moved || !B.t) return; const b = B.t.closest('button,a,[role=button]'); if (b) { this._bandHit = Date.now(); try { b.click(); } catch (x) {} } },
       // iOS cancels the pointer when a tap moves a hair (the page starts to scroll), so bandUp never runs: the tap's own click

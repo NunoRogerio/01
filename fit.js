@@ -671,3 +671,18 @@ window.__wfBlink=function(path,dur){
   function start(){try{new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t&&t.nodeType===1&&t.hasAttribute&&t.hasAttribute('data-wf-eqw')&&ms[i].type==='attributes')continue;later();return;}}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['style','class','hidden','aria-hidden']});}catch(x){}later();window.addEventListener('resize',later);}
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();
+
+// The projected fire shape (Projection, fire page): the outline grown unevenly, most downwind, sized to GR x its area,
+// seeded by the fire so it is stable. One definition shared by the map (drawing) and the fire page (framing the +6 h shape).
+window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.length < 3) return null;
+  let h = 7; for (const ch of String(seedSrc || 'f')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const gSeed = h;
+  const rr = (k) => { const x = Math.sin(gSeed * 0.001 + k * 12.9898) * 43758.5453; return x - Math.floor(x); };
+  const hk = Math.round(GR * 10), ph = [rr(1) * 6.28 + hk * 0.7, rr(2) * 6.28 + hk * 1.1, rr(3) * 6.28 + hk * 1.7], wdir = rr(4) * 6.28, wind = Math.min(1.4, 0.35 + (GR - 1) * 0.45);
+  const area = (q) => { let a = 0; for (let i = 0; i < q.length; i++) { const u = q[i], v = q[(i + 1) % q.length]; a += u[0] * v[1] - v[0] * u[1]; } return Math.abs(a) / 2; };
+  const cx = pts.reduce((a, q) => a + q[0], 0) / pts.length, cy = pts.reduce((a, q) => a + q[1], 0) / pts.length;
+  const warped = pts.map((q) => { const dx = q[0] - cx, dy = q[1] - cy, t = Math.atan2(dy, dx);
+    const n = 0.5 * Math.sin(2 * t + ph[0]) + 0.3 * Math.sin(3 * t + ph[1]) + 0.2 * Math.sin(5 * t + ph[2]), b = Math.pow(Math.max(0, Math.cos(t - wdir)), 2);
+    const m = 1 + 0.16 * n + wind * b; return [cx + dx * m, cy + dy * m]; });
+  const k = Math.sqrt(GR * area(pts) / Math.max(1e-12, area(warped)));
+  return warped.map((q, i) => { const o = pts[i], dx0 = o[0] - cx, dy0 = o[1] - cy, dx = (q[0] - cx) * k, dy = (q[1] - cy) * k, r0 = Math.hypot(dx0, dy0), r1 = Math.hypot(dx, dy);
+    const f = r0 && r1 < r0 * 1.05 ? r0 * 1.05 / r1 : 1; return [cx + dx * f, cy + dy * f]; }); };

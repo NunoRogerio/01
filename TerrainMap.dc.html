@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=108"></script>
+<script src="fit.js?v=109"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=138"></script>
 <script src="i18n.js?v=122"></script>
@@ -66,7 +66,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 [data-wf-pop] .wf-title-xs{font-size:17px!important;line-height:22px!important}
 </style>
 </helmet>
-<div ref="{{setEl}}" data-wf-maproot="1" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onLostPointerCapture="{{onLost}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: none; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div ref="{{setEl}}" data-wf-maproot="1" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onLostPointerCapture="{{onLost}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: {{rootTA}}; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
   <!-- While a finger moves the map, these layers move as one picture (a CSS transform); the full redraw follows a few times a second and on release -->
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
@@ -459,8 +459,8 @@ class Component extends DCLogic {
     };
     this.isLocked = () => { const p = this.props; return (p.locked === true || p.locked === 'true') && !(p.isFull === true || p.isFull === 'true'); };
     this.onWheel = (e) => {
-      e.preventDefault();
-      if (this.isLocked()) return;   // a locked map (page band) never pans or zooms; full screen does
+      if (this.isLocked()) return;   /* a locked map lets the page scroll under the wheel */
+      e.preventDefault();   // a locked map (page band) never pans or zooms; full screen does
       const p = this.local(e.clientX, e.clientY);
       this.zoomAt(p.x, p.y, Math.exp(-e.deltaY * 0.0018));
     };
@@ -1339,18 +1339,7 @@ class Component extends DCLogic {
     const GR = Number(p.grow) || 0, isGrow = GR > 0 && mode === 'spread';
     // The projected shape is not a scaled copy: the outline grows unevenly, most downwind, with its own wobble at each horizon
     // (seeded by the fire, so it is stable), then is sized to the target area (current × factor) and never falls inside the current outline
-    const gSeed = (() => { let h = 7; for (const ch of String(p.fireId || p.fireX || 'f')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; })();
-    const grownXY = (pts) => { if (!isGrow || GR <= 1 || !pts || pts.length < 3) return null;
-      const rr = (k) => { const x = Math.sin(gSeed * 0.001 + k * 12.9898) * 43758.5453; return x - Math.floor(x); };
-      const hk = Math.round(GR * 10), ph = [rr(1) * 6.28 + hk * 0.7, rr(2) * 6.28 + hk * 1.1, rr(3) * 6.28 + hk * 1.7], wdir = rr(4) * 6.28, wind = Math.min(1.4, 0.35 + (GR - 1) * 0.45);
-      const area = (q) => { let a = 0; for (let i = 0; i < q.length; i++) { const u = q[i], v = q[(i + 1) % q.length]; a += u[0] * v[1] - v[0] * u[1]; } return Math.abs(a) / 2; };
-      const cx = pts.reduce((a, q) => a + q[0], 0) / pts.length, cy = pts.reduce((a, q) => a + q[1], 0) / pts.length;
-      const warped = pts.map((q) => { const dx = q[0] - cx, dy = q[1] - cy, t = Math.atan2(dy, dx);
-        const n = 0.5 * Math.sin(2 * t + ph[0]) + 0.3 * Math.sin(3 * t + ph[1]) + 0.2 * Math.sin(5 * t + ph[2]), b = Math.pow(Math.max(0, Math.cos(t - wdir)), 2);
-        const m = 1 + 0.16 * n + wind * b; return [cx + dx * m, cy + dy * m]; });
-      const k = Math.sqrt(GR * area(pts) / Math.max(1e-12, area(warped)));
-      return warped.map((q, i) => { const o = pts[i], dx0 = o[0] - cx, dy0 = o[1] - cy, dx = (q[0] - cx) * k, dy = (q[1] - cy) * k, r0 = Math.hypot(dx0, dy0), r1 = Math.hypot(dx, dy);
-        const f = r0 && r1 < r0 * 1.05 ? r0 * 1.05 / r1 : 1; return [cx + dx * f, cy + dy * f]; }); };
+    const grownXY = (pts) => (isGrow && window.__wfGrowXY ? window.__wfGrowXY(pts, GR, p.fireId || p.fireX || 'f') : null);   /* shared with the fire page's framing (fit.js) */
     const growPath = (r) => { if (!r || !r.length) return ''; const c = Math.cos((r[0][0] || 0) * Math.PI / 180) || 1, g = grownXY(r.map((q) => [q[1] * c, q[0]])); return g ? ringPath(g.map((q) => [q[1], q[0] / c])) : ''; };
     // without a model run: the illustrative outline (an ellipse in map pixels) grown the same way
     const fakeRing = (() => { const out = [], a = -35 * Math.PI / 180; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); out.push([598 + x * Math.cos(a) - y * Math.sin(a), 298 + x * Math.sin(a) + y * Math.cos(a)]); } return out; })();
@@ -1384,7 +1373,7 @@ class Component extends DCLogic {
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' || p.noTitle === true || p.noTitle === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       legDown: this.legDown, legMove: this.legMove, legUp: this.legUp, legClick: this.legClick,
-      setEl: this.setEl, onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, onLost: this.onLost, stop: this.stop,
+      setEl: this.setEl, rootTA: this.isLocked() ? 'pan-y' : 'none',   /* a locked (page) map lets a vertical swipe scroll the page; taps still reach its legend and buttons */ onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, onLost: this.onLost, stop: this.stop,
       zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
       cursor: (this.state || {}).dragging ? 'grabbing' : 'grab',
       w: W, h: H, s: +s.toFixed(4), tx: +tx.toFixed(1), ty: +ty.toFixed(1),

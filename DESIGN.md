@@ -520,3 +520,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Fire map band (Oct 1):** a tap that moves a hair still reaches the map's buttons and legend; a new touch forgets fingers left over from a pinch, so the map keeps answering after a zoom.
 - **Profile photo picker (Oct 1):** the "Or pick one" label is centred on the screen, like the photo and Change photo above it.
 - **Create profile (Oct 1):** styled as the grey Add resources button: the same grey (solid #E3E3E8, the 12% grey over the page) and corners, a bare grey plus where the photos sit (no circle); its title and description keep their text styles.
+- **Small maps are locked (Oct 1, every minimised map: fire page, ignition candidate, station, projection):** no pan and no zoom; a vertical swipe on them scrolls the page; taps still reach the legend chips and the map's buttons (full screen, drone, re-centre). Full screen pans and zooms as before.
+- **Fire map framing (Oct 1):** the small map frames the current outline and, while the fire is not held, its whole +6 h projected shape, zooming out as much as needed so every horizon (Now, +1 h, +3 h, +6 h) stays fully on screen. The projected shape is one shared definition (fit.js `__wfGrowXY`) used by the map and the framing.
+- **Stage tag:** no shadow on the current stage when the stack is open either.
