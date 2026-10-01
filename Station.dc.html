@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=119"></script>
+<script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=142"></script>
 <script src="i18n.js?v=128"></script>
@@ -33,7 +33,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .stfire{transition:background-color .15s ease}.stfire:active{background-color:#E5E5EA}
 .stbtn{transition:opacity .15s ease}.stbtn:active{opacity:.76}
 .strow2{transition:background-color .15s ease}.strow2:not([disabled]):active{background-color:rgba(118,118,128,0.12)}
-.btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;font:inherit;-webkit-tap-highlight-color:transparent}.btn:active,.mbtn:active{opacity:.6}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;font:inherit;-webkit-tap-highlight-color:transparent}.btn:active,.mbtn:active{opacity:.6}
 </style>
 </helmet>
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
@@ -48,11 +48,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <div style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08)">
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
-    <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 12px; row-gap: 12px; min-width: 0">
+    <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <div style="grid-column: 1 / -1; grid-row: 2; display: flex; flex-direction: column; min-width: 0">
-    <span style="display: flex; align-items: center; gap: 12px; min-width: 0"><img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="display: {{st.crestD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{st.title}}</h1></span>
-    <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-top: 2px"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.region}}</span></span>
+    <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="display: {{st.crestD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{st.title}}</h1></span>
+    <span style="display: flex; align-items: baseline; gap: 8px; min-width: 0; margin-top: 2px"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.region}}</span></span>
     <span style="display: {{st.kindD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{st.kind}}</span>
       </div>
       <!-- Header actions, as on the main screen: the incident chats, notifications, your profile (always at the top; the chat is an option, not a foot button) -->
@@ -121,8 +121,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- Command: the station's coordination team, one row; the chat opens a group with you and the whole team -->
       <div style="display: flex; flex-direction: column">
         <span style="margin: 0 16px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.cmd}}</span>
-        <div style="display: flex; align-items: center; gap: 12px; margin: 0 16px; padding: 0 16px 0 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
-          <button type="button" class="strow2" onClick="{{cmd.open}}" aria-haspopup="dialog" aria-label="{{cmd.aria}}" style="display: flex; align-items: center; gap: 12px; flex-grow: 1; min-width: 0; min-height: 60px; padding: 16px 0 16px 16px; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+        <div style="display: flex; align-items: center; gap: 8px; margin: 0 16px; padding: 0 16px 0 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+          <button type="button" class="strow2" onClick="{{cmd.open}}" aria-haspopup="dialog" aria-label="{{cmd.aria}}" style="display: flex; align-items: center; gap: 8px; flex-grow: 1; min-width: 0; min-height: 60px; padding: 16px 0 16px 16px; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
             <span aria-hidden="true" style="display: flex; flex-shrink: 0; padding-left: 8px">
               <sc-for list="{{cmd.faces}}" as="p" hint-placeholder-count="3">
                 <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin-left: -8px; border-radius: 50%; background: #E5E5EA; box-shadow: 0 0 0 2px #F2F2F7; font-size: 13px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
@@ -154,7 +154,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
             <!-- each vehicle, crew or aircraft is its own white card, 8px apart -->
             <li style="border-radius: 16px; background: #FFFFFF; overflow: hidden">
-              <button type="button" class="strow2" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto {{r.chevW}}; gap: 2px 12px; align-items: center; width: 100%; min-height: 60px; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
+              <button type="button" class="strow2" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto {{r.chevW}}; gap: 2px 8px; align-items: center; width: 100%; min-height: 60px; padding: 12px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
                 <span class="wf-stag" style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{r.tag}}</span>
@@ -171,7 +171,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <span style="display: {{rowsD}}; margin: 0 16px 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Details</span>
         <ul style="display: {{rowsD}}; flex-direction: column; margin: 0 16px; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <sc-for list="{{rows}}" as="r" hint-placeholder-count="2">
-            <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 16px; box-sizing: border-box">
+            <li style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 16px; box-sizing: border-box">
               <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
                 <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{r.k}}</span>
                 <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
@@ -192,7 +192,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <section role="dialog" aria-modal="true" aria-label="{{sq.title}}" aria-hidden="{{sq.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 53px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sq.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{sq.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
-    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0 0 0 8px; margin-bottom: 40px">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 0 0 0 8px; margin-bottom: 32px">
       <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
         <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{sq.sub}}</span>
@@ -202,7 +202,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <ul style="display: flex; flex-direction: column; gap: 8px; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto">
       <sc-for list="{{sq.people}}" as="p" hint-placeholder-count="5">
-        <li style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
+        <li style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 15px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
             <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
@@ -221,13 +221,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <section role="dialog" aria-modal="true" aria-label="Key figures" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 53px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down (on it, or anywhere when the list does not scroll) closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{kp.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
-    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 40px; padding: 0 16px">
-      <div style="display: flex; align-items: flex-start; gap: 12px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">Key figures</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 32px; padding: 0 16px">
+      <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><h2 style="margin: 0; padding-top: 6px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">Key figures</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
       <button type="button" class="mbtn wf-reset wf-rpill" onClick="{{kp.reset}}" aria-label="Reset to the default cards" aria-disabled="{{kp.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; margin-top: 6px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; cursor: pointer; flex-shrink: 0">Reset</button>
     </div>
     <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">
       <sc-for list="{{kp.rows}}" as="r" hint-placeholder-count="6">
-        <div data-pk-row="{{r.key}}" data-pk-on="{{r.onStr}}" onPointerDown="{{r.down}}" onPointerMove="{{r.move}}" onPointerUp="{{r.up}}" onPointerCancel="{{r.up}}" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 16px; border-top: {{r.sep}}; background: #FFFFFF; touch-action: pan-y; -webkit-user-select: none; user-select: none">
+        <div data-pk-row="{{r.key}}" data-pk-on="{{r.onStr}}" onPointerDown="{{r.down}}" onPointerMove="{{r.move}}" onPointerUp="{{r.up}}" onPointerCancel="{{r.up}}" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 52px; padding: 0 16px; border-top: {{r.sep}}; background: #FFFFFF; touch-action: pan-y; -webkit-user-select: none; user-select: none">
           <span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{r.name}}</span>
           <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
         </div>

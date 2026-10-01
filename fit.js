@@ -176,9 +176,9 @@ window.__wfBlink=function(path,dur){
   var BLINK='';
   function blink(root){try{var a=(root||document).querySelectorAll('#wf-load path.base');for(var j=0;j<a.length;j++)window.__wfBlink(a[j]);}catch(e){}}
   var st=document.createElement('style');
-  st.textContent='@view-transition{navigation:auto}#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#F2F2F7;transition:opacity .3s ease}'+
+  st.textContent='@view-transition{navigation:auto}#wf-load{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#F2F2F7;transition:opacity .3s ease}'+
     '#wf-load.out{opacity:0;pointer-events:none}#wf-load.photo{background:#000!important}'+
-    '#wf-load .in{display:flex;flex-direction:column;align-items:center;gap:22px;opacity:0;animation:wfin .4s ease .25s forwards}'+
+    '#wf-load .in{display:flex;flex-direction:column;align-items:center;gap:24px;opacity:0;animation:wfin .4s ease .25s forwards}'+
     '@keyframes wfin{to{opacity:1}}'+
     '@keyframes wfburn{0%,12%{opacity:0}45%,62%{opacity:1}100%{opacity:0}}'+
     '@keyframes wfsweep{from{background-position:120% 0}to{background-position:-120% 0}}'+

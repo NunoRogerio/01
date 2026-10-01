@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=119"></script>
+<script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=142"></script>
 <script src="i18n.js?v=128"></script>
@@ -45,7 +45,7 @@ a{color:#006A91}a:hover{color:#006A91}
 .lock{animation:lock .5s cubic-bezier(.2,.8,.2,1) both}
 .dot{position:relative;display:inline-block;flex-shrink:0;width:8px;height:8px;border-radius:50%;background:currentColor}
 .dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:ping 1.8s cubic-bezier(0,0,.2,1) infinite}
-.btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:10px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;border:1px solid transparent;border-radius:10px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.97);transition-duration:.08s}
 .btn .go{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
@@ -313,7 +313,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: #8E8E93; color: #FFFFFF; cursor: pointer"><svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.88" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
       </label>
     </sc-if>
-    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; column-gap: 16px; margin: 38px -16px 16px; padding: 0 max(24px, {{rowPadR}}) 2px 32px; border-bottom: 0; font-size: 15px; font-weight: 400; color: #545458">
+    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; column-gap: 16px; margin: 32px -16px 16px; padding: 0 max(24px, {{rowPadR}}) 2px 32px; border-bottom: 0; font-size: 15px; font-weight: 400; color: #545458">
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.name.aria}}" onClick="{{sort.name.pick}}" style="position: relative; color: {{sort.name.c}}; text-align: left"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.name.op}}; transform: rotate({{sort.name.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{colName}}</span>&nbsp;</button></span>
       <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{sort.cands.aria}}" onClick="{{sort.cands.pick}}" style="position: relative; color: {{sort.cands.c}}; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.cands.op}}; transform: rotate({{sort.cands.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Candidates</span></button></span>
       <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{sort.fires.aria}}" onClick="{{sort.fires.pick}}" style="position: relative; color: {{sort.fires.c}}; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.fires.op}}; transform: rotate({{sort.fires.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Fires</span></button></span>
@@ -335,7 +335,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </div>
       </sc-if>
       <sc-if value="{{ff.on}}" hint-placeholder-val="{{ false }}">
-        <section aria-label="Deforestation and finance" style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; margin: 10px 16px 12px; padding: 14px 16px; border-radius: 16px; background: #FFFFFF">
+        <section aria-label="Deforestation and finance" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; margin: 8px 16px 8px; padding: 14px 16px; border-radius: 16px; background: #FFFFFF">
           <span style="display: flex; flex-direction: column; gap: 2px">
             <b style="font-size: 17px; font-weight: 600; line-height: 22px">Fires on cleared land</b>
             <span style="font-size: 17px; line-height: 22px; color: #000000">{{ff.line}}</span>
@@ -486,7 +486,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
     <div data-wf-fadetop="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 8px 16px 0; opacity: {{pfInOp}}; transform: translateY({{pfInY}}); transition: opacity .3s ease {{pfInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pfInDelay}}">
-      <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 20px 16px 16px; border-radius: 16px; background: #FFFFFF">
+      <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 20px 16px 16px; border-radius: 16px; background: #FFFFFF">
         <div style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
         <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; align-items: center; text-align: center">
@@ -524,7 +524,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div aria-hidden="{{cs.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{cs.vis}}; opacity: {{cs.op}}; transition: opacity .35s ease {{cs.delay}}, visibility 0s linear {{cs.visDelay}}">
           <!-- Role play: the crew coordinators in the incident chats answer through Claude with the person's own API key -->
           <div style="display: flex; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px; border-top: 0">   <!-- 24px between text, field and actions -->
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px">
               <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ai.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{ai.sub}}</span></span>
               <button type="button" role="switch" class="wf-tog" aria-checked="{{ai.onStr}}" aria-label="{{ai.title}}" onClick="{{ai.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{ai.swBg}}; opacity: {{ai.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{ai.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
             </div>

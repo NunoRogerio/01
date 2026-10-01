@@ -42,7 +42,7 @@
     '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:var(--wf-y);text-wrap:balance;text-shadow:0 0 12px rgba(0,0,0,.45)}' +
     '.sub{font-size:15px;line-height:20px;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}' +
     '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:44px;margin-top:8px;border-radius:10px;background:var(--wf-y);color:#1C1C1E;font-size:17px;font-weight:600}' +
-    '.credit{position:relative;display:grid;margin-top:12px;font-size:12px;line-height:14px;color:rgba(255,255,255,.72)}' +
+    '.credit{position:relative;display:grid;margin-top:8px;font-size:12px;line-height:14px;color:rgba(255,255,255,.72)}' +
     '.credit span{grid-area:1/1;opacity:0;animation:o 52s linear infinite}' +
     '[hidden]{display:none!important}' +
     '@media (prefers-reduced-motion:reduce){.forest{transition:none}.forest i,.cup svg,.credit span{animation:none}.forest i:first-child,.credit span:first-child{opacity:1}}';

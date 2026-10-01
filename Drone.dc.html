@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=119"></script>
+<script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=142"></script>
 <script src="i18n.js?v=128"></script>
@@ -44,7 +44,7 @@ a{color:#006A91}a:hover{color:#006A91}
 .lock{animation:lock .5s cubic-bezier(.2,.8,.2,1) both}
 .dot{position:relative;display:inline-block;flex-shrink:0;width:8px;height:8px;border-radius:50%;background:currentColor}
 .dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:ping 1.8s cubic-bezier(0,0,.2,1) infinite}
-.btn{display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;border:1px solid transparent;border-radius:10px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;border:1px solid transparent;border-radius:10px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .2s ease,border-color .2s ease,color .2s ease}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.97);transition-duration:.08s}
 .btn .go{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
@@ -166,11 +166,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: relative; z-index: 4; flex-shrink: 0; padding: 8px 16px 12px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08)">
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
-    <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 12px; row-gap: 12px; min-width: 0">
+    <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
       <a href="Alert.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <div style="grid-column: 1 / -1; grid-row: 2; display: flex; flex-direction: column; min-width: 0">
-    <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">Drone D‑3</h1></span>
-    <span style="display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-top: 2px"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{vPlace}}</span></span>
+    <span style="display: flex; align-items: baseline; gap: 8px; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">Drone D‑3</h1></span>
+    <span style="display: flex; align-items: baseline; gap: 8px; min-width: 0; margin-top: 2px"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{vPlace}}</span></span>
     <span role="status" aria-live="polite" style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{dRight}}. {{dNote}}.</span>
       </div>
       <!-- Header actions, as on the main screen: the incident chats, notifications, your profile (always at the top; the chat is an option, not a foot button) -->
