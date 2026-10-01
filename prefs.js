@@ -381,6 +381,11 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       var avail = card.clientWidth - 16, w = row.scrollWidth, fs = parseFloat(getComputedStyle(n).fontSize) || 26;
       if (w > avail + 0.5 && fs > 12) n.style.setProperty('--k', Math.max(12, Math.floor(fs * avail / w * 0.97)) + 'px');
     }
+    /* One size per row of cards: every number in the group takes the smallest size any of them needed */
+    var G = new Map();
+    for (var j = 0; j < ns.length; j++) { var c = ns[j].closest('[data-wf-kpicard]'); if (!c || !c.clientWidth) continue; var g = c.parentElement; if (!G.has(g)) G.set(g, []); G.get(g).push(ns[j]); }
+    G.forEach(function (list) { if (list.length < 2) return; var mn = Infinity; list.forEach(function (x) { mn = Math.min(mn, parseFloat(getComputedStyle(x).fontSize) || 26); });
+      list.forEach(function (x) { if (Math.abs((parseFloat(getComputedStyle(x).fontSize) || 26) - mn) > 0.5) x.style.setProperty('--k', mn + 'px'); }); });
   }
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
   var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;

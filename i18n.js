@@ -133,7 +133,7 @@
   var F=[
     [/\bTap to review\./g,'Toque para abrir.'],[/\bconfirmed from a satellite detection\b/g,'confirmado a partir de uma deteção por satélite'],[/\bConfirmed from a satellite detection\b/g,'Confirmado a partir de uma deteção por satélite'],[/\bTap to see forces dispatched\./g,'Toque para ver os meios empenhados.'],[/\bTap the crosshair to cycle to it\./g,'Toque na mira para ir até ele.'],
     [/^(.+) County, (.+)$/,'Condado de $1, $2'],[/^([^,]+) County$/,'Condado de $1'],[/^([^,]+) Parish$/,'Paróquia de $1'],[/^([^,]+) District$/,'Distrito de $1'],[/^(.+) Parish, (.+)$/,'Paróquia de $1, $2'],[/^(.+) District, Portugal$/,'Distrito de $1, Portugal'],[/(\d+)% likelihood/g,'$1% de probabilidade'],[/\bNear (?=[A-ZÀ-Ý])/g,'Perto de '],[/\b(\d+)([ \u00a0])of[ \u00a0](\d+)\b/g,'$1$2de$2$3'],[/\bActive fire\b/g,'Incêndio ativo'],[/\bSatellite\b/g,'Satélite'],
-    [/ · (\d+) min ago\b/g,' · há $1 min'],[/ · (\d+)h ago\b/g,' · há $1 h'],[/\bAccess: /g,'Acesso: '],[/ only$/,' apenas'],[/\bPlatform administrator\b/g,'Administrador da plataforma'],
+    [/(\. | · )(\d+) min ago\b/g,'$1há $2 min'],[/(\. | · )(\d+) ?h ago\b/g,'$1há $2 h'],[/(\. | · )(\d+) ?d ago\b/g,'$1há $2 d'],[/\bAccess: /g,'Acesso: '],[/ only$/,' apenas'],[/\bPlatform administrator\b/g,'Administrador da plataforma'],
     [/\b(\d+) crews\b/g,'$1 equipas'],[/\b1 crew\b/g,'1 equipa'],[/\b1 tender\b/g,'1 autotanque'],[/\b(\d+) helicopters?\b/g,function(m,n){return n+(n==='1'?' helicóptero':' helicópteros');}],[/\b(\d+) air tankers?\b/g,function(m,n){return n+(n==='1'?' avião-tanque':' aviões-tanque');}],[/\b(\d+) drone swarms?\b/g,function(m,n){return n+(n==='1'?' enxame de drones':' enxames de drones');}],[/\b(\d+) tenders\b/g,'$1 autotanques'],[/\b1 helicopter\b/g,'1 helicóptero'],[/\b(\d+) helicopters\b/g,'$1 helicópteros'],
     [/\b1 air tanker\b/g,'1 avião-tanque'],[/\b(\d+) air tankers\b/g,'$1 aviões-tanque'],[/\b1 drone swarm\b/g,'1 enxame de drones'],[/\b(\d+) drone swarms\b/g,'$1 enxames de drones'],
     [/\bcrews free\b/g,'equipas livres'],[/\bequipas free\b/g,'equipas livres'],[/ min drive\.$/,' min de carro.'],[/\bcrews needed\b/g,'equipas necessárias'],[/\bonly (\d)/g,'só $1'],[/^From the (.+) swarm unit$/,'Da unidade de enxame $1'],[/ swarm unit\b/g,' unidade de enxame'],
@@ -175,7 +175,7 @@
       [/\b(\d{1,2}):(\d{2}) (AM|PM)\b/g,function(m,h,mm,ap){h=+h%12+(ap==='PM'?12:0);return String(h).padStart(2,'0')+':'+mm;}],
       [/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec) (\d{1,2})\b/g,function(m,mo,d){return MJ[mo]+'月'+d+'日';}],
       [/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec)\b/g,function(m,d,mo){return MJ[mo]+'月'+d+'日';}],
-      [/ · (\d+) min ago\b/g,' · $1分前'],[/ · (\d+)h ago\b/g,' · $1時間前'],[/\bSatellite\b/g,'衛星'],[/\bActive fire\b/g,'活動中の火災']
+      [/(\. | · )(\d+) min ago\b/g,'$1$2分前'],[/(\. | · )(\d+) ?h ago\b/g,'$1$2時間前'],[/(\. | · )(\d+) ?d ago\b/g,'$1$2日前'],[/\bSatellite\b/g,'衛星'],[/\bActive fire\b/g,'活動中の火災']
     ];
 
     // Place names: the known Japanese form (curated here, then data/names-ja.json from GeoNames and Natural Earth),
