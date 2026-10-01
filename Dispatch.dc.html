@@ -262,9 +262,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- Configure dispatch, station by station: each chosen station (or air support) is a card with what it sends; the grey card
        below adds another (choose the station, then its resources, suggested or your own, Apply). Cancel or Send orders at the foot. -->
-  <!-- The chosen stations scroll between the header and the fixed Cancel / Send order foot, however many there are -->
-  <div class="rise" style="position: relative; display: flex; flex-direction: column; gap: 56px; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 24px 16px 16px; animation-delay: 160ms">
-    <span style="display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px -8px; font-size: 15px; line-height: 20px; color: #6E6E73"><span style="font-weight: 600">Stations and resources</span><span>{{pl.count}}</span></span>
+  <!-- The chosen stations scroll between the header and the fixed Cancel / Send order foot, however many there are; one group: 8px between the cards -->
+  <div class="rise" style="position: relative; display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 24px 16px 16px; animation-delay: 160ms">
+    <span style="display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px; font-size: 15px; line-height: 20px; color: #6E6E73"><span style="font-weight: 600">Stations and resources</span><span>{{pl.count}}</span></span>
     <!-- Add a station first; each new station comes out from under it and pushes the others down -->
     <!-- Add: 16px corners like the Please assign crews card, the + tiles' grey, a + before the words, medium grey -->
     <button type="button" class="mbtn wf-reset" onClick="{{pl.add}}" aria-disabled="{{pl.addDis}}" style="position: relative; flex-shrink: 0; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 64px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: rgba(118,118,128,0.12); color: #6E6E73; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 5v14M5 12h14"></path></svg><span>{{pl.addLbl}}</span></button>
@@ -1307,7 +1307,7 @@ class Component extends DCLogic {
     const maxEta = deployedRaw.length ? Math.max(...deployedRaw.map((d) => d.eta)) : 0;
     const deployed = deployedRaw.map((d) => ({
       ...d, at: RU ? 'On scene' : clock(d.eta), w: RU ? 0 : Math.max(8, Math.round((1 - d.eta / (maxEta + 4)) * 100)),
-      c: d.air ? '#0079A6' : '#000000', bg: d.air ? 'rgba(0,121,166,0.1)' : 'transparent'
+      c: '#000000', bg: 'transparent'
     }));
     deployed.forEach((d) => { d.pre = RU ? '' : 'ETA: '; d.val = RU ? d.valTxt : d.eta + ' min'; d.post = RU ? '' : ' · ' + d.at; });
     if (RO) {
@@ -1318,7 +1318,7 @@ class Component extends DCLogic {
     /* Confirmed here: the orders live in Resources, station by station (no separate list of orders) */
     if (!(RO && frow && /^Confirmed from/.test(frow.note || ''))) ORD.forEach((o) => {
       ordRows.push({ head: true, item: false, title: (o.code && o.code !== '—' ? o.code + ' · ' : '') + o.name, note: (o.km != null ? o.km + (o.du || DU) + ' · ' : '') + 'order sent ' + o.at, noteD: 'block' });
-      o.n.forEach((n, i) => { if (n > 0) ordRows.push({ item: true, g: 'ord', label: meta[i].name, icon: meta[i].icon, c: i >= 2 ? '#0079A6' : '#000000', from: '', w: 0, barD: 'none', pre: '', val: String(n), post: '' }); });
+      o.n.forEach((n, i) => { if (n > 0) ordRows.push({ item: true, g: 'ord', label: meta[i].name, icon: meta[i].icon, c: '#000000', from: '', w: 0, barD: 'none', pre: '', val: String(n), post: '' }); });
     });
     if (false && !ORD.length && RO) {   /* dropped: before crews are sent the Please assign crews card at the top covers this */
       // Which stations are on the fire is not published per station: the incident chat's forces when there is one (simulation), else an estimate
@@ -1497,7 +1497,7 @@ class Component extends DCLogic {
       : { k1L: 'Stations', k1V: String(ORD.filter((o) => o.id !== 'air').length), k1S: '', k2L: 'Units', k2V: String(ORD.reduce((a, o) => a + o.n.reduce((x, y) => x + y, 0), 0)), k2S: '' };
     const mapUnits = sent && !(window.__wfLiveMap && fv) ? deployedRaw.map((d) => ({
       x0: d.o[0], y0: d.o[1], x1: d.d[0], y1: d.d[1], eta: d.eta, air: d.air, icon: d.icon, n: d.n,
-      c: d.air ? '#0079A6' : '#000000', glow: d.air ? 'rgba(0,121,166,0.55)' : 'rgba(0,0,0,0.35)',
+      c: '#000000', glow: 'rgba(0,0,0,0.35)',
       tt: d.label, td: d.from + ' · on the line in ' + d.eta + ' min (' + clock(d.eta) + ')'
     })) : [];
     const etas = meta.filter((m, i) => counts[i] > 0).map((m) => m.eta);
@@ -1667,7 +1667,7 @@ class Component extends DCLogic {
       acc: (() => {
         const setP = (key, i, v) => { const base = { ...PER, air: AIR.slice() }; const arr = base[key].slice(); arr[i] = v; base[key] = arr; this.setState({ per: base, cfPick: true }); };
         const row = (key, i, m, n, cap, rec) => { const lessDis = n <= 0, moreDis = n >= cap;
-          return { name: m.name, icon: m.icon, ic: key === 'air' ? '#0079A6' : '#000000', n,
+          return { name: m.name, icon: m.icon, ic: '#000000', n,
             availText: realSt ? (key === 'air' ? m.from : '') : cap === 0 ? 'None available' : n >= cap ? 'All ' + cap + ' assigned' : (cap - n) + ' of ' + cap + ' free',
             availColor: !realSt && n >= cap ? '#7A5600' : '#545458', avD: realSt && key !== 'air' ? 'none' : 'block', nColor: '#000000',
             less: () => { if (!lessDis) setP(key, i, n - 1); }, more: () => { if (!moreDis) setP(key, i, n + 1); },
@@ -1699,7 +1699,7 @@ class Component extends DCLogic {
           title: all ? (n > 1 ? 'Dispatch orders sent' : 'Dispatch order sent') : (n > 1 ? 'Sending orders' : 'Sending order'), titleC: '#000000',
           sub: 'To station coordinators. ' + fireId, pct: on ? Math.round((k + (all ? 0 : 0.35)) / Math.max(1, n) * 100) : 0, barC: '#3A3A3C', barOp: all ? 0 : 1, doneOp: all ? 1 : 0, doneS: all ? 1 : 0.5,
           rows: SP.map((d, i) => { const sentO = i < k, now = i === k && on && !all, cr = d.id === 'air' ? this.wfAirBadge() : crestOf(d); return { crest: cr, crestD: cr ? 'block' : 'none', hdBg: 'transparent', name: (d.code && d.code !== '—' ? d.code + ' · ' : '') + d.name, sep: i ? '0' : '0',
-            units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: q.t >= 2 && q.t < 6 ? '#0079A6' : '#000000', n: q.x })),
+            units: d.n.map((x, t) => ({ x, t })).filter((q) => q.x > 0).map((q) => ({ label: meta[q.t].name, icon: meta[q.t].icon, c: '#000000', n: q.x })),
             state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: '#000000', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           redo: () => { this._replace = null; if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
