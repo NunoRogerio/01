@@ -153,7 +153,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.title}}" sub="{{m.body}}" action="{{m.link}}" credit="1" style="margin-top: 8px; cursor: pointer"></wf-trophy>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
-          <article class="chmsg" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden">
+          <article class="chmsg" onClick="{{m.cardGo}}" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden; cursor: {{m.cardCur}}">
             <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 12px; padding: 12px 16px">
               <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
               <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
@@ -746,7 +746,9 @@ class Component extends DCLogic {
             return fx ? Object.assign({}, r0, { r: fx[0], rc: fx[1] }) : r0; }).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '0' : '0' })),
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
-          hasLink: !!m.link || toSheet, linkCls: 'wf-pri',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
+          /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
+          cardGo: !toSheet && m.link ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: !toSheet && m.link ? 'pointer' : 'default',
+          hasLink: toSheet, linkCls: 'wf-pri',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
           goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }
