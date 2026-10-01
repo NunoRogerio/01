@@ -17,7 +17,7 @@
 <script src="fit.js?v=101"></script>
 <script src="avatar.js?v=8"></script>
 <script src="prefs.js?v=121"></script>
-<script src="i18n.js?v=113"></script>
+<script src="i18n.js?v=114"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=38"></script>
 
@@ -223,6 +223,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; padding: 0 16px 40px">
         <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{incTitle}}</span>
         <span aria-label="{{incSub}}" style="font-size: 17px; line-height: 22px; color: #000000"><b style="font-weight: 700">{{incN1}}</b> <span>{{incW1}}</span> <b style="font-weight: 700">{{incN2}}</b> <span>{{incW2}}</span></span>
+        <span style="margin-top: 4px; font-size: 15px; line-height: 20px; color: #6E6E73">Choose an incident to explore.</span>
       </div>
       <!-- Filter then find (fixed above the scrolling list): the switcher sets what the list shows (both, candidates only, fires only); the search looks only in that. One group: 16px between them, 56px to the list -->
       <div style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 0 16px 56px">
@@ -239,32 +240,30 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </label>
       </div>
       <div class="wf-snap" style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
-        <div role="row" style="display: {{li.ignD}}; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; padding: 0 16px 8px; border-bottom: 0; font-size: 15px; line-height: 18px; color: #545458">
-          <span style="font-weight: 600">Ignition candidates</span>
-          <span style="text-align: right">Likelihood</span>
-          <span></span>
+        <!-- Column headings in the region table's style (15px regular grey); the value column sorts (tap again to reverse) -->
+        <div role="row" style="display: {{li.ignD}}; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; flex-shrink: 0; padding: 0 16px 16px; border-bottom: 0; font-size: 15px; font-weight: 400; line-height: 20px; color: #545458">
+          <span>Ignition candidates</span>
+          <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{lsort.lik.aria}}" onClick="{{lsort.lik.pick}}" style="position: relative; color: inherit; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{lsort.lik.op}}; transform: rotate({{lsort.lik.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Likelihood</span></button></span>
         </div>
         <sc-if value="{{noCands}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000; line-height: 22px">None in this area</span></sc-if>
         <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
-          <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin-bottom: 2px; box-sizing: border-box; color: #000000; text-decoration: none">
+          <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin-bottom: 2px; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
             <span style="text-align: right; font-size: 17px; font-weight: {{it.valW}}; line-height: 20px; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
-            <span style="grid-row: 1; grid-column: 3; align-self: center; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
-        <div role="row" style="display: {{li.fireD}}; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: end; gap: 8px; flex-shrink: 0; margin-top: {{li.fireMt}}; padding: 0 16px 8px; border-bottom: 0; font-size: 15px; line-height: 18px; color: #545458">
-          <span style="font-weight: 600">Fires</span>
-          <span style="text-align: right">State</span>
-          <span></span>
+        <div role="row" style="display: {{li.fireD}}; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; flex-shrink: 0; margin-top: {{li.fireMt}}; padding: 0 16px 16px; border-bottom: 0; font-size: 15px; font-weight: 400; line-height: 20px; color: #545458">
+          <span>Fires</span>
+          <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{lsort.st.aria}}" onClick="{{lsort.st.pick}}" style="position: relative; color: inherit; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{lsort.st.op}}; transform: rotate({{lsort.st.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Status</span></button></span>
         </div>
         <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000; line-height: 22px">None in this area</span></sc-if>
         <sc-for list="{{fireShown}}" as="it" hint-placeholder-count="3">
-          <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin-bottom: 2px; box-sizing: border-box; color: #000000; text-decoration: none">
+          <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 2px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin-bottom: 2px; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
             <span style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 14px; background: {{it.valBg}}; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap; color: {{it.valC}}">{{it.val}}</span>
-            <span style="grid-row: 1; grid-column: 3; align-self: center; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+            <span style="display: {{it.sub2D}}; grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub2}}</span>
           </a>
         </sc-for>
         <div aria-hidden="true" style="flex-shrink: 0; height: 32px"></div>
@@ -301,6 +300,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <button type="button" class="opt" onClick="{{nt.open}}" aria-haspopup="dialog" aria-expanded="{{nt.str}}" aria-label="{{nt.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 8px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform-origin: 50% 15%; animation: {{nt.ring}}"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{nt.badgeD}}; position: absolute; top: -13px; right: -10px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 7px; border: 2px solid #F2F2F7; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums">{{nt.unread}}</span></button>
       <button type="button" class="opt avbtn" onClick="{{openPrefs}}" aria-haspopup="dialog" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 7px 4px 0 0; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font: inherit; font-size: 15px; font-weight: 600; overflow: hidden; cursor: pointer">{{me.code}}<span aria-hidden="true" style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
     </div>
+    <span style="flex-shrink: 0; margin-top: -8px; padding: 0 20px; font-size: 15px; line-height: 20px; color: #6E6E73">Select a region to explore.</span>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; padding: 4px 16px 24px; opacity: {{scInOp}}; transform: translateY({{scInY}}); transition: opacity .3s ease {{scInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{scInDelay}}">
     <h2 id="scopeTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">{{panelTitle}}</h2>
     <sc-if value="{{showSearch}}" hint-placeholder-val="{{ false }}">
@@ -311,7 +311,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: #8E8E93; color: #FFFFFF; cursor: pointer"><svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.88" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
       </label>
     </sc-if>
-    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; column-gap: 16px; margin: 38px -16px 0; padding: 0 {{rowPadR}} 2px {{rowPadL}}; border-bottom: 0; font-size: 15px; font-weight: 400; color: #545458">
+    <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; column-gap: 16px; margin: 38px -16px 16px; padding: 0 {{rowPadR}} 2px {{rowPadL}}; border-bottom: 0; font-size: 15px; font-weight: 400; color: #545458">
       <span style="display: flex; justify-content: flex-start"><button type="button" class="sorth" aria-sort="{{sort.name.aria}}" onClick="{{sort.name.pick}}" style="position: relative; color: {{sort.name.c}}; text-align: left"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.name.op}}; transform: rotate({{sort.name.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{colName}}</span>&nbsp;</button></span>
       <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{sort.cands.aria}}" onClick="{{sort.cands.pick}}" style="position: relative; color: {{sort.cands.c}}; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.cands.op}}; transform: rotate({{sort.cands.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Candidates</span></button></span>
       <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{sort.fires.aria}}" onClick="{{sort.fires.pick}}" style="position: relative; color: {{sort.fires.c}}; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{sort.fires.op}}; transform: rotate({{sort.fires.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Fires</span></button></span>
@@ -320,8 +320,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div class="wf-snap" data-sort-list="1" style="display: flex; flex-direction: column; gap: 2px; margin: 0 -16px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; transform: translateX({{slX}}%); opacity: {{slO}}; transition: {{slT}}">
       <sc-if value="{{inCounties}}" hint-placeholder-val="{{ false }}">
         <div class="sqwrap" data-sel="{{allState.selA}}" style="display: flex; align-items: center; gap: 8px; padding: 12px 0 12px 16px; border-radius: 0; border-bottom: 0; background-color: {{allState.selBg}}; transition: background-color .15s ease">
-          <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>
+          <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: {{backD}}; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
           </button>
           <button type="button" class="sqrow nosep" disabled="{{allState.dis}}" onClick="{{allState.pick}}" aria-label="{{allState.aria}}" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; align-content: center; gap: 2px 16px; min-height: 52px; padding: 0 {{rowPadR}} 0 0; flex-grow: 1; min-width: 0; border-radius: 999px; border: 0; background-color: transparent; color: {{allState.fg}}; text-align: left; font: inherit; cursor: pointer">
             <span style="min-width: 0; line-height: 20px; font-size: 17px; font-weight: 600">{{allState.name}}</span>
@@ -1184,7 +1184,9 @@ class Component extends DCLogic {
     const fState = (f) => { const I = f.info; if (!I || !I.stEn) return /^Confirmed from /.test(f.note || '') ? ['Confirmed', TONE.hot] : ['Active', TONE.hot]; return [I.stEn, TONE[I.tone] || TONE.hot]; };
     const fireList = FIRES.map((f, j) => ({ f, j, st: fState(f) })).sort((a, b) => a.st[1][1] - b.st[1][1]).map(({ f, j, st }) => ({
       place: f.place, c: '#E86A00', iconFill: '#E86A00', iconPath: 'M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z', isCand: false, isFire: true, href: 'Dispatch.dc.html', val: st[0], valW: 400, valC: st[1][0], valBg: st[1][2], nameW: 400, iconPath: FLAME,
-      sub: /^Confirmed from /.test(f.note || '') ? 'Confirmed by satellite' : [geoOf(f)].concat(String(f.note || '').split(' · ').filter((x) => x && !(f.info && (x === f.info.st || x === f.info.stEn)))).filter(Boolean).join(' · '), conf: '',
+      // Two lines: where it is, then what the tag does not already say (the containment % is on the tag)
+      ...(() => { const conf = /^Confirmed from /.test(f.note || ''), rest = conf ? ['Confirmed by satellite'] : String(f.note || '').split(' · ').filter((x) => x && !(f.info && (x === f.info.st || x === f.info.stEn)) && !/^(contained|contido)\s*\d+\s*%$/i.test(x.trim()) && !/^\d+\s*%\s*(contained|contido)$/i.test(x.trim()));
+        const g = geoOf(f) || ''; const l2 = rest.join('. '); return { sub: g || l2, sub2: g ? l2 : '', sub2D: g && l2 ? 'block' : 'none', stRank: st[1][1] }; })(), conf: '',
       bg: 'rgba(232,106,0,0.16)', bd: 'rgba(232,106,0,0.45)', ...anim(N + j),
       aria: 'Fire ' + f.place + ', ' + st[0] + (geoOf(f) ? ', ' + geoOf(f) : '') + '. Open', pick: () => { this.wfListFlag(true); this.wfSetFireView(f); }
     }));
@@ -1220,8 +1222,12 @@ class Component extends DCLogic {
           tabs: [['all', 'All'], ['ign', 'Candidates'], ['fire', 'Fires']].map(([k, l]) => ({ label: l, sel: String(K === k), w: K === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ liK: k }); } })) },
           _iL: iL, _fL: fL }; })(),
       ...((ignListAll, fireListAll) => { const st1 = this.state || {}, q1 = String(st1.liQ || '').trim().toLowerCase(), K1 = st1.liK || 'all', hit1 = (it) => !q1 || [it.place, it.sub, it.val].some((v) => String(v || '').toLowerCase().indexOf(q1) >= 0);
-        const ignList = K1 === 'fire' ? [] : ignListAll.filter(hit1), fireList = K1 === 'ign' ? [] : fireListAll.filter(hit1);
-        return { ignShown: ignList, fireShown: fireList, noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' ignition candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' fire' + (fireListAll.length === 1 ? '' : 's'),
+        // Sorting: Likelihood (highest first, tap again for lowest) and Status (most active first, tap again to reverse)
+        const LS = st1.liSort || { k: 'lik', d: -1 }, FS = st1.fiSort || { k: 'st', d: 1 };
+        const ignList = K1 === 'fire' ? [] : ignListAll.filter(hit1).slice().sort((a, b) => LS.d * ((a.conf || 0) - (b.conf || 0))), fireList = K1 === 'ign' ? [] : fireListAll.filter(hit1).slice().sort((a, b) => FS.d * ((a.stRank || 0) - (b.stRank || 0)));
+        const col = (S, key, def) => ({ aria: S.d > 0 ? 'ascending' : 'descending', op: 1, rot: S.d > 0 ? (def > 0 ? '0deg' : '180deg') : (def > 0 ? '180deg' : '0deg'), pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ [key]: { k: S.k, d: -S.d } }); } });
+        const lsort = { lik: col(LS, 'liSort', -1), st: col(FS, 'fiSort', 1) };
+        return { lsort, ignShown: ignList, fireShown: fireList, noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' ignition candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' fire' + (fireListAll.length === 1 ? '' : 's'),
         /* the counts in bold: number, words, number, words */ incN1: String(ignListAll.length), incW1: ignListAll.length === 1 ? 'ignition candidate.' : 'ignition candidates.', incN2: String(fireListAll.length), incW2: fireListAll.length === 1 ? 'fire' : 'fires' }; })(ignList, fireList),
       ff,
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
