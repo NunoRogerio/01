@@ -16,7 +16,7 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=105"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=130"></script>
+<script src="prefs.js?v=131"></script>
 <script src="i18n.js?v=119"></script>
 <script src="live.js?v=37"></script>
 <script src="chat.js?v=41"></script>
@@ -542,7 +542,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <button type="button" class="opt wf-b wf-ter" onClick="{{inv.copy}}" style="border: 0; font: inherit; cursor: pointer">{{inv.copyTxt}}</button>
               </div>
             </sc-if>
-            <button type="button" class="opt wf-b wf-pri" onClick="{{inv.make}}" disabled="{{inv.dis}}" style="display: {{inv.makeD}}; border: 0; font: inherit; opacity: {{inv.op}}; cursor: pointer">{{inv.makeTxt}}</button>
+            <button type="button" class="opt wf-b {{inv.cls}}" onClick="{{inv.make}}" disabled="{{inv.dis}}" aria-disabled="{{inv.disStr}}" style="display: {{inv.makeD}}; border: 0; font: inherit; cursor: pointer">{{inv.makeTxt}}</button>
             <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{inv.note}}</span>
           </div>
           </div>
@@ -936,7 +936,7 @@ class Component extends DCLogic {
           try { navigator.clipboard.writeText(link).then(done, () => {}); } catch (e) {} };
         return { d: 'flex', title: T('Invite people', 'Convidar pessoas'),
           sub: T('Send a link that opens the app with Claude role-play already switched on.', 'Envie uma ligação que abre a aplicação com a encenação do Claude já ligada.'),
-          hasLink: !!link, link, makeD: link ? 'none' : 'block', dis: !key, op: key ? 1 : 0.4,
+          hasLink: !!link, link, makeD: link ? 'none' : 'block', dis: !key, disStr: key ? 'false' : 'true', cls: key ? 'wf-pri' : 'wf-sec wf-dis',   /* disabled: the secondary button, faded */
           makeTxt: T('Create invite link', 'Criar ligação de convite'), shareTxt: T('Share', 'Partilhar'), copyTxt: s.invCopied ? T('Copied', 'Copiado') : T('Copy', 'Copiar'),
           make: () => { if (!key) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ invLink: mk() }); },
           share: () => { try { if (navigator.share) { navigator.share({ title: 'Fire Watch', text: T('Join me on Fire Watch. Claude role-play is switched on for you.', 'Junte-se a mim no Fire Watch. A encenação do Claude já está ligada para si.'), url: link }).catch(() => {}); return; } } catch (e) {} copy(); },
