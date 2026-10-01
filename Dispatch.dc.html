@@ -582,12 +582,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               </button></li>
               <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">   <!-- a full-width line between the station and its units -->
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">
-              <!-- Unit row: the icon in the crest's column; the name and its description in full, then the status on its own line: the tag (one width for all) and the eight level bars -->
-              <li class="wf-unit" style="display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 2px 16px; padding: 12px 16px">
+              <!-- Unit row: the icon in the crest's column; the name on the first row with the status tag (one width for all) anchored at the row's right; the description under them -->
+              <li class="wf-unit" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 2px 16px; padding: 12px 16px">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="grid-row: 1 / span 2; justify-self: center"><path d="{{u.ic}}"></path></svg>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.name}}</span>
-                <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
-                <span style="grid-column: 2; display: {{u.tagRowD}}; align-items: center; gap: 12px; margin-top: 6px">
+                <span style="grid-column: 2 / -1; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{u.sub}}</span>
+                <span style="grid-column: 3; grid-row: 1; justify-self: end; display: {{u.tagRowD}}; align-items: center; gap: 12px">
                 <span class="wf-stag" style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 16px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{u.tag}}</span>
                 <svg role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" width="30" height="28" viewBox="0 0 30 28" style="display: none; flex-shrink: 0"><path d="{{u.batLo}}" fill="#C7C7CC"></path><path d="{{u.batHi}}" fill="#000000"></path></svg></span>
                 <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">

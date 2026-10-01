@@ -537,3 +537,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Selected list item (Oct 1):** a 1px dark grey outline (was 2px), in every list (area picker, chosen stations).
 - **Station tooltip tag (Oct 1):** the tag at the top of a station tooltip ("1 fire", "Available") is always at least as wide as "Available", so busy and free stations show the same tag width.
 - **Dark round buttons, press (Oct 1, later; refines the round button press above):** no edge line of their own (their dark glass is already the pulse colour); on press they swell like the chat button at the top and pulse a 1px dark grey outline (light buttons keep 2px), and they do not dim while held.
+- **Unit rows on the Crews tab (Oct 1):** the status tag sits on the first row, beside the unit name, anchored to the right of the card; the description runs under both.
