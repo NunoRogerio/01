@@ -527,3 +527,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Orders sent (Oct 1):** the round back sits above the title as on other screens; the primary is "Return" ("Voltar") instead of Done, and both go back to the page you came from (the fire page, the chat, or the map).
 - **Shared elements inherit (standing rule, Oct 1):** a change to a common element (a button type, tag, card, dialog) applies to every sibling and related use across the app, now and in future work.
 - **Crews tab stations (Oct 1):** folded by default; unfold one with its chevron; leaving the page and coming back folds them all again.
+- **Stage stack in full screen (Oct 1):** the full-screen map header shows the same stage tag as the page (stage and time in it); a tap unfolds the stack over the map, a tap outside or on the tag folds it. The stage stack exists only on the fire page and its full-screen map.
