@@ -519,3 +519,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Ignition candidate stage (Oct 1):** the stage spectrum starts on the lightest lime (#F7FCDC, a shade lighter than First alert) with dark grey text and the outline circle, not grey; it applies wherever the stage tag shows.
 - **Fire map band (Oct 1):** a tap that moves a hair still reaches the map's buttons and legend; a new touch forgets fingers left over from a pinch, so the map keeps answering after a zoom.
 - **Profile photo picker (Oct 1):** the "Or pick one" label is centred on the screen, like the photo and Change photo above it.
+- **Create profile (Oct 1):** styled as the grey Add resources button: the same grey (solid #E3E3E8, the 12% grey over the page) and corners, a bare grey plus where the photos sit (no circle); its title and description keep their text styles.
