@@ -91,7 +91,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     o.push('html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:#E8E8ED!important}');
     o.push('html:root .wf-note{color:#AEAEB2!important}');
     o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-tabs::before{background:#3A3A3C}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
-    o.push('html:root{--wf-band-solid:#2A2A2D;--wf-sec-bg:#5A5A5E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(90,90,94,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
+    o.push('html:root{--wf-band-solid:#3A3A3C;--wf-sec-bg:#5A5A5E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(90,90,94,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
@@ -181,7 +181,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-stag{min-width:132px;justify-content:center;text-align:center}' +
     '.wf-qual{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;border-radius:0;background:rgba(118,118,128,0.12);color:#1C1C1E;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
     '.wf-qual svg{flex-shrink:0;scale:1.2}' +
-    '.wf-qual.hd{min-height:52px;padding:0 6px 0 16px!important;border-radius:26px!important;transition:padding-left .35s cubic-bezier(.2,.8,.2,1)}.wf-qual.hd.open{padding-left:6px!important}.wf-qual.hd [role=status]:not(.wf-hst),.wf-qual.hd .qtag{min-height:40px!important;padding:10px 14px!important;border-radius:20px!important;box-sizing:border-box}:root{--wf-band-solid:#E3E3E8}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
+    '.wf-qual.hd{overflow:visible!important;position:relative;z-index:8;min-height:52px;padding:0 6px 0 16px!important;border-radius:26px!important;transition:padding-left .35s cubic-bezier(.2,.8,.2,1)}.wf-qual.hd.open{padding-left:6px!important}.wf-qual.hd [role=status]:not(.wf-hst),.wf-qual.hd .qtag{min-height:40px!important;padding:10px 14px!important;border-radius:20px!important;box-sizing:border-box}:root{--wf-band-solid:#E3E3E8}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
     // On a card the band is the top row, edge to edge, with the round X at its end
     '.wf-qual.top{min-height:56px;padding:8px 8px 8px 16px;border-radius:14px 14px 0 0}.wf-qual.top>span{flex-grow:1;min-width:0;overflow:hidden;text-overflow:ellipsis}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
