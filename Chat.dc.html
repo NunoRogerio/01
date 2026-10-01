@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=97"></script>
 <script src="avatar.js?v=8"></script>
-<script src="prefs.js?v=115"></script>
+<script src="prefs.js?v=116"></script>
 <script src="i18n.js?v=111"></script>
 <script src="live.js?v=35"></script>
 <script src="chat.js?v=36"></script>
@@ -384,7 +384,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </div>
       <div class="chscroll" style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 14px; background: #FFFFFF">
         <sc-for list="{{sk.rows}}" as="r" hint-placeholder-count="10">
-          <button type="button" role="switch" aria-checked="{{r.onStr}}" onClick="{{r.tog}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 0 16px; border: 0; border-bottom: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; opacity: {{r.op}}; cursor: pointer">{{r.name}}<span aria-hidden="true" style="position: relative; display: block; flex-shrink: 0; width: 64px; height: 25px; border-radius: 999px; background: {{r.swBg}}; transition: background-color .3s ease"><span style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></span></button>
+          <button type="button" role="switch" aria-checked="{{r.onStr}}" onClick="{{r.tog}}" data-pk-row="{{r.key}}" data-pk-on="{{r.onStr}}" onPointerDown="{{r.down}}" onPointerMove="{{r.move}}" onPointerUp="{{r.up}}" onPointerCancel="{{r.up}}" style="position: relative; touch-action: pan-y; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 0 16px; border: 0; border-bottom: 0; background: #FFFFFF; color: #000000; font: inherit; font-size: 17px; text-align: left; opacity: {{r.op}}; cursor: pointer">{{r.name}}<span aria-hidden="true" style="position: relative; display: block; flex-shrink: 0; width: 64px; height: 25px; border-radius: 999px; background: {{r.swBg}}; transition: background-color .3s ease"><span style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></span></button>
         </sc-for>
       </div>
     </section>
@@ -633,9 +633,10 @@ class Component extends DCLogic {
             y: on ? '0%' : '105%', op: on ? 1 : 0, pe: on ? 'auto' : 'none', hidden: on ? 'false' : 'true',
             resetDis: (() => { let o = null; try { o = localStorage.getItem('wf-order-sum'); } catch (e) {} const opt = base.filter((m) => m.opt).map((m) => m.key); return !o && hid.length === opt.length && opt.every((k) => hid.indexOf(k) >= 0) ? 'true' : 'false'; })(),
             reset: () => { try { localStorage.removeItem('wf-hide-sum'); localStorage.removeItem('wf-order-sum'); } catch (e) {} this.forceUpdate(); },
-            rows: base.map((m) => { const vis = hid.indexOf(m.key) < 0, last = vis && base.filter((q) => hid.indexOf(q.key) < 0).length <= 1;
+            rows: (() => { const S0 = window.__wfPickSort ? window.__wfPickSort('sum', base, (k) => hid.indexOf(k) < 0) : base, OK = S0.filter((m) => hid.indexOf(m.key) < 0).map((m) => m.key);   /* on first in screen order (long press to reorder), off A to Z */
+              return S0.map((m) => { const vis = hid.indexOf(m.key) < 0, last = vis && base.filter((q) => hid.indexOf(q.key) < 0).length <= 1;
               return { name: m.l, onStr: String(vis), swBg: vis ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.16)', swX: vis ? '24px' : '0px', op: last ? 0.4 : 1,
-                tog: () => { if (last) return; const h = hid.slice(), i = h.indexOf(m.key); if (i >= 0) h.splice(i, 1); else h.push(m.key); save(h); } }; }) };
+                key: m.key, ...(window.__wfPickDrag ? window.__wfPickDrag(this, 'sum', m.key, OK) : {}), tog: () => { if (last) return; const h = hid.slice(), i = h.indexOf(m.key); if (i >= 0) h.splice(i, 1); else h.push(m.key); save(h); } }; }); })() };
         })() };
     }
 
