@@ -516,13 +516,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div style="display: grid; grid-template-rows: {{cs.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{cs.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{cs.vis}}; opacity: {{cs.op}}; transition: opacity .35s ease {{cs.delay}}, visibility 0s linear {{cs.visDelay}}">
           <!-- Role play: the crew coordinators in the incident chats answer through Claude with the person's own API key -->
-          <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-top: 0">
+          <div style="display: flex; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px; border-top: 0">   <!-- 24px between text, field and actions -->
             <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
               <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ai.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{ai.sub}}</span></span>
               <button type="button" role="switch" class="wf-tog" aria-checked="{{ai.onStr}}" aria-label="{{ai.title}}" onClick="{{ai.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{ai.swBg}}; opacity: {{ai.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{ai.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
             </div>
             <label style="display: flex; align-items: center; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{ai.ph}}</span><input id="wf-ai-key-in" type="password" autocomplete="off" spellcheck="false" value="{{ai.draft}}" onInput="{{ai.onInput}}" placeholder="{{ai.ph}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"><!-- Saved key: a check in the primary colour on the right --><span aria-hidden="true" style="display: {{ai.okD}}; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 8px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2.57" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></label>
-            <div style="display: flex; flex-direction: column; gap: 56px">
+            <div style="display: flex; flex-direction: column; gap: 24px">   <!-- grouped actions, 24px apart -->
               <div style="display: flex; gap: 16px">
                 <button type="button" class="btn wf-sec" onClick="{{ai.remove}}" style="display: {{ai.cxD}}; flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.cxTxt}}</button>
                 <button type="button" class="btn primary" onClick="{{ai.save}}" style="flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{ai.saveTxt}}</button>
@@ -533,11 +533,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="font-size: 15px; line-height: 20px; color: {{ai.noteC}}">{{ai.note}}</span>
           </div>
           <!-- Administrator only: invite links that switch on Claude role-play on the invitee's phone -->
-          <div style="display: {{inv.d}}; flex-direction: column; gap: 12px; flex-shrink: 0; padding: 16px; border-top: 0">
+          <div style="display: {{inv.d}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px; border-top: 0">
             <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{inv.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{inv.sub}}</span></span>
             <sc-if value="{{inv.hasLink}}" hint-placeholder-val="{{ false }}">
               <span style="display: block; padding: 10px 12px; border-radius: 10px; background: rgba(118,118,128,0.12); font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: all; user-select: all; max-height: 54px; overflow: hidden">{{inv.link}}</span>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
                 <button type="button" class="opt wf-b wf-sec" onClick="{{inv.share}}" style="border: 0; font: inherit; cursor: pointer">{{inv.shareTxt}}</button>
                 <button type="button" class="opt wf-b wf-ter" onClick="{{inv.copy}}" style="border: 0; font: inherit; cursor: pointer">{{inv.copyTxt}}</button>
               </div>
@@ -554,7 +554,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.count}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
         <div style="display: grid; grid-template-rows: {{ds.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
-            <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-top: 0">
+            <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-top: 0">
               <button type="button" class="opt wf-b wf-pri" onClick="{{ds.add}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{ds.addTxt}}</button>
               <span style="display: {{ds.noteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.note}}</span>
             </div>
