@@ -271,7 +271,8 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
       </button>
     </sc-for>
-    <sc-if value="{{noLink}}" hint-placeholder-val="{{ false }}">
+    <!-- a fire's map shows its perimeter only: no origin dot there -->
+    <sc-if value="{{pinOn}}" hint-placeholder-val="{{ false }}">
       <span class="tipwrap" tabindex="0" style="position: absolute; z-index: 24; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
         <sc-if value="{{pinSt}}" hint-placeholder-val="{{ false }}">
           <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><path transform="translate(8 8)" d="M4.6 3.6H19.4V12.2L12 20.9 4.6 12.2Z" fill="rgba(64,156,255,0.6)" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path></svg>
@@ -1510,7 +1511,7 @@ class Component extends DCLogic {
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;
             return { size: 40, outer: 44 }; })(),   // round map controls: 44px, the minimum comfortable touch target optIcon: optOpen ? 'm6 15 6-6 6 6' : 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', optLabel: optOpen ? 'Collapse map controls' : 'Map controls',
           optToggle: () => { window.__wfCtrlOpen = !window.__wfCtrlOpen; this.forceUpdate(); } }; })(),
-      linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)),
+      linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)), pinOn: !(isRisk && on(p.linkCandidate)) && p.mode !== 'spread',
       recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
       ignMarks: LY.cands && (isRisk && on(p.linkCandidate)) ? ((list) => (IGN_V ? IGN_V.map((q) => [q.g, q.i]) : list.map((g, i) => [g, i])).map(([g, gi]) => {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
