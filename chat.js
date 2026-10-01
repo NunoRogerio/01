@@ -111,7 +111,7 @@
     var cc = ccOf(st);
     var done = function (rows) {
       var kx = 111.32 * Math.cos(lat * Math.PI / 180);
-      var all = rows.map(function (r) { return { ck: r[1] + r[0], name: r[4] || 'Fire station', km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
+      var all = rows.map(function (r) { return { ck: r[1] + r[0], name: r[4] || 'Fire station', la: r[2], lo: r[3], km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
         .filter(function (q) { return isFinite(q.km) && !/aeroporto|airport|base aérea/i.test(q.name); })
         .sort(function (a, b) { return a.km - b.km; });
       // Every fire gets a team: the nearest stations within 80 km, else the nearest ones at all (up to 250 km)
@@ -121,7 +121,7 @@
         var nm0 = (cc === 'pt' || cc === 'br') ? ['Bombeiros Voluntários', 'Bombeiros Municipais', 'Corpo de Bombeiros'] : ['Fire Station 1', 'Fire Station 2', 'Fire Station 3'];
         near = nm0.map(function (n, i) { return { ck: 'loc' + i, name: n, km: 6 + i * 7, local: true }; });
       }
-      cb(near.map(function (q) { var min = Math.round(q.km * 1.3 / 50 * 60) + 3; return { ck: q.ck, name: q.name, short: shortStation(q.name), km: q.km, min: min }; }));
+      cb(near.map(function (q) { var min = Math.round(q.km * 1.3 / 50 * 60) + 3; return { ck: q.ck, name: q.name, short: shortStation(q.name), km: q.km, min: min, la: q.la, lo: q.lo }; }));
     };
     if (SF[cc]) return done(SF[cc]);
     fetch('data/stations-' + cc + '.json').then(function (r) { return r.json(); }).then(function (js) { SF[cc] = js.s || []; done(SF[cc]); }).catch(function () { done([]); });   // a failed load is not remembered: the next chat tries again
@@ -1018,8 +1018,9 @@
     var db = load(), out = null, ch = null;
     Object.keys(db.chats).some(function (k) { ch = db.chats[k];
       return (db.chats[k].forces || []).concat(db.chats[k].people.map(function (p) { return { coord: p.name, station: p.org, crew: [] }; })).some(function (f) {
-        if (f.coord === name) { out = { roleEn: 'Crew coordinator', rolePt: 'Coordenador de equipa', station: f.station }; return true; }
-        if (f.crew.indexOf(name) >= 0) { out = { roleEn: 'Firefighter', rolePt: 'Bombeiro', station: f.station }; return true; }
+        var stOf = function () { var S = (ch.stations || []).find(function (q) { return q.short === f.station || q.name === f.full; }) || {}; return { ck: S.ck || f.ck || '', name: S.name || f.full || f.station, short: f.station, la: S.la, lo: S.lo, km: S.km, chat: ch.key }; };
+        if (f.coord === name) { out = { roleEn: 'Crew coordinator', rolePt: 'Coordenador de equipa', station: f.station, st: stOf() }; return true; }
+        if (f.crew.indexOf(name) >= 0) { out = { roleEn: 'Firefighter', rolePt: 'Bombeiro', station: f.station, st: stOf() }; return true; }
         return false;
       });
     });

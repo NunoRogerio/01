@@ -238,7 +238,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
       <span class="tipwrap" tabindex="0" aria-label="{{om.aria}}" style="position: absolute; left: {{om.left}}px; top: {{om.top}}px; width: 28px; height: 28px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: {{mvI}}">
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="overflow: visible; scale: 1.54;"><circle cx="8" cy="8" r="5.6" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.1; stroke: #3A3A3C" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"></circle></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="overflow: visible; scale: 1.54;"><circle cx="8" cy="8" r="5.6" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2; stroke: #3A3A3C" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"></circle></svg>
         <span class="{{om.tip}}" role="tooltip"><b>{{om.tt}}</b>{{om.td}}</span>
       </span>
     </sc-for>
@@ -247,11 +247,11 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
           <svg class="mk" width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 0.77; overflow: visible">
             <g transform="translate(48 48)"><circle r="11" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></circle></g>
-            <defs><mask id="wfIgMS" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="48" cy="48" r="11" fill="#000"></circle></mask></defs><circle cx="48" cy="48" r="11" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.1"></circle><circle cx="48" cy="48" r="11" fill="none" stroke="#3A3A3C" stroke-width="{{ig.bdW2}}" mask="url(#wfIgMS)"></circle>
+            <defs><mask id="wfIgMS" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="48" cy="48" r="11" fill="#000"></circle></mask></defs><circle cx="48" cy="48" r="11" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2"></circle><circle cx="48" cy="48" r="11" fill="none" stroke="#3A3A3C" stroke-width="{{ig.bdW2}}" mask="url(#wfIgMS)"></circle>
           </svg>
           <span class="igpill" role="tooltip">
             <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 10px; white-space: nowrap">
-              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style="flex-shrink: 0"><circle cx="5" cy="5" r="4" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.1" stroke="#3A3A3C" stroke-width="1.6"></circle></svg><span style="font-weight: 600; color: #000000">{{ig.pos}}</span><span class="igname"><span style="font-weight: 600; color: #000000">· {{ig.place}}</span><span style="color: #545458; font-variant-numeric: tabular-nums">{{ig.conf}}%</span></span>
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style="flex-shrink: 0"><circle cx="5" cy="5" r="4" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2" stroke="#3A3A3C" stroke-width="1.6"></circle></svg><span style="font-weight: 600; color: #000000">{{ig.pos}}</span><span class="igname"><span style="font-weight: 600; color: #000000">· {{ig.place}}</span><span style="color: #545458; font-variant-numeric: tabular-nums">{{ig.conf}}%</span></span>
             </span>
             <span class="igmore"><span style="display: block; padding: 0 12px 10px; width: 206px; box-sizing: border-box; white-space: normal; font-size: 15px; line-height: 1.45; color: #3C3C43"><b style="display: block; margin-bottom: 2px; font-weight: 600; color: #000000">{{ig.tt}}</b>{{ig.td}}</span></span>
           </span>
@@ -260,12 +260,12 @@ image[href*="tile.openstreetmap"]{opacity:.72}
           <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
           <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
             <g transform="translate(32 32)"><circle r="11" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"><animateTransform attributeName="transform" type="scale" values="1;2.31" dur="1.6s" repeatCount="indefinite"></animateTransform><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"></animate></circle></g>
-            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="32" cy="32" r="11" fill="#000"></circle></mask></defs><circle cx="32" cy="32" r="11" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.1"></circle><circle cx="32" cy="32" r="11" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" mask="url(#wfIgMN)"></circle>
+            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="32" cy="32" r="11" fill="#000"></circle></mask></defs><circle cx="32" cy="32" r="11" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2"></circle><circle cx="32" cy="32" r="11" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" mask="url(#wfIgMN)"></circle>
           </svg>
           </sc-if>
           <sc-if value="{{ig.still}}" hint-placeholder-val="{{ false }}">
           <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
-            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="32" cy="32" r="11" fill="#000"></circle></mask></defs><circle cx="32" cy="32" r="11" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.1"></circle><circle cx="32" cy="32" r="11" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" mask="url(#wfIgMN)"></circle>
+            <defs><mask id="wfIgMN" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="32" cy="32" r="11" fill="#000"></circle></mask></defs><circle cx="32" cy="32" r="11" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2"></circle><circle cx="32" cy="32" r="11" fill="none" stroke="{{ig.bdC}}" stroke-width="{{ig.bdW}}" mask="url(#wfIgMN)"></circle>
           </svg>
           </sc-if>
           <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
@@ -283,7 +283,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
           <!-- the ignition pulses as on the main map: its dark outline circle grows and fades -->
           <circle class="wf-pinpulse" cx="20" cy="20" r="{{pinTriR}}" fill="none" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke" style="display: {{pinTriD}}"></circle>
           <circle cx="20" cy="20" r="10" fill="none" stroke="#E8590C" stroke-width="1.5" style="display: {{pinCirD}}"><animate attributeName="r" values="10;21" dur="2s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0.9;0" dur="2s" repeatCount="indefinite"></animate></circle>
-          <circle cx="20" cy="20" r="{{pinTriR}}" fill="#E5FF00" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke" style="display: {{pinTriD}}; fill: var(--wf-y, #E5FF00); fill-opacity: 0.1"></circle>
+          <circle cx="20" cy="20" r="{{pinTriR}}" fill="#E5FF00" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke" style="display: {{pinTriD}}; fill: var(--wf-y, #E5FF00); fill-opacity: 0.2"></circle>
           <circle cx="20" cy="20" r="9.3" fill="#E8590C" style="display: {{pinCirD}};"></circle>
         </svg>
         </sc-if>
@@ -1052,7 +1052,7 @@ class Component extends DCLogic {
       { d: I.w, rot: ((d.wind_direction_10m || 0) + 180) % 360, txt: WS + ' ' + from, aria: 'Wind ' + WS + ' from ' + from }] };
   }
   legendItems(has) {
-    const LY = this.layers(), Y10 = ((h) => { h = String(h || '#E5FF00').replace('#', ''); return 'rgba(' + [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',') + ',0.1)'; })(window.__wfY), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
+    const LY = this.layers(), Y10 = ((h) => { h = String(h || '#E5FF00').replace('#', ''); return 'rgba(' + [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',') + ',0.2)'; })(window.__wfY), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
       ['cands', 'Ignition candidates', 'M7 2.6a4.4 4.4 0 1 1 0 8.8a4.4 4.4 0 1 1 0-8.8Z', Y10, '#3A3A3C'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
