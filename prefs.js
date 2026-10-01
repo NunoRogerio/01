@@ -260,7 +260,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       ntAria: n ? 'Notifications, ' + n + ' unread' : 'Notifications', openNt: go('wf-nt-open'), openPf: go('wf-prefs-open'),
       // screens that are not an incident (a station, the drone): the chat opens the list of incident chats, as on the main screen
       ch: (function () { var C = window.__wfChat, u = 0; try { u = C && C.totalUnread ? C.totalUnread() : 0; } catch (e) {}
-        return { badgeD: u ? 'block' : 'none', n: C && C.badge ? C.badge(u) : String(u), aria: u ? 'Incident chats, ' + u + ' unread' : 'Incident chats', open: function () { if (C && C.openList) C.openList(); } }; })() };
+        return { badgeD: u ? 'block' : 'none', n: C && C.badge ? C.badge(u) : String(u), aria: u ? 'Incident chats, ' + u + ' unread' : 'Incident chats', open: function (e) { if (e && e.preventDefault) e.preventDefault(); go('wf-ch-open')(); } }; })() };   /* the chats blade on the main screen, as the notifications and the profile */
   };
   function segGrow(th) {
     var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 60 / SEG.total;
