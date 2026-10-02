@@ -45,13 +45,9 @@ p{margin:0}
   <!-- One column that scrolls freely (no snapping); groups 56px apart, each named by a group label 8px above its content -->
   <div data-wf-page="1" style="display: flex; flex-direction: column; gap: 56px; flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 32px 16px 48px">
 
-    <!-- Title M, then part 1, How it started: one short paragraph about the problem, not about the authors -->
+    <!-- Title M -->
     <div style="display: flex; flex-direction: column; gap: 32px; flex-shrink: 0">
       <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em">{{tx.title}}</h1>
-      <div style="display: flex; flex-direction: column; gap: 8px">
-        <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.start}}</span>
-        <p style="font-size: 17px; line-height: 22px">{{tx.intro1}}</p>
-      </div>
     </div>
 
     <!-- Part 2, The goal: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
@@ -129,9 +125,9 @@ class Component extends DCLogic {
       deploy: 'M3 16.5V8h10.5v8.5M13.5 11h4l3 3.5v2M3 16.5h1.7M9.3 16.5h4.9M18.8 16.5h1.7M9.3 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0ZM18.8 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0Z'
     };
     const steps = [
-      [IC.detect, L('Detect', 'Detetar', '検知'), L('Many sources working together catch an ignition as fast and accurately as possible.', 'Várias fontes em conjunto captam uma ignição o mais rápido e com a maior precisão possível.', '複数の情報源が連携し、発火をできるだけ速く正確にとらえます。')],
-      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Coordinators check it by drone or on the ground.', 'Os coordenadores verificam por drone ou no terreno.', 'コーディネーターがドローンや現場で確かめます。')],
-      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('The nearest stations send their crews.', 'Os quartéis mais próximos enviam as equipas.', '最寄りの消防署が隊員を送ります。')]
+      [IC.detect, L('Detect', 'Detetar', '検知'), L('Many sources together catch it fast.', 'Várias fontes em conjunto captam-na depressa.', '複数の情報源が連携し、素早くとらえます。')],
+      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Checked by drone or on the ground.', 'Verificada por drone ou no terreno.', 'ドローンや現場で確認します。')],
+      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('The nearest stations send crews.', 'Os quartéis mais próximos enviam equipas.', '最寄りの消防署が出動します。')]
     ].map(([ic, t, dd], i, a) => ({ ic, t, d: dd, n: i + 1, lineD: i < a.length - 1 ? 'block' : 'none', pb: i < a.length - 1 ? 16 : 0 }));
     const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M13.3 12a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0Z';
     const stages = [
@@ -156,26 +152,26 @@ class Component extends DCLogic {
           'Criado por Anastasia Osling e Nuno Rogério, design leads.',
           '制作: Anastasia Osling、Nuno Rogério(デザインリード)'),
         idea: L('The goal', 'O objetivo', '目標'),
-        goal: L('In a wildfire, the first minutes decide how big it gets. We want to shorten the time from the first sign of an ignition to firefighters on the way.',
-          'Num incêndio rural, os primeiros minutos decidem a sua dimensão. Queremos encurtar o tempo entre o primeiro sinal de uma ignição e os bombeiros a caminho.',
-          '山火事では、最初の数分がその規模を左右します。発火の最初の兆候から消防隊の出動までの時間を短くしたいと考えています。'),
-        chat: L('At every step, one chat per incident keeps everyone on the same page.',
-          'Em cada passo, uma conversa por incidente mantém todos alinhados.',
-          'どの段階でも、インシデントごとのチャットで全員が同じ情報を共有します。'),
-        why: L('Today these steps live in separate tools and phone calls. We want to see what changes when they work as one system.',
-          'Hoje estes passos vivem em ferramentas separadas e chamadas telefónicas. Queremos ver o que muda quando funcionam como um só sistema.',
-          '現在、これらの段階は別々のツールや電話に分かれています。それらがひとつのシステムとして動いたら何が変わるのかを確かめたいのです。'),
+        goal: L('In a wildfire, the first minutes count. We want to shorten the time from ignition to firefighters on the way.',
+          'Num incêndio rural, os primeiros minutos contam. Queremos encurtar o tempo entre a ignição e os bombeiros a caminho.',
+          '山火事では最初の数分が重要です。発火から消防隊の出動までの時間を短くしたいと考えています。'),
+        chat: L('One chat per incident keeps everyone aligned.',
+          'Uma conversa por incidente mantém todos alinhados.',
+          'インシデントごとのチャットで全員がつながります。'),
+        why: L('Today these steps live in separate tools. We want to see them work as one.',
+          'Hoje estes passos vivem em ferramentas separadas. Queremos vê-los funcionar como um só.',
+          '現在これらは別々のツールに分かれています。ひとつにつながる姿を確かめたいのです。'),
         stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
         now: L('Now', 'Agora', '現在'),
-        stage1: L('Forest Fire Watch is an early exploration, an alpha version shared with a small group of experts. It\'s a conversation starter: something concrete that brings us closer to the problem and to the people who face it, so we can understand them better.',
-          'O Forest Fire Watch é uma exploração inicial, uma versão alfa partilhada com um grupo restrito de especialistas. É um ponto de partida para a conversa: algo concreto que nos aproxima do problema e das pessoas que o enfrentam, para as compreendermos melhor.',
-          'Forest Fire Watchは初期段階の探究で、限られた専門家の方々に公開しているアルファ版です。会話のきっかけとして、課題とそれに向き合う人々に近づき、より深く理解するための具体的なものです。'),
-        users: L('We are designing for regional and station fire leaders, and for the regional and national government bodies that coordinate the response, such as Proteção Civil in Portugal.',
-          'Desenhamos para comandantes regionais e de quartel, e para os organismos regionais e nacionais que coordenam a resposta, como a Proteção Civil em Portugal.',
-          '対象は、地域や消防署の指揮者、そして対応を調整する地域・国の行政機関(ポルトガルのProteção Civilなど)です。'),
-        stage2: L('Only people with real experience in firefighting, prevention and resource planning can tell us if it makes sense and what we missed. If we invited you to a feedback session, that is why: we want your view.',
-          'Só quem tem experiência real no combate, na prevenção e no planeamento de meios nos pode dizer se faz sentido e o que nos escapou. Se foi convidado para uma sessão de feedback, é por isso: queremos a sua opinião.',
-          '消火活動、予防、資源計画に実際に携わってきた方だけが、これが意味を持つのか、何を見落としているのかを教えてくれます。フィードバックセッションにお招きしたのはそのためです。ぜひご意見をお聞かせください。'),
+        stage1: L('An early exploration and a conversation starter, to get closer to the problem and the people who face it.',
+          'Uma exploração inicial e um ponto de partida para a conversa, para nos aproximarmos do problema e de quem o enfrenta.',
+          '課題とそれに向き合う人々に近づくための、初期の探究であり会話のきっかけです。'),
+        users: L('Designed for regional and station fire leaders, and government bodies such as Proteção Civil in Portugal.',
+          'Desenhado para comandantes regionais e de quartel, e organismos públicos como a Proteção Civil em Portugal.',
+          '地域・消防署の指揮者、そしてポルトガルのProteção Civilのような行政機関のために設計しています。'),
+        stage2: L('Only real experience can tell us what works and what we missed. That\'s why we invited you.',
+          'Só a experiência real nos diz o que funciona e o que nos escapou. Foi por isso que o convidámos.',
+          '何が役立ち、何を見落としているかは、実際の経験だけが教えてくれます。だからこそお招きしました。'),
         thanks: L('Thank you.', 'Obrigado.', 'ありがとうございます。'),
         alpha: L('Alpha version.', 'Versão alfa.', 'アルファ版。')
       }
