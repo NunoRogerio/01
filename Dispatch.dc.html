@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=142"></script>
+<script src="prefs.js?v=143"></script>
 <script src="i18n.js?v=129"></script>
 <script src="live.js?v=39"></script>
 <script src="chat.js?v=46"></script>
@@ -1180,7 +1180,7 @@ class Component extends DCLogic {
     prev.reverse();   // newest first: going down goes back in time
     // the stages still to come, at most four, above it in greys: the nearest the darkest, each further one lighter
     const GR = [['#DADADF', '#2C2C2E'], ['#E4E4E8', '#48484A']];   /* light: they have not happened yet */
-    const next = []; for (let i = stg + 1; i < C.STAGES.length && next.length < 2; i++) { const Sd = C.STAGES[i], g = GR[next.length]; next.push({ l: Sd.en, c: g[1], bg: g[0], ic: C.ICON[Sd.icon], t: 'Next', note: true }); }   /* the next two only (no room above); no duration yet: "Next" in the annotation style */
+    const next = []; for (let i = stg + 1; i < C.STAGES.length && next.length < 1; i++) { const Sd = C.STAGES[i], g = GR[next.length]; next.push({ l: Sd.en, c: g[1], bg: g[0], ic: C.ICON[Sd.icon], t: 'Next', note: true }); }   /* the next stage only; no duration yet: "Next" in the annotation style */
     const SC = C.STAGES[stg], cur = { l: label, t: cur0(dur(ms[stg])), ic: C.ICON[SC.icon] };
     function cur0(t) { return t ? 'for ' + t : ''; }
     // One width, set by the widest, within what the band leaves beside its kind. Open, the current chip grows 8px each side

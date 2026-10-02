@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=142"></script>
+<script src="prefs.js?v=143"></script>
 <script src="i18n.js?v=129"></script>
 <script src="live.js?v=39"></script>
 
@@ -246,10 +246,11 @@ image[href*="tile.openstreetmap"]{opacity:.72}
          The legend chips sit 32px below it. -->
     <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: {{hdrDir}}; align-items: {{hdrAlign}}; justify-content: space-between; gap: 16px; box-sizing: border-box; padding: 16px; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-        <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; overflow-wrap: anywhere">{{mapTtl}}</span>
-        <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
+        <!-- the same title, subtitle and status band as the fire page's header, so the stage tag and its stack sit exactly as there -->
+        <span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; overflow-wrap: anywhere">{{mapTtl}}</span>
+        <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
       </span>
-      <span data-wf-hdrst="1" style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0; box-sizing: border-box; min-height: 44px; padding: 6px 6px 6px 16px; border-radius: 999px; background: rgba(118,118,128,0.12); width: {{hdrStW}}">
+      <span data-wf-hdrst="1" style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0; box-sizing: border-box; min-height: 52px; padding: 0 6px 0 16px; border-radius: 26px; background: rgba(118,118,128,0.12); width: {{hdrStW}}">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{mapDot}}"></path></svg>
         <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapKind}}</span>
         <span style="display: {{mapTagD}}; margin-left: auto; flex-shrink: 0; align-items: center; min-height: 32px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{mapTagBg}}; color: {{mapTagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{mapTag}}</span>
@@ -1679,7 +1680,7 @@ class Component extends DCLogic {
           return { cands: Array.isArray(p.ignitions) ? p.ignitions.length : null, fires: F.length - nRes, resolved: nRes, stations: nSt }; })() : {};
         if (p.legNow || p.legGrow) { NC = Object.assign({}, NC || {}, p.legNow ? { burn: p.legNow } : {}, p.legGrow ? { grow: p.legGrow } : {}); }   /* the Projection screen: area and perimeter in the chips */;
         const legend = this.legendItems(has, NC); const optOpen = !!window.__wfCtrlOpen;
-        const HLAND = this.W() > this.H() * 1.2, HDR = p.mode !== 'pin' && !!p.mapTitle && !!p.mapKind, HDRH = HLAND ? 76 : 136;   /* the fire header: 16 + 44 + 16 in one row; upright 16 + 44 + 16 + 44 + 16 */
+        const HLAND = this.W() > this.H() * 1.2, HDR = p.mode !== 'pin' && !!p.mapTitle && !!p.mapKind, HDRH = HLAND ? 84 : 156;   /* the fire header: 16 + 44 + 16 in one row; upright 16 + 44 + 16 + 44 + 16 */
         const FULL0 = p.isFull === true || p.isFull === 'true';
         const hasT = p.mode === 'pin' || !!p.mapTitle, inT = hasT && legend.length > 0 && !(FULL0 && p.mapTitle), TT = HDR ? HDRH + 32 : (FULL0 && p.mapTitle) ? 0 : hasT ? 66 : 0;   /* full screen (area maps): the title card sits at the top right, the legend column at the top left from the same line */   /* full screen: the legend column 32px under the title box or the fire header */   // pin: the legend sits inside the title box, under its text
         const WX = this.wxRow(inT);
