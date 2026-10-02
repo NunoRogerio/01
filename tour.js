@@ -139,10 +139,14 @@ if (WF_TOUR_ON) (function () {
       t: ['Assign resources', 'Atribua meios'],
       b: ['Choose which stations send crews.', 'Escolha que quartéis enviam equipas.'] },
 
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button.mbtn.wf-reset', function (b) { return !b.hasAttribute('aria-disabled'); }); },
+    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }); },
       t: ['Use the suggested resources', 'Use os meios sugeridos'],
       b: ['One tap fills the plan. Add resources lets you choose stations yourself.', 'Um toque preenche o plano. Adicionar meios deixa escolher os quartéis.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button.btn.primary', function (b) { return !b.closest('section[role=dialog]'); }); },
+    { page: 'Dispatch.dc.html', mode: 'tap', find: function () {
+        // Never a dead end: if the plan is still empty (Send order disabled), the tour fills it with the AI suggested pack itself
+        var b = q('button.btn.primary', function (x) { return !x.closest('section[role=dialog]') && x.offsetParent !== null; });
+        if (b && b.getAttribute('aria-disabled') === 'true') { var ai = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); if (ai && !ai.__wfAuto) { ai.__wfAuto = 1; ai.click(); } }
+        return b; },
       t: ['Send the orders', 'Envie as ordens'],
       b: ['Each station gets its order.', 'Cada quartel recebe a sua ordem.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
