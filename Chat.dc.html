@@ -18,7 +18,7 @@
 <script src="prefs.js?v=144"></script>
 <script src="i18n.js?v=133"></script>
 <script src="live.js?v=39"></script>
-<script src="chat.js?v=47"></script>
+<script src="chat.js?v=48"></script>
 <script src="trophy.js?v=17"></script>
 
 <title>Chats</title>
@@ -595,7 +595,7 @@ class Component extends DCLogic {
       const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope || null;   /* as the main screen reads it */
         let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} const lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r || ''] || null;
         if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; })();
-      const inSc = (c) => c.kind === 'dm' || !SC || !SC.st || !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co) || !c.st;
+      const inSc = (c) => window.__wfChat && window.__wfChat.inScope ? window.__wfChat.inScope(c, SC) : true;   /* the selected region only, direct messages included */
       const scName = SC ? (SC.title || SC.co || ({ PT: 'Portugal', CA: 'California', US: 'United States', AMZ: 'Amazon', NV: 'Nevada' })[SC.st] || SC.st || '') : '';
       const all = C.list().filter(inSc);
       const row = (c, i) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);

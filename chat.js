@@ -1130,6 +1130,11 @@
   function stageTag(f) { var i = stageIdx(f), S = STAGES[i] || STAGES[2], I = (f && f.info) || {}, conf = /^Confirmed from /.test((f && f.note) || '');
     return { i: i, label: I.stEn || I.st || (conf ? 'Confirmed' : 'Active'), fg: S.c, bg: S.bg, ic: ICON[S.icon], en: S.en }; }
   window.__wfStageTag = stageTag;
+  // Chats and their counts follow the selected region: an incident chat belongs to its place; a direct message to its
+  // country or state (Portugal never shows Brazil's or the US's messages)
+  function inScope(c, SC) { if (!SC || !SC.st || !c || !c.st) return true;
+    if (c.kind === 'dm') return c.st === SC.st || (SC.st === 'US' && /^[A-Z]{2}$/.test(c.st) && c.st !== 'PT') || (SC.st === 'AMZ' && c.st === 'BRA');
+    return !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co); }
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,
@@ -1138,14 +1143,16 @@
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
     }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
+    inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },
     badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
     // The chat badge counts what the chats list shows: open chats in the selected area (and direct messages), never chats
     // from another area the list cannot reach
-    totalUnread: function () { var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };
-      var inSc = function (c) { return c.kind === 'dm' || !SC || !SC.st || !window.__wfInArea || !c.st || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co); };
+    totalUnread: function () { var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var r0 = null; try { r0 = localStorage.getItem('wf-role'); } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r0 || ''] || null;
+      if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };   /* as the chats list reads it */
+      var inSc = function (c) { return inScope(c, SC); };
       return Object.keys(db.chats).reduce(function (a, k) { var c = db.chats[k]; return a + (!c.closed && inSc(c) ? unread(c) : 0); }, 0); },
     nearby: function (key) { var c = load().chats[key]; return c ? nearby(c, 50) : []; }, setTopic: setTopic,
     police: function (inc) { var c = police(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
