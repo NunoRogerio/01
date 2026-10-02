@@ -29,8 +29,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 p{margin:0}
 </style>
 </helmet>
-<!-- About, in three parts: how it started (the authors, Anastasia first), the goal and its flow, where we are and what the expert
-     interviews are for; then a simple thank you and the build line from Login.
+<!-- About, in three parts: how it started (the problem, in short), the goal and its flow, where we are and what the expert
+     interviews are for; then a simple thank you, the authors as a note (Anastasia first) and the build line from Login.
      Opened from Login (top right) and from the user preferences (last row). Back returns to the screen before. -->
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Header, fixed: back on the left, the logo (as in the user preferences) centred, an empty column on the right to balance it -->
@@ -45,26 +45,12 @@ p{margin:0}
   <!-- One column that scrolls freely (no snapping); groups 56px apart, each named by a group label 8px above its content -->
   <div data-wf-page="1" style="display: flex; flex-direction: column; gap: 56px; flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 32px 16px 48px">
 
-    <!-- Title M, then part 1, How it started: the authors (Anastasia first), then the story -->
+    <!-- Title M, then part 1, How it started: one short paragraph about the problem, not about the authors -->
     <div style="display: flex; flex-direction: column; gap: 32px; flex-shrink: 0">
       <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em">{{tx.title}}</h1>
       <div style="display: flex; flex-direction: column; gap: 8px">
         <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.start}}</span>
-        <sc-for list="{{authors}}" as="a" hint-placeholder-count="2">
-          <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: #FFFFFF">
-            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font-size: 15px; font-weight: 600; letter-spacing: 0.02em">{{a.code}}</span>
-            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-              <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{a.name}}</span>
-              <span style="font-size: 17px; line-height: 22px">{{a.role}}</span>
-              <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{a.org}}</span>
-            </span>
-          </div>
-        </sc-for>
-        <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px; font-size: 17px; line-height: 22px">
-          <p>{{tx.intro1}}</p>
-          <p>{{tx.intro2}}</p>
-          <p>{{tx.intro3}}</p>
-        </div>
+        <p style="font-size: 17px; line-height: 22px">{{tx.intro1}}</p>
       </div>
     </div>
 
@@ -114,8 +100,10 @@ p{margin:0}
       </div>
     </div>
 
-    <!-- A simple thank you, then the build line as on Login -->
+    <!-- A simple thank you, the authors as a note, then the build line as on Login -->
     <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: center">{{tx.thanks}}</span>
+    <!-- The authors, as a closing note (Anastasia first), in the annotation style -->
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">{{tx.by}}</p>
     <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span> {{verTxt}}</p>
   </div>
 </div>
@@ -156,24 +144,16 @@ class Component extends DCLogic {
       backHref: role ? 'Main.dc.html' : 'Login.dc.html',
       // Opened from the user preferences: back finds them still open
       back: () => { try { if (window.sessionStorage.getItem('wf-about-from') === 'prefs') window.sessionStorage.setItem('wf-prefs-open', '1'); window.sessionStorage.removeItem('wf-about-from'); } catch (e) {} },
-      authors: [
-        { code: 'AO', name: 'Anastasia Osling', role: L('Lead UX research designer', 'Lead UX research designer', 'リードUXリサーチデザイナー'), org: 'R&D, Hitachi USA' },
-        { code: 'NR', name: 'Nuno Rogério', role: L('Director, design team', 'Diretor, equipa de design', 'デザインチーム ディレクター'), org: 'Hitachi Vantara' }
-      ],
       tx: {
         back: L('Back', 'Voltar', '戻る'),
         title: L('About', 'Sobre', 'このアプリについて'),
         start: L('How it started', 'Como começou', 'はじまり'),
-        intro1: L('Anastasia Osling and Nuno Rogério are design leaders at Hitachi, with wide experience in UX design and a passion for nature, and for doing all within our reach to protect it.',
-          'Anastasia Osling e Nuno Rogério são líderes de design na Hitachi, com vasta experiência em design de UX e uma paixão pela natureza e por tudo o que está ao nosso alcance para a proteger.',
-          'Anastasia OslingとNuno Rogérioは日立のデザインリーダーです。UXデザインの豊富な経験を持ち、自然と、それを守るために私たちにできるすべてのことに情熱を注いでいます。'),
-        intro2: L('Wildfires are a shared challenge, faced by ordinary people. Year after year they grow larger, and so does their toll on people and the planet. We see the dead and the burned hectares on the news, and burned forests around our own homes: Ana\'s in Nevada City, California, Nuno\'s in Porto, Portugal.',
-          'Os incêndios florestais são um desafio comum, de pessoas comuns. Ano após ano, crescem em dimensão, e com eles o impacto nas pessoas e no planeta. Vemos nas notícias os mortos e os hectares ardidos, e as florestas queimadas à volta das nossas terras: a Ana em Nevada City, na Califórnia, o Nuno no Porto, em Portugal.',
-          '山火事は、ごく普通の人々が共に向き合う課題です。年々その規模は大きくなり、人と地球への影響も深刻になっています。ニュースでは犠牲者や焼失面積が伝えられ、私たちの暮らす土地の周りでも森が焼けています。アナはカリフォルニアのネバダシティで、ヌノはポルトガルのポルトで。'),
-        intro3: L('Just sit and watch? Ana and Nuno said no. Starting from Ana\'s wish to improve wildfire response, in California and around the world, they took on the challenge of opening a path in this field. Over a year of conversations they tried out scenarios and studied ideas that already exist. Forest Fire Watch is one result.',
-          'Ficar sentado a assistir? A Ana e o Nuno responderam que não. Partindo da vontade da Ana de melhorar a resposta aos incêndios, na Califórnia e no mundo, aceitaram o desafio de abrir caminho neste campo. Ao longo de um ano de conversas, ensaiaram cenários e estudaram ideias que já existem. O Forest Fire Watch é um dos resultados.',
-          'ただ座って見ているだけでいいのか。2人の答えは「いいえ」でした。カリフォルニア、そして世界の山火事対応を良くしたいというアナの思いを出発点に、この分野に道を切り開く挑戦を引き受けました。1年にわたって対話を重ね、シナリオを試し、既存のアイデアを調べてきました。Forest Fire Watchはその成果のひとつです。'),
-        authors: L('Authors', 'Autores', '制作者'),
+        intro1: L('Every year wildfires grow larger, taking lives and forests, from Nevada City, California, to Porto, Portugal. Just sit and watch? We said no. Forest Fire Watch grew from a year of conversations, scenarios and a close look at ideas that already exist.',
+          'Todos os anos os incêndios florestais crescem, levando vidas e florestas, de Nevada City, na Califórnia, ao Porto, em Portugal. Ficar sentado a assistir? Dissemos que não. O Forest Fire Watch nasceu de um ano de conversas, cenários e estudo de ideias que já existem.',
+          '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命と森を奪っています。ただ座って見ているだけでいいのか。私たちの答えは「いいえ」でした。Forest Fire Watchは、1年にわたる対話とシナリオ、既存のアイデアの調査から生まれました。'),
+        by: L('Created by Anastasia Osling, lead UX research designer, R&D, Hitachi USA, and Nuno Rogério, design director, Hitachi Vantara.',
+          'Criado por Anastasia Osling, lead UX research designer, R&D, Hitachi USA, e Nuno Rogério, diretor de design, Hitachi Vantara.',
+          '制作: Anastasia Osling(リードUXリサーチデザイナー、R&D、Hitachi USA)、Nuno Rogério(デザインディレクター、Hitachi Vantara)。'),
         idea: L('The goal', 'O objetivo', '目標'),
         goal: L('Shorten the time from spotting an ignition to confirming it and sending firefighters. In a wildfire, every minute counts.',
           'Encurtar o tempo entre detetar uma ignição, confirmá-la e enviar os bombeiros. Num incêndio rural, cada minuto conta.',
