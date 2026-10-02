@@ -33,7 +33,7 @@
   var chipRow = function () { var b = q('button.chbtn', function (x) { return x.parentElement && x.parentElement.style.maxHeight === '88px'; }); return b ? b.parentElement : null; };
   var pathBtn = function (d) { return q('button.mbtn', function (b) { var p = b.querySelector('path[d^="' + d + '"]'); return !!p && getComputedStyle(p).display !== 'none'; }); };
   var hdr = function (sel) { return q('header[data-pull="down"] ' + sel); };
-  var closeIn = function (sec) { var s = document.querySelector(sec); if (!s) return; var b = [].slice.call(s.querySelectorAll('button')).find(function (x) { return x.querySelector('path[d^="M6 6"]'); }); if (b) b.click(); };
+  var closeIn = function (sec) { var s = document.querySelector(sec); if (!s) return; var b = [].slice.call(s.querySelectorAll('button')).find(function (x) { return x.querySelector('path[d^="M6 6"]'); }); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } };
   var areaOpen = function () { var a = document.querySelector('section[data-swipe-key="sc"]'); return !!a && a.getAttribute('aria-hidden') === 'false'; };
   var areaClose = function () { var b = document.querySelector('section[data-swipe-key="sc"] button[data-swipe-go]'); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } };
   var scrollEnd = function (sel) { var e = document.querySelector(sel); if (e) e.scrollTo({ top: e.scrollHeight, behavior: 'smooth' }); };
@@ -63,14 +63,14 @@
       t: ['Quick tour', 'Visita rápida'],
       b: ['Follow one ignition from detection to a closed fire. Tap what the arrow points to, or use ‹ › to move between steps.',
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que a seta indica, ou use ‹ › para mudar de passo.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return hdr('> button.opt[aria-expanded]'); }, area: true, also: 'section[data-swipe-key="sc"]',   // the area picker can be used here; it closes when the tour moves on
+    { page: 'Main.dc.html', mode: 'tap', closeAfter: true, find: function () { return hdr('> button.opt[aria-expanded]'); }, area: true, also: 'section[data-swipe-key="sc"]',   // the area picker can be used here; it closes when the tour moves on
       t: ['Choose a region', 'Escolha uma região'],
-      b: ['Tap the area name to switch country, state or district.', 'Toque no nome da área para mudar de país, estado ou distrito.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('[data-wf-leg] button[aria-pressed="false"]') || q('[data-wf-leg]'); },
+      b: ['Tap the area name, then pick a country, state or district (or close the list).', 'Toque no nome da área e escolha um país, estado ou distrito (ou feche a lista).'] },
+    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('[data-wf-leg] button[aria-pressed="false"]'); }, legend: true, lock: true,
       t: ['Show more on the map', 'Mostre mais no mapa'],
       b: ['Grey chips are hidden layers, like active fires or fire stations. Tap one to show it.',
           'As etiquetas cinzentas são camadas escondidas, como incêndios ativos ou quartéis. Toque numa para a mostrar.'] },
-    { page: 'Main.dc.html', mode: 'next', find: pickMarker, also: '[data-wf-pop] a.wf-pri',
+    { page: 'Main.dc.html', mode: 'tap', find: pickMarker, also: '[data-wf-pop] a.wf-pri',
       t: ['Pick an incident on the map', 'Escolha um incidente no mapa'],
       b: ['Tap any circle for a short summary, then View.', 'Toque num círculo para um resumo, depois em Ver.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
@@ -81,10 +81,11 @@
       t: ['Open the demo ignition', 'Abra a ignição de demonstração'],
       b: ['We chose the most likely candidate for this tour. Tap it.', 'Escolhemos o candidato mais provável para esta visita. Toque nele.'] },
 
-    { page: 'Alert.dc.html', mode: 'next', find: function () { return q('[data-wf-ighdr]'); },
+    { page: 'Alert.dc.html', mode: 'next', interact: true, find: function () { return q('[role=list]:has(> [data-wf-kpi][data-g="ign"])') || q('[data-wf-ighdr]'); },
       ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Now let\'s take a closer look.', 'Agora vamos ver de perto.'],
-      t: ['The ignition candidate', 'O candidato a ignição'],
-      b: ['Likelihood, place and detection time come first, so you can decide fast.', 'Probabilidade, local e hora da deteção primeiro, para decidir depressa.'] },
+      t: ['Key figures', 'Números principais'],
+      b: ['Likelihood, heat power and people at risk first, to decide fast. Press and hold a card to reorder; tap + to choose which to show.',
+          'Probabilidade, potência térmica e pessoas em risco primeiro, para decidir depressa. Prima e mantenha um cartão para reordenar; toque em + para escolher quais mostrar.'] },
     { page: 'Alert.dc.html', mode: 'next', find: function () { return q('button.qtag'); },
       t: ['Confirm or dismiss here', 'Confirme ou descarte aqui'],
       b: ['This tag confirms the fire. In this tour we confirm it with the team, in the chat.', 'Esta etiqueta confirma o incêndio. Nesta visita confirmamos com a equipa, na conversa.'] },
@@ -94,10 +95,10 @@
     { page: 'Alert.dc.html', mode: 'tap', find: function () { return pathBtn('M4 14h6v6'); },
       t: ['Back to the page', 'Voltar à página'],
       b: ['Pan and zoom freely. Then tap here to return.', 'Mova e aproxime à vontade. Depois toque aqui para voltar.'] },
-    { page: 'Alert.dc.html', mode: 'tap', find: function () { return pathBtn('M2.5 6h6M15.5 6h6'); },
+    { page: 'Alert.dc.html', mode: 'tap', find: function () { return pathBtn('M2.5 6h6M15.5 6h6'); }, show: { ms: 4500, t: ['Live drone feed', 'Imagem do drone em direto'], b: ['Smoke and flame seen from above. We close it in a moment to see the spread.', 'Fumo e chama vistos de cima. Fechamos já para ver a propagação.'], close: function () { var b = q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); if (b) b.click(); } },
       t: ['Send a drone', 'Envie um drone'],
       b: ['Its live feed replaces the map, to check the smoke from above.', 'A imagem em direto substitui o mapa, para ver o fumo de cima.'] },
-    { page: 'Alert.dc.html', mode: 'next', find: function () { return q('div[role=tablist].wf-seg'); },
+    { page: 'Alert.dc.html', mode: 'tap', before: function () { var f = q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); if (f) { selfTap = true; f.click(); selfTap = false; } var m = pathBtn('M4 14h6v6'); if (m) { selfTap = true; m.click(); selfTap = false; } }, find: function () { return q('div[role=tablist].wf-seg'); },
       ach: ['Drone in the air. Nice!', 'Drone no ar. Boa!'], then: ['Now let\'s see where it can spread.', 'Agora vamos ver para onde pode avançar.'],
       t: ['See where it can spread', 'Veja para onde pode avançar'],
       b: ['Tap +1 h, +3 h or +6 h to see the projection.', 'Toque em +1 h, +3 h ou +6 h para ver a projeção.'] },
@@ -134,7 +135,7 @@
     { page: 'Dispatch.dc.html', mode: 'next', find: function () { return q('div[role=tablist].wf-tabs'); },
       t: ['Situation and resources', 'Situação e meios'],
       b: ['Situation shows the figures. Crews shows the stations and units on this fire.', 'Situação mostra os números. Equipas mostra os quartéis e meios neste incêndio.'] },
-    { page: 'Dispatch.dc.html', mode: 'next', find: function () { return q('[data-wf-kpis] [data-wf-kpicard]'); },
+    { page: 'Dispatch.dc.html', mode: 'next', interact: true, find: function () { return q('[data-wf-kpis] [data-wf-kpicard]'); },
       t: ['Make it yours', 'Adapte à sua maneira'],
       b: ['Press and hold a card, then drag it to reorder.', 'Prima e mantenha um cartão, depois arraste-o para reordenar.'] },
     { page: 'Dispatch.dc.html', mode: 'next', find: function () { return q('[data-wf-kpis] > button[data-round]'); },
@@ -230,9 +231,9 @@
     var s = get(); if (!s) return;
     var st = S[s.i]; if (st && st.done) try { st.done(); } catch (e) {}
     if (i >= S.length) { end(); return; }
-    put({ i: i }); seen = 0; scrolled = false; ran = false;
+    put({ i: i, max: Math.max(i, s.max || 0) }); seen = 0; scrolled = false; ran = false; armed = -1;
   }
-  function back(i) { if (i < 1) return; var p = i - 1; put({ i: p, b: 1 }); seen = Date.now(); scrolled = false; ran = false; cur = -1; lastKey = ''; if (S[p].page !== PAGE) { try { history.back(); } catch (e) { location.href = S[p].page; } } else tick(); }
+  function back(i) { if (i < 1) return; var s0 = get() || {}; var p = i - 1; put({ i: p, b: 1, max: Math.max(i, s0.max || 0) }); seen = Date.now(); scrolled = false; ran = false; cur = -1; lastKey = ''; if (S[p].page !== PAGE) { try { history.back(); } catch (e) { location.href = S[p].page; } } else tick(); }
   window.__wfTour = { start: function () { put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
@@ -249,13 +250,13 @@
       '<path d="' + d + '" stroke="rgba(255,255,255,0.92)" stroke-width="7"/><path d="' + hd + '" stroke="rgba(255,255,255,0.92)" stroke-width="7"/>' +
       '<path class="ar" style="--l:' + L + '" d="' + d + '" stroke="#1C1C1E" stroke-width="2.6"/><path class="ar" style="--l:40" d="' + hd + '" stroke="#1C1C1E" stroke-width="2.6"/></g>';
   }
-  function draw(i, st, el, late) {
+  function draw(i, st, el, late, low) {
     build();
     var pt = PT(), L = function (a) { return a ? (pt ? a[1] : a[0]) : ''; }, s0back = !!(get() || {}).b;   // achievements show when reached going forward, not when stepping back
-    var key = i + '|' + (el ? 1 : 0) + '|' + (late ? 1 : 0) + '|' + (pt ? 1 : 0);
+    var key = i + '|' + (armed === i ? 'a' : '') + (el ? 1 : 0) + '|' + (late ? 1 : 0) + '|' + (pt ? 1 : 0);
     if (key !== lastKey) {
       lastKey = key; bub.classList.remove('on');
-      var nx = st.mode === 'next' || late, nl = st.next ? L(st.next) : '';
+      var done0 = i < ((get() || {}).max || 0), nx = st.mode === 'next' || late || done0, nl = st.next ? L(st.next) : '';
       var CH = function (d) { return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"></path></svg>'; };
       var AC = st.ach && !s0back ? '<div class="ta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span></span></div><p class="tth"></p>' : '';
       bub.innerHTML = AC + '<p class="tt"></p><p class="tx"></p><div class="tf"><span class="tn"></span><button type="button" class="te"></button>' +
@@ -264,17 +265,21 @@
       var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
       if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }
       bub.querySelector('.tt').textContent = L(st.t);
+      if (st.show && armed === i) bub.querySelector('.tt').textContent = L(st.show.t);
+      if (st.legend && armed === i) { bub.querySelector('.tt').textContent = pt ? 'Camada visível' : 'Layer shown'; }
       bub.querySelector('.tx').textContent = late && !el ? (pt ? 'Este passo não está disponível agora. Toque em › para continuar.' : 'This step isn\'t available right now. Tap › to carry on.') : L(st.b);
+      if (st.show && armed === i) bub.querySelector('.tx').textContent = L(st.show.b);
+      if (st.legend && armed === i) bub.querySelector('.tx').textContent = pt ? 'Agora voltamos a escondê-la e seguimos, só com as ignições no mapa.' : 'Now we hide it again and move on, with only ignitions on the map.';
       bub.querySelector('.tn').textContent = (i + 1) + (pt ? ' de ' : ' of ') + S.length;
       var e = bub.querySelector('.te'); e.textContent = pt ? 'Terminar visita' : 'End tour'; e.onclick = function (ev) { ev.stopPropagation(); end(); };
-      var g = bub.querySelector('.tg'); if (g) { if (nl) g.textContent = nl; else g.setAttribute('aria-label', pt ? 'Seguinte' : 'Next'); g.onclick = function (ev) { ev.stopPropagation(); var s0 = S[i]; go(i + 1); if (s0.go) s0.go(); else tick(); }; }
+      var g = bub.querySelector('.tg'); if (g) { if (nl) g.textContent = nl; else g.setAttribute('aria-label', pt ? 'Seguinte' : 'Next'); g.onclick = function (ev) { ev.stopPropagation(); var s0 = S[i], nxS = S[i + 1]; go(i + 1); if (s0.go && !(done0 && s0.mode !== 'next')) s0.go(); else if (nxS && nxS.page !== PAGE) { var at = location.href; try { history.forward(); } catch (x) {} setTimeout(function () { if (location.href === at) location.href = nxS.page; }, 500); } else tick(); }; }
       requestAnimationFrame(function () { if (bub) bub.classList.add('on'); });
       svg.innerHTML = '';
       svg.__k = '';
     }
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
-    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = Math.max(16, (vh - bh) / 2) + 'px'; return; }
+    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2)) + 'px'; return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
     if (big) { ring.style.display = 'none'; svg.innerHTML = ''; bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (vh - bh - 40) + 'px'; return; }
@@ -312,8 +317,10 @@
     // the area picker belongs to the region step only: anywhere else it is closed, so the step's control is in view
     if (PAGE === 'Main.dc.html' && !st.area && areaOpen()) { areaClose(); return; }
     if (st.skip && st.skip()) { go(i + 1); return; }
+    if (st.closeAfter && armed === i && !areaOpen()) { go(i + 1); return; }   // the area list was opened and is closed again
     if (st.mode === 'until' && st.until && st.until()) { go(i + 1); return; }
     if (st.auto && Date.now() - (window.__wfTourAuto || 0) > 2600 && Date.now() - seen > 2200) { window.__wfTourAuto = Date.now(); drive(); }
+    if (st.show && armed === i) { curEl = null; draw(i, st, null, false, true); return; }
     var el = st.lock && lockEl && lockEl.isConnected && lockI === i ? lockEl : (st.find ? st.find() : null); if (st.lock && el) { lockEl = el; lockI = i; }
     var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); el.scrollIntoView({ block: vOut ? 'center' : 'nearest', inline: hOut ? 'center' : 'nearest', behavior: 'smooth' }); } catch (e) {} }
     if (el) { var sh1 = shown(el, st.strict); if (sh1 !== true && !(sh1 === 'part' && scrolled)) el = null; }
@@ -322,7 +329,7 @@
     curEl = el; draw(i, st, el, late); window.__wfTour.el = el; window.__wfTour.i = i;
   }
   // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
-  var selfTap = false, lockEl = null, lockI = -1;
+  var selfTap = false, lockEl = null, lockI = -1, armed = -1;
   function drive() {
     var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { return !x.disabled; });
     if (!b) { var W = ['Move to', 'Passar a', 'Air support', 'Meio aéreo', 'Close fire', 'Encerrar incêndio'];
@@ -342,6 +349,7 @@
     var s = get(), st = s && S[s.i], el = st && st.page === PAGE ? (st.lock && lockEl && lockEl.isConnected ? lockEl : st.find ? st.find() : null) : null; if (!el && curEl && curEl.isConnected) el = curEl;
     if (st && st.also && e.target && e.target.closest && e.target.closest(st.also)) return true;   // e.g. View on the map summary
     if (!el) return false;
+    if (st && st.mode === 'next' && !st.interact) return false;
     if (el === e.target || el.contains(e.target)) return true;
     var p = e.changedTouches && e.changedTouches[0] || e, r = el.getBoundingClientRect();
     return p.clientX >= r.left - 4 && p.clientX <= r.right + 4 && p.clientY >= r.top - 4 && p.clientY <= r.bottom + 4;
@@ -351,11 +359,13 @@
   });
   // a tap on the control a 'tap' step points at moves the tour on (the tap itself still does its job)
   document.addEventListener('click', function (e) {
-    var s = get(); if (!s) return; var st = S[s.i]; if (!st || st.mode !== 'tap' || st.page !== PAGE || !st.find) return;
+    var s = get(); if (!s) return; var st = S[s.i]; if (!st || st.mode !== 'tap' || st.page !== PAGE || !st.find || armed === s.i) return;
     var el = st.lock && lockEl && lockEl.isConnected ? lockEl : st.find(); if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;   // a tap on a control that is still disabled doesn't count
     // the tap is on the control, or lands inside its area (some map bands pass taps through to the control underneath)
     var r = el.getBoundingClientRect(), inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom && (e.clientX || e.clientY);
-    if (el === e.target || el.contains(e.target) || inside) { go(s.i + 1); setTimeout(tick, 60); }
+    if (el === e.target || el.contains(e.target) || inside) { if (st.closeAfter) { armed = s.i; return; }
+      if (st.show) { armed = s.i; var at2 = s.i, sh = st.show; setTimeout(function () { var s3 = get(); if (!s3 || s3.i !== at2) return; selfTap = true; try { sh.close(); } catch (x) {} selfTap = false; go(at2 + 1); tick(); }, sh.ms); return; }
+      if (st.legend) { armed = s.i; var at = s.i, chipEl = el.closest ? el : el; setTimeout(function () { var s2 = get(); if (!s2 || s2.i !== at) return; var on = q('[data-wf-leg] button[aria-pressed="true"]', function (b) { return b.getAttribute('aria-label') === chipEl.getAttribute('aria-label') || b === chipEl; }) || chipEl; selfTap = true; try { (chipEl.isConnected ? chipEl : on).click(); } catch (x) {} selfTap = false; go(at + 1); tick(); }, 2400); return; } go(s.i + 1); setTimeout(tick, 60); }
   }, true);
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
   var boot = function () { requestAnimationFrame(loop); };
