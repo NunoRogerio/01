@@ -599,10 +599,12 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - Full-screen map legend (stacked chips, every map): all chips share one width, set by the longest; counts right-aligned at the chip's end (8px min from the label).
 
-- Map legend, layer off (every map): the chip keeps its normal marker shape, drawn in middle grey (#8E8E93) at 20% opacity (no colour), and the chip background is 10% darker (#DADADF; dark theme #1E1E21). Layer on: unchanged.
+- Map legend, layer off (every map): the chip keeps its normal marker shape, drawn in middle grey (#8E8E93) at 20% opacity (no colour), and the chip background is 5% darker (#E6E6EB; dark theme #222225; 10% was too dark). Layer on: unchanged.
 
 - Chat badge (every header): counts unread messages only in the chats the chats list shows — open chats in the selected area, plus direct messages. Chats from another area no longer add to it (a Portugal view showed 18 from Los Angeles chats over an empty list).
 
 - Chats and notifications follow the selected region: the chats list, its counts and every chat badge show only that region's chats; direct messages belong to their country/state (Portugal never shows Brazil's or the US's). One shared filter, __wfChat.inScope. Notifications are already built from the region's candidates and fires.
 
 - All US states enabled in the region picker (same NIFC fires, FIRMS candidates and OSM stations the app already loaded for California, so no extra download). A single-country view (Portugal) costs nothing more; the whole-US view is about as heavy as the whole-Brazil view.
+
+- Map legend: at least one layer always stays on; tapping the last one that is on does nothing (every map).

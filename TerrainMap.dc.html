@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=144"></script>
+<script src="prefs.js?v=145"></script>
 <script src="i18n.js?v=133"></script>
 <script src="live.js?v=40"></script>
 
@@ -1201,13 +1201,14 @@ class Component extends DCLogic {
       ['resolved', 'Resolved fires', CIR, '#6F2B06', 'none'],
       ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M2.7 12.2H11.3V7.2L7 2.1 2.7 7.2Z', 'rgba(64,156,255,0.6)', '#3A3A3C']
     ];
-    return all.filter((a) => has[a[0]]).map(([k, label, d, fill, stroke]) => {
-      const on = LY[k];
+    const shown = all.filter((a) => has[a[0]]), onN = shown.filter((a) => LY[a[0]]).length;   // the last layer on stays on: the map never shows nothing
+    return shown.map(([k, label, d, fill, stroke]) => {
+      const on = LY[k], last = on && onN <= 1;
             const C = false, off = (c) => (on ? c : 'none');
       const n = NC && NC[k] != null ? String(NC[k]) : '';
-      return { n, nD: n ? 'inline' : 'none', label, d, sw: k === 'cands' ? 1.8 : (k === 'burn' || k === 'active' || k === 'held') ? 1 : 1.3, glowD: k === 'active' && on ? 'M1.5 8.3C4 2.8 9 9.8 12.5 3.3' : '', fill: on ? fill : (fill === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), stroke: on ? stroke : (stroke === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), bg: on ? '#F2F2F7' : '#DADADF', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
+      return { n, nD: n ? 'inline' : 'none', label, d, sw: k === 'cands' ? 1.8 : (k === 'burn' || k === 'active' || k === 'held') ? 1 : 1.3, glowD: k === 'active' && on ? 'M1.5 8.3C4 2.8 9 9.8 12.5 3.3' : '', fill: on ? fill : (fill === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), stroke: on ? stroke : (stroke === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), bg: on ? '#F2F2F7' : '#E6E6EB', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
-        aria: label + (n ? ', ' + n : '') + (on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => this.toggleLayer(k) };
+        aria: label + (n ? ', ' + n : '') + (last ? ', shown' : on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => { if (last) return; this.toggleLayer(k); } };
     });
   }
   // The widest view the map serves: the whole state or country of the selected area (California, Portugal), never just
