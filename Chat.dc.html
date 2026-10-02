@@ -16,7 +16,7 @@
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=142"></script>
-<script src="i18n.js?v=128"></script>
+<script src="i18n.js?v=129"></script>
 <script src="live.js?v=39"></script>
 <script src="chat.js?v=46"></script>
 <script src="trophy.js?v=16"></script>
@@ -157,7 +157,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 8px; padding: 12px 16px">
               <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
               <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
-                <span style="margin-bottom: 8px; font-size: 17px; font-weight: 700; line-height: 22px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
+                <!-- the stage and time on the icon's centre line (a 32px row); the line under it keeps its 8px -->
+                <span style="display: flex; align-items: center; min-height: 32px; margin-bottom: 3px; font-size: 17px; font-weight: 700; line-height: 22px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
                 <span style="font-size: 17px; font-weight: 400; line-height: 22px">{{m.title}}</span>
                 <span style="display: {{m.bodyD}}; font-size: 17px; line-height: 22px; color: #000000">{{m.body}}</span>
               </div>
@@ -529,7 +530,7 @@ class Component extends DCLogic {
     const t = { back: L('Back', 'Voltar'), close: L('Close', 'Fechar'), chats: L('Chats', 'Conversas'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
       msg: L('Write a message…', 'Escrever mensagem…'), send: L('Send', 'Enviar'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
-      fireCard: L('Fire card', 'Cartão do incêndio'), details: L('Details', 'Detalhes'), fireCardSub: L('Projection and time in each stage', 'Projeção e tempo em cada fase'),
+      fireCard: L('Fire card', 'Cartão do incêndio'), details: L('Details', 'Detalhes'), fireCardSub: L('Progress and projection', 'Progresso e projeção'),
       reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
       proj: L('Spread projection', 'Projeção da propagação'), projSub: L('Where the fire can be in 1, 3 and 6 hours, on its map.', 'Onde o fogo pode estar dentro de 1, 3 e 6 horas, no mapa.'), openFire: L('View projection', 'Ver projeção'),
       forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
@@ -765,7 +766,7 @@ class Component extends DCLogic {
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
           cardGo: !toSheet && m.link ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: !toSheet && m.link ? 'pointer' : 'default',
-          hasLink: toSheet, linkCls: 'wf-pri',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Projection and time in each stage', 'Projeção e tempo em cada fase') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
+          hasLink: toSheet, linkCls: 'wf-pri',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
           goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }
