@@ -37,7 +37,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- Full screen only: the map as its own layer. On the page the map is a band that scrolls with everything else. -->
   <sc-if value="{{full}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; z-index: 7">
-      <dc-import name="TerrainMap" mode="spread" fire-id="{{f.id}}" fire-x="{{f.x}}" fire-y="{{f.y}}" stations-st="{{f.st}}" fire-only="true" loader="true" no-routes="true" horizon="{{hz}}" grow="{{grow}}" fake-hz="{{fakeHz}}" w="390" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" zoom="{{viewF.zoom}}" focus-x="{{viewF.fx}}" focus-y="{{viewF.fy}}" controls="side" radius="{{zero}}" attr-bottom="{{attrF}}" on-full="{{toggleFull}}" is-full="{{yes}}" close-x="true" hint-size="390px,844px"></dc-import>
+      <dc-import name="TerrainMap" mode="spread" fire-id="{{f.id}}" fire-x="{{f.x}}" fire-y="{{f.y}}" stations-st="{{f.st}}" fire-only="true" loader="true" no-routes="true" horizon="{{hz}}" grow="{{grow}}" fake-hz="{{fakeHz}}" leg-now="{{legNow}}" leg-grow="{{legGrow}}" leg-grow-label="{{legGrowL}}" w="390" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" zoom="{{viewF.zoom}}" focus-x="{{viewF.fx}}" focus-y="{{viewF.fy}}" controls="side" radius="{{zero}}" attr-bottom="{{attrF}}" on-full="{{toggleFull}}" is-full="{{yes}}" close-x="true" hint-size="390px,844px"></dc-import>
           <!-- The horizon switcher on the full-screen map too, in the dark map-control style, on the map buttons' centre line, left of them -->
       <div role="tablist" aria-label="{{tx.hz}}" class="wf-seg" data-wf-hzfull="1" style="position: absolute; left: 16px; right: 136px; top: -200px; z-index: 30; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
         <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 4); transform: translateX({{segX}})"><span class="segblob"></span></span>
@@ -77,7 +77,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <div class="wf-page" style="position: relative; z-index: 5; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 32px">
     <!-- The map band leaves room for the KPI cards under it, so they show without scrolling -->
     <div style="position: relative; flex-shrink: 0; height: {{bandH}}px; margin-top: 16px; overflow: hidden">
-      <dc-import name="TerrainMap" mode="spread" fire-id="{{f.id}}" fire-x="{{f.x}}" fire-y="{{f.y}}" stations-st="{{f.st}}" fire-only="true" loader="true" no-routes="true" no-title="true" horizon="{{hz}}" grow="{{grow}}" fake-hz="{{fakeHz}}" w="390" h="{{bandH}}" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" locked="true" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" controls="side" radius="{{zero}}" attr-bottom="{{zero}}" on-full="{{toggleFull}}" is-full="{{no}}" hint-size="390px,600px"></dc-import>
+      <dc-import name="TerrainMap" mode="spread" fire-id="{{f.id}}" fire-x="{{f.x}}" fire-y="{{f.y}}" stations-st="{{f.st}}" fire-only="true" loader="true" no-routes="true" no-title="true" leg-now="{{legNow}}" leg-grow="{{legGrow}}" leg-grow-label="{{legGrowL}}" horizon="{{hz}}" grow="{{grow}}" fake-hz="{{fakeHz}}" w="390" h="{{bandH}}" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" locked="true" zoom="{{view.zoom}}" focus-x="{{view.fx}}" focus-y="{{view.fy}}" controls="side" radius="{{zero}}" attr-bottom="{{zero}}" on-full="{{toggleFull}}" is-full="{{no}}" hint-size="390px,600px"></dc-import>
     </div>
     <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px 16px 0">
     <div role="list" style="display: flex; gap: 8px">
@@ -151,7 +151,9 @@ class Component extends DCLogic {
     clearTimeout(this._bhT); this._bhT = setTimeout(() => { try { const pg = document.querySelector('.wf-page'), kp = pg && pg.querySelector('[data-wf-kpicard]'); if (!pg || !kp) return;
       const k = pg.getBoundingClientRect().height / (pg.offsetHeight || 1) || 1, avail = pg.offsetHeight - 16 - 16 - kp.offsetHeight - 16, h = Math.max(280, Math.round(avail));
       if (Math.abs(h - ((this.state || {}).bandH || 0)) > 2) this.setState({ bandH: h }); } catch (e) {} }, 80);
-    return { hx, bandH,
+    // the map legend's values: the burned area now and, from +1 h, the projected one, each as its area and its perimeter
+    const legNow = area(A0) + ' ' + aU + '. ' + km(perKm(A0)), legGrow = hz ? area(Ah) + ' ' + aU + '. ' + km(perKm(Ah)) : '', legGrowL = L('In ' + hz + ' h', 'Em ' + hz + ' h');
+    return { hx, bandH, legNow, legGrow, legGrowL,
       f: { id: v.id, x: v.x, y: v.y, st: r ? r[0] : '', place: v.place || (r && r[3]) || 'Fire', region: (r && r[1]) || String(v.note || '').split(' · ')[0] || '', tag: I.stEn || I.st || '', tagD: (I.stEn || I.st) ? 'inline-flex' : 'none', tagBg: tn[1], tagFg: tn[0] },
       tx: { kind: L('Projection', 'Projeção'), hz: L('Projection horizon', 'Horizonte da projeção'), est: L('Estimate', 'Estimativa'), fire: L('View fire', 'Ver incêndio') },
       hz, grow: gk, fakeHz: ({ 0: 0, 1: 1, 3: 2, 6: 3 })[hz], zero: 0, yes: true, no: false, full: F, view, viewF, kpis,

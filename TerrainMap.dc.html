@@ -131,7 +131,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <sc-if value="{{growFake}}" hint-placeholder-val="{{ false }}">
         <g transform="translate({{fdx}} {{fdy}})">
         <path d="{{gF.d}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-dasharray="6 5" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-        <ellipse cx="598" cy="298" rx="26" ry="14" transform="rotate(-35 598 298)" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="1" vector-effect="non-scaling-stroke"></ellipse>
+        <ellipse style="display: {{gNowD}}" cx="598" cy="298" rx="26" ry="14" transform="rotate(-35 598 298)" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="1" vector-effect="non-scaling-stroke"></ellipse>
         </g>
         </sc-if>
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
@@ -1057,7 +1057,7 @@ class Component extends DCLogic {
   }
   // Map legend: which layers are shown (shared by every map while the app is open).
   layers() {
-    const d = { fires: true, resolved: true, cands: true, stations: true, burn: true, active: true, held: true };
+    const d = { fires: true, resolved: true, cands: true, stations: true, burn: true, grow: true, active: true, held: true };
     let v = window.__wfLayers;
     if (!v) { try { v = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
     const out = Object.assign(d, v || {});
@@ -1193,6 +1193,7 @@ class Component extends DCLogic {
     const all = [
       ['cands', 'Ignition candidates', 'M7 2.6a4.4 4.4 0 1 1 0 8.8a4.4 4.4 0 1 1 0-8.8Z', Y10, '#3A3A3C'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
+      ['grow', this.props.legGrowLabel || 'Projected', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', Y10.replace(',0.2)', ',0.5)'), '#E8590C'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#186B2D'],
       ['fires', 'Active fires', CIR, '#E8590C', 'none'],
@@ -1438,7 +1439,7 @@ class Component extends DCLogic {
     const edges = (sn, held) => { let d = ''; const r = sn.ring, n = r.length; for (let i = 0; i < n; i++) { const j = (i + 1) % n; if (!!sn.done[i] === held && !!sn.done[j] === held) d += 'M' + Pf(r[i][0], r[i][1]) + 'L' + Pf(r[j][0], r[j][1]); } return d; };
     // No mapped perimeter (e.g. most Portuguese fires): the model's outline from the reported size, labelled 'Estimated'.
     const REAL = mdl && !mdl.assumed, showEdge = !!mdl;   /* the edge always says its state: burning front (orange) or held line (green), estimated outline or not */
-    const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 && !isGrow ? ringPath(snapH.ring) : '', mGrow: LY.burn ? growPath(mdl.snaps[0].ring) : '',
+    const modelVals = mdl ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(mdl.snaps[0].ring) : '', mFut: LY.burn && hz > 0 && !isGrow ? ringPath(snapH.ring) : '', mGrow: LY.burn && LY.grow ? growPath(mdl.snaps[0].ring) : '',
       mActive: LY.active && showEdge ? edges(snapH, false) : '', mHeld: LY.held && showEdge ? edges(snapH, true) : '',
       // strokes sit inside the CSS-scaled map layer, so size them in screen pixels by dividing by the zoom
       // INPE's newest fire fronts (Brazil): where the fire burned on its latest day
@@ -1446,7 +1447,7 @@ class Component extends DCLogic {
       mSw: { thin: +(1.5 / s).toFixed(5), one: +(1 / s).toFixed(5), g1: +(3 / s).toFixed(5), g2: +(6 / s).toFixed(5), g3: +(10 / s).toFixed(5), edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) },
       mOut: 'M-3000000 -3000000H3000000V3000000H-3000000Z' + ringPath(snapH.ring), mOutId: 'wfOut' + String(p.fireId || 'f').replace(/[^A-Za-z0-9]/g, '') } : ((G) => G && G.ring && window.__wfLiveMap && mode === 'spread'
       // no model yet (or weather unreachable): still draw INPE's burned outline and newest fronts for Brazilian fires
-      ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(G.ring) : '', mFut: '', mGrow: LY.burn ? growPath(G.ring) : '', mActive: '', mHeld: '', mFront: G.front && G.front.ring && LY.active ? ringPath(G.front.ring) : '', mSw: { thin: +(1.5 / s).toFixed(5), one: +(1 / s).toFixed(5), g1: 1, g2: 1, g3: 1, edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) }, mOut: '', mOutId: 'wfOutx' }
+      ? { hasModel: true, fakeSpread: false, mNow: LY.burn ? ringPath(G.ring) : '', mFut: '', mGrow: LY.burn && LY.grow ? growPath(G.ring) : '', mActive: '', mHeld: '', mFront: G.front && G.front.ring && LY.active ? ringPath(G.front.ring) : '', mSw: { thin: +(1.5 / s).toFixed(5), one: +(1 / s).toFixed(5), g1: 1, g2: 1, g3: 1, edge: +(3 / s).toFixed(5), dash: +(6 / s).toFixed(5) + ' ' + +(5 / s).toFixed(5) }, mOut: '', mOutId: 'wfOutx' }
       : { hasModel: false, fakeSpread: !window.__wfLiveMap || !p.fireId || !!(MD && MD.failed), mNow: '', mFut: '', mGrow: '', mActive: '', mHeld: '', mFront: '', mSw: { thin: 1, one: 1, g1: 1, g2: 1, g3: 1, edge: 1, dash: '6 5' }, mOut: '', mOutId: 'wfOutx' })(p.fireId && (window.__wfBRGeo || {})[p.fireId]);
 
     const hzF = p.fakeHz != null && p.fakeHz !== '' ? Number(p.fakeHz) : hz;   /* the illustrative rings are +1, +2, +3 steps; a screen with other horizons maps onto them */
@@ -1666,16 +1667,17 @@ class Component extends DCLogic {
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
-      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: gFake }, ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
+      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow ? gFake : '' }, gNowD: LY.burn ? 'inline' : 'none', ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
       burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? (window.__wfLiveMap ? this.heatAreas(FIRES_V) : FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; })) : [],
       burnFx: !MANY && !window.__wfLiveMap && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
-        const has = { burn: !!mdl, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
+        const has = { burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */
-        const NC = isRisk ? (() => { const F = Array.isArray(p.fires) ? p.fires : [], nRes = F.filter((g) => g.info && g.info.resolved).length;
+        let NC = isRisk ? (() => { const F = Array.isArray(p.fires) ? p.fires : [], nRes = F.filter((g) => g.info && g.info.resolved).length;
           const sk = (p.scopeSt || '') + '|' + (p.scopeCo || ''), SFc = this.stationFile(); let nSt = this._stCnt && this._stCnt.k === sk ? this._stCnt.n : null;
           if (nSt == null && SFc && SFc.pts) { const inSc = this.inScopeFn(); nSt = inSc ? SFc.pts.filter((q) => inSc(q[0], q[1])).length : SFc.pts.length; this._stCnt = { k: sk, n: nSt }; }
           return { cands: Array.isArray(p.ignitions) ? p.ignitions.length : null, fires: F.length - nRes, resolved: nRes, stations: nSt }; })() : {};
+        if (p.legNow || p.legGrow) { NC = Object.assign({}, NC || {}, p.legNow ? { burn: p.legNow } : {}, p.legGrow ? { grow: p.legGrow } : {}); }   /* the Projection screen: area and perimeter in the chips */;
         const legend = this.legendItems(has, NC); const optOpen = !!window.__wfCtrlOpen;
         const HLAND = this.W() > this.H() * 1.2, HDR = p.mode !== 'pin' && !!p.mapTitle && !!p.mapKind, HDRH = HLAND ? 76 : 136;   /* the fire header: 16 + 44 + 16 in one row; upright 16 + 44 + 16 + 44 + 16 */
         const FULL0 = p.isFull === true || p.isFull === 'true';
