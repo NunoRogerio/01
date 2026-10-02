@@ -580,6 +580,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   </span>
                   <!-- Show or hide this source's data (asks first); the map and place names have no switch -->
                   <button type="button" role="switch" class="wf-tog" aria-checked="{{d.onStr}}" aria-label="{{d.name}}" aria-disabled="{{d.lockStr}}" onClick="{{d.toggle}}" style="display: {{d.togD}}; position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{d.swBg}}; opacity: {{d.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{d.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
+                  <!-- What the source brings, across the full row (under the switch too), in the annotation style -->
+                  <span style="display: {{d.whyD}}; grid-column: 1 / -1; margin-top: 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{d.why}}</span>
                 </li>
               </sc-for>
             </ul>
@@ -861,20 +863,20 @@ class Component extends DCLogic {
           if (pt && m < 1) return 'Carregado agora';
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         const items = [
-          ['NASA FIRMS', T('Satellite heat detections (VIIRS, MODIS, Landsat). Europe and the Americas', 'Deteções de calor por satélite (VIIRS, MODIS, Landsat). Europa e Américas'), c.tSat, false, 26, 'SAT'],
-          ['NOAA GOES-18 and GOES-19', T('Geostationary heat detections every 10 minutes. The Americas', 'Deteções de calor geostacionárias a cada 10 minutos. Américas'), c.tSat, false, 1, null, 10],
-          ['NIFC · WFIGS', T('Wildfire incidents. United States', 'Incêndios florestais. Estados Unidos'), c.tUS, false, 26, 'US'],
-          ['CAL FIRE', T('Wildfire incidents the federal list lacks. California', 'Incêndios florestais em falta na lista federal. Califórnia'), c.tCF, false, 1, 'CF', 10],
-          ['EFFIS · Copernicus', T('Mapped burnt areas of the last 30 days. Portugal', 'Áreas ardidas mapeadas nos últimos 30 dias. Portugal'), null, true, 1, null, 10],
-          ['IPMA', T('Official fire danger by municipality, today. Portugal', 'Perigo de incêndio oficial por concelho, hoje. Portugal'), null, true, 1, null, 10],
-          ['Fogos.pt · ANEPC', T('Rural fire occurrences. Portugal', 'Ocorrências de incêndios rurais. Portugal'), c.tPT, false, 26, 'PT'],
-          ['INPE · Programa Queimadas', T('Fire events. Brazil', 'Eventos de fogo. Brasil'), c.tBR, false, 27, 'BR'],
-          ['BC Wildfire Service', T('Wildfires. British Columbia', 'Incêndios florestais. Colúmbia Britânica'), c.tCAN, false, 26, 'CAN'],
-          ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27],
-          ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26],
-          ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10]
-        ].map(([name, what, t, still, day, key, mon]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
-          return { name, sub: what, loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
+          ['NASA FIRMS', T('Satellite heat detections (VIIRS, MODIS, Landsat). Europe and the Americas', 'Deteções de calor por satélite (VIIRS, MODIS, Landsat). Europa e Américas'), c.tSat, false, 26, 'SAT', 9, T('Polar-orbiting satellites, each passing about twice a day: together they spot most new fires within hours.', 'Satélites em órbita polar, cada um passa cerca de duas vezes por dia: juntos detetam a maioria dos novos incêndios em poucas horas.')],
+          ['NOAA GOES-18 and GOES-19', T('Geostationary heat detections every 10 minutes. The Americas', 'Deteções de calor geostacionárias a cada 10 minutos. Américas'), c.tSat, false, 1, null, 10, T('A new scan every 10 minutes, so an ignition can show within the hour instead of at the next satellite pass. Coarser: a spot needs two scans.', 'Uma nova leitura a cada 10 minutos: uma ignição pode surgir na primeira hora, sem esperar pela próxima passagem de satélite. Menos detalhe: um ponto precisa de duas leituras.')],
+          ['NIFC · WFIGS', T('Wildfire incidents. United States', 'Incêndios florestais. Estados Unidos'), c.tUS, false, 26, 'US', 9, T('The US federal list of reported wildfires, with containment, size and crews.', 'A lista federal dos EUA de incêndios reportados, com contenção, área e meios.')],
+          ['CAL FIRE', T('Wildfire incidents the federal list lacks. California', 'Incêndios florestais em falta na lista federal. Califórnia'), c.tCF, false, 1, 'CF', 10, T('California\'s own incident list: it adds the fires the federal list does not have yet.', 'A lista de incidentes da própria Califórnia: acrescenta os incêndios que a lista federal ainda não tem.')],
+          ['EFFIS · Copernicus', T('Mapped burnt areas of the last 30 days. Portugal', 'Áreas ardidas mapeadas nos últimos 30 dias. Portugal'), null, true, 1, null, 10, T('Gives each Portuguese fire its real mapped shape instead of an estimate.', 'Dá a cada incêndio em Portugal a sua forma real mapeada, em vez de uma estimativa.')],
+          ['IPMA', T('Official fire danger by municipality, today. Portugal', 'Perigo de incêndio oficial por concelho, hoje. Portugal'), null, true, 1, null, 10, T('Shows today\'s official fire danger for the nearest municipality on the map.', 'Mostra no mapa o perigo de incêndio oficial de hoje para o concelho mais próximo.')],
+          ['Fogos.pt · ANEPC', T('Rural fire occurrences. Portugal', 'Ocorrências de incêndios rurais. Portugal'), c.tPT, false, 26, 'PT', 9, T('Civil protection occurrences in Portugal, with the means on the ground.', 'Ocorrências da proteção civil em Portugal, com os meios no terreno.')],
+          ['INPE · Programa Queimadas', T('Fire events. Brazil', 'Eventos de fogo. Brasil'), c.tBR, false, 27, 'BR', 9, T('Brazil\'s fire events, built from satellite detections, with their burned areas.', 'Eventos de fogo no Brasil, construídos a partir de deteções de satélite, com as áreas ardidas.')],
+          ['BC Wildfire Service', T('Wildfires. British Columbia', 'Incêndios florestais. Colúmbia Britânica'), c.tCAN, false, 26, 'CAN', 9, T('British Columbia\'s fires, with crew, aircraft and equipment counts.', 'Incêndios da Colúmbia Britânica, com número de equipas, aeronaves e máquinas.')],
+          ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27, null, 9, T('Names the town nearest each satellite detection.', 'Dá o nome da localidade mais próxima de cada deteção de satélite.')],
+          ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26, null, 9, T('The map itself, and the fire stations shown on it.', 'O próprio mapa e os quartéis de bombeiros nele mostrados.')],
+          ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10, T('Wind and temperature drive the projections; air quality and terrain add context.', 'O vento e a temperatura conduzem as projeções; a qualidade do ar e o relevo dão contexto.')]
+        ].map(([name, what, t, still, day, key, mon, why]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
+          return { name, sub: what, why: why || '', whyD: why ? 'block' : 'none', loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
           onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
