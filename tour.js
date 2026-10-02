@@ -4,7 +4,12 @@
 // The step is kept in sessionStorage ('wf-tour'), so the tour carries on across screens. Every bubble has End tour.
 // Steps either wait for a tap on the control they point at ('tap'), offer a Next button ('next'), or wait until
 // something has happened on screen ('until'). A step whose control can't be found after a while shows Next instead.
-(function () {
+// The tour is switched off for now (Oct 2): it never runs or blocks touches, and any tour left running on a phone is cleared.
+var WF_TOUR_ON = false;
+if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {} window.__wfTour = { start: function () {}, end: function () {}, warn: function () {}, active: function () { return false; } };
+  var wfTourGone = function () { ['wf-tour', 'wf-tourwarn', 'wf-tour-css'].forEach(function (id) { var el = document.getElementById(id); if (el) el.remove(); }); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wfTourGone); else wfTourGone(); }
+if (WF_TOUR_ON) (function () {
   var KEY = 'wf-tour', PAGE = (location.pathname.split('/').pop() || 'index.html');
   var get = function () { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) { return null; } };
   var put = function (s) { try { if (s) sessionStorage.setItem(KEY, JSON.stringify(s)); else sessionStorage.removeItem(KEY); } catch (e) {} };
@@ -171,9 +176,12 @@
     { page: 'Main.dc.html', mode: 'tap', find: function () { return hdr('> a[href="Chat.dc.html"]'); },
       t: ['Active chats', 'Conversas ativas'],
       b: ['Every incident chat you are in.', 'Todas as conversas de incidentes em que participa.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="cb"]'); }, done: function () { closeIn('section[data-swipe-key="cb"]'); },
-      t: ['Pick up where you left off', 'Retome onde ficou'],
-      b: ['Open any chat to carry on.', 'Abra qualquer conversa para continuar.'] },
+    { page: 'Main.dc.html', mode: 'tap', find: function () { var L = document.querySelectorAll('section[data-swipe-key="cb"] button[role=tab]'); return L[1] && shown(L[1]) === true ? L[1] : null; },
+      t: ['Open or resolved', 'Abertas ou resolvidas'],
+      b: ['Open chats are under way. Tap Resolved to find the fire you just closed.', 'As abertas estão em curso. Toque em Resolvidas para ver o incêndio que acabou de encerrar.'] },
+    { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="cb"] a.chrow'); }, done: function () { closeIn('section[data-swipe-key="cb"]'); },
+      t: ['Your fire, kept', 'O seu incêndio, guardado'],
+      b: ['Each resolved chat keeps its history and summary, a benchmark for the next one.', 'Cada conversa resolvida guarda a história e o resumo, uma referência para a próxima.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return hdr('button.avbtn'); },
       t: ['Your settings', 'As suas definições'],
       b: ['Language, theme, text size, chats and data.', 'Idioma, tema, tamanho do texto, conversas e dados.'] },
@@ -181,7 +189,7 @@
       find: function () { return q('[data-wf-fadetop] > div > button[aria-expanded]', function (b) { return !!b.parentElement.querySelector('ul'); }); },
       t: ['Connected data sources', 'Fontes de dados ligadas'],
       b: ['Every source the app reads. Tap to see them.', 'Todas as fontes que a app lê. Toque para as ver.'] },
-    { page: 'Main.dc.html', mode: 'next', next: ['Finish', 'Terminar'], before: function () { setTimeout(function () { scrollEnd('[data-wf-fadetop]'); }, 450); },
+    { page: 'Main.dc.html', mode: 'next', low: true, next: ['Finish', 'Terminar'], before: function () { setTimeout(function () { scrollEnd('[data-wf-fadetop]'); }, 450); },
       ach: ['Tour complete. You\'re ready!', 'Visita concluída. Está pronto!'], then: ['Now explore on your own.', 'Agora explore por si.'],
       t: ["That's the tour", 'Fim da visita'],
       b: ['Scroll down to see every source and when it last loaded. Thank you for exploring.', 'Deslize para baixo para ver cada fonte e quando foi carregada. Obrigado por explorar.'] }
@@ -234,7 +242,24 @@
     put({ i: i, max: Math.max(i, s.max || 0) }); seen = 0; scrolled = false; ran = false; armed = -1;
   }
   function back(i) { if (i < 1) return; var s0 = get() || {}; var p = i - 1; put({ i: p, b: 1, max: Math.max(i, s0.max || 0) }); seen = Date.now(); scrolled = false; ran = false; cur = -1; lastKey = ''; if (S[p].page !== PAGE) { try { history.back(); } catch (e) { location.href = S[p].page; } } else tick(); }
-  window.__wfTour = { start: function () { put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
+  // The entry warning: a dark-glass tooltip just above the Tour button (the tour is still being tuned)
+  function warn(anchor) {
+    var old = document.getElementById('wf-tourwarn'); if (old) { old.remove(); return; }
+    css(); var pt = PT(), w = document.createElement('div'); w.id = 'wf-tourwarn'; w.setAttribute('role', 'dialog'); w.setAttribute('translate', 'no');
+    var r = anchor ? anchor.getBoundingClientRect() : { top: innerHeight - 140, left: innerWidth - 80, width: 60 };
+    w.style.cssText = 'position:fixed;left:16px;right:16px;bottom:' + Math.max(16, innerHeight - r.top + 12) + 'px;z-index:99995;padding:16px;border-radius:20px;background:rgba(28,28,30,0.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased';
+    w.innerHTML = '<p style="margin:0;font-size:17px;font-weight:600;line-height:22px">⚠️ ' + (pt ? 'Atenção: a visita ainda tem falhas' : 'Warning: the tour is still buggy') + '</p>' +
+      '<p style="margin:4px 0 0;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)">' + (pt ? 'Pode não conseguir voltar. Avance por sua conta e risco.' : 'You might not be able to return. Proceed at your own risk.') + '</p>' +
+      '<div style="display:flex;gap:8px;margin-top:16px"><button type="button" data-a="no" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:rgba(255,255,255,0.14);color:#FFFFFF;font:inherit;font-size:15px;font-weight:600;cursor:pointer">' + (pt ? 'Agora não' : 'Not now') + '</button>' +
+      '<button type="button" data-a="go" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:var(--wf-y,#E5FF00);color:#1C1C1E;font:inherit;font-size:15px;font-weight:600;cursor:pointer">' + (pt ? 'Começar visita' : 'Start tour') + '</button></div>' +
+      '<span aria-hidden="true" style="position:absolute;bottom:-7px;right:' + Math.max(24, innerWidth - (r.left + r.width / 2) - 8) + 'px;width:14px;height:14px;background:rgba(28,28,30,0.94);transform:rotate(45deg);border-radius:0 0 3px 0"></span>';
+    w.querySelector('[data-a=no]').onclick = function () { w.remove(); };
+    w.querySelector('[data-a=go]').onclick = function () { w.remove(); window.__wfTour.start(); };
+    document.body.appendChild(w);
+    var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
+    setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
+  }
+  window.__wfTour = { warn: warn, start: function () { put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
   function arrow(x1, y1, x2, y2, seed) {
@@ -279,6 +304,7 @@
     }
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
+    if (low && el && !st.find) el = null;
     if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2)) + 'px'; return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
@@ -325,8 +351,8 @@
     var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); el.scrollIntoView({ block: vOut ? 'center' : 'nearest', inline: hOut ? 'center' : 'nearest', behavior: 'smooth' }); } catch (e) {} }
     if (el) { var sh1 = shown(el, st.strict); if (sh1 !== true && !(sh1 === 'part' && scrolled)) el = null; }
     var late = st.find && !el && Date.now() - seen > (st.mode === 'until' && !s.b ? 1e9 : s.b ? 1500 : 9000);
-    if (st.find && !el && !late) { curEl = null; if (root) { bub.classList.remove('on'); ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; lastKey = ''; } return; }
-    curEl = el; draw(i, st, el, late); window.__wfTour.el = el; window.__wfTour.i = i;
+    if (st.find && !el && !late) { curEl = null; draw(i, st, null, false, true); return; }   // still waiting for its control: the bubble stays, End tour always reachable
+    curEl = el; draw(i, st, el, late, st.low); window.__wfTour.el = el; window.__wfTour.i = i;
   }
   // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
   var selfTap = false, lockEl = null, lockI = -1, armed = -1;
@@ -340,6 +366,8 @@
   var curEl = null;
   function allowed(e) {
     if (selfTap || !get() || !root || !root.isConnected) return true;
+    if (e.target && e.target.closest && e.target.closest('#wf-tourwarn')) return true;
+    var s0 = get(), st0 = s0 && S[s0.i]; if (st0 && st0.page === PAGE && st0.find && !curEl && !(st0.show && armed === s0.i)) return true;   // nothing to point at yet: never lock the screen
     if (e.target && e.target.closest && e.target.closest('#wf-tour')) return true;
     // iPhone: the app lays an invisible haptic layer (#wf-hapov) over the touched control and passes the tap on to it;
     // judge the tap by the control underneath
