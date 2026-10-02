@@ -1573,7 +1573,7 @@ class Component extends DCLogic {
       fullClick: () => { if (typeof p.onFull === 'function') p.onFull(); },
       droneD: typeof p.onDrone === 'function' ? 'flex' : 'none', droneClick: (e) => { if (typeof p.onDrone === 'function') p.onDrone(e); },
       ...(() => { const full = p.isFull === true || p.isFull === 'true', locked = p.locked === true || p.locked === 'true', ctl = full || typeof p.onFull === 'function';
-        if (locked || !ctl) return { recD: 'none', goHomeFn: null, recDis: 'true', recOp: 0.4, recPE: 'none', ctrlDir: full ? 'row' : 'column' };
+        if ((locked && !full) || !ctl) return { recD: 'none',   /* a locked map band still gets re-centre once full screen (it pans there) */ goHomeFn: null, recDis: 'true', recOp: 0.4, recPE: 'none', ctrlDir: full ? 'row' : 'column' };
         const v = this.view(), h = this.homeView();
         const moved = !!this._moved && (Math.abs(v.cx - h.cx) * v.s > 12 || Math.abs(v.cy - h.cy) * v.s > 12 || Math.abs(Math.log(v.s / h.s)) > 0.05);   // enabled only once the person has moved the map themselves
         return { recD: 'flex', recDis: moved ? 'false' : 'true', recOp: moved ? 1 : 0.4, recPE: moved ? 'auto' : 'none', ctrlDir: full ? 'row' : 'column', goHomeFn: this._gh || (this._gh = () => this.goHome()) }; })(),

@@ -576,3 +576,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Add resources (Oct 2):** a white card with the + in a 56px grey square like the mini KPI + tiles, the label on its right.
 - **AI suggested pack (Oct 2):** while nothing is chosen, a card above Add resources (lime square with a sparkle): one tap fills the plan with the two nearest available stations (each with its suggested order, the first leading) and air support; every card can still be changed or removed.
 - **Suggestion chips (Oct 2, standing):** white at 70% like your own messages (was the lime at 70%). "Chat with the team first" in the Confirm fire dialog is such a chip, with the chat icon on its left, no longer a full-width primary button.
+- **Re-centre on full-screen maps (Oct 2):** a map band that is locked on the page (the ignition candidate's) still gets the re-centre button once full screen, where it pans; the projection switcher makes room for it, 8px to its left.
