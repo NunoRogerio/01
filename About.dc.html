@@ -96,6 +96,7 @@ p{margin:0}
       </ol>
       <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 8px; font-size: 17px; line-height: 22px">
         <p>{{tx.stage1}}</p>
+        <p>{{tx.users}}</p>
         <p>{{tx.stage2}}</p>
       </div>
     </div>
@@ -166,9 +167,12 @@ class Component extends DCLogic {
           '現在、これらの段階は別々のツールや電話に分かれています。それらがひとつのシステムとして動いたら何が変わるのかを確かめたいのです。'),
         stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
         now: L('Now', 'Agora', '現在'),
-        stage1: L('Forest Fire Watch is an alpha version, shared with a small group of experts. Many tools already tackle parts of this problem; we wanted to try one integrated system.',
-          'O Forest Fire Watch é uma versão alfa, partilhada com um grupo restrito de especialistas. Muitas ferramentas já respondem a partes deste problema; quisemos testar um sistema integrado.',
-          'Forest Fire Watchはアルファ版で、限られた専門家の方々に公開しています。この課題の一部に取り組むツールは数多くありますが、私たちは統合されたシステムを試したいと考えました。'),
+        stage1: L('Forest Fire Watch is an early exploration, an alpha version shared with a small group of experts. It\'s a conversation starter: something concrete that brings us closer to the problem and to the people who face it, so we can understand them better.',
+          'O Forest Fire Watch é uma exploração inicial, uma versão alfa partilhada com um grupo restrito de especialistas. É um ponto de partida para a conversa: algo concreto que nos aproxima do problema e das pessoas que o enfrentam, para as compreendermos melhor.',
+          'Forest Fire Watchは初期段階の探究で、限られた専門家の方々に公開しているアルファ版です。会話のきっかけとして、課題とそれに向き合う人々に近づき、より深く理解するための具体的なものです。'),
+        users: L('We are designing for regional and station fire leaders, and for the regional and national government bodies that coordinate the response, such as Proteção Civil in Portugal.',
+          'Desenhamos para comandantes regionais e de quartel, e para os organismos regionais e nacionais que coordenam a resposta, como a Proteção Civil em Portugal.',
+          '対象は、地域や消防署の指揮者、そして対応を調整する地域・国の行政機関(ポルトガルのProteção Civilなど)です。'),
         stage2: L('Only people with real experience in firefighting, prevention and resource planning can tell us if it makes sense and what we missed. If we invited you to a feedback session, that is why: we want your view.',
           'Só quem tem experiência real no combate, na prevenção e no planeamento de meios nos pode dizer se faz sentido e o que nos escapou. Se foi convidado para uma sessão de feedback, é por isso: queremos a sua opinião.',
           '消火活動、予防、資源計画に実際に携わってきた方だけが、これが意味を持つのか、何を見落としているのかを教えてくれます。フィードバックセッションにお招きしたのはそのためです。ぜひご意見をお聞かせください。'),
