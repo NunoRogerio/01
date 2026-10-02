@@ -103,7 +103,7 @@ p{margin:0}
     <!-- A simple thank you, the authors as a note, then the build line as on Login -->
     <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: center">{{tx.thanks}}</span>
     <!-- The authors, as a closing note (Anastasia first), in the annotation style -->
-    <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center">{{tx.by}}</p>
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: center">{{tx.by}}</p>
     <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span> {{verTxt}}</p>
   </div>
 </div>
@@ -148,18 +148,22 @@ class Component extends DCLogic {
         back: L('Back', 'Voltar', '戻る'),
         title: L('About', 'Sobre', 'このアプリについて'),
         start: L('How it started', 'Como começou', 'はじまり'),
-        intro1: L('Every year wildfires grow larger, taking lives and forests, from Nevada City, California, to Porto, Portugal. Just sit and watch? We said no. Forest Fire Watch grew from a year of conversations, scenarios and a close look at ideas that already exist.',
-          'Todos os anos os incêndios florestais crescem, levando vidas e florestas, de Nevada City, na Califórnia, ao Porto, em Portugal. Ficar sentado a assistir? Dissemos que não. O Forest Fire Watch nasceu de um ano de conversas, cenários e estudo de ideias que já existem.',
-          '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命と森を奪っています。ただ座って見ているだけでいいのか。私たちの答えは「いいえ」でした。Forest Fire Watchは、1年にわたる対話とシナリオ、既存のアイデアの調査から生まれました。'),
-        by: L('Created by Anastasia Osling, lead UX research designer, R&D, Hitachi USA, and Nuno Rogério, design director, Hitachi Vantara.',
-          'Criado por Anastasia Osling, lead UX research designer, R&D, Hitachi USA, e Nuno Rogério, diretor de design, Hitachi Vantara.',
-          '制作: Anastasia Osling(リードUXリサーチデザイナー、R&D、Hitachi USA)、Nuno Rogério(デザインディレクター、Hitachi Vantara)。'),
+        intro1: L('Wildfires grow larger every year, and the toll keeps rising: lives lost, homes and forests burned, from Nevada City, California, to Porto, Portugal. We kept asking ourselves the same question: could we just sit and watch? We decided we couldn\'t. What followed was a year of conversations, scenarios played out on paper and a close study of the tools already in the field. Forest Fire Watch is what came out of it.',
+          'Os incêndios florestais crescem todos os anos, e o preço não para de subir: vidas perdidas, casas e florestas ardidas, de Nevada City, na Califórnia, ao Porto, em Portugal. Fazíamo-nos sempre a mesma pergunta: podemos ficar sentados a assistir? Decidimos que não. Seguiu-se um ano de conversas, cenários ensaiados no papel e um estudo atento das ferramentas que já existem no terreno. O Forest Fire Watch nasceu daí.',
+          '山火事は年々大きくなり、その被害も増え続けています。カリフォルニアのネバダシティからポルトガルのポルトまで、命が失われ、家や森が焼かれています。私たちは同じ問いを繰り返してきました。ただ座って見ているだけでいいのか。答えは「いいえ」でした。それから1年、対話を重ね、シナリオを紙の上で試し、現場ですでに使われているツールを丁寧に調べてきました。Forest Fire Watchはそこから生まれました。'),
+        by: L('Created by Anastasia Osling and Nuno Rogério, design leads.',
+          'Criado por Anastasia Osling e Nuno Rogério, design leads.',
+          '制作: Anastasia Osling、Nuno Rogério(デザインリード)'),
         idea: L('The goal', 'O objetivo', '目標'),
-        goal: L('Shorten the time from spotting an ignition to confirming it and sending firefighters. In a wildfire, every minute counts.',
-          'Encurtar o tempo entre detetar uma ignição, confirmá-la e enviar os bombeiros. Num incêndio rural, cada minuto conta.',
-          '発火の発見から確認、消防隊の派遣までの時間を短くすること。山火事では一分一秒が大切です。'),
-        chat: L('At every step, one chat per incident keeps everyone involved together.', 'Em cada passo, uma conversa por incidente junta todos os intervenientes.', 'どの段階でも、インシデントごとのチャットで関係者全員がつながります。'),
-        why: L('One integrated system, so response times drop and forests and people stay safe.', 'Um só sistema integrado, para reduzir os tempos de resposta e proteger florestas e pessoas.', 'ひとつの統合システムで対応時間を縮め、森と人を守ります。'),
+        goal: L('In a wildfire, the first minutes decide how big it gets. Our goal is to shorten the path from the first sign of an ignition to confirming it and getting firefighters on the way, and to make that path easier for everyone on it.',
+          'Num incêndio rural, os primeiros minutos decidem a sua dimensão. O nosso objetivo é encurtar o caminho entre o primeiro sinal de uma ignição, a sua confirmação e o envio dos bombeiros, e tornar esse caminho mais simples para todos os que nele participam.',
+          '山火事では、最初の数分がその規模を左右します。私たちの目標は、発火の最初の兆候から確認、消防隊の出動までの道のりを短くし、そこに関わるすべての人にとってわかりやすくすることです。'),
+        chat: L('At every step, one chat per incident keeps coordinators, crews and station chiefs on the same page.',
+          'Em cada passo, uma conversa por incidente mantém coordenadores, equipas e comandantes de quartel alinhados.',
+          'どの段階でも、インシデントごとのチャットでコーディネーター、隊員、署長が同じ情報を共有します。'),
+        why: L('Today these steps often live in separate tools and phone calls. We want to see what happens when they work as one system: faster decisions, fewer gaps, and forests and people better protected.',
+          'Hoje estes passos vivem muitas vezes em ferramentas separadas e em chamadas telefónicas. Queremos perceber o que acontece quando funcionam como um só sistema: decisões mais rápidas, menos falhas, e florestas e pessoas mais protegidas.',
+          '現在、これらの段階は別々のツールや電話に分かれていることが少なくありません。それらがひとつのシステムとして動いたら何が起きるのかを確かめたいのです。より速い判断、より少ない抜け漏れ、そして森と人をよりよく守ることです。'),
         stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
         now: L('Now', 'Agora', '現在'),
         stage1: L('Forest Fire Watch is now an alpha version, shared with a small group of experts. Many tools and technologies already tackle each of these problems. We still wanted to try one integrated system.',
