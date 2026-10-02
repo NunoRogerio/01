@@ -197,7 +197,9 @@
       '#wf-tour .tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}' +
       '#wf-tour .tr{position:absolute;box-sizing:border-box;border:2px solid var(--wf-y,#E5FF00);box-shadow:0 0 0 2px rgba(28,28,30,0.55);pointer-events:none;animation:wftp 1.6s ease-in-out infinite}' +
       '@keyframes wftp{0%,100%{opacity:1}50%{opacity:.45}}' +
-      '#wf-tour .tgl{position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55),inset 0 0 14px 3px rgba(var(--wf-y-rgb,229,255,0),0.4);animation:wftg 3.6s ease-in-out infinite}' +
+      '#wf-tour .tgl{position:absolute;top:10%;height:80%;width:18px;-webkit-mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent);animation:wftg 3.6s ease-in-out infinite}' +
+      '#wf-tour .tgl.l{left:0;background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),0.65) 0,rgba(var(--wf-y-rgb,229,255,0),0.65) 1.5px,rgba(var(--wf-y-rgb,229,255,0),0.38) 2.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
+      '#wf-tour .tgl.r{right:0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),0.65) 0,rgba(var(--wf-y-rgb,229,255,0),0.65) 1.5px,rgba(var(--wf-y-rgb,229,255,0),0.38) 2.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
       '@keyframes wftg{0%,100%{opacity:1}50%{opacity:.4}}' +
       '#wf-tour .tc{width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.14);color:#FFFFFF}#wf-tour .tc.tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}#wf-tour .tc[disabled]{opacity:.3;cursor:default}' +
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
@@ -211,7 +213,7 @@
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'tsv');
     ring = document.createElement('div'); ring.className = 'tr';
     bub = document.createElement('div'); bub.className = 'tb'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-live', 'polite');
-    var glow = document.createElement('div'); glow.className = 'tgl'; root.appendChild(glow);   // tour mode: a soft lime glow round the whole screen
+    ['l', 'r'].forEach(function (k) { var g = document.createElement('div'); g.className = 'tgl ' + k; root.appendChild(g); });   // tour mode: a soft lime glow along both sides of the screen
     root.appendChild(svg); root.appendChild(ring); root.appendChild(bub); document.body.appendChild(root);
   }
   function end() { put(null); if (root) root.remove(); root = null; cur = -1; }
@@ -321,6 +323,10 @@
   function allowed(e) {
     if (selfTap || !get() || !root || !root.isConnected) return true;
     if (e.target && e.target.closest && e.target.closest('#wf-tour')) return true;
+    // iPhone: the app lays an invisible haptic layer (#wf-hapov) over the touched control and passes the tap on to it;
+    // judge the tap by the control underneath
+    var hv = e.target && e.target.closest && e.target.closest('#wf-hapov');
+    if (hv && hv.__t) { if (hv.__t.closest && hv.__t.closest('#wf-tour')) return true; e = { target: hv.__t, clientX: e.clientX, clientY: e.clientY, changedTouches: e.changedTouches }; }
     // the control is looked up again at the moment of the touch: maps and lists redraw their items while touched
     var s = get(), st = s && S[s.i], el = st && st.page === PAGE && st.find ? st.find() : null; if (!el && curEl && curEl.isConnected) el = curEl;
     if (st && st.also && e.target && e.target.closest && e.target.closest(st.also)) return true;   // e.g. View on the map summary
