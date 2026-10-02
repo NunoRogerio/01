@@ -68,7 +68,7 @@ p{margin:0}
               </span>
               <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 0 0 {{st.pb}}px">
                 <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{st.n}}. {{st.t}}</span>
-                <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{st.d}}</span>
+                <span style="font-size: 17px; line-height: 22px; color: #000000">{{st.d}}</span>
               </span>
             </li>
           </sc-for>
@@ -128,8 +128,8 @@ class Component extends DCLogic {
       deploy: 'M3 16.5V8h10.5v8.5M13.5 11h4l3 3.5v2M3 16.5h1.7M9.3 16.5h4.9M18.8 16.5h1.7M9.3 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0ZM18.8 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0Z'
     };
     const steps = [
-      [IC.detect, L('Detect', 'Detetar', '検知'), L('Many sources working together (satellites, cameras, sensors, people\'s reports) catch an ignition as quickly and accurately as possible.', 'Várias fontes a trabalhar em conjunto (satélites, câmaras, sensores, alertas de pessoas) captam uma ignição o mais rápido e com a maior precisão possível.', '衛星、カメラ、センサー、人々からの通報など、複数の情報源が連携し、発火をできるだけ速く正確にとらえます。')],
-      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Coordinators check it, by drone or with crews on the ground.', 'Os coordenadores verificam, por drone ou com equipas no terreno.', 'コーディネーターがドローンや現場の隊員で確かめます。')],
+      [IC.detect, L('Detect', 'Detetar', '検知'), L('Many sources working together catch an ignition as fast and accurately as possible.', 'Várias fontes em conjunto captam uma ignição o mais rápido e com a maior precisão possível.', '複数の情報源が連携し、発火をできるだけ速く正確にとらえます。')],
+      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Coordinators check it by drone or on the ground.', 'Os coordenadores verificam por drone ou no terreno.', 'コーディネーターがドローンや現場で確かめます。')],
       [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('The nearest stations send their crews.', 'Os quartéis mais próximos enviam as equipas.', '最寄りの消防署が隊員を送ります。')]
     ].map(([ic, t, dd], i, a) => ({ ic, t, d: dd, n: i + 1, lineD: i < a.length - 1 ? 'block' : 'none', pb: i < a.length - 1 ? 16 : 0 }));
     const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M13.3 12a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0Z';
@@ -148,30 +148,30 @@ class Component extends DCLogic {
         back: L('Back', 'Voltar', '戻る'),
         title: L('About', 'Sobre', 'このアプリについて'),
         start: L('How it started', 'Como começou', 'はじまり'),
-        intro1: L('Wildfires grow larger every year, and the toll keeps rising: lives lost, homes and forests burned, from Nevada City, California, to Porto, Portugal. We kept asking ourselves the same question: could we just sit and watch? We decided we couldn\'t. What followed was a year of conversations, scenarios played out on paper and a close study of the tools already in the field. As UX specialists, we then shaped the interface together, exploring the concepts that surfaced in those conversations and turning them into screens and flows that can be tried.',
-          'Os incêndios florestais crescem todos os anos, e o preço não para de subir: vidas perdidas, casas e florestas ardidas, de Nevada City, na Califórnia, ao Porto, em Portugal. Fazíamo-nos sempre a mesma pergunta: podemos ficar sentados a assistir? Decidimos que não. Seguiu-se um ano de conversas, cenários ensaiados no papel e um estudo atento das ferramentas que já existem no terreno. Como especialistas em UX, formulámos depois juntos a interface, explorando os conceitos que foram surgindo nessas conversas e transformando-os em ecrãs e fluxos que se podem experimentar.',
-          '山火事は年々大きくなり、その被害も増え続けています。カリフォルニアのネバダシティからポルトガルのポルトまで、命が失われ、家や森が焼かれています。私たちは同じ問いを繰り返してきました。ただ座って見ているだけでいいのか。答えは「いいえ」でした。それから1年、対話を重ね、シナリオを紙の上で試し、現場ですでに使われているツールを丁寧に調べてきました。そしてUXの専門家として、対話の中で見えてきたコンセプトを掘り下げながら、実際に試せる画面とフローへと、2人でインターフェースを形にしました。'),
+        intro1: L('Wildfires grow larger every year, taking lives, homes and forests, from Nevada City, California, to Porto, Portugal. Could we just sit and watch? We decided we couldn\'t. A year of conversations, scenarios and study of existing tools followed, and as UX specialists we shaped the interface together from the concepts we found along the way.',
+          'Os incêndios florestais crescem todos os anos, levando vidas, casas e florestas, de Nevada City, na Califórnia, ao Porto, em Portugal. Podíamos ficar sentados a assistir? Decidimos que não. Seguiu-se um ano de conversas, cenários e estudo das ferramentas existentes, e, como especialistas em UX, formulámos juntos a interface a partir dos conceitos que fomos descobrindo.',
+          '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命や家、森を奪っています。ただ座って見ているだけでいいのか。答えは「いいえ」でした。1年にわたる対話、シナリオ、既存ツールの調査を経て、UXの専門家として、見つけたコンセプトから2人でインターフェースを形にしました。'),
         by: L('Created by Anastasia Osling and Nuno Rogério, design leads.',
           'Criado por Anastasia Osling e Nuno Rogério, design leads.',
           '制作: Anastasia Osling、Nuno Rogério(デザインリード)'),
         idea: L('The goal', 'O objetivo', '目標'),
-        goal: L('In a wildfire, the first minutes decide how big it gets. Our goal is to shorten the path from the first sign of an ignition to confirming it and getting firefighters on the way, and to make that path easier for everyone on it.',
-          'Num incêndio rural, os primeiros minutos decidem a sua dimensão. O nosso objetivo é encurtar o caminho entre o primeiro sinal de uma ignição, a sua confirmação e o envio dos bombeiros, e tornar esse caminho mais simples para todos os que nele participam.',
-          '山火事では、最初の数分がその規模を左右します。私たちの目標は、発火の最初の兆候から確認、消防隊の出動までの道のりを短くし、そこに関わるすべての人にとってわかりやすくすることです。'),
-        chat: L('At every step, one chat per incident keeps coordinators, crews and station chiefs on the same page.',
-          'Em cada passo, uma conversa por incidente mantém coordenadores, equipas e comandantes de quartel alinhados.',
-          'どの段階でも、インシデントごとのチャットでコーディネーター、隊員、署長が同じ情報を共有します。'),
-        why: L('Today these steps often live in separate tools and phone calls. We want to see what happens when they work as one system: faster decisions, fewer gaps, and forests and people better protected.',
-          'Hoje estes passos vivem muitas vezes em ferramentas separadas e em chamadas telefónicas. Queremos perceber o que acontece quando funcionam como um só sistema: decisões mais rápidas, menos falhas, e florestas e pessoas mais protegidas.',
-          '現在、これらの段階は別々のツールや電話に分かれていることが少なくありません。それらがひとつのシステムとして動いたら何が起きるのかを確かめたいのです。より速い判断、より少ない抜け漏れ、そして森と人をよりよく守ることです。'),
+        goal: L('In a wildfire, the first minutes decide how big it gets. We want to shorten the time from the first sign of an ignition to firefighters on the way.',
+          'Num incêndio rural, os primeiros minutos decidem a sua dimensão. Queremos encurtar o tempo entre o primeiro sinal de uma ignição e os bombeiros a caminho.',
+          '山火事では、最初の数分がその規模を左右します。発火の最初の兆候から消防隊の出動までの時間を短くしたいと考えています。'),
+        chat: L('At every step, one chat per incident keeps everyone on the same page.',
+          'Em cada passo, uma conversa por incidente mantém todos alinhados.',
+          'どの段階でも、インシデントごとのチャットで全員が同じ情報を共有します。'),
+        why: L('Today these steps live in separate tools and phone calls. We want to see what changes when they work as one system.',
+          'Hoje estes passos vivem em ferramentas separadas e chamadas telefónicas. Queremos ver o que muda quando funcionam como um só sistema.',
+          '現在、これらの段階は別々のツールや電話に分かれています。それらがひとつのシステムとして動いたら何が変わるのかを確かめたいのです。'),
         stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
         now: L('Now', 'Agora', '現在'),
-        stage1: L('Forest Fire Watch is now an alpha version, shared with a small group of experts. Many tools and technologies already tackle each of these problems. We still wanted to try one integrated system.',
-          'O Forest Fire Watch é agora uma versão alfa, partilhada com um grupo restrito de especialistas. Já existem muitas ferramentas e tecnologias para cada uma destas questões. Mesmo assim, quisemos testar um sistema integrado.',
-          'Forest Fire Watchは現在アルファ版で、限られた専門家の方々に公開しています。それぞれの課題に取り組むツールや技術はすでに数多くありますが、それでも統合されたシステムを試したいと考えました。'),
-        stage2: L('Our goal in these interviews: hear from people with real experience fighting fires or planning prevention and resources. However much we read, only that experience tells us if the app makes sense and what we missed. If we invited you to a feedback session, that is why: we want your view.',
-          'O nosso objetivo nestas entrevistas: ouvir quem tem experiência real no combate a incêndios ou no planeamento da prevenção e dos meios. Por muito que tenhamos lido, só essa experiência nos diz se a app faz sentido e o que nos escapou. Se foi convidado para uma sessão de feedback, é por isso: queremos a sua opinião.',
-          'このインタビューの目的は、消火活動や予防・資源計画に実際に携わってきた方々の声を聞くことです。どれだけ文献を読んでも、このアプリが意味を持つのか、何を見落としているのかは、その経験なしにはわかりません。フィードバックセッションにお招きしたのはそのためです。ぜひご意見をお聞かせください。'),
+        stage1: L('Forest Fire Watch is an alpha version, shared with a small group of experts. Many tools already tackle parts of this problem; we wanted to try one integrated system.',
+          'O Forest Fire Watch é uma versão alfa, partilhada com um grupo restrito de especialistas. Muitas ferramentas já respondem a partes deste problema; quisemos testar um sistema integrado.',
+          'Forest Fire Watchはアルファ版で、限られた専門家の方々に公開しています。この課題の一部に取り組むツールは数多くありますが、私たちは統合されたシステムを試したいと考えました。'),
+        stage2: L('Only people with real experience in firefighting, prevention and resource planning can tell us if it makes sense and what we missed. If we invited you to a feedback session, that is why: we want your view.',
+          'Só quem tem experiência real no combate, na prevenção e no planeamento de meios nos pode dizer se faz sentido e o que nos escapou. Se foi convidado para uma sessão de feedback, é por isso: queremos a sua opinião.',
+          '消火活動、予防、資源計画に実際に携わってきた方だけが、これが意味を持つのか、何を見落としているのかを教えてくれます。フィードバックセッションにお招きしたのはそのためです。ぜひご意見をお聞かせください。'),
         thanks: L('Thank you.', 'Obrigado.', 'ありがとうございます。'),
         alpha: L('Alpha version.', 'Versão alfa.', 'アルファ版。')
       }
