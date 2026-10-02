@@ -627,3 +627,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Tour glow (Oct 2):** thinner and more transparent: a 1px lime line at 55% with a 14px inner glow at 40%, breathing over 3.6 s between full strength and 60% more transparent.
 - **Tour glow (Oct 2, revised):** only along the two sides of the screen, 80% of its height, centred, fading out at both ends; never across the top or bottom, so the status bar keeps the app's colour.
 - **Tour and the area picker (Oct 2):** on the region step the area picker can be opened and a region chosen inside it; the picker closes as soon as the tour moves to any other step, so each step's control is in view.
+- **Tour, list step (Oct 2):** the highlight stays on the most likely candidate (the list's first row) and never jumps between rows; a tap on any candidate row also opens it and the tour carries on from the ignition page.

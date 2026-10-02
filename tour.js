@@ -38,6 +38,13 @@
   var areaClose = function () { var b = document.querySelector('section[data-swipe-key="sc"] button[data-swipe-go]'); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } };
   var scrollEnd = function (sel) { var e = document.querySelector(sel); if (e) e.scrollTo({ top: e.scrollHeight, behavior: 'smooth' }); };
 
+  // The open incident list's most likely candidate (the first row; the list is sorted by likelihood). Only once the
+  // list is open (its blade unclipped), judged by the blade itself because the list's top fade covers its first row.
+  function listRow() {
+    var sec = document.querySelector('section[data-swipe-key="li"]'); if (!sec) return null;
+    var cp = getComputedStyle(sec).clipPath || ''; if (!/^inset\(0px/.test(cp) && cp !== 'none') return null;
+    var r0 = sec.querySelector('a.sqrow[href="Alert.dc.html"]'); return r0 && shown(r0) ? r0 : null;
+  }
   // The map step points at a circle whose summary panel has room to open whole: away from the screen sides and from
   // the top and bottom bands, closest to the upper middle of the map (the bubble then sits clear of the panel)
   function pickMarker() {
@@ -67,10 +74,10 @@
       t: ['Pick an incident on the map', 'Escolha um incidente no mapa'],
       b: ['Tap any circle for a short summary, then View.', 'Toque num círculo para um resumo, depois em Ver.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
-      skip: function () { return shown(q('section[data-swipe-key="li"] a.sqrow', null, true), true) === true; },
+      skip: function () { return !!listRow(); },
       t: ['…or from the list', '…ou na lista'],
       b: ['Tap here to open every candidate and fire in this region.', 'Toque aqui para abrir todos os candidatos e incêndios desta região.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] a.sqrow[href="Alert.dc.html"]', null, true); }, strict: true,
+    { page: 'Main.dc.html', mode: 'tap', find: listRow, lock: true, also: 'section[data-swipe-key="li"] a.sqrow[href="Alert.dc.html"]',   // any candidate row carries on
       t: ['Open the demo ignition', 'Abra a ignição de demonstração'],
       b: ['We chose the most likely candidate for this tour. Tap it.', 'Escolhemos o candidato mais provável para esta visita. Toque nele.'] },
 
@@ -307,7 +314,7 @@
     if (st.skip && st.skip()) { go(i + 1); return; }
     if (st.mode === 'until' && st.until && st.until()) { go(i + 1); return; }
     if (st.auto && Date.now() - (window.__wfTourAuto || 0) > 2600 && Date.now() - seen > 2200) { window.__wfTourAuto = Date.now(); drive(); }
-    var el = st.find ? st.find() : null;
+    var el = st.lock && lockEl && lockEl.isConnected && lockI === i ? lockEl : (st.find ? st.find() : null); if (st.lock && el) { lockEl = el; lockI = i; }
     var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); el.scrollIntoView({ block: vOut ? 'center' : 'nearest', inline: hOut ? 'center' : 'nearest', behavior: 'smooth' }); } catch (e) {} }
     if (el) { var sh1 = shown(el, st.strict); if (sh1 !== true && !(sh1 === 'part' && scrolled)) el = null; }
     var late = st.find && !el && Date.now() - seen > (st.mode === 'until' && !s.b ? 1e9 : s.b ? 1500 : 9000);
@@ -315,7 +322,7 @@
     curEl = el; draw(i, st, el, late); window.__wfTour.el = el; window.__wfTour.i = i;
   }
   // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
-  var selfTap = false;
+  var selfTap = false, lockEl = null, lockI = -1;
   function drive() {
     var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { return !x.disabled; });
     if (!b) { var W = ['Move to', 'Passar a', 'Air support', 'Meio aéreo', 'Close fire', 'Encerrar incêndio'];
@@ -332,7 +339,7 @@
     var hv = e.target && e.target.closest && e.target.closest('#wf-hapov');
     if (hv && hv.__t) { if (hv.__t.closest && hv.__t.closest('#wf-tour')) return true; e = { target: hv.__t, clientX: e.clientX, clientY: e.clientY, changedTouches: e.changedTouches }; }
     // the control is looked up again at the moment of the touch: maps and lists redraw their items while touched
-    var s = get(), st = s && S[s.i], el = st && st.page === PAGE && st.find ? st.find() : null; if (!el && curEl && curEl.isConnected) el = curEl;
+    var s = get(), st = s && S[s.i], el = st && st.page === PAGE ? (st.lock && lockEl && lockEl.isConnected ? lockEl : st.find ? st.find() : null) : null; if (!el && curEl && curEl.isConnected) el = curEl;
     if (st && st.also && e.target && e.target.closest && e.target.closest(st.also)) return true;   // e.g. View on the map summary
     if (!el) return false;
     if (el === e.target || el.contains(e.target)) return true;
@@ -345,7 +352,7 @@
   // a tap on the control a 'tap' step points at moves the tour on (the tap itself still does its job)
   document.addEventListener('click', function (e) {
     var s = get(); if (!s) return; var st = S[s.i]; if (!st || st.mode !== 'tap' || st.page !== PAGE || !st.find) return;
-    var el = st.find(); if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;   // a tap on a control that is still disabled doesn't count
+    var el = st.lock && lockEl && lockEl.isConnected ? lockEl : st.find(); if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;   // a tap on a control that is still disabled doesn't count
     // the tap is on the control, or lands inside its area (some map bands pass taps through to the control underneath)
     var r = el.getBoundingClientRect(), inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom && (e.clientX || e.clientY);
     if (el === e.target || el.contains(e.target) || inside) { go(s.i + 1); setTimeout(tick, 60); }
