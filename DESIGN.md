@@ -598,3 +598,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Confirm fire? dialog: "Chat with the team first" spans the full width, 48px tall like the buttons below (17px semibold, centred, chat icon kept).
 
 - Full-screen map legend (stacked chips, every map): all chips share one width, set by the longest; counts right-aligned at the chip's end (8px min from the label).
+
+- Map legend, layer off (every map): the chip keeps its normal marker shape, drawn in middle grey (#8E8E93) at 20% opacity (no colour), and the chip background is 10% darker (#DADADF; dark theme #1E1E21). Layer on: unchanged.
