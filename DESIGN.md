@@ -588,3 +588,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Report night ignition (Oct 2, replaces the tag on the time card):** its own card under the time card, 8px apart, the same shape as the GPS and time cards (white, 16px corners, 56px), its text and a shield icon in the Resolving blue (#1F64A6).
 - **Report night ignition (Oct 2, later; replaces the card):** a floating glass pill like Please dispatch resources, just below it (or in its place when there is nothing to dispatch), in the Resolving blue with the moon on the right; Situation tab only. Both pills now read in Portuguese too.
 - **Login version date (Oct 2, automatic):** the date under "Alpha version" follows the app's last change: it reads version.txt, which every design change rewrites (the automatic data updates leave it alone). Day, short month, year in the app language ("2 Oct 2026", "2 out 2026").
+
+- Dispatch, Crews tab of a confirmed fire: while nothing is chosen, the AI suggested pack card sits above Add resources (8px gap), same card as in the configuration view.
+- Floating pills ("Please dispatch resources", "Report night ignition") share one width: min(320px, 100% − 64px), content centred.
