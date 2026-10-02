@@ -183,6 +183,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 .wf-heli-t{animation:wfHeliT 6s ease infinite}
 @keyframes wfHeli{0%,62%{transform:rotate(0);filter:none}68%{transform:rotate(-22deg);filter:drop-shadow(0 0 14px rgba(var(--wf-y-rgb),.9)) drop-shadow(0 0 28px rgba(var(--wf-y-rgb),.6))}72%{transform:rotate(-17deg)}76%{transform:rotate(-20deg);filter:drop-shadow(0 0 14px rgba(var(--wf-y-rgb),.9)) drop-shadow(0 0 28px rgba(var(--wf-y-rgb),.6))}86%{transform:rotate(3deg)}91%{transform:rotate(-1deg)}96%,100%{transform:rotate(0);filter:none}}
 @keyframes wfHeliT{0%,62%,96%,100%{text-shadow:none}68%,86%{text-shadow:0 0 22px rgba(var(--wf-y-rgb),.9),0 0 44px rgba(var(--wf-y-rgb),.6)}}
+.wf-cable{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 /* Helicopter rotor (Oct 2): two moments, no transition, looping: full width, then 2px at the mast, then full again */
 .wf-rot{animation:wfRot .3s step-end infinite}.wf-rot2{opacity:0;animation:wfRot2 .3s step-end infinite}
 @keyframes wfRot{0%{opacity:1}50%{opacity:0}}@keyframes wfRot2{0%{opacity:0}50%{opacity:1}}
@@ -292,7 +293,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap">{{barSub}}</span>
       </button>
       <!-- Quick tour: a helicopter with "Tour" under it, bottom right of the bottom blade, level with the blade's title -->
-      <button type="button" class="opt" data-wf-tourbtn="1" onClick="{{tourGo}}" aria-label="{{tourAria}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex-shrink: 0; min-width: 56px; height: 56px; margin: 24px 4px 0 0; padding: 0 4px; border: 0; border-radius: 16px; background: transparent; color: #3A3A3C; font: inherit; cursor: pointer">
+      <button type="button" class="opt" data-wf-tourbtn="1" onClick="{{tourGo}}" aria-label="{{tourAria}}" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex-shrink: 0; min-width: 56px; height: 56px; margin: 24px 4px 0 0; padding: 0 4px; border: 0; border-radius: 16px; background: transparent; color: #3A3A3C; font: inherit; cursor: pointer">
         <svg class="wf-heli" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="wf-rot" d="M2.5 5h15"></path><path class="wf-rot2" d="M9.79 5h0.42"></path><path d="M10 5v3M5 8h8a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2H8a3 3 0 0 1-3-3Z M13 8.2V12h3.9M17 11.5h4.5M21.5 9.5v4M7 19h9.5M9 15v4M14 15v4"></path></svg>
         <span class="wf-heli-t" style="font-size: 11px; font-weight: 600; line-height: 14px; white-space: nowrap">{{tourTxt}}</span>
       </button>
@@ -632,6 +633,53 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 </div>
 </x-dc>
+<script>
+// Tour helicopter's bucket line (Oct 2): a 0.8px cable hangs from the belly through the label and below, with a water bucket at its end
+// like firefighting helicopters. It is a damped pendulum: it sways gently side to side on its own, and when the helicopter dips its
+// nose the hook moves and the cable and bucket react to that motion (pivot acceleration), then settle back into the sway.
+(function () {
+  var NS = 'http://www.w3.org/2000/svg', L = 34, G = 520, C = 0.8, W0 = Math.sqrt(G / L), WW = W0 * 0.85, A = 0.5;
+  var HOOK = [11.5 * 28 / 24, 15 * 28 / 24], ORG = [14, 11.2]; // belly hook and the icon's rotation origin, in px of the 28px icon
+  var still = matchMedia('(prefers-reduced-motion: reduce)');
+  var st = null, last = 0, t = 0;
+  function build(btn) {
+    var o = document.createElementNS(NS, 'svg'); o.setAttribute('class', 'wf-cable'); o.setAttribute('aria-hidden', 'true');
+    o.innerHTML = '<line stroke="currentColor" stroke-width="0.8" stroke-linecap="round"></line>' +
+      '<g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"><path d="M-2.4 0L2.4 0M-1.2 -1.6L-2.4 0M1.2 -1.6L2.4 0"></path><path d="M-3 0h6l-0.9 5.2a1.4 1.4 0 0 1 -1.4 1.1h-1.4a1.4 1.4 0 0 1 -1.4 -1.1Z" fill="rgba(var(--wf-y-rgb),.18)"></path></g>';
+    btn.style.position = 'relative'; btn.appendChild(o);
+    return { btn: btn, o: o, ln: o.firstChild, bk: o.lastChild, phi: 0, w: 0, pp: null, pv: null };
+  }
+  function frame(now) {
+    requestAnimationFrame(frame);
+    var btn = document.querySelector('[data-wf-tourbtn]');
+    if (!btn) { st = null; return; }
+    if (!st || st.btn !== btn || !st.o.isConnected) st = build(btn);
+    var heli = btn.querySelector('.wf-heli'), lab = btn.querySelector('.wf-heli-t'); if (!heli || !lab) return;
+    var dt = Math.min(0.033, last ? (now - last) / 1000 : 0.016); last = now; t += dt;
+    // where the icon sits in the button (layout, not transform), and its current rotation from the CSS animation
+    var br = btn.getBoundingClientRect(), lr = lab.getBoundingClientRect(), orr = st.o.getBoundingClientRect(), ix = br.left - orr.left + (br.width - 28) / 2, iy = lr.top - orr.top - 2 - 28;
+    var cs = getComputedStyle(heli), m = cs.transform, a = 0;
+    if (m && m !== 'none') { var v = m.match(/-?[\d.e]+/g); if (v) a = Math.atan2(+v[1], +v[0]); }
+    var dx = HOOK[0] - ORG[0], dy = HOOK[1] - ORG[1];
+    var px = ix + ORG[0] + dx * Math.cos(a) - dy * Math.sin(a), py = iy + ORG[1] + dx * Math.sin(a) + dy * Math.cos(a);
+    if (!isFinite(st.phi) || !isFinite(st.w)) { st.phi = 0; st.w = 0; st.pp = st.pv = null; }
+    if (still.matches || dt < 0.004) { if (still.matches) { st.phi = 0; st.w = 0; } }
+    else {
+      var ax = 0, ay = 0;
+      if (st.pp) { var vx = (px - st.pp[0]) / dt, vy = (py - st.pp[1]) / dt; if (st.pv) { ax = (vx - st.pv[0]) / dt; ay = (vy - st.pv[1]) / dt; } st.pv = [vx, vy]; }
+      st.pp = [px, py];
+      ax = Math.max(-4000, Math.min(4000, ax)); ay = Math.max(-4000, Math.min(4000, ay));
+      var acc = -((G + ay) * Math.sin(st.phi) + ax * Math.cos(st.phi)) / L - C * st.w + A * Math.sin(WW * t);
+      st.w += acc * dt; st.phi += st.w * dt;
+    }
+    var bx = px + L * Math.sin(st.phi), by = py + L * Math.cos(st.phi);
+    st.ln.setAttribute('x1', px.toFixed(2)); st.ln.setAttribute('y1', py.toFixed(2)); st.ln.setAttribute('x2', bx.toFixed(2)); st.ln.setAttribute('y2', by.toFixed(2));
+    st.bk.setAttribute('transform', 'translate(' + bx.toFixed(2) + ' ' + by.toFixed(2) + ') rotate(' + (-st.phi * 180 / Math.PI).toFixed(2) + ')');
+    st.o.style.filter = cs.filter; // glows with the helicopter
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
 <script>window.addEventListener('pageshow', function (e) { if (e.persisted) { try { sessionStorage.removeItem('wf-prefs-open'); } catch (x) {} } });</script>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
