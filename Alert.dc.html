@@ -182,7 +182,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <!-- The projection switcher on the full-screen map too, in the dark map-control style (dark glass, white options, the
          hi-vis yellow on the chosen one), lined up with the map's buttons at the bottom, left of them -->
-    <div role="tablist" aria-label="Projection" class="wf-seg" data-wf-cpfull="1" style="position: absolute; left: 16px; right: 136px; top: -200px; z-index: 30; display: {{cp.fullD}}; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
+    <div role="tablist" aria-label="Projection" class="wf-seg" data-wf-cpfull="1" style="position: absolute; left: 16px; right: 68px; bottom: 20px; z-index: 30; display: {{cp.fullD}}; background: rgba(0,0,0,0.58); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 4); transform: translateX({{cp.x}})"><span class="segblob"></span></span>
       <sc-for list="{{cp.tabs}}" as="tb" hint-placeholder-count="4">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fg}}">{{tb.label}}</button>
@@ -907,11 +907,7 @@ class Component extends DCLogic {
     const on = o.gpsD && o.gpsD !== 'none', HZ = [0, 1, 3, 6], h = on ? ((this.state || {}).chz || 0) : 0;
     o.cp = { d: on ? 'grid' : 'none', fullD: on && o.downPE === 'none' ? 'grid' : 'none', gpsMt: on ? '0' : '-40px', h: String(h), x: (HZ.indexOf(h) * 100) + '%',
       tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fg: k === h ? '#1C1C1E' : '#FFFFFF', pick: () => { if (((this.state || {}).chz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chz: k }); } })) };
-    // full screen: line the switcher up with the map's buttons (same centre line), left of the first one, once laid out
-    clearTimeout(this._cpT); this._cpT = setTimeout(() => { try { const sw = document.querySelector('[data-wf-cpfull]'); if (!sw || sw.offsetParent === null) return;
-      const host = sw.parentElement.getBoundingClientRect(), bs = [...sw.parentElement.querySelectorAll('button')].filter((b) => /Re-centre the map|Send drone|Close map|Exit full screen|Full screen/.test(b.getAttribute('aria-label') || '') && b.offsetWidth).map((b) => b.getBoundingClientRect()).filter((r) => r.bottom > host.top + host.height / 2);
-      if (!bs.length) return; bs.sort((a, b) => b.bottom - a.bottom); const left = Math.min(...bs.map((r) => r.left)), mid = (bs[0].top + bs[0].bottom) / 2,   /* the controls stack on the right: level with the lowest one */ k = host.width / (sw.parentElement.offsetWidth || host.width) || 1;
-      sw.style.top = ((mid - host.top) / k - sw.offsetHeight / 2) + 'px'; sw.style.right = ((host.right - left) / k + 8) + 'px'; } catch (e) {} }, 60);
+    /* full screen: the switcher sits left of the stacked round controls, level with the lowest (fixed: bottom 20px, right 68px) */
     return o;
   }
   _renderVals0() {
