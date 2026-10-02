@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
-<script src="i18n.js?v=133"></script>
+<script src="i18n.js?v=134"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -47,9 +47,9 @@ a{color:#0062CC}a:hover{color:#004FA3}
     <svg width="37" height="45" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 0 8px rgba(0,0,0,0.35))"><path data-wf-eye="1" style="fill: var(--wf-y)" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" style="stroke: var(--wf-y)" stroke-width="1.1" stroke-linecap="round"></path></svg>
     <h1 style="margin: 56px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: var(--wf-y); text-shadow: 0 0 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.5)">Log in to your account</p>
-    <!-- The build stage: the label (15px regular) in the hi-vis yellow, then its date in normal text (17px regular, white) -->
+    <!-- The build stage: the label (15px regular) in the hi-vis yellow, then "Last update" and its date in normal text (17px regular, white) -->
     <p style="margin: 16px 0 0; font-size: 15px; line-height: 20px; color: var(--wf-y); text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">Alpha version</p>
-    <p style="margin: 0; font-size: 17px; line-height: 22px; color: #FFFFFF; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)" data-wf-verdate="1">2 Oct 2026</p>
+    <p style="margin: 0; font-size: 17px; line-height: 22px; color: #FFFFFF; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)" data-wf-verdate="1">Last update: 2 Oct 2026</p>
   </div>
   </div>
 
@@ -441,10 +441,10 @@ class Component extends DCLogic {
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
       xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
       dOp: s.phase === 'out' ? 0 : 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
-      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#545458', userFs: sel ? '17px' : '19px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
+      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#545458', userFs: '17px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
       pwBlur: (e) => { if (!sel) { try { e.target.blur(); } catch (x) {} } },
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
-      hint: sel ? sel[3] + (sel[4] ? ' · ' + sel[4] : '') + '. ' + (sel[7] ? sel[7] + ' ' : '') + 'Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[9] || sel[0]] + '.' : 'Tap Username to choose a demo profile.',
+      hint: sel ? sel[3] + (sel[4] ? ' · ' + sel[4] : '') + '. ' + (sel[7] ? sel[7] + ' ' : '') + 'Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[9] || sel[0]] + '.' : 'Tap username to choose a demo profile.',
       selPhoto: sel ? 'url("' + (sel[10] || uni(sel[0], sel[3]) || sel[8]) + '")' : 'none', selCode: sel ? sel[1] : '', selOrg: sel ? sel[5] : '', selName: sel ? sel[3] : '', selRole: sel ? sel[4] : '', selSum: sel ? sel[7] : '',
       selAccess: sel ? 'All features. ' + ({ design: 'All regions', admin: 'All regions', pt: 'Portugal region only', ca: 'California region only', nv: 'Nevada region only', amz: 'Amazônia Legal region only' })[sel[9] || sel[0]] : '',   // mini card: organisation, then access on a row of its own
       goD: sel ? 'flex' : 'none', offD: sel ? 'none' : 'flex',
@@ -496,10 +496,10 @@ class Component extends DCLogic {
 </script>
 <script>
 // The date under "Alpha version" follows the app's last change: version.txt is rewritten with every design change
-// (the data updates don't touch it), so the date moves on by itself. Day, short month, year: "2 Oct 2026" / "2 out 2026".
+// (the data updates don't touch it), so the date moves on by itself. "Last update: 2 Oct 2026" / "Última atualização: 2 out 2026".
 (function () {
   var M = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], pt: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'] };
-  function put(t) { var d = new Date(t * 1000); if (isNaN(d)) return; var pt = window.__wfLang === 'pt', txt = d.getDate() + ' ' + M[pt ? 'pt' : 'en'][d.getMonth()] + ' ' + d.getFullYear();
+  function put(t) { var d = new Date(t * 1000); if (isNaN(d)) return; var pt = window.__wfLang === 'pt', txt = (pt ? 'Última atualização: ' : 'Last update: ') + d.getDate() + ' ' + M[pt ? 'pt' : 'en'][d.getMonth()] + ' ' + d.getFullYear();
     var set = function () { var el = document.querySelector('[data-wf-verdate]'); if (el && el.textContent !== txt) el.textContent = txt; }; set(); setInterval(set, 500); }   /* kept as the screen redraws or translates */
   fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (v) { var n = parseInt(String(v).trim(), 10); if (n > 1e9) put(n); }).catch(function () {});
 })();

@@ -608,3 +608,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - All US states enabled in the region picker (same NIFC fires, FIRMS candidates and OSM stations the app already loaded for California, so no extra download). A single-country view (Portugal) costs nothing more; the whole-US view is about as heavy as the whole-Brazil view.
 
 - Map legend: at least one layer always stays on; tapping the last one that is on does nothing (every map).
+- **Login:** under "Alpha version", "Last update: 2 Oct 2026" (the date of the last design change). The empty Username field uses the field size (17px, like Password). The hint under the form reads "Tap username to choose a demo profile." (sentence case).
