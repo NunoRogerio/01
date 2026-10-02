@@ -860,7 +860,7 @@ class Component extends DCLogic {
   }
   // Card groups can be trimmed by the user: the grey + tile at the end of a group opens a list of that group's cards with
   // toggles. Hidden cards are kept per group on this phone.
-  wfHidden(grp) { let v = null, sn = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + grp) || 'null'); sn = JSON.parse(localStorage.getItem('wf-seen-' + grp) || 'null'); } catch (e) {} const opt = ((this._grpAll || {})[grp] || []).filter((m) => m.opt).map((m) => m.key); if (!Array.isArray(v)) return opt; const NEW = ['dew', 'vis', 'cloud', 'uv', 'press', 'canopy', 'land', 'water', 'lastb', 'soil', 'drops', 'line', 'evac', 'cost', 'hot', 'conf', 'hits', 'homes', 'stn', 'prot']; return v.concat(opt.filter((k) => v.indexOf(k) < 0 && (Array.isArray(sn) ? sn.indexOf(k) < 0 : NEW.indexOf(k) >= 0))); }   // extra cards start hidden
+  wfHidden(grp) { let v = null, sn = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + grp) || 'null'); sn = JSON.parse(localStorage.getItem('wf-seen-' + grp) || 'null'); } catch (e) {} const opt = ((this._grpAll || {})[grp] || []).filter((m) => m.opt).map((m) => m.key); if (!Array.isArray(v)) return opt; const NEW = ['dew', 'vis', 'cloud', 'uv', 'press', 'canopy', 'land', 'water', 'lastb', 'soil', 'drops', 'line', 'evac', 'cost', 'hot', 'conf', 'hits', 'homes', 'stn', 'prot', 'crCrews', 'crrelief', 'crwater', 'crsoon', 'crfresh', 'crshift', 'crtank', 'crdrop']; return v.concat(opt.filter((k) => v.indexOf(k) < 0 && (Array.isArray(sn) ? sn.indexOf(k) < 0 : NEW.indexOf(k) >= 0))); }   // extra cards start hidden
   wfGrpNote(grp, all) { this._grpAll = this._grpAll || {}; this._grpAll[grp] = all.map((m) => ({ key: m.key, l: m.l, opt: !!m.opt })); const H = this.wfHidden(grp); return (k) => H.indexOf(k) < 0; }
   wfPicker() {
     const st = this.state || {}, g = st.pick || null, all = (this._grpAll || {})[g] || [], H = g ? this.wfHidden(g) : [];
@@ -1227,7 +1227,7 @@ class Component extends DCLogic {
     if (o.pgMapD !== 'block') return Object.assign(o, { ft: { d: 'none', x: '0%', fireSel: 'true', resSel: 'false', goFire: () => {}, goRes: () => {} } });
     const tab0 = st.ftab || (st.reinforce ? 'res' : 'fire'), res = tab0 === 'res', go = (t) => () => { if (tab0 === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
     // Something that needs attention on the other tab: a red dot (no count) on its label
-    const crewAlert = (o.deployed || []).some((d) => d.fx && ((d.sum || []).some((k) => k.c === '#B0001A') || (d.conf && !(d.groups || []).length)));
+    const crewAlert = (o.deployed || []).some((d) => d.fx && d.conf && !(d.groups || []).length);
     // Situation needs attention only for something to act on that you have not seen yet: people at risk not evacuated, while you
     // were on Crews. Seeing Situation with it clears the dot until it changes.
     const sitNow = !!(o.cc && Array.isArray(o.cc.med) && o.cc.med.some((m) => m.key === 'pop' && m.tag === 'Not evacuated'));
@@ -1253,6 +1253,17 @@ class Component extends DCLogic {
     o.ft = { d: 'grid', x: res ? 'calc(100% + 4px)' : '0%',   /* the bar is 80% of its tab's width, centred under it */ fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
       resDot: !res && crewAlert ? 'block' : 'none', fireDot: res && sitAlert ? 'block' : 'none',
       resAria: 'Crews' + (!res && crewAlert ? '. Needs attention' : ''), fireAria: 'Situation' + (res && sitAlert ? '. Needs attention' : '') };
+    // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
+    // Vehicles and People are already there (Vehicles, Personnel), so only the crew-specific figures join.
+    if (o.cc && Array.isArray(o.cc.med) && o.cc.medD !== 'none') { const fx = (o.deployed || []).find((d) => d.fx); const none = { svgD: 'none', segD: 'none', dot: '', line: '', lineC: 'none', area: '', areaFill: 'none', bars: '', barC: 'none', bar2: '', bar2C: 'none', segs: [], aria: '' };
+      const cr = fx && (fx.cnt || [])[1] ? [{ key: 'crCrews', l: 'Crews', v: fx.cnt[1].v, c: '#3A3A3C' }] : [];
+      const ck = cr.concat(((fx && fx.sum) || []).map((k) => ({ key: 'cr' + (k.key ? k.key : /relief/i.test(k.l) ? 'relief' : /water/i.test(k.l) ? 'water' : k.l), l: k.l, v: k.v, c: k.c || '#3A3A3C' })));
+      if (ck.length) { const G = this._grpAll = this._grpAll || {}, known = (G.kpi || []).map((m) => m.key);
+        G.kpi = (G.kpi || []).concat(ck.filter((m) => known.indexOf(m.key) < 0).map((m) => ({ key: m.key, l: m.l, opt: true })));
+        const H = this.wfHidden('kpi'); let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-kpi-order') || 'null'); } catch (e) {} const ix = (k) => { const i = Array.isArray(ord) ? ord.indexOf(k) : -1; return i < 0 ? 99 : i; };
+        const add = ck.filter((m) => H.indexOf(m.key) < 0).map((m) => { const q = /^([~<>≈]?-?[\d.,]+%?)\s+(.+)$/.exec(String(m.v)); return { note: 'Estimate', tag: '', sub: '', tagFg: '', tagBg: '', tagD: 'none', subD: 'none', tagRole: 'presentation', tagGo: null, tagAria: '', tagCur: 'default', key: m.key, l: m.l, v: m.v,
+          ...(q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }), ...this.wfKpiDrag(m.key), noteD: 'block', sep: '0', basis: '0', mt: '0', k: Math.max(16, Math.min(30, Math.floor(106 / Math.max(1, (q ? q[1] : String(m.v)).length * 0.6)))) + 'px', padR: '8px', padL: '8px', ch: Object.assign({ dot: '' }, none) }; });
+        if (add.length) { const med = o.cc.med.concat(add).map((m, i) => ({ m, i })).sort((x, y) => (ix(x.m.key) - ix(y.m.key)) || (x.i - y.i)).map((x) => x.m); o.cc = Object.assign({}, o.cc, { med, medD: 'flex' }); } } }
     // Crews: only the crews section (the two wear-out alerts, then adding, editing and removing stations); everything else is Situation
     let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
     o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
@@ -1266,7 +1277,7 @@ class Component extends DCLogic {
       const vis = this.wfGrpNote('crew', all); let ord = null; try { ord = JSON.parse(localStorage.getItem('wf-order-crew') || 'null'); } catch (e) {} ord = Array.isArray(ord) ? ord : all.map((m) => m.key);
       const ix = (k) => { const i = ord.indexOf(k); return i < 0 ? 99 : i; }, colW = 98;
       const kc = all.filter((m) => vis(m.key)).sort((a, b) => ix(a.key) - ix(b.key)).map((m) => ({ ...m, k: Math.max(16, Math.min(30, Math.floor(colW / Math.max(1, String(m.v).length * 0.6)))) + 'px', ...this.wfKpiDrag(m.key, 'crew') }));
-      return { ...d, kc, kcD: all.length ? 'flex' : 'none', kcAdd: () => this.setState({ pick: 'crew' }), estD: (d.sum || []).length ? 'flex' : 'none', addMt: all.length && d.addD === 'flex' ? '56px' : (d.addMt || '0') }; });
+      return { ...d, kc: [], kcD: 'none', kcAdd: () => {}, estD: 'none', addMt: '0', addMt2: d.aiD === 'flex' ? '8px' : '0' }; });   /* crew figures moved to Situation's Key figures (optional) */
     if (res) {
       o.pgMapD = 'none'; o.mapOp = 0; o.mapPE = 'none'; o.kpiD = 'none'; o.kpiTopD = 'none'; o.kpiRowD = 'none'; o.ulMt = '40px';   /* Crews tab: its first element 56px under the tabs (16px page padding + 40) */
       if (o.cc) o.cc = Object.assign({}, o.cc, { d: 'none' });
