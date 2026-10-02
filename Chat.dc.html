@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=145"></script>
+<script src="prefs.js?v=146"></script>
 <script src="i18n.js?v=134"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=48"></script>
@@ -542,7 +542,7 @@ class Component extends DCLogic {
       simNote: L('Simulation: people, times, area and population figures come from the role-played scenario, not from live data.', 'Simulação: pessoas, tempos, área e população vêm do cenário encenado, não de dados em direto.') };
     const FOR = (window.__wfPhotos || [{ f: 'forest-1.webp', by: 'Mari Potter' }]).map((p) => [p.f, p.by]),   // this visit's random order (fit.js)
       fh = (k) => FOR[String(k || '').split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 0) % FOR.length];
-    const hero = fh(s.key), heroBg = 'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.42) 45%, rgba(0,0,0,0.66) 100%), url("assets/splash/' + hero[0] + '") center / cover', heroImg = 'url("assets/splash/' + hero[0] + '")', heroCredit = L('Photo: ', 'Foto: ') + hero[1] + ' / Unsplash';
+    const hero = fh(s.key), heroBg = 'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.66) 100%), url("assets/splash/' + hero[0] + '") center / cover', heroImg = 'url("assets/splash/' + hero[0] + '")', heroCredit = L('Photo: ', 'Foto: ') + hero[1] + ' / Unsplash';
     const ic = { trophy: C ? C.ICON.trophy : '' }, winBg = document.documentElement.classList.contains('wf-dark') ? 'linear-gradient(160deg, #3A3A20 0%, #1F3A28 100%)' : 'linear-gradient(160deg, #FFF6D6 0%, #E4F3E8 100%)';
     if (!C) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, groups: [], noChats: true, listSub: '', listTitle: t.chats };
     // Stage colours: light tints by day; in dark mode a deep tint of the same colour and a lighter shade for text
