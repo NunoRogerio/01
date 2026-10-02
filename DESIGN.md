@@ -596,3 +596,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - Crews tab: no mini KPI tiles (and no "Estimate" label). The crew figures (Crews, Crews need relief, Tenders low on water, Relief due within 3 h, Fresh crews, Longest shift, Water in tanks, Aircraft dropping) are optional cards in Situation's Key figures, off by default; the user switches them on from the + tile. Vehicles and People are not repeated there (Key figures already has Vehicles and Personnel). The Crews tab's red dot now means only "confirmed fire with no crews".
 - Confirm fire? dialog: "Chat with the team first" spans the full width, 48px tall like the buttons below (17px semibold, centred, chat icon kept).
+
+- Full-screen map legend (stacked chips, every map): all chips share one width, set by the longest; counts right-aligned at the chip's end (8px min from the label).
