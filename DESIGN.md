@@ -591,3 +591,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - Dispatch, Crews tab of a confirmed fire: while nothing is chosen, the AI suggested pack card sits above Add resources (8px gap), same card as in the configuration view.
 - Floating pills ("Please dispatch resources", "Report night ignition") share one width: min(320px, 100% − 64px), content centred.
+
+- Confirm fire? dialog: buttons read "Dismiss" / "Confirm" (the title already names the fire; redundant-words rule). Standalone buttons with no such title (drone view, chat chips) keep "Dismiss fire" / "Confirm fire".
