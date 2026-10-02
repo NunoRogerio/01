@@ -36,6 +36,17 @@
   var closeIn = function (sec) { var s = document.querySelector(sec); if (!s) return; var b = [].slice.call(s.querySelectorAll('button')).find(function (x) { return x.querySelector('path[d^="M6 6"]'); }); if (b) b.click(); };
   var scrollEnd = function (sel) { var e = document.querySelector(sel); if (e) e.scrollTo({ top: e.scrollHeight, behavior: 'smooth' }); };
 
+  // The map step points at a circle whose summary panel has room to open whole: away from the screen sides and from
+  // the top and bottom bands, closest to the upper middle of the map (the bubble then sits clear of the panel)
+  function pickMarker() {
+    var sel = document.querySelector('[data-wf-maproot] button.tipwrap.igsel'); if (sel && document.querySelector('[data-wf-pop]') && shown(sel) === true) return sel;
+    var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap')), vw = VW(), vh = VH(), best = null, bs = 1e9;
+    L.forEach(function (b) { if (shown(b) !== true) return; var r = b.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      var sc = Math.abs(y - vh * 0.42) + Math.abs(x - vw / 2) * 0.5 + (x < 120 || x > vw - 120 ? 1000 : 0) + (y < 260 || y > vh - 300 ? 1000 : 0);
+      if (sc < bs) { bs = sc; best = b; } });
+    return best;
+  }
+
   // ---- the steps --------------------------------------------------------------------------------------------
   // t: the action (title); b: one or two short sentences; mode: 'tap' | 'next' | 'until'
   var S = [
@@ -50,7 +61,7 @@
       t: ['Show more on the map', 'Mostre mais no mapa'],
       b: ['Grey chips are hidden layers, like active fires or fire stations. Tap one to show it.',
           'As etiquetas cinzentas são camadas escondidas, como incêndios ativos ou quartéis. Toque numa para a mostrar.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('[data-wf-maproot] button.tipwrap'); },
+    { page: 'Main.dc.html', mode: 'next', find: pickMarker, also: '[data-wf-pop] a.wf-pri',
       t: ['Pick an incident on the map', 'Escolha um incidente no mapa'],
       b: ['Tap any circle for a short summary, then View.', 'Toque num círculo para um resumo, depois em Ver.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
@@ -62,6 +73,7 @@
       b: ['We chose the most likely candidate for this tour. Tap it.', 'Escolhemos o candidato mais provável para esta visita. Toque nele.'] },
 
     { page: 'Alert.dc.html', mode: 'next', find: function () { return q('[data-wf-ighdr]'); },
+      ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Now let\'s take a closer look.', 'Agora vamos ver de perto.'],
       t: ['The ignition candidate', 'O candidato a ignição'],
       b: ['Likelihood, place and detection time come first, so you can decide fast.', 'Probabilidade, local e hora da deteção primeiro, para decidir depressa.'] },
     { page: 'Alert.dc.html', mode: 'next', find: function () { return q('button.qtag'); },
@@ -77,6 +89,7 @@
       t: ['Send a drone', 'Envie um drone'],
       b: ['Its live feed replaces the map, to check the smoke from above.', 'A imagem em direto substitui o mapa, para ver o fumo de cima.'] },
     { page: 'Alert.dc.html', mode: 'next', find: function () { return q('div[role=tablist].wf-seg'); },
+      ach: ['Drone in the air. Nice!', 'Drone no ar. Boa!'], then: ['Now let\'s see where it can spread.', 'Agora vamos ver para onde pode avançar.'],
       t: ['See where it can spread', 'Veja para onde pode avançar'],
       b: ['Tap +1 h, +3 h or +6 h to see the projection.', 'Toque em +1 h, +3 h ou +6 h para ver a projeção.'] },
     { page: 'Alert.dc.html', mode: 'tap', find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
@@ -90,6 +103,7 @@
       t: ['Confirm the fire', 'Confirme o incêndio'],
       b: ['The team agrees it is a real fire.', 'A equipa confirma que é um incêndio real.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return chip(['Configure dispatch', 'Configurar despacho', '出動']); },
+      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now let\'s deal with the fire.', 'Agora vamos tratar do incêndio.'],
       t: ['Assign resources', 'Atribua meios'],
       b: ['Choose which stations send crews.', 'Escolha que quartéis enviam equipas.'] },
 
@@ -100,6 +114,7 @@
       t: ['Send the orders', 'Envie as ordens'],
       b: ['Each station gets its order.', 'Cada quartel recebe a sua ordem.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
+      ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Now back to the team.', 'Agora de volta à equipa.'],
       t: ['Back to the chat', 'Volte à conversa'],
       b: ['Tap Return once every order is through.', 'Toque em Voltar quando todas as ordens tiverem passado.'] },
 
@@ -129,6 +144,7 @@
       b: ['The tour plays the fire owner for you: it approves air support and moves the stages on until the fire is closed. Status cards show each change.',
           'A visita faz de responsável pelo incêndio: aprova o meio aéreo e avança as fases até o incêndio ser encerrado. Os cartões de estado mostram cada mudança.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('wf-trophy'); },
+      ach: ['Fire out. Outstanding work!', 'Incêndio extinto. Trabalho notável!'], then: ['Now let\'s see what it took.', 'Agora vamos ver o que foi preciso.'],
       t: ['Fire closed', 'Incêndio encerrado'],
       b: ['Tap to see the summary.', 'Toque para ver o resumo.'] },
     { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header.chview'); }, next: ['Home', 'Início'],
@@ -156,6 +172,7 @@
       t: ['Connected data sources', 'Fontes de dados ligadas'],
       b: ['Every source the app reads. Tap to see them.', 'Todas as fontes que a app lê. Toque para as ver.'] },
     { page: 'Main.dc.html', mode: 'next', next: ['Finish', 'Terminar'], before: function () { setTimeout(function () { scrollEnd('[data-wf-fadetop]'); }, 450); },
+      ach: ['Tour complete. You\'re ready!', 'Visita concluída. Está pronto!'], then: ['Now explore on your own.', 'Agora explore por si.'],
       t: ["That's the tour", 'Fim da visita'],
       b: ['Scroll down to see every source and when it last loaded. Thank you for exploring.', 'Deslize para baixo para ver cada fonte e quando foi carregada. Obrigado por explorar.'] }
   ];
@@ -168,6 +185,9 @@
     st.textContent = '#wf-tour{position:fixed;inset:0;z-index:99990;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased}' +
       '#wf-tour .tb{position:absolute;box-sizing:border-box;padding:16px;border-radius:20px;background:rgba(28,28,30,0.72);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;pointer-events:auto;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}' +
       '#wf-tour .tb.on{opacity:1;transform:none}' +
+      '#wf-tour .ta{display:inline-flex;align-items:center;gap:6px;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:6px 12px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;animation:wfach .6s cubic-bezier(.3,1.5,.5,1) both}' +
+      '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
+      '#wf-tour .tth{margin:0 0 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)}' +
       '#wf-tour .tt{margin:0;font-size:17px;font-weight:600;line-height:22px}' +
       '#wf-tour .tx{margin:4px 0 0;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty}' +
       '#wf-tour .tf{display:flex;align-items:center;gap:8px;margin-top:16px}' +
@@ -220,16 +240,18 @@
   }
   function draw(i, st, el, late) {
     build();
-    var pt = PT(), L = function (a) { return a ? (pt ? a[1] : a[0]) : ''; };
+    var pt = PT(), L = function (a) { return a ? (pt ? a[1] : a[0]) : ''; }, s0back = !!(get() || {}).b;   // achievements show when reached going forward, not when stepping back
     var key = i + '|' + (el ? 1 : 0) + '|' + (late ? 1 : 0) + '|' + (pt ? 1 : 0);
     if (key !== lastKey) {
       lastKey = key; bub.classList.remove('on');
       var nx = st.mode === 'next' || late, nl = st.next ? L(st.next) : '';
       var CH = function (d) { return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"></path></svg>'; };
-      bub.innerHTML = '<p class="tt"></p><p class="tx"></p><div class="tf"><span class="tn"></span><button type="button" class="te"></button>' +
+      var AC = st.ach && !s0back ? '<div class="ta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span></span></div><p class="tth"></p>' : '';
+      bub.innerHTML = AC + '<p class="tt"></p><p class="tx"></p><div class="tf"><span class="tn"></span><button type="button" class="te"></button>' +
         '<button type="button" class="tc tb0"' + (i ? '' : ' disabled') + '>' + CH('m15 6-6 6 6 6') + '</button>' +
         (nl && nx ? '<button type="button" class="tg"></button>' : '<button type="button" class="tc' + (nx ? ' tg' : '') + '"' + (nx ? '' : ' disabled') + '>' + CH('m9 6 6 6-6 6') + '</button>') + '</div>';
       var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
+      if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }
       bub.querySelector('.tt').textContent = L(st.t);
       bub.querySelector('.tx').textContent = late && !el ? (pt ? 'Este passo não está disponível agora. Toque em › para continuar.' : 'This step isn\'t available right now. Tap › to carry on.') : L(st.b);
       bub.querySelector('.tn').textContent = (i + 1) + (pt ? ' de ' : ' of ') + S.length;
@@ -299,10 +321,13 @@
   function allowed(e) {
     if (selfTap || !get() || !root || !root.isConnected) return true;
     if (e.target && e.target.closest && e.target.closest('#wf-tour')) return true;
-    var el = curEl; if (!el || !el.isConnected) return false;
+    // the control is looked up again at the moment of the touch: maps and lists redraw their items while touched
+    var s = get(), st = s && S[s.i], el = st && st.page === PAGE && st.find ? st.find() : null; if (!el && curEl && curEl.isConnected) el = curEl;
+    if (st && st.also && e.target && e.target.closest && e.target.closest(st.also)) return true;   // e.g. View on the map summary
+    if (!el) return false;
     if (el === e.target || el.contains(e.target)) return true;
     var p = e.changedTouches && e.changedTouches[0] || e, r = el.getBoundingClientRect();
-    return p.clientX >= r.left && p.clientX <= r.right && p.clientY >= r.top && p.clientY <= r.bottom;
+    return p.clientX >= r.left - 4 && p.clientX <= r.right + 4 && p.clientY >= r.top - 4 && p.clientY <= r.bottom + 4;
   }
   ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'click', 'contextmenu'].forEach(function (t) {
     window.addEventListener(t, function (e) { if (allowed(e)) return; e.stopPropagation(); e.stopImmediatePropagation(); if (t === 'click' || t === 'contextmenu') e.preventDefault(); }, { capture: true, passive: false });
