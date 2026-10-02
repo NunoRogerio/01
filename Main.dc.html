@@ -14,10 +14,10 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=121"></script>
+<script src="fit.js?v=122"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=147"></script>
-<script src="i18n.js?v=136"></script>
+<script src="i18n.js?v=137"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=48"></script>
 
@@ -593,6 +593,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
       </div>
+      <!-- About: the last row of the preferences, a white card like Share; opens the About screen (back returns here, panel open) -->
+      <div style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <a href="About.dc.html" class="opt" onClick="{{abt.go}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; color: #000000; font-size: 17px; text-decoration: none"><span style="flex-grow: 1; font-weight: 600">About</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg></a>
+      </div>
     </div>
     <div role="button" tabindex="0" aria-label="Close preferences" onPointerDown="{{hPf.down}}" onPointerMove="{{hPf.move}}" onPointerUp="{{hPf.up}}" onPointerCancel="{{hPf.cancel}}" onKeyDown="{{hPf.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; margin-top: auto; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
   </section>
@@ -614,6 +618,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
 </div>
 </x-dc>
+<script>window.addEventListener('pageshow', function (e) { if (e.persisted) { try { sessionStorage.removeItem('wf-prefs-open'); } catch (x) {} } });</script>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   // A panel opened from an incident screen's header (bell or profile): once it has folded away, back to that screen
@@ -861,6 +866,7 @@ class Component extends DCLogic {
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o, dsOpen: false }); } }; })(),   // one drawer open at a time
       // Share with other people: the app's own link through the phone's share sheet; without one, the link is copied
+      abt: { go: () => { try { window.sessionStorage.setItem('wf-about-from', 'prefs'); } catch (e) {} } },
       shr: (() => { const pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         return { title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}

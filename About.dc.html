@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
+<meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fire Watch">
+<meta name="theme-color" content="#F2F2F7">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png?v=4">
+<link rel="icon" href="icon-192.png?v=4">
+<script src="fit.js?v=122"></script>
+<script src="prefs.js?v=147"></script>
+<script src="i18n.js?v=137"></script>
+
+<title>About</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}img,svg{-webkit-user-drag:none}
+body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
+p{margin:0}
+</style>
+</helmet>
+<!-- About: who made the app, why, the idea in one flow, where the project stands, and the build line from Login.
+     Opened from Login (top right) and from the user preferences (last row). Back returns to the screen before. -->
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+  <!-- Header, fixed: back on the left, the logo (as in the user preferences) centred, an empty column on the right to balance it -->
+  <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; flex-shrink: 0; padding: 8px 16px 8px">
+    <a href="{{backHref}}" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="{{tx.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+    <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; justify-self: center; gap: 8px; min-width: 0; transform: scale(1.08); color: #6E6E73; font-size: 17px; font-weight: 600; letter-spacing: 0.02em; line-height: 22px; white-space: nowrap">
+      <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
+    </span>
+    <span aria-hidden="true"></span>
+  </div>
+
+  <!-- One column that scrolls freely (no snapping); groups 56px apart, each named by a group label 8px above its content -->
+  <div data-wf-page="1" style="display: flex; flex-direction: column; gap: 56px; flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 32px 16px 48px">
+
+    <!-- Title M and the introduction: who, and why -->
+    <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0">
+      <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em">{{tx.title}}</h1>
+      <div style="display: flex; flex-direction: column; gap: 16px; font-size: 17px; line-height: 22px">
+        <p>{{tx.intro1}}</p>
+        <p>{{tx.intro2}}</p>
+      </div>
+    </div>
+
+    <!-- Authors: one card each, like the profile cards on Login (name, role, organisation) -->
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
+      <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.authors}}</span>
+      <sc-for list="{{authors}}" as="a" hint-placeholder-count="2">
+        <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: #FFFFFF">
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font-size: 15px; font-weight: 600; letter-spacing: 0.02em">{{a.code}}</span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+            <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{a.name}}</span>
+            <span style="font-size: 17px; line-height: 22px">{{a.role}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{a.org}}</span>
+          </span>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- The idea: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
+      <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.idea}}</span>
+      <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
+        <p style="font-size: 17px; line-height: 22px">{{tx.goal}}</p>
+        <ol aria-label="{{tx.idea}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
+          <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px">
+              <span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center">
+                <span style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{st.ic}}"></path></svg></span>
+                <span style="display: {{st.lineD}}; flex: 1 1 auto; width: 2px; min-height: 16px; margin: 4px 0; border-radius: 999px; background: rgba(60,60,67,0.2)"></span>
+              </span>
+              <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 0 0 {{st.pb}}px">
+                <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{st.n}}. {{st.t}}</span>
+                <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{st.d}}</span>
+              </span>
+            </li>
+          </sc-for>
+        </ol>
+        <!-- Across all three steps: one chat per incident -->
+        <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: rgba(118,118,128,0.12)">
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></span>
+          <span style="font-size: 17px; line-height: 22px">{{tx.chat}}</span>
+        </div>
+        <p style="font-size: 17px; line-height: 22px">{{tx.why}}</p>
+      </div>
+    </div>
+
+    <!-- Where we are: the stages so far (the current one tagged), then what the feedback sessions are for -->
+    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
+      <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.stage}}</span>
+      <ol aria-label="{{tx.stage}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <sc-for list="{{stages}}" as="sg" hint-placeholder-count="3">
+          <li aria-current="{{sg.cur}}" style="display: flex; align-items: center; gap: 16px; min-height: 52px; padding: 12px 16px; box-sizing: border-box; border-top: {{sg.bt}}">
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; background: {{sg.bg}}; color: {{sg.fg}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.57" stroke-linecap="round" stroke-linejoin="round"><path d="{{sg.ic}}"></path></svg></span>
+            <span style="flex-grow: 1; min-width: 0; font-size: 17px; font-weight: {{sg.w}}; line-height: 22px">{{sg.t}}</span>
+            <span style="display: {{sg.tagD}}; align-items: center; height: 24px; padding: 0 10px; flex-shrink: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px">{{tx.now}}</span>
+          </li>
+        </sc-for>
+      </ol>
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 8px; font-size: 17px; line-height: 22px">
+        <p>{{tx.stage1}}</p>
+        <p>{{tx.stage2}}</p>
+      </div>
+    </div>
+
+    <!-- Thanks, then the build line as on Login -->
+    <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0">
+      <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{tx.thanks}}</span>
+      <p style="font-size: 17px; line-height: 22px">{{tx.thanks2}}</p>
+    </div>
+    <p style="flex-shrink: 0; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span> {{verTxt}}</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    // The date of the app's last design change, as on Login (version.txt)
+    try { fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then((r) => (r.ok ? r.text() : '')).then((v) => { const n = parseInt(String(v).trim(), 10); if (n > 1e9) this.setState({ ver: n }); }).catch(() => {}); } catch (e) {}
+  }
+  renderVals() {
+    const s = this.state || {}, lang = window.__wfLang === 'pt' ? 'pt' : window.__wfLang === 'ja' ? 'ja' : 'en';
+    const L = (en, pt, ja) => (lang === 'pt' ? pt : lang === 'ja' ? ja : en);
+    let role = ''; try { role = window.localStorage.getItem('wf-role') || ''; } catch (e) {}
+    const M = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], pt: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'] };
+    const d = s.ver ? new Date(s.ver * 1000) : null;
+    const verTxt = !d || isNaN(d) ? '' : lang === 'ja' ? '最終更新: ' + d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日'
+      : L('Last update: ', 'Última atualização: ', '') + d.getDate() + ' ' + M[lang === 'pt' ? 'pt' : 'en'][d.getMonth()] + ' ' + d.getFullYear();
+    const IC = {
+      detect: 'M12 3v3M12 18v3M3 12h3M18 12h3M18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0ZM13.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z',
+      confirm: 'M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12ZM14.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z',
+      deploy: 'M3 16.5V8h10.5v8.5M13.5 11h4l3 3.5v2M3 16.5h1.7M9.3 16.5h4.9M18.8 16.5h1.7M9.3 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0ZM18.8 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0Z'
+    };
+    const steps = [
+      [IC.detect, L('Detect', 'Detetar', '検知'), L('Satellites flag a possible ignition.', 'Os satélites assinalam uma possível ignição.', '衛星が発火の可能性を知らせます。')],
+      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Coordinators check it, by drone or with crews on the ground.', 'Os coordenadores verificam, por drone ou com equipas no terreno.', 'コーディネーターがドローンや現場の隊員で確かめます。')],
+      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('The nearest stations send their crews.', 'Os quartéis mais próximos enviam as equipas.', '最寄りの消防署が隊員を送ります。')]
+    ].map(([ic, t, dd], i, a) => ({ ic, t, d: dd, n: i + 1, lineD: i < a.length - 1 ? 'block' : 'none', pb: i < a.length - 1 ? 16 : 0 }));
+    const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M14.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z';
+    const stages = [
+      [L('Research and scenarios', 'Pesquisa e cenários', '調査とシナリオ'), false],
+      [L('Alpha version', 'Versão alfa', 'アルファ版'), false],
+      [L('Feedback from experts', 'Feedback de especialistas', '専門家からのフィードバック'), true]
+    ].map(([t, now], i) => ({ t, cur: now ? 'step' : 'false', w: now ? 600 : 400, tagD: now ? 'inline-flex' : 'none', ic: now ? NOW : DONE,
+      bg: now ? 'var(--wf-y)' : '#3A3A3C', fg: now ? '#1C1C1E' : '#FFFFFF', bt: i ? '1px solid rgba(60,60,67,0.12)' : '0' }));
+    return {
+      verTxt, steps, stages,
+      backHref: role ? 'Main.dc.html' : 'Login.dc.html',
+      // Opened from the user preferences: back finds them still open
+      back: () => { try { if (window.sessionStorage.getItem('wf-about-from') === 'prefs') window.sessionStorage.setItem('wf-prefs-open', '1'); window.sessionStorage.removeItem('wf-about-from'); } catch (e) {} },
+      authors: [
+        { code: 'NR', name: 'Nuno Rogério', role: L('Director, design team', 'Diretor, equipa de design', 'デザインチーム ディレクター'), org: 'Hitachi Vantara' },
+        { code: 'AO', name: 'Anastasia Osling', role: L('Lead UX research designer', 'Lead UX research designer', 'リードUXリサーチデザイナー'), org: 'R&D, Hitachi USA' }
+      ],
+      tx: {
+        back: L('Back', 'Voltar', '戻る'),
+        title: L('About', 'Sobre', 'このアプリについて'),
+        intro1: L('Forest Fire Watch is a project by Nuno Rogério and Anastasia Osling, two UX designers at Hitachi. It began with Ana\'s wish to find ways to improve wildfire response, in California and around the world.',
+          'O Forest Fire Watch é um projeto de Nuno Rogério e Anastasia Osling, dois designers de UX da Hitachi. Nasceu da vontade da Ana de encontrar formas de melhorar a resposta aos incêndios florestais, na Califórnia e no resto do mundo.',
+          'Forest Fire Watchは、日立の2人のUXデザイナー、Nuno RogérioとAnastasia Oslingのプロジェクトです。カリフォルニア、そして世界中の山火事対応を良くする方法を探りたいというアナの思いから始まりました。'),
+        intro2: L('Over a year of conversations, we tried out scenarios and studied ideas that already exist. This app is one result of that work together.',
+          'Ao longo de um ano de conversas, ensaiámos cenários e estudámos ideias que já existem. Esta app é um dos resultados desse trabalho a dois.',
+          '1年にわたって対話を重ね、シナリオを試し、既存のアイデアを調べてきました。このアプリはその共同作業から生まれた成果のひとつです。'),
+        authors: L('Authors', 'Autores', '制作者'),
+        idea: L('The idea', 'A ideia', 'アイデア'),
+        goal: L('Shorten the time from spotting an ignition to confirming it and sending firefighters. In a wildfire, every minute counts.',
+          'Encurtar o tempo entre detetar uma ignição, confirmá-la e enviar os bombeiros. Num incêndio rural, cada minuto conta.',
+          '発火の発見から確認、消防隊の派遣までの時間を短くすること。山火事では一分一秒が大切です。'),
+        chat: L('At every step, one chat per incident keeps everyone involved together.', 'Em cada passo, uma conversa por incidente junta todos os intervenientes.', 'どの段階でも、インシデントごとのチャットで関係者全員がつながります。'),
+        why: L('One integrated system, so response times drop and forests and people stay safe.', 'Um só sistema integrado, para reduzir os tempos de resposta e proteger florestas e pessoas.', 'ひとつの統合システムで対応時間を縮め、森と人を守ります。'),
+        stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
+        now: L('Now', 'Agora', '現在'),
+        stage1: L('We are now listening to people with real experience fighting fires or planning prevention and resources. Many tools and technologies already tackle each of these problems. We still wanted to try one integrated system.',
+          'Agora estamos a ouvir quem tem experiência real no combate a incêndios ou no planeamento da prevenção e dos meios. Já existem muitas ferramentas e tecnologias para cada uma destas questões. Mesmo assim, quisemos testar um sistema integrado.',
+          'いま私たちは、消火活動や予防・資源計画に実際に携わってきた方々の声を聞いています。それぞれの課題に取り組むツールや技術はすでに数多くありますが、それでも統合されたシステムを試したいと考えました。'),
+        stage2: L('What you can try here is a first result, shared with a small group of experts. However much we read, only real experience tells us if the app makes sense and what we missed. If we invited you to a feedback session, that is why: we want your view.',
+          'O que pode experimentar aqui é um primeiro resultado, partilhado com um grupo restrito de especialistas. Por muito que tenhamos lido, só quem tem experiência real nos diz se a app faz sentido e o que nos escapou. Se foi convidado para uma sessão de feedback, é por isso: queremos a sua opinião.',
+          'ここで体験できるのは最初の成果で、限られた専門家の方々に公開しています。どれだけ文献を読んでも、このアプリが意味を持つのか、何を見落としているのかは、実際の経験を持つ方にしかわかりません。フィードバックセッションにお招きしたのはそのためです。ぜひご意見をお聞かせください。'),
+        thanks: L('Thank you.', 'Obrigado.', 'ありがとうございます。'),
+        thanks2: L('We want to reach real results for our goal: protecting forests and people.', 'Queremos chegar a resultados reais para o nosso objetivo: proteger as florestas e as pessoas.', '森と人を守るという目標に向けて、実際の成果につなげたいと考えています。'),
+        alpha: L('Alpha version.', 'Versão alfa.', 'アルファ版。')
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
