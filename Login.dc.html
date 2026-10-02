@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=123"></script>
+<script src="fit.js?v=124"></script>
 <script src="avatar.js?v=9"></script>
 <script src="i18n.js?v=137"></script>
 
@@ -87,8 +87,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 3 1 0; min-height: 40px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">
-    <!-- The build stage on one line, above the note: "Alpha version" in bold hi-vis yellow, the last update in white (15px) -->
-    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span> <span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>
+    <!-- The build stage on two lines, above the note: "Alpha version." in bold hi-vis yellow, then the last update (date and time, in the viewer's own time zone) in white (15px) -->
+    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span><br><span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>
     <p style="margin: 0; font-size: 15px; line-height: 18px; color: #FFFFFF">Limited audience. Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
     <!-- About: text only, in the hi-vis colour (no container), with a 48px touch area -->
     <a href="About.dc.html" style="align-self: center; display: flex; align-items: center; justify-content: center; height: 48px; margin: 16px 0; padding: 0 16px; color: var(--wf-y); font-size: 17px; font-weight: 600; text-decoration: none; text-shadow: 0 0 8px rgba(0,0,0,0.6)">About</a>
@@ -502,8 +502,7 @@ class Component extends DCLogic {
 // (the data updates don't touch it), so the date moves on by itself. "Last update: 2 Oct 2026" / "Última atualização: 2 out 2026".
 (function () {
   var M = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], pt: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'] };
-  function put(t) { var d = new Date(t * 1000); if (isNaN(d)) return; var pt = window.__wfLang === 'pt', txt = (pt ? 'Última atualização: ' : 'Last update: ') + d.getDate() + ' ' + M[pt ? 'pt' : 'en'][d.getMonth()] + ' ' + d.getFullYear();
-    var set = function () { var el = document.querySelector('[data-wf-verdate]'); if (el && el.textContent !== txt) el.textContent = txt; }; set(); setInterval(set, 500); }   /* kept as the screen redraws or translates */
+  function put(t) { var d = new Date(t * 1000); if (isNaN(d)) return; var set = function () { var txt = window.__wfVerTxt ? window.__wfVerTxt(t) : ''; var el = document.querySelector('[data-wf-verdate]'); if (el && txt && el.textContent !== txt) el.textContent = txt; }; set(); setInterval(set, 500); }   /* kept as the screen redraws or translates */
   fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (v) { var n = parseInt(String(v).trim(), 10); if (n > 1e9) put(n); }).catch(function () {});
 })();
 </script>

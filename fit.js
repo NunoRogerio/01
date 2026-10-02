@@ -727,3 +727,12 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
     var D=document.querySelectorAll('[role=dialog],[role=alertdialog]');for(var j=0;j<D.length;j++)shown.set(D[j],vis(D[j]));}catch(x){}};
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();
+
+// The build line's date, shared by Login and About: the date and time of the app's last design change (version.txt, a
+// Unix time), shown in the viewer's own time zone and clock style. "Last update: 2 Oct 2026, at 15:53" (a US phone shows
+// its own time, e.g. "7:53 AM"); PT "Última atualização: 2 out 2026, às 15:53".
+window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';lang=lang||window.__wfLang||'en';
+  var M={en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],pt:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']};
+  var hm;try{hm=new Intl.DateTimeFormat(lang==='pt'?'pt-PT':lang==='ja'?'ja-JP':undefined,{hour:'numeric',minute:'2-digit'}).format(d);}catch(e){hm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+  if(lang==='ja')return '最終更新: '+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+hm;
+  return (lang==='pt'?'Última atualização: ':'Last update: ')+d.getDate()+' '+M[lang==='pt'?'pt':'en'][d.getMonth()]+' '+d.getFullYear()+(lang==='pt'?', às ':', at ')+hm;};

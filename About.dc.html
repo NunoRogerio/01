@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=123"></script>
+<script src="fit.js?v=124"></script>
 <script src="prefs.js?v=147"></script>
 <script src="i18n.js?v=137"></script>
 
@@ -37,7 +37,7 @@ p{margin:0}
   <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; flex-shrink: 0; padding: 8px 16px 8px">
     <a href="{{backHref}}" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="{{tx.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
     <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; justify-self: center; gap: 8px; min-width: 0; transform: scale(1.08); color: #6E6E73; font-size: 17px; font-weight: 600; letter-spacing: 0.02em; line-height: 22px; white-space: nowrap">
-      <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
+      <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path data-wf-about-logo="1" fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
     </span>
     <span aria-hidden="true"></span>
   </div>
@@ -93,7 +93,7 @@ p{margin:0}
       <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 8px; font-size: 17px; line-height: 22px">
         <p>{{tx.stage1}}</p>
         <p>{{tx.users}}</p>
-        <p>{{tx.stage2}} <b style="font-weight: 700">{{tx.stage2Q}}</b> {{tx.stage2B}}</p>
+        <p>{{tx.stage2}}<br><b style="font-weight: 700">{{tx.stage2Q}}</b></p>
       </div>
     </div>
 
@@ -101,13 +101,16 @@ p{margin:0}
     <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: center">{{tx.thanks}}</span>
     <!-- The authors: "Project by", then one line each (Anastasia first) -->
     <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: center">{{tx.by}}<br>Anastasia Osling, {{tx.des}}<br>Nuno Rogério, {{tx.des}}</p>
-    <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span> {{verTxt}}</p>
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span><br>{{verTxt}}</p>
   </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  componentWillUnmount() { clearInterval(this._blink); }
   componentDidMount() {
+    // The header logo's eye blinks every 5 s (fit.js blink, as on the loading screen)
+    this._blink = setInterval(() => { try { const e = document.querySelector('[data-wf-about-logo]'); if (e && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 5000);
     // The date of the app's last design change, as on Login (version.txt)
     try { fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then((r) => (r.ok ? r.text() : '')).then((v) => { const n = parseInt(String(v).trim(), 10); if (n > 1e9) this.setState({ ver: n }); }).catch(() => {}); } catch (e) {}
   }
@@ -117,8 +120,7 @@ class Component extends DCLogic {
     let role = ''; try { role = window.localStorage.getItem('wf-role') || ''; } catch (e) {}
     const M = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], pt: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'] };
     const d = s.ver ? new Date(s.ver * 1000) : null;
-    const verTxt = !d || isNaN(d) ? '' : lang === 'ja' ? '最終更新: ' + d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日'
-      : L('Last update: ', 'Última atualização: ', '') + d.getDate() + ' ' + M[lang === 'pt' ? 'pt' : 'en'][d.getMonth()] + ' ' + d.getFullYear();
+    const verTxt = s.ver && window.__wfVerTxt ? window.__wfVerTxt(s.ver, lang) : '';   /* shared with Login (fit.js) */
     const IC = {
       detect: 'M12 3v3M12 18v3M3 12h3M18 12h3M18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0ZM13.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z',
       confirm: 'M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12ZM14.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z',
@@ -165,21 +167,18 @@ class Component extends DCLogic {
           '現在これらは別々のツールに分かれています。ひとつにつながる姿を確かめたいのです。'),
         stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
         now: L('Now', 'Agora', '現在'),
-        stage1: L('An early exploration and a conversation starter, to get closer to the problem and the people who face it.',
-          'Uma exploração inicial e um ponto de partida para a conversa, para nos aproximarmos do problema e de quem o enfrenta.',
-          '課題とそれに向き合う人々に近づくための、初期の探究であり会話のきっかけです。'),
-        users: L('Designed for regional and station fire leaders, and government bodies such as Proteção Civil in Portugal.',
-          'Desenhado para comandantes regionais e de quartel, e organismos públicos como a Proteção Civil em Portugal.',
-          '地域・消防署の指揮者、そしてポルトガルのProteção Civilのような行政機関のために設計しています。'),
-        stage2: L('Our goal at this stage is to use this prototype to answer one question:',
-          'O nosso objetivo nesta fase é usar este protótipo para responder a uma pergunta:',
-          'この段階での目標は、このプロトタイプを使ってひとつの問いに答えることです。'),
+        stage1: L('This prototype is a conversation starter, to get closer to the problem and the people who face it.',
+          'Este protótipo é um ponto de partida para a conversa, para nos aproximarmos do problema e de quem o enfrenta.',
+          'このプロトタイプは、課題とそれに向き合う人々に近づくための会話のきっかけです。'),
+        users: L('It\'s designed for regional and station fire leaders, and government bodies such as Proteção Civil in Portugal or Cal OES in California, as examples.',
+          'Foi desenhado para comandantes regionais e de quartel, e organismos públicos como a Proteção Civil em Portugal ou o Cal OES na Califórnia, como exemplos.',
+          '地域・消防署の指揮者、そして行政機関のために設計しています。例として、ポルトガルのProteção CivilやカリフォルニアのCal OESです。'),
+        stage2: L('Our goal at this stage is to use this prototype to answer one question only your experience can tell us:',
+          'O nosso objetivo nesta fase é usar este protótipo para responder a uma pergunta a que só a sua experiência pode responder:',
+          'この段階での目標は、あなたの経験だけが答えられるひとつの問いに、このプロトタイプを使って答えることです。'),
         stage2Q: L('What are we missing?',
           'O que nos está a escapar?',
           '私たちは何を見落としているのか。'),
-        stage2B: L('Only your experience can tell us.',
-          'Só a sua experiência nos pode dizer.',
-          'それはあなたの経験だけが教えてくれます。'),
         thanks: L('Thank you.', 'Obrigado.', 'ありがとうございます。'),
         alpha: L('Alpha version.', 'Versão alfa.', 'アルファ版。')
       }
