@@ -29,7 +29,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 p{margin:0}
 </style>
 </helmet>
-<!-- About: who made the app, why, the idea in one flow, where the project stands, and the build line from Login.
+<!-- About, in three parts: how it started (the authors, Anastasia first), the goal and its flow, where we are and what the expert
+     interviews are for; then a simple thank you and the build line from Login.
      Opened from Login (top right) and from the user preferences (last row). Back returns to the screen before. -->
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Header, fixed: back on the left, the logo (as in the user preferences) centred, an empty column on the right to balance it -->
@@ -44,32 +45,30 @@ p{margin:0}
   <!-- One column that scrolls freely (no snapping); groups 56px apart, each named by a group label 8px above its content -->
   <div data-wf-page="1" style="display: flex; flex-direction: column; gap: 56px; flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 32px 16px 48px">
 
-    <!-- Title M and the introduction: who, and why -->
-    <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0">
+    <!-- Title M, then part 1, How it started: the authors (Anastasia first), then the story -->
+    <div style="display: flex; flex-direction: column; gap: 32px; flex-shrink: 0">
       <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em">{{tx.title}}</h1>
-      <div style="display: flex; flex-direction: column; gap: 16px; font-size: 17px; line-height: 22px">
-        <p>{{tx.intro1}}</p>
-        <p>{{tx.intro2}}</p>
-        <p>{{tx.intro3}}</p>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.start}}</span>
+        <sc-for list="{{authors}}" as="a" hint-placeholder-count="2">
+          <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: #FFFFFF">
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font-size: 15px; font-weight: 600; letter-spacing: 0.02em">{{a.code}}</span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{a.name}}</span>
+              <span style="font-size: 17px; line-height: 22px">{{a.role}}</span>
+              <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{a.org}}</span>
+            </span>
+          </div>
+        </sc-for>
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px; font-size: 17px; line-height: 22px">
+          <p>{{tx.intro1}}</p>
+          <p>{{tx.intro2}}</p>
+          <p>{{tx.intro3}}</p>
+        </div>
       </div>
     </div>
 
-    <!-- Authors: one card each, like the profile cards on Login (name, role, organisation) -->
-    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
-      <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.authors}}</span>
-      <sc-for list="{{authors}}" as="a" hint-placeholder-count="2">
-        <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: #FFFFFF">
-          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; color: #000000; font-size: 15px; font-weight: 600; letter-spacing: 0.02em">{{a.code}}</span>
-          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
-            <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{a.name}}</span>
-            <span style="font-size: 17px; line-height: 22px">{{a.role}}</span>
-            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{a.org}}</span>
-          </span>
-        </div>
-      </sc-for>
-    </div>
-
-    <!-- The idea: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
+    <!-- Part 2, The goal: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
       <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.idea}}</span>
       <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
@@ -97,7 +96,7 @@ p{margin:0}
       </div>
     </div>
 
-    <!-- Where we are: the stages so far (the current one tagged), then what the feedback sessions are for -->
+    <!-- Part 3, Where we are: the stages so far (the current one tagged), then what the feedback sessions are for -->
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
       <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.stage}}</span>
       <ol aria-label="{{tx.stage}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
@@ -115,12 +114,9 @@ p{margin:0}
       </div>
     </div>
 
-    <!-- Thanks, then the build line as on Login -->
-    <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0">
-      <span style="font-size: 17px; font-weight: 700; line-height: 22px">{{tx.thanks}}</span>
-      <p style="font-size: 17px; line-height: 22px">{{tx.thanks2}}</p>
-    </div>
-    <p style="flex-shrink: 0; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span> {{verTxt}}</p>
+    <!-- A simple thank you, then the build line as on Login -->
+    <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: center">{{tx.thanks}}</span>
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span> {{verTxt}}</p>
   </div>
 </div>
 </x-dc>
@@ -148,7 +144,7 @@ class Component extends DCLogic {
       [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Coordinators check it, by drone or with crews on the ground.', 'Os coordenadores verificam, por drone ou com equipas no terreno.', 'コーディネーターがドローンや現場の隊員で確かめます。')],
       [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('The nearest stations send their crews.', 'Os quartéis mais próximos enviam as equipas.', '最寄りの消防署が隊員を送ります。')]
     ].map(([ic, t, dd], i, a) => ({ ic, t, d: dd, n: i + 1, lineD: i < a.length - 1 ? 'block' : 'none', pb: i < a.length - 1 ? 16 : 0 }));
-    const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M14.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z';
+    const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M13.3 12a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0Z';
     const stages = [
       [L('Research and scenarios', 'Pesquisa e cenários', '調査とシナリオ'), false],
       [L('Alpha version', 'Versão alfa', 'アルファ版'), false],
@@ -161,23 +157,24 @@ class Component extends DCLogic {
       // Opened from the user preferences: back finds them still open
       back: () => { try { if (window.sessionStorage.getItem('wf-about-from') === 'prefs') window.sessionStorage.setItem('wf-prefs-open', '1'); window.sessionStorage.removeItem('wf-about-from'); } catch (e) {} },
       authors: [
-        { code: 'NR', name: 'Nuno Rogério', role: L('Director, design team', 'Diretor, equipa de design', 'デザインチーム ディレクター'), org: 'Hitachi Vantara' },
-        { code: 'AO', name: 'Anastasia Osling', role: L('Lead UX research designer', 'Lead UX research designer', 'リードUXリサーチデザイナー'), org: 'R&D, Hitachi USA' }
+        { code: 'AO', name: 'Anastasia Osling', role: L('Lead UX research designer', 'Lead UX research designer', 'リードUXリサーチデザイナー'), org: 'R&D, Hitachi USA' },
+        { code: 'NR', name: 'Nuno Rogério', role: L('Director, design team', 'Diretor, equipa de design', 'デザインチーム ディレクター'), org: 'Hitachi Vantara' }
       ],
       tx: {
         back: L('Back', 'Voltar', '戻る'),
         title: L('About', 'Sobre', 'このアプリについて'),
-        intro1: L('Forest Fire Watch is a project by Nuno Rogério and Anastasia Osling, design leaders at Hitachi with wide experience in UX design and a passion for nature, and for doing all within our reach to protect it.',
-          'O Forest Fire Watch é um projeto de Nuno Rogério e Anastasia Osling, líderes de design na Hitachi, com vasta experiência em design de UX e uma paixão pela natureza e por tudo o que está ao nosso alcance para a proteger.',
-          'Forest Fire Watchは、日立のデザインリーダーであるNuno RogérioとAnastasia Oslingのプロジェクトです。2人はUXデザインの豊富な経験を持ち、自然と、それを守るために私たちにできるすべてのことに情熱を注いでいます。'),
-        intro2: L('Wildfires are a shared challenge, faced by ordinary people. Year after year they grow larger, and so does their toll on people and the planet. We see the dead and the burned hectares on the news, and burned forests around our own homes: Nuno\'s in Porto, Portugal, Ana\'s in Nevada City, California.',
-          'Os incêndios florestais são um desafio comum, de pessoas comuns. Ano após ano, crescem em dimensão, e com eles o impacto nas pessoas e no planeta. Vemos nas notícias os mortos e os hectares ardidos, e as florestas queimadas à volta das nossas terras: o Nuno no Porto, em Portugal, a Ana em Nevada City, na Califórnia.',
-          '山火事は、ごく普通の人々が共に向き合う課題です。年々その規模は大きくなり、人と地球への影響も深刻になっています。ニュースでは犠牲者や焼失面積が伝えられ、私たちの暮らす土地の周りでも森が焼けています。ヌノはポルトガルのポルトで、アナはカリフォルニアのネバダシティで。'),
-        intro3: L('Just sit and watch? Nuno and Ana said no. Starting from Ana\'s wish to improve wildfire response, in California and around the world, they took on the challenge of opening a path in this field. Over a year of conversations they tried out scenarios and studied ideas that already exist. This app is one result.',
-          'Ficar sentado a assistir? O Nuno e a Ana responderam que não. Partindo da vontade da Ana de melhorar a resposta aos incêndios, na Califórnia e no mundo, aceitaram o desafio de abrir caminho neste campo. Ao longo de um ano de conversas, ensaiaram cenários e estudaram ideias que já existem. Esta app é um dos resultados.',
-          'ただ座って見ているだけでいいのか。2人の答えは「いいえ」でした。カリフォルニア、そして世界の山火事対応を良くしたいというアナの思いを出発点に、この分野に道を切り開く挑戦を引き受けました。1年にわたって対話を重ね、シナリオを試し、既存のアイデアを調べてきました。このアプリはその成果のひとつです。'),
+        start: L('How it started', 'Como começou', 'はじまり'),
+        intro1: L('Anastasia Osling and Nuno Rogério are design leaders at Hitachi, with wide experience in UX design and a passion for nature, and for doing all within our reach to protect it.',
+          'Anastasia Osling e Nuno Rogério são líderes de design na Hitachi, com vasta experiência em design de UX e uma paixão pela natureza e por tudo o que está ao nosso alcance para a proteger.',
+          'Anastasia OslingとNuno Rogérioは日立のデザインリーダーです。UXデザインの豊富な経験を持ち、自然と、それを守るために私たちにできるすべてのことに情熱を注いでいます。'),
+        intro2: L('Wildfires are a shared challenge, faced by ordinary people. Year after year they grow larger, and so does their toll on people and the planet. We see the dead and the burned hectares on the news, and burned forests around our own homes: Ana\'s in Nevada City, California, Nuno\'s in Porto, Portugal.',
+          'Os incêndios florestais são um desafio comum, de pessoas comuns. Ano após ano, crescem em dimensão, e com eles o impacto nas pessoas e no planeta. Vemos nas notícias os mortos e os hectares ardidos, e as florestas queimadas à volta das nossas terras: a Ana em Nevada City, na Califórnia, o Nuno no Porto, em Portugal.',
+          '山火事は、ごく普通の人々が共に向き合う課題です。年々その規模は大きくなり、人と地球への影響も深刻になっています。ニュースでは犠牲者や焼失面積が伝えられ、私たちの暮らす土地の周りでも森が焼けています。アナはカリフォルニアのネバダシティで、ヌノはポルトガルのポルトで。'),
+        intro3: L('Just sit and watch? Ana and Nuno said no. Starting from Ana\'s wish to improve wildfire response, in California and around the world, they took on the challenge of opening a path in this field. Over a year of conversations they tried out scenarios and studied ideas that already exist. Forest Fire Watch is one result.',
+          'Ficar sentado a assistir? A Ana e o Nuno responderam que não. Partindo da vontade da Ana de melhorar a resposta aos incêndios, na Califórnia e no mundo, aceitaram o desafio de abrir caminho neste campo. Ao longo de um ano de conversas, ensaiaram cenários e estudaram ideias que já existem. O Forest Fire Watch é um dos resultados.',
+          'ただ座って見ているだけでいいのか。2人の答えは「いいえ」でした。カリフォルニア、そして世界の山火事対応を良くしたいというアナの思いを出発点に、この分野に道を切り開く挑戦を引き受けました。1年にわたって対話を重ね、シナリオを試し、既存のアイデアを調べてきました。Forest Fire Watchはその成果のひとつです。'),
         authors: L('Authors', 'Autores', '制作者'),
-        idea: L('The idea', 'A ideia', 'アイデア'),
+        idea: L('The goal', 'O objetivo', '目標'),
         goal: L('Shorten the time from spotting an ignition to confirming it and sending firefighters. In a wildfire, every minute counts.',
           'Encurtar o tempo entre detetar uma ignição, confirmá-la e enviar os bombeiros. Num incêndio rural, cada minuto conta.',
           '発火の発見から確認、消防隊の派遣までの時間を短くすること。山火事では一分一秒が大切です。'),
@@ -185,14 +182,13 @@ class Component extends DCLogic {
         why: L('One integrated system, so response times drop and forests and people stay safe.', 'Um só sistema integrado, para reduzir os tempos de resposta e proteger florestas e pessoas.', 'ひとつの統合システムで対応時間を縮め、森と人を守ります。'),
         stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
         now: L('Now', 'Agora', '現在'),
-        stage1: L('We are now listening to people with real experience fighting fires or planning prevention and resources. Many tools and technologies already tackle each of these problems. We still wanted to try one integrated system.',
-          'Agora estamos a ouvir quem tem experiência real no combate a incêndios ou no planeamento da prevenção e dos meios. Já existem muitas ferramentas e tecnologias para cada uma destas questões. Mesmo assim, quisemos testar um sistema integrado.',
-          'いま私たちは、消火活動や予防・資源計画に実際に携わってきた方々の声を聞いています。それぞれの課題に取り組むツールや技術はすでに数多くありますが、それでも統合されたシステムを試したいと考えました。'),
-        stage2: L('What you can try here is a first result, shared with a small group of experts. However much we read, only real experience tells us if the app makes sense and what we missed. If we invited you to a feedback session, that is why: we want your view.',
-          'O que pode experimentar aqui é um primeiro resultado, partilhado com um grupo restrito de especialistas. Por muito que tenhamos lido, só quem tem experiência real nos diz se a app faz sentido e o que nos escapou. Se foi convidado para uma sessão de feedback, é por isso: queremos a sua opinião.',
-          'ここで体験できるのは最初の成果で、限られた専門家の方々に公開しています。どれだけ文献を読んでも、このアプリが意味を持つのか、何を見落としているのかは、実際の経験を持つ方にしかわかりません。フィードバックセッションにお招きしたのはそのためです。ぜひご意見をお聞かせください。'),
+        stage1: L('Forest Fire Watch is now an alpha version, shared with a small group of experts. Many tools and technologies already tackle each of these problems. We still wanted to try one integrated system.',
+          'O Forest Fire Watch é agora uma versão alfa, partilhada com um grupo restrito de especialistas. Já existem muitas ferramentas e tecnologias para cada uma destas questões. Mesmo assim, quisemos testar um sistema integrado.',
+          'Forest Fire Watchは現在アルファ版で、限られた専門家の方々に公開しています。それぞれの課題に取り組むツールや技術はすでに数多くありますが、それでも統合されたシステムを試したいと考えました。'),
+        stage2: L('Our goal in these interviews: hear from people with real experience fighting fires or planning prevention and resources. However much we read, only that experience tells us if the app makes sense and what we missed. If we invited you to a feedback session, that is why: we want your view.',
+          'O nosso objetivo nestas entrevistas: ouvir quem tem experiência real no combate a incêndios ou no planeamento da prevenção e dos meios. Por muito que tenhamos lido, só essa experiência nos diz se a app faz sentido e o que nos escapou. Se foi convidado para uma sessão de feedback, é por isso: queremos a sua opinião.',
+          'このインタビューの目的は、消火活動や予防・資源計画に実際に携わってきた方々の声を聞くことです。どれだけ文献を読んでも、このアプリが意味を持つのか、何を見落としているのかは、その経験なしにはわかりません。フィードバックセッションにお招きしたのはそのためです。ぜひご意見をお聞かせください。'),
         thanks: L('Thank you.', 'Obrigado.', 'ありがとうございます。'),
-        thanks2: L('We want to reach real results for our goal: protecting forests and people.', 'Queremos chegar a resultados reais para o nosso objetivo: proteger as florestas e as pessoas.', '森と人を守るという目標に向けて、実際の成果につなげたいと考えています。'),
         alpha: L('Alpha version.', 'Versão alfa.', 'アルファ版。')
       }
     };
