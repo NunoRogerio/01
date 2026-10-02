@@ -42,14 +42,16 @@ a{color:#0062CC}a:hover{color:#004FA3}
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 56px 16px 40px; background: transparent; overflow: hidden; opacity: {{lvOp}}; transform: translateY({{lvY}}); transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- The sign-in fields sit at the middle of the screen: equal regions above and below them.
        The logo group is centred in the region above; the hint, log-in button and credits fill the one below. -->
-  <div style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 0">
+  <div style="flex: 0 0 auto; display: flex; justify-content: center; padding-top: 24px">
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0 16px">
     <svg width="37" height="45" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 0 8px rgba(0,0,0,0.35))"><path data-wf-eye="1" style="fill: var(--wf-y)" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" style="stroke: var(--wf-y)" stroke-width="1.1" stroke-linecap="round"></path></svg>
-    <h1 style="margin: 56px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: var(--wf-y); text-shadow: 0 0 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
+    <h1 style="margin: 32px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: var(--wf-y); text-shadow: 0 0 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.5)">Log in to your account</p>
   </div>
   </div>
 
+  <!-- The free space sits between the logo group and the fields: a chosen profile card grows upward into it, so the logo and Log in never move -->
+  <div aria-hidden="true" style="flex: 1 1 0; min-height: 0"></div>
   <form onSubmit="{{noSubmit}}" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex-shrink: 0; margin: 0">
     <div style="display: flex; flex-direction: column; border-radius: 14px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset">
       <div style="position: relative; display: flex; flex-direction: column; padding: 0 16px">
@@ -78,14 +80,14 @@ a{color:#0062CC}a:hover{color:#004FA3}
     </div>
   </form>
 
-  <div style="position: relative; z-index: 1; flex: 1 1 0; display: flex; flex-direction: column">
+  <div style="position: relative; z-index: 1; flex: 0 0 auto; display: flex; flex-direction: column">
     <p style="display: {{offD}}; margin: 8px 16px 0; min-height: 36px; font-size: 15px; line-height: 18px; color: #FFFFFF; text-shadow: 0 0 8px rgba(0,0,0,0.6)">{{hint}}</p>
 
-    <!-- Log in sits a little above the middle of the space between the field and the text block below (1 : 3, the hint keeps room for two lines above) -->
-    <div aria-hidden="true" style="flex: 1 1 0; min-height: 8px"></div>
+    <!-- Log in has a fixed place: 24px under the chosen profile card (or under the hint before one is chosen), 48px above the text block -->
+    <div aria-hidden="true" style="flex: 0 0 auto; height: 24px"></div>
     <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 17px; font-weight: 600; text-decoration: none">Log in</a>
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
-    <div aria-hidden="true" style="flex: 3 1 0; min-height: 40px"></div>
+    <div aria-hidden="true" style="flex: 0 0 auto; height: 48px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">
     <!-- The build stage on two lines, above the note: "Alpha version." in bold hi-vis yellow, then the last update (date and time, in the viewer's own time zone) in white (15px) -->
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span><br><span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>

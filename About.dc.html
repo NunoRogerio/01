@@ -26,7 +26,7 @@
 <style>
 *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}img,svg{-webkit-user-drag:none}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
-p{margin:0}
+p{margin:0}[data-wf-page] p,[data-wf-page] span,[data-wf-page] b{text-wrap:pretty}
 </style>
 </helmet>
 <!-- About, in three parts: how it started (the problem, in short), the goal and its flow, where we are and what the expert
@@ -54,7 +54,7 @@ p{margin:0}
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
       <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.idea}}</span>
       <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
-        <p style="font-size: 17px; line-height: 22px">{{tx.goal}} <b style="font-weight: 700">{{tx.goalQ}}</b></p>
+        <p style="font-size: 17px; line-height: 22px">{{tx.goal}}<br><b style="font-weight: 700">{{tx.goalQ}}</b></p>
         <ol aria-label="{{tx.idea}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
             <li style="display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px">
@@ -74,7 +74,6 @@ p{margin:0}
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></span>
           <span style="font-size: 17px; line-height: 22px">{{tx.chat}}</span>
         </div>
-        <p style="font-size: 17px; line-height: 22px">{{tx.why}}</p>
       </div>
     </div>
 
@@ -116,7 +115,8 @@ class Component extends DCLogic {
   }
   renderVals() {
     const s = this.state || {}, lang = window.__wfLang === 'pt' ? 'pt' : window.__wfLang === 'ja' ? 'ja' : 'en';
-    const L = (en, pt, ja) => (lang === 'pt' ? pt : lang === 'ja' ? ja : en);
+    // the last two words of every longer text stay together, so no word is ever left alone on a line (also where text-wrap: pretty is missing)
+    const L = (en, pt, ja) => { const t = lang === 'pt' ? pt : lang === 'ja' ? ja : en; return typeof t === 'string' && t.length > 24 ? t.replace(/ (\S+)$/, '\u00A0$1') : t; };
     let role = ''; try { role = window.localStorage.getItem('wf-role') || ''; } catch (e) {}
     const M = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], pt: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'] };
     const d = s.ver ? new Date(s.ver * 1000) : null;
@@ -152,24 +152,21 @@ class Component extends DCLogic {
           '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命や家、森を奪っています。ただ座って見ているだけでいいのか。答えは「いいえ」でした。1年にわたる対話、シナリオ、既存ツールの調査を経て、UXの専門家として、見つけたコンセプトから2人でインターフェースを形にしました。'),
         by: L('Project by', 'Projeto de', 'プロジェクト'),
         des: L('designer', 'designer', 'デザイナー'),
-        idea: L('Goal', 'Objetivo', '目標'),
-        goal: L('In a wildfire, the first minutes count.',
-          'Num incêndio rural, os primeiros minutos contam.',
-          '山火事では最初の数分が重要です。'),
+        idea: L('Goal:', 'Objetivo:', '目標:'),
+        goal: L('In a wildfire, every first second counts. Our question is:',
+          'Num incêndio rural, cada primeiro segundo conta. A nossa pergunta é:',
+          '山火事では、最初の一秒一秒が重要です。私たちの問いは:'),
         goalQ: L('Is it possible to reduce the time between ignition and action?',
           'É possível reduzir o tempo entre a ignição e a ação?',
           '発火から行動までの時間を短くすることはできるでしょうか。'),
-        chat: L('One chat per incident keeps everyone aligned.',
-          'Uma conversa por incidente mantém todos alinhados.',
-          'インシデントごとのチャットで全員がつながります。'),
-        why: L('Today these steps live in separate tools. We want to see them work as one.',
-          'Hoje estes passos vivem em ferramentas separadas. Queremos vê-los funcionar como um só.',
-          '現在これらは別々のツールに分かれています。ひとつにつながる姿を確かめたいのです。'),
-        stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
+        chat: L('Can one chat per incident keep everyone aligned?',
+          'Pode uma conversa por incidente manter todos alinhados?',
+          'インシデントごとのひとつのチャットで、全員をつなげられるでしょうか。'),
+        stage: L('Where we are:', 'Em que fase estamos:', '現在の段階:'),
         now: L('Now', 'Agora', '現在'),
-        stage1: L('This prototype is a conversation starter, to get closer to the problem and the people who face it.',
-          'Este protótipo é um ponto de partida para a conversa, para nos aproximarmos do problema e de quem o enfrenta.',
-          'このプロトタイプは、課題とそれに向き合う人々に近づくための会話のきっかけです。'),
+        stage1: L('Look at this prototype as a conversation starter. The goal is for us to get closer to the problem and the people who face it.',
+          'Veja este protótipo como um ponto de partida para a conversa. O objetivo é aproximarmo-nos do problema e de quem o enfrenta.',
+          'このプロトタイプを会話のきっかけとして見てください。目的は、課題とそれに向き合う人々に近づくことです。'),
         users: L('It\'s designed for regional and station fire leaders, and government bodies such as Proteção Civil in Portugal or Cal OES in California, as examples.',
           'Foi desenhado para comandantes regionais e de quartel, e organismos públicos como a Proteção Civil em Portugal ou o Cal OES na Califórnia, como exemplos.',
           '地域・消防署の指揮者、そして行政機関のために設計しています。例として、ポルトガルのProteção CivilやカリフォルニアのCal OESです。'),
