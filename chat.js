@@ -1142,7 +1142,11 @@
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },
     badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
-    totalUnread: function () { var db = load(); return Object.keys(db.chats).reduce(function (a, k) { return a + unread(db.chats[k]); }, 0); },
+    // The chat badge counts what the chats list shows: open chats in the selected area (and direct messages), never chats
+    // from another area the list cannot reach
+    totalUnread: function () { var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };
+      var inSc = function (c) { return c.kind === 'dm' || !SC || !SC.st || !window.__wfInArea || !c.st || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co); };
+      return Object.keys(db.chats).reduce(function (a, k) { var c = db.chats[k]; return a + (!c.closed && inSc(c) ? unread(c) : 0); }, 0); },
     nearby: function (key) { var c = load().chats[key]; return c ? nearby(c, 50) : []; }, setTopic: setTopic,
     police: function (inc) { var c = police(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     policeChat: function (id) { return load().chats['p:' + id] || null; },
