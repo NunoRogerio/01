@@ -20,7 +20,7 @@
     var cs = getComputedStyle(el); if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity === 0) return false;
     for (var a = el.parentElement, n = 0; a && a !== document.body && n < 40; a = a.parentElement, n++) { var ac = getComputedStyle(a); if (+ac.opacity === 0 || ac.display === 'none') return false; }   // e.g. a full-screen map kept faded out until opened
     if (r.bottom < 0 || r.top > VH()) return 'off';
-    if (r.bottom > VH() - 24 || r.top < 24) return 'part';   // partly cut off at an edge: scrolled fully into view   // there, but scrolled away: the tour scrolls it into view
+    if (r.bottom > VH() - 24 || r.top < 24 || r.left < 0 || r.right > VW()) return 'part';   // partly cut off at an edge: scrolled fully into view   // there, but scrolled away: the tour scrolls it into view
     if (!strict) return true;
     var x = Math.min(VW() - 2, Math.max(2, r.left + r.width / 2)), y = Math.min(VH() - 2, Math.max(2, r.top + Math.min(r.height / 2, 40)));
     var h = document.elementFromPoint(x, y); if (!h) return false;
@@ -41,15 +41,15 @@
   var S = [
     { page: 'Main.dc.html', mode: 'next', next: ['Start', 'Começar'],
       t: ['Quick tour', 'Visita rápida'],
-      b: ['Follow one ignition from detection to a closed fire. Tap what the arrow points to; some steps only need Next.',
-          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que a seta indica; alguns passos só pedem Seguinte.'] },
+      b: ['Follow one ignition from detection to a closed fire. Tap what the arrow points to, or use ‹ › to move between steps.',
+          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que a seta indica, ou use ‹ › para mudar de passo.'] },
     { page: 'Main.dc.html', mode: 'next', find: function () { return hdr('> button.opt[aria-expanded]'); },
       t: ['Choose a region', 'Escolha uma região'],
       b: ['Tap the area name to switch country, state or district.', 'Toque no nome da área para mudar de país, estado ou distrito.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('[data-wf-leg]'); },
-      t: ['Choose what the map shows', 'Escolha o que o mapa mostra'],
-      b: ['Tap a chip to show or hide ignition candidates, active fires, resolved fires and fire stations.',
-          'Toque numa etiqueta para mostrar ou esconder candidatos a ignição, incêndios ativos, resolvidos e quartéis.'] },
+    { page: 'Main.dc.html', mode: 'next', find: function () { return q('[data-wf-leg] button[aria-pressed="false"]') || q('[data-wf-leg]'); },
+      t: ['Show more on the map', 'Mostre mais no mapa'],
+      b: ['Grey chips are hidden layers, like active fires or fire stations. Tap one to show it.',
+          'As etiquetas cinzentas são camadas escondidas, como incêndios ativos ou quartéis. Toque numa para a mostrar.'] },
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('[data-wf-maproot] button.tipwrap'); },
       t: ['Pick an incident on the map', 'Escolha um incidente no mapa'],
       b: ['Tap any circle for a short summary, then View.', 'Toque num círculo para um resumo, depois em Ver.'] },
@@ -123,11 +123,11 @@
       t: ['Back to the team', 'De volta à equipa'],
       b: ['Tap to return to the chat.', 'Toque para voltar à conversa.'] },
 
-    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); },
-      find: function () { return q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)') || chipRow(); },
-      t: ['Move the fire forward', 'Faça o incêndio avançar'],
-      b: ['Tap the suggested replies, approve air support when asked, and close the fire. Some steps take a few seconds.',
-          'Toque nas respostas sugeridas, aprove o meio aéreo quando pedido e encerre o incêndio. Alguns passos demoram uns segundos.'] },
+    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,
+      find: function () { return q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (b) { return !b.disabled; }) || chipRow(); },
+      t: ['Watch the fire move forward', 'Veja o incêndio avançar'],
+      b: ['The tour plays the fire owner for you: it approves air support and moves the stages on until the fire is closed. Status cards show each change.',
+          'A visita faz de responsável pelo incêndio: aprova o meio aéreo e avança as fases até o incêndio ser encerrado. Os cartões de estado mostram cada mudança.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('wf-trophy'); },
       t: ['Fire closed', 'Incêndio encerrado'],
       b: ['Tap to see the summary.', 'Toque para ver o resumo.'] },
@@ -136,7 +136,7 @@
       t: ['The fire summary', 'O resumo do incêndio'],
       b: ['Time in each stage, the forces used and the result. Scroll down to see it all.', 'Tempo em cada fase, meios usados e resultado. Deslize para baixo para ver tudo.'] },
 
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('header[data-pull="down"] button.opt[aria-haspopup="dialog"]', function (b) { return !b.classList.contains('avbtn') && !b.querySelector('.wf-title-m'); }); },
+    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('header[data-pull="down"] button', function (b) { return !!b.querySelector('path[d^="M6 16.5V11"]'); }); },
       t: ['Notifications', 'Notificações'],
       b: ['New ignitions, requests and status changes.', 'Novas ignições, pedidos e mudanças de estado.'] },
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="nt"]'); }, done: function () { closeIn('section[data-swipe-key="nt"]'); },
@@ -177,7 +177,10 @@
       '#wf-tour .tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}' +
       '#wf-tour .tr{position:absolute;box-sizing:border-box;border:2px solid var(--wf-y,#E5FF00);box-shadow:0 0 0 2px rgba(28,28,30,0.55);pointer-events:none;animation:wftp 1.6s ease-in-out infinite}' +
       '@keyframes wftp{0%,100%{opacity:1}50%{opacity:.45}}' +
-      '#wf-tour svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
+      '#wf-tour .tgl{position:absolute;inset:0;box-shadow:inset 0 0 0 2px rgba(var(--wf-y-rgb,229,255,0),0.9),inset 0 0 28px 10px rgba(var(--wf-y-rgb,229,255,0),0.55);animation:wftg 3.2s ease-in-out infinite}' +
+      '@keyframes wftg{0%,100%{opacity:1}50%{opacity:.6}}' +
+      '#wf-tour .tc{width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.14);color:#FFFFFF}#wf-tour .tc.tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}#wf-tour .tc[disabled]{opacity:.3;cursor:default}' +
+      '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
       '@keyframes wfta{to{stroke-dashoffset:0}}';
     document.head.appendChild(st);
@@ -185,9 +188,10 @@
   function build() {
     if (root && root.isConnected) return; css();
     root = document.createElement('div'); root.id = 'wf-tour'; root.setAttribute('translate', 'no');
-    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'tsv');
     ring = document.createElement('div'); ring.className = 'tr';
     bub = document.createElement('div'); bub.className = 'tb'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-live', 'polite');
+    var glow = document.createElement('div'); glow.className = 'tgl'; root.appendChild(glow);   // tour mode: a soft lime glow round the whole screen
     root.appendChild(svg); root.appendChild(ring); root.appendChild(bub); document.body.appendChild(root);
   }
   function end() { put(null); if (root) root.remove(); root = null; cur = -1; }
@@ -197,6 +201,7 @@
     if (i >= S.length) { end(); return; }
     put({ i: i }); seen = 0; scrolled = false; ran = false;
   }
+  function back(i) { if (i < 1) return; var p = i - 1; put({ i: p, b: 1 }); seen = Date.now(); scrolled = false; ran = false; cur = -1; lastKey = ''; if (S[p].page !== PAGE) { try { history.back(); } catch (e) { location.href = S[p].page; } } else tick(); }
   window.__wfTour = { start: function () { put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
@@ -219,13 +224,17 @@
     var key = i + '|' + (el ? 1 : 0) + '|' + (late ? 1 : 0) + '|' + (pt ? 1 : 0);
     if (key !== lastKey) {
       lastKey = key; bub.classList.remove('on');
-      var nx = st.mode === 'next' || late, nl = st.next ? L(st.next) : (pt ? 'Seguinte' : 'Next');
-      bub.innerHTML = '<p class="tt"></p><p class="tx"></p><div class="tf"><span class="tn"></span><button type="button" class="te"></button>' + (nx ? '<button type="button" class="tg"></button>' : '') + '</div>';
+      var nx = st.mode === 'next' || late, nl = st.next ? L(st.next) : '';
+      var CH = function (d) { return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"></path></svg>'; };
+      bub.innerHTML = '<p class="tt"></p><p class="tx"></p><div class="tf"><span class="tn"></span><button type="button" class="te"></button>' +
+        '<button type="button" class="tc tb0"' + (i ? '' : ' disabled') + '>' + CH('m15 6-6 6 6 6') + '</button>' +
+        (nl && nx ? '<button type="button" class="tg"></button>' : '<button type="button" class="tc' + (nx ? ' tg' : '') + '"' + (nx ? '' : ' disabled') + '>' + CH('m9 6 6 6-6 6') + '</button>') + '</div>';
+      var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
       bub.querySelector('.tt').textContent = L(st.t);
-      bub.querySelector('.tx').textContent = late && !el ? (pt ? 'Este passo não está disponível neste ecrã. Toque em Seguinte para continuar.' : 'This step isn\'t available on this screen. Tap Next to carry on.') : L(st.b);
+      bub.querySelector('.tx').textContent = late && !el ? (pt ? 'Este passo não está disponível agora. Toque em › para continuar.' : 'This step isn\'t available right now. Tap › to carry on.') : L(st.b);
       bub.querySelector('.tn').textContent = (i + 1) + (pt ? ' de ' : ' of ') + S.length;
       var e = bub.querySelector('.te'); e.textContent = pt ? 'Terminar visita' : 'End tour'; e.onclick = function (ev) { ev.stopPropagation(); end(); };
-      var g = bub.querySelector('.tg'); if (g) { g.textContent = nl; g.onclick = function (ev) { ev.stopPropagation(); var s0 = S[i]; go(i + 1); if (s0.go) s0.go(); else tick(); }; }
+      var g = bub.querySelector('.tg'); if (g) { if (nl) g.textContent = nl; else g.setAttribute('aria-label', pt ? 'Seguinte' : 'Next'); g.onclick = function (ev) { ev.stopPropagation(); var s0 = S[i]; go(i + 1); if (s0.go) s0.go(); else tick(); }; }
       requestAnimationFrame(function () { if (bub) bub.classList.add('on'); });
       svg.innerHTML = '';
       svg.__k = '';
@@ -237,11 +246,15 @@
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
     if (big) { ring.style.display = 'none'; svg.innerHTML = ''; bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (vh - bh - 40) + 'px'; return; }
     var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
-    ring.style.display = 'block'; ring.style.left = T.l + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (T.r - T.l) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
+    ring.style.display = 'block'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
     var gap = 76, below = vh - T.b - 32, above = T.t - 16, up;
     if (below >= bh + gap) up = false; else if (above >= bh + gap) up = true; else up = above > below;
     var cx = (T.l + T.r) / 2, left = Math.min(vw - 16 - bw, Math.max(16, cx - bw / 2));
     var top = up ? Math.max(16, T.t - gap - bh) : Math.min(vh - 32 - bh, T.b + gap);
+    // never cover the target or an open map tooltip: try the other side, then the top or bottom of the screen
+    var OB = [T].concat([].slice.call(document.querySelectorAll('[data-wf-pop]')).map(function (p) { var q0 = p.getBoundingClientRect(); return q0.width ? { l: q0.left - 8, t: q0.top - 8, r: q0.right + 8, b: q0.bottom + 8 } : null; }).filter(Boolean));
+    var hits = function (y) { return OB.some(function (o) { return left < o.r && left + bw > o.l && y < o.b && y + bh > o.t; }); };
+    if (hits(top)) { var alts = [up ? Math.min(vh - 32 - bh, T.b + gap) : Math.max(16, T.t - gap - bh), vh - 32 - bh, 16], f = alts.find(function (y) { return !hits(y); }); if (f != null) { up = f + bh / 2 < (T.t + T.b) / 2; top = f; } }
     bub.style.left = left + 'px'; bub.style.top = top + 'px';
     var sx = Math.min(left + bw - 36, Math.max(left + 36, cx + (cx < vw / 2 ? 24 : -24))), sy = up ? top + bh + 8 : top - 8;
     var ex = cx, ey = up ? T.t - 8 : T.b + 8;
@@ -265,13 +278,35 @@
     if (!ran && st.before) { ran = true; try { st.before(); } catch (e) {} }
     if (st.skip && st.skip()) { go(i + 1); return; }
     if (st.mode === 'until' && st.until && st.until()) { go(i + 1); return; }
+    if (st.auto && Date.now() - (window.__wfTourAuto || 0) > 2600 && Date.now() - seen > 2200) { window.__wfTourAuto = Date.now(); drive(); }
     var el = st.find ? st.find() : null;
-    var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }
+    var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); el.scrollIntoView({ block: vOut ? 'center' : 'nearest', inline: hOut ? 'center' : 'nearest', behavior: 'smooth' }); } catch (e) {} }
     if (el) { var sh1 = shown(el, st.strict); if (sh1 !== true && !(sh1 === 'part' && scrolled)) el = null; }
-    var late = st.find && !el && Date.now() - seen > (st.mode === 'until' ? 1e9 : 9000);
-    if (st.find && !el && !late) { if (root) { bub.classList.remove('on'); ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; lastKey = ''; } return; }
-    draw(i, st, el, late); window.__wfTour.el = el; window.__wfTour.i = i;
+    var late = st.find && !el && Date.now() - seen > (st.mode === 'until' && !s.b ? 1e9 : s.b ? 1500 : 9000);
+    if (st.find && !el && !late) { curEl = null; if (root) { bub.classList.remove('on'); ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; lastKey = ''; } return; }
+    curEl = el; draw(i, st, el, late); window.__wfTour.el = el; window.__wfTour.i = i;
   }
+  // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
+  var selfTap = false;
+  function drive() {
+    var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { return !x.disabled; });
+    if (!b) { var W = ['Move to', 'Passar a', 'Air support', 'Meio aéreo', 'Close fire', 'Encerrar incêndio'];
+      b = q('button.chbtn', function (x) { if (!x.parentElement || x.parentElement.style.maxHeight !== '88px') return false; var t = txt(x); return W.some(function (w) { return t.indexOf(w) === 0; }); }); }
+    if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; }
+  }
+  // Tour mode is modal: only the bubble and the control it points at take touches (scrolling still works).
+  var curEl = null;
+  function allowed(e) {
+    if (selfTap || !get() || !root || !root.isConnected) return true;
+    if (e.target && e.target.closest && e.target.closest('#wf-tour')) return true;
+    var el = curEl; if (!el || !el.isConnected) return false;
+    if (el === e.target || el.contains(e.target)) return true;
+    var p = e.changedTouches && e.changedTouches[0] || e, r = el.getBoundingClientRect();
+    return p.clientX >= r.left && p.clientX <= r.right && p.clientY >= r.top && p.clientY <= r.bottom;
+  }
+  ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'click', 'contextmenu'].forEach(function (t) {
+    window.addEventListener(t, function (e) { if (allowed(e)) return; e.stopPropagation(); e.stopImmediatePropagation(); if (t === 'click' || t === 'contextmenu') e.preventDefault(); }, { capture: true, passive: false });
+  });
   // a tap on the control a 'tap' step points at moves the tour on (the tap itself still does its job)
   document.addEventListener('click', function (e) {
     var s = get(); if (!s) return; var st = S[s.i]; if (!st || st.mode !== 'tap' || st.page !== PAGE || !st.find) return;
