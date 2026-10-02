@@ -178,11 +178,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 .sqrow:not([disabled]):active{opacity:.68}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
 
 .chrow{transition:background-color .15s ease,filter .15s ease}.chrow:active{filter:brightness(.94)}
-/* Tour button (glow 80% more diffuse, Oct 2): every 6 s the helicopter dips its nose about 20° with a slight bounce and comes back; icon and label glow lime while it moves */
+/* Tour button (glow blur doubled again, Oct 2): every 6 s the helicopter dips its nose about 20° with a slight bounce and comes back; icon and label glow lime while it moves */
 .wf-heli{transform-origin:50% 40%;animation:wfHeli 6s cubic-bezier(.3,.7,.4,1) infinite}
 .wf-heli-t{animation:wfHeliT 6s ease infinite}
-@keyframes wfHeli{0%,62%{transform:rotate(0);filter:none}68%{transform:rotate(-22deg);filter:drop-shadow(0 0 7px rgba(var(--wf-y-rgb),.9)) drop-shadow(0 0 14px rgba(var(--wf-y-rgb),.6))}72%{transform:rotate(-17deg)}76%{transform:rotate(-20deg);filter:drop-shadow(0 0 7px rgba(var(--wf-y-rgb),.9)) drop-shadow(0 0 14px rgba(var(--wf-y-rgb),.6))}86%{transform:rotate(3deg)}91%{transform:rotate(-1deg)}96%,100%{transform:rotate(0);filter:none}}
-@keyframes wfHeliT{0%,62%,96%,100%{text-shadow:none}68%,86%{text-shadow:0 0 11px rgba(var(--wf-y-rgb),.9),0 0 22px rgba(var(--wf-y-rgb),.6)}}
+@keyframes wfHeli{0%,62%{transform:rotate(0);filter:none}68%{transform:rotate(-22deg);filter:drop-shadow(0 0 14px rgba(var(--wf-y-rgb),.9)) drop-shadow(0 0 28px rgba(var(--wf-y-rgb),.6))}72%{transform:rotate(-17deg)}76%{transform:rotate(-20deg);filter:drop-shadow(0 0 14px rgba(var(--wf-y-rgb),.9)) drop-shadow(0 0 28px rgba(var(--wf-y-rgb),.6))}86%{transform:rotate(3deg)}91%{transform:rotate(-1deg)}96%,100%{transform:rotate(0);filter:none}}
+@keyframes wfHeliT{0%,62%,96%,100%{text-shadow:none}68%,86%{text-shadow:0 0 22px rgba(var(--wf-y-rgb),.9),0 0 44px rgba(var(--wf-y-rgb),.6)}}
 @media (prefers-reduced-motion: reduce){.wf-heli,.wf-heli-t{animation:none}}
 </style>
 </helmet>
