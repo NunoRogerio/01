@@ -99,8 +99,8 @@ p{margin:0}
 
     <!-- A simple thank you, the authors as a note, then the build line as on Login -->
     <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: center">{{tx.thanks}}</span>
-    <!-- The authors, as a closing note (Anastasia first), in the annotation style -->
-    <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: center">{{tx.by}}</p>
+    <!-- The authors: "Project by", then one line each (Anastasia first) -->
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: center">{{tx.by}}<br>Anastasia Osling, {{tx.des}}<br>Nuno Rogério, {{tx.des}}</p>
     <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span> {{verTxt}}</p>
   </div>
 </div>
@@ -148,9 +148,8 @@ class Component extends DCLogic {
         intro1: L('Wildfires grow larger every year, taking lives, homes and forests, from Nevada City, California, to Porto, Portugal. Could we just sit and watch? We decided we couldn\'t. A year of conversations, scenarios and study of existing tools followed, and as UX specialists we shaped the interface together from the concepts we found along the way.',
           'Os incêndios florestais crescem todos os anos, levando vidas, casas e florestas, de Nevada City, na Califórnia, ao Porto, em Portugal. Podíamos ficar sentados a assistir? Decidimos que não. Seguiu-se um ano de conversas, cenários e estudo das ferramentas existentes, e, como especialistas em UX, formulámos juntos a interface a partir dos conceitos que fomos descobrindo.',
           '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命や家、森を奪っています。ただ座って見ているだけでいいのか。答えは「いいえ」でした。1年にわたる対話、シナリオ、既存ツールの調査を経て、UXの専門家として、見つけたコンセプトから2人でインターフェースを形にしました。'),
-        by: L('Created by Anastasia Osling and Nuno Rogério, designers.',
-          'Criado por Anastasia Osling e Nuno Rogério, designers.',
-          '制作: Anastasia Osling、Nuno Rogério(デザイナー)'),
+        by: L('Project by', 'Projeto de', 'プロジェクト'),
+        des: L('designer', 'designer', 'デザイナー'),
         idea: L('The goal', 'O objetivo', '目標'),
         goal: L('In a wildfire, the first minutes count.',
           'Num incêndio rural, os primeiros minutos contam.',
