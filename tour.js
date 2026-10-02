@@ -6,7 +6,24 @@
 // something has happened on screen ('until'). A step whose control can't be found after a while shows Next instead.
 // The tour is switched off for now (Oct 2): it never runs or blocks touches, and any tour left running on a phone is cleared.
 var WF_TOUR_ON = false;
-if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {} window.__wfTour = { start: function () {}, end: function () {}, warn: function () {}, active: function () { return false; } };
+if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
+  // While the tour is off, the Tour button stays and opens a dark-glass tooltip saying it is coming back (X or a tap outside closes it)
+  var wfTourSoon = function (anchor) {
+    var old = document.getElementById('wf-toursoon'); if (old) { old.remove(); return; }
+    var pt = window.__wfLang === 'pt', w = document.createElement('div'); w.id = 'wf-toursoon'; w.setAttribute('role', 'dialog'); w.setAttribute('translate', 'no');
+    var r = anchor ? anchor.getBoundingClientRect() : { top: innerHeight - 140, left: innerWidth - 80, width: 60 };
+    w.style.cssText = 'position:fixed;left:16px;right:16px;bottom:' + Math.max(16, innerHeight - r.top + 12) + 'px;z-index:99995;display:flex;align-items:flex-start;gap:16px;padding:16px;border-radius:20px;background:rgba(28,28,30,0.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased;opacity:0;transform:translateY(8px);transition:opacity .28s ease,transform .28s cubic-bezier(.2,.8,.2,1)';
+    w.innerHTML = '<p style="flex:1 1 auto;margin:0;font-size:15px;line-height:20px;text-wrap:pretty">' + (pt ? 'A visita está em desenvolvimento. Volta quando tivermos a certeza de que o helicóptero o leva em segurança.' : 'Tour is under development. It will return once we\'re sure the chopper gets you by safely.') + '</p>' +
+      '<button type="button" class="opt" data-a="x" aria-label="' + (pt ? 'Fechar' : 'Close') + '" style="flex:0 0 44px;width:44px;height:44px;margin:-10px -10px -10px 0;border:0;border-radius:50%;background:rgba(255,255,255,0.14);color:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="transition:transform .5s cubic-bezier(.3,.7,.3,1)"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+      '<span aria-hidden="true" style="position:absolute;bottom:-7px;right:' + Math.max(24, innerWidth - (r.left + r.width / 2) - 8) + 'px;width:14px;height:14px;background:rgba(28,28,30,0.94);transform:rotate(45deg);border-radius:0 0 3px 0"></span>';
+    var close = function () { document.removeEventListener('pointerdown', off, true); var ic = w.querySelector('svg'); if (ic) ic.style.transform = 'rotate(90deg)'; w.style.opacity = '0'; w.style.transform = 'translateY(8px)'; setTimeout(function () { w.remove(); }, 300); };
+    var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) close(); };
+    w.querySelector('[data-a=x]').onclick = close;
+    document.body.appendChild(w);
+    requestAnimationFrame(function () { w.style.opacity = '1'; w.style.transform = 'none'; });
+    setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
+  };
+  window.__wfTour = { start: function () {}, end: function () {}, warn: wfTourSoon, active: function () { return false; } };
   var wfTourGone = function () { ['wf-tour', 'wf-tourwarn', 'wf-tour-css'].forEach(function (id) { var el = document.getElementById(id); if (el) el.remove(); }); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wfTourGone); else wfTourGone(); }
 if (WF_TOUR_ON) (function () {
