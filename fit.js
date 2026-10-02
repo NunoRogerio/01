@@ -222,7 +222,7 @@ window.__wfBlink=function(path,dur){
   var PH=window.__wfSplashPH();
   // Sign in hands its photo over (which photo, and how far it had zoomed): the loading screen carries on with that very
   // photo from that zoom at the same steady pace, so the picture never jumps. RATE: the slideshow's zoom per second.
-  var RATE=0.3/18,HAND=null;try{HAND=JSON.parse(sessionStorage.getItem('wf-soft-photo')||'null');}catch(e){}
+  var RATE=0.33/18,HAND=null;try{HAND=JSON.parse(sessionStorage.getItem('wf-soft-photo')||'null');}catch(e){}
   var handPH=function(h){var q=h&&(window.__wfPhotoList||[]).find(function(x){return x.f===h.f;});return q?[q.f,q.alt,q.by,q.b]:null;};
   var handS=function(h){return h?h.s+RATE*Math.max(0,Date.now()-h.t)/1000:1;};
   var nxt=0;try{nxt=(parseInt(localStorage.getItem('wf-splash-i')||'0',10)||0)%PH.length;}catch(e){}

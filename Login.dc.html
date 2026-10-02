@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=120"></script>
+<script src="fit.js?v=121"></script>
 <script src="avatar.js?v=9"></script>
 <script src="i18n.js?v=136"></script>
 
@@ -429,7 +429,7 @@ class Component extends DCLogic {
     const sel = P.find((p) => p[0] === selId) || null;
     const open = !!s.open;
     return {
-      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.3 : 1, from: 1, keep: i === prev, flt: ph[2] < 1 ? 'brightness(' + ph[2] + ')' : 'none' })),   // every photo zooms in, so sign in can hand it on to the loading screen still zooming the same way
+      bgs: this._bgs = PH.map((ph, i) => ({ img: (i === cur || i === prev) ? 'url("assets/splash/' + ph[0] + '")' : 'none', op: i === cur ? 1 : 0, sc: (i === cur || i === prev) ? 1.33 : 1, from: 1, keep: i === prev, flt: ph[2] < 1 ? 'brightness(' + ph[2] + ')' : 'none' })),   // every photo zooms in, so sign in can hand it on to the loading screen still zooming the same way
       credit: 'Photo: ' + PH[cur][1] + ' / Unsplash',
       noSubmit: (e) => { try { e.preventDefault(); } catch (x) {} },
       toggle: () => (open ? this.closePanel(true) : this.openPanel()),
