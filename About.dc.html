@@ -50,6 +50,7 @@ p{margin:0}
       <div style="display: flex; flex-direction: column; gap: 16px; font-size: 17px; line-height: 22px">
         <p>{{tx.intro1}}</p>
         <p>{{tx.intro2}}</p>
+        <p>{{tx.intro3}}</p>
       </div>
     </div>
 
@@ -166,12 +167,15 @@ class Component extends DCLogic {
       tx: {
         back: L('Back', 'Voltar', '戻る'),
         title: L('About', 'Sobre', 'このアプリについて'),
-        intro1: L('Forest Fire Watch is a project by Nuno Rogério and Anastasia Osling, two UX designers at Hitachi. It began with Ana\'s wish to find ways to improve wildfire response, in California and around the world.',
-          'O Forest Fire Watch é um projeto de Nuno Rogério e Anastasia Osling, dois designers de UX da Hitachi. Nasceu da vontade da Ana de encontrar formas de melhorar a resposta aos incêndios florestais, na Califórnia e no resto do mundo.',
-          'Forest Fire Watchは、日立の2人のUXデザイナー、Nuno RogérioとAnastasia Oslingのプロジェクトです。カリフォルニア、そして世界中の山火事対応を良くする方法を探りたいというアナの思いから始まりました。'),
-        intro2: L('Over a year of conversations, we tried out scenarios and studied ideas that already exist. This app is one result of that work together.',
-          'Ao longo de um ano de conversas, ensaiámos cenários e estudámos ideias que já existem. Esta app é um dos resultados desse trabalho a dois.',
-          '1年にわたって対話を重ね、シナリオを試し、既存のアイデアを調べてきました。このアプリはその共同作業から生まれた成果のひとつです。'),
+        intro1: L('Forest Fire Watch is a project by Nuno Rogério and Anastasia Osling, design leaders at Hitachi with wide experience in UX design and a passion for nature, and for doing all within our reach to protect it.',
+          'O Forest Fire Watch é um projeto de Nuno Rogério e Anastasia Osling, líderes de design na Hitachi, com vasta experiência em design de UX e uma paixão pela natureza e por tudo o que está ao nosso alcance para a proteger.',
+          'Forest Fire Watchは、日立のデザインリーダーであるNuno RogérioとAnastasia Oslingのプロジェクトです。2人はUXデザインの豊富な経験を持ち、自然と、それを守るために私たちにできるすべてのことに情熱を注いでいます。'),
+        intro2: L('Wildfires are a shared challenge, faced by ordinary people. Year after year they grow larger, and so does their toll on people and the planet. We see the dead and the burned hectares on the news, and burned forests around our own homes: Nuno\'s in Porto, Portugal, Ana\'s in Nevada City, California.',
+          'Os incêndios florestais são um desafio comum, de pessoas comuns. Ano após ano, crescem em dimensão, e com eles o impacto nas pessoas e no planeta. Vemos nas notícias os mortos e os hectares ardidos, e as florestas queimadas à volta das nossas terras: o Nuno no Porto, em Portugal, a Ana em Nevada City, na Califórnia.',
+          '山火事は、ごく普通の人々が共に向き合う課題です。年々その規模は大きくなり、人と地球への影響も深刻になっています。ニュースでは犠牲者や焼失面積が伝えられ、私たちの暮らす土地の周りでも森が焼けています。ヌノはポルトガルのポルトで、アナはカリフォルニアのネバダシティで。'),
+        intro3: L('Just sit and watch? Nuno and Ana said no. Starting from Ana\'s wish to improve wildfire response, in California and around the world, they took on the challenge of opening a path in this field. Over a year of conversations they tried out scenarios and studied ideas that already exist. This app is one result.',
+          'Ficar sentado a assistir? O Nuno e a Ana responderam que não. Partindo da vontade da Ana de melhorar a resposta aos incêndios, na Califórnia e no mundo, aceitaram o desafio de abrir caminho neste campo. Ao longo de um ano de conversas, ensaiaram cenários e estudaram ideias que já existem. Esta app é um dos resultados.',
+          'ただ座って見ているだけでいいのか。2人の答えは「いいえ」でした。カリフォルニア、そして世界の山火事対応を良くしたいというアナの思いを出発点に、この分野に道を切り開く挑戦を引き受けました。1年にわたって対話を重ね、シナリオを試し、既存のアイデアを調べてきました。このアプリはその成果のひとつです。'),
         authors: L('Authors', 'Autores', '制作者'),
         idea: L('The idea', 'A ideia', 'アイデア'),
         goal: L('Shorten the time from spotting an ignition to confirming it and sending firefighters. In a wildfire, every minute counts.',
