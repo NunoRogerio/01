@@ -90,9 +90,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
     o.push('html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:#E8E8ED!important}');
     o.push('html:root .wf-note{color:#AEAEB2!important}');
-    o.push('.wf-rm{background:rgba(255,69,58,0.15)!important;color:#FF8A80!important;-webkit-text-fill-color:#FF8A80!important}');   // Remove: red tint with red text, 5:1 at night too
+    o.push('.wf-rm{background:rgba(255,69,58,0.10)!important;color:#FF8A80!important;-webkit-text-fill-color:#FF8A80!important}');   // Remove: red tint with red text, 5:1 at night too
     o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-tabs::before{background:#3A3A3C}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
-    o.push('html:root{--wf-band-solid:#3A3A3C;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.2)!important;color:#FF8A80!important}');
+    o.push('html:root{--wf-band-solid:#3A3A3C;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.15)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
@@ -170,7 +170,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // Condensed buttons (compact surfaces such as map tooltips): 32px tall, 15px semibold, same pill and roles
     ':root .wf-b.wf-cond{height:32px!important;min-height:32px!important;font-size:15px!important;line-height:20px!important;padding:0 12px!important}' +
     ':root .wf-pri,:root .btn.primary{background:var(--wf-y)!important;color:#1C1C1E!important;-webkit-text-fill-color:#1C1C1E;border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
-    ':root .wf-danger{background:rgba(255,59,48,0.14)!important;color:#B0001A!important;border-color:transparent!important}' +
+    ':root .wf-danger{background:rgba(255,59,48,0.09)!important;color:#B0001A!important;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
     // Big KPI numbers across the app (forces, resolution summary, profiles): dark grey, one size
