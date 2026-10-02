@@ -143,7 +143,7 @@ class Component extends DCLogic {
     // full screen: line the switcher up with the map's buttons (same centre line), 8px left of the first one, once laid out
     clearTimeout(this._hzT); if (F) this._hzT = setTimeout(() => { try { const sw = document.querySelector('[data-wf-hzfull]'); if (!sw) return; const host = sw.parentElement.getBoundingClientRect();
       const bs = [...sw.parentElement.querySelectorAll('button')].filter((b) => !sw.contains(b) && b.offsetWidth && Math.abs(b.offsetWidth - b.offsetHeight) < 3).map((b) => b.getBoundingClientRect()).filter((r) => r.top > host.top + host.height / 2);
-      if (!bs.length) return; const left = Math.min(...bs.map((r) => r.left)), mid = (bs[0].top + bs[0].bottom) / 2, k = host.width / (sw.parentElement.offsetWidth || host.width) || 1;
+      if (!bs.length) return; bs.sort((a, b) => b.bottom - a.bottom); const left = Math.min(...bs.map((r) => r.left)), mid = (bs[0].top + bs[0].bottom) / 2,   /* the controls stack on the right: level with the lowest one */ k = host.width / (sw.parentElement.offsetWidth || host.width) || 1;
       sw.style.top = ((mid - host.top) / k - sw.offsetHeight / 2) + 'px'; sw.style.right = ((host.right - left) / k + 8) + 'px'; } catch (e) {} }, 60);
     // the map band: the screen's height minus the header and the KPI row (16px above and below the cards), never under 280px;
     // measured once the screen is laid out, so larger text or a longer title still leaves the KPIs in view

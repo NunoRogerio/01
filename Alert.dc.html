@@ -910,7 +910,7 @@ class Component extends DCLogic {
     // full screen: line the switcher up with the map's buttons (same centre line), left of the first one, once laid out
     clearTimeout(this._cpT); this._cpT = setTimeout(() => { try { const sw = document.querySelector('[data-wf-cpfull]'); if (!sw || sw.offsetParent === null) return;
       const host = sw.parentElement.getBoundingClientRect(), bs = [...sw.parentElement.querySelectorAll('button')].filter((b) => /Re-centre the map|Send drone|Close map|Exit full screen|Full screen/.test(b.getAttribute('aria-label') || '') && b.offsetWidth).map((b) => b.getBoundingClientRect()).filter((r) => r.bottom > host.top + host.height / 2);
-      if (!bs.length) return; const left = Math.min(...bs.map((r) => r.left)), mid = (bs[0].top + bs[0].bottom) / 2, k = host.width / (sw.parentElement.offsetWidth || host.width) || 1;
+      if (!bs.length) return; bs.sort((a, b) => b.bottom - a.bottom); const left = Math.min(...bs.map((r) => r.left)), mid = (bs[0].top + bs[0].bottom) / 2,   /* the controls stack on the right: level with the lowest one */ k = host.width / (sw.parentElement.offsetWidth || host.width) || 1;
       sw.style.top = ((mid - host.top) / k - sw.offsetHeight / 2) + 'px'; sw.style.right = ((host.right - left) / k + 8) + 'px'; } catch (e) {} }, 60);
     return o;
   }
