@@ -362,10 +362,10 @@ window.__wfBlink=function(path,dur){
   })();
 })();
 
-// Lists marked wf-snap scroll and coast exactly like normal, untouched. Only once the motion has come to rest,
-// if the top item is left half shown, the list eases to a whole item (80% rule, below).
-// The last position of the list always stays reachable.
+// No snapping anywhere (Oct 2): every scrolling list coasts freely with the phone's own momentum and stays where it stops.
+// (The old settle-to-a-whole-item behaviour below is kept but switched off.)
 (function(){
+  return;
   function stops(L){
     var max=L.scrollHeight-L.clientHeight,out=[],k=L.children,off=L.hasAttribute('data-snap-off')?(parseFloat(L.getAttribute('data-snap-off'))||0):32;   // items come to rest 32px under the list's top, clear of the top fade
     for(var i=0;i<k.length;i++){var c=k[i];if(!c.offsetHeight)continue;out.push(Math.max(0,Math.min(max,(c.offsetParent===L?c.offsetTop:c.offsetTop-L.offsetTop)-off)));}
