@@ -16,7 +16,7 @@
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=143"></script>
-<script src="i18n.js?v=129"></script>
+<script src="i18n.js?v=130"></script>
 <script src="live.js?v=39"></script>
 <script src="chat.js?v=46"></script>
 
@@ -507,7 +507,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <h2 id="soTitle" style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; color: #000000">Confirm fire?</h2>
     <p style="margin: 2px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{cur.place}}</p>
     <!-- Talk it over before deciding: the candidate's team chat, full width above the choice -->
-    <button type="button" class="btn primary" onClick="{{chat.go}}" style="display: {{chat.btnD}}; width: 100%; height: 48px; margin-top: 24px; font-size: 17px; font-weight: 600">Chat with the team first</button>
+    <!-- a suggestion chip, as in the chat (white 70%, the chat icon on the left), not a main action -->
+    <button type="button" class="chbtn" onClick="{{chat.go}}" style="display: {{chat.btnD}}; align-self: flex-start; align-items: center; gap: 8px; height: 40px; margin-top: 24px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.7); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>Chat with the team first</button>
     <div class="wf-dlg-acts">
       <button type="button" class="btn wf-sec" onClick="{{mo.dismiss}}" aria-haspopup="dialog" style="height: 48px; font-size: 17px; font-weight: 600">Dismiss fire</button>
       <button type="button" class="btn primary" onClick="{{mo.confirm}}" style="height: 48px; font-size: 17px; font-weight: 600">Confirm fire</button>
@@ -1196,7 +1197,7 @@ class Component extends DCLogic {
       hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null },
       chat: (() => { const C = window.__wfChat, raw = SC.cands[ci]; if (!C || !raw) return { badgeD: 'none', n: '', aria: 'Chat', open: null, go: null, label: '', btnD: 'none' };
         const inc = C.incCand(raw), ex = C.find(inc), u = ex ? C.unread(ex) : 0;
-        return { badgeD: u ? 'block' : 'none', n: C.badge ? C.badge(u) : String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} C.open(inc); window.location.href = 'Chat.dc.html'; }, label: 'Team chat', btnD: 'block' }; })(),
+        return { badgeD: u ? 'block' : 'none', n: C.badge ? C.badge(u) : String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} C.open(inc); window.location.href = 'Chat.dc.html'; }, label: 'Team chat', btnD: 'inline-flex' }; })(),
       hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), goDrone: () => { this.wfSetVerify(cur.id); window.__wfDroneSeen = Object.assign(window.__wfDroneSeen || {}, { [cur.id]: true }); this.setState({ feed: cur.id }); },   // the drone's feed opens in place: in the map band, or floating over the full-screen map
       ...(() => {   // the feed comes out from behind the drone button at its own proportions and glides, growing, to its place; X folds it back
         const on = !!s.feed && s.feed === cur.id, closing = Date.now() - (this._feedOff || 0) < 650, inFull = !!s.full, mx = on && !!s.feedMax;
