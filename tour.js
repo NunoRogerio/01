@@ -78,27 +78,22 @@ if (WF_TOUR_ON) (function () {
     return best;
   }
 
+  // own messages in the chat (the Ask the team step waits for one more)
+  var meBase = 0; function mine() { return document.querySelectorAll('.chbubR').length; }
+  // the fire page map's full-screen control: open (maximize) or close (minimize)
+  function fsBtn(open) { var d = open ? 'M14 4h6v6' : 'M4 14h6v6'; return q('button.mbtn', function (b) { var p = b.querySelector('path[d^="' + d + '"]'); return !!p && getComputedStyle(p).display !== 'none'; }); }
+  function closeDrone() { var f = q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); if (f) { selfTap = true; try { f.click(); } catch (e) {} selfTap = false; } }
   // ---- the steps --------------------------------------------------------------------------------------------
   // t: the action (title); b: one or two short sentences; mode: 'tap' | 'next' | 'until'
   var S = [
     { page: 'Main.dc.html', mode: 'next', next: ['Start', 'Começar'],
       t: ['Quick tour', 'Visita rápida'],
-      b: ['Follow one ignition from detection to a closed fire. Tap what the arrow points to, or use ‹ › to move between steps.',
-          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que a seta indica, ou use ‹ › para mudar de passo.'] },
-    { page: 'Main.dc.html', mode: 'tap', closeAfter: true, find: function () { return hdr('> button.opt[aria-expanded]'); }, area: true, also: 'section[data-swipe-key="sc"]',   // the area picker can be used here; it closes when the tour moves on
-      t: ['Choose a region', 'Escolha uma região'],
-      b: ['Tap the area name, then pick a country, state or district (or close the list).', 'Toque no nome da área e escolha um país, estado ou distrito (ou feche a lista).'] },
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('[data-wf-leg] button[aria-pressed="false"]'); }, legend: true, lock: true,
-      t: ['Show more on the map', 'Mostre mais no mapa'],
-      b: ['Grey chips are hidden layers, like active fires or fire stations. Tap one to show it.',
-          'As etiquetas cinzentas são camadas escondidas, como incêndios ativos ou quartéis. Toque numa para a mostrar.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: pickMarker, also: '[data-wf-pop] a.wf-pri',
-      t: ['Pick an incident on the map', 'Escolha um incidente no mapa'],
-      b: ['Tap any circle for a short summary, then View.', 'Toque num círculo para um resumo, depois em Ver.'] },
+      b: ['Follow one ignition from detection to a closed fire. Tap what the helicopter points to, or use ‹ › to move between steps.',
+          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
       skip: function () { return !!listRow(); },
-      t: ['…or from the list', '…ou na lista'],
-      b: ['Tap here to open every candidate and fire in this region.', 'Toque aqui para abrir todos os candidatos e incêndios desta região.'] },
+      t: ['Open the list', 'Abra a lista'],
+      b: ['Every candidate and fire in this region, the most likely first.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro.'] },
     { page: 'Main.dc.html', mode: 'tap', find: listRow, lock: true, also: 'section[data-swipe-key="li"] a.sqrow[href="Alert.dc.html"]',   // any candidate row carries on
       t: ['Open the demo ignition', 'Abra a ignição de demonstração'],
       b: ['We chose the most likely candidate for this tour. Tap it.', 'Escolhemos o candidato mais provável para esta visita. Toque nele.'] },
@@ -108,37 +103,41 @@ if (WF_TOUR_ON) (function () {
       t: ['Key figures', 'Números principais'],
       b: ['Likelihood, heat power and people at risk first, to decide fast. Press and hold a card to reorder; tap + to choose which to show.',
           'Probabilidade, potência térmica e pessoas em risco primeiro, para decidir depressa. Prima e mantenha um cartão para reordenar; toque em + para escolher quais mostrar.'] },
-    { page: 'Alert.dc.html', mode: 'next', find: function () { return q('button.qtag'); },
-      t: ['Confirm or dismiss here', 'Confirme ou descarte aqui'],
-      b: ['This tag confirms the fire. In this tour we confirm it with the team, in the chat.', 'Esta etiqueta confirma o incêndio. Nesta visita confirmamos com a equipa, na conversa.'] },
-    { page: 'Alert.dc.html', mode: 'tap', find: function () { return pathBtn('M14 4h6v6'); },
-      t: ['See the map full screen', 'Veja o mapa em ecrã inteiro'],
-      b: ['Tap to open the map full screen.', 'Toque para abrir o mapa em ecrã inteiro.'] },
-    { page: 'Alert.dc.html', mode: 'tap', find: function () { return pathBtn('M4 14h6v6'); },
-      t: ['Back to the page', 'Voltar à página'],
-      b: ['Pan and zoom freely. Then tap here to return.', 'Mova e aproxime à vontade. Depois toque aqui para voltar.'] },
-    { page: 'Alert.dc.html', mode: 'tap', find: function () { return pathBtn('M2.5 6h6M15.5 6h6'); }, show: { ms: 4500, t: ['Live drone feed', 'Imagem do drone em direto'], b: ['Smoke and flame seen from above. We close it in a moment to see the spread.', 'Fumo e chama vistos de cima. Fechamos já para ver a propagação.'], close: function () { var b = q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); if (b) b.click(); } },
-      t: ['Send a drone', 'Envie um drone'],
-      b: ['Its live feed replaces the map, to check the smoke from above.', 'A imagem em direto substitui o mapa, para ver o fumo de cima.'] },
-    { page: 'Alert.dc.html', mode: 'tap', before: function () { var f = q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); if (f) { selfTap = true; f.click(); selfTap = false; } var m = pathBtn('M4 14h6v6'); if (m) { selfTap = true; m.click(); selfTap = false; } }, find: function () { return q('div[role=tablist].wf-seg'); },
-      ach: ['Drone in the air. Nice!', 'Drone no ar. Boa!'], then: ['Now let\'s see where it can spread.', 'Agora vamos ver para onde pode avançar.'],
-      t: ['See where it can spread', 'Veja para onde pode avançar'],
-      b: ['Tap +1 h, +3 h or +6 h to see the projection.', 'Toque em +1 h, +3 h ou +6 h para ver a projeção.'] },
     { page: 'Alert.dc.html', mode: 'tap', find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
-      t: ['Talk with the team', 'Fale com a equipa'],
-      b: ['One chat per incident gathers coordinators and station chiefs.', 'Uma conversa por incidente junta coordenadores e comandantes de quartel.'] },
+      t: ['Confirm it with the team', 'Confirme com a equipa'],
+      b: ['Confirming a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Confirmar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
 
     { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header + button.chrow[aria-expanded]'); },
       t: ["The incident's state", 'O estado do incidente'],
-      b: ['Always pinned at the top. Tap it any time for the timeline and projection.', 'Sempre no topo. Toque a qualquer momento para ver a cronologia e a projeção.'] },
+      b: ['Always pinned at the top. It changes as the incident moves on.', 'Sempre no topo. Muda à medida que o incidente avança.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return chip(['Confirm fire', 'Confirmar incêndio', '確認']); },
       t: ['Confirm the fire', 'Confirme o incêndio'],
-      b: ['The team agrees it is a real fire.', 'A equipa confirma que é um incêndio real.'] },
-    { page: 'Chat.dc.html', mode: 'tap', find: function () { return chip(['Configure dispatch', 'Configurar despacho', '出動']); },
-      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now let\'s deal with the fire.', 'Agora vamos tratar do incêndio.'],
-      t: ['Assign resources', 'Atribua meios'],
-      b: ['Choose which stations send crews.', 'Escolha que quartéis enviam equipas.'] },
+      b: ['Suggestions under the message field are the quick actions. Tap Confirm fire.', 'As sugestões sob o campo de mensagem são as ações rápidas. Toque em Confirmar incêndio.'] },
+    { page: 'Chat.dc.html', mode: 'until', before: function () { meBase = mine(); }, until: function () { return mine() > meBase; },
+      find: function () { return q('label:has(> input.sqsearch)'); },
+      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now talk with the team.', 'Agora fale com a equipa.'],
+      t: ['Ask the team something', 'Pergunte algo à equipa'],
+      b: ['Type a question, like "Is the access road open?", and send it.', 'Escreva uma pergunta, como "O acesso está livre?", e envie.'] },
+    { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('a[data-wf-firettl]'); },
+      t: ['Open the fire', 'Abra o incêndio'],
+      b: ['Tap the fire\'s name for its page.', 'Toque no nome do incêndio para abrir a sua página.'] },
 
+    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return fsBtn(true); },
+      t: ['See the map full screen', 'Veja o mapa em ecrã inteiro'],
+      b: ['Tap to open the fire\'s map full screen.', 'Toque para abrir o mapa do incêndio em ecrã inteiro.'] },
+    { page: 'Dispatch.dc.html', mode: 'next', free: true, low: true, find: function () { return fsBtn(false); },
+      t: ['Try the map', 'Experimente o mapa'],
+      b: ['Pan and zoom, switch layers in the legend, see the spread with +1 h, +3 h or +6 h, or send a drone. Tap › when you\'re done.', 'Mova e aproxime, troque camadas na legenda, veja a propagação com +1 h, +3 h ou +6 h, ou envie um drone. Toque em › quando terminar.'] },
+    { page: 'Dispatch.dc.html', mode: 'tap', before: closeDrone, find: function () { return fsBtn(false); },
+      t: ['Back to the page', 'Voltar à página'],
+      b: ['Tap here to leave full screen.', 'Toque aqui para sair do ecrã inteiro.'] },
+    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
+      t: ['Back to the team', 'De volta à equipa'],
+      b: ['Tap to return to the chat.', 'Toque para voltar à conversa.'] },
+
+    { page: 'Chat.dc.html', mode: 'tap', find: function () { return chip(['Configure dispatch', 'Configurar despacho', '出動']); },
+      t: ['Move the fire on', 'Faça o incêndio avançar'],
+      b: ['Each stage brings its next action. Tap Configure dispatch to send crews.', 'Cada fase traz a ação seguinte. Toque em Configurar despacho para enviar equipas.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }); },
       t: ['Use the suggested resources', 'Use os meios sugeridos'],
       b: ['One tap fills the plan. Add resources lets you choose stations yourself.', 'Um toque preenche o plano. Adicionar meios deixa escolher os quartéis.'] },
@@ -154,66 +153,30 @@ if (WF_TOUR_ON) (function () {
       t: ['Back to the chat', 'Volte à conversa'],
       b: ['Tap Return once every order is through.', 'Toque em Voltar quando todas as ordens tiverem passado.'] },
 
-    { page: 'Chat.dc.html', mode: 'next', find: chipRow, next: ['Fire page', 'Página do incêndio'],
-      go: function () { location.href = 'Dispatch.dc.html'; },
-      t: ['The crews are on their way', 'As equipas estão a caminho'],
-      b: ['Status cards follow each change. Now a look at the fire page.', 'Os cartões de estado acompanham cada mudança. Agora, a página do incêndio.'] },
-    { page: 'Dispatch.dc.html', mode: 'next', find: function () { return q('div[role=tablist].wf-tabs'); },
-      t: ['Situation and resources', 'Situação e meios'],
-      b: ['Situation shows the figures. Crews shows the stations and units on this fire.', 'Situação mostra os números. Equipas mostra os quartéis e meios neste incêndio.'] },
-    { page: 'Dispatch.dc.html', mode: 'next', interact: true, find: function () { return q('[data-wf-kpis] [data-wf-kpicard]'); },
-      t: ['Make it yours', 'Adapte à sua maneira'],
-      b: ['Press and hold a card, then drag it to reorder.', 'Prima e mantenha um cartão, depois arraste-o para reordenar.'] },
-    { page: 'Dispatch.dc.html', mode: 'next', find: function () { return q('[data-wf-kpis] > button[data-round]'); },
-      t: ['Choose what to see', 'Escolha o que ver'],
-      b: ['Tap + to add or remove cards.', 'Toque em + para adicionar ou retirar cartões.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { var L = document.querySelectorAll('div[role=tablist].wf-tabs button.tabopt'); return L[1] && shown(L[1]) ? L[1] : null; },
-      t: ['See the resources', 'Veja os meios'],
-      b: ['Tap Crews to see who is on the way.', 'Toque em Equipas para ver quem está a caminho.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
-      t: ['Back to the team', 'De volta à equipa'],
-      b: ['Tap to return to the chat.', 'Toque para voltar à conversa.'] },
-
-    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,
+    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!chip(['Close fire', 'Encerrar incêndio']); }, auto: true, noClose: true,
       find: function () { return q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (b) { return !b.disabled; }) || chipRow(); },
       t: ['Watch the fire move forward', 'Veja o incêndio avançar'],
-      b: ['The tour plays the fire owner for you: it approves air support and moves the stages on until the fire is closed. Status cards show each change.',
-          'A visita faz de responsável pelo incêndio: aprova o meio aéreo e avança as fases até o incêndio ser encerrado. Os cartões de estado mostram cada mudança.'] },
+      b: ['The tour plays the fire owner for you: it approves air support and moves each stage on. Status cards show every change.',
+          'A visita faz de responsável pelo incêndio: aprova o meio aéreo e avança cada fase. Os cartões de estado mostram cada mudança.'] },
+    { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('header + button.chrow[aria-expanded]'); },
+      ach: ['Every stage done. Nice work!', 'Todas as fases concluídas. Bom trabalho!'], then: ['Now the stage history.', 'Agora a história das fases.'],
+      t: ['See every stage', 'Veja todas as fases'],
+      b: ['Tap the state to open the stack: each stage and how long it took.', 'Toque no estado para abrir a pilha: cada fase e quanto tempo durou.'] },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio']); },
+      t: ['Close the fire', 'Encerre o incêndio'],
+      b: ['When the watch is over, close it.', 'Quando a vigilância terminar, encerre-o.'] },
+    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,
+      find: function () { return q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (b) { return !b.disabled; }) || chipRow(); },
+      t: ['Closing the fire', 'A encerrar o incêndio'],
+      b: ['The team confirms the closing checks.', 'A equipa confirma as verificações de encerramento.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('wf-trophy'); },
       ach: ['Fire out. Outstanding work!', 'Incêndio extinto. Trabalho notável!'], then: ['Now let\'s see what it took.', 'Agora vamos ver o que foi preciso.'],
       t: ['Fire closed', 'Incêndio encerrado'],
       b: ['Tap to see the summary.', 'Toque para ver o resumo.'] },
-    { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header.chview'); }, next: ['Home', 'Início'],
-      go: function () { location.href = 'Main.dc.html'; },
-      t: ['The fire summary', 'O resumo do incêndio'],
-      b: ['Time in each stage, the forces used and the result. Scroll down to see it all.', 'Tempo em cada fase, meios usados e resultado. Deslize para baixo para ver tudo.'] },
-
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('header[data-pull="down"] button', function (b) { return !!b.querySelector('path[d^="M6 16.5V11"]'); }); },
-      t: ['Notifications', 'Notificações'],
-      b: ['New ignitions, requests and status changes.', 'Novas ignições, pedidos e mudanças de estado.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="nt"]'); }, done: function () { closeIn('section[data-swipe-key="nt"]'); },
-      t: ['Every alert in one place', 'Todos os alertas num só sítio'],
-      b: ['Tap one to open its incident.', 'Toque num para abrir o incidente.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return hdr('> a[href="Chat.dc.html"]'); },
-      t: ['Active chats', 'Conversas ativas'],
-      b: ['Every incident chat you are in.', 'Todas as conversas de incidentes em que participa.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: function () { var L = document.querySelectorAll('section[data-swipe-key="cb"] button[role=tab]'); return L[1] && shown(L[1]) === true ? L[1] : null; },
-      t: ['Open or resolved', 'Abertas ou resolvidas'],
-      b: ['Open chats are under way. Tap Resolved to find the fire you just closed.', 'As abertas estão em curso. Toque em Resolvidas para ver o incêndio que acabou de encerrar.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="cb"] a.chrow'); }, done: function () { closeIn('section[data-swipe-key="cb"]'); },
-      t: ['Your fire, kept', 'O seu incêndio, guardado'],
-      b: ['Each resolved chat keeps its history and summary, a benchmark for the next one.', 'Cada conversa resolvida guarda a história e o resumo, uma referência para a próxima.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return hdr('button.avbtn'); },
-      t: ['Your settings', 'As suas definições'],
-      b: ['Language, theme, text size, chats and data.', 'Idioma, tema, tamanho do texto, conversas e dados.'] },
-    { page: 'Main.dc.html', mode: 'tap', before: function () { scrollEnd('[data-wf-fadetop]'); },
-      find: function () { return q('[data-wf-fadetop] > div > button[aria-expanded]', function (b) { return !!b.parentElement.querySelector('ul'); }); },
-      t: ['Connected data sources', 'Fontes de dados ligadas'],
-      b: ['Every source the app reads. Tap to see them.', 'Todas as fontes que a app lê. Toque para as ver.'] },
-    { page: 'Main.dc.html', mode: 'next', low: true, next: ['Finish', 'Terminar'], before: function () { setTimeout(function () { scrollEnd('[data-wf-fadetop]'); }, 450); },
+    { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header.chview'); }, next: ['Finish', 'Terminar'],
       ach: ['Tour complete. You\'re ready!', 'Visita concluída. Está pronto!'], then: ['Now explore on your own.', 'Agora explore por si.'],
-      t: ["That's the tour", 'Fim da visita'],
-      b: ['Scroll down to see every source and when it last loaded. Thank you for exploring.', 'Deslize para baixo para ver cada fonte e quando foi carregada. Obrigado por explorar.'] }
+      t: ['The fire summary', 'O resumo do incêndio'],
+      b: ['Time in each stage, the forces used and the result. Scroll down to see it all. Thank you for exploring.', 'Tempo em cada fase, meios usados e resultado. Deslize para baixo para ver tudo. Obrigado por explorar.'] }
   ];
 
   // ---- drawing ----------------------------------------------------------------------------------------------
@@ -255,14 +218,15 @@ if (WF_TOUR_ON) (function () {
     ['l', 'r'].forEach(function (k) { var g = document.createElement('div'); g.className = 'tgl ' + k; root.appendChild(g); });   // tour mode: a soft lime glow along both sides of the screen
     root.appendChild(svg); root.appendChild(ring); root.appendChild(bub); document.body.appendChild(root);
   }
-  function end() { put(null); if (root) root.remove(); root = null; cur = -1; }
+  function end() { put(null); if (root) root.remove(); root = null; cur = -1; heliLand(); }
   function go(i) {
     var s = get(); if (!s) return;
     var st = S[s.i]; if (st && st.done) try { st.done(); } catch (e) {}
     if (i >= S.length) { end(); return; }
+    if (S[i].page !== PAGE) heliExit(S[i].page);
     put({ i: i, max: Math.max(i, s.max || 0) }); seen = 0; scrolled = false; ran = false; armed = -1;
   }
-  function back(i) { if (i < 1) return; var s0 = get() || {}; var p = i - 1; put({ i: p, b: 1, max: Math.max(i, s0.max || 0) }); seen = Date.now(); scrolled = false; ran = false; cur = -1; lastKey = ''; if (S[p].page !== PAGE) { try { history.back(); } catch (e) { location.href = S[p].page; } } else tick(); }
+  function back(i) { if (i < 1) return; var s0 = get() || {}; var p = i - 1; if (S[p].page !== PAGE) heliExit(S[p].page); put({ i: p, b: 1, max: Math.max(i, s0.max || 0) }); seen = Date.now(); scrolled = false; ran = false; cur = -1; lastKey = ''; if (S[p].page !== PAGE) { try { history.back(); } catch (e) { location.href = S[p].page; } } else tick(); }
   // The entry warning: a dark-glass tooltip just above the Tour button (the tour is still being tuned)
   function warn(anchor) {
     var old = document.getElementById('wf-tourwarn'); if (old) { old.remove(); return; }
@@ -280,7 +244,7 @@ if (WF_TOUR_ON) (function () {
     var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
-  window.__wfTour = { warn: warn, start: function () { put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
+  window.__wfTour = { warn: warn, start: function () { heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
   function arrow(x1, y1, x2, y2, seed) {
@@ -326,10 +290,10 @@ if (WF_TOUR_ON) (function () {
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
     if (low && el && !st.find) el = null;
-    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2)) + 'px'; return; }
+    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2)) + 'px'; return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
-    if (big) { ring.style.display = 'none'; svg.innerHTML = ''; bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (vh - bh - 40) + 'px'; return; }
+    if (big) { ring.style.display = 'none'; svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (vh - bh - 40) + 'px'; return; }
     var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
     ring.style.display = 'block'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
     var gap = 76, below = vh - T.b - 32, above = T.t - 16, up;
@@ -341,13 +305,103 @@ if (WF_TOUR_ON) (function () {
     var hits = function (y) { return OB.some(function (o) { return left < o.r && left + bw > o.l && y < o.b && y + bh > o.t; }); };
     if (hits(top)) { var alts = [up ? Math.min(vh - 32 - bh, T.b + gap) : Math.max(16, T.t - gap - bh), vh - 32 - bh, 16], f = alts.find(function (y) { return !hits(y); }); if (f != null) { up = f + bh / 2 < (T.t + T.b) / 2; top = f; } }
     bub.style.left = left + 'px'; bub.style.top = top + 'px';
-    var sx = Math.min(left + bw - 36, Math.max(left + 36, cx + (cx < vw / 2 ? 24 : -24))), sy = up ? top + bh + 8 : top - 8;
-    var ex = cx, ey = up ? T.t - 8 : T.b + 8;
-    if (Math.abs(ey - sy) < 24) { svg.innerHTML = ''; svg.__k = ''; return; }
-    var k = [sx, sy, ex, ey].map(function (v) { return Math.round(v); }).join(',');
-    if (svg.__k !== k) { var fresh = !svg.__k; svg.__k = k; svg.innerHTML = arrow(sx, sy, ex, ey, i + 1); if (!fresh) [].forEach.call(svg.querySelectorAll('.ar'), function (p) { p.style.animation = 'none'; p.style.strokeDashoffset = '0'; }); }
+    // the guide helicopter hovers over the control, its bucket pointing at it (no arrow)
+    svg.innerHTML = ''; svg.__k = '';
+    heliAim(T, { top: top, height: bh, left: left, width: bw }, up);
   }
 
+
+  // ---- the guide helicopter (Oct 3) ---------------------------------------------------------------------------
+  // Instead of an arrow, the Tour button's helicopter takes off (growing 20%) and flies to each control to tap, hovering
+  // over it with its water bucket pointing at it (the cable a damped pendulum). It flies from one focus to the next;
+  // when the tour changes screen it slides out to one side and comes back in from the opposite side on the next screen.
+  var HK = 'wf-heli', ORDER = { 'Main.dc.html': 0, 'Alert.dc.html': 1, 'Chat.dc.html': 2, 'Dispatch.dc.html': 3 };
+  var H = null, NSV = 'http://www.w3.org/2000/svg', SC = 1.4, HOOKU = [11.5, 15], BUCK = 8;   // 28px icon at 120%: 1.4px per unit
+  var heliPaths = '<path class="wf-rot" d="M2.5 5h15"></path><path class="wf-rot2" d="M9.79 5h0.42"></path><path d="M10 5v3M5 8h8a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2H8a3 3 0 0 1-3-3Z M13 8.2V12h3.9M17 11.5h4.5M21.5 9.5v4M7 19h9.5M9 15v4M14 15v4"></path>';
+  function tourBtnIcon() { return document.querySelector('[data-wf-tourbtn] .wf-heli'); }
+  function heliMake() {
+    if (H && H.svg.isConnected) return H;
+    var o = document.createElementNS(NSV, 'svg'); o.id = 'wf-tourheli'; o.setAttribute('aria-hidden', 'true');
+    o.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;overflow:visible;pointer-events:none;z-index:99992;color:#2C2C2E';
+    // a white halo under every line (drawn as wider white strokes, cheaper than a filter) keeps it readable on maps and photos
+    var bk = '<path d="M-3 0L3 0M-1.5 -2L-3 0M1.5 -2L3 0"></path><path d="M-3.8 0h7.6l-1.1 6.4a1.8 1.8 0 0 1 -1.8 1.4h-1.8a1.8 1.8 0 0 1 -1.8 -1.4Z"></path>';
+    o.innerHTML = '<line class="lh" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-opacity="0.5"></line><line class="lc" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-opacity="0.4"></line>' +
+      '<g class="hb" fill="none" stroke-linejoin="round" stroke-linecap="round"><g stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3.3">' + bk + '</g><g stroke="currentColor" stroke-width="1.3">' + bk.replace('Z"></path>', 'Z" fill="rgba(var(--wf-y-rgb,229,255,0),.35)"></path>') + '</g></g>' +
+      '<g class="hh" fill="none" stroke-linecap="round" stroke-linejoin="round"><g stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="2.6">' + heliPaths + '</g><g stroke="currentColor" stroke-width="1.3">' + heliPaths + '</g></g>';
+    if (!document.getElementById('wf-tourheli-css')) { var cs = document.createElement('style'); cs.id = 'wf-tourheli-css';
+      cs.textContent = '#wf-tourheli .wf-rot{animation:wfTRot .3s step-end infinite}#wf-tourheli .wf-rot2{opacity:0;animation:wfTRot2 .3s step-end infinite}@keyframes wfTRot{0%{opacity:1}50%{opacity:0}}@keyframes wfTRot2{0%{opacity:0}50%{opacity:1}}@media (prefers-reduced-motion:reduce){#wf-tourheli .wf-rot,#wf-tourheli .wf-rot2{animation:none}}';
+      document.head.appendChild(cs); }
+    document.body.appendChild(o);
+    var keep = H;
+    H = { svg: o, ln: o.querySelector('.lc'), lh: o.querySelector('.lh'), bk: o.querySelector('.hb'), hh: o.querySelector('.hh'),
+      x: keep ? keep.x : -60, y: keep ? keep.y : 120, vx: 0, vy: 0, tx: null, ty: null, L: 30, tL: 30, sc: keep ? keep.sc : 1.2, tsc: 1.2,
+      flip: keep ? keep.flip : 1, fl: keep ? keep.fl : 1, phi: 0, w: 0, pp: null, pv: null, t: 0, last: 0, gone: false, land: null, exitX: null };
+    if (!heliLoop.on) { heliLoop.on = true; requestAnimationFrame(heliLoop); }
+    return H;
+  }
+  // hook point (where the cable leaves the belly) for a bucket tip at (x, y)
+  function heliAt(x, y, L) { var h = heliMake(); h.tL = L; h.tx = x; h.ty = y - L - BUCK; h.exitX = null; }
+  function heliAim(T, bub0, up) {
+    var cx = (T.l + T.r) / 2, tipY = T.t - 2, room = tipY - BUCK - 10 - 24 * 1.4 * 0.2 - 22;   // space above for cable and body
+    if (up && bub0) room = Math.min(room, tipY - (bub0.top + bub0.height) - 6);
+    if (room >= 10 + 22) { heliAt(cx, tipY, Math.min(34, room - 22)); return; }
+    // no room above: hover beside it, the bucket at its side, on whichever side has room
+    var vw = VW(), side = T.r + 46 < vw ? 1 : -1, x = side > 0 ? T.r + 8 : T.l - 8;
+    heliAt(x, (T.t + T.b) / 2 + 2, 14);
+  }
+  function heliPark(bub0) { if (!bub0) return; heliAt(bub0.left + bub0.width - 40, bub0.top - 4, 14); }
+  function heliExit(toPage) {
+    var h = H; if (!h) return; var dir = (ORDER[toPage] == null ? 1 : ORDER[toPage]) >= (ORDER[PAGE] || 0) ? -1 : 1;   // deeper: out to the left, in from the right
+    h.exitX = dir < 0 ? -80 : VW() + 80; h.tx = h.exitX; h.ty = h.y;
+    try { sessionStorage.setItem(HK, JSON.stringify({ y: h.y, from: dir < 0 ? 'right' : 'left', sc: h.sc, t: Date.now() })); } catch (e) {}
+  }
+  function heliEnter() {
+    var h = heliMake(), m = null; try { m = JSON.parse(sessionStorage.getItem(HK) || 'null'); } catch (e) {}
+    if (m && Date.now() - m.t < 15000) { h.x = m.from === 'right' ? VW() + 80 : -80; h.y = m.y; h.flip = h.fl = m.from === 'right' ? 1 : -1; h.sc = h.tsc = 1.2; }
+    else { var ic = tourBtnIcon(), r = ic && ic.getBoundingClientRect(); if (r && r.width) { h.x = r.left + HOOKU[0] * 28 / 24; h.y = r.top + HOOKU[1] * 28 / 24; h.sc = 1; h.flip = h.fl = 1; } else { h.x = VW() + 80; h.y = VH() * 0.4; } }
+    h.vx = h.vy = 0; h.pp = h.pv = null; try { sessionStorage.removeItem(HK); } catch (e) {}
+  }
+  function heliTakeOff() { var h = heliMake(), ic = tourBtnIcon(), r = ic && ic.getBoundingClientRect(); try { sessionStorage.removeItem(HK); } catch (e) {}
+    if (r && r.width) { h.x = r.left + HOOKU[0] * 28 / 24; h.y = r.top + HOOKU[1] * 28 / 24; h.sc = 1; h.flip = h.fl = 1; h.vx = h.vy = 0; h.L = h.tL = 22; h.pp = h.pv = null; }
+    h.tsc = 1.2; heliHome(true); }
+  function heliHome(hide) { var b = document.querySelector('[data-wf-tourbtn]'); if (!b) return; [].forEach.call(b.querySelectorAll('.wf-heli,.wf-cable'), function (e) { e.style.visibility = hide ? 'hidden' : ''; }); }
+  function heliLand() {
+    var h = H; if (!h) return; try { sessionStorage.removeItem(HK); } catch (e) {}
+    var ic = tourBtnIcon(), r = ic && ic.getBoundingClientRect();
+    if (r && r.width) { h.land = true; h.tsc = 1; heliAt(r.left + HOOKU[0] * 28 / 24, r.top + HOOKU[1] * 28 / 24 + 22 + BUCK, 22); }
+    else { h.exitX = VW() + 80; h.tx = h.exitX; h.land = true; }
+  }
+  function heliLoop(now) {
+    requestAnimationFrame(heliLoop);
+    var h = H; if (!h || !h.svg.isConnected) return;
+    var dt = h.last ? Math.min(0.033, (now - h.last) / 1000) : 0.016; h.last = now; if (dt < 0.004) return; h.t += dt;
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!h.land && (h.hid = (h.hid || 0) + 1) % 20 === 1) heliHome(true);   // the button's own helicopter is the one flying
+    if (h.tx != null) {
+      var bob = h.exitX == null && !h.land ? Math.sin(h.t * 1.7) * 2.5 : 0, k = h.exitX != null ? 14 : 7.5, c = 2 * Math.sqrt(k);   // critically damped: no overshoot
+      if (still) { h.x = h.tx; h.y = h.ty + bob; h.vx = h.vy = 0; }
+      else { var ax = k * (h.tx - h.x) - c * h.vx, ay = k * (h.ty + bob - h.y) - c * h.vy; h.vx += ax * dt; h.vy += ay * dt;
+        var sp = Math.hypot(h.vx, h.vy), mx = 900; if (sp > mx) { h.vx *= mx / sp; h.vy *= mx / sp; } h.x += h.vx * dt; h.y += h.vy * dt; }
+    }
+    h.sc += (h.tsc - h.sc) * Math.min(1, dt * 5); h.L += (h.tL - h.L) * Math.min(1, dt * 4);
+    // it faces where it flies (a quick turn), nose dipping with speed
+    if (Math.abs(h.vx) > 70) h.flip = h.vx < 0 ? 1 : -1; h.fl += (h.flip - h.fl) * Math.min(1, dt * 7);
+    var tilt = Math.max(-16, Math.min(16, h.fl * h.vx * 0.035));
+    h.hh.setAttribute('transform', 'translate(' + h.x.toFixed(2) + ' ' + h.y.toFixed(2) + ') scale(' + (h.fl * SC * h.sc / 1.2).toFixed(3) + ' ' + (SC * h.sc / 1.2).toFixed(3) + ') rotate(' + tilt.toFixed(2) + ') translate(' + -HOOKU[0] + ' ' + -HOOKU[1] + ')');
+    // the bucket on its cable: a damped pendulum hung from the hook, swung by the helicopter's own acceleration
+    var px = h.x, py = h.y, G = 520, L = Math.max(8, h.L);
+    if (still) { h.phi = 0; h.w = 0; }
+    else { var axp = 0, ayp = 0; if (h.pp) { var vx0 = (px - h.pp[0]) / dt, vy0 = (py - h.pp[1]) / dt; if (h.pv) { axp = (vx0 - h.pv[0]) / dt; ayp = (vy0 - h.pv[1]) / dt; } h.pv = [vx0, vy0]; } h.pp = [px, py];
+      axp = Math.max(-3000, Math.min(3000, axp)); ayp = Math.max(-3000, Math.min(3000, ayp));
+      var acc = -((G + ayp) * Math.sin(h.phi) + axp * Math.cos(h.phi)) / L - 1.6 * h.w + 0.35 * Math.sin(h.t * 3.1);
+      h.w += acc * dt; h.phi = Math.max(-1.1, Math.min(1.1, h.phi + h.w * dt)); if (!isFinite(h.phi)) { h.phi = 0; h.w = 0; } }
+    var bx = px + L * Math.sin(h.phi), by = py + L * Math.cos(h.phi);
+    [h.ln, h.lh].forEach(function (l) { l.setAttribute('x1', px.toFixed(2)); l.setAttribute('y1', py.toFixed(2)); l.setAttribute('x2', bx.toFixed(2)); l.setAttribute('y2', by.toFixed(2)); });
+    h.bk.setAttribute('transform', 'translate(' + bx.toFixed(2) + ' ' + by.toFixed(2) + ') rotate(' + (-h.phi * 180 / Math.PI).toFixed(2) + ')');
+    // landed back on the Tour button: hand over to the button's own helicopter
+    if (h.land && h.tx != null && Math.hypot(h.tx - h.x, h.ty - h.y) < 1.5 && Math.abs(h.sc - 1) < 0.02) { h.svg.remove(); H = null; heliHome(false); }
+    if (h.land && h.exitX != null && (h.x < -60 || h.x > VW() + 60)) { h.svg.remove(); H = null; heliHome(false); }
+  }
   // ---- the loop ---------------------------------------------------------------------------------------------
   function tick() {
     var s = get(); if (!s) { if (root) end(); return; }
@@ -379,7 +433,7 @@ if (WF_TOUR_ON) (function () {
   var selfTap = false, lockEl = null, lockI = -1, armed = -1;
   function drive() {
     var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { return !x.disabled; });
-    if (!b) { var W = ['Move to', 'Passar a', 'Air support', 'Meio aéreo', 'Close fire', 'Encerrar incêndio'];
+    if (!b) { var g0 = get(), st1 = g0 && S[g0.i], W = ['Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(st1 && st1.noClose ? [] : ['Close fire', 'Encerrar incêndio']);
       b = q('button.chbtn', function (x) { if (!x.parentElement || x.parentElement.style.maxHeight !== '88px') return false; var t = txt(x); return W.some(function (w) { return t.indexOf(w) === 0; }); }); }
     if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; }
   }
@@ -388,7 +442,8 @@ if (WF_TOUR_ON) (function () {
   function allowed(e) {
     if (selfTap || !get() || !root || !root.isConnected) return true;
     if (e.target && e.target.closest && e.target.closest('#wf-tourwarn')) return true;
-    var s0 = get(), st0 = s0 && S[s0.i]; if (st0 && st0.page === PAGE && st0.find && !curEl && !(st0.show && armed === s0.i)) return true;   // nothing to point at yet: never lock the screen
+    var s0 = get(), st0 = s0 && S[s0.i]; if (st0 && st0.free && st0.page === PAGE) return true;   // a step to play with the screen freely
+    if (st0 && st0.page === PAGE && st0.find && !curEl && !(st0.show && armed === s0.i)) return true;   // nothing to point at yet: never lock the screen
     if (e.target && e.target.closest && e.target.closest('#wf-tour')) return true;
     // iPhone: the app lays an invisible haptic layer (#wf-hapov) over the touched control and passes the tap on to it;
     // judge the tap by the control underneath
@@ -417,7 +472,7 @@ if (WF_TOUR_ON) (function () {
       if (st.legend) { armed = s.i; var at = s.i, chipEl = el.closest ? el : el; setTimeout(function () { var s2 = get(); if (!s2 || s2.i !== at) return; var on = q('[data-wf-leg] button[aria-pressed="true"]', function (b) { return b.getAttribute('aria-label') === chipEl.getAttribute('aria-label') || b === chipEl; }) || chipEl; selfTap = true; try { (chipEl.isConnected ? chipEl : on).click(); } catch (x) {} selfTap = false; go(at + 1); tick(); }, 2400); return; } go(s.i + 1); setTimeout(tick, 60); }
   }, true);
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
-  var boot = function () { requestAnimationFrame(loop); };
+  var boot = function () { requestAnimationFrame(loop); try { if (get()) heliEnter(); } catch (e) {} };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   window.addEventListener('pageshow', function () { lastKey = ''; cur = -1; });
 })();
