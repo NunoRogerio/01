@@ -487,11 +487,11 @@ class Component extends DCLogic {
       this._glide = requestAnimationFrame(step);
     };
     // The legend row scrolls sideways by drag (the map's own touch handling would otherwise keep it still); a tap still toggles a layer
-    this.legDown = (e) => { if (e && e.stopPropagation) e.stopPropagation(); const el = e.currentTarget; this._leg = { id: e.pointerId, x: e.clientX, sl: el.scrollLeft, el, moved: false }; };
-    this.legMove = (e) => { const L = this._leg; if (!L || L.id !== e.pointerId) return; const dx = e.clientX - L.x; if (!L.moved && Math.abs(dx) < 6) return;
+    this.legDown = (e) => { if (e && e.stopPropagation) e.stopPropagation(); const el = e.currentTarget; this._leg = { id: e.pointerId, x: e.clientX, y: e.clientY, sl: el.scrollLeft, el, moved: false }; this._legFar = false; };
+    this.legMove = (e) => { const L = this._leg; if (!L || L.id !== e.pointerId) return; const dx = e.clientX - L.x; if (Math.hypot(dx, e.clientY - L.y) > 8) this._legFar = true; if (!L.moved && Math.abs(dx) < 6) return;
       if (!L.moved) { L.moved = true; try { L.el.setPointerCapture(e.pointerId); } catch (x) {} } const z = L.el.getBoundingClientRect().width / (L.el.offsetWidth || 1) || 1; L.el.scrollLeft = L.sl - dx / z; if (e.stopPropagation) e.stopPropagation(); };
-    this.legUp = (e) => { const L = this._leg; if (L && L.id === e.pointerId) { this._legMoved = L.moved ? Date.now() : 0; this._leg = null; } if (e && e.stopPropagation) e.stopPropagation(); };
-    this.legClick = (e) => { if (this._legMoved && Date.now() - this._legMoved < 400) { e.stopPropagation(); e.preventDefault(); this._legMoved = 0; } };
+    this.legUp = (e) => { const L = this._leg; if (L && L.id === e.pointerId) { this._legMoved = (L.moved || this._legFar) ? Date.now() : 0; this._leg = null; } this._legFar = false; if (e && e.stopPropagation) e.stopPropagation(); };
+    this.legClick = (e) => { if ((this._legMoved && Date.now() - this._legMoved < 400) || (this._homeAt && Date.now() - this._homeAt < 1000)) { e.stopPropagation(); e.preventDefault(); this._legMoved = 0; } };
     this.onDown = (e) => {
       if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
       this.stopGlide();
@@ -1070,6 +1070,8 @@ class Component extends DCLogic {
     return out;
   }
   toggleLayer(k) {
+    // Re-centre only moves the view: no layer changes from the same tap (a ghost click landing on a chip)
+    if (this._homeAt && Date.now() - this._homeAt < 1000) return;
     // store only what was tapped: the main map's stations chip has its own key, so other maps keep their stations setting
     let raw = window.__wfLayers; if (!raw) { try { raw = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
     const v = Object.assign({}, raw || {}), main = ['fires', 'resolved', 'stations'].indexOf(k) >= 0 && (this.props.mode || 'risk') === 'risk';
@@ -1291,7 +1293,7 @@ class Component extends DCLogic {
   // The page's own framing of this map (the place, pin or station it was opened on), before any pan or zoom
   homeView() { const b = this.base(), z0 = this.pinCloseOn() ? 1 : (Number(this.props.startZoom) || 1), px = Number(this.props.pinX), py = Number(this.props.pinY), hasPin = z0 !== 1 && isFinite(px) && isFinite(py) && this.props.pinX != null;
     return this.clampView(hasPin ? px - (px - b.cx) / z0 : b.cx, hasPin ? py - (py - b.cy) / z0 : b.cy, b.s * z0); }
-  goHome() { this._moved = false; const v = this.homeView(); try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} this.stopGlide(); this._animUntil = Date.now() + 700; this._pv = Object.assign({}, this._pv || {}, v); this.setState({ ...v }); }
+  goHome() { this._homeAt = Date.now(); this._tap = null; this._moved = false; const v = this.homeView(); try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} this.stopGlide(); this._animUntil = Date.now() + 700; this._pv = Object.assign({}, this._pv || {}, v); this.setState({ ...v }); }
   flyTo(lat, lon, bb) {
     const G = this.geo(); if (!G || !G.P) return false;
     const c = G.P(lat, lon), w = this.win(), H = this.H();
@@ -1577,7 +1579,7 @@ class Component extends DCLogic {
         if ((locked && !full) || !ctl) return { recD: 'none',   /* a locked map band still gets re-centre once full screen (it pans there) */ goHomeFn: null, recDis: 'true', recOp: 0.4, recPE: 'none', ctrlDir: 'column' };
         const v = this.view(), h = this.homeView();
         const moved = !!this._moved && (Math.abs(v.cx - h.cx) * v.s > 12 || Math.abs(v.cy - h.cy) * v.s > 12 || Math.abs(Math.log(v.s / h.s)) > 0.05);   // enabled only once the person has moved the map themselves
-        return { recD: 'flex', recDis: moved ? 'false' : 'true', recOp: moved ? 1 : 0.4, recPE: moved ? 'auto' : 'none', ctrlDir: 'column', goHomeFn: this._gh || (this._gh = () => this.goHome()) }; })(),
+        return { recD: 'flex', recDis: moved ? 'false' : 'true', recOp: moved ? 1 : 0.4, recPE: 'auto', ctrlDir: 'column', goHomeFn: this._gh || (this._gh = (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (!this._moved) return; this.goHome(); }) };   /* always takes its own taps (never falls through to the map or a chip under it); does nothing while centred */ })(),
       fsRot: (p.isFull === true || p.isFull === 'true') ? '180deg' : '0deg', fsMaxD: (p.isFull === true || p.isFull === 'true') ? 'none' : 'inline', fsMinD: (p.isFull === true || p.isFull === 'true') ? 'inline' : 'none',
       fsXD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'inline' : 'none', fsCornD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'none' : 'inline',
       fullLabel: (p.isFull === true || p.isFull === 'true') ? (String(p.closeX) === 'true' ? 'Close map' : 'Exit full screen') : 'Full screen',
