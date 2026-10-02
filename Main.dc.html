@@ -20,7 +20,7 @@
 <script src="i18n.js?v=137"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=48"></script>
-<script src="tour.js?v=16"></script>
+<script src="tour.js?v=17"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -1148,7 +1148,7 @@ class Component extends DCLogic {
     const C = window.__wfChat, s = this.state || {}, PTL = window.__wfLang === 'pt', L = (en, pt) => (PTL ? pt : en);
     if (this._cbBoot === undefined) { let f = false; try { f = window.sessionStorage.getItem('wf-ch-open') === '1'; window.sessionStorage.removeItem('wf-ch-open'); } catch (e) {} this._cbBoot = f; }
     const open = s.cbOpen === undefined ? !!this._cbBoot : !!s.cbOpen;
-    const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope || null; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; })();
+    const SC = this.wfScope();   /* the same area as the map and lists (a profile locked to a country gets that country, never Los Angeles) */
     const inSc = (c) => window.__wfChat && window.__wfChat.inScope ? window.__wfChat.inScope(c, SC) : true;   /* the selected region only, direct messages included */
     const all = C ? C.list().filter(inSc) : [];
     const ago = (tm) => { const m = Math.round((Date.now() - tm) / 60000); if (m < 1) return L('Just now', 'Agora mesmo'); if (m < 60) return L(m + ' min ago', 'há ' + m + ' min'); const d = new Date(tm), n = new Date(); return d.toDateString() === n.toDateString() ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString([], { day: 'numeric', month: 'short' }); };

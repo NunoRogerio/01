@@ -4,8 +4,8 @@
 // The step is kept in sessionStorage ('wf-tour'), so the tour carries on across screens. Every bubble has End tour.
 // Steps either wait for a tap on the control they point at ('tap'), offer a Next button ('next'), or wait until
 // something has happened on screen ('until'). A step whose control can't be found after a while shows Next instead.
-// The tour is switched off for now (Oct 2): it never runs or blocks touches, and any tour left running on a phone is cleared.
-var WF_TOUR_ON = false;
+// WF_TOUR_ON = false switches the tour off: it never runs or blocks touches, any tour left running is cleared, and the Tour button says it is coming back.
+var WF_TOUR_ON = true;
 if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
   // While the tour is off, the Tour button stays and opens a dark-glass tooltip saying it is coming back (X or a tap outside closes it)
   var wfTourSoon = function (anchor) {
@@ -265,8 +265,8 @@ if (WF_TOUR_ON) (function () {
     css(); var pt = PT(), w = document.createElement('div'); w.id = 'wf-tourwarn'; w.setAttribute('role', 'dialog'); w.setAttribute('translate', 'no');
     var r = anchor ? anchor.getBoundingClientRect() : { top: innerHeight - 140, left: innerWidth - 80, width: 60 };
     w.style.cssText = 'position:fixed;left:16px;right:16px;bottom:' + Math.max(16, innerHeight - r.top + 12) + 'px;z-index:99995;padding:16px;border-radius:20px;background:rgba(28,28,30,0.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased';
-    w.innerHTML = '<p style="margin:0;font-size:17px;font-weight:600;line-height:22px">⚠️ ' + (pt ? 'Atenção: a visita ainda tem falhas' : 'Warning: the tour is still buggy') + '</p>' +
-      '<p style="margin:4px 0 0;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)">' + (pt ? 'Pode não conseguir voltar. Avance por sua conta e risco.' : 'You might not be able to return. Proceed at your own risk.') + '</p>' +
+    w.innerHTML = '<p style="margin:0;font-size:17px;font-weight:600;line-height:22px">⚠️ ' + (pt ? 'Visita em construção' : 'Tour under construction') + '</p>' +
+      '<p style="margin:4px 0 0;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty">' + (pt ? 'Estamos a trabalhar nela e ainda tem muitas falhas. Terminar visita está sempre à mão para sair.' : 'We\'re still working on it and it has lots of bugs. End tour is always there to get you out.') + '</p>' +
       '<div style="display:flex;gap:8px;margin-top:16px"><button type="button" data-a="no" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:rgba(255,255,255,0.14);color:#FFFFFF;font:inherit;font-size:15px;font-weight:600;cursor:pointer">' + (pt ? 'Agora não' : 'Not now') + '</button>' +
       '<button type="button" data-a="go" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:var(--wf-y,#E5FF00);color:#1C1C1E;font:inherit;font-size:15px;font-weight:600;cursor:pointer">' + (pt ? 'Começar visita' : 'Start tour') + '</button></div>' +
       '<span aria-hidden="true" style="position:absolute;bottom:-7px;right:' + Math.max(24, innerWidth - (r.left + r.width / 2) - 8) + 'px;width:14px;height:14px;background:rgba(28,28,30,0.94);transform:rotate(45deg);border-radius:0 0 3px 0"></span>';
