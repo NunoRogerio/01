@@ -40,8 +40,6 @@ a{color:#0062CC}a:hover{color:#004FA3}
 </style>
 </helmet>
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 56px 16px 40px; background: transparent; overflow: hidden; opacity: {{lvOp}}; transform: translateY({{lvY}}); transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
-  <!-- About, top right over the photo: a pill in the dark control style used over maps and photos -->
-  <a href="About.dc.html" class="opt" aria-label="About" style="position: absolute; top: 60px; right: 16px; z-index: 2; display: flex; align-items: center; justify-content: center; height: 44px; padding: 0 16px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; background: rgba(0,0,0,0.5); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); color: #FFFFFF; font-size: 17px; font-weight: 600; text-decoration: none">About</a>
   <!-- The sign-in fields sit at the middle of the screen: equal regions above and below them.
        The logo group is centred in the region above; the hint, log-in button and credits fill the one below. -->
   <div style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 0">
@@ -87,8 +85,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 56px 0 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">
-    <!-- The build stage on one line, above the note: "Alpha version" in bold hi-vis yellow, then the last update in white (15px) -->
-    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span> <span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>
+    <!-- The build stage on one line, above the note: "Alpha version" in bold hi-vis yellow, the last update in white (15px), then "About" in bold hi-vis yellow (opens About) -->
+    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span> <span data-wf-verdate="1">Last update: 2 Oct 2026</span>. <a href="About.dc.html" style="display: inline-block; margin: -12px -8px; padding: 12px 8px; font-weight: 700; color: var(--wf-y); text-decoration: none">About</a></p>
     <p style="margin: 0; font-size: 15px; line-height: 18px; color: #FFFFFF">Limited audience. Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     </div>
