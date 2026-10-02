@@ -215,7 +215,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## 7. Data scope
 
-- Live regions are Portugal and California only (`window.__wfOnly` in `live.js`). Every other region is paused: no fires, candidates or area-picker entries.
+- Live regions are Portugal, every US state (and DC) and Brazil with Amazônia Legal (`window.__wfOnly` in `live.js`). Every other region is paused: no fires, candidates or area-picker entries.
 - To bring a region back, add it to that list.
 - **No sticky hover on touch:** on phones a tapped element never keeps a hover fill or glow (iOS keeps :hover on the last tap); only the tap feedback shows. `prefs.js` strips hover fills on touch screens app-wide.
 - Main screen bottom blade: the counts sit 37px under the blade's top edge (16px higher than before).
@@ -604,3 +604,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Chat badge (every header): counts unread messages only in the chats the chats list shows — open chats in the selected area, plus direct messages. Chats from another area no longer add to it (a Portugal view showed 18 from Los Angeles chats over an empty list).
 
 - Chats and notifications follow the selected region: the chats list, its counts and every chat badge show only that region's chats; direct messages belong to their country/state (Portugal never shows Brazil's or the US's). One shared filter, __wfChat.inScope. Notifications are already built from the region's candidates and fires.
+
+- All US states enabled in the region picker (same NIFC fires, FIRMS candidates and OSM stations the app already loaded for California, so no extra download). A single-country view (Portugal) costs nothing more; the whole-US view is about as heavy as the whole-Brazil view.
