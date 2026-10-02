@@ -34,6 +34,8 @@
   var pathBtn = function (d) { return q('button.mbtn', function (b) { var p = b.querySelector('path[d^="' + d + '"]'); return !!p && getComputedStyle(p).display !== 'none'; }); };
   var hdr = function (sel) { return q('header[data-pull="down"] ' + sel); };
   var closeIn = function (sec) { var s = document.querySelector(sec); if (!s) return; var b = [].slice.call(s.querySelectorAll('button')).find(function (x) { return x.querySelector('path[d^="M6 6"]'); }); if (b) b.click(); };
+  var areaOpen = function () { var a = document.querySelector('section[data-swipe-key="sc"]'); return !!a && a.getAttribute('aria-hidden') === 'false'; };
+  var areaClose = function () { var b = document.querySelector('section[data-swipe-key="sc"] button[data-swipe-go]'); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } };
   var scrollEnd = function (sel) { var e = document.querySelector(sel); if (e) e.scrollTo({ top: e.scrollHeight, behavior: 'smooth' }); };
 
   // The map step points at a circle whose summary panel has room to open whole: away from the screen sides and from
@@ -54,7 +56,7 @@
       t: ['Quick tour', 'Visita rápida'],
       b: ['Follow one ignition from detection to a closed fire. Tap what the arrow points to, or use ‹ › to move between steps.',
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que a seta indica, ou use ‹ › para mudar de passo.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return hdr('> button.opt[aria-expanded]'); },
+    { page: 'Main.dc.html', mode: 'next', find: function () { return hdr('> button.opt[aria-expanded]'); }, area: true, also: 'section[data-swipe-key="sc"]',   // the area picker can be used here; it closes when the tour moves on
       t: ['Choose a region', 'Escolha uma região'],
       b: ['Tap the area name to switch country, state or district.', 'Toque no nome da área para mudar de país, estado ou distrito.'] },
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('[data-wf-leg] button[aria-pressed="false"]') || q('[data-wf-leg]'); },
@@ -300,6 +302,8 @@
     jumped = true;
     if (i !== cur) { cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
     if (!ran && st.before) { ran = true; try { st.before(); } catch (e) {} }
+    // the area picker belongs to the region step only: anywhere else it is closed, so the step's control is in view
+    if (PAGE === 'Main.dc.html' && !st.area && areaOpen()) { areaClose(); return; }
     if (st.skip && st.skip()) { go(i + 1); return; }
     if (st.mode === 'until' && st.until && st.until()) { go(i + 1); return; }
     if (st.auto && Date.now() - (window.__wfTourAuto || 0) > 2600 && Date.now() - seen > 2200) { window.__wfTourAuto = Date.now(); drive(); }
