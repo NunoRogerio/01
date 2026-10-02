@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=120"></script>
 <script src="avatar.js?v=9"></script>
-<script src="i18n.js?v=135"></script>
+<script src="i18n.js?v=136"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -47,9 +47,6 @@ a{color:#0062CC}a:hover{color:#004FA3}
     <svg width="37" height="45" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 0 8px rgba(0,0,0,0.35))"><path data-wf-eye="1" style="fill: var(--wf-y)" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" style="stroke: var(--wf-y)" stroke-width="1.1" stroke-linecap="round"></path></svg>
     <h1 style="margin: 56px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: var(--wf-y); text-shadow: 0 0 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.5)">Log in to your account</p>
-    <!-- The build stage: the label (15px bold) in the hi-vis yellow, then "Last update" and its date (15px regular, white) -->
-    <p style="margin: 16px 0 0; font-size: 15px; font-weight: 700; line-height: 20px; color: var(--wf-y); text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">Alpha version</p>
-    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)" data-wf-verdate="1">Last update: 2 Oct 2026</p>
   </div>
   </div>
 
@@ -88,7 +85,9 @@ a{color:#0062CC}a:hover{color:#004FA3}
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 56px 0 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 1 1 0; min-height: 24px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">
-    <p style="margin: 0; font-size: 15px; line-height: 18px; color: #FFFFFF">Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
+    <!-- The build stage on one line, above the note: "Alpha version" in bold hi-vis yellow, then the last update in white (15px) -->
+    <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span> <span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>
+    <p style="margin: 0; font-size: 15px; line-height: 18px; color: #FFFFFF">Limited audience. Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     </div>
   </div>
@@ -495,7 +494,7 @@ class Component extends DCLogic {
 }
 </script>
 <script>
-// The date under "Alpha version" follows the app's last change: version.txt is rewritten with every design change
+// The date after "Alpha version." follows the app's last change: version.txt is rewritten with every design change
 // (the data updates don't touch it), so the date moves on by itself. "Last update: 2 Oct 2026" / "Última atualização: 2 out 2026".
 (function () {
   var M = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], pt: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'] };
