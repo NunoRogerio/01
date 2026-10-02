@@ -521,7 +521,9 @@ class Component extends DCLogic {
     } else { this._posEl = null; }
   }
   // Views inside this screen stack up, so every back returns to the one you came from
-  go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person, team: !!(extra && extra.fromTeam) }]), view, sheet: false, ...(extra || {}) }); }
+  // The screen's main scrolling area (the tallest visible one): its place is kept when you go on and restored by Back
+  wfMainScroller() { let best = null; document.querySelectorAll('*').forEach((el) => { if (el.scrollHeight <= el.clientHeight + 2 || !el.offsetParent) return; const o = getComputedStyle(el).overflowY; if (o !== 'auto' && o !== 'scroll') return; if (!best || el.clientHeight > best.clientHeight) best = el; }); return best; }
+  go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const sc = this.wfMainScroller(); this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person, team: !!(extra && extra.fromTeam), top: sc ? sc.scrollTop : 0 }]), view, sheet: false, ...(extra || {}) }); }
   renderVals() {
     const s = this.state || {}, C = window.__wfChat;
     const L = (en, pt) => (C ? C.L(en, pt) : en);
@@ -878,7 +880,9 @@ class Component extends DCLogic {
             key: m.key, ...(window.__wfPickDrag ? window.__wfPickDrag(this, grp, m.key, OK) : {}), tog: () => { if (last) return; const h = hid.slice(), i = h.indexOf(m.key); if (i >= 0) h.splice(i, 1); else h.push(m.key); save(h); } }; }); })() };
   }
   popFn() {
-    return (e) => { if (e && e.preventDefault) e.preventDefault(); const st = (this.state || {}).stack || []; const prev = st[st.length - 1] || { view: 'chat' }; this.setState({ view: prev.view, person: prev.person, stack: st.slice(0, -1), team: !!prev.team, tmDy: 0, ppDy: 0, ...(prev.tab ? { tab: prev.tab, key: prev.view === 'list' ? '' : (this.state || {}).key } : {}) }); if (prev.view === 'list') { try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} } this._n = -1; };
+    return (e) => { if (e && e.preventDefault) e.preventDefault(); const st = (this.state || {}).stack || []; const prev = st[st.length - 1] || { view: 'chat' }; this.setState({ view: prev.view, person: prev.person, stack: st.slice(0, -1), team: !!prev.team, tmDy: 0, ppDy: 0, ...(prev.tab ? { tab: prev.tab, key: prev.view === 'list' ? '' : (this.state || {}).key } : {}) }); if (prev.view === 'list') { try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} } this._n = -1;
+      // Back keeps the place you left (a summary, a team list…): its scroll comes back once the screen has drawn (the chat itself keeps its own place)
+      if (prev.top > 0 && prev.view !== 'chat') { const t0 = Date.now(), step = () => { const sc = this.wfMainScroller(); if (sc && sc.scrollHeight - sc.clientHeight >= prev.top - 1) { sc.scrollTop = prev.top; if (Math.abs(sc.scrollTop - prev.top) < 2) return; } if (Date.now() - t0 < 1200) requestAnimationFrame(step); else if (sc) sc.scrollTop = prev.top; }; requestAnimationFrame(step); } };
   }
 }
 </script>
