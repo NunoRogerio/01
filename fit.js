@@ -156,7 +156,7 @@ window.__wfBlink=function(path,dur){
       var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
       // Screens loaded inside other screens (the map) and the scripts keep their plain address, so refresh
       // the phone's copy of every file first; otherwise the new page could still run an old map.
-      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js','About.dc.html','index.html'];
+      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js','About.dc.html','tour.js','index.html'];
       // The new page opens as this one would have: the opening loading screen, or the one after log in, plays there once
       var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');}catch(e){}location.replace(u);};
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);

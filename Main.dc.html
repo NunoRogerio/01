@@ -14,12 +14,13 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=124"></script>
+<script src="fit.js?v=125"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=147"></script>
 <script src="i18n.js?v=137"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=48"></script>
+<script src="tour.js?v=1"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -280,6 +281,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 22px; color: {{barC}}">{{barTitle}}</span>
         </span>
         <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap">{{barSub}}</span>
+      </button>
+      <!-- Quick tour: a helicopter with "Tour" under it, bottom right of the bottom blade, level with the blade's title -->
+      <button type="button" class="opt" data-wf-tourbtn="1" onClick="{{tourGo}}" aria-label="{{tourAria}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex-shrink: 0; width: 56px; height: 56px; margin: 24px 4px 0 0; padding: 0; border: 0; border-radius: 16px; background: transparent; color: #3A3A3C; font: inherit; cursor: pointer">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h15M10 5v3M5 8h8a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2H8a3 3 0 0 1-3-3Z M13 8.2V12h3.9M17 11.5h4.5M21.5 9.5v4M7 19h9.5M9 15v4M14 15v4"></path></svg>
+        <span style="font-size: 13px; font-weight: 600; line-height: 16px">{{tourTxt}}</span>
       </button>
     </div>
   </section>
@@ -865,6 +871,8 @@ class Component extends DCLogic {
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o, dsOpen: false }); } }; })(),   // one drawer open at a time
       // Share with other people: the app's own link through the phone's share sheet; without one, the link is copied
+      tourTxt: window.__wfLang === 'pt' ? 'Visita' : 'Tour', tourAria: window.__wfLang === 'pt' ? 'Visita rápida à app' : 'Quick tour of the app',
+      tourGo: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (this.state.list) this.setState({ list: false }); if (window.__wfTour) window.__wfTour.start(); },
       abt: { go: () => { try { window.sessionStorage.setItem('wf-about-from', 'prefs'); } catch (e) {} } },
       shr: (() => { const pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         return { title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
