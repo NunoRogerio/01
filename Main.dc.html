@@ -17,7 +17,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=162"></script>
+<script src="prefs.js?v=163"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=57"></script>
@@ -504,10 +504,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
   <section data-wf-menusec="1" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 60px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #FFFFFF; visibility: {{pm.vis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
     <!-- Menu (Oct 3, 17:18): the open section's title, level with the menu button; 40px to its first element -->
-    <h2 id="pfTitle" class="wf-title-m" style="display: flex; align-items: center; height: 44px; margin: {{pm.tTop}}px 0 0; padding: 0 16px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
+    <h2 id="pfTitle" class="wf-title-m" data-wf-keepsp="1" style="display: flex; align-items: center; min-height: 44px; margin: {{pm.tTop}}px 0 0; padding: 0 16px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
-    <div data-wf-fadetop="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 48px">
-      <div style="display: {{pm.dProf}}; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 24px 16px 16px; border-radius: 16px; background: #F2F2F7">
+    <!-- (Oct 3, 21:27) 16px all round the section (top: the title level with the menu button, 16px down; left; bottom), whatever the spacing preference; items sit on the panel itself, no containers (to be designed later) -->
+    <div data-wf-fadetop="1" data-wf-keepsp="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 16px">
+      <div style="display: {{pm.dProf}}; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 0">
         <div style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
         <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; align-items: center; text-align: center">
@@ -546,8 +547,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
       <!-- Share: the same group label and white card as Chat settings; the card opens the phone's share sheet with the app's link (copies it where there is none) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Share</span>
-      <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #F2F2F7; overflow: hidden">
-        <div style="padding: 16px 16px 0">
+      <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0">
+        <div style="padding: 0">
           <div role="button" tabindex="0" class="mbtn" onClick="{{shr.copy}}" aria-label="{{shr.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 8px 16px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
             <span translate="no" style="font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: none; user-select: none">{{shr.link}}</span>
             <span style="position: relative; display: flex; justify-content: flex-end; height: 22px; margin-top: 4px">
@@ -556,17 +557,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </span>
           </div>
         </div>
-        <button type="button" class="opt" onClick="{{shr.go}}" aria-label="{{shr.title}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span role="status" aria-live="polite" style="flex-grow: 1; font-weight: 600">{{shr.title}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg></button>
+        <button type="button" class="opt" onClick="{{shr.go}}" aria-label="{{shr.title}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span role="status" aria-live="polite" style="flex-grow: 1; font-weight: 600">{{shr.title}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg></button>
       </div>
       <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Chat settings</span>
       <!-- Chat settings: a drawer row like Connect data sources; opens in place to the Claude key and the invite links -->
-      <div style="display: {{pm.dChat}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #F2F2F7; overflow: hidden">
-        <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ai.pill}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
+      <div style="display: {{pm.dChat}}; flex-direction: column; flex-shrink: 0">
+        <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ai.pill}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
         <div style="display: grid; grid-template-rows: {{cs.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{cs.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{cs.vis}}; opacity: {{cs.op}}; transition: opacity .35s ease {{cs.delay}}, visibility 0s linear {{cs.visDelay}}">
           <!-- Role play: the crew coordinators in the incident chats answer through Claude with the person's own API key -->
-          <div style="display: flex; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px; border-top: 0">   <!-- 24px between text, field and actions -->
+          <div style="display: flex; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px 0; border-top: 0">   <!-- 24px between text, field and actions -->
             <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px">
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ai.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{ai.sub}}</span></span>
               <button type="button" role="switch" class="wf-tog" aria-checked="{{ai.onStr}}" aria-label="{{ai.title}}" onClick="{{ai.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{ai.swBg}}; opacity: {{ai.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{ai.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
@@ -581,7 +582,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="font-size: 15px; line-height: 20px; color: {{ai.noteC}}">{{ai.note}}</span>
           </div>
           <!-- Administrator only: invite links that switch on Claude role-play on the invitee's phone -->
-          <div style="display: {{inv.d}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px; border-top: 0">
+          <div style="display: {{inv.d}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px 0; border-top: 0">
             <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{inv.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{inv.sub}}</span></span>
             <sc-if value="{{inv.hasLink}}" hint-placeholder-val="{{ false }}">
               <!-- The whole grey box copies the link (no Copy button); its last row holds the copy icon, and a dark tooltip confirms -->
@@ -602,18 +603,18 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Connected data sources</span>
       <!-- Connect data sources: a drawer like Chat settings; Add data source on top, then the sources the app reads -->
-      <div style="display: {{pm.dDs}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #F2F2F7; overflow: hidden">
-        <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.count}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
+      <div style="display: {{pm.dDs}}; flex-direction: column; flex-shrink: 0">
+        <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.count}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
         <div style="display: grid; grid-template-rows: {{ds.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
-            <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-top: 0">
+            <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px 0; border-top: 0">
               <button type="button" class="opt wf-b wf-pri" onClick="{{ds.add}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{ds.addTxt}}</button>
               <span style="display: {{ds.noteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.note}}</span>
             </div>
             <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
               <sc-for list="{{ds.items}}" as="d" hint-placeholder-count="7">
                 <!-- Rows: the name in bold, dividers edge to edge -->
-                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 16px 16px; border-top: 0">
+                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 16px 0; border-top: 0">
                   <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
                   <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
                   <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
@@ -634,7 +635,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- About: the last row of the preferences, on the grey of the switcher and the search field (pill, 52px like the switcher);
            the app's symbol and "About" centred, no chevron. The symbol's eye blinks every 4 s. Back returns here, panel open. -->
       <!-- About (Oct 3, 17:39): a section like the others, showing the About screen itself in place (header and title left out) -->
-      <iframe src="{{pm.aboutSrc}}" title="About" style="display: {{pm.dAbout}}; flex: 1 0 auto; width: calc(100% + 32px); height: calc({{vh}}px - 152px); margin: 0 -16px -48px; border: 0; background: transparent"></iframe>
+      <iframe src="{{pm.aboutSrc}}" title="About" style="display: {{pm.dAbout}}; flex: 1 0 auto; width: calc(100% + 32px); height: calc({{vh}}px - 152px); margin: 0 -16px -16px; border: 0; background: transparent"></iframe>
       <a href="About.dc.html" class="opt" onClick="{{abt.go}}" tabindex="-1" aria-hidden="true" style="display: none; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 52px; padding: 0 16px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #000000; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path data-wf-about-eye="1" fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>About</a>
     </div>
   </section>
@@ -998,6 +999,7 @@ class Component extends DCLogic {
           this.wfMenuPost('open');   // tapping the open section folds the menu to its icon column
           // switching section while open (Oct 3, 19:50): the chosen section slides in from the right, from behind the icon
           // column, and covers the current one, which stays in place underneath until it is covered
+          let go = null;
           if (open && pmSec !== k) { try { const sec = document.querySelector('[data-wf-menusec]'), sc0 = sec && sec.querySelector('[data-wf-fadetop]');
             if (sec) { const cl = sec.cloneNode(true), w = sec.offsetWidth; cl.removeAttribute('data-wf-menusec'); cl.setAttribute('aria-hidden', 'true'); cl.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id'));
               cl.querySelectorAll('iframe').forEach((e) => { e.removeAttribute('src'); e.style.visibility = 'hidden'; });
@@ -1006,11 +1008,12 @@ class Component extends DCLogic {
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
               // (Oct 3, 20:32) the section being covered darkens 24% (10% + 14%, Oct 3, 21:14), gradually, as the new one slides over it
               const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .74s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
-              requestAnimationFrame(() => requestAnimationFrame(() => { dim.style.opacity = '0.24'; }));
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateX(' + (w + 60) + 'px)';
-              requestAnimationFrame(() => requestAnimationFrame(() => { sec.style.transition = 'transform .74s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)'; }));
-              setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 820); } } catch (e) {} }
-          this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {})); };
+              // (Oct 3, 21:27) no jump: the slide (and the darkening) start only once the new section has rendered, off to the
+              // right, so it never changes or settles while it is moving in
+              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; (() => { dim.style.opacity = '0.24'; sec.style.transition = 'transform .74s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)';
+                setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 800); })(); }; } } catch (e) {} }
+          this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {}), () => { if (go) go(); }); };
         const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
