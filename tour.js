@@ -671,7 +671,7 @@ if (WF_TOUR_ON) (function () {
     for (var i = 0; i < G.length; i++) { var sg = G[i].classList.contains('l') ? k : -k;
       var hh = sg < 0 ? h * (1 + 0.2 * sg) : h, tt = r.top + r.height / 2 - hh / 2;   // the far edge is also up to 20% shorter, still centred
       G[i].style.top = tt.toFixed(1) + 'px'; G[i].style.height = hh.toFixed(1) + 'px';
-      G[i].style.width = (31 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg).toFixed(3)); }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
+      G[i].style.width = (37.2 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (1.2 * (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg)).toFixed(3)); /* both edges +20% wide and +20% opacity (Oct 3) */ }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
   }
   // Tilt (Oct 3): held between 30° and 60° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
   // upright (above 60°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
