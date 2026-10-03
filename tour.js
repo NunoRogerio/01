@@ -251,11 +251,11 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour .ta{background:var(--wf-y,#E5FF00);box-shadow:0 0 0 1px rgba(28,28,30,0.12),0 2px 12px rgba(var(--wf-y-rgb,229,255,0),0.55);color:#1C1C1E}' +
       // the card glows softly all round, pulsing with the screen-edge glow
       '#wf-tour .tb{animation:wftbg 3.6s ease-in-out infinite}' +
-      '@keyframes wftbg{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 16px 0 rgba(var(--wf-y-rgb,229,255,0),0.24)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 16px 0 rgba(var(--wf-y-rgb,229,255,0),0.08)}}' +
+      '@keyframes wftbg{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 20px 0 rgba(var(--wf-y-rgb,229,255,0),0.36)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 20px 0 rgba(var(--wf-y-rgb,229,255,0),0.14)}}' +
       '@media (prefers-reduced-motion:reduce){#wf-tour .tb{animation:none}}' +
       // the screen-edge glows ride with the card: 110% of its height, centred on it (positioned from script)
       // edge glows more evident here: wider, brighter, and never fading below 60%
-      '#wf-tour .tgl{width:26px;animation-name:wftg2}@keyframes wftg2{0%,100%{opacity:1}50%{opacity:.6}}' +
+      '#wf-tour .tgl{width:31px;animation-name:wftg2}@keyframes wftg2{0%,100%{opacity:1}50%{opacity:.52}}' +
       '#wf-tour .tgl.l{background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),0.95) 0,rgba(var(--wf-y-rgb,229,255,0),0.95) 2px,rgba(var(--wf-y-rgb,229,255,0),0.6) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
       '#wf-tour .tgl.r{background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),0.95) 0,rgba(var(--wf-y-rgb,229,255,0),0.95) 2px,rgba(var(--wf-y-rgb,229,255,0),0.6) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
       '#wf-tour .tgl{transition:top .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1)}#wf-tour.drag .tgl{transition:none}');
@@ -285,7 +285,26 @@ if (WF_TOUR_ON) (function () {
     var up = function () { if (!st) return; st = null; b.classList.remove('drag'); setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
   }
-  function end() { put(null); if (root) root.remove(); root = null; cur = -1; heliLand(); }
+  // End tour (Oct 3): back to the main screen, where the guide circle flies home into the Tour button, shrinking to its size
+  function end() {
+    var d = dot && dot.classList.contains('on') ? dot.getBoundingClientRect() : null;
+    if (d && d.width) { try { sessionStorage.setItem('wf-tourhome', JSON.stringify({ x: d.left + d.width / 2, y: d.top + d.height / 2, t: Date.now() })); } catch (e) {} }
+    put(null); try { sessionStorage.removeItem(DK); } catch (e) {} cur = -1; heliLand();
+    if (PAGE !== 'Main.dc.html') { if (root) root.remove(); root = null; location.href = 'Main.dc.html'; return; }
+    if (bub) bub.classList.remove('on'); var R0 = root; root = null; setTimeout(function () { if (R0) R0.remove(); }, 350);
+    flyHome();
+  }
+  function flyHome() {
+    if (WF_TOUR_HELI) return; var m = null; try { m = JSON.parse(sessionStorage.getItem('wf-tourhome') || 'null'); sessionStorage.removeItem('wf-tourhome'); } catch (e) {}
+    if (!m || Date.now() - m.t > 15000) return;
+    var go = function (n) { var tb = document.querySelector('[data-wf-tourbtn] .wf-tdot'), r = tb && tb.getBoundingClientRect();
+      if (!r || !r.width) { if (n < 40) setTimeout(function () { go(n + 1); }, 100); return; }
+      css(); var f = document.createElement('div'); f.className = 'tdot on'; f.style.cssText = 'position:fixed;z-index:99991;animation:none;left:' + m.x + 'px;top:' + m.y + 'px;transition:left .7s cubic-bezier(.2,.8,.2,1),top .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1),opacity .2s ease .6s';
+      var host = document.createElement('div'); host.id = 'wf-tour'; host.appendChild(f); document.body.appendChild(host); tb.style.visibility = 'hidden';
+      requestAnimationFrame(function () { requestAnimationFrame(function () { f.style.left = (r.left + r.width / 2) + 'px'; f.style.top = (r.top + r.height / 2) + 'px'; f.style.transform = 'scale(' + (r.width / 80) + ')'; f.style.opacity = '0'; }); });
+      setTimeout(function () { tb.style.visibility = ''; host.remove(); }, 800); };
+    go(0);
+  }
   function go(i) {
     var s = get(); if (!s) return;
     var st = S[s.i]; if (st && st.done) try { st.done(); } catch (e) {}
@@ -579,12 +598,12 @@ if (WF_TOUR_ON) (function () {
     if (WF_TOUR_HELI || !root || !bub || !root.isConnected) return;
     root.classList.toggle('drag', bub.classList.contains('drag'));
     var r = bub.getBoundingClientRect(), G = root.querySelectorAll('.tgl'); if (!r.height || !bub.classList.contains('on')) return;
-    var h = r.height * 1.1, t = r.top + r.height / 2 - h / 2;
+    var h = r.height * 1.265, t = r.top + r.height / 2 - h / 2;
     for (var i = 0; i < G.length; i++) { G[i].style.top = t.toFixed(1) + 'px'; G[i].style.height = h.toFixed(1) + 'px'; }
   }
   (function gl() { try { glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
-  var boot = function () { requestAnimationFrame(loop); try { if (get()) heliEnter(); } catch (e) {} };
+  var boot = function () { requestAnimationFrame(loop); try { if (get()) heliEnter(); } catch (e) {} try { if (!get() && PAGE === 'Main.dc.html') setTimeout(flyHome, 400); } catch (e) {} };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   window.addEventListener('pageshow', function () { lastKey = ''; cur = -1; });
 })();
