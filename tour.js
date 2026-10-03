@@ -330,7 +330,8 @@ if (WF_TOUR_ON) (function () {
     var st = null;
     b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
     b.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return; st.moved = true; drag.i = st.i; drag.dx = st.dx + mx; drag.dy = st.dy + my; b.classList.add('drag'); place(parseFloat(b.dataset.l || 0), parseFloat(b.dataset.t || 0)); e.preventDefault(); });
-    var up = function () { if (!st) return; st = null; b.classList.remove('drag'); setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
+    var up = function () { if (!st) return; if (st.moved) { tiltN = tiltB; tiltV = 0; } st = null;   // dropped: it stays here, the tilt starts again from this angle
+    b.classList.remove('drag'); setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
   }
   // End tour (Oct 3): back to the main screen, where the guide circle flies home into the Tour button, shrinking to its size
@@ -379,7 +380,7 @@ if (WF_TOUR_ON) (function () {
     var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
-  window.__wfTour = { warn: warn, start: function () { askTilt(); try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
+  window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
   function arrow(x1, y1, x2, y2, seed) {
@@ -676,19 +677,22 @@ if (WF_TOUR_ON) (function () {
     for (var i = 0; i < G.length; i++) { var sg = G[i].classList.contains('l') ? k : -k;
       var hh = sg < 0 ? h * (1 + 0.2 * sg) : h, tt = r.top + r.height / 2 - hh / 2;   // the far edge is also up to 20% shorter, still centred
       G[i].style.top = tt.toFixed(1) + 'px'; G[i].style.height = hh.toFixed(1) + 'px';
-      G[i].style.width = (37.2 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (1.2 * (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg)).toFixed(3)); /* both edges +20% wide and +20% opacity (Oct 3) */ }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
+      G[i].style.width = (37.2 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (1.44 * (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg)).toFixed(3)); /* both edges +20% wide and +20% opacity (Oct 3) */ }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
   }
   // Tilt (Oct 3): held between 30° and 50° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
   // upright (above 50°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
-  var tiltB = null, tiltT = 0, tiltV = 0;
+  var tiltB = null, tiltT = 0, tiltV = 0, tiltN = null;
   window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; });
   function askTilt() { try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
   function tiltSync(now) {
     var dt = tiltT ? Math.min(0.05, (now - tiltT) / 1000) : 0; tiltT = now;
     if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) { tiltV = 0; return; }
     var b = tiltB, v = 0;
-    if (b < 30) v = -Math.min(1, (30 - Math.max(-30, b)) / 60);          // 30° → 0, -30° and beyond → full speed up
-    else if (b > 50) v = Math.min(1, (Math.min(120, b) - 50) / 40);      // 50° → 0, 90° and beyond → full speed down (was from 60°)
+    // still within 10° either side of the resting angle (taken when the tour starts and whenever the card is dropped after a
+    // drag); past it, flatter slides up and more upright slides down, full speed 40° past the still zone (Oct 3, 12:20)
+    if (tiltN == null) tiltN = b;
+    var d0 = b - tiltN;
+    if (d0 < -10) v = -Math.min(1, (-10 - d0) / 40); else if (d0 > 10) v = Math.min(1, (d0 - 10) / 40);
     // the angle sets a target speed (36 px/s just past the band, 1071 px/s at full tilt; +70% at 12:11); the card accelerates towards it and
     // decelerates smoothly back to rest inside the band (Oct 3: max +50%, slowest -10%)
     var target = v ? (v < 0 ? -1 : 1) * (36 + (1071 - 36) * Math.pow(Math.abs(v), 1.4)) : 0;
