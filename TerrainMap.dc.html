@@ -1149,6 +1149,11 @@ class Component extends DCLogic {
     }
     return { d: 'M' + pts.join('L') + 'Z', ex: ex, ey: ey, terrain: !!EL };
   }
+  wxFetch(key, lat, lon, C) { clearTimeout(this._wxT);
+    this._wxT = setTimeout(() => { if (C[key] !== undefined) return; C[key] = null;
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(2) + '&longitude=' + lon.toFixed(2) + '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto')
+        .then((r) => r.ok ? r.json() : null).then((j) => { const c = j && j.current; C[key] = c && c.temperature_2m != null ? c : false; this.forceUpdate(); })
+        .catch(() => { C[key] = false; }); }, 700); }
   wxRow(inLegendBox) {
     const off = { wxOn: false, wx: [] };
     if (!window.__wfLiveMap || inLegendBox || this.props.noWeather) return off;
@@ -1156,8 +1161,11 @@ class Component extends DCLogic {
     const x0 = v.cx + (w.l - W / 2) / v.s, x1 = v.cx + (W - w.r - W / 2) / v.s, yc = v.cy + (w.c - H / 2) / v.s, xc = (x0 + x1) / 2;
     const lat = 34.19 - (yc - 662) / 2829, lon = (xc - 518) / 2345 - 118.13;
     const km = (x1 - x0) / 2345 * 111.32 * Math.cos(lat * Math.PI / 180);
-    if (!(km > 0 && km < 100) || Math.abs(lat) > 85) return off;
-    const key = lat.toFixed(1) + ',' + lon.toFixed(1), C = window.__wfWx || (window.__wfWx = {}), d = C[key];
+    if (!(km > 0 && km < 100) || Math.abs(lat) > 85) { this._wxLast = null; return off; }
+    const key = lat.toFixed(1) + ',' + lon.toFixed(1), C = window.__wfWx || (window.__wfWx = {});
+    // (Oct 3, 20:35) while the map pans, the weather of the place just shown stays up until the new place's weather has
+    // loaded (it used to vanish and come back on every move); only zooming out of range hides it
+    let d = C[key]; if (d) this._wxLast = d; else if (this._wxLast) { const pend = d === undefined || d === null; if (pend || d === false) { if (d === undefined) this.wxFetch(key, lat, lon, C); d = this._wxLast; } }
     if (d === undefined) {
       clearTimeout(this._wxT);
       this._wxT = setTimeout(() => { if (C[key] !== undefined) return; C[key] = null;
