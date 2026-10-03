@@ -125,6 +125,16 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       }
       return;
     }
+    var aim2 = function (el) { if (!el || !dot) return; var r = el.getBoundingClientRect(); if (root) root.classList.add('demopick'); dotHold = true; dot.style.left = ((r.left + r.right) / 2) + 'px'; dot.style.top = ((r.top + r.bottom) / 2) + 'px'; };
+    if (st.demo.tapClose) {
+      // (Oct 3, 20:01) after the pause the circle comes back, goes to the close control (the X, or the list's grabber) and taps it
+      var C2 = 1200 + 500 + 2500 - 900;
+      setTimeout(function () { if (still()) aim2(document.querySelector(st.demo.closeAt || st.demo.close)); }, C2);
+      setTimeout(function () { if (still()) tap(); }, C2 + 700);
+      setTimeout(function () { if (still()) press(st.demo.close); }, C2 + 960);
+      setTimeout(next, C2 + 960 + 700);
+      return;
+    }
     setTimeout(function () { press(st.demo.close); }, 1200 + 500 + 2500);   // about 0.5 s to open, then 2.5 s open (Oct 3, 17:12; was 1 s)
     // once the blade has folded back, the tour moves on to the next step by itself (Oct 3, 17:11)
     setTimeout(next, 1200 + 500 + 2500 + 550);
@@ -178,14 +188,14 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Choose a region', 'Escolha uma região'], point: true, area: true, demo: Object.assign(demoOf('button[aria-haspopup="dialog"][aria-label^="Area:"]', 'section[data-swipe-key="sc"] button[data-swipe-go]'), { pick: function () { var sec = document.querySelector('section[data-swipe-key="sc"]'); if (!sec) return null; var B = [].slice.call(sec.querySelectorAll('button,[role=button]')); for (var k = 0; k < B.length; k++) { var t = (B[k].getAttribute('aria-label') || B[k].textContent || ''); if (/^\s*Los Angeles/.test(t) && B[k].offsetHeight) return B[k]; } return null; } }),
       b: ['Tap here any time to change the region. For now we stay here.', 'Toque aqui a qualquer momento para mudar de região. Por agora ficamos aqui.'] },
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
-      t: ['Or pick from the list', 'Ou escolha da lista'], point: true, demo: demoOf('section[data-swipe-key="li"] > div:last-child > button.opt', 'section[data-swipe-key="li"] button[data-swipe-go]'),
+      t: ['Or pick from the list', 'Ou escolha da lista'], point: true, demo: Object.assign(demoOf('section[data-swipe-key="li"] > div:last-child > button.opt', 'section[data-swipe-key="li"] button[data-swipe-go]'), { tapClose: true, closeAt: 'section[data-swipe-key="li"] > span[aria-hidden="true"]' }),   // (Oct 3, 20:01) closes on its grabber
       b: ['Every candidate and fire in this region, the most likely first. Open it any time to pick one.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro. Abra-a a qualquer momento para escolher um.'] },
     { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('header a[href="Chat.dc.html"].opt') || q('a[href="Chat.dc.html"].opt'); },
-      demo: demoOf('a[href="Chat.dc.html"].opt', 'section[data-swipe-key="cb"] button[data-swipe-go]'),
+      demo: Object.assign(demoOf('a[href="Chat.dc.html"].opt', 'section[data-swipe-key="cb"] button[data-swipe-go]'), { tapClose: true }),   // (Oct 3, 20:01) the circle taps the X
       t: ['Your chats', 'As suas conversas'],
       b: ['Every incident has its team chat. They are all here, any time.', 'Cada incidente tem a conversa da sua equipa. Estão todas aqui, a qualquer momento.'] },
     { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Notifications"]') || q('button[aria-haspopup="dialog"][aria-label^="Notificações"]'); },
-      demo: demoOf('button[aria-haspopup="dialog"][aria-label^="Notifications"], button[aria-haspopup="dialog"][aria-label^="Notificações"]', 'section[data-swipe-key="nt"] button[data-swipe-go]'),
+      demo: Object.assign(demoOf('button[aria-haspopup="dialog"][aria-label^="Notifications"], button[aria-haspopup="dialog"][aria-label^="Notificações"]', 'section[data-swipe-key="nt"] button[data-swipe-go]'), { tapClose: true }),   // (Oct 3, 20:01) the circle taps the X
       t: ['Notifications', 'Notificações'],
       b: ['New ignitions and changes to your incidents.', 'Novas ignições e mudanças nos seus incidentes.'] },
     { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('button[aria-label="Preferences"]') || q('button[aria-label="Preferências"]'); },
