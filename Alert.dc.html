@@ -1165,7 +1165,7 @@ class Component extends DCLogic {
       toggleFull: () => { const st = this.state || {}; this.setState(st.full && st.tab === 'map' ? { full: false, tab: null } : { full: !st.full }); },   // reads the live state: the map may hold an older copy of this handler
       figBg: tab.isMap ? 'transparent' : '#1C1C1E', figPE: tab.isMap ? 'none' : 'auto',
       clipT: s.full && tab.isMap ? 0 : 133, clipBleed: s.full && tab.isMap ? 0 : 40, clipB: s.full && tab.isMap ? 0 : 468, ctrlTop: 238,
-      topY: s.full && tab.isMap ? '-200px' : '0px', topOp: s.full && tab.isMap ? 0 : 1, topPE: s.full && tab.isMap ? 'none' : 'auto',
+      topY: s.full && tab.isMap ? 'calc(-100% - 24px)' : '0px', topOp: 1,   /* (Oct 3, 23:13) slides away whole, like the main screen */ topPE: s.full && tab.isMap ? 'none' : 'auto',
       downPE: s.full && tab.isMap ? 'none' : 'auto',
       downY: s.full && tab.isMap ? '480px' : '0px', navY: s.full && tab.isMap ? '140px' : '0px', downOp: s.full && tab.isMap ? 0 : 1,
       segY: s.full && tab.isMap ? '428px' : '0px', fs: { top: fsTop, h: fsH }, fsBox: boxFor(tab, 390, fsH, false, fsTop),
