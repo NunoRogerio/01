@@ -29,7 +29,7 @@ if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
 // Two guides (Oct 3): the "Chopper tour test" demo profile keeps the guide helicopter; every other profile gets a light-blue
 // circle (80px) over the control to tap. The circle lets every touch through, so the control under it works as it is.
 var WF_TOUR_HELI = (function () { try { return localStorage.getItem('wf-custom') === 'heli'; } catch (e) { return false; } })();
-if (WF_TOUR_ON) (function () {
+if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the menu frame (menu.js)
   var KEY = 'wf-tour', PAGE = (location.pathname.split('/').pop() || 'index.html');
   var get = function () { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) { return null; } };
   var put = function (s) { try { if (s) sessionStorage.setItem(KEY, JSON.stringify(s)); else sessionStorage.removeItem(KEY); } catch (e) {} };
@@ -268,7 +268,10 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour .tb{position:absolute;box-sizing:border-box;padding:16px;border-radius:20px;background:rgba(28,28,30,0.72);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;pointer-events:auto;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}' +
       '#wf-tour .tb.on{opacity:1;transform:none}' +
       '#wf-tour .tb{touch-action:none;cursor:grab}#wf-tour .tb.drag{cursor:grabbing;transition:none!important}#wf-tour .tb::before{content:"";position:absolute;left:50%;top:6px;width:44px;height:3px;margin-left:-22px;border-radius:2px;background:rgba(255,255,255,0.3)}' +
-      '#wf-tour .ta{display:inline-flex;align-items:center;gap:8px;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;animation:wfach .6s cubic-bezier(.3,1.5,.5,1) both}' +
+      '#wf-tour .ta{display:inline-flex;align-items:center;gap:8px;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;position:relative;isolation:isolate;opacity:0}' +
+      // the achievement shows last (Oct 3, 18:40): once the card has settled it pops in, its background swells 10% and back,
+      // with the prlim sound and a haptic at that same moment
+      '#wf-tour .ta.go{animation:wfach .3s cubic-bezier(.3,1.5,.5,1) both}#wf-tour .ta::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:inherit;pointer-events:none}#wf-tour .ta.go::before{animation:wfachBg .5s cubic-bezier(.3,0,.3,1) .05s both}@keyframes wfachBg{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}' +
       '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
       '#wf-tour .tth{margin:0 0 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)}' +
       '#wf-tour .tt{margin:0;font-size:17px;font-weight:600;line-height:22px}' +
@@ -337,7 +340,7 @@ if (WF_TOUR_ON) (function () {
   ['pointerdown', 'touchend'].forEach(function (ev) { window.addEventListener(ev, function () { actxGet(); }, { capture: true, passive: true }); });
   function prlim() {
     var c = actxGet(); if (!c) return;
-    try { var t0 = c.currentTime + 0.02, out = c.createGain(); out.gain.value = 0.22; out.connect(c.destination);
+    try { var t0 = c.currentTime + 0.005, out = c.createGain(); out.gain.value = 0.22; out.connect(c.destination);
       var note = function (f, t, d, peak) { var o = c.createOscillator(), g = c.createGain(), o2 = c.createOscillator(), g2 = c.createGain();
         o.type = 'sine'; o.frequency.setValueAtTime(f, t); o2.type = 'sine'; o2.frequency.setValueAtTime(f * 2.01, t);   // a faint octave shimmer
         g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
@@ -471,7 +474,8 @@ if (WF_TOUR_ON) (function () {
         '<button type="button" class="tc tb0"' + (i ? '' : ' disabled') + '>' + CH('m15 6-6 6 6 6') + '</button>' +
         (nl && nx ? '<button type="button" class="tg"></button>' : '<button type="button" class="tc' + (nx ? ' tg' : '') + '"' + (nx ? '' : ' disabled') + '>' + CH('m9 6 6 6-6 6') + '</button>') + '</div>';
       var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
-      if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} prlim(); }
+      if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); actxGet();   // wake the sound now, so it plays the instant the chip appears
+        var taEl = bub.querySelector('.ta'); setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }, 520); }
       bub.querySelector('.tt').textContent = L(st.t);
       // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }

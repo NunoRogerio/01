@@ -58,6 +58,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
   function darkCss() {
     var o = [];
+    o.push('path[transform="rotate(-25 12 12)"][fill="#1C1C1E"]{fill:#E5E5EA}');   // the night moon next to text turns light at night (Oct 3, 18:31); on the map's yellow markers it stays dark
     [['rgb(242, 242, 247)', '#262629'], ['rgb(255, 255, 255)', '#333336'], ['rgb(238, 238, 240)', '#333336'], ['rgb(229, 229, 234)', '#3A3A3C'],
       ['rgb(227, 227, 232)', '#3A3A3C'], ['rgb(230, 230, 235)', '#222225'],
       ['rgba(118, 118, 128, 0.12)', 'rgba(118,118,128,0.24)'], ['rgba(60, 60, 67, 0.3)', 'rgba(235,235,245,0.3)'], ['rgba(60, 60, 67, 0.2)', 'rgba(235,235,245,0.2)'], ['rgba(60, 60, 67, 0.12)', 'rgba(235,235,245,0.12)'],
@@ -128,7 +129,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     return Math.max(28, Math.min(cap, Math.floor(w / (len * 0.6)))) + 'px';
   };
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
-  var BTN = '.sqrow::after{display:none!important}' +   /* lists: no divider between items, only the line under the list's header */
+  var BTN = '.sqrow::after{display:none!important}' +
+    // Stage tags (Oct 3, 18:50): the icon sits at the left, 8px in; the label stays centred on the whole tag (equal room both sides)
+    '.wf-stg{position:relative;justify-content:center!important;padding-left:36px!important;padding-right:36px!important}.wf-stg>svg{position:absolute;left:8px;top:50%;margin:0!important;transform:translateY(-50%)}' +   /* lists: no divider between items, only the line under the list's header */
     '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
   'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over an 8px lime bar, rounded at both ends, that glides between them; shared by every tab set */
@@ -248,6 +251,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       var go = function () { spObs.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['style'] }); spAll(document.documentElement); };
       if (document.body) go(); else document.addEventListener('DOMContentLoaded', go); }
   }
+  // A choice made in the menu (which on most screens is a frame underneath, menu.js) applies to the screen above at once
+  try { window.addEventListener('storage', function (e) { if (!e.key || !/^wf-(theme|text|space)-/.test(e.key)) return; apply(); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} }); } catch (e) {}
   function apply() {
     var theme = get('theme', 'light'), size = get('text', 'normal');
     try { spApply(get('space', 'comfortable')); } catch (e) {}

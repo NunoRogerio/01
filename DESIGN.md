@@ -698,3 +698,10 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Menu shadow, subtler (Oct 3, 18:25):** the shadow cast over the icon column (by the open section, and by the screen when folded to the column) is 0 0 12px at 8% (was 24px at 12%).
 - **Languages, second pass (Oct 3):** tour texts, chat quick replies and notification texts translated too; a text made of known parts ("Place: Status", "Place. Sentence") is translated part by part in every language.
 - **Menu icon column spacing (Oct 3, 18:26):** 16px between the section icons (was 8px).
+- **Menu on every screen (Oct 3, 18:34):** the menu button works the same on every screen: that screen slides left from under the button to uncover the menu, and the button closes it back to the same screen (never the map). One menu for the whole app: the main screen's menu, loaded underneath in menu-only mode (Main.dc.html?menu=1, menu.js). Choices made there (theme, text size, spacing, language) apply to the screen above at once.
+- **Night moon in dark mode (Oct 3, 18:31):** the moon beside text (lists, detection lines, map popups) turns light at night; on the map's yellow markers it stays dark.
+- **Tour achievement (Oct 3, 18:40):** the achievement chip shows last, once the card has settled: it pops in, its background swells 10% and back, and the prlim sound and haptic land at that same moment.
+- **Stage tags (Oct 3, 18:50):** the stage icon sits at the tag's left, 8px in; the label stays centred on the whole tag (equal room on both sides). Every stage tag (incident lists, fire page).
+- **Language switcher (Oct 3, 18:54):** each option is a flag and the country initials (EN, PT, BR, ES, FR, IT, DE, NL, UA, PL… 日本), the first switcher's formula; the full name is read out by screen readers.
+- **About in the menu (Oct 3, 18:44):** scrolls further, so its last lines clear the bottom; in dark mode it takes the menu surface's colour.
+- **Translations (Oct 3, 18:56):** stopped at 32 languages; Bosnian not added.

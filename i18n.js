@@ -10,7 +10,8 @@
   // English, Portuguese and Japanese live here; the others load from data/i18n/<code>.json when chosen. A language is
   // listed only once it is translated.
   var LANGS=[['en','English','gb'],['pt','Português','pt'],['pt-BR','Brasileiro','br'],['es','Español','es'],['fr','Français','fr'],['it','Italiano','it'],['de','Deutsch','de'],['nl','Nederlands','nl'],['uk','Українська','ua'],['pl','Polski','pl'],['ro','Română','ro'],['el','Ελληνικά','gr'],['cs','Čeština','cz'],['sv','Svenska','se'],['hu','Magyar','hu'],['bg','Български','bg'],['da','Dansk','dk'],['fi','Suomi','fi'],['sk','Slovenčina','sk'],['hr','Hrvatski','hr'],['sl','Slovenščina','si'],['lt','Lietuvių','lt'],['lv','Latviešu','lv'],['et','Eesti','ee'],['ga','Gaeilge','ie'],['mt','Malti','mt'],['nb','Norsk','no'],['is','Íslenska','is'],['sq','Shqip','al'],['sr','Српски','rs'],['mk','Македонски','mk'],['ca','Català','es-ct'],['ja','日本語','jp']];
-  window.__wfLangs=LANGS.map(function(a){return {code:a[0],name:a[1],flag:'assets/flags/'+a[2]+'.svg'};});
+  // short: the country initials shown on the switcher (Oct 3, 18:54: back to the first switcher's formula, EN PT 日本)
+  window.__wfLangs=LANGS.map(function(a){return {code:a[0],name:a[1],flag:'assets/flags/'+a[2]+'.svg',short:a[0]==='en'?'EN':a[0]==='ja'?'日本':a[2]==='es-ct'?'CAT':a[2].toUpperCase()};});
   var OK={};LANGS.forEach(function(a){OK[a[0]]=1;});
   try{var role=localStorage.getItem('wf-role')||'',sv=localStorage.getItem('wf-lang-'+role);lang=OK[sv]?sv:((role==='pt'||role==='design')?'pt':'en');}catch(e){}
   window.__wfLang=lang;
@@ -307,5 +308,7 @@
   window.__wfUseLang=function(l){if(l===lang)return;lang=l;window.__wfLang=l;sets(l);cache.clear();
     if(document.body)node(document.body,true);try{if(TITLE)document.title=tr(TITLE);}catch(e){}
     try{window.dispatchEvent(new Event('wf-sync'));window.dispatchEvent(new Event('wf-lang'));}catch(e){}};
+  // a language chosen in the menu frame (menu.js) changes the screen above too
+  try{window.addEventListener('storage',function(e){if(!e.key||e.key.indexOf('wf-lang-')!==0)return;var r='';try{r=localStorage.getItem('wf-role')||'';}catch(x){}if(e.key==='wf-lang-'+r&&OK[e.newValue])window.__wfUseLang(e.newValue);});}catch(e){}
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();
