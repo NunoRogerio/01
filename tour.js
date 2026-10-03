@@ -58,6 +58,23 @@ if (WF_TOUR_ON) (function () {
   var closeIn = function (sec) { var s = document.querySelector(sec); if (!s) return; var b = [].slice.call(s.querySelectorAll('button')).find(function (x) { return x.querySelector('path[d^="M6 6"]'); }); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } };
   var areaOpen = function () { var a = document.querySelector('section[data-swipe-key="sc"]'); return !!a && a.getAttribute('aria-hidden') === 'false'; };
   var areaClose = function () { var b = document.querySelector('section[data-swipe-key="sc"] button[data-swipe-go]'); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } };
+  // Bring a control into view by scrolling only the containers people can scroll themselves (never the page or a clipped
+  // frame: on iPhone that shifted the whole app up, hid the back row and left no way to scroll it back)
+  function scrollable(n, ax) { var c = getComputedStyle(n), o = ax === 'y' ? c.overflowY : c.overflowX; return (o === 'auto' || o === 'scroll') && (ax === 'y' ? n.scrollHeight > n.clientHeight + 1 : n.scrollWidth > n.clientWidth + 1); }
+  function reveal(el, vOut, hOut) {
+    var r = el.getBoundingClientRect(), doneY = !vOut, doneX = !hOut;
+    for (var n = el.parentElement; n && n !== document.body && n !== document.documentElement && !(doneX && doneY); n = n.parentElement) {
+      var b = n.getBoundingClientRect();
+      if (!doneY && scrollable(n, 'y')) { doneY = true; n.scrollBy({ top: (r.top + r.height / 2) - (Math.max(b.top, 0) + Math.min(b.height, VH()) / 2), behavior: 'smooth' }); }
+      if (!doneX && scrollable(n, 'x')) { doneX = true; n.scrollBy({ left: (r.left + r.width / 2) - (b.left + b.width / 2), behavior: 'smooth' }); }
+    }
+  }
+  // Safety: anything that can't be scrolled by hand (the page, clipped frames) is kept at its origin while the tour runs
+  function unshift() {
+    var a = document.activeElement; if (a && /^(INPUT|TEXTAREA)$/.test(a.tagName)) return;   // typing: iPhone moves the page for the keyboard
+    [document.scrollingElement, document.documentElement, document.body].forEach(function (n) { if (n && (n.scrollTop || n.scrollLeft)) { n.scrollTop = 0; n.scrollLeft = 0; } });
+    var dc = document.getElementById('dc-root'); for (var n = dc; n && n !== document.body; n = n.parentElement) if (n.scrollTop && getComputedStyle(n).overflowY === 'hidden') n.scrollTop = 0;
+  }
   var scrollEnd = function (sel) { var e = document.querySelector(sel); if (e) e.scrollTo({ top: e.scrollHeight, behavior: 'smooth' }); };
 
   // The open incident list's most likely candidate (the first row; the list is sorted by likelihood). Only once the
@@ -198,6 +215,7 @@ if (WF_TOUR_ON) (function () {
     st.textContent = '#wf-tour{position:fixed;inset:0;z-index:99990;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased}' +
       '#wf-tour .tb{position:absolute;box-sizing:border-box;padding:16px;border-radius:20px;background:rgba(28,28,30,0.72);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;pointer-events:auto;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}' +
       '#wf-tour .tb.on{opacity:1;transform:none}' +
+      '#wf-tour .tb{touch-action:none;cursor:grab}#wf-tour .tb.drag{cursor:grabbing;transition:none!important}#wf-tour .tb::before{content:"";position:absolute;left:50%;top:6px;width:44px;height:3px;margin-left:-22px;border-radius:2px;background:rgba(255,255,255,0.3)}' +
       '#wf-tour .ta{display:inline-flex;align-items:center;gap:6px;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:6px 12px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;animation:wfach .6s cubic-bezier(.3,1.5,.5,1) both}' +
       '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
       '#wf-tour .tth{margin:0 0 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)}' +
@@ -227,7 +245,22 @@ if (WF_TOUR_ON) (function () {
     ring = document.createElement('div'); ring.className = 'tr';
     bub = document.createElement('div'); bub.className = 'tb'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-live', 'polite');
     ['l', 'r'].forEach(function (k) { var g = document.createElement('div'); g.className = 'tgl ' + k; root.appendChild(g); });   // tour mode: a soft lime glow along both sides of the screen
-    root.appendChild(svg); root.appendChild(ring); root.appendChild(bub); document.body.appendChild(root);
+    root.appendChild(svg); root.appendChild(ring); root.appendChild(bub); document.body.appendChild(root); dragOn(bub);
+  }
+  // The bubble can be dragged out of the way (by its grabber or any part that isn't a button); it stays where it was put
+  // for the rest of that step, kept on screen
+  var drag = { dx: 0, dy: 0, i: -1 };
+  function place(l, t) {
+    var s0 = get(); if (!s0 || drag.i !== s0.i) { drag.dx = 0; drag.dy = 0; }
+    var w = bub.offsetWidth, h = bub.offsetHeight, L = Math.min(VW() - w - 8, Math.max(8, l + drag.dx)), T = Math.min(VH() - h - 8, Math.max(8, t + drag.dy));
+    bub.style.left = L + 'px'; bub.style.top = T + 'px';
+  }
+  function dragOn(b) {
+    var st = null;
+    b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
+    b.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return; st.moved = true; drag.i = st.i; drag.dx = st.dx + mx; drag.dy = st.dy + my; b.classList.add('drag'); place(parseFloat(b.dataset.l || 0), parseFloat(b.dataset.t || 0)); e.preventDefault(); });
+    var up = function () { if (!st) return; st = null; b.classList.remove('drag'); setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
+    b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
   }
   function end() { put(null); if (root) root.remove(); root = null; cur = -1; heliLand(); }
   function go(i) {
@@ -301,10 +334,10 @@ if (WF_TOUR_ON) (function () {
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
     if (low && el && !st.find) el = null;
-    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2)) + 'px'; return; }
+    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? 64 : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
-    if (big) { ring.style.display = 'none'; svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.style.left = ((vw - bw) / 2) + 'px'; bub.style.top = (vh - bh - 40) + 'px'; return; }
+    if (big) { ring.style.display = 'none'; svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
     var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
     ring.style.display = 'block'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
     var gap = 76, below = vh - T.b - 32, above = T.t - 16, up;
@@ -315,7 +348,7 @@ if (WF_TOUR_ON) (function () {
     var OB = [T].concat([].slice.call(document.querySelectorAll('[data-wf-pop]')).map(function (p) { var q0 = p.getBoundingClientRect(); return q0.width ? { l: q0.left - 8, t: q0.top - 8, r: q0.right + 8, b: q0.bottom + 8 } : null; }).filter(Boolean));
     var hits = function (y) { return OB.some(function (o) { return left < o.r && left + bw > o.l && y < o.b && y + bh > o.t; }); };
     if (hits(top)) { var alts = [up ? Math.min(vh - 32 - bh, T.b + gap) : Math.max(16, T.t - gap - bh), vh - 32 - bh, 16], f = alts.find(function (y) { return !hits(y); }); if (f != null) { up = f + bh / 2 < (T.t + T.b) / 2; top = f; } }
-    bub.style.left = left + 'px'; bub.style.top = top + 'px';
+    bub.dataset.l = left; bub.dataset.t = top; place(left, top); top = parseFloat(bub.style.top); left = parseFloat(bub.style.left);
     // the guide helicopter hovers over the control, its bucket pointing at it (no arrow)
     svg.innerHTML = ''; svg.__k = '';
     heliAim(T, { top: top, height: bh, left: left, width: bw }, up);
@@ -425,6 +458,7 @@ if (WF_TOUR_ON) (function () {
     }
     jumped = true;
     if (i !== cur) { cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
+    unshift();
     if (!ran && st.before) { ran = true; try { st.before(); } catch (e) {} }
     // the area picker belongs to the region step only: anywhere else it is closed, so the step's control is in view
     if (PAGE === 'Main.dc.html' && !st.area && areaOpen()) { areaClose(); return; }
@@ -434,10 +468,10 @@ if (WF_TOUR_ON) (function () {
     if (st.auto && Date.now() - (window.__wfTourAuto || 0) > 2600 && Date.now() - seen > 2200) { window.__wfTourAuto = Date.now(); drive(); }
     if (st.show && armed === i) { curEl = null; draw(i, st, null, false, true); return; }
     var el = st.lock && lockEl && lockEl.isConnected && lockI === i ? lockEl : (st.find ? st.find() : null); if (st.lock && el) { lockEl = el; lockI = i; }
-    var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); el.scrollIntoView({ block: vOut ? 'center' : 'nearest', inline: hOut ? 'center' : 'nearest', behavior: 'smooth' }); } catch (e) {} }
+    var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); reveal(el, vOut, hOut); } catch (e) {} }
     if (el) { var sh1 = shown(el, st.strict); if (sh1 !== true && !(sh1 === 'part' && scrolled)) el = null; }
     var late = st.find && !el && Date.now() - seen > (st.mode === 'until' && !s.b ? 1e9 : s.b ? 1500 : 9000);
-    if (st.find && !el && !late) { curEl = null; draw(i, st, null, false, true); return; }   // still waiting for its control: the bubble stays, End tour always reachable
+    if (st.find && !el && !late) { curEl = null; draw(i, st, null, false, 'top'); return; }   // waiting at the top: the app's controls mostly sit low   // still waiting for its control: the bubble stays, End tour always reachable
     curEl = el; draw(i, st, el, late, st.low); window.__wfTour.el = el; window.__wfTour.i = i;
   }
   // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
@@ -453,7 +487,8 @@ if (WF_TOUR_ON) (function () {
   function allowed(e) {
     if (selfTap || !get() || !root || !root.isConnected) return true;
     if (e.target && e.target.closest && e.target.closest('#wf-tourwarn')) return true;
-    var s0 = get(), st0 = s0 && S[s0.i]; if (st0 && st0.free && st0.page === PAGE) return true;   // a step to play with the screen freely
+    var s0 = get(), st0 = s0 && S[s0.i]; if (st0 && st0.page !== PAGE) return true;   // the tour has moved to another screen: this one is being left, nothing is blocked
+    if (st0 && st0.free && st0.page === PAGE) return true;   // a step to play with the screen freely
     if (st0 && st0.page === PAGE && st0.find && !curEl && !(st0.show && armed === s0.i)) return true;   // nothing to point at yet: never lock the screen
     if (e.target && e.target.closest && e.target.closest('#wf-tour')) return true;
     // iPhone: the app lays an invisible haptic layer (#wf-hapov) over the touched control and passes the tap on to it;
@@ -474,13 +509,16 @@ if (WF_TOUR_ON) (function () {
   });
   // a tap on the control a 'tap' step points at moves the tour on (the tap itself still does its job)
   document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('#wf-hapov')) return;   // iPhone: the haptic layer's own click; the tap passed on to the control moves the tour on
     var s = get(); if (!s) return; var st = S[s.i]; if (!st || st.mode !== 'tap' || st.page !== PAGE || !st.find || armed === s.i) return;
     var el = st.lock && lockEl && lockEl.isConnected ? lockEl : st.find(); if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;   // a tap on a control that is still disabled doesn't count
     // the tap is on the control, or lands inside its area (some map bands pass taps through to the control underneath)
     var r = el.getBoundingClientRect(), inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom && (e.clientX || e.clientY);
     if (el === e.target || el.contains(e.target) || inside) { if (st.closeAfter) { armed = s.i; return; }
       if (st.show) { armed = s.i; var at2 = s.i, sh = st.show; setTimeout(function () { var s3 = get(); if (!s3 || s3.i !== at2) return; selfTap = true; try { sh.close(); } catch (x) {} selfTap = false; go(at2 + 1); tick(); }, sh.ms); return; }
-      if (st.legend) { armed = s.i; var at = s.i, chipEl = el.closest ? el : el; setTimeout(function () { var s2 = get(); if (!s2 || s2.i !== at) return; var on = q('[data-wf-leg] button[aria-pressed="true"]', function (b) { return b.getAttribute('aria-label') === chipEl.getAttribute('aria-label') || b === chipEl; }) || chipEl; selfTap = true; try { (chipEl.isConnected ? chipEl : on).click(); } catch (x) {} selfTap = false; go(at + 1); tick(); }, 2400); return; } go(s.i + 1); setTimeout(tick, 60); }
+      if (st.legend) { armed = s.i; var at = s.i, chipEl = el.closest ? el : el; setTimeout(function () { var s2 = get(); if (!s2 || s2.i !== at) return; var on = q('[data-wf-leg] button[aria-pressed="true"]', function (b) { return b.getAttribute('aria-label') === chipEl.getAttribute('aria-label') || b === chipEl; }) || chipEl; selfTap = true; try { (chipEl.isConnected ? chipEl : on).click(); } catch (x) {} selfTap = false; go(at + 1); tick(); }, 2400); return; } var was = s.i; go(s.i + 1); setTimeout(tick, 60);
+      // 3) never lost: if the tap should have opened the next screen and nothing happened, the step comes back so it can be tapped again
+      if (S[was + 1] && S[was + 1].page !== PAGE) setTimeout(function () { var s4 = get(); if (s4 && s4.i === was + 1) { put({ i: was, max: s4.max || was }); cur = -1; lastKey = ''; tick(); } }, 2000); }
   }, true);
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
   var boot = function () { requestAnimationFrame(loop); try { if (get()) heliEnter(); } catch (e) {} };
