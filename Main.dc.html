@@ -15,9 +15,9 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<script src="fit.js?v=127"></script>
+<script src="fit.js?v=130"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=165"></script>
+<script src="prefs.js?v=166"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=58"></script>
@@ -190,6 +190,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 /* Tour button circle (Oct 3): the guide's pulse, growing slowly to +10% and returning quickly */
 .wf-tdot{animation:wfTdot 1.8s infinite}@keyframes wfTdot{0%{transform:scale(1);animation-timing-function:ease-in-out}75%{transform:scale(1.1);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion: reduce){.wf-tdot,.wf-heli,.wf-heli-t,.wf-rot,.wf-rot2{animation:none}}
+</style>
+<style>
+/* About inside the menu (Oct 3, 22:13): its own header, title, frame size and containers give way to the menu's section structure */
+[data-wf-about-in] [data-wf-about-root]{position:static!important;width:auto!important;height:auto!important;padding:0!important;background:transparent!important;overflow:visible!important;font-family:inherit!important}
+[data-wf-about-in] [data-wf-about-hdr],[data-wf-about-in] [data-wf-about-ttl]{display:none!important}
+[data-wf-about-in] [data-wf-page]{flex:none!important;overflow:visible!important;padding:0!important}
+[data-wf-about-in] [data-wf-page] [style*="border-radius: 16px"]{background:transparent!important;padding:0!important}
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
@@ -638,7 +645,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- About: the last row of the preferences, on the grey of the switcher and the search field (pill, 52px like the switcher);
            the app's symbol and "About" centred, no chevron. The symbol's eye blinks every 4 s. Back returns here, panel open. -->
       <!-- About (Oct 3, 17:39): a section like the others, showing the About screen itself in place (header and title left out) -->
-      <iframe src="{{pm.aboutSrc}}" title="About" style="display: {{pm.dAbout}}; flex: 1 0 auto; width: calc(100% + 32px); height: calc({{vh}}px - 152px); margin: 0 -16px -16px; border: 0; background: transparent"></iframe>
+      <!-- (Oct 3, 22:13) About is part of the menu itself (imported, no frame), so it slides, scrolls and is covered exactly like every other section -->
+      <div data-wf-about-in="1" style="display: {{pm.dAbout}}; flex-shrink: 0"><dc-import name="About"></dc-import></div>
       <a href="About.dc.html" class="opt" onClick="{{abt.go}}" tabindex="-1" aria-hidden="true" style="display: none; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 52px; padding: 0 16px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #000000; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path data-wf-about-eye="1" fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>About</a>
     </div>
   </section>
@@ -733,6 +741,7 @@ class Component extends DCLogic {
   // arrives it locks with a small "clack" (overshoots 2px, knocks back 1px, settles) and a light haptic
   // Closing (Oct 3, 20:13): the menu button waits while the screen slides back, and only moves home as the screen's edge
   // reaches the icon column, just before it covers it. The moment comes from the slide's own ease (sine in and out).
+  wfSignOutNow() { try { window.localStorage.removeItem('wf-role'); window.localStorage.removeItem('wf-last-user'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); try { window.top.location.href = 'reset.html?out=1'; } catch (e) { location.href = 'reset.html?out=1'; } }
   wfBurgerBack() { const vw = (window.__wfVP || {}).w || 390, travel = Math.min(vw, 564) + 32, f = Math.max(0, Math.min(1, (travel - 60) / travel));
     return Math.round(Math.acos(1 - 2 * f) / Math.PI * 530); }   // the screen's slide (Oct 3, 21:44: 0.53s)
   wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = (to ? 0 : this.wfBurgerBack()) + 247; if (!b) return;
@@ -1121,12 +1130,17 @@ class Component extends DCLogic {
           rm: [L('Remove the key?', 'Remover a chave?', 'キーを削除しますか?'),
             L('The key is deleted from this phone and role-play stops.', 'A chave é apagada deste telemóvel e a encenação para.', 'キーはこの端末から削除され、ロールプレイは停止します。'),
             L('To use it again you will need to paste the key again.', 'Para voltar a usá-la terá de colar a chave de novo.', '再び使うにはキーをもう一度貼り付ける必要があります。'),
-            L('Remove', 'Remover', '削除')] }[k];
+            L('Remove', 'Remover', '削除')],
+          // (Oct 3, 22:07) signing out asks first
+          out: [L('Sign out?', 'Terminar sessão?', 'サインアウトしますか?'),
+            L('You will need to sign in again to use the app.', 'Terá de voltar a entrar para usar a aplicação.', 'アプリを使うには再度サインインが必要です。'),
+            '', L('Sign out', 'Terminar sessão', 'サインアウト')] }[k];
         const close = () => this.setState({ aiAsk: null });
         return { title: txt[0], body: txt[1], note: txt[2] || '', noteD: txt[2] ? 'block' : 'none', ok: txt[3], cancel: L('Cancel', 'Cancelar', 'キャンセル'), hidden: open ? 'false' : 'true', pe: open ? 'auto' : 'none', op: open ? 1 : 0,
           y: open ? '0%' : '105%', dur: open ? '.5s' : '.4s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', close,
           hap: (k === 'on' || k === 'off' || /^ds/.test(k)) ? 'late' : 'now',   // turning role-play on/off: the vibration comes when the toggle lands
-          confirm: () => { const kk = s.aiAsk; if (kk !== 'on' && kk !== 'off' && !/^ds/.test(kk || '')) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} } close();
+          confirm: () => { const kk = s.aiAsk; if (kk === 'out') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} close(); this.wfSignOutNow(); return; }
+            if (kk !== 'on' && kk !== 'off' && !/^ds/.test(kk || '')) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} } close();
             if (/^ds(on|off):/.test(kk || '')) { if (window.__wfDS) window.__wfDS.set(kk.replace(/^ds(on|off):/, ''), /^dson/.test(kk)); this.forceUpdate(); return; }
             if (!A) return; if (kk === 'rep') { const d = (s.aiDraft || '').trim(); if (d) { this.setState({ aiBusy: true, aiDraft: '', aiRep: false }); A.set(d, () => this.setState({ aiBusy: false })); } else { this.setState({ aiRep: true }); setTimeout(() => { try { document.getElementById('wf-ai-key-in').focus(); } catch (e) {} }, 450); } return; }
             if (kk === 'rm') { A.set(''); this.setState({ aiDraft: '', aiRep: false }); } else { A.setOn(kk === 'on'); this.forceUpdate(); } } }; })(),
@@ -1528,7 +1542,8 @@ class Component extends DCLogic {
       hList: this.wfHandle('li', 'down', () => { this.wfListFlag(false); this.setState({ list: false }); }), liDy: 0, liDyT: '0s', liClipT: this.wfDrag('li').y ? '0s' : '.55s',
       openScope: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.setState({ scOpen: true, scBrowse: undefined }); }, pScope: this.wfPull('sc', 'down', () => this.setState({ scOpen: true, scBrowse: undefined })), pList: this.wfPull('li', 'up', () => { this.wfListFlag(false); this.setState({ list: true }); }), closeScope: () => this.setState({ scOpen: false }),
       backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : brObj && brObj.id === 'AMZ' ? 'BRA' : '@', q: '' })), acct: ({ amz: { name: 'Rafael Nogueira · Prevfogo Amazônia', area: 'Ibama · Access: Amazônia Legal only' }, admin: { name: 'Nuno Rogerio · Platform administrator', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
-      signOut: () => { try { window.localStorage.removeItem('wf-role'); window.localStorage.removeItem('wf-last-user'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
+      signOut: (e) => { if (e && e.preventDefault) e.preventDefault(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ aiAsk: 'out' }); },
+      signOutNow: () => { try { window.localStorage.removeItem('wf-role'); window.localStorage.removeItem('wf-last-user'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
       backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : brObj && brObj.id === 'AMZ' ? 'Back to Brazil' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
       scOp: scOpen ? 1 : 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? (this.wfDrag('sc').y ? (-this.wfDrag('sc').y) + 'px' : '0px') : Math.max(0, L.vh - 48 - (this._tbh || 163)) + 'px', scClipT: this.wfDrag('sc').y ? '0s' : '.55s', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
       ps: (() => { const P = this.wfPlaceSearch(); this._psOpen = P.open; return P; })(), hPs: this.wfHandle('ps', 'up', () => this.wfPlaceSearch().close()),   // the grabber: a tap or a swipe up folds Find a place

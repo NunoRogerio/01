@@ -704,7 +704,9 @@ window.__wfBlink=function(path,dur){
 // in its group, measured after rendering and translation, so tags line up whatever their language.
 (function(){
   var busy=false;
-  function run(){busy=false;var g={},l=document.querySelectorAll('[data-wf-eqw]');for(var i=0;i<l.length;i++){var k=l[i].getAttribute('data-wf-eqw');(g[k]=g[k]||[]).push(l[i]);}
+  // Dialog action pairs (Oct 3, 22:07): when a label would wrap (e.g. "Terminar sessão"), the two buttons stack, each full width
+  function acts(){var A=document.querySelectorAll('.wf-dlg-acts');for(var i=0;i<A.length;i++){var a=A[i];if(!a.offsetWidth)continue;a.classList.remove('wf-stack');var B=a.querySelectorAll('button'),wrap=false;for(var j=0;j<B.length;j++){var b=B[j];if(!b.offsetWidth)continue;var r=document.createRange();r.selectNodeContents(b);var R=r.getClientRects(),tops={};for(var q=0;q<R.length;q++)if(R[q].width>1)tops[Math.round(R[q].top)]=1;if(Object.keys(tops).length>1)wrap=true;}if(wrap)a.classList.add('wf-stack');}}
+  function run(){try{acts();}catch(x){}busy=false;var g={},l=document.querySelectorAll('[data-wf-eqw]');for(var i=0;i<l.length;i++){var k=l[i].getAttribute('data-wf-eqw');(g[k]=g[k]||[]).push(l[i]);}
     // measured in one pass (all minimums lifted together, then every width read with a single layout), so long lists
     // (thousands of rows, e.g. Brazil) don't force one layout per tag
     if(!l.length)return;var W={},old=[];for(var j=0;j<l.length;j++){old.push(l[j].style.minWidth);l[j].style.minWidth='';}
@@ -735,7 +737,11 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
 // keeps its place), except when you came back with a back
 // control (data-wf-back, or a screen's own back through __wfBackOrHome), where the place you left is useful and kept.
 (function(){
-  var KEY='wf-back-nav', mark=function(){try{sessionStorage.setItem(KEY,String(Date.now()));}catch(x){}};
+  var KEY='wf-back-nav', mark=function(){try{sessionStorage.setItem(KEY,String(Date.now()));sessionStorage.setItem('wf-vt-back',String(Date.now()));}catch(x){}};
+  // Back (Oct 3, 22:06): the screen you go back to slides in from the right over the current one, which darkens 20%
+  // as it is covered, exactly like the sections of the settings menu (same 0.53s, same ease). Other screen changes keep their dissolve.
+  try{var vs=document.createElement('style');vs.textContent='html:active-view-transition-type(wfback)::view-transition-old(root){animation:wfvtDim .53s cubic-bezier(.37,0,.63,1) both}html:active-view-transition-type(wfback)::view-transition-new(root){animation:wfvtIn .53s cubic-bezier(.37,0,.63,1) both}@keyframes wfvtDim{from{filter:brightness(1)}to{filter:brightness(.8)}}@keyframes wfvtIn{from{transform:translateX(100%)}to{transform:none}}';(document.head||document.documentElement).appendChild(vs);}catch(x){}
+  addEventListener('pagereveal',function(e){if(!e.viewTransition)return;var t=0;try{t=+sessionStorage.getItem('wf-vt-back')||0;sessionStorage.removeItem('wf-vt-back');}catch(x){}if(Date.now()-t<15000){try{e.viewTransition.types.add('wfback');}catch(x){}}});
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(a)mark();},true);
   var ob=window.__wfBackOrHome;if(typeof ob==='function'){window.__wfBackOrHome=function(){mark();return ob.apply(this,arguments);};}
   var top=function(root){try{var L=(root||document).querySelectorAll('*');for(var i=0;i<L.length;i++){var el=L[i];if(el.closest&&el.closest('[data-wf-maproot],[data-wf-keepscroll]'))continue;if(el.scrollTop>0)el.scrollTop=0;if(el.scrollLeft>0&&el.getAttribute('role')!=='tablist')el.scrollLeft=0;}if(!root)window.scrollTo(0,0);}catch(x){}};

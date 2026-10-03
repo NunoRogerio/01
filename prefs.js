@@ -163,7 +163,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // dialogs: a panel that runs to the bottom edge, 24px inside, with its buttons kept 48px clear of the home indicator; no light around it
     'html .wf-dlg{left:0!important;right:0!important;bottom:0!important;padding:30px 24px calc(32px + var(--wf-safe-b))!important;border-radius:28px 28px 0 0!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
     'html .wf-dlg[aria-hidden="true"]{translate:0 24px!important;box-shadow:none!important}' +
-    '.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}' +
+    '.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}.wf-dlg-acts.wf-stack{grid-template-columns:1fr}.wf-dlg-acts.wf-stack>*:last-child{order:-1}' +
     // dialogs: 24px around the content, plus 48px clear of the home indicator
     '.seg{transition:left .42s cubic-bezier(.4,0,.2,1) .14s,width .42s cubic-bezier(.4,0,.2,1) .14s!important}' +
     ':root{--wf-sec-bg:#737376;--wf-sec-fg:#FFFFFF;--wf-dis-bg:rgba(115,115,118,0.5);--wf-dis-fg:rgba(255,255,255,0.9);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#3A3A3C}' +
