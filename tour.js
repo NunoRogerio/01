@@ -172,7 +172,7 @@ if (WF_TOUR_ON) (function () {
 
     { page: 'Alert.dc.html', mode: 'next', interact: true, find: function () { return q('[role=list]:has(> [data-wf-kpi][data-g="ign"])') || q('[data-wf-ighdr]'); },
       ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Now let\'s take a closer look.', 'Agora vamos ver de perto.'],
-      t: ['Key figures', 'Números principais'],
+      t: ['Key figures', 'Números principais'], hold: true, tourScroll: true, low: true,
       b: ['Likelihood, heat power and people at risk first, to decide fast. Press and hold a card to reorder; tap + to choose which to show.',
           'Probabilidade, potência térmica e pessoas em risco primeiro, para decidir depressa. Prima e mantenha um cartão para reordenar; toque em + para escolher quais mostrar.'] },
     { page: 'Alert.dc.html', mode: 'tap', before: freshDemo, find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
@@ -374,7 +374,7 @@ if (WF_TOUR_ON) (function () {
     var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
-  window.__wfTour = { warn: warn, start: function () { try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
+  window.__wfTour = { warn: warn, start: function () { askTilt(); try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
   function arrow(x1, y1, x2, y2, seed) {
@@ -570,7 +570,7 @@ if (WF_TOUR_ON) (function () {
     }
     jumped = true;
     if (i !== cur && S[i]) runDemo(i, S[i]);
-    if (i !== cur) { cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
+    if (i !== cur) { holdI = -1; cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
     unshift();
     if (!ran && st.before) { ran = true; try { st.before(); } catch (e) {} }
     // the area picker belongs to the region step only: anywhere else it is closed, so the step's control is in view
@@ -580,12 +580,35 @@ if (WF_TOUR_ON) (function () {
     if (st.mode === 'until' && st.until && st.until()) { go(i + 1); return; }
     if (st.auto && Date.now() - (window.__wfTourAuto || 0) > 2600 && Date.now() - seen > 2200) { window.__wfTourAuto = Date.now(); drive(); }
     if (st.show && armed === i) { curEl = null; draw(i, st, null, false, true); return; }
+    if (st.hold && holdTick(i, st)) return;
     var el = st.lock && lockEl && lockEl.isConnected && lockI === i ? lockEl : (st.find ? st.find() : null); if (st.lock && el) { lockEl = el; lockI = i; }
     var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); reveal(el, vOut, hOut); } catch (e) {} }
     if (el) { var sh1 = shown(el, st.strict); if (sh1 !== true && !(sh1 === 'part' && scrolled)) el = null; }
     var late = st.find && !el && Date.now() - seen > (st.mode === 'until' && !s.b ? 1e9 : s.b ? 1500 : 9000);
     if (st.find && !el && !late) { curEl = null; draw(i, st, null, false, 'top'); return; }   // waiting just above the middle: clear of the header (pinned state, title) and of the controls that sit low   // still waiting for its control: the bubble stays, End tour always reachable
     curEl = el; draw(i, st, el, late, st.low); window.__wfTour.el = el; window.__wfTour.i = i;
+  }
+  // Hold steps (Oct 3, Key figures): the card is placed once and stays still (no re-placing, no flicker) while the page
+  // scrolls by itself, slowly, to the end so every section is seen; any touch, wheel or scroll by the person stops it.
+  // The circle stays on the area the card talks about, kept on screen.
+  var holdI = -1, asRun = null;
+  function holdTick(i, st) {
+    var el = st.find ? st.find() : null;
+    if (holdI !== i) { if (!el || !shown(el)) return false; holdI = i; draw(i, st, null, false, st.low);   // the card sits low and still; the page starts from its top
+      for (var n0 = el.parentElement; n0 && n0 !== document.body; n0 = n0.parentElement) if (scrollable(n0, 'y')) { n0.scrollTop = 0; break; } if (st.tourScroll) setTimeout(function () { var s0 = get(); if (s0 && s0.i === i) autoScroll(el, i); }, 1600); return true; }
+    if (el && !WF_TOUR_HELI) { var r = el.getBoundingClientRect(), y = Math.max(r.top + 40, Math.min(r.bottom - 40, VH() / 2)); var cb = bub ? bub.getBoundingClientRect().top - 56 : VH() - 150; y = Math.max(150, Math.min(cb, y)); dotAim((r.left + r.right) / 2, y); }
+    return true;
+  }
+  function autoScroll(el, i) {
+    var sc = null; for (var n = el.parentElement; n && n !== document.body; n = n.parentElement) if (scrollable(n, 'y')) { sc = n; break; }
+    if (!sc) return; var stop = false, last = 0, pos = sc.scrollTop;
+    var halt = function () { stop = true; ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.removeEventListener(t, halt, true); }); };
+    ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.addEventListener(t, halt, { capture: true, passive: true }); });
+    var step = function (t) { var s0 = get(); if (stop || !s0 || s0.i !== i || !sc.isConnected) { halt(); return; }
+      if (Math.abs(sc.scrollTop - pos) > 2) { halt(); return; }   // scrolled by hand (momentum, scrollbar): stop
+      var dt = last ? Math.min(50, t - last) : 16; last = t; pos = Math.min(sc.scrollHeight - sc.clientHeight, pos + 70 * dt / 1000); sc.scrollTop = pos;
+      if (pos >= sc.scrollHeight - sc.clientHeight - 0.5) { halt(); return; } requestAnimationFrame(step); };
+    requestAnimationFrame(step);
   }
   // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
   var selfTap = false, lockEl = null, lockI = -1, armed = -1;
@@ -650,7 +673,23 @@ if (WF_TOUR_ON) (function () {
       G[i].style.top = tt.toFixed(1) + 'px'; G[i].style.height = hh.toFixed(1) + 'px';
       G[i].style.width = (31 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg).toFixed(3)); }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
   }
-  (function gl() { try { glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
+  // Tilt (Oct 3): held between 30° and 60° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
+  // upright (above 60°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
+  var tiltB = null, tiltT = 0;
+  window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; });
+  function askTilt() { try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
+  function tiltSync(now) {
+    var dt = tiltT ? Math.min(0.05, (now - tiltT) / 1000) : 0; tiltT = now;
+    if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) return;
+    var b = tiltB, v = 0;
+    if (b < 30) v = -Math.min(1, (30 - Math.max(-30, b)) / 60);          // 30° → 0, -30° and beyond → full speed up
+    else if (b > 60) v = Math.min(1, (Math.min(120, b) - 60) / 30);      // 60° → 0, 90° and beyond → full speed down
+    if (!v) return;
+    var s0 = get(); if (!s0) return; if (drag.i !== s0.i) { drag.i = s0.i; drag.dx = 0; drag.dy = 0; }
+    var l = +bub.dataset.l, t = +bub.dataset.t; if (!isFinite(l) || !isFinite(t)) return;
+    drag.dy += v * 420 * dt; place(l, t); drag.dy = parseFloat(bub.style.top) - t;   // kept on screen: no build-up past the edges
+  }
+  (function gl(now) { try { tiltSync(now || performance.now()); glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
   var boot = function () { requestAnimationFrame(loop); try { if (get()) heliEnter(); } catch (e) {} try { if (!get() && PAGE === 'Main.dc.html') setTimeout(flyHome, 400); } catch (e) {} };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
