@@ -538,7 +538,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
             <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
-              <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: {{g.fs}}; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer"><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.label}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.label}}</span></span></button>
+              <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" aria-label="{{o.aria}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: {{g.fs}}; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer"><svg width="34" height="29" viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" style="display: {{o.icD}}; flex-shrink: 0"><path d="{{o.ic}}"></path></svg><span style="display: {{o.lbD}}"><span style="grid-area: 1 / 1">{{o.label}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.label}}</span></span></button>
             </sc-for>
           </div>
         </div>
@@ -976,7 +976,7 @@ class Component extends DCLogic {
     const group = (label, cur0, opts, pick) => { const pend = (s.segPend || {})[label], cur = pend !== undefined ? pend : cur0, i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
       label, fs: opts.length * Math.max(...opts.map((x) => x[1].length)) > 24 ? '15px' : '17px',   // long option names (Spacing) step down to 15px so they fit
       d: pmSec === ({ Language: 'lang', Theme: 'look', 'Text size': 'look', Spacing: 'look' })[label] ? 'flex' : 'none', ld: label === 'Language' ? 'none' : 'block', cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 20px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
-      opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, fg: o[0] === cur ? '#1C1C1E' : '#3C3C43', pick: () => { if (o[0] === cur) return;
+      opts: opts.map((o) => ({ label: o[1], aria: o[3] || o[1], ic: o[2] || 'M0 0', icD: o[2] ? 'block' : 'none', lbD: o[2] ? 'none' : 'inline-grid', on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, fg: o[0] === cur ? '#1C1C1E' : '#3C3C43', pick: () => { if (o[0] === cur) return;
         try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
         
         this.setState({ segPend: Object.assign({}, (this.state || {}).segPend, { [label]: o[0] }) });
@@ -1163,7 +1163,8 @@ class Component extends DCLogic {
         group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
         group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),
         // Spacing (Oct 3, 18:10): every space of 16px or more one step down or up the spacing scale (prefs.js)
-        group('Spacing', P ? P.get('space') || 'comfortable' : 'comfortable', [['condensed', 'Condensed'], ['comfortable', 'Comfortable'], ['spacious', 'Spacious']], (v) => setPref('space', v))
+        group('Spacing', P ? P.get('space') || 'comfortable' : 'comfortable', [   // (Oct 3, 20:52) icons: three squares, close together, comfortable, far apart
+          ['condensed', '', 'M5.5 9.5h5v5h-5Z M11.5 9.5h5v5h-5Z M17.5 9.5h5v5h-5Z', 'Condensed'], ['comfortable', '', 'M3 9.5h5v5H3Z M11.5 9.5h5v5h-5Z M20 9.5h5v5h-5Z', 'Comfortable'], ['spacious', '', 'M.9 9.5h5v5h-5Z M11.5 9.5h5v5h-5Z M22.1 9.5h5v5h-5Z', 'Spacious']], (v) => setPref('space', v))
       ]
     };
   }
