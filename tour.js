@@ -330,7 +330,7 @@ if (WF_TOUR_ON) (function () {
     var st = null;
     b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
     b.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return; st.moved = true; drag.i = st.i; drag.dx = st.dx + mx; drag.dy = st.dy + my; b.classList.add('drag'); place(parseFloat(b.dataset.l || 0), parseFloat(b.dataset.t || 0)); e.preventDefault(); });
-    var up = function () { if (!st) return; if (st.moved) { tiltN = tiltB; tiltV = 0; } st = null;   // dropped: it stays here, the tilt starts again from this angle
+    var up = function () { if (!st) return; if (st.moved) { tiltLock = st.i; tiltV = 0; tiltVX = 0; } st = null;   // dropped: it stays here for the rest of this step (tilt off until the next step)
     b.classList.remove('drag'); setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
   }
@@ -380,7 +380,7 @@ if (WF_TOUR_ON) (function () {
     var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
-  window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
+  window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; tiltNG = null; tiltLock = -1; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
   function arrow(x1, y1, x2, y2, seed) {
@@ -576,7 +576,7 @@ if (WF_TOUR_ON) (function () {
     }
     jumped = true;
     if (i !== cur && S[i]) runDemo(i, S[i]);
-    if (i !== cur) { holdI = -1; cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
+    if (i !== cur) { holdI = -1; tiltN = null; tiltNG = null; tiltV = 0; tiltVX = 0; cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
     unshift();
     if (!ran && st.before) { ran = true; try { st.before(); } catch (e) {} }
     // the area picker belongs to the region step only: anywhere else it is closed, so the step's control is in view
@@ -681,27 +681,34 @@ if (WF_TOUR_ON) (function () {
   }
   // Tilt (Oct 3): held between 30° and 50° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
   // upright (above 50°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
-  var tiltB = null, tiltT = 0, tiltV = 0, tiltN = null;
-  window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; });
+  var tiltB = null, tiltG = null, tiltT = 0, tiltV = 0, tiltVX = 0, tiltN = null, tiltNG = null, tiltLock = -1;
+  window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; if (e && typeof e.gamma === 'number') tiltG = e.gamma; });
   function askTilt() { try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
   function tiltSync(now) {
     var dt = tiltT ? Math.min(0.05, (now - tiltT) / 1000) : 0; tiltT = now;
-    if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) { tiltV = 0; return; }
+    if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) { tiltV = 0; tiltVX = 0; return; }
+    var sL = get(); if (sL && tiltLock === sL.i) { tiltV = 0; tiltVX = 0; return; }   // dragged in this step: it stays where it was put until the next step
     var b = tiltB, v = 0;
-    // still within 10° either side of the resting angle (taken when the tour starts and whenever the card is dropped after a
-    // drag); past it, flatter slides up and more upright slides down, full speed 40° past the still zone (Oct 3, 12:20)
+    // still within 10° either side of the resting angle (taken at the start of each step); past it, flatter slides up and more upright slides down, full speed 40° past the still zone (Oct 3, 12:20)
     if (tiltN == null) tiltN = b;
     var d0 = b - tiltN;
     if (d0 < -10) v = -Math.min(1, (-10 - d0) / 40); else if (d0 > 10) v = Math.min(1, (d0 - 10) / 40);
     // the angle sets a target speed (36 px/s just past the band, 1071 px/s at full tilt; +70% at 12:11); the card accelerates towards it and
     // decelerates smoothly back to rest inside the band (Oct 3: max +50%, slowest -10%)
-    var target = v ? (v < 0 ? -1 : 1) * (36 + (1071 - 36) * Math.pow(Math.abs(v), 1.4)) : 0;
-    tiltV += (target - tiltV) * Math.min(1, dt / 0.22);
-    if (Math.abs(tiltV) < 2 && !target) { tiltV = 0; return; }
+    var spd = function (x) { return x ? (x < 0 ? -1 : 1) * (36 + (1071 - 36) * Math.pow(Math.abs(x), 1.4)) : 0; };
+    var target = spd(v);
+    // sideways (Oct 3, 12:25): tilting left or right slides the card left or right, with the same still zone and speeds
+    var hv = 0; if (tiltG != null) { if (tiltNG == null) tiltNG = tiltG; var g0 = tiltG - tiltNG; if (g0 < -10) hv = -Math.min(1, (-10 - g0) / 40); else if (g0 > 10) hv = Math.min(1, (g0 - 10) / 40); }
+    var targetX = spd(hv);
+    tiltV += (target - tiltV) * Math.min(1, dt / 0.22); tiltVX += (targetX - tiltVX) * Math.min(1, dt / 0.22);
+    if (Math.abs(tiltVX) < 2 && !targetX) tiltVX = 0;
+    if (Math.abs(tiltV) < 2 && !target) tiltV = 0;
+    if (!tiltV && !tiltVX) return;
     var s0 = get(); if (!s0) return; if (drag.i !== s0.i) { drag.i = s0.i; drag.dx = 0; drag.dy = 0; }
     var l = +bub.dataset.l, t = +bub.dataset.t; if (!isFinite(l) || !isFinite(t)) return;
-    var before = drag.dy; drag.dy += tiltV * dt; place(l, t); drag.dy = parseFloat(bub.style.top) - t;   // kept on screen: no build-up past the edges
+    var before = drag.dy, beforeX = drag.dx; drag.dy += tiltV * dt; drag.dx += tiltVX * dt; place(l, t); drag.dy = parseFloat(bub.style.top) - t; drag.dx = parseFloat(bub.style.left) - l;   // kept on screen: no build-up past the edges
     if (Math.abs(drag.dy - before) < 0.01 && Math.abs(tiltV * dt) > 0.5) tiltV = 0;   // stopped by a screen edge
+    if (Math.abs(drag.dx - beforeX) < 0.01 && Math.abs(tiltVX * dt) > 0.5) tiltVX = 0;
   }
   (function gl(now) { try { tiltSync(now || performance.now()); glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
