@@ -422,11 +422,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </section>
   <!-- (Grabbers sit 8px from their blade's edge. Panels that drop down from the top stop 32px above the screen's bottom edge, clear of the iOS home indicator.) -->
   <!-- Notifications: grow down out of the top blade; close with the X (a gentle quarter turn) or by tapping outside -->
-  </div>
-  <!-- Open, the part of the screen still showing closes the menu with a tap -->
-  <div aria-hidden="true" onClick="{{closePrefs}}" style="display: {{pm.catchD}}; position: absolute; inset: 0; z-index: 90"></div>
-  </div>
-  <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: 1; background: #F2F2F7">
+  <div class="scrim {{glass}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 39; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{nt.op}}; pointer-events: {{nt.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-panel" role="dialog" data-swipe="up" data-swipe-key="nt" aria-modal="true" aria-labelledby="ntTitle" aria-hidden="{{nt.hidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.14); transform: translateY({{nt.y}}); clip-path: inset(0 0 {{nt.cl}}px 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{nt.cl}}px 0 round 0 0 28px 28px); visibility: {{nt.vis}}; pointer-events: {{nt.pe}}; transition: transform {{nt.dur}} {{nt.ease}}, clip-path {{nt.clT}} ease, -webkit-clip-path {{nt.clT}} ease, visibility 0s linear {{nt.visDelay}}">
     <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 24px 16px; flex-shrink: 0">
       <!-- The blade's type icon before its title (as the station crest before a station's name), not a button -->
@@ -499,6 +495,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div role="button" tabindex="0" aria-label="Close chats" onPointerDown="{{cb.h.down}}" onPointerMove="{{cb.h.move}}" onPointerUp="{{cb.h.up}}" onPointerCancel="{{cb.h.cancel}}" onKeyDown="{{cb.h.key}}" class="wf-grab gb" style="display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; height: 29px; padding-bottom: 8px; margin-top: auto; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
   </section>
 
+  </div>
+  <!-- Open, the part of the screen still showing closes the menu with a tap -->
+  <div aria-hidden="true" onClick="{{closePrefs}}" style="display: {{pm.catchD}}; position: absolute; inset: 0; z-index: 90"></div>
+  </div>
+  <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: 1; background: #F2F2F7">
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
   <section data-wf-menusec="1" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 84px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #F2F2F7; visibility: {{pm.vis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
     <!-- Menu (Oct 3, 17:18): the open section's title, level with the menu button; 40px to its first element -->
@@ -614,6 +615,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <!-- About: the last row of the preferences, on the grey of the switcher and the search field (pill, 52px like the switcher);
            the app's symbol and "About" centred, no chevron. The symbol's eye blinks every 4 s. Back returns here, panel open. -->
+      <!-- About (Oct 3, 17:39): a section like the others, showing the About screen itself in place (header and title left out) -->
+      <iframe src="{{pm.aboutSrc}}" title="About" style="display: {{pm.dAbout}}; flex: 1 0 auto; width: calc(100% + 32px); height: calc({{vh}}px - 152px); margin: 0 -16px -48px; border: 0; background: #F2F2F7"></iframe>
       <a href="About.dc.html" class="opt" onClick="{{abt.go}}" tabindex="-1" aria-hidden="true" style="display: none; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 52px; padding: 0 16px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #000000; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path data-wf-about-eye="1" fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>About</a>
     </div>
   </section>
@@ -938,8 +941,15 @@ class Component extends DCLogic {
           ds: 'M12 4c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3ZM4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3', about: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17ZM12 11v5.5M12 7.8h.01' };
         const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', theme: 'Theme', text: 'Text size', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
         const pick = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-          if (k === 'about') { try { window.sessionStorage.setItem('wf-about-from', 'prefs'); } catch (e) {} window.location.href = 'About.dc.html'; return; }
           if (open && pmSec === k) { this.setState({ pm: 'rail' }); return; }   // tapping the open section folds the menu to its icon column
+          // switching section while open (Oct 3, 17:38): the current content slides away to the left, revealing the chosen one underneath
+          if (open && pmSec !== k) { try { const sec = document.querySelector('[data-wf-menusec]'), sc0 = sec && sec.querySelector('[data-wf-fadetop]');
+            if (sec) { const cl = sec.cloneNode(true), w = sec.offsetWidth; cl.removeAttribute('data-wf-menusec'); cl.setAttribute('aria-hidden', 'true'); cl.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id')); cl.querySelectorAll('iframe').forEach((e) => { e.removeAttribute('src'); e.style.visibility = 'hidden'; });
+              const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
+              cl.style.pointerEvents = 'none'; cl.style.zIndex = '2'; cl.style.transition = 'none'; cl.style.boxShadow = '0 0 40px rgba(0,0,0,0.18)';
+              sec.parentNode.appendChild(cl); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
+              requestAnimationFrame(() => requestAnimationFrame(() => { cl.style.transition = 'transform .5s cubic-bezier(.2,.8,.2,1)'; cl.style.transform = 'translateX(' + (-(w + 48)) + 'px)'; }));
+              setTimeout(() => { try { cl.remove(); } catch (e) {} }, 600); } } catch (e) {} }
           try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {}
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {})); };
         const items = ['profile', 'lang', 'theme', 'text', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = k === 'profile', hasPh = !!me.photo;
@@ -948,7 +958,7 @@ class Component extends DCLogic {
         return { x: open ? -mw : rail ? -84 : 0, dur: boot ? '0s' : '.5s', sh: pmMode ? '0 0 40px rgba(0,0,0,0.18)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 84, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s', hbOp: rail ? 0 : 1, hbPE: rail ? 'none' : 'auto',
-          dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none' }; })(),
+          dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
       // the fixed profile picture: where the top bar has it (measured on open), shown while the panel is open or closing
       pfAv: (() => { const P = s.pfAvPos || this._pfAvLast || { top: 15, left: ((window.__wfVP || {}).w || 390) - 56 }; this._pfAvLast = P; return { top: P.top, left: P.left, rowDy: s.pfRowDy != null ? s.pfRowDy : 11, rowPr: s.pfRowPr != null ? s.pfRowPr : 16, op: pf ? 1 : 0, delay: pf ? '.15s' : '0s', ring: pf ? 1 : 0 }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none', pfScrimOp: pf ? 1 : 0, pfDy: 0, pfCl: this.wfDrag('pf').y ? Math.max(0, -this.wfDrag('pf').y) : -80, pfClT: this.wfDrag('pf').y ? '0s' : '.3s', hPf: this.wfHandle('pf', 'up', () => this.setState({ pf: false })),
