@@ -219,8 +219,38 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '@keyframes wfKenSo{0%{transform:scale(1.3);animation-timing-function:cubic-bezier(.3,.1,.3,1)}38%{transform:scale(1)}100%{transform:scale(1)}}' +
     '@keyframes wfKenOne{from{transform:scale(1)}to{transform:scale(1.3)}}' +
     '@media (prefers-reduced-motion:reduce){.wf-forest>i{animation:none!important}.wf-forest>i:nth-of-type(1){opacity:1}}';   // switch thumbs stay white in both themes
+
+  // ---- Spacing (Oct 3, 18:10): condensed, comfortable (as designed) or spacious ----
+  // Every inline padding, margin and gap of 16px or more moves one step along the app's spacing scale: down for condensed,
+  // up for spacious (16 <-> 8/24, 24 <-> 16/32, ... 56 <-> 48/64). The close spaces (4 and 8px, which tie related things
+  // together) never change, so groups stay groups. Values off the scale are left alone. Kept up as screens re-render.
+  var SPL = [8, 16, 24, 32, 40, 48, 56, 64, 72, 80], spDir = 0, spRec = new WeakMap(), spEls = new Set(), spObs = null;
+  var SPP = ['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'row-gap', 'column-gap'];
+  function spMap(n) { var a = Math.abs(n), i = SPL.indexOf(a); if (a < 16 || i < 0) return n; var j = i + spDir; if (j < 0 || j >= SPL.length) return n; return (n < 0 ? -1 : 1) * SPL[j]; }
+  function spVal(v) { return v.replace(/(-?\d+(?:\.\d+)?)px/g, function (m, n) { return spMap(+n) + 'px'; }); }
+  // per element and property: the value as designed (o) and the value written here (w); a property the screen rewrites is
+  // taken as its new design value, so nothing is ever shifted twice
+  function spEl(el) {
+    var st = el.style; if (!st || !el.getAttribute('style')) return; var r = spRec.get(el);
+    for (var i = 0; i < SPP.length; i++) { var p = SPP[i], v = st.getPropertyValue(p); if (!v) continue;
+      if (r && r[p] && r[p].w === v) continue;
+      var nv = spDir ? spVal(v) : v;
+      if (nv !== v) { if (!r) { r = {}; spRec.set(el, r); spEls.add(el); } r[p] = { o: v, w: nv }; st.setProperty(p, nv, st.getPropertyPriority(p)); }
+      else if (r && r[p]) delete r[p]; }
+  }
+  function spAll(root) { if (!root || !root.querySelectorAll) return; if (root.hasAttribute && root.hasAttribute('style')) spEl(root); root.querySelectorAll('[style]').forEach(spEl); }
+  function spApply(mode) {
+    var d = mode === 'condensed' ? -1 : mode === 'spacious' ? 1 : 0; if (d === spDir) return;
+    spEls.forEach(function (el) { var r = spRec.get(el); if (!r) return; for (var p in r) if (el.style.getPropertyValue(p) === r[p].w) el.style.setProperty(p, r[p].o); spRec.delete(el); });   // back to the design
+    spEls.clear(); spDir = d; if (!d) return;
+    spAll(document.documentElement);
+    if (!spObs && window.MutationObserver) { spObs = new MutationObserver(function (L) { if (!spDir) return; for (var i = 0; i < L.length; i++) { var r = L[i]; if (r.type === 'attributes') spEl(r.target); else for (var k = 0; k < r.addedNodes.length; k++) if (r.addedNodes[k].nodeType === 1) spAll(r.addedNodes[k]); } });
+      var go = function () { spObs.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['style'] }); spAll(document.documentElement); };
+      if (document.body) go(); else document.addEventListener('DOMContentLoaded', go); }
+  }
   function apply() {
     var theme = get('theme', 'light'), size = get('text', 'normal');
+    try { spApply(get('space', 'comfortable')); } catch (e) {}
     var el = document.getElementById('wf-prefs');
     if (!el) { el = document.createElement('style'); el.id = 'wf-prefs'; (document.head || document.documentElement).appendChild(el); }
     el.textContent = (theme === 'dark' ? darkCss() : '') + '\n' + BTN + '\n' + fontCss(size);

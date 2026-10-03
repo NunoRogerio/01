@@ -16,8 +16,8 @@
 <meta name="wf-layout" content="fluid">
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=152"></script>
-<script src="i18n.js?v=137"></script>
+<script src="prefs.js?v=153"></script>
+<script src="i18n.js?v=138"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=51"></script>
 <script src="tour.js?v=56"></script>
@@ -525,12 +525,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
         <div role="radiogroup" aria-label="{{g.label}}" style="display: {{g.d}}; flex-direction: column; gap: 8px; flex-shrink: 0">
           <!-- Group label in the annotation style (smaller, mid grey) -->
-          <span class="wf-label" aria-hidden="true" style="display: none; margin-left: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{g.label}}</span>
+          <span class="wf-label" aria-hidden="true" style="display: {{g.ld}}; margin-left: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{g.label}}</span>
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 8px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
             <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
-              <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
+              <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: {{g.fs}}; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
             </sc-for>
           </div>
         </div>
@@ -625,12 +625,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
        (profile picture first), and Sign out at the bottom. 60px wide: 8px either side of the 44px icons (Oct 3, 17:56; was 84px). -->
   <nav data-wf-rail="1" aria-label="Preferences" style="position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: 68px 0 48px; overflow-y: auto; scrollbar-width: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
     <span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0"></span>
-    <!-- the section icons sit centred in the screen's height (Oct 3, 17:56): the bottom spacer is 20px longer, as the column's top (68px padding) is 20px deeper than its bottom (48px) -->
-    <span aria-hidden="true" style="flex: 1 0 16px"></span>
+    <!-- the section icons sit centred in the visible screen's height (Oct 3, 18:10): halfway between the top of what shows
+         (--wf-top: the part of the frame under the browser's bar) and the bottom -->
+    <div style="position: absolute; left: 0; right: 0; top: calc(50% + var(--wf-top, 0px) / 2); transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px">
     <sc-for list="{{pm.items}}" as="it" hint-placeholder-count="8">
-      <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
-    </sc-for>
-    <span aria-hidden="true" style="flex: 1 0 36px"></span>
+        <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
+      </sc-for>
+    </div>
+    <span aria-hidden="true" style="flex: 1 0 16px"></span>
     <a href="reset.html?out=1" class="opt" onClick="{{signOut}}" aria-label="Sign out" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.5H5.5v15H10M14 8l4 4-4 4M18 12H9"></path></svg></a>
   </nav>
   </div>
@@ -938,7 +940,8 @@ class Component extends DCLogic {
     // Segmented controls: the yellow slides to the new option first; the choice is applied once it has arrived, so the
     // repaint (theme, text size) or reload (language) never interrupts the movement
     const group = (label, cur0, opts, pick) => { const pend = (s.segPend || {})[label], cur = pend !== undefined ? pend : cur0, i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
-      label, d: pmSec === ({ Language: 'lang', Theme: 'theme', 'Text size': 'text' })[label] ? 'flex' : 'none', cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 20px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
+      label, fs: opts.length * Math.max(...opts.map((x) => x[1].length)) > 24 ? '15px' : '17px',   // long option names (Spacing) step down to 15px so they fit
+      d: pmSec === ({ Language: 'lang', Theme: 'look', 'Text size': 'look', Spacing: 'look' })[label] ? 'flex' : 'none', ld: label === 'Language' ? 'none' : 'block', cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 20px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
       opts: opts.map((o) => ({ label: o[1], on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, fg: o[0] === cur ? '#1C1C1E' : '#3C3C43', pick: () => { if (o[0] === cur) return;
         try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
         
@@ -951,10 +954,10 @@ class Component extends DCLogic {
       pm: (() => { const vw = (window.__wfVP || {}).w || 390, mw = Math.min(vw, 564), open = pmMode === 'open', rail = pmMode === 'rail';
         const sel = (k) => open && pmSec === k, Y = 'var(--wf-y)';
         const IC = { profile: 'M12 4a4 4 0 1 0 0 8a4 4 0 1 0 0-8ZM4.5 20c.8-3.6 3.8-6 7.5-6s6.7 2.4 7.5 6', lang: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17ZM3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5s1.2-6.1 3.5-8.5Z',
-          theme: 'M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5a7.5 7.5 0 1 0 10 10Z', text: 'M3.5 18.5 8.5 5.5l5 13M5.4 13.8h6.2M15 18.5l3-8 3 8M16 16h4',
+          look: 'M3.5 18.5 8.5 5.5l5 13M5.4 13.8h6.2M15 18.5l3-8 3 8M16 16h4',   // Appearance: theme, text size and spacing (Oct 3, 18:10)
           share: 'M12 4v11M8 7.5 12 3.5l4 4M8 11H5.5v9h13v-9H16', chat: 'M4 5.5h16v10H9l-5 4ZM8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01',
           ds: 'M12 4c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3ZM4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3', about: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17ZM12 11v5.5M12 7.8h.01' };
-        const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', theme: 'Theme', text: 'Text size', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
+        const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', look: 'Appearance', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
         const pick = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
           if (open && pmSec === k) { this.setState({ pm: 'rail' }); return; }   // tapping the open section folds the menu to its icon column
           // switching section while open (Oct 3, 17:38): the current content slides away to the left, revealing the chosen one underneath
@@ -967,7 +970,7 @@ class Component extends DCLogic {
               setTimeout(() => { try { cl.remove(); } catch (e) {} }, 1000); } } catch (e) {} }
           try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {}
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {})); };
-        const items = ['profile', 'lang', 'theme', 'text', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
+        const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         return { x: open ? -mw : rail ? -60 : 0, dur: boot ? '0s' : '.9s',   // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
@@ -1110,7 +1113,9 @@ class Component extends DCLogic {
       pfGroups: [
         group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', '日本']], (l) => { if (window.__wfSetLang) window.__wfSetLang(l); }),
         group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
-        group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v))
+        group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),
+        // Spacing (Oct 3, 18:10): every space of 16px or more one step down or up the spacing scale (prefs.js)
+        group('Spacing', P ? P.get('space') || 'comfortable' : 'comfortable', [['condensed', 'Condensed'], ['comfortable', 'Comfortable'], ['spacious', 'Spacious']], (v) => setPref('space', v))
       ]
     };
   }
