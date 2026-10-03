@@ -19,7 +19,7 @@
 <script src="i18n.js?v=137"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=51"></script>
-<script src="tour.js?v=37"></script>
+<script src="tour.js?v=38"></script>
 <script src="trophy.js?v=18"></script>
 
 <title>Chats</title>
@@ -119,6 +119,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblL}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.inStage}}</span></span>
           <span style="display: flex; flex-direction: column; gap: 4px; text-align: right"><span style="font-size: 15px; line-height: 20px; color: #3C3C43">{{c.lblR}}</span><span role="timer" style="font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums">{{c.elapsed}}</span></span>
         </span>
+        <span role="button" tabindex="0" class="btn primary" data-wf-stmove="1" onClick="{{c.mv.go}}" style="display: {{c.mv.d}}; align-items: center; justify-content: center; width: 100%; height: 48px; margin-top: 16px; border-radius: 999px; font-size: 17px; font-weight: 600; line-height: 22px; cursor: pointer">{{c.mv.label}}</span>
         </span></span>
       </button>
     </div>
@@ -816,7 +817,12 @@ class Component extends DCLogic {
       goProj: () => { const v = { id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, place: c.place, note: c.kind === 'cand' ? 'Confirmed from ' + c.incId : (c.note || c.reg || ''), x: c.x, y: c.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { proj: v }); try { sessionStorage.setItem('wf-proj', JSON.stringify(v)); } catch (e) {} },
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
-        ...(() => { const ex = !!s.stEx; return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-12px', tmPb: '0', tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: !ex }); } }; })(),
+        ...(() => { const ex = !!s.stEx; return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-12px', tmPb: '0',
+          /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
+          mv: (() => { const st = c.stage, nx = C.STAGES[st + 1]; if (c.kind === 'dm' || c.dismissed || c.closed || st >= 7 || !nx) return { d: 'none', label: '', go: null };
+            const key = st === 0 ? 'confirm' : st === 1 && !c.flags.dispatched ? 'dispatch' : st === 6 ? (c.flags.closeCard ? '' : 'closeCheck') : 'next'; if (!key) return { d: 'none', label: '', go: null };
+            return { d: 'flex', label: L('Move to ', 'Passar a ') + T(nx), go: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: false }); run(key); } }; })(),
+          tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: !ex }); } }; })(),
         elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,
         pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary,

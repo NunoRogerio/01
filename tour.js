@@ -90,6 +90,11 @@ if (WF_TOUR_ON) (function () {
   // The map step points at a circle whose summary panel has room to open whole: away from the screen sides and from
   // the top and bottom bands, closest to the upper middle of the map (the bubble then sits clear of the panel)
   // the most likely candidate on the map (highest percent in its label), on screen
+  // the state card's Move to <next stage> button, when the card is open
+  function stMove() { return q('[data-wf-stmove]'); }
+  function stExpand() { var c = q('header + button.chrow[aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
+  // the candidate was confirmed: its Confirm / Dismiss suggestions are gone (checked a moment after the step began)
+  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Confirm fire', 'Confirmar incêndio', '確認']) && !chip(['Dismiss fire', 'Descartar incêndio']) && !!q('header + button.chrow[aria-expanded]'); }
   function topMarker() {
     var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap[aria-label*="ignition candidate"]')), best = null, bp = -1;
     L.forEach(function (b) { if (shown(b) !== true) return; var m = /(\d+) percent/.exec(b.getAttribute('aria-label') || ''), v = m ? +m[1] : 0; if (v > bp) { bp = v; best = b; } });
@@ -152,12 +157,13 @@ if (WF_TOUR_ON) (function () {
       t: ['Confirm it with the team', 'Confirme com a equipa'],
       b: ['Confirming a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Confirmar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
 
-    { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header + button.chrow[aria-expanded]'); },
+    // Oct 3: the state card is where the status changes: tap it, then its Move to <next stage> button
+    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('header + button.chrow[aria-expanded="true"]'); }, find: function () { return q('header + button.chrow[aria-expanded]'); },
       t: ["The incident's state", 'O estado do incidente'],
-      b: ['Always pinned at the top. It changes as the incident moves on.', 'Sempre no topo. Muda à medida que o incidente avança.'] },
-    { page: 'Chat.dc.html', mode: 'tap', find: function () { return chip(['Confirm fire', 'Confirmar incêndio', '確認']); },
+      b: ['Always pinned at the top. Tap it to see the stage and move the incident on.', 'Sempre no topo. Toque nele para ver a fase e fazer o incidente avançar.'] },
+    { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
       t: ['Confirm the fire', 'Confirme o incêndio'],
-      b: ['Suggestions under the message field are the quick actions. Tap Confirm fire.', 'As sugestões sob o campo de mensagem são as ações rápidas. Toque em Confirmar incêndio.'] },
+      b: ['Tap Move to First alert to confirm it. The Confirm fire suggestion does the same.', 'Toque em Passar a Despacho de 1.º alerta para o confirmar. A sugestão Confirmar incêndio faz o mesmo.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('a[data-wf-firettl]'); },
       ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now open the fire.', 'Agora abra o incêndio.'],
       t: ['Open the fire', 'Abra o incêndio'],
@@ -177,9 +183,9 @@ if (WF_TOUR_ON) (function () {
       t: ['Back to the team', 'De volta à equipa'],
       b: ['Tap to return to the chat.', 'Toque para voltar à conversa.'] },
 
-    { page: 'Chat.dc.html', mode: 'tap', find: function () { return chip(['Configure dispatch', 'Configurar despacho', '出動']); },
+    { page: 'Chat.dc.html', mode: 'tap', before: stExpand, find: function () { return stMove() || chip(['Configure dispatch', 'Configurar despacho', '出動']); },
       t: ['Move the fire on', 'Faça o incêndio avançar'],
-      b: ['Each stage brings its next action. Tap Configure dispatch to send crews.', 'Cada fase traz a ação seguinte. Toque em Configurar despacho para enviar equipas.'] },
+      b: ['The state card moves the fire on. Tap Move to Ongoing to send crews.', 'O cartão de estado faz o incêndio avançar. Toque em Passar a Em curso para enviar equipas.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }); },
       // the plan is already filled (an earlier tour): straight to Send the orders
       skip: function () { if (!seen || Date.now() - seen < 2500) return false; var ai = q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }), snd = q('button.btn.primary', function (x) { return !x.closest('section[role=dialog]') && x.offsetParent !== null; }); return !ai && !!snd && snd.getAttribute('aria-disabled') !== 'true'; },
@@ -206,9 +212,9 @@ if (WF_TOUR_ON) (function () {
       ach: ['Every stage done. Nice work!', 'Todas as fases concluídas. Bom trabalho!'], then: ['Now the stage history.', 'Agora a história das fases.'],
       t: ['See every stage', 'Veja todas as fases'],
       b: ['Tap the state to open the stack: each stage and how long it took.', 'Toque no estado para abrir a pilha: cada fase e quanto tempo durou.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio']); },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return stMove() || chip(['Close fire', 'Encerrar incêndio']); },
       t: ['Close the fire', 'Encerre o incêndio'],
-      b: ['When the watch is over, close it.', 'Quando a vigilância terminar, encerre-o.'] },
+      b: ['When the watch is over, close it: Move to Closed.', 'Quando a vigilância terminar, encerre-o: Passar a Encerrada.'] },
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,
       find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
       t: ['Closing the fire', 'A encerrar o incêndio'],
