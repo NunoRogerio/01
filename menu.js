@@ -5,7 +5,7 @@
 // The main screen has its own copy of this behaviour built in; this file is for the other screens.
 (function () {
   if (window.top !== window || /Main\.dc\.html/.test(location.pathname)) return;
-  var DUR = 920, EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
+  var DUR = 740, EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
   var mode = '', ifr = null, ready = false, btn = null, want = null;
   var css = document.createElement('style');
   css.textContent = 'html.wf-menujs [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +
@@ -43,11 +43,13 @@
   // the button travels to (or from) the menu's icon column and locks with a "clack", as on the main screen
   // the button slides with the screen to its place (same ease and time), then locks with a small clack (Oct 3, 19:49)
   var ct = 0;
+  // closing: the button waits until the screen's edge reaches the icon column (Oct 3, 20:13)
+  function back() { var t = mw() + 32, f = Math.max(0, Math.min(1, (t - 60) / t)); return Math.round(Math.acos(1 - 2 * f) / Math.PI * DUR); }
   function clack(to) { if (!btn) return; var h = host(), d = to ? 1 : -1, restL = btn.__restL;
     if (restL == null) { var p = rest(); if (!p) return; restL = btn.__restL = p.l; }
-    btn.style.transition = 'left ' + (DUR / 2) + 'ms ' + EASE;   // twice as fast as the screen (Oct 3, 19:58)
+    btn.style.transition = 'left 380ms ' + EASE + ' ' + (to ? 0 : back()) + 'ms';   // twice as fast as the screen (Oct 3, 19:58)
     btn.style.left = (to ? (h.offsetWidth - 8 - 44) : restL) + 'px';
-    clearTimeout(ct); ct = setTimeout(function () { btn.style.transition = ''; if (!to) btn.__restL = null; try { if (btn.animate) btn.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, DUR / 2 - 40); }
+    clearTimeout(ct); ct = setTimeout(function () { btn.style.transition = ''; if (!to) btn.__restL = null; try { if (btn.animate) btn.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, (to ? 0 : back()) + 380 - 40); }
   // while the menu shows, touches go through the screen's frame to the menu underneath (the screen itself and the button keep theirs)
   function through(on) { var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
   function slide(x) { var p = page(); if (!p) return; p.style.transition = 'transform ' + DUR + 'ms ' + EASE; p.style.transform = x ? 'translateX(' + x + 'px)' : ''; p.style.boxShadow = x ? SH : ''; p.style.willChange = 'transform'; }

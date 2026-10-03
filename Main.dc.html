@@ -195,7 +195,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Menu (Oct 3, 17:18): the whole screen slides to the left to uncover the menu underneath, and back to the right to close it
        (or to leave just the menu's icon column showing) -->
-  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .92s ease">
+  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .74s ease">
 
   <div style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 1">
   <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{ps.open}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
@@ -655,7 +655,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
   <!-- The menu button (Oct 3, 18:02): one button that stays put, above everything, at the top right (8px from the edge, in line
        with the menu's icon column); the screen slides out from under it and back under it. Opens and closes the menu. -->
-  <button type="button" class="opt" data-wf-burger="1" data-pf-av="1" onClick="{{pm.burger}}" aria-haspopup="true" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: absolute; z-index: 95; top: {{pm.bTop}}px; right: {{pm.bRight}}px; transition: right {{pm.bDur}} cubic-bezier(.37,0,.63,1), opacity .3s ease; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; opacity: {{pm.bOp}}; pointer-events: {{pm.bPE}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button>
+  <button type="button" class="opt" data-wf-burger="1" data-pf-av="1" onClick="{{pm.burger}}" aria-haspopup="true" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: absolute; z-index: 95; top: {{pm.bTop}}px; right: {{pm.bRight}}px; transition: right {{pm.bDur}} cubic-bezier(.37,0,.63,1) {{pm.bDelay}}, opacity .3s ease; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; opacity: {{pm.bOp}}; pointer-events: {{pm.bPE}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button>
   <!-- Confirm role-play changes and key removal (no grabber: it is not expandable; Cancel or a tap outside closes it) -->
   <div class="wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-dlg" role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 0 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
@@ -726,7 +726,11 @@ class Component extends DCLogic {
   // locks into place like a mechanism, a quick "clack": it speeds into the spot, overshoots 2px, knocks back 1px and settles
   // The menu button slides with the screen to its place (Oct 3, 19:49): the same ease and time as the screen; as it
   // arrives it locks with a small "clack" (overshoots 2px, knocks back 1px, settles) and a light haptic
-  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = 460; if (!b) return;
+  // Closing (Oct 3, 20:13): the menu button waits while the screen slides back, and only moves home as the screen's edge
+  // reaches the icon column, just before it covers it. The moment comes from the slide's own ease (sine in and out).
+  wfBurgerBack() { const vw = (window.__wfVP || {}).w || 390, travel = Math.min(vw, 564) + 32, f = Math.max(0, Math.min(1, (travel - 60) / travel));
+    return Math.round(Math.acos(1 - 2 * f) / Math.PI * 740); }
+  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = (to ? 0 : this.wfBurgerBack()) + 380; if (!b) return;
       clearTimeout(this._clackT); this._clackT = setTimeout(() => { try { if (b.animate) b.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, T - 40); } catch (e) {} }
   // The language switcher's yellow (Oct 3, 18:23): placed on the chosen option; on a new choice it travels there, its height
   // shrinking to half on the way and growing back to full as it lands (as the other switchers' motion, in reverse)
@@ -996,20 +1000,22 @@ class Component extends DCLogic {
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '1'; cl.style.transition = 'none';
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateX(' + (w + 60) + 'px)';
-              requestAnimationFrame(() => requestAnimationFrame(() => { sec.style.transition = 'transform .92s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)'; }));
-              setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 1000); } } catch (e) {} }
+              requestAnimationFrame(() => requestAnimationFrame(() => { sec.style.transition = 'transform .74s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)'; }));
+              setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 820); } } catch (e) {} }
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {})); };
         const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         return { x: open ? -(mw + 32) : rail ? -60 : 0,   // open: 32px further, so the screen's shadow stays off the menu
-          dur: boot ? '0s' : '.92s',   // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
+          dur: boot ? '0s' : '.74s',   // (Oct 3, 20:13) 25% faster
+            // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s',
           burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(20, L0.vw - (L0.colL + L0.colW) + 20) : 20; })(),   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
           bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
-          slVis: MENU ? 'hidden' : 'visible', bTop: s.bTop != null ? s.bTop : 68, tTop: (s.bTop != null ? s.bTop : 68) - 56,   /* the section title stays level with the button */   // level with the top bar's buttons, measured from its spot (Oct 3, 20:08) bDur: boot ? '0s' : '.46s',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
+          slVis: MENU ? 'hidden' : 'visible', bTop: s.bTop != null ? s.bTop : 68, tTop: (s.bTop != null ? s.bTop : 68) - 56,   /* the section title stays level with the button */   // level with the top bar's buttons, measured from its spot (Oct 3, 20:08)
+          bDur: boot ? '0s' : '.38s', bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
           bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.scOpen || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.scOpen || s.full) ? 'auto' : 'none',   // hidden while another top panel or the full-screen map is up
           dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',
