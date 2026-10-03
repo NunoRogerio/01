@@ -17,9 +17,9 @@
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=153"></script>
-<script src="i18n.js?v=143"></script>
+<script src="i18n.js?v=144"></script>
 <script src="live.js?v=40"></script>
-<script src="chat.js?v=55"></script>
+<script src="chat.js?v=56"></script>
 <script src="tour.js?v=56"></script>
 
 <title>Incidents</title>
@@ -635,7 +635,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0"></span>
     <!-- the section icons sit centred in the visible screen's height (Oct 3, 18:10): halfway between the top of what shows
          (--wf-top: the part of the frame under the browser's bar) and the bottom -->
-    <div style="position: absolute; left: 0; right: 0; top: calc(50% + var(--wf-top, 0px) / 2); transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px">
+    <div style="position: absolute; left: 0; right: 0; top: calc(50% + var(--wf-top, 0px) / 2); transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 16px">
     <sc-for list="{{pm.items}}" as="it" hint-placeholder-count="8">
         <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
       </sc-for>
