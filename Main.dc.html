@@ -548,6 +548,24 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Share: the same group label and white card as Chat settings; the card opens the phone's share sheet with the app's link (copies it where there is none) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Share</span>
       <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0">
+          <!-- (Oct 3, 22:00) Share = invite people (administrator): links that switch on Claude role-play on the invitee's phone; it replaces the app link here and left Chat settings -->
+        <div style="display: {{inv.d}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 0">
+          <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{inv.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{inv.sub}}</span></span>
+          <sc-if value="{{inv.hasLink}}" hint-placeholder-val="{{ false }}">
+            <!-- The whole grey box copies the link (no Copy button); its last row holds the copy icon, and a dark tooltip confirms -->
+            <div role="button" tabindex="0" class="mbtn" onClick="{{inv.copy}}" aria-label="{{inv.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 8px 16px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
+              <span style="font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: none; user-select: none">{{inv.link}}</span>
+              <span style="position: relative; display: flex; justify-content: flex-end; height: 22px; margin-top: 4px">
+                <span role="status" aria-live="polite" style="position: absolute; right: -6px; bottom: calc(100% + 6px); z-index: 5; padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; white-space: nowrap; pointer-events: none; opacity: {{inv.tipOp}}; transform: translateY({{inv.tipY}}); transition: opacity .2s ease, transform .2s ease">{{inv.tipTxt}}</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{inv.copyIc}}"></path></svg>
+              </span>
+            </div>
+            <button type="button" class="opt wf-b wf-sec" onClick="{{inv.share}}" style="border: 0; font: inherit; cursor: pointer">{{inv.shareTxt}}</button>
+          </sc-if>
+          <button type="button" class="opt wf-b {{inv.cls}}" onClick="{{inv.make}}" disabled="{{inv.dis}}" aria-disabled="{{inv.disStr}}" style="display: {{inv.makeD}}; border: 0; font: inherit; cursor: pointer">{{inv.makeTxt}}</button>
+          <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{inv.note}}</span>
+        </div>
+        <div style="display: {{shr.oldD}}; flex-direction: column">
         <div style="padding: 0">
           <div role="button" tabindex="0" class="mbtn" onClick="{{shr.copy}}" aria-label="{{shr.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 8px 16px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
             <span translate="no" style="font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: none; user-select: none">{{shr.link}}</span>
@@ -558,6 +576,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
         <button type="button" class="opt" onClick="{{shr.go}}" aria-label="{{shr.title}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span role="status" aria-live="polite" style="flex-grow: 1; font-weight: 600">{{shr.title}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg></button>
+      </div>
       </div>
       <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Chat settings</span>
@@ -581,23 +600,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </div>
             <span style="font-size: 15px; line-height: 20px; color: {{ai.noteC}}">{{ai.note}}</span>
           </div>
-          <!-- Administrator only: invite links that switch on Claude role-play on the invitee's phone -->
-          <div style="display: {{inv.d}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 16px 0; border-top: 0">
-            <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{inv.title}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{inv.sub}}</span></span>
-            <sc-if value="{{inv.hasLink}}" hint-placeholder-val="{{ false }}">
-              <!-- The whole grey box copies the link (no Copy button); its last row holds the copy icon, and a dark tooltip confirms -->
-              <div role="button" tabindex="0" class="mbtn" onClick="{{inv.copy}}" aria-label="{{inv.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 8px 16px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
-                <span style="font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: none; user-select: none">{{inv.link}}</span>
-                <span style="position: relative; display: flex; justify-content: flex-end; height: 22px; margin-top: 4px">
-                  <span role="status" aria-live="polite" style="position: absolute; right: -6px; bottom: calc(100% + 6px); z-index: 5; padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; white-space: nowrap; pointer-events: none; opacity: {{inv.tipOp}}; transform: translateY({{inv.tipY}}); transition: opacity .2s ease, transform .2s ease">{{inv.tipTxt}}</span>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{inv.copyIc}}"></path></svg>
-                </span>
-              </div>
-              <button type="button" class="opt wf-b wf-sec" onClick="{{inv.share}}" style="border: 0; font: inherit; cursor: pointer">{{inv.shareTxt}}</button>
-            </sc-if>
-            <button type="button" class="opt wf-b {{inv.cls}}" onClick="{{inv.make}}" disabled="{{inv.dis}}" aria-disabled="{{inv.disStr}}" style="display: {{inv.makeD}}; border: 0; font: inherit; cursor: pointer">{{inv.makeTxt}}</button>
-            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{inv.note}}</span>
-          </div>
+
           </div>
         </div>
       </div>
@@ -1009,8 +1012,8 @@ class Component extends DCLogic {
               const lives = [...sec.querySelectorAll('iframe')], waits = [];
               cl.querySelectorAll('iframe').forEach((e, i) => { const lv = lives[i]; e.removeAttribute('src');
                 let snap = ''; try { const d = lv && lv.offsetWidth && lv.contentDocument; if (d && d.documentElement) { const h = d.documentElement.cloneNode(true); h.querySelectorAll('script, noscript').forEach((x) => x.remove());
-                  const pgE = d.querySelector('[data-wf-page]'), st = pgE ? pgE.scrollTop : 0; snap = '<!doctype html>' + h.outerHTML.replace('<head>', '<head><base href="' + d.baseURI + '">');
-                  waits.push(new Promise((res) => { e.onload = () => { try { const q = e.contentDocument.querySelector('[data-wf-page]'); if (q) q.scrollTop = st; } catch (x) {} res(); }; setTimeout(res, 300); })); } } catch (x) {}
+                  const pgE = d.querySelector('[data-wf-page]'), st = pgE ? pgE.scrollTop : 0; snap = '<!doctype html>' + h.outerHTML.replace('<head>', '<head><base href="' + d.baseURI + '"><style>[data-wf-about-hdr],[data-wf-about-ttl],[data-wf-back]{display:none!important}</style>');
+                  waits.push(new Promise((res) => { e.onload = () => { try { const q = e.contentDocument.querySelector('[data-wf-page]'); if (q) q.scrollTop = st; } catch (x) {} res(); }; setTimeout(res, 500); })); } } catch (x) {}
                 if (snap) e.srcdoc = snap; else e.style.visibility = 'hidden'; });
               const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '1'; cl.style.transition = 'none';
@@ -1038,7 +1041,7 @@ class Component extends DCLogic {
           bDur: boot ? '0s' : '.25s',   // (Oct 3, 21:36) 50% faster   // (Oct 3, 20:54) twice as fast as the screen   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time
           bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
           bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 'auto' : 'none',   // (Oct 3, 20:19) shown with the area picker (its top row has the same buttons), hidden over the open incident list   // hidden while another top panel or the full-screen map is up
-          dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmMode || pmSec === 'about' || this._abtSeen ?   /* (Oct 3, 21:49) loaded as soon as the menu opens, so About is ready when it slides in */ (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
+          dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmMode || pmSec === 'about' || this._abtSeen ?   /* (Oct 3, 21:49) loaded as soon as the menu opens, so About is ready when it slides in */ (this._abtSeen = 'About.dc.html?embed=1&v=3') : 'about:blank' }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',
       cs: (() => { const o = !!s.chatSet, pt = lang === 'pt';
         return { title: pt ? 'Encenação e chave' : (window.__wfJA ? window.__wfJA('Chat role-play and key') : 'Chat role-play and key'), str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
@@ -1050,12 +1053,12 @@ class Component extends DCLogic {
       // Tour entry: a warning tooltip first (tour.js, built on top of everything); the tour starts from its Start tour button
       tourGo: (e) => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (window.__wfTour) window.__wfTour.warn(e && e.currentTarget ? e.currentTarget : document.querySelector('[data-wf-tourbtn]')); },
       abt: { go: () => { try { window.sessionStorage.setItem('wf-about-from', 'prefs'); } catch (e) {} } },
-      shr: (() => { const pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), link = new URL('./', location.href).href + '#install';
+      shr: (() => { const pt = lang === 'pt', oldD = this.wfRole() === 'admin' ? 'none' : 'flex', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), link = new URL('./', location.href).href + '#install';
         // the link itself shows too (Oct 3, 19:04): the grey box copies it, as the invite link
         const copyL = () => { const done = () => { this.setState({ shrLCopied: true }); clearTimeout(this._shrLT); this._shrLT = setTimeout(() => this.setState({ shrLCopied: false }), 1800); };
           const old = () => { try { const t = document.createElement('textarea'); t.value = link; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0;left:0;top:0'; document.body.appendChild(t); t.select(); const ok = document.execCommand('copy'); t.remove(); if (ok) done(); } catch (e) {} };
           try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} try { navigator.clipboard.writeText(link).then(done, old); } catch (e) { old(); } };
-        return { link, copy: copyL, copyAria: T('Copy link', 'Copiar ligação'), tipTxt: T('Copied to clipboard', 'Copiado para a área de transferência'), tipOp: s.shrLCopied ? 1 : 0, tipY: s.shrLCopied ? '0px' : '4px', copyIc: s.shrLCopied ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
+        return { oldD, link, copy: copyL, copyAria: T('Copy link', 'Copiar ligação'), tipTxt: T('Copied to clipboard', 'Copiado para a área de transferência'), tipOp: s.shrLCopied ? 1 : 0, tipY: s.shrLCopied ? '0px' : '4px', copyIc: s.shrLCopied ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
             const url = new URL('./', location.href).href + '#install', copy = () => { try { navigator.clipboard.writeText(url); } catch (e) {} this.setState({ shrCopied: true }); clearTimeout(this._shrT); this._shrT = setTimeout(() => this.setState({ shrCopied: false }), 1800); };
             try { if (navigator.share) { navigator.share({ title: 'Forest Fire Watch', text: T('Forest Fire Watch: wildfire ignition detection.', 'Forest Fire Watch: deteção de ignições de incêndios florestais.'), url }).catch(() => {}); return; } } catch (e) {}
@@ -1163,7 +1166,7 @@ class Component extends DCLogic {
           make: () => { if (!key) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ invLink: mk() }); },
           share: () => { try { if (navigator.share) { navigator.share({ title: 'Fire Watch', text: T('Join me on Fire Watch. Claude role-play is switched on for you.', 'Junte-se a mim no Fire Watch. A encenação do Claude já está ligada para si.'), url: link }).catch(() => {}); return; } } catch (e) {} copy(); },
           copy,
-          note: !key ? T('Save your Anthropic key above first: the link carries it.', 'Guarde primeiro a sua chave Anthropic acima: a ligação leva-a consigo.')
+          note: !key ? T('Save your Anthropic key in Chat settings first: the link carries it.', 'Guarde primeiro a sua chave Anthropic nas Definições das conversas: a ligação leva-a consigo.')
             : T('The link carries your key: calls from invited phones use your credit. Send it privately, only to people you trust. To cut everyone off, replace the key in the Anthropic console.', 'A ligação leva a sua chave: as chamadas dos telemóveis convidados usam o seu crédito. Envie-a em privado, só a quem confia. Para cortar o acesso a todos, substitua a chave na consola Anthropic.') }; })(),
       openPrefs: (...a) => this.openPrefsFn(...a),
       closePrefs: (...a) => this.closePrefsFn(...a),
