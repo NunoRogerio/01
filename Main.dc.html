@@ -946,8 +946,8 @@ class Component extends DCLogic {
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         return { x: open ? -mw : rail ? -84 : 0, dur: boot ? '0s' : '.5s', sh: pmMode ? '0 0 40px rgba(0,0,0,0.18)' : 'none', catchD: open ? 'block' : 'none',
-          cw: mw - 84, title: TT[pmSec], items, op: open ? 1 : 0, opDelay: open ? '.12s' : '0s', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '.5s', pe: open ? 'auto' : 'none',
-          railVis: pmMode ? 'visible' : 'hidden', railVisDelay: pmMode ? '0s' : '.5s', hbOp: rail ? 0 : 1, hbPE: rail ? 'none' : 'auto',
+          cw: mw - 84, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
+          railVis: 'visible', railVisDelay: '0s', hbOp: rail ? 0 : 1, hbPE: rail ? 'none' : 'auto',
           dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none' }; })(),
       // the fixed profile picture: where the top bar has it (measured on open), shown while the panel is open or closing
       pfAv: (() => { const P = s.pfAvPos || this._pfAvLast || { top: 15, left: ((window.__wfVP || {}).w || 390) - 56 }; this._pfAvLast = P; return { top: P.top, left: P.left, rowDy: s.pfRowDy != null ? s.pfRowDy : 11, rowPr: s.pfRowPr != null ? s.pfRowPr : 16, op: pf ? 1 : 0, delay: pf ? '.15s' : '0s', ring: pf ? 1 : 0 }; })(),
