@@ -58,6 +58,10 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
   function darkCss() {
     var o = [];
+    // Candidate markers at night (Oct 3, 21:02): the yellow fill at 80% so they stand out on the dark map as much as the light
+    // ones do by day; their rim and moon stay dark on the yellow, and the pulse ring turns yellow (a dark ring would vanish)
+    o.push('circle[fill="#E5FF00"][style*="fill-opacity: 0.2"]{fill-opacity:.8!important}.tipwrap svg.mk,.tipwrap svg,.fzone>svg.mk{opacity:1!important}.tipwrap svg.mk circle[fill="#E5FF00"]{fill-opacity:.8!important}');
+    o.push('circle[fill="#E5FF00"][stroke="#3A3A3C"],circle[fill="#E5FF00"][style*="stroke: #3A3A3C"],[data-wf-maproot] circle[fill="none"][stroke="#3A3A3C"]:not(:has(animate)){stroke:#1C1C1E!important}[data-wf-maproot] circle[fill="none"][stroke="#3A3A3C"]:has(animate),[data-wf-maproot] circle[fill="none"]:has(animateTransform),.wf-pinpulse{stroke:var(--wf-y,#E5FF00)!important}.wf-tdot{background:rgba(var(--wf-y-rgb,229,255,0),0.8)!important}');
     o.push('path[transform="rotate(-25 12 12)"][fill="#1C1C1E"]{fill:#E5E5EA}');   // the night moon next to text turns light at night (Oct 3, 18:31); on the map's yellow markers it stays dark
     [['rgb(242, 242, 247)', '#262629'], ['rgb(255, 255, 255)', '#333336'], ['rgb(238, 238, 240)', '#333336'], ['rgb(229, 229, 234)', '#3A3A3C'],
       ['rgb(227, 227, 232)', '#3A3A3C'], ['rgb(230, 230, 235)', '#222225'],

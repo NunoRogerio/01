@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=158"></script>
+<script src="prefs.js?v=160"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=42"></script>
 
@@ -1207,7 +1207,7 @@ class Component extends DCLogic {
     return out;
   }
   legendItems(has, NC) {
-    const LY = this.layers(), Y10 = ((h) => { h = String(h || '#E5FF00').replace('#', ''); return 'rgba(' + [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',') + ',0.2)'; })(window.__wfY), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
+    const LY = this.layers(), Y10 = ((h) => { h = String(h || '#E5FF00').replace('#', ''); return 'rgba(' + [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(',') + (document.documentElement.classList.contains('wf-dark') ? ',0.8)' : ',0.2)'); })(window.__wfY), CIR = 'M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z';
     const all = [
       ['cands', 'Ignition candidates', 'M7 2.6a4.4 4.4 0 1 1 0 8.8a4.4 4.4 0 1 1 0-8.8Z', Y10, '#3A3A3C'],
       ['burn', 'Burned area', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', 'rgba(58,58,60,0.5)', '#1C1C1E'],
