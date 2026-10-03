@@ -12,6 +12,11 @@
   var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {}
   var KEY = 'wf-chats3-' + (role || 'anon'), ACH = 'wf-achv';
   var PT = function () { return window.__wfLang === 'pt'; };
+  // The language the role-played crews write in: the app's language (Oct 3, 18:13: more languages)
+  var LNAME = function (full) { var l = window.__wfLang || 'en', M = { pt: ['European Portuguese (pt-PT)', 'Portuguese bombeiros'], 'pt-BR': ['Brazilian Portuguese (pt-BR)', 'Brazilian bombeiros and Defesa Civil'],
+      es: ['Spanish (es-ES)', 'Spanish bomberos'], fr: ['French (fr-FR)', 'French sapeurs-pompiers'], it: ['Italian (it-IT)', 'Italian Vigili del Fuoco'], de: ['German (de-DE)', 'German Feuerwehr'],
+      nl: ['Dutch (nl-NL)', 'Dutch brandweer'], uk: ['Ukrainian (uk-UA)', 'Ukrainian State Emergency Service (DSNS) firefighters'], ja: ['Japanese (ja-JP)', 'Japanese fire services'] }, m = M[l];
+    return m ? m[0] + (full ? ', fireground vocabulary used by ' + m[1] : '') : 'English'; };
   var L = function (en, pt) { return PT() && pt ? pt : (window.__wfJA ? window.__wfJA(en) : en); };
   var MIN = 60000;
 
@@ -816,7 +821,7 @@
     'Coordinators may take operational decisions themselves (deploy or recall their own crews, launch the drone, order a local evacuation) and announce them as decisions. Only the fire owner changes the incident stage: never declare the fire held, resolved or closed, and never invent new stations, aircraft or people. ' +
     'If the fire owner names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
     'Answer with JSON only, no prose around it: {"replies":[{"who":<team index>,"text":"<message>","minutes":<minutes of fire time before this message, 1 to 15>}]} with one reply, or two when a second coordinator genuinely adds something.';
-  function aiSys() { return AI_SYS.replace('LANGUAGE', PT() ? 'European Portuguese (pt-PT), fireground vocabulary used by Portuguese bombeiros' : 'English'); }
+  function aiSys() { return AI_SYS.replace('LANGUAGE', LNAME(true)); }
   function aiDeliver(key, txt, fallback) {
     var c = load().chats[key]; if (!c) return; c.pending = null;
     var js = parseJSON(txt), R = js && Array.isArray(js.replies) ? js.replies : null;
@@ -1110,7 +1115,7 @@
   }
   function policeAi(c, text) {
     var key = c.key; c.pending = { who: 0, at: Date.now(), q: text }; INF[key] = 1;
-    aiCall(POL_SYS.replace('LANGUAGE', PT() ? 'European Portuguese (pt-PT)' : 'English'), policeBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now.', 500, function (err, txt) {
+    aiCall(POL_SYS.replace('LANGUAGE', LNAME(false)), policeBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now.', 500, function (err, txt) {
       delete INF[key]; var c2 = load().chats[key]; if (!c2) return;
       if (err) { c2.pending = null; policeReply(c2, text); save(); emit(); return; }
       aiDeliver(key, txt, function (c3) { policeReply(c3, text); });

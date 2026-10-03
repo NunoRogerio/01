@@ -6,7 +6,13 @@
   var lang='en';
   // The profile sets the default; the preferences panel can switch a Portuguese profile to English (kept per profile).
   // Every profile can choose English, Portuguese or Japanese; the Portuguese profiles start in Portuguese.
-  try{var role=localStorage.getItem('wf-role')||'',sv=localStorage.getItem('wf-lang-'+role);lang=(sv==='en'||sv==='pt'||sv==='ja')?sv:((role==='pt'||role==='design')?'pt':'en');}catch(e){}
+  // The languages on offer (Oct 3, 18:13): each with its native name and its round flag (assets/flags, circle-flags, MIT).
+  // English, Portuguese and Japanese live here; the others load from data/i18n/<code>.json when chosen. A language is
+  // listed only once it is translated.
+  var LANGS=[['en','English','gb'],['pt','Português','pt'],['pt-BR','Brasileiro','br'],['es','Español','es'],['fr','Français','fr'],['it','Italiano','it'],['de','Deutsch','de'],['nl','Nederlands','nl'],['uk','Українська','ua'],['ja','日本語','jp']];
+  window.__wfLangs=LANGS.map(function(a){return {code:a[0],name:a[1],flag:'assets/flags/'+a[2]+'.svg'};});
+  var OK={};LANGS.forEach(function(a){OK[a[0]]=1;});
+  try{var role=localStorage.getItem('wf-role')||'',sv=localStorage.getItem('wf-lang-'+role);lang=OK[sv]?sv:((role==='pt'||role==='design')?'pt':'en');}catch(e){}
   window.__wfLang=lang;
   // Changing language happens in place, with no reload: every text keeps its original (English) source and is
   // translated again into the new language, so there is no white screen in between.
@@ -227,15 +233,24 @@
     var MJ={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Sept:9,Oct:10,Nov:11,Dec:12};
   }
   var cache=new Map();
-  function sets(l){if(l==='pt'){X=XP;R=RP;F=FP;}else if(l==='ja'){X=XJ;R=RJ;F=FJ;window.__wfJaNames&&window.__wfJaNames();}else{X={};R=[];F=[];}
-    try{document.documentElement.lang=l==='ja'?'ja':l==='pt'?'pt-PT':'en';}catch(e){}}
+  // ---- the other languages: one file each (phrases, patterns, fragments, months, compass words) -----------------------
+  var DICT={},MON3=/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec) (\d{1,2})\b/g,MON3b=/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec)\b/g;
+  function prep(j){var mo=j.months||{},di=j.dirs||{};mo.Sept=mo.Sept||mo.Sep;
+    var r=(j.r||[]).map(function(a){return [new RegExp(a[0]),a[1]];}),f=(j.f||[]).map(function(a){return [new RegExp(a[0],'g'),a[1]];});
+    f.push([/\b(\d{1,2}):(\d{2}) (AM|PM)\b/g,function(m,h,mm,ap){h=+h%12+(ap==='PM'?12:0);return String(h).padStart(2,'0')+':'+mm;}]);
+    f.push([MON3,function(m,a,d){return mo[a]?d+' '+mo[a]:m;}]);f.push([MON3b,function(m,d,a){return mo[a]?d+' '+mo[a]:m;}]);
+    f.push([/\b(northeast|northwest|southeast|southwest|north|south|east|west)\b/g,function(m,w){return di[w]||m;}]);
+    return {x:j.x||{},r:r,f:f};}
+  function loadDict(l){if(DICT[l])return DICT[l];try{var q=new XMLHttpRequest();q.open('GET','data/i18n/'+l+'.json?v=1',false);q.send();if(q.status===200||(q.status===0&&q.responseText))DICT[l]=prep(JSON.parse(q.responseText));}catch(e){}return DICT[l];}
+  function sets(l){if(l==='pt'){X=XP;R=RP;F=FP;}else if(l==='ja'){X=XJ;R=RJ;F=FJ;window.__wfJaNames&&window.__wfJaNames();}else if(l!=='en'&&OK[l]){var D=loadDict(l)||{x:{},r:[],f:[]};X=D.x;R=D.r;F=D.f;}else{X={};R=[];F=[];}
+    try{document.documentElement.lang=l==='ja'?'ja':l==='pt'?'pt-PT':l;}catch(e){}}
   sets(lang);
   function tr(s){
     var k=s.trim();if(!k||k.length>600)return s;
     if(cache.has(k))return rewrap(s,cache.get(k));
     var out=null;
     if(Object.prototype.hasOwnProperty.call(X,k))out=X[k];
-    if(out===null){for(var i=0;i<R.length;i++){var m=k.match(R[i][0]);if(m){out=typeof R[i][1]==='function'?R[i][1].apply(null,m):k.replace(R[i][0],R[i][1]);if(lang==='ja')for(var f=0;f<F.length;f++)out=out.replace(F[f][0],F[f][1]);break;}}}
+    if(out===null){for(var i=0;i<R.length;i++){var m=k.match(R[i][0]);if(m){out=typeof R[i][1]==='function'?R[i][1].apply(null,m):k.replace(R[i][0],R[i][1]);if(lang!=='pt')for(var f=0;f<F.length;f++)out=out.replace(F[f][0],F[f][1]);break;}}}
     if(out===null&&lang==='ja'&&window.__wfJaName){var nm=window.__wfJaName(k);if(nm!==k)out=nm;else{var cm=/^([^,·]+), ([^,·]+)$/.exec(k);if(cm){var A=window.__wfJaName(cm[1]),B=window.__wfJaName(cm[2]);if(A!==cm[1]||B!==cm[2])out=B+' '+A;}}}
     if(out===null){var t=k;for(var j=0;j<F.length;j++)t=t.replace(F[j][0],F[j][1]);
       // translate each line/segment that is itself a known phrase
@@ -276,7 +291,7 @@
     var c=el.cloneNode(true);c.removeAttribute('data-wf-langfit');c.removeAttribute('data-wf-lf');
     c.style.cssText+=';position:absolute;left:-9999px;top:0;visibility:hidden;width:'+w+'px;min-height:0;height:auto;flex:none';
     var dst=[];lfWalk(c,function(t){dst.push(t);});el.parentNode.appendChild(c);var max=0;
-    ['en','pt','ja'].forEach(function(l){dst.forEach(function(t,i){t.nodeValue=window.__wfTrIn(src[i],l);});max=Math.max(max,c.offsetHeight);});
+    (lang==='en'||lang==='pt'||lang==='ja'?['en','pt','ja']:['en','pt','ja',lang]).forEach(function(l){dst.forEach(function(t,i){t.nodeValue=window.__wfTrIn(src[i],l);});max=Math.max(max,c.offsetHeight);});
     c.remove();
     var id=el.getAttribute('data-wf-lf');if(!id){id=String(++LF);el.setAttribute('data-wf-lf',id);}
     var st=document.getElementById('wf-lf-'+id);if(!st){st=document.createElement('style');st.id='wf-lf-'+id;document.head.appendChild(st);}

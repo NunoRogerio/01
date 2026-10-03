@@ -17,9 +17,9 @@
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=153"></script>
-<script src="i18n.js?v=138"></script>
+<script src="i18n.js?v=139"></script>
 <script src="live.js?v=40"></script>
-<script src="chat.js?v=51"></script>
+<script src="chat.js?v=52"></script>
 <script src="tour.js?v=56"></script>
 
 <title>Incidents</title>
@@ -501,12 +501,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
   <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: 1; background: #F2F2F7">
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
-  <section data-wf-menusec="1" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 60px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.18); visibility: {{pm.vis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
+  <section data-wf-menusec="1" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 60px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #FFFFFF; box-shadow: 0 0 24px rgba(0,0,0,0.12); visibility: {{pm.vis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
     <!-- Menu (Oct 3, 17:18): the open section's title, level with the menu button; 40px to its first element -->
     <h2 id="pfTitle" class="wf-title-m" style="display: flex; align-items: center; height: 44px; margin: 12px 0 0; padding: 0 16px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
     <div data-wf-fadetop="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 48px">
-      <div style="display: {{pm.dProf}}; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 24px 16px 16px; border-radius: 16px; background: #FFFFFF">
+      <div style="display: {{pm.dProf}}; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 24px 16px 16px; border-radius: 16px; background: #F2F2F7">
         <div style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
         <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; align-items: center; text-align: center">
@@ -521,6 +521,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
         <!-- Sign out belongs with the profile -->
         <a href="reset.html?out=1" class="wf-b wf-sec" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0">Sign out</a>
+      </div>
+      <!-- Language (Oct 3, 18:23): a multi-line switcher, as many flag + name options per line as fit; the yellow travels to the
+           new choice, shrinking in height on the way and growing back as it lands, then the language changes -->
+      <div role="radiogroup" aria-label="Language" data-wf-langsw="1" translate="no" style="display: {{lg.d}}; position: relative; flex-wrap: wrap; gap: 4px; flex-shrink: 0; padding: 8px; border-radius: 30px; background: rgba(118,118,128,0.12)">
+        <span class="wf-langthumb" aria-hidden="true" style="position: absolute; left: 8px; top: 8px; width: 0; height: 44px; border-radius: 999px; background: var(--wf-y); opacity: 0"></span>
+        <sc-for list="{{lg.opts}}" as="o" hint-placeholder-count="10">
+          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 6px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><img src="{{o.flag}}" alt="" width="32" height="32" style="display: block; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.08)">{{o.name}}</button>
+        </sc-for>
       </div>
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
         <div role="radiogroup" aria-label="{{g.label}}" style="display: {{g.d}}; flex-direction: column; gap: 8px; flex-shrink: 0">
@@ -537,13 +545,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
       <!-- Share: the same group label and white card as Chat settings; the card opens the phone's share sheet with the app's link (copies it where there is none) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Share</span>
-      <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+      <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #F2F2F7; overflow: hidden">
         <button type="button" class="opt" onClick="{{shr.go}}" aria-label="{{shr.title}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span role="status" aria-live="polite" style="flex-grow: 1; font-weight: 600">{{shr.title}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg></button>
       </div>
       <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Chat settings</span>
       <!-- Chat settings: a drawer row like Connect data sources; opens in place to the Claude key and the invite links -->
-      <div style="display: {{pm.dChat}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+      <div style="display: {{pm.dChat}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #F2F2F7; overflow: hidden">
         <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ai.pill}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
         <div style="display: grid; grid-template-rows: {{cs.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{cs.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{cs.vis}}; opacity: {{cs.op}}; transition: opacity .35s ease {{cs.delay}}, visibility 0s linear {{cs.visDelay}}">
@@ -584,7 +592,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Connected data sources</span>
       <!-- Connect data sources: a drawer like Chat settings; Add data source on top, then the sources the app reads -->
-      <div style="display: {{pm.dDs}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+      <div style="display: {{pm.dDs}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #F2F2F7; overflow: hidden">
         <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.count}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
         <div style="display: grid; grid-template-rows: {{ds.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
@@ -616,7 +624,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- About: the last row of the preferences, on the grey of the switcher and the search field (pill, 52px like the switcher);
            the app's symbol and "About" centred, no chevron. The symbol's eye blinks every 4 s. Back returns here, panel open. -->
       <!-- About (Oct 3, 17:39): a section like the others, showing the About screen itself in place (header and title left out) -->
-      <iframe src="{{pm.aboutSrc}}" title="About" style="display: {{pm.dAbout}}; flex: 1 0 auto; width: calc(100% + 32px); height: calc({{vh}}px - 152px); margin: 0 -16px -48px; border: 0; background: #F2F2F7"></iframe>
+      <iframe src="{{pm.aboutSrc}}" title="About" style="display: {{pm.dAbout}}; flex: 1 0 auto; width: calc(100% + 32px); height: calc({{vh}}px - 152px); margin: 0 -16px -48px; border: 0; background: transparent"></iframe>
       <a href="About.dc.html" class="opt" onClick="{{abt.go}}" tabindex="-1" aria-hidden="true" style="display: none; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; height: 52px; padding: 0 16px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #000000; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path data-wf-about-eye="1" fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>About</a>
     </div>
   </section>
@@ -710,6 +718,16 @@ class Component extends DCLogic {
   wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'); if (!b || !b.animate) return; const from = to ? 0 : 12, d = to ? 1 : -1, x = to ? 12 : 0;
       b.animate([{ transform: 'translateX(' + from + 'px)', easing: 'cubic-bezier(.6,0,1,.6)' }, { transform: 'translateX(' + (x + 2 * d) + 'px)', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { transform: 'translateX(' + (x - d) + 'px)', offset: 0.86 }, { transform: 'translateX(' + x + 'px)' }], { duration: 450, delay: 560, fill: 'backwards' });
       setTimeout(() => { try { if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, 560 + 324); } catch (e) {} }
+  // The language switcher's yellow (Oct 3, 18:23): placed on the chosen option; on a new choice it travels there, its height
+  // shrinking to half on the way and growing back to full as it lands (as the other switchers' motion, in reverse)
+  wfLangThumb(anim) { try { const box = document.querySelector('[data-wf-langsw]'), th = box && box.querySelector('.wf-langthumb'), b = box && box.querySelector('button[aria-checked="true"]'); if (!th || !b || !b.offsetWidth) return;
+      const t = { l: b.offsetLeft, t: b.offsetTop, w: b.offsetWidth, h: b.offsetHeight }, p = th.__p, px = (v) => v + 'px';
+      const set = () => { th.style.left = px(t.l); th.style.top = px(t.t); th.style.width = px(t.w); th.style.height = px(t.h); th.style.opacity = '1'; th.__p = t; };
+      if (anim && p && th.animate && (p.l !== t.l || p.t !== t.t)) { if (th.__a) th.__a.cancel();
+        th.__a = th.animate([{ left: px(p.l), top: px(p.t), width: px(p.w), height: px(p.h) },
+          { left: px(t.l), top: px(t.t + t.h / 4), width: px(t.w), height: px(t.h / 2), offset: 0.78, easing: 'cubic-bezier(.2,.8,.3,1)' },
+          { left: px(t.l), top: px(t.t), width: px(t.w), height: px(t.h) }], { duration: 640, easing: 'cubic-bezier(.4,0,.2,1)' }); }
+      set(); } catch (e) {} }
   openPrefsFn() { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
         this.wfBurgerClack(true); this.setState({ pf: true, pm: 'open', pmSec: 'profile', pfSpin: false }); }
   // ...and slides all the way back to the right
@@ -837,6 +855,7 @@ class Component extends DCLogic {
     if (!o || o.k !== K || Math.abs(o.x - x) > 0.5 || Math.abs(o.w - w) > 0.5) this.setState({ liSeg: { k: K, x, w } }); } catch (x) {} }
   componentDidUpdate() { this.wfLiSeg(); }
   componentDidMount() { /* the About row's symbol blinks every 4 s (only while the preferences show it) */ this._abtBlink = setInterval(() => { try { const e = document.querySelector('[data-wf-about-eye]'); if (e && e.getBoundingClientRect().height && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 4000); this.wfTopWatch(); setTimeout(() => this.wfLiSeg(), 300); setTimeout(() => this.wfLiSeg(), 1500); try { const u = () => this.wfPsKb(), vv = window.visualViewport; if (vv) { vv.addEventListener('resize', u); vv.addEventListener('scroll', u); } document.addEventListener('focusin', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); /* Find a place on the map: the field takes focus inside the tap itself, so iOS opens the keyboard at once */ document.addEventListener('touchstart', (e) => { try { const t = e.touches && e.touches[0]; this._psT0 = t ? [t.clientX, t.clientY] : null; } catch (x) {} }, { capture: true, passive: true }); document.addEventListener('touchend', (e) => { try { const b = e.target && e.target.closest && e.target.closest('button[aria-label="Find a place"]'); if (!b || !this._psOpen) return; const t = e.changedTouches && e.changedTouches[0], o = this._psT0; if (t && o && Math.hypot(t.clientX - o[0], t.clientY - o[1]) > 10) return; /* a drag over the button is not a tap */ this._psOpen(); this._psEat = Date.now(); } catch (x) {} }, true); /* the tap's own click lands on the panel that just opened over the button: it is swallowed so it cannot close it again */ document.addEventListener('click', (e) => { if (this._psEat && Date.now() - this._psEat < 600) { this._psEat = 0; e.preventDefault(); e.stopPropagation(); } }, true); document.addEventListener('focusout', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); setInterval(u, 1000); } catch (x) {} [60, 600, 1600].forEach((t) => setTimeout(() => { if (this.state.pf) this.wfPfAvFix(); else { const av = this.wfPfAvPos(); if (av) this.setState({ pfAvPos: av }); } }, t));
+    try { const lt = () => setTimeout(() => this.wfLangThumb(false), 140); window.addEventListener('resize', lt); window.addEventListener('wf-prefs', lt); window.addEventListener('wf-lang', lt); } catch (e) {}
     try { window.addEventListener('resize', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 120)); window.addEventListener('pageshow', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 300)); } catch (x) {}
  window.__wfSwipeDrag = (k, dy) => this.setState({ hdK: dy ? k : null, hdY: dy });   // a whole-blade swipe (fit.js) shows as the blade's own drag
     try { sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
@@ -964,17 +983,19 @@ class Component extends DCLogic {
           if (open && pmSec !== k) { try { const sec = document.querySelector('[data-wf-menusec]'), sc0 = sec && sec.querySelector('[data-wf-fadetop]');
             if (sec) { const cl = sec.cloneNode(true), w = sec.offsetWidth; cl.removeAttribute('data-wf-menusec'); cl.setAttribute('aria-hidden', 'true'); cl.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id')); cl.querySelectorAll('iframe').forEach((e) => { e.removeAttribute('src'); e.style.visibility = 'hidden'; });
               const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
-              cl.style.pointerEvents = 'none'; cl.style.zIndex = '2'; cl.style.transition = 'none'; cl.style.boxShadow = '0 0 40px rgba(0,0,0,0.18)';
+              cl.style.pointerEvents = 'none'; cl.style.zIndex = '2'; cl.style.transition = 'none'; cl.style.boxShadow = '0 0 24px rgba(0,0,0,0.12)';
               sec.parentNode.appendChild(cl); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
               requestAnimationFrame(() => requestAnimationFrame(() => { cl.style.transition = 'transform 1.1s cubic-bezier(.37,0,.63,1)'; cl.style.transform = 'translateX(' + (-(w + 48)) + 'px)'; }));
               setTimeout(() => { try { cl.remove(); } catch (e) {} }, 1200); } } catch (e) {} }
           try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {}
+          if (k === 'lang') setTimeout(() => this.wfLangThumb(false), 30);
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {})); };
         const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
-        return { x: open ? -mw : rail ? -60 : 0, dur: boot ? '0s' : '1.1s',   // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
-          sh: pmMode ? '0 0 40px rgba(0,0,0,0.18)' : 'none', catchD: open ? 'block' : 'none',
+        return { x: open ? -(mw + 32) : rail ? -60 : 0,   // open: 32px further, so the screen's shadow stays off the menu
+          dur: boot ? '0s' : '1.1s',   // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
+          sh: pmMode ? '0 0 24px rgba(0,0,0,0.12)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s',
           burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(20, L0.vw - (L0.colL + L0.colW) + 20) : 20; })(),
@@ -1110,8 +1131,12 @@ class Component extends DCLogic {
             : T('The link carries your key: calls from invited phones use your credit. Send it privately, only to people you trust. To cut everyone off, replace the key in the Anthropic console.', 'A ligação leva a sua chave: as chamadas dos telemóveis convidados usam o seu crédito. Envie-a em privado, só a quem confia. Para cortar o acesso a todos, substitua a chave na consola Anthropic.') }; })(),
       openPrefs: (...a) => this.openPrefsFn(...a),
       closePrefs: (...a) => this.closePrefsFn(...a),
+      lg: (() => { const cur = s.langPend || lang, LS = window.__wfLangs || [{ code: 'en', name: 'English', flag: 'assets/flags/gb.svg' }];
+        return { d: (s.pmSec || 'profile') === 'lang' ? 'flex' : 'none', opts: LS.map((o) => ({ name: o.name, flag: o.flag, on: o.code === cur ? 'true' : 'false', fg: o.code === cur ? '#1C1C1E' : '#3C3C43', w: o.code === cur ? 600 : 400,
+          pick: () => { if (o.code === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+            this.setState({ langPend: o.code }, () => this.wfLangThumb(true)); clearTimeout(this._lgT);
+            this._lgT = setTimeout(() => { if (window.__wfSetLang) window.__wfSetLang(o.code); this.setState({ langPend: null, lang: o.code }, () => this.wfLangThumb(false)); }, 700); } })) }; })(),
       pfGroups: [
-        group('Language', lang, [['en', 'EN'], ['pt', 'PT'], ['ja', '日本']], (l) => { if (window.__wfSetLang) window.__wfSetLang(l); }),
         group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
         group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),
         // Spacing (Oct 3, 18:10): every space of 16px or more one step down or up the spacing scale (prefs.js)
