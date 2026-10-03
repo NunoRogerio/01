@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=167"></script>
+<script src="prefs.js?v=171"></script>
 <script src="i18n.js?v=150"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=59"></script>
@@ -1230,6 +1230,7 @@ class Component extends DCLogic {
               if (Math.hypot(vx, vy) < 12) { this._fGlide = false; this._fFling = 0; this.forceUpdate(); return; } this._fFling = requestAnimationFrame(step); };
             this._fFling = requestAnimationFrame(step); }
           this.forceUpdate(); };
+        try { document.documentElement.classList.toggle('wf-black', mx); } catch (x) {}   // (Oct 3, 23:00) maximized: the strips beside the app's frame go black too, so no light lines show at the sides
         const mf = { sc: mx ? 1 : 0.94, op: mx ? 1 : 0, pe: mx ? 'auto' : 'none', hidden: mx ? 'false' : 'true', vid: mx };
         return { bf, ff, mf, feedXRot: on ? '0deg' : '90deg', maxFeed: () => this.setState({ feedMax: true }), minFeed: () => this.setState({ feedMax: false }) };
       })(),
