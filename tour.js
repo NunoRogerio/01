@@ -338,7 +338,7 @@ if (WF_TOUR_ON) (function () {
       var stepF = function (now) { var s0 = get(); if (!s0 || s0.i !== i || !bub || !bub.isConnected) { fling = 0; return; }
         var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
         var bx = drag.dx, by = drag.dy; drag.dx += vx * dt; drag.dy += vy * dt; place(l, t); drag.dx = parseFloat(bub.style.left) - l; drag.dy = parseFloat(bub.style.top) - t;
-        if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by) < 0.01) vy = 0;
+        if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by - vy * dt) > 0.5 && Math.abs(vy) > 60) vy = -vy * 0.3; else if (Math.abs(drag.dy - by) < 0.01) vy = 0;   // the same rubber bump at the top and bottom
         if (Math.hypot(vx, vy) < 12) { fling = 0; return; } fling = requestAnimationFrame(stepF); };
       fling = requestAnimationFrame(stepF);
     };
@@ -702,7 +702,7 @@ if (WF_TOUR_ON) (function () {
   }
   // Tilt (Oct 3): held between 30° and 50° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
   // upright (above 50°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
-  var tiltB = null, tiltG = null, tiltT = 0, tiltV = 0, tiltVX = 0, tiltN = null, tiltNG = null, tiltLock = -1;
+  var tiltB = null, tiltG = null, tiltT = 0, tiltV = 0, tiltVX = 0, tiltN = null, tiltNG = null, tiltLock = -1, tiltBump = 0, tiltBumped = false;
   window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; if (e && typeof e.gamma === 'number') tiltG = e.gamma; });
   function askTilt() { try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
   function tiltSync(now) {
@@ -719,16 +719,23 @@ if (WF_TOUR_ON) (function () {
     var spd = function (x) { return x ? (x < 0 ? -1 : 1) * (36 + (1071 - 36) * Math.pow(Math.abs(x), 1.4)) : 0; };
     var target = spd(v);
     // sideways (Oct 3, 12:25): tilting left or right slides the card left or right, with the same still zone and speeds
-    var hv = 0; if (tiltG != null) { if (tiltNG == null) tiltNG = tiltG; var g0 = tiltG - tiltNG; if (g0 < -10) hv = -Math.min(1, (-10 - g0) / 40); else if (g0 > 10) hv = Math.min(1, (g0 - 10) / 40); }
+    var hv = 0;   // sideways tilt removed (Oct 3, 12:55): it clashed with the screen turning
     var targetX = spd(hv);
-    tiltV += (target - tiltV) * Math.min(1, dt / 0.22); tiltVX += (targetX - tiltVX) * Math.min(1, dt / 0.22);
+    // rubber bump (Oct 3, 12:55): hitting the top or bottom throws the card back by an amount set by the impact speed; it then
+    // coasts to a stop and goes back to following the tilt
+    if (now < tiltBump) { tiltV *= Math.exp(-dt / 0.12); target = 0; }
+    else tiltV += (target - tiltV) * Math.min(1, dt / 0.22);
+    tiltVX += (targetX - tiltVX) * Math.min(1, dt / 0.22);
     if (Math.abs(tiltVX) < 2 && !targetX) tiltVX = 0;
-    if (Math.abs(tiltV) < 2 && !target) tiltV = 0;
+    if (Math.abs(tiltV) < 2 && !target && now >= tiltBump) tiltV = 0;
     if (!tiltV && !tiltVX) return;
     var s0 = get(); if (!s0) return; if (drag.i !== s0.i) { drag.i = s0.i; drag.dx = 0; drag.dy = 0; }
     var l = +bub.dataset.l, t = +bub.dataset.t; if (!isFinite(l) || !isFinite(t)) return;
     var before = drag.dy, beforeX = drag.dx; drag.dy += tiltV * dt; drag.dx += tiltVX * dt; place(l, t); drag.dy = parseFloat(bub.style.top) - t; drag.dx = parseFloat(bub.style.left) - l;   // kept on screen: no build-up past the edges
-    if (Math.abs(drag.dy - before) < 0.01 && Math.abs(tiltV * dt) > 0.5) tiltV = 0;   // stopped by a screen edge
+    var hitE = Math.abs(drag.dy - before - tiltV * dt) > 0.5;
+    var topNow = parseFloat(bub.style.top), farE = topNow > 68 && topNow < VH() - bub.offsetHeight - 68; if (farE) tiltBumped = false;   // one bounce per arrival at an edge
+    if (hitE && !tiltBumped && Math.abs(tiltV) > 280 && now >= tiltBump) { tiltV = -tiltV * 0.3; tiltBump = now + 380; tiltBumped = true; }   // bumped a screen edge hard enough to bounce
+    else if (hitE && now >= tiltBump) tiltV = 0;   // a soft touch settles against the edge
     if (Math.abs(drag.dx - beforeX) < 0.01 && Math.abs(tiltVX * dt) > 0.5) tiltVX = 0;
   }
   (function gl(now) { try { tiltSync(now || performance.now()); glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
