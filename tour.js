@@ -68,8 +68,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var r = el.getBoundingClientRect(), doneY = !vOut, doneX = !hOut;
     for (var n = el.parentElement; n && n !== document.body && n !== document.documentElement && !(doneX && doneY); n = n.parentElement) {
       var b = n.getBoundingClientRect();
-      if (!doneY && scrollable(n, 'y')) { doneY = true; n.scrollBy({ top: (r.top + r.height / 2) - (Math.max(b.top, 0) + Math.min(b.height, VH()) / 2), behavior: 'smooth' }); }
-      if (!doneX && scrollable(n, 'x')) { doneX = true; n.scrollBy({ left: (r.left + r.width / 2) - (b.left + b.width / 2), behavior: 'smooth' }); }
+      if (!doneY && scrollable(n, 'y')) { doneY = true; glide(n, 'y', (r.top + r.height / 2) - (Math.max(b.top, 0) + Math.min(b.height, VH()) / 2)); }
+      if (!doneX && scrollable(n, 'x')) { doneX = true; glide(n, 'x', (r.left + r.width / 2) - (b.left + b.width / 2)); }
     }
   }
   // Safety: anything that can't be scrolled by hand (the page, clipped frames) is kept at its origin while the tour runs
@@ -78,7 +78,17 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     [document.scrollingElement, document.documentElement, document.body].forEach(function (n) { if (n && (n.scrollTop || n.scrollLeft)) { n.scrollTop = 0; n.scrollLeft = 0; } });
     var dc = document.getElementById('dc-root'); for (var n = dc; n && n !== document.body; n = n.parentElement) if (n.scrollTop && getComputedStyle(n).overflowY === 'hidden') n.scrollTop = 0;
   }
-  var scrollEnd = function (sel) { var e = document.querySelector(sel); if (e) e.scrollTo({ top: e.scrollHeight, behavior: 'smooth' }); };
+  // One auto-scroll speed for the whole tour (Oct 3, 20:57): 104 px/s (49% faster than the 70 px/s used before), with a
+  // gentle start and finish; any touch, wheel or scroll by the person stops it
+  var TOUR_SPEED = 104;
+  function glide(n, axis, delta) { if (!n || !delta) return; var p0 = axis === 'x' ? n.scrollLeft : n.scrollTop, dur = Math.max(250, Math.abs(delta) / TOUR_SPEED * 1000), t0 = 0, stop = false;
+    var halt = function () { stop = true; ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.removeEventListener(t, halt, true); }); };
+    ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.addEventListener(t, halt, { capture: true, passive: true }); });
+    var ease = function (k) { return k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; };
+    var step = function (t) { if (stop || !n.isConnected) { halt(); return; } if (!t0) t0 = t; var k = Math.min(1, (t - t0) / dur), v = p0 + delta * ease(k);
+      if (axis === 'x') n.scrollLeft = v; else n.scrollTop = v; if (k < 1) requestAnimationFrame(step); else halt(); };
+    requestAnimationFrame(step); }
+  var scrollEnd = function (sel) { var e = document.querySelector(sel); if (e) glide(e, 'y', e.scrollHeight - e.clientHeight - e.scrollTop); };
 
   // The open incident list's most likely candidate (the first row; the list is sorted by likelihood). Only once the
   // list is open (its blade unclipped), judged by the blade itself because the list's top fade covers its first row.
@@ -705,7 +715,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.addEventListener(t, halt, { capture: true, passive: true }); });
     var step = function (t) { var s0 = get(); if (stop || !s0 || s0.i !== i || !sc.isConnected) { halt(); return; }
       if (Math.abs(sc.scrollTop - pos) > 2) { halt(); return; }   // scrolled by hand (momentum, scrollbar): stop
-      var dt = last ? Math.min(50, t - last) : 16; last = t; pos = Math.min(maxPos, pos + 70 * dt / 1000); sc.scrollTop = pos;
+      var dt = last ? Math.min(50, t - last) : 16; last = t; pos = Math.min(maxPos, pos + TOUR_SPEED * dt / 1000); sc.scrollTop = pos;
       if (pos >= maxPos - 0.5) { halt(); return; } requestAnimationFrame(step); };
     requestAnimationFrame(step);
   }
