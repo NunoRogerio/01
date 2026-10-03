@@ -90,6 +90,16 @@ if (WF_TOUR_ON) (function () {
   // The map step points at a circle whose summary panel has room to open whole: away from the screen sides and from
   // the top and bottom bands, closest to the upper middle of the map (the bubble then sits clear of the panel)
   // the most likely candidate on the map (highest percent in its label), on screen
+  // Show a blade by opening it and folding it back (Oct 3): opens once the circle has arrived, closes 0.5 s after it has opened
+  function demoOf(openSel, closeSel) { return { open: openSel, close: closeSel }; }
+  var demoRan = -1;
+  function runDemo(i, st) {
+    if (!st.demo || demoRan === i || get() && get().b) return; demoRan = i;
+    var still = function () { var s0 = get(); return !!s0 && s0.i === i; };
+    var press = function (sel) { var e = q(sel) || document.querySelector(sel); if (!e) return; selfTap = true; try { e.click(); } catch (x) {} selfTap = false; };
+    setTimeout(function () { if (still()) press(st.demo.open); }, 900);
+    setTimeout(function () { press(st.demo.close); }, 900 + 1000);   // the blade takes about 0.5 s to open, then stays 0.5 s
+  }
   // the state card's Move to <next stage> button, when the card is open
   function stMove() { return q('[data-wf-stmove]'); }
   function stExpand() { var c = q('header + button.chrow[aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
@@ -136,11 +146,23 @@ if (WF_TOUR_ON) (function () {
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo amarelo marca, ou use ‹ › para mudar de passo.'] },
     // Oct 3: the two blade selectors are shown (not opened), then the ignition is opened from the map
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Area:"]') || q('button[aria-label^="Área:"]'); },
-      t: ['Choose a region', 'Escolha uma região'], point: true,
+      t: ['Choose a region', 'Escolha uma região'], point: true, area: true, demo: demoOf('button[aria-haspopup="dialog"][aria-label^="Area:"]', 'section[data-swipe-key="sc"] button[data-swipe-go]'),
       b: ['Tap here any time to change the region. For now we stay here.', 'Toque aqui a qualquer momento para mudar de região. Por agora ficamos aqui.'] },
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
-      t: ['Or pick from the list', 'Ou escolha da lista'], point: true,
+      t: ['Or pick from the list', 'Ou escolha da lista'], point: true, demo: demoOf('section[data-swipe-key="li"] > div:last-child > button.opt', 'section[data-swipe-key="li"] button[data-swipe-go]'),
       b: ['Every candidate and fire in this region, the most likely first. Open it any time to pick one.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro. Abra-a a qualquer momento para escolher um.'] },
+    { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('header a[href="Chat.dc.html"].opt') || q('a[href="Chat.dc.html"].opt'); },
+      demo: demoOf('a[href="Chat.dc.html"].opt', 'section[data-swipe-key="cb"] button[data-swipe-go]'),
+      t: ['Your chats', 'As suas conversas'],
+      b: ['Every incident has its team chat. They are all here, any time.', 'Cada incidente tem a conversa da sua equipa. Estão todas aqui, a qualquer momento.'] },
+    { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Notifications"]') || q('button[aria-haspopup="dialog"][aria-label^="Notificações"]'); },
+      demo: demoOf('button[aria-haspopup="dialog"][aria-label^="Notifications"], button[aria-haspopup="dialog"][aria-label^="Notificações"]', 'section[data-swipe-key="nt"] button[data-swipe-go]'),
+      t: ['Notifications', 'Notificações'],
+      b: ['New ignitions and changes to your incidents.', 'Novas ignições e mudanças nos seus incidentes.'] },
+    { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('button[aria-label="Preferences"]') || q('button[aria-label="Preferências"]'); },
+      demo: demoOf('button[aria-label="Preferences"], button[aria-label="Preferências"]', 'button[data-pf-av]'),
+      t: ['Your preferences', 'As suas preferências'],
+      b: ['Your profile, theme, text size and language.', 'O seu perfil, tema, tamanho do texto e língua.'] },
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
       t: ['Pick a candidate on the map', 'Escolha um candidato no mapa'],
       b: ['We marked the most likely one. Tap it.', 'Marcámos o mais provável. Toque nele.'] },
@@ -276,9 +298,9 @@ if (WF_TOUR_ON) (function () {
       // the screen-edge glows ride with the card: 110% of its height, centred on it (positioned from script)
       // edge glows more evident here: wider, brighter, and never fading below 60%
       // a lens: widest in the middle, tapering to a 4px line at the top and bottom ends (Oct 3); --gk: the magnetism's opacity
-      '#wf-tour .tgl{width:31px;animation-name:wftg2;filter:blur(var(--gbl,2px));-webkit-mask-image:radial-gradient(100% 50% at var(--gx) 50%,#000 45%,transparent 100%),linear-gradient(#000,#000);mask-image:radial-gradient(100% 50% at var(--gx) 50%,#000 45%,transparent 100%),linear-gradient(#000,#000);-webkit-mask-size:100% 100%,4px 100%;mask-size:100% 100%,4px 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}@keyframes wftg2{0%,100%{opacity:1}50%{opacity:.52}}' +
-      '#wf-tour .tgl.l{--gx:0%;-webkit-mask-position:0 0,0 0;mask-position:0 0,0 0;background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 0,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 2px,rgba(var(--wf-y-rgb,229,255,0),calc(0.6*var(--gk,1))) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
-      '#wf-tour .tgl.r{--gx:100%;-webkit-mask-position:0 0,100% 0;mask-position:0 0,100% 0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 0,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 2px,rgba(var(--wf-y-rgb,229,255,0),calc(0.6*var(--gk,1))) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
+      '#wf-tour .tgl{width:31px;animation-name:wftg2;filter:blur(var(--gbl,2px));-webkit-mask-image:radial-gradient(100% 50% at var(--gx) 50%,#000 45%,transparent 100%),linear-gradient(#000,#000);mask-image:radial-gradient(100% 50% at var(--gx) 50%,#000 45%,transparent 100%),linear-gradient(#000,#000);-webkit-mask-size:100% 100%,4px 100%;mask-size:100% 100%,4px 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}@keyframes wftg2{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:.3;transform:scaleX(.78)}}' +
+      '#wf-tour .tgl.l{transform-origin:0 50%;--gx:0%;-webkit-mask-position:0 0,0 0;mask-position:0 0,0 0;background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 0,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 2px,rgba(var(--wf-y-rgb,229,255,0),calc(0.6*var(--gk,1))) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
+      '#wf-tour .tgl.r{transform-origin:100% 50%;--gx:100%;-webkit-mask-position:0 0,100% 0;mask-position:0 0,100% 0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 0,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 2px,rgba(var(--wf-y-rgb,229,255,0),calc(0.6*var(--gk,1))) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
       '#wf-tour .tgl{transition:top .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1),width .3s ease}#wf-tour.drag .tgl{transition:width .15s ease}');
     document.head.appendChild(st);
   }
@@ -547,6 +569,7 @@ if (WF_TOUR_ON) (function () {
       if (root) { root.remove(); root = null; lastKey = ''; } return;
     }
     jumped = true;
+    if (i !== cur && S[i]) runDemo(i, S[i]);
     if (i !== cur) { cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
     unshift();
     if (!ran && st.before) { ran = true; try { st.before(); } catch (e) {} }
@@ -619,13 +642,13 @@ if (WF_TOUR_ON) (function () {
     if (WF_TOUR_HELI || !root || !bub || !root.isConnected) return;
     root.classList.toggle('drag', bub.classList.contains('drag'));
     var r = bub.getBoundingClientRect(), G = root.querySelectorAll('.tgl'); if (!r.height || !bub.classList.contains('on')) return;
-    var h = r.height * 0.8, t = r.top + r.height / 2 - h / 2;   // 80% of the card's height, centred on it
+    var h = r.height * 1.1, t = r.top + r.height / 2 - h / 2;   // 110% of the card's height, centred on it
     // Magnetism: the edge the card comes near swells and brightens; the far edge shrinks and dims
     var vw = VW(), k = Math.max(-1, Math.min(1, ((vw - r.right) - r.left) / Math.max(1, vw - r.width - 16)));   // full effect at the 8px limit the card can be dragged to   // +1: card at the left edge, -1: at the right
     for (var i = 0; i < G.length; i++) { var sg = G[i].classList.contains('l') ? k : -k;
       var hh = sg < 0 ? h * (1 + 0.2 * sg) : h, tt = r.top + r.height / 2 - hh / 2;   // the far edge is also up to 20% shorter, still centred
       G[i].style.top = tt.toFixed(1) + 'px'; G[i].style.height = hh.toFixed(1) + 'px';
-      G[i].style.width = (31 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg).toFixed(3)); }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
+      G[i].style.width = (31 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg).toFixed(3)); }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
   }
   (function gl() { try { glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
