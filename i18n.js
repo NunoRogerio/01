@@ -241,7 +241,7 @@
     f.push([MON3,function(m,a,d){return mo[a]?d+' '+mo[a]:m;}]);f.push([MON3b,function(m,d,a){return mo[a]?d+' '+mo[a]:m;}]);
     f.push([/\b(northeast|northwest|southeast|southwest|north|south|east|west)\b/g,function(m,w){return di[w]||m;}]);
     return {x:j.x||{},r:r,f:f};}
-  function loadDict(l){if(DICT[l])return DICT[l];try{var q=new XMLHttpRequest();q.open('GET','data/i18n/'+l+'.json?v=1',false);q.send();if(q.status===200||(q.status===0&&q.responseText))DICT[l]=prep(JSON.parse(q.responseText));}catch(e){}return DICT[l];}
+  function loadDict(l){if(DICT[l])return DICT[l];try{var q=new XMLHttpRequest();q.open('GET','data/i18n/'+l+'.json?v=2',false);q.send();if(q.status===200||(q.status===0&&q.responseText))DICT[l]=prep(JSON.parse(q.responseText));}catch(e){}return DICT[l];}
   function sets(l){if(l==='pt'){X=XP;R=RP;F=FP;}else if(l==='ja'){X=XJ;R=RJ;F=FJ;window.__wfJaNames&&window.__wfJaNames();}else if(l!=='en'&&OK[l]){var D=loadDict(l)||{x:{},r:[],f:[]};X=D.x;R=D.r;F=D.f;}else{X={};R=[];F=[];}
     try{document.documentElement.lang=l==='ja'?'ja':l==='pt'?'pt-PT':l;}catch(e){}}
   sets(lang);
@@ -255,6 +255,8 @@
     if(out===null){var t=k;for(var j=0;j<F.length;j++)t=t.replace(F[j][0],F[j][1]);
       // translate each line/segment that is itself a known phrase
       t=t.split('\n').map(function(line){var q=line.trim();return Object.prototype.hasOwnProperty.call(X,q)?line.replace(q,X[q]):line;}).join('\n');
+      // (Oct 3) a text made of known parts: "Place: Status" or "Place. Sentence", each part translated on its own
+      if(t===k){var sg=/^(.+?)(: |\. )(.+)$/.exec(k);if(sg){var a1=Object.prototype.hasOwnProperty.call(X,sg[1])?X[sg[1]]:sg[1],b1=Object.prototype.hasOwnProperty.call(X,sg[3])?X[sg[3]]:null;if(b1==null&&lang!=='en'){var b2=tr(sg[3]);if(b2!==sg[3])b1=b2;}if(b1!=null)t=a1+sg[2]+b1;}}
       out=t;}
     if(cache.size>8000)cache.clear();cache.set(k,out);return rewrap(s,out);
   }

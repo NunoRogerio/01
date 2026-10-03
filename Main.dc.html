@@ -17,7 +17,7 @@
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=153"></script>
-<script src="i18n.js?v=139"></script>
+<script src="i18n.js?v=140"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=52"></script>
 <script src="tour.js?v=56"></script>
@@ -501,7 +501,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
   <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: 1; background: #F2F2F7">
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
-  <section data-wf-menusec="1" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 60px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #FFFFFF; box-shadow: 0 0 24px rgba(0,0,0,0.12); visibility: {{pm.vis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
+  <section data-wf-menusec="1" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 60px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #FFFFFF; box-shadow: 0 0 12px rgba(0,0,0,0.08); visibility: {{pm.vis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
     <!-- Menu (Oct 3, 17:18): the open section's title, level with the menu button; 40px to its first element -->
     <h2 id="pfTitle" class="wf-title-m" style="display: flex; align-items: center; height: 44px; margin: 12px 0 0; padding: 0 16px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
@@ -983,7 +983,7 @@ class Component extends DCLogic {
           if (open && pmSec !== k) { try { const sec = document.querySelector('[data-wf-menusec]'), sc0 = sec && sec.querySelector('[data-wf-fadetop]');
             if (sec) { const cl = sec.cloneNode(true), w = sec.offsetWidth; cl.removeAttribute('data-wf-menusec'); cl.setAttribute('aria-hidden', 'true'); cl.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id')); cl.querySelectorAll('iframe').forEach((e) => { e.removeAttribute('src'); e.style.visibility = 'hidden'; });
               const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
-              cl.style.pointerEvents = 'none'; cl.style.zIndex = '2'; cl.style.transition = 'none'; cl.style.boxShadow = '0 0 24px rgba(0,0,0,0.12)';
+              cl.style.pointerEvents = 'none'; cl.style.zIndex = '2'; cl.style.transition = 'none'; cl.style.boxShadow = '0 0 12px rgba(0,0,0,0.08)';
               sec.parentNode.appendChild(cl); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
               requestAnimationFrame(() => requestAnimationFrame(() => { cl.style.transition = 'transform 1.1s cubic-bezier(.37,0,.63,1)'; cl.style.transform = 'translateX(' + (-(w + 48)) + 'px)'; }));
               setTimeout(() => { try { cl.remove(); } catch (e) {} }, 1200); } } catch (e) {} }
@@ -995,7 +995,7 @@ class Component extends DCLogic {
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         return { x: open ? -(mw + 32) : rail ? -60 : 0,   // open: 32px further, so the screen's shadow stays off the menu
           dur: boot ? '0s' : '1.1s',   // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
-          sh: pmMode ? '0 0 24px rgba(0,0,0,0.12)' : 'none', catchD: open ? 'block' : 'none',
+          sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s',
           burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(20, L0.vw - (L0.colL + L0.colW) + 20) : 20; })(),
