@@ -678,8 +678,8 @@ if (WF_TOUR_ON) (function () {
       G[i].style.top = tt.toFixed(1) + 'px'; G[i].style.height = hh.toFixed(1) + 'px';
       G[i].style.width = (37.2 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (1.2 * (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg)).toFixed(3)); /* both edges +20% wide and +20% opacity (Oct 3) */ }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
   }
-  // Tilt (Oct 3): held between 30° and 60° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
-  // upright (above 60°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
+  // Tilt (Oct 3): held between 30° and 50° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
+  // upright (above 50°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
   var tiltB = null, tiltT = 0, tiltV = 0;
   window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; });
   function askTilt() { try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
@@ -688,7 +688,7 @@ if (WF_TOUR_ON) (function () {
     if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) { tiltV = 0; return; }
     var b = tiltB, v = 0;
     if (b < 30) v = -Math.min(1, (30 - Math.max(-30, b)) / 60);          // 30° → 0, -30° and beyond → full speed up
-    else if (b > 60) v = Math.min(1, (Math.min(120, b) - 60) / 30);      // 60° → 0, 90° and beyond → full speed down
+    else if (b > 50) v = Math.min(1, (Math.min(120, b) - 50) / 40);      // 50° → 0, 90° and beyond → full speed down (was from 60°)
     // the angle sets a target speed (36 px/s just past the band, 1071 px/s at full tilt; +70% at 12:11); the card accelerates towards it and
     // decelerates smoothly back to rest inside the band (Oct 3: max +50%, slowest -10%)
     var target = v ? (v < 0 ? -1 : 1) * (36 + (1071 - 36) * Math.pow(Math.abs(v), 1.4)) : 0;
