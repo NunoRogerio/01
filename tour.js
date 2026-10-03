@@ -118,7 +118,7 @@ if (WF_TOUR_ON) (function () {
   // t: the action (title); b: one or two short sentences; mode: 'tap' | 'next' | 'until'
   var S = [
     { page: 'Main.dc.html', mode: 'next', next: ['Start', 'Começar'],
-      t: ['Quick tour', 'Visita rápida'],
+      t: ['Let\'s deal with a fire ignition now', 'Vamos tratar de uma ignição agora'], wip: true,
       b: WF_TOUR_HELI ? ['Follow one ignition from detection to a closed fire. Tap what the helicopter points to, or use ‹ › to move between steps.',
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
           ['Follow one ignition from detection to a closed fire. Tap what the yellow circle marks, or use ‹ › to move between steps.',
@@ -224,6 +224,7 @@ if (WF_TOUR_ON) (function () {
       '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
       '#wf-tour .tth{margin:0 0 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)}' +
       '#wf-tour .tt{margin:0;font-size:17px;font-weight:600;line-height:22px}' +
+      '#wf-tour .twip{margin:4px 0 0;font-size:15px;font-weight:600;line-height:20px;color:var(--wf-y,#E5FF00)}' +
       '#wf-tour .tx{margin:4px 0 0;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty}' +
       '#wf-tour .tf{display:flex;align-items:center;gap:8px;margin-top:16px}' +
       '#wf-tour .tn{flex-grow:1;font-size:13px;line-height:18px;color:rgba(255,255,255,0.6);font-variant-numeric:tabular-nums}' +
@@ -294,7 +295,8 @@ if (WF_TOUR_ON) (function () {
   }
   function back(i) { if (i < 1) return; var s0 = get() || {}; var p = i - 1; if (S[p].page !== PAGE) heliExit(S[p].page); put({ i: p, b: 1, max: Math.max(i, s0.max || 0) }); seen = Date.now(); scrolled = false; ran = false; cur = -1; lastKey = ''; if (S[p].page !== PAGE) { try { history.back(); } catch (e) { location.href = S[p].page; } } else tick(); }
   // The entry warning: a dark-glass tooltip just above the Tour button (the tour is still being tuned)
-  function warn(anchor) {
+  function warn(anchor) { if (window.__wfTour && window.__wfTour.active && window.__wfTour.active()) return; window.__wfTour.start(); }   // straight in; the sign is on the first card (Oct 3)
+  function warnOld(anchor) {
     var old = document.getElementById('wf-tourwarn'); if (old) { old.remove(); return; }
     css(); var pt = PT(), w = document.createElement('div'); w.id = 'wf-tourwarn'; w.setAttribute('role', 'dialog'); w.setAttribute('translate', 'no');
     var r = anchor ? anchor.getBoundingClientRect() : { top: innerHeight - 140, left: innerWidth - 80, width: 60 };
@@ -362,6 +364,8 @@ if (WF_TOUR_ON) (function () {
       var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
       if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }
       bub.querySelector('.tt').textContent = L(st.t);
+      // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
+      if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }
       if (st.show && armed === i) bub.querySelector('.tt').textContent = L(st.show.t);
       if (st.legend && armed === i) { bub.querySelector('.tt').textContent = pt ? 'Camada visível' : 'Layer shown'; }
       bub.querySelector('.tx').textContent = late && !el ? (pt ? 'Este passo não está disponível agora. Toque em › para continuar.' : 'This step isn\'t available right now. Tap › to carry on.') : L(st.b);
