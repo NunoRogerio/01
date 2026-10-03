@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=125"></script>
+<script src="fit.js?v=126"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=147"></script>
+<script src="prefs.js?v=148"></script>
 <script src="i18n.js?v=137"></script>
 <script src="live.js?v=40"></script>
 
@@ -177,7 +177,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-for>
 
   <sc-for list="{{zones}}" as="z" hint-placeholder-count="2">
-    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{z.left}}px; top: {{z.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: {{z.bg}}; border: 1px solid {{z.bd}}; color: {{z.fg}}; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; transition: {{mv}}">{{z.label}}
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{z.left}}px; top: {{z.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: {{z.bg}}; border: 1px solid {{z.bd}}; color: {{z.fg}}; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; transition: {{mv}}">{{z.label}}
       <span class="{{z.tip}}" role="tooltip"><b>{{z.tt}}</b>{{z.td}}</span>
     </span>
   </sc-for>
@@ -205,21 +205,21 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-for>
 
   <sc-for list="{{sensors}}" as="m" hint-placeholder-count="5">
-    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; transform: translate(-4px, -50%); display: flex; align-items: center; gap: 5px; height: 22px; font-size: 13px; font-weight: 600; color: #006A91; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; transition: {{mv}}">
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; transform: translate(-4px, -50%); display: flex; align-items: center; gap: 4px; height: 22px; font-size: 13px; font-weight: 600; color: #006A91; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; transition: {{mv}}">
       <span style="width: 8px; height: 8px; scale: 1.1; border-radius: 50%; background: #0079A6; box-shadow: 0 0 0 3px rgba(0,121,166,0.18), 0 0 10px rgba(0,121,166,0.8)"></span>{{m.label}}
       <span class="{{m.tip}}" role="tooltip"><b>{{m.tt}}</b>{{m.td}}</span>
     </span>
   </sc-for>
 
   <sc-for list="{{rings}}" as="rg" hint-placeholder-count="3">
-    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{rg.left}}px; top: {{rg.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,0.8); border: 1px solid {{rg.bd}}; color: {{rg.fg}}; font-size: 13px; font-weight: 700; white-space: nowrap; transition: {{mv}}">{{rg.label}}
+    <span class="tipwrap" tabindex="0" style="position: absolute; left: {{rg.left}}px; top: {{rg.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: rgba(255,255,255,0.8); border: 1px solid {{rg.bd}}; color: {{rg.fg}}; font-size: 13px; font-weight: 700; white-space: nowrap; transition: {{mv}}">{{rg.label}}
       <span class="{{rg.tip}}" role="tooltip"><b>{{rg.tt}}</b>{{rg.td}}</span>
     </span>
   </sc-for>
 
   <sc-for list="{{stations}}" as="t" hint-placeholder-count="4">
-    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); max-width: 170px; box-sizing: border-box; display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: {{t.blur}}; -webkit-backdrop-filter: {{t.blur}}; font-size: 13px; font-weight: 600; white-space: nowrap">
-      <svg class="mk" width="14" height="14" viewBox="0 0 24 24" style="scale: 1.72; overflow: visible" fill="{{t.fill}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="wfStM" maskUnits="userSpaceOnUse" x="-40" y="-40" width="104" height="104"><rect x="-40" y="-40" width="104" height="104" fill="#fff"></rect><path d="{{t.icon}}" fill="#000"></path></mask></defs><path d="{{t.icon}}" fill="{{t.fill}}" stroke="none"></path><path d="{{t.icon}}" fill="none" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path><path d="{{t.icon}}" fill="none" stroke="{{t.bdC}}" stroke-width="{{t.bdW}}" mask="{{t.mask}}"></path></svg>{{t.label}}<span aria-hidden="true" style="display: {{t.aD}}; position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 3px; width: max-content; max-width: 120px; font-size: 13px; line-height: 16px; font-weight: 600; color: #3A3A3C; text-align: center; pointer-events: none; text-shadow: 0 0 3px #FFFFFF, 0 0 3px #FFFFFF, 0 0 2px #FFFFFF"><span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.aN}}</span><span style="display: block; white-space: nowrap">{{t.aT}}</span></span>
+    <span class="tipwrap" tabindex="0" role="button" onClick="{{t.sel}}" style="cursor: pointer; position: absolute; left: {{t.left}}px; top: {{t.top}}px; transform: translate(-50%, -100%); max-width: 170px; box-sizing: border-box; display: flex; align-items: center; gap: 4px; height: 26px; padding: 0 8px 0 8px; border-radius: 999px; background: {{t.bg}}; border: 1px solid {{t.bd}}; color: {{t.fg}}; opacity: {{t.op}}; transition: {{mvS}}; backdrop-filter: {{t.blur}}; -webkit-backdrop-filter: {{t.blur}}; font-size: 13px; font-weight: 600; white-space: nowrap">
+      <svg class="mk" width="14" height="14" viewBox="0 0 24 24" style="scale: 1.72; overflow: visible" fill="{{t.fill}}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="wfStM" maskUnits="userSpaceOnUse" x="-40" y="-40" width="104" height="104"><rect x="-40" y="-40" width="104" height="104" fill="#fff"></rect><path d="{{t.icon}}" fill="#000"></path></mask></defs><path d="{{t.icon}}" fill="{{t.fill}}" stroke="none"></path><path d="{{t.icon}}" fill="none" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path><path d="{{t.icon}}" fill="none" stroke="{{t.bdC}}" stroke-width="{{t.bdW}}" mask="{{t.mask}}"></path></svg>{{t.label}}<span aria-hidden="true" style="display: {{t.aD}}; position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 4px; width: max-content; max-width: 120px; font-size: 13px; line-height: 16px; font-weight: 600; color: #3A3A3C; text-align: center; pointer-events: none; text-shadow: 0 0 3px #FFFFFF, 0 0 3px #FFFFFF, 0 0 2px #FFFFFF"><span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.aN}}</span><span style="display: block; white-space: nowrap">{{t.aT}}</span></span>
       <span class="{{t.tip}}" role="tooltip"><b>{{t.tt}}</b>{{t.td}}</span>
     </span>
   </sc-for>
@@ -228,14 +228,14 @@ image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
-      <span class="tipwrap" tabindex="0" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 8px; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
+      <span class="tipwrap" tabindex="0" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; height: 26px; padding: 0 8px 0 8px; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>{{cm.label}}
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
     <!-- The pin's label is the map's title, above the legend, so nothing on the map sits under it (not on a small detail map) -->
     <!-- full screen: the place card at the top right (the area card's look, as on the main map), the legend free on the left -->
-    <div style="position: absolute; z-index: 50; left: {{pinTtlLeft}}; right: {{pinTtlRight}}; top: {{ttlTop}}px; display: {{pinTtlD}}; flex-direction: column; gap: 2px; box-sizing: border-box; height: {{pinTtlH}}; max-width: calc(100% - 32px); padding: {{pinTtlPad}}; border-radius: 20px; background: {{pinTtlBg}}; box-shadow: {{pinTtlSh}}; -webkit-backdrop-filter: {{pinTtlBf}}; backdrop-filter: {{pinTtlBf}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+    <div style="position: absolute; z-index: 50; left: {{pinTtlLeft}}; right: {{pinTtlRight}}; top: {{ttlTop}}px; display: {{pinTtlD}}; flex-direction: column; gap: 4px; box-sizing: border-box; height: {{pinTtlH}}; max-width: calc(100% - 32px); padding: {{pinTtlPad}}; border-radius: 20px; background: {{pinTtlBg}}; box-shadow: {{pinTtlSh}}; -webkit-backdrop-filter: {{pinTtlBf}}; backdrop-filter: {{pinTtlBf}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinLabel}}</span>
       <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinCoords}}</span>
     </div>
@@ -246,22 +246,22 @@ image[href*="tile.openstreetmap"]{opacity:.72}
          Upright the groups stack; in landscape they share one row, the place on the left and the status on the right.
          The legend chips sit 32px below it. -->
     <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: {{ttlTop}}px; display: flex; flex-direction: {{hdrDir}}; align-items: {{hdrAlign}}; justify-content: space-between; gap: 16px; box-sizing: border-box; padding: 16px; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
-      <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+      <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
         <!-- the same title, subtitle and status band as the fire page's header, so the stage tag and its stack sit exactly as there -->
         <span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; overflow-wrap: anywhere">{{mapTtl}}</span>
         <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
       </span>
-      <span data-wf-hdrst="1" style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0; box-sizing: border-box; min-height: 52px; padding: 0 6px 0 16px; border-radius: 26px; background: rgba(118,118,128,0.12); width: {{hdrStW}}">
+      <span data-wf-hdrst="1" style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0; box-sizing: border-box; min-height: 52px; padding: 0 8px 0 16px; border-radius: 26px; background: rgba(118,118,128,0.12); width: {{hdrStW}}">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{mapDot}}"></path></svg>
         <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapKind}}</span>
-        <span style="display: {{mapTagD}}; margin-left: auto; flex-shrink: 0; align-items: center; min-height: 32px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{mapTagBg}}; color: {{mapTagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{mapTag}}</span>
+        <span style="display: {{mapTagD}}; margin-left: auto; flex-shrink: 0; align-items: center; min-height: 32px; padding: 4px 16px; box-sizing: border-box; border-radius: 999px; background: {{mapTagBg}}; color: {{mapTagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{mapTag}}</span>
       </span>
     </div>
   </sc-if>
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
     <!-- the title sits in its own solid container (the legend chips' surface and shadow) so the map never runs through it -->
-    <div style="position: absolute; z-index: 50; left: {{ttlLeftCss}}; right: {{ttlRightCss}}; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px); display: flex; flex-direction: column; justify-content: center; gap: 2px; box-sizing: border-box; height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+    <div style="position: absolute; z-index: 50; left: {{ttlLeftCss}}; right: {{ttlRightCss}}; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px); display: flex; flex-direction: column; justify-content: center; gap: 4px; box-sizing: border-box; height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapTtl}}</span>
       <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
     </div>
@@ -289,10 +289,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
             <defs><mask id="wfIgMS" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300"><rect x="-100" y="-100" width="300" height="300" fill="#fff"></rect><circle cx="48" cy="48" r="11" fill="#000"></circle></mask></defs><circle cx="48" cy="48" r="11" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2"></circle><circle cx="48" cy="48" r="11" fill="none" stroke="#3A3A3C" stroke-width="{{ig.bdW2}}" mask="url(#wfIgMS)"></circle>
           </svg>
           <span class="igpill" role="tooltip">
-            <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 10px; white-space: nowrap">
+            <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 16px 0 8px; white-space: nowrap">
               <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style="flex-shrink: 0"><circle cx="5" cy="5" r="4" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2" stroke="#3A3A3C" stroke-width="1.6"></circle></svg><span style="font-weight: 600; color: #000000">{{ig.pos}}</span><span class="igname"><span style="font-weight: 600; color: #000000">· {{ig.place}}</span><span style="color: #545458; font-variant-numeric: tabular-nums">{{ig.conf}}%</span></span>
             </span>
-            <span class="igmore"><span style="display: block; padding: 0 12px 10px; width: 206px; box-sizing: border-box; white-space: normal; font-size: 15px; line-height: 1.45; color: #3C3C43"><b style="display: block; margin-bottom: 2px; font-weight: 600; color: #000000">{{ig.tt}}</b>{{ig.td}}</span></span>
+            <span class="igmore"><span style="display: block; padding: 0 16px 8px; width: 206px; box-sizing: border-box; white-space: normal; font-size: 15px; line-height: 1.45; color: #3C3C43"><b style="display: block; margin-bottom: 4px; font-weight: 600; color: #000000">{{ig.tt}}</b>{{ig.td}}</span></span>
           </span>
         </sc-if>
         <sc-if value="{{ig.notSel}}" hint-placeholder-val="{{ true }}">
@@ -342,9 +342,9 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
-  <div role="group" data-wf-leg="1" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: {{legRightCss}}; top: calc({{legTopC}}px - 6px); width: {{legW}}; box-sizing: border-box; padding: 6px 8px 14px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
+  <div role="group" data-wf-leg="1" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: {{legRightCss}}; top: calc({{legTopC}}px - 6px); width: {{legW}}; box-sizing: border-box; padding: 8px 8px 16px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
-      <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{lg.bg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer">
+      <button type="button" class="mbtn" aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{lg.bg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); color: {{lg.fg}}; font: inherit; font-size: 15px; line-height: 32px; white-space: nowrap; cursor: pointer">
         <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.glowD}}" fill="none" stroke="#E8590C" stroke-opacity="0.35" stroke-width="3" stroke-linecap="round" style="filter: blur(0.9px)"></path><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}<span style="display: {{lg.nD}}; margin-left: auto; padding-left: 8px; font-weight: 600; color: #3A3A3C; font-variant-numeric: tabular-nums">{{lg.n}}</span>
       </button>
     </sc-for>
@@ -355,7 +355,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
        round controls, its two rows level with the two lowest buttons (44px rows, 8px apart): two cells on the upper row, three below -->
   <div role="group" aria-label="Weather at the map centre" onPointerDown="{{stop}}" style="position: absolute; z-index: 51; left: {{srchL}}px; right: {{wxR}}px; top: {{wxTopCss}}; bottom: {{wxBotCss}}; display: {{wxDisp}}; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: 44px; align-content: end; gap: {{wxGap}}; overflow-x: {{wxOvx}}; scrollbar-width: none; pointer-events: auto">
     <sc-for list="{{wx}}" as="w" hint-placeholder-count="3">
-      <span role="img" aria-label="{{w.aria}}" style="display: flex; align-items: center; justify-content: {{wxJ}}; gap: 6px; flex-shrink: 0; grid-column: span {{w.span}}; min-width: 0; height: {{wxH}}; box-sizing: border-box; padding: 0 {{wxPadR}} 0 {{wxPadL}}; border-radius: 999px; background: rgba(242,242,247,0.62); box-shadow: 0 0 10px rgba(0,0,0,0.10); color: #3C3C43; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%)">
+      <span role="img" aria-label="{{w.aria}}" style="display: flex; align-items: center; justify-content: {{wxJ}}; gap: 8px; flex-shrink: 0; grid-column: span {{w.span}}; min-width: 0; height: {{wxH}}; box-sizing: border-box; padding: 0 {{wxPadR}} 0 {{wxPadL}}; border-radius: 999px; background: rgba(242,242,247,0.62); box-shadow: 0 0 10px rgba(0,0,0,0.10); color: #3C3C43; font-size: 15px; line-height: 20px; white-space: nowrap; overflow: hidden; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{w.rot}}deg)"><path d="{{w.d}}"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{w.txt}}</span>
       </span>
     </sc-for>
@@ -370,18 +370,18 @@ image[href*="tile.openstreetmap"]{opacity:.72}
          Groups, top to bottom: KPI (annotation above the XS number), tag, place (Title XS with the level above as annotation), View.
          Gaps: 8px after the KPI (its box already carries space under the digits), 12px between the other groups, 16px above View. -->
     <sc-if value="{{pop.isIgn}}" hint-placeholder-val="{{ false }}">
-      <div role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
+      <div role="img" aria-label="{{pop.pctAria}}" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px 16px 0">
         <span style="display: block; font-size: 15px; line-height: 20px; color: #6E6E73">Likelihood</span>
-        <span class="wf-like-xs" style="display: block; margin-top: 2px; white-space: nowrap; --wf-fs: {{pop.pctFs}}px">{{pop.pct}}</span>
+        <span class="wf-like-xs" style="display: block; margin-top: 4px; white-space: nowrap; --wf-fs: {{pop.pctFs}}px">{{pop.pct}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 8px">{{pop.place}}</b>
         <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
-        <span style="display: {{pop.igNightD}}; align-items: center; gap: 6px; margin-top: 8px; font-size: 15px; line-height: 20px; color: #3A3A3C"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg>Night detection</span>
+        <span style="display: {{pop.igNightD}}; align-items: center; gap: 8px; margin-top: 8px; font-size: 15px; line-height: 20px; color: #3A3A3C"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg>Night detection</span>
       </div>
     </sc-if>
     <sc-if value="{{pop.isFire}}" hint-placeholder-val="{{ false }}">
       <!-- A fire's stage docks on the card's top edge (a tab, square above, rounded below, as the station's), then the KPI with its label under it, then the place -->
-      <div style="display: flex; justify-content: center"><span role="status" style="display: inline-flex; align-items: center; justify-content: center; text-align: center; max-width: calc(100% - 24px); box-sizing: border-box; min-height: 32px; padding: 6px 16px; border-radius: 0 0 14px 14px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; line-height: 20px; font-weight: 600">{{pop.fkTag}}</span></div>
-      <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 12px 12px 0">
+      <div style="display: flex; justify-content: center"><span role="status" style="display: inline-flex; align-items: center; justify-content: center; text-align: center; max-width: calc(100% - 24px); box-sizing: border-box; min-height: 32px; padding: 8px 16px; border-radius: 0 0 14px 14px; background: {{pop.fkTagBg}}; color: {{pop.fkTagFg}}; font-size: 15px; line-height: 20px; font-weight: 600">{{pop.fkTag}}</span></div>
+      <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px 16px 0">
         <span class="wf-like-xs" style="display: {{pop.fkNumD}}; white-space: nowrap; --wf-fs: {{pop.fkFs}}px">{{pop.fkNum}}</span>
         <span style="display: {{pop.fkSubD}}; margin-top: -2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkSub}}</span>
         <span style="display: block; margin-top: -2px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkLbl}}</span>
@@ -390,16 +390,16 @@ image[href*="tile.openstreetmap"]{opacity:.72}
       </div>
     </sc-if>
     <!-- A station's state docks on the card's top edge: a tab with its top corners square, the rest of the card under it -->
-    <div style="display: {{pop.dockD}}; justify-content: center; margin-top: 0"><span role="status" style="display: inline-grid; align-items: center; justify-items: center; max-width: calc(100% - 24px); box-sizing: border-box; min-height: 32px; padding: 6px 16px; border-radius: 0 0 14px 14px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden"><!-- One width for every station tag: at least as wide as "Available" (an invisible copy in the same cell sets it) --><span aria-hidden="true" style="grid-area: 1 / 1; visibility: hidden">Available</span><span style="grid-area: 1 / 1; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{pop.tagTxt}}</span></span></div>
+    <div style="display: {{pop.dockD}}; justify-content: center; margin-top: 0"><span role="status" style="display: inline-grid; align-items: center; justify-items: center; max-width: calc(100% - 24px); box-sizing: border-box; min-height: 32px; padding: 8px 16px; border-radius: 0 0 14px 14px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden"><!-- One width for every station tag: at least as wide as "Available" (an invisible copy in the same cell sets it) --><span aria-hidden="true" style="grid-area: 1 / 1; visibility: hidden">Available</span><span style="grid-area: 1 / 1; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{pop.tagTxt}}</span></span></div>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: {{pop.stPadT}} 12px {{pop.stPadB}}">
         <!-- the crest sits half as far from the state tab above and the name below as before (its image has its own clear margin) -->
         <img src="{{pop.stCrest}}" data-crest="{{pop.stCrN}}" alt="" style="display: {{pop.stCrestD}}; width: 54%; height: auto; max-height: 140px; object-fit: contain; margin: -6px 0 -3px">
         <span style="display: {{pop.stKD}}; font-size: 15px; line-height: 20px; color: #6E6E73">Distance</span>
-        <span class="wf-like-xs" style="display: {{pop.stKD}}; margin-top: 2px; white-space: nowrap; --wf-fs: {{pop.stFs}}px">{{pop.stKm}}</span>
+        <span class="wf-like-xs" style="display: {{pop.stKD}}; margin-top: 4px; white-space: nowrap; --wf-fs: {{pop.stFs}}px">{{pop.stKm}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: {{pop.ttMt}}">{{pop.tt}}</b>
         <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
-        <span role="status" style="display: {{pop.tagD}}; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 8px; padding: 4px 12px; border-radius: 16px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600">{{pop.tagTxt}}</span>
+        <span role="status" style="display: {{pop.tagD}}; align-items: center; justify-content: center; text-align: center; max-width: 100%; box-sizing: border-box; min-height: 28px; margin-top: 8px; padding: 4px 16px; border-radius: 16px; background: {{pop.tagBg}}; color: {{pop.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600">{{pop.tagTxt}}</span>
       </div>
     </sc-if>
     <div style="display: {{pop.viewD}}; gap: 8px; margin-top: {{pop.btnMt}}; padding: {{pop.btnPad}}">

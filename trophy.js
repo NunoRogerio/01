@@ -32,7 +32,7 @@
     '@keyframes zi{0%{transform:scale(1)}34.7%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
     '@keyframes zo{0%{transform:scale(1.3)}34.7%{transform:scale(1)}100%{transform:scale(1)}}' +
     'canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}' +
-    '.logo{display:flex;align-items:center;gap:6px;margin-bottom:8px;color:#FFFFFF;font-size:15px;font-weight:600;letter-spacing:.02em;line-height:20px;text-shadow:0 0 10px rgba(0,0,0,.45)}' +
+    '.logo{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#FFFFFF;font-size:15px;font-weight:600;letter-spacing:.02em;line-height:20px;text-shadow:0 0 10px rgba(0,0,0,.45)}' +
     '.logo svg{flex-shrink:0;display:block;overflow:visible;filter:drop-shadow(0 0 8px rgba(0,0,0,.35))}' +
     '.cup{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 24px rgba(0,0,0,.35);perspective:200px;animation:in .9s cubic-bezier(.2,.8,.2,1) both}' +
     '.cup svg{animation:spin 8s cubic-bezier(.45,0,.25,1) 1.2s infinite}' +

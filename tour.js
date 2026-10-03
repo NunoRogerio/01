@@ -221,7 +221,7 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour .tb{position:absolute;box-sizing:border-box;padding:16px;border-radius:20px;background:rgba(28,28,30,0.72);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;pointer-events:auto;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}' +
       '#wf-tour .tb.on{opacity:1;transform:none}' +
       '#wf-tour .tb{touch-action:none;cursor:grab}#wf-tour .tb.drag{cursor:grabbing;transition:none!important}#wf-tour .tb::before{content:"";position:absolute;left:50%;top:6px;width:44px;height:3px;margin-left:-22px;border-radius:2px;background:rgba(255,255,255,0.3)}' +
-      '#wf-tour .ta{display:inline-flex;align-items:center;gap:6px;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:6px 12px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;animation:wfach .6s cubic-bezier(.3,1.5,.5,1) both}' +
+      '#wf-tour .ta{display:inline-flex;align-items:center;gap:8px;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;animation:wfach .6s cubic-bezier(.3,1.5,.5,1) both}' +
       '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
       '#wf-tour .tth{margin:0 0 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)}' +
       '#wf-tour .tt{margin:0;font-size:17px;font-weight:600;line-height:22px}' +
@@ -244,7 +244,14 @@ if (WF_TOUR_ON) (function () {
       '@media (prefers-reduced-motion:reduce){#wf-tour .tdot.on{animation:none}}' +
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
-      '@keyframes wfta{to{stroke-dashoffset:0}}';
+      '@keyframes wfta{to{stroke-dashoffset:0}}' +
+      // Blue circle profiles (Oct 3): the information cards are light-blue frosted glass with dark text (the helicopter profile keeps the dark glass)
+      (WF_TOUR_HELI ? '' :
+      '#wf-tour .tb{background:rgba(214,240,255,0.72);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,60,100,0.18),inset 0 0 0 1px rgba(90,200,250,0.55);color:#1C1C1E}' +
+      '#wf-tour .tb::before{background:rgba(28,28,30,0.2)}' +
+      '#wf-tour .tth,#wf-tour .tx{color:rgba(28,28,30,0.8)}#wf-tour .tn{color:rgba(28,28,30,0.62)}' +
+      '#wf-tour .te,#wf-tour .tc{background:rgba(28,28,30,0.08);color:#1C1C1E}' +
+      '#wf-tour .ta{background:rgba(28,28,30,0.08);box-shadow:inset 0 0 0 1px rgba(28,28,30,0.18);color:#1C1C1E}');
     document.head.appendChild(st);
   }
   function build() {

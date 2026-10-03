@@ -13,8 +13,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=125"></script>
-<script src="prefs.js?v=147"></script>
+<script src="fit.js?v=126"></script>
+<script src="prefs.js?v=148"></script>
 <script src="i18n.js?v=137"></script>
 
 <title>About</title>
@@ -32,7 +32,7 @@ p{margin:0}[data-wf-page] p,[data-wf-page] span,[data-wf-page] b{text-wrap:prett
 <!-- About, in three parts: how it started (the problem, in short), the goal and its flow, where we are and what the expert
      interviews are for; then a simple thank you, the authors as a note (Anastasia first) and the build line from Login.
      Opened from Login (top right) and from the user preferences (last row). Back returns to the screen before. -->
-<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 52px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Header, fixed: back on the left, the logo (as in the user preferences) centred, an empty column on the right to balance it -->
   <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; flex-shrink: 0; padding: 8px 16px 8px">
     <a href="{{backHref}}" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="{{tx.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
@@ -62,7 +62,7 @@ p{margin:0}[data-wf-page] p,[data-wf-page] span,[data-wf-page] b{text-wrap:prett
                 <span style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{st.ic}}"></path></svg></span>
                 <span style="display: {{st.lineD}}; flex: 1 1 auto; width: 2px; min-height: 16px; margin: 4px 0; border-radius: 999px; background: rgba(60,60,67,0.2)"></span>
               </span>
-              <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 0 0 {{st.pb}}px">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 0 0 {{st.pb}}px">
                 <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{st.n}}. {{st.t}}</span>
                 <span style="font-size: 17px; line-height: 22px; color: #000000">{{st.d}}</span>
               </span>
@@ -82,10 +82,10 @@ p{margin:0}[data-wf-page] p,[data-wf-page] span,[data-wf-page] b{text-wrap:prett
       <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.stage}}</span>
       <ol aria-label="{{tx.stage}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
         <sc-for list="{{stages}}" as="sg" hint-placeholder-count="3">
-          <li aria-current="{{sg.cur}}" style="display: flex; align-items: center; gap: 16px; min-height: 52px; padding: 12px 16px; box-sizing: border-box; border-top: {{sg.bt}}">
+          <li aria-current="{{sg.cur}}" style="display: flex; align-items: center; gap: 16px; min-height: 52px; padding: 16px 16px; box-sizing: border-box; border-top: {{sg.bt}}">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; background: {{sg.bg}}; color: {{sg.fg}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.57" stroke-linecap="round" stroke-linejoin="round"><path d="{{sg.ic}}"></path></svg></span>
             <span style="flex-grow: 1; min-width: 0; font-size: 17px; font-weight: {{sg.w}}; line-height: 22px">{{sg.t}}</span>
-            <span style="display: {{sg.tagD}}; align-items: center; height: 24px; padding: 0 10px; flex-shrink: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px">{{tx.now}}</span>
+            <span style="display: {{sg.tagD}}; align-items: center; height: 24px; padding: 0 8px; flex-shrink: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 20px">{{tx.now}}</span>
           </li>
         </sc-for>
       </ol>
