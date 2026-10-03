@@ -623,8 +623,9 @@ if (WF_TOUR_ON) (function () {
     // Magnetism: the edge the card comes near swells and brightens; the far edge shrinks and dims
     var vw = VW(), k = Math.max(-1, Math.min(1, ((vw - r.right) - r.left) / Math.max(1, vw - r.width - 16)));   // full effect at the 8px limit the card can be dragged to   // +1: card at the left edge, -1: at the right
     for (var i = 0; i < G.length; i++) { var sg = G[i].classList.contains('l') ? k : -k;
-      G[i].style.top = t.toFixed(1) + 'px'; G[i].style.height = h.toFixed(1) + 'px';
-      G[i].style.width = (31 * (sg > 0 ? 1 + 0.55 * sg : 1 + 0.4 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gk', (sg > 0 ? 1 + 0.2 * sg : 1 + 0.25 * sg).toFixed(3)); }   // near edge: up to +55% wide, +20% opacity; far edge: -40% wide, -25% opacity
+      var hh = sg < 0 ? h * (1 + 0.2 * sg) : h, tt = r.top + r.height / 2 - hh / 2;   // the far edge is also up to 20% shorter, still centred
+      G[i].style.top = tt.toFixed(1) + 'px'; G[i].style.height = hh.toFixed(1) + 'px';
+      G[i].style.width = (31 * (sg > 0 ? 1 + 0.55 * sg : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gk', (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg).toFixed(3)); }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
   }
   (function gl() { try { glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
