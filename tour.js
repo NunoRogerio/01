@@ -335,8 +335,8 @@ if (WF_TOUR_ON) (function () {
     // Inertia (Oct 3): a swipe keeps the card sliding the way it was thrown, decelerating smoothly; screen edges stop it
     // Left and right edges (Oct 3, 13:37): the bubble is nearly as wide as the screen, so there is no room to throw it back;
     // it stretches past the edge like rubber (further the harder it hits, up to 32px) and springs back
-    var sideBump = function (v) { try { var d = (v > 0 ? 1 : -1) * Math.min(32, 10 + Math.abs(v) * 0.015); if (b.__wfSB) b.__wfSB.cancel();
-      b.__wfSB = b.animate([{ translate: '0px 0px', easing: 'cubic-bezier(.2,.9,.3,1)' }, { translate: d + 'px 0px', offset: 0.3, easing: 'cubic-bezier(.3,1.6,.5,1)' }, { translate: '0px 0px' }], { duration: 620 }); } catch (x) {} };
+    var sideBump = function (v) { try { var d = (v > 0 ? -1 : 1) * Math.min(10, 4 + Math.abs(v) * 0.004); if (b.__wfSB) b.__wfSB.cancel();   // recoils inward, away from the edge (never past it), 4 to 10px (Oct 3, 13:40)
+      b.__wfSB = b.animate([{ translate: '0px 0px', easing: 'cubic-bezier(.2,.8,.3,1)' }, { translate: d + 'px 0px', offset: 0.35, easing: 'cubic-bezier(.4,0,.2,1)' }, { translate: '0px 0px' }], { duration: 560 }); } catch (x) {} };
     var throwIt = function (vx, vy, i) {
       var last = 0, l = parseFloat(b.dataset.l || 0), t = parseFloat(b.dataset.t || 0);
       var stepF = function (now) { var s0 = get(); if (!s0 || s0.i !== i || !bub || !bub.isConnected) { fling = 0; return; }
