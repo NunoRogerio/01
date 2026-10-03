@@ -238,9 +238,9 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour .tgl.r{right:0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),0.65) 0,rgba(var(--wf-y-rgb,229,255,0),0.65) 1.5px,rgba(var(--wf-y-rgb,229,255,0),0.38) 2.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
       '@keyframes wftg{0%,100%{opacity:1}50%{opacity:.4}}' +
       '#wf-tour .tc{width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.14);color:#FFFFFF}#wf-tour .tc.tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}#wf-tour .tc[disabled]{opacity:.3;cursor:default}' +
-      '#wf-tour .tdot{position:absolute;width:80px;height:80px;margin:-40px 0 0 -40px;box-sizing:border-box;border-radius:50%;background:rgba(90,200,250,0.26);box-shadow:inset 0 0 0 1.5px rgba(90,200,250,0.7);pointer-events:none;opacity:0;transition:opacity .35s ease,left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1)}' +
-      '#wf-tour .tdot.on{opacity:1;animation:wftd 1.8s ease-in-out infinite}' +
-      '@keyframes wftd{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}' +
+      '#wf-tour .tdot{position:absolute;width:80px;height:80px;margin:-40px 0 0 -40px;box-sizing:border-box;border-radius:50%;background:rgba(var(--wf-y-rgb,229,255,0),0.3);box-shadow:inset 0 0 0 2px rgba(var(--wf-y-rgb,229,255,0),0.95),0 0 0 1px rgba(28,28,30,0.35);pointer-events:none;opacity:0;transition:opacity .35s ease,left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1)}' +
+      '#wf-tour .tdot.on{opacity:1;animation:wftd 1.8s infinite}' +
+      '@keyframes wftd{0%{transform:scale(1);animation-timing-function:ease-in-out}75%{transform:scale(1.1);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:scale(1)}}' +
       '@media (prefers-reduced-motion:reduce){#wf-tour .tdot.on{animation:none}}' +
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
