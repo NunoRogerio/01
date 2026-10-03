@@ -380,7 +380,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   // Achievement sound (Oct 3, 17:20): a short bright "prlim", a quick rising trill landing on a soft bell note.
   // Web Audio, no file to load; the context is unlocked by the first touch (browsers block sound before one).
-  var actx = null;
+  var actx = null, ACH_LEAD = 450;   // the sound leads the achievement card by this much (ms)
   function actxGet() { try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {} return actx; }
   ['pointerdown', 'touchend'].forEach(function (ev) { window.addEventListener(ev, function () { actxGet(); }, { capture: true, passive: true }); });
   function prlim() {
@@ -524,8 +524,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
         '<button type="button" class="tc tb0"' + (i ? '' : ' disabled') + '>' + CH('m15 6-6 6 6 6') + '</button>' +
         (nl && nx ? '<button type="button" class="tg"></button>' : '<button type="button" class="tc' + (nx ? ' tg' : '') + '"' + (nx ? '' : ' disabled') + '>' + CH('m9 6 6 6-6 6') + '</button>') + '</div>';
       var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
-      if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); actxGet();   // wake the sound now, so it plays the instant the chip appears
-        var taEl = bub.querySelector('.ta'); setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }, 520); }
+      if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); // (Oct 3, 21:16) an achievement is announced by its sound first: the "prlim" plays before anything changes on screen,
+        // then the card appears (ACH_LEAD later), and the chip pops last with its swell
+        prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {}
+        var taEl = bub.querySelector('.ta'); setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); }, ACH_LEAD + 520); }
       bub.querySelector('.tt').textContent = L(st.t);
       // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }
@@ -537,7 +539,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       bub.querySelector('.tn').textContent = (i + 1) + (pt ? ' de ' : ' of ') + S.length;
       var e = bub.querySelector('.te'); e.textContent = pt ? 'Terminar visita' : 'End tour'; e.onclick = function (ev) { ev.stopPropagation(); end(); };
       var g = bub.querySelector('.tg'); if (g) { if (nl) g.textContent = nl; else g.setAttribute('aria-label', pt ? 'Seguinte' : 'Next'); g.onclick = function (ev) { ev.stopPropagation(); var s0 = S[i], nxS = S[i + 1]; go(i + 1); if (s0.go && !(done0 && s0.mode !== 'next')) s0.go(); else if (nxS && nxS.page !== PAGE) { var at = location.href; try { history.forward(); } catch (x) {} setTimeout(function () { if (location.href === at) location.href = nxS.page; }, 500); } else tick(); }; }
-      requestAnimationFrame(function () { if (bub) bub.classList.add('on'); });
+      var showB = function () { requestAnimationFrame(function () { if (bub) bub.classList.add('on'); }); }; if (AC) setTimeout(function () { if (lastKey === key) showB(); }, ACH_LEAD); else showB();
       svg.innerHTML = '';
       svg.__k = '';
     }

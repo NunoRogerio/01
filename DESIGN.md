@@ -748,3 +748,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Likelihood tags on the map (Oct 3, 21:12): every candidate shows its tag, including the selected one. A tag goes on the side that is clear and inside the map. If one side has no room, it goes on the other. If neither side is clear, it takes the side with the fewest overlaps, and tags may overlap. A tag is never hidden.
 - Dark theme off (Oct 3, 21:13): every screen is light and the Theme choice is hidden from Appearance. The dark styles stay in prefs.js (DARK_ON) for later.
 - Menu section switch (Oct 3, 21:14): the section being covered darkens 24% (10% + 14%) as the new one slides over it.
+- Achievement order (Oct 3, 21:16): the "prlim" sound (and its haptic) comes first, before anything changes on screen. The achievement card appears 450ms later, and the chip pops last with its 10% swell.
