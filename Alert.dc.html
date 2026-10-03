@@ -13,10 +13,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=130"></script>
+<script src="fit.js?v=131"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=166"></script>
-<script src="i18n.js?v=149"></script>
+<script src="prefs.js?v=167"></script>
+<script src="i18n.js?v=150"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=58"></script>
 <script src="tour.js?v=66"></script>
@@ -1211,11 +1211,25 @@ class Component extends DCLogic {
         const dx = Math.max(dxMin, Math.min(dxMax, this._fdx || 0)), dy = Math.max(dyMin, Math.min(dyMax, this._fdy || 0));
         this._fB = { dxMin, dxMax, dyMin, dyMax };
         const ff = mk(fOn, 'translate(' + (cx - 32 - left0) + 'px, ' + (RH - 64 - top0) + 'px) scale(0.1788)', 'translate(' + dx + 'px, ' + dy + 'px)');
-        ff.top = top0; ff.left = left0; ff.tT = this._fDrag ? '0s' : '.55s cubic-bezier(.2,.8,.2,1)';
-        ff.down = (e) => { if (e.target.closest && e.target.closest('button')) return; let k = 1; try { const el = e.currentTarget, P = el.parentElement; k = el.getBoundingClientRect().width / 358 || 1; this._rootW = P.offsetWidth || 390; this._rootH = P.offsetHeight || 844; } catch (x) {} this._fDrag = { x: e.clientX, y: e.clientY, x0: dx, y0: dy, k }; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} };
-        ff.move = (e) => { const D = this._fDrag, B = this._fB; if (!D || !B) return;
-          this._fdx = Math.max(B.dxMin, Math.min(B.dxMax, D.x0 + (e.clientX - D.x) / D.k)); this._fdy = Math.max(B.dyMin, Math.min(B.dyMax, D.y0 + (e.clientY - D.y) / D.k)); this.forceUpdate(); };
-        ff.up = () => { if (!this._fDrag) return; this._fDrag = null; this.forceUpdate(); };
+        ff.top = top0; ff.left = left0; ff.tT = this._fDrag || this._fGlide ? '0s' : '.55s cubic-bezier(.2,.8,.2,1)';
+        ff.down = (e) => { if (e.target.closest && e.target.closest('button')) return; cancelAnimationFrame(this._fFling || 0); this._fFling = 0; this._fGlide = false; let k = 1; try { const el = e.currentTarget, P = el.parentElement; k = el.getBoundingClientRect().width / 358 || 1; this._rootW = P.offsetWidth || 390; this._rootH = P.offsetHeight || 844; } catch (x) {} this._fDrag = { x: e.clientX, y: e.clientY, x0: dx, y0: dy, k }; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} };
+        // (Oct 3, 22:09) dragged like the tour's cards: it follows the finger after a 6px slop, a throw keeps it gliding the way it
+        // went, slowing smoothly; at an edge (8px in) it bounces back gently, no magnet; it stays where it lands
+        ff.move = (e) => { const D = this._fDrag, B = this._fB; if (!D || !B) return; const mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true;
+          const now = performance.now(); (D.tr = D.tr || []).push([now, e.clientX, e.clientY]); while (D.tr.length > 2 && now - D.tr[0][0] > 90) D.tr.shift();
+          this._fdx = Math.max(B.dxMin, Math.min(B.dxMax, D.x0 + mx / D.k)); this._fdy = Math.max(B.dyMin, Math.min(B.dyMax, D.y0 + my / D.k)); this.forceUpdate(); };
+        ff.up = () => { const D = this._fDrag; if (!D) return; this._fDrag = null; cancelAnimationFrame(this._fFling || 0);
+          const tr = D.tr || [], a = tr[0], z = tr[tr.length - 1]; let vx = 0, vy = 0;
+          if (D.moved && a && z && z[0] - a[0] > 8 && performance.now() - z[0] < 80) { vx = (z[1] - a[1]) / ((z[0] - a[0]) / 1000) / D.k; vy = (z[2] - a[2]) / ((z[0] - a[0]) / 1000) / D.k; const sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
+          if (Math.hypot(vx, vy) > 150) { let last = 0; const B = this._fB; this._fGlide = true;
+            const step = (now) => { const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; const k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
+              let x = (this._fdx || 0) + vx * dt, y = (this._fdy || 0) + vy * dt;
+              if (x < B.dxMin) { x = B.dxMin; vx = -vx * 0.3; } else if (x > B.dxMax) { x = B.dxMax; vx = -vx * 0.3; }
+              if (y < B.dyMin) { y = B.dyMin; vy = -vy * 0.3; } else if (y > B.dyMax) { y = B.dyMax; vy = -vy * 0.3; }
+              this._fdx = x; this._fdy = y; this.forceUpdate();
+              if (Math.hypot(vx, vy) < 12) { this._fGlide = false; this._fFling = 0; this.forceUpdate(); return; } this._fFling = requestAnimationFrame(step); };
+            this._fFling = requestAnimationFrame(step); }
+          this.forceUpdate(); };
         const mf = { sc: mx ? 1 : 0.94, op: mx ? 1 : 0, pe: mx ? 'auto' : 'none', hidden: mx ? 'false' : 'true', vid: mx };
         return { bf, ff, mf, feedXRot: on ? '0deg' : '90deg', maxFeed: () => this.setState({ feedMax: true }), minFeed: () => this.setState({ feedMax: false }) };
       })(),

@@ -6,11 +6,11 @@
   var lang='en';
   // The profile sets the default; the preferences panel can switch a Portuguese profile to English (kept per profile).
   // Every profile can choose English, Portuguese or Japanese; the Portuguese profiles start in Portuguese.
-  // The languages on offer (Oct 3, 18:13): each with its native name and its round flag (assets/flags, circle-flags, MIT).
+  // The languages on offer (Oct 3, 18:13): each by its native name (Oct 3, 22:11: no flags, a flag is a country, not a language).
   // English, Portuguese and Japanese live here; Spanish, French and German load from data/i18n/<code>.json when chosen.
   // Oct 3, 19:33: these six only; in order of how many people speak each worldwide (19:39)
-  var LANGS=[['en','English','gb'],['es','Español','es'],['fr','Français','fr'],['pt','Português','pt'],['de','Deutsch','de'],['ja','日本語','jp']];
-  window.__wfLangs=LANGS.map(function(a){return {code:a[0],name:a[1],flag:'assets/flags/'+a[2]+'.svg'};});
+  var LANGS=[['en','English'],['es','Español'],['fr','Français'],['pt','Português'],['de','Deutsch'],['ja','日本語']];
+  window.__wfLangs=LANGS.map(function(a){return {code:a[0],name:a[1]};});
   var OK={};LANGS.forEach(function(a){OK[a[0]]=1;});
   try{var role=localStorage.getItem('wf-role')||'',sv=localStorage.getItem('wf-lang-'+role);lang=OK[sv]?sv:((role==='pt'||role==='design')?'pt':'en');}catch(e){}
   window.__wfLang=lang;

@@ -207,6 +207,7 @@ window.__wfBlink=function(path,dur){
     '#wf-load.hand .name{letter-spacing:.02em;text-shadow:0 0 10px rgba(0,0,0,.45)}'+
     '#wf-load.hand .sub{display:grid;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}#wf-load.hand .sub>span{grid-area:1/1;transition:opacity .45s cubic-bezier(.4,0,.2,1)}'+
     '#wf-load.hand .pct{position:absolute;left:0;right:0;top:50%;margin:0;transform:translateY(-50%);text-align:center;font-size:143px;line-height:1}'+
+    '#wf-load.hand .sub2{position:absolute;left:0;right:0;top:calc(50% + 80px);margin:0;text-align:center;white-space:nowrap;font:400 17px/22px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5);transition:opacity .45s cubic-bezier(.4,0,.2,1)}'+
     '#wf-load.hand .cap{bottom:auto;color:rgba(255,255,255,.72);transition:none}'+
     '#wf-load.hand .shade{background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)}';
   document.head.appendChild(st);
@@ -233,9 +234,11 @@ window.__wfBlink=function(path,dur){
   var handLayout=function(o,lay,first){if(!lay)return false;o.classList.add('hand');
     var put=function(n,r){if(!n||!r)return;n.style.left=r[0]+'px';n.style.top=r[1]+'px';n.style.width=r[2]+'px';n.style.height=r[3]+'px';if(r[4]){n.style.fontSize=r[4]+'px';n.style.lineHeight=r[3]+'px';}};
     put(o.querySelector('.in>svg'),lay.logo);put(o.querySelector('.name'),lay.name);put(o.querySelector('.cap'),lay.cred);
-    var sb=o.querySelector('.sub');if(sb&&lay.sub){put(sb,lay.sub);sb.innerHTML='';var a=document.createElement('span'),b=document.createElement('span');a.textContent=lay.sub[5]||'';b.textContent=LOADTXT;
-      if(first){b.style.opacity='0';sb.appendChild(a);sb.appendChild(b);setTimeout(function(){a.style.opacity='0';b.style.opacity='1';},60);}   // the line changes softly
-      else{sb.appendChild(b);}}
+    // (Oct 3, 22:16) 'Loading live data' sits under the counter; the sign-in line fades out where it was, the logo stays put
+    var sb=o.querySelector('.sub');if(sb&&lay.sub){put(sb,lay.sub);sb.innerHTML='';var a=document.createElement('span'),b=o.querySelector('.sub2');a.textContent=lay.sub[5]||'';
+      if(!b){b=document.createElement('span');b.className='sub2';o.querySelector('.in').appendChild(b);}b.textContent=LOADTXT;if(lay.sub[4])b.style.fontSize=lay.sub[4]+'px';
+      if(first){b.style.opacity='0';sb.appendChild(a);setTimeout(function(){a.style.opacity='0';b.style.opacity='1';},60);}   // the line changes softly
+      else{b.style.opacity='1';}}
     var cp=o.querySelector('.cap');if(cp&&lay.cred)cp.textContent=lay.cred[5]||'';
     return true;};
   var LAY=null;try{LAY=JSON.parse(sessionStorage.getItem('wf-soft-layout')||'null');}catch(e){}
