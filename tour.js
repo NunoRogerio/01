@@ -433,7 +433,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       b.classList.remove('drag');
       var tr = s1.trail, a = tr[0], z = tr[tr.length - 1], vx = 0, vy = 0;
       if (s1.moved && a && z && z[0] - a[0] > 8 && performance.now() - z[0] < 80) { vx = (z[1] - a[1]) / ((z[0] - a[0]) / 1000); vy = (z[2] - a[2]) / ((z[0] - a[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
-      if (vy < -600 && Math.abs(vy) > Math.abs(vx) * 1.2) { exitTop(vy); return; }   // a swipe up: the tour leaves through the top
+      if (vy < -1800 && Math.abs(vy) > Math.abs(vx) * 1.5) { exitTop(vy); return; }   // only a very fast swipe up ends the tour through the top (Oct 3, 22:36); normal throws bounce
       if (Math.hypot(vx, vy) > 150) throwIt(vx, vy, s1.i);
       setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
