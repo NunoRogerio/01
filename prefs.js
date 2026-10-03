@@ -383,25 +383,21 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   /* Round controls: their press (swell + haptic) lives in fit.js, loaded on every screen */
   /* Mini card numbers: shrink the value until value + unit fit inside the card's 8px side padding */
   function fitKpi() {
-    /* Set inline with !important so it wins over the text-size setting's .kpi size (it used to override the fit). Each pass
-       starts from the natural size, so numbers also grow back when there is room; all in one frame, so nothing flickers. */
-    var ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), want = [];
-    for (var i0 = 0; i0 < ns.length; i0++) ns[i0].style.removeProperty('font-size');
+    /* Three value sizes on the 8px scale (Oct 3): each card's value takes the largest of 40, 32 or 24px that fits with 8px clear
+       on every side of the card, and clear of a vertical note (Estimate) by 4px. Set inline with !important so the text-size
+       setting can't override it; each pass starts afresh, all in one frame (no flicker). If even 24px is too wide, the value
+       wraps onto two lines at 24px. */
+    var SZ = [40, 32, 24], ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), rg = document.createRange();
     for (var i = 0; i < ns.length; i++) {
-      var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]'), fs = parseFloat(getComputedStyle(n).fontSize) || 26;
-      want.push(fs); if (!row || !card || !card.clientWidth) continue;
-      var avail = card.clientWidth - 16, w = row.scrollWidth;   // the card's 8px padding on each side stays clear
-      if (w > avail + 0.5) {   // first guess, then measured down 1px at a time (units keep their size, so the row doesn't scale evenly)
-        var f2 = Math.max(12, Math.floor(fs * avail / w)); n.style.setProperty('font-size', f2 + 'px', 'important');
-        for (var t = 0; t < 24 && f2 > 12 && row.scrollWidth > avail + 0.5; t++) { f2--; n.style.setProperty('font-size', f2 + 'px', 'important'); }
-        want[i] = f2; n.style.removeProperty('font-size');
-      }
+      var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]');
+      if (!row || !card || !card.clientWidth) continue;
+      row.style.removeProperty('max-width'); row.style.setProperty('white-space', 'nowrap'); row.style.setProperty('flex-wrap', 'nowrap'); n.style.setProperty('white-space', 'nowrap');   // measured on one line
+      var cr = card.getBoundingClientRect(), L = cr.left + 8, R = cr.right - 8, note = card.querySelector('.wf-note');
+      if (note && note.offsetWidth && getComputedStyle(note).display !== 'none' && (note.textContent || '').trim()) { var nr = note.getBoundingClientRect(); R = Math.min(R, nr.left - 4); }
+      var fits = function () { rg.selectNodeContents(row); var r = rg.getBoundingClientRect(); return r.left >= L - 0.5 && r.right <= R + 0.5 && row.scrollWidth <= row.clientWidth + 0.5; }, k = 0;
+      for (; k < SZ.length; k++) { n.style.setProperty('font-size', SZ[k] + 'px', 'important'); if (fits()) break; }
+      if (k === SZ.length) { n.style.setProperty('font-size', '24px', 'important'); n.style.setProperty('white-space', 'normal'); row.style.setProperty('white-space', 'normal'); row.style.setProperty('flex-wrap', 'wrap'); row.style.setProperty('justify-content', 'center'); var cx = (cr.left + cr.right) / 2; row.style.setProperty('max-width', Math.floor(2 * Math.min(R - cx, cx - L)) + 'px'); }
     }
-    /* One size per row of cards: every number in the group takes the smallest size any of them needed */
-    var G = new Map();
-    for (var j = 0; j < ns.length; j++) { var c = ns[j].closest('[data-wf-kpicard]'); if (!c || !c.clientWidth) continue; var g = c.parentElement && c.parentElement.parentElement; if (!G.has(g)) G.set(g, []); G.get(g).push(j); }
-    G.forEach(function (list) { var mn = Infinity; list.forEach(function (k) { mn = Math.min(mn, want[k]); }); list.forEach(function (k) { want[k] = mn; }); });
-    for (var k2 = 0; k2 < ns.length; k2++) { var nat = parseFloat(getComputedStyle(ns[k2]).fontSize) || 26; if (Math.abs(want[k2] - nat) > 0.5) ns[k2].style.setProperty('font-size', want[k2] + 'px', 'important'); }
   }
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
   var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;
