@@ -743,3 +743,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Dark theme markers (Oct 3, 21:02):** candidate markers (map, legend dot, ignition pin, the Tour button's circle) fill the yellow at 80% at night so they stand out on the dark map as much as by day; their rim and moon stay dark on the yellow, and the pulse ring turns yellow so it shows on the dark map.
 - **Count badges (Oct 3, 21:04):** no outline; they sit 4px above and 6px beyond the button's corner, inside the screen, so WebKit never clips them at the top.
 - **Tag contrast check (Oct 3, 21:07):** every stage tag and likelihood tag measured against WCAG 2.2 (1.4.3, 4.5:1 for text): all pass, 5.1:1 to 10.8:1, in both themes (opaque light backgrounds). The fallback stage tag colours (used when a fire has no stage) were tinted see-through backgrounds that failed on the dark theme; they are now the stage tags' opaque pairs.
+
+- Stage tag label (Oct 3, 21:09): the icon sits 8px in from the left; the label is centred in the space between the icon and the tag's right edge (32px left / 8px right padding).
+- Likelihood tags on the map (Oct 3, 21:12): every candidate shows its tag, including the selected one. A tag goes on the side that is clear and inside the map. If one side has no room, it goes on the other. If neither side is clear, it takes the side with the fewest overlaps, and tags may overlap. A tag is never hidden.
+- Dark theme off (Oct 3, 21:13): every screen is light and the Theme choice is hidden from Appearance. The dark styles stay in prefs.js (DARK_ON) for later.
+- Menu section switch (Oct 3, 21:14): the section being covered darkens 24% (10% + 14%) as the new one slides over it.

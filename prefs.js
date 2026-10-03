@@ -136,8 +136,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   var BTN = '.sqrow::after{display:none!important}' +
     // The likelihood tag, one component (Oct 3, 20:26): the stage tags' pill; colours from live.js __wfConfTag. Incident list, candidate picker, map
     '.wf-ctag{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 16px;box-sizing:border-box;border-radius:14px;font-size:15px;line-height:20px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}' +
-    // Stage tags (Oct 3, 18:50): the icon sits at the left, 8px in; the label stays centred on the whole tag (equal room both sides)
-    '.wf-stg{position:relative;justify-content:center!important;padding-left:36px!important;padding-right:36px!important}.wf-stg>svg{position:absolute;left:8px;top:50%;margin:0!important;transform:translateY(-50%)}' +   /* lists: no divider between items, only the line under the list's header */
+    // Stage tags (Oct 3, 18:50; 21:09): the icon sits at the left, 8px in; the label is centred in the space between the icon and the tag's right edge
+    '.wf-stg{position:relative;justify-content:center!important;padding-left:32px!important;padding-right:8px!important}.wf-stg>svg{position:absolute;left:8px;top:50%;margin:0!important;transform:translateY(-50%)}' +   /* lists: no divider between items, only the line under the list's header */
     '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
   'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over an 8px lime bar, rounded at both ends, that glides between them; shared by every tab set */
@@ -264,7 +264,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   // profile's region, whatever the profile's own region is; when it ends, the profile's own region and choice come back
   window.__wfTourLock = function () { try { return sessionStorage.getItem('wf-tour') ? 'CA' : null; } catch (e) { return null; } };
   function apply() {
-    var theme = get('theme', 'light'), size = get('text', 'normal');
+    // Dark theme is off for now (Oct 3, 21:13): every screen is light, whatever was chosen before; the dark styles stay for later
+    var DARK_ON = false, theme = DARK_ON ? get('theme', 'light') : 'light', size = get('text', 'normal');
     try { spApply(get('space', 'comfortable')); } catch (e) {}
     var el = document.getElementById('wf-prefs');
     if (!el) { el = document.createElement('style'); el.id = 'wf-prefs'; (document.head || document.documentElement).appendChild(el); }

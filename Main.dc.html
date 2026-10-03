@@ -17,7 +17,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=160"></script>
+<script src="prefs.js?v=162"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=57"></script>
@@ -1003,9 +1003,9 @@ class Component extends DCLogic {
               const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '1'; cl.style.transition = 'none';
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
-              // (Oct 3, 20:32) the section being covered darkens 10%, gradually, as the new one slides over it
+              // (Oct 3, 20:32) the section being covered darkens 24% (10% + 14%, Oct 3, 21:14), gradually, as the new one slides over it
               const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .74s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
-              requestAnimationFrame(() => requestAnimationFrame(() => { dim.style.opacity = '0.1'; }));
+              requestAnimationFrame(() => requestAnimationFrame(() => { dim.style.opacity = '0.24'; }));
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateX(' + (w + 60) + 'px)';
               requestAnimationFrame(() => requestAnimationFrame(() => { sec.style.transition = 'transform .74s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)'; }));
               setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 820); } } catch (e) {} }
@@ -1160,7 +1160,7 @@ class Component extends DCLogic {
             this.setState({ langPend: o.code }, () => this.wfLangThumb(true)); clearTimeout(this._lgT);
             this._lgT = setTimeout(() => { if (window.__wfSetLang) window.__wfSetLang(o.code); this.setState({ langPend: null, lang: o.code }, () => this.wfLangThumb(false)); }, 700); } })) }; })(),
       pfGroups: [
-        group('Theme', theme, [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v)),
+        // (Oct 3, 21:13) the Theme choice is hidden while the dark theme is off (prefs.js DARK_ON)
         group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),
         // Spacing (Oct 3, 18:10): every space of 16px or more one step down or up the spacing scale (prefs.js)
         group('Spacing', P ? P.get('space') || 'comfortable' : 'comfortable', [   // (Oct 3, 20:52) icons: three squares, close together, comfortable, far apart
