@@ -1063,7 +1063,7 @@
   function police(inc) {
     var db = load(), k = 'p:' + inc.id;
     if (db.chats[k] && !db.chats[k].v2) delete db.chats[k];   // a report made before the captain's investigation: started again
-    if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.place = 'Night ignition report'; o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = P0.roleEn; o.people[0].rolePt = P0.rolePt; o.people[0].org = P0.org; } save(); return o; }
+    if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.dismissed = false; o.place = 'Night ignition report';   /* reported again: a chat that was put away comes back */ o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = P0.roleEn; o.people[0].rolePt = P0.rolePt; o.people[0].org = P0.org; } save(); return o; }
     var now = Date.now(), P = policeOf(inc.st, inc.reg);
     var ch = { key: k, kind: 'dm', police: true, v2: true, incId: inc.id, place: 'Night ignition report', reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
       stage: 0, startStage: 0, started: now, vNow: now, vAt: now, hist: [{ s: 0, vt: now }], people: [], stations: [], forces: [], air: null, evac: null,
