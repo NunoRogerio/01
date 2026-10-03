@@ -709,3 +709,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Share link (Oct 3, 19:04):** the Share section shows the app's link in the grey copy box (as the invite link): tap it to copy, the copy icon turns into a tick and a dark tooltip confirms.
 - **Languages not yet translated (Oct 3, 19:06):** translation work is stopped. The rest of Europe's languages are listed with their flags (Bosanski, Crnogorski, Беларуская, Lëtzebuergesch, Türkçe, ქართული, Հայերեն); tapping one shows a tooltip, "Not available yet", and nothing changes.
 - **Mini KPI values (Oct 3, 19:15):** 32px by default in every mini KPI card; a value only steps down to 24px when it doesn't fit (then wraps at 24px as a last resort). Replaces the 40/32/24 largest-that-fits rule.
+- **Language flags (Oct 3, 19:17):** 24px round flags (was 32px), 12px in from the option's left edge.
