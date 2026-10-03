@@ -707,10 +707,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function autoScroll(el, i) {
     var sc = null; for (var n = el.parentElement; n && n !== document.body; n = n.parentElement) if (scrollable(n, 'y')) { sc = n; break; }
     if (!sc) return; var stop = false, last = 0, pos = sc.scrollTop;
-    // (Oct 3, 19:53) it scrolls only until the last row of the step's own cards (the first mini KPIs) sits just above the
-    // tour card, so the circle never has to leave the area it points at
-    var K = el.querySelectorAll('[data-wf-kpi]'), lastK = K.length ? K[K.length - 1] : el, bt = bub ? bub.getBoundingClientRect().top : VH() - 150;
-    var maxPos = Math.max(pos, Math.min(sc.scrollHeight - sc.clientHeight, pos + (lastK.getBoundingClientRect().bottom - (bt - 24))));
+    // (Oct 3, 20:58) it scrolls until the step's section (its label, e.g. Key figures) sits at the top of the page, just under
+    // the fixed header, so the whole group of cards shows above the tour card
+    var secEl = el.closest('section[aria-label]') || el, sct = sc.getBoundingClientRect().top;
+    var maxPos = Math.max(pos, Math.min(sc.scrollHeight - sc.clientHeight, pos + (secEl.getBoundingClientRect().top - sct - 12)));
     var halt = function () { stop = true; ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.removeEventListener(t, halt, true); }); };
     ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.addEventListener(t, halt, { capture: true, passive: true }); });
     var step = function (t) { var s0 = get(); if (stop || !s0 || s0.i !== i || !sc.isConnected) { halt(); return; }

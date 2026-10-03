@@ -739,3 +739,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Menu button speed (Oct 3, 20:54):** the button's move is twice as fast as the screen's slide (0.37 s, same ease); closing, it starts only when the screen's edge reaches the left of the icon column, then clacks.
 - **Menu icon spacing fixed (Oct 3, 20:55):** the icon column always keeps 16px between its icons; the Spacing preference never changes it.
 - **Tour auto-scroll speed (Oct 3, 20:57):** one speed for every scroll the tour makes by itself: 104 px/s (49% faster than before), with a gentle start and finish, stopping at any touch. Bringing a target into view, scrolling a chat to its end and the Key figures scroll all use it.
+- **Tour Key figures scroll end (Oct 3, 20:58):** the page scrolls until the Key figures section (its label) sits at the top, just under the fixed header, so the whole group of cards shows. Supersedes the 19:53 end point.
