@@ -757,3 +757,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - About in the menu (Oct 3, 21:45): the embedded About fills its frame exactly, so it scrolls to the end.
 - Round button spacing is fixed (Oct 3, 21:47): the spacing preference never changes the 16px between round buttons or their 16px from the right edge. That covers the top-bar groups and the map controls.
 - Spacing icons (Oct 3, 21:48): two rows of three squares, so the icons show vertical spacing as well as horizontal.
+- Menu sections all behave alike (Oct 3, 21:49): a section shown in a frame (About) stays visible while the next one slides over it. Its copy shows a still snapshot of the page at the same scroll position and darkens like the others. About loads as soon as the menu opens, so it slides in already filled.

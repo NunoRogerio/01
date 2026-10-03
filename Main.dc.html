@@ -1004,7 +1004,14 @@ class Component extends DCLogic {
           let go = null;
           if (open && pmSec !== k) { try { const sec = document.querySelector('[data-wf-menusec]'), sc0 = sec && sec.querySelector('[data-wf-fadetop]');
             if (sec) { const cl = sec.cloneNode(true), w = sec.offsetWidth; cl.removeAttribute('data-wf-menusec'); cl.setAttribute('aria-hidden', 'true'); cl.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id'));
-              cl.querySelectorAll('iframe').forEach((e) => { e.removeAttribute('src'); e.style.visibility = 'hidden'; });
+              // (Oct 3, 21:49) a section shown in a frame (About) stays on screen while it is covered, like every other section:
+              // its copy shows a still snapshot of the frame's page (scroll position kept); the slide waits for it, briefly
+              const lives = [...sec.querySelectorAll('iframe')], waits = [];
+              cl.querySelectorAll('iframe').forEach((e, i) => { const lv = lives[i]; e.removeAttribute('src');
+                let snap = ''; try { const d = lv && lv.offsetWidth && lv.contentDocument; if (d && d.documentElement) { const h = d.documentElement.cloneNode(true); h.querySelectorAll('script, noscript').forEach((x) => x.remove());
+                  const pgE = d.querySelector('[data-wf-page]'), st = pgE ? pgE.scrollTop : 0; snap = '<!doctype html>' + h.outerHTML.replace('<head>', '<head><base href="' + d.baseURI + '">');
+                  waits.push(new Promise((res) => { e.onload = () => { try { const q = e.contentDocument.querySelector('[data-wf-page]'); if (q) q.scrollTop = st; } catch (x) {} res(); }; setTimeout(res, 300); })); } } catch (x) {}
+                if (snap) e.srcdoc = snap; else e.style.visibility = 'hidden'; });
               const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '1'; cl.style.transition = 'none';
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
@@ -1013,8 +1020,8 @@ class Component extends DCLogic {
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateX(' + (w + 60) + 'px)';
               // (Oct 3, 21:27) no jump: the slide (and the darkening) start only once the new section has rendered, off to the
               // right, so it never changes or settles while it is moving in
-              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; (() => { dim.style.opacity = '0.24'; sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)';
-                setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 590); })(); }; } } catch (e) {} }
+              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; Promise.all(waits).then(() => { dim.style.opacity = '0.24'; sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)';
+                setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 590); }); }; } } catch (e) {} }
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {}), () => { if (go) go(); }); };
         const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
@@ -1031,7 +1038,7 @@ class Component extends DCLogic {
           bDur: boot ? '0s' : '.25s',   // (Oct 3, 21:36) 50% faster   // (Oct 3, 20:54) twice as fast as the screen   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time
           bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
           bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 'auto' : 'none',   // (Oct 3, 20:19) shown with the area picker (its top row has the same buttons), hidden over the open incident list   // hidden while another top panel or the full-screen map is up
-          dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
+          dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmMode || pmSec === 'about' || this._abtSeen ?   /* (Oct 3, 21:49) loaded as soon as the menu opens, so About is ready when it slides in */ (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',
       cs: (() => { const o = !!s.chatSet, pt = lang === 'pt';
         return { title: pt ? 'Encenação e chave' : (window.__wfJA ? window.__wfJA('Chat role-play and key') : 'Chat role-play and key'), str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
