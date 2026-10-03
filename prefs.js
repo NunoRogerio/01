@@ -236,7 +236,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   // per element and property: the value as designed (o) and the value written here (w); a property the screen rewrites is
   // taken as its new design value, so nothing is ever shifted twice
   function spEl(el) {
-    var st = el.style; if (!st || !el.getAttribute('style')) return; var r = spRec.get(el);
+    var st = el.style; if (!st || !el.getAttribute('style')) return; if (el.closest && el.closest('[data-wf-nospace]')) return;   // kept as designed (the menu's icon column: always 16px apart)
+    var r = spRec.get(el);
     for (var i = 0; i < SPP.length; i++) { var p = SPP[i], v = st.getPropertyValue(p); if (!v) continue;
       if (r && r[p] && r[p].w === v) continue;
       var nv = spDir ? spVal(v) : v;
