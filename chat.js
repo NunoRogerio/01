@@ -1074,8 +1074,8 @@
     var bodyEn = [inc.reg, inc.startTxt ? 'Started ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.', bodyPt = [inc.reg, inc.startTxt ? 'Início ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.';
     ch.msgs.push({ id: newId(), kind: 'card', from: 'me', topic: true, tag: { en: 'Night ignition', pt: 'Ignição noturna' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + inc.place, pt: 'Incêndio. ' + inc.place }, body: { en: bodyEn, pt: bodyPt }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic, t: now, vt: now });
     mine(ch, 'Reporting a night ignition, can you please investigate?', 'Reporto uma ignição noturna, podem investigar, por favor?');
-    say(ch, 0, P.roleEn + ' ' + nm + ', ' + P.org + '. Thank you for reporting it. I have opened a case for the night ignition at ' + inc.place + (inc.startTxt ? ', started ' + inc.startTxt : '') + '. A few questions to start: how was it detected, and did your crews see anyone or any vehicle near the point of origin?',
-      P.rolePt + ' ' + nm + ', ' + P.org + '. Obrigado pela participação. Abri um processo para a ignição noturna em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
+    say(ch, 0, 'Thank you for reporting it. I have opened a case for the night ignition at ' + inc.place + (inc.startTxt ? ', started ' + inc.startTxt : '') + '. A few questions to start: how was it detected, and did your crews see anyone or any vehicle near the point of origin?',
+      'Obrigado pela participação. Abri um processo para a ignição noturna em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
     db.chats[k] = ch; save(); emit(); return ch;
   }
   function policeReply(c, text) {
