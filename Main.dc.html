@@ -17,7 +17,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=171"></script>
+<script src="prefs.js?v=172"></script>
 <script src="i18n.js?v=150"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=59"></script>
@@ -218,7 +218,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- 21px from the subtitle to the grabber, the same as from the bottom blade's grabber to its first line (was 36px) -->
   <header class="fade" data-pull="down" data-wf-keepsp="1" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
-    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px 16px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 4px 8px 16px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
         <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 32px">{{scope.title}}</span>
       </span>
@@ -299,7 +299,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <!-- Collapsed bottom blade: a grabber at the top says it expands; 48px under the text to the screen edge, clear of the home indicator -->
     <div style="position: relative; display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; height: {{barHNow}}px; padding: 0 16px; flex-shrink: 0; overflow: hidden; opacity: {{barOp}}; transition: height .5s cubic-bezier(.2,.8,.2,1), opacity .25s ease">
-      <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; padding: 32px 8px 4px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; margin-left: -8px; padding: 32px 8px 4px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         
         <span style="display: flex; align-items: center; gap: 8px; height: 22px; max-width: 100%; min-width: 0">
           <span style="font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 22px; color: {{barC}}">{{barTitle}}</span>
@@ -309,7 +309,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap">{{barSub}}</span>
       </button>
       <!-- Quick tour: a helicopter with "Tour" under it, bottom right of the bottom blade, level with the blade's title -->
-      <button type="button" class="opt" data-wf-tourbtn="1" onClick="{{tourGo}}" aria-label="{{tourAria}}" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; flex-shrink: 0; min-width: 56px; height: 56px; margin: 24px 4px 0 0; padding: 0 4px; border: 0; border-radius: 16px; background: transparent; color: #3A3A3C; font: inherit; cursor: pointer">
+      <button type="button" class="opt" data-wf-tourbtn="1" onClick="{{tourGo}}" aria-label="{{tourAria}}" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; flex-shrink: 0; min-width: 56px; height: 56px; margin: 24px 0 0 0; padding: 0; border: 0; border-radius: 16px; background: transparent; color: #3A3A3C; font: inherit; cursor: pointer">
         <span class="wf-tdot" aria-hidden="true" style="display: {{tourDotD}}; width: 28px; height: 28px; box-sizing: border-box; border-radius: 50%; background: rgba(var(--wf-y-rgb,229,255,0),0.3); box-shadow: inset 0 0 0 2px rgba(var(--wf-y-rgb,229,255,0),0.95), 0 0 0 1px rgba(28,28,30,0.35)"></span>
         <svg class="wf-heli" style="display: {{tourHeliD}}" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="wf-rot" d="M2.5 5h15"></path><path class="wf-rot2" d="M9.79 5h0.42"></path><path d="M10 5v3M5 8h8a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2H8a3 3 0 0 1-3-3Z M13 8.2V12h3.9M17 11.5h4.5M21.5 9.5v4M7 19h9.5M9 15v4M14 15v4"></path></svg>
         <span class="wf-heli-t" style="animation-name: {{tourTxtAnim}}; font-size: 11px; font-weight: 600; line-height: 14px; white-space: nowrap">{{tourTxt}}</span>
@@ -325,7 +325,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div class="scrim {{glass}}" onClick="{{closeScope}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{scOp}}; pointer-events: {{scPE}}"></div>
   <section role="dialog" data-swipe="up" data-swipe-key="sc" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path {{scClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{scClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
     <div data-wf-keepsp="1" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px; flex-shrink: 0">
-      <button type="button" class="opt" data-swipe-go="1" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <button type="button" class="opt" data-swipe-go="1" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
           <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 32px">{{scope.title}}</span>
         </span>
@@ -480,7 +480,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </button>
     </div>
     <div role="tablist" aria-label="Chats" class="wf-seg" style="flex-shrink: 0; margin: 0 16px; opacity: {{cb.inOp}}; transition: opacity .3s ease {{cb.inDelay}}">
-      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 20px) / 2); transform: translateX({{cb.tabX}})"><span class="segblob"></span></span>
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{cb.tabX}})"><span class="segblob"></span></span>
       <sc-for list="{{cb.tabs}}" as="tb" hint-placeholder-count="2">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
       </sc-for>
@@ -517,13 +517,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
     <!-- (Oct 3, 21:27) 16px all round the section (top: the title level with the menu button, 16px down; left; bottom), whatever the spacing preference; items sit on the panel itself, no containers (to be designed later) -->
     <div data-wf-fadetop="1" data-wf-keepsp="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 16px">
-      <div style="display: {{pm.dProf}}; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 0">
+      <div style="display: {{pm.dProf}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 0">
         <div style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
         <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; align-items: center; text-align: center">
           <!-- Title, then one normal-text block (22px lines, no extra gap between them), as in the data source rows -->
           <!-- Title M (26px semibold): the topic of the panel (larger than title S, used in lists) -->
-          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 96px; height: 96px; margin: 4px 0 32px; border-radius: 50%; background: #E5E5EA; color: #000000; font-size: 26px; font-weight: 600; overflow: hidden">{{me.code}}<span style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></span>
+          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 96px; height: 96px; margin: 0 0 32px; border-radius: 50%; background: #E5E5EA; color: #000000; font-size: 26px; font-weight: 600; overflow: hidden">{{me.code}}<span style="position: absolute; inset: 0; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></span>
           <span class="wf-title-m" style="margin-bottom: 4px; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{me.name}}</span>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.title}}</span>
           <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
@@ -548,7 +548,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span class="wf-label" aria-hidden="true" style="display: {{g.ld}}; margin-left: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{g.label}}</span>
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 8px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
-            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
+            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
               <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" aria-label="{{o.aria}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: {{g.fs}}; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer"><svg width="34" height="29" viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" style="display: {{o.icD}}; flex-shrink: 0"><path d="{{o.ic}}"></path></svg><span style="display: {{o.lbD}}"><span style="grid-area: 1 / 1">{{o.label}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.label}}</span></span></button>
             </sc-for>
@@ -577,7 +577,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </div>
         <div style="display: {{shr.oldD}}; flex-direction: column">
         <div style="padding: 0">
-          <div role="button" tabindex="0" class="mbtn" onClick="{{shr.copy}}" aria-label="{{shr.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 8px 16px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
+          <div role="button" tabindex="0" class="mbtn" onClick="{{shr.copy}}" aria-label="{{shr.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 16px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
             <span translate="no" style="font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: none; user-select: none">{{shr.link}}</span>
             <span style="position: relative; display: flex; justify-content: flex-end; height: 22px; margin-top: 4px">
               <span role="status" aria-live="polite" style="position: absolute; right: -6px; bottom: calc(100% + 6px); z-index: 5; padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; white-space: nowrap; pointer-events: none; opacity: {{shr.tipOp}}; transform: translateY({{shr.tipY}}); transition: opacity .2s ease, transform .2s ease">{{shr.tipTxt}}</span>
@@ -994,7 +994,7 @@ class Component extends DCLogic {
     // repaint (theme, text size) or reload (language) never interrupts the movement
     const group = (label, cur0, opts, pick) => { const pend = (s.segPend || {})[label], cur = pend !== undefined ? pend : cur0, i = Math.max(0, opts.findIndex((o) => o[0] === cur)); return {
       label, fs: opts.length * Math.max(...opts.map((x) => x[1].length)) > 24 ? '15px' : '17px',   // long option names (Spacing) step down to 15px so they fit
-      d: pmSec === ({ Language: 'lang', Theme: 'look', 'Text size': 'look', Spacing: 'look' })[label] ? 'flex' : 'none', ld: label === 'Language' ? 'none' : 'block', cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 20px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
+      d: pmSec === ({ Language: 'lang', Theme: 'look', 'Text size': 'look', Spacing: 'look' })[label] ? 'flex' : 'none', ld: label === 'Language' ? 'none' : 'block', cols: 'repeat(' + opts.length + ', minmax(0, 1fr))', thumbW: 'calc((100% - 16px) / ' + opts.length + ')', thumbX: (i * 100) + '%',
       opts: opts.map((o) => ({ label: o[1], aria: o[3] || o[1], ic: o[2] || 'M0 0', icD: o[2] ? 'block' : 'none', lbD: o[2] ? 'none' : 'inline-grid', on: o[0] === cur ? 'true' : 'false', w: o[0] === cur ? 600 : 400, fg: o[0] === cur ? '#1C1C1E' : '#3C3C43', pick: () => { if (o[0] === cur) return;
         try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
         
@@ -1368,7 +1368,7 @@ class Component extends DCLogic {
     return {
       rows, none: !rows.length, noneTxt: tab === 'resolved' ? L('No resolved fires yet.', 'Ainda sem incêndios resolvidos.') : L('No open chats in this area.', 'Sem conversas abertas nesta área.'),
       title: scopeName, sub: L('Chats. ', 'Conversas. ') + opn.length + L(' open. ', ' abertas. ') + tu + L(' unread.', ' por ler.'),
-      tabX: tab === 'resolved' ? 'calc(100% + 4px)' : '0%',
+      tabX: tab === 'resolved' ? '100%' : '0%',
       tabs: [['open', L('Open', 'Abertas') + (opn.length ? ' ' + opn.length : '')], ['resolved', L('Resolved', 'Resolvidas') + (done.length ? ' ' + done.length : '')]].map(([k, label]) => ({ label, sel: String(tab === k), pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ cbTab: k }); } })),
       note: L('Simulation: crew coordinators, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: coordenadores, respostas, veículos e tempos são encenados. Quartéis e incidentes são reais.'), noteD: rows.length ? 'block' : 'none',
       str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
