@@ -330,6 +330,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
           <path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="translate(14.5 14.5) scale(0.5) rotate(-25 12 12) translate(1.5 0)" fill="#1C1C1E" style="display: {{pinMoonD}}"></path>
         </svg>
         </sc-if>
+        <span class="wf-ctag" aria-hidden="true" style="display: {{pinTagD}}; position: absolute; top: 50%; left: {{pinTagL}}; right: {{pinTagR}}; transform: translateY(-50%); pointer-events: none; color: {{pinTagFg}}; background: linear-gradient({{pinTagBg}}, {{pinTagBg}}), rgba(255,255,255,0.94); box-shadow: 0 0 8px rgba(0,0,0,0.10)">{{pinConf}}</span>
         <span class="{{fire.tip}}" role="tooltip"><b>{{fire.tt}}</b>{{fire.td}}</span>
       </span>
     </sc-if>
@@ -1717,7 +1718,12 @@ class Component extends DCLogic {
           cb: (() => { const top = Math.round(this.win().t + 8 + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), n = typeof p.onFull === 'function' ? 4 : 3;
             return { size: 40, outer: 44 }; })(),   // round map controls: 44px, the minimum comfortable touch target optIcon: optOpen ? 'm6 15 6-6 6 6' : 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', optLabel: optOpen ? 'Collapse map controls' : 'Map controls',
           optToggle: () => { window.__wfCtrlOpen = !window.__wfCtrlOpen; this.forceUpdate(); } }; })(),
-      linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)), pinOn: !(isRisk && on(p.linkCandidate)) && p.mode !== 'spread', pinMoonD: (() => { if (p.mode !== 'pin') return 'none'; const L0 = (Array.isArray(p.ignitions) ? p.ignitions : []).find((g) => g && g.id === p.pinId); return L0 && window.__wfNight && window.__wfNight(L0.live) ? 'inline' : 'none'; })(),
+      linkCandidate: isRisk && on(p.linkCandidate), noLink: !(isRisk && on(p.linkCandidate)), pinOn: !(isRisk && on(p.linkCandidate)) && p.mode !== 'spread', ...(() => { const L0 = p.mode === 'pin' && p.pinKind !== 'station' ? (Array.isArray(p.ignitions) ? p.ignitions : []).find((g) => g && g.id === p.pinId) : null;
+        // (Oct 3, 20:43) the candidate's likelihood tag always shows beside its pin: right, or left near the map's right edge
+        if (!L0 || L0.conf == null) return { pinTagD: 'none', pinTagL: 'auto', pinTagR: 'auto', pinConf: '', pinTagFg: '', pinTagBg: '' };
+        const T = window.__wfConfTag ? window.__wfConfTag(L0.conf) : { fg: '#185A93', bg: 'rgba(31,111,186,0.12)' }, fl = at(PX, PY).left, wd = 32 + String(L0.conf).length * 9 + 14, right = fl + 24 + wd < W - 8;
+        return { pinTagD: 'inline-flex', pinTagL: right ? '44px' : 'auto', pinTagR: right ? 'auto' : '44px', pinConf: L0.conf + '%', pinTagFg: T.fg, pinTagBg: T.bg }; })(),
+      pinMoonD: (() => { if (p.mode !== 'pin') return 'none'; const L0 = (Array.isArray(p.ignitions) ? p.ignitions : []).find((g) => g && g.id === p.pinId); return L0 && window.__wfNight && window.__wfNight(L0.live) ? 'inline' : 'none'; })(),
       recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
       ignMarks: LY.cands && (isRisk && on(p.linkCandidate)) ? ((list) => (IGN_V ? IGN_V.map((q) => [q.g, q.i]) : list.map((g, i) => [g, i])).map(([g, gi]) => {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);

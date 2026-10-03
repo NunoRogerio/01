@@ -731,3 +731,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Menu button motion (Oct 3, 20:29):** the button moves with exactly the screen's motion (same ease, same 0.74 s): opening, together with the screen; closing, the same motion started only when the screen's edge reaches the icon column. Then the clack.
 - **Menu sections (Oct 3, 20:32):** the section being covered darkens 10%, gradually, while the new one slides in over it; the icon column is white.
 - **Map weather while panning (Oct 3, 20:35):** the weather chips stay up while the map moves: the last place's weather shows until the new place's has loaded. They hide only when zoomed out of range.
+- **Likelihood tag on the ignition map (Oct 3, 20:43):** the candidate's map on its own page always shows its likelihood tag beside the pin (right, or left near the map's right edge), whatever the zoom. Same component and colours as the incident list.
