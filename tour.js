@@ -26,6 +26,9 @@ if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
   window.__wfTour = { start: function () {}, end: function () {}, warn: wfTourSoon, active: function () { return false; } };
   var wfTourGone = function () { ['wf-tour', 'wf-tourwarn', 'wf-tour-css'].forEach(function (id) { var el = document.getElementById(id); if (el) el.remove(); }); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wfTourGone); else wfTourGone(); }
+// Two guides (Oct 3): the "Chopper tour test" demo profile keeps the guide helicopter; every other profile gets a light-blue
+// circle (80px) over the control to tap. The circle lets every touch through, so the control under it works as it is.
+var WF_TOUR_HELI = (function () { try { return localStorage.getItem('wf-custom') === 'heli'; } catch (e) { return false; } })();
 if (WF_TOUR_ON) (function () {
   var KEY = 'wf-tour', PAGE = (location.pathname.split('/').pop() || 'index.html');
   var get = function () { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) { return null; } };
@@ -114,8 +117,10 @@ if (WF_TOUR_ON) (function () {
   var S = [
     { page: 'Main.dc.html', mode: 'next', next: ['Start', 'Começar'],
       t: ['Quick tour', 'Visita rápida'],
-      b: ['Follow one ignition from detection to a closed fire. Tap what the helicopter points to, or use ‹ › to move between steps.',
-          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] },
+      b: WF_TOUR_HELI ? ['Follow one ignition from detection to a closed fire. Tap what the helicopter points to, or use ‹ › to move between steps.',
+          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
+          ['Follow one ignition from detection to a closed fire. Tap what the blue circle marks, or use ‹ › to move between steps.',
+          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo azul marca, ou use ‹ › para mudar de passo.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
       skip: function () { return !!listRow(); },
       t: ['Open the list', 'Abra a lista'],
@@ -208,7 +213,7 @@ if (WF_TOUR_ON) (function () {
   ];
 
   // ---- drawing ----------------------------------------------------------------------------------------------
-  var jumped = false, root, bub, ring, svg, cur = -1, seen = 0, scrolled = false, ran = false, lastKey = '';
+  var jumped = false, root, bub, ring, dot, svg, cur = -1, seen = 0, scrolled = false, ran = false, lastKey = '';
   function css() {
     if (document.getElementById('wf-tour-css')) return;
     var st = document.createElement('style'); st.id = 'wf-tour-css';
@@ -233,6 +238,10 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour .tgl.r{right:0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),0.65) 0,rgba(var(--wf-y-rgb,229,255,0),0.65) 1.5px,rgba(var(--wf-y-rgb,229,255,0),0.38) 2.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
       '@keyframes wftg{0%,100%{opacity:1}50%{opacity:.4}}' +
       '#wf-tour .tc{width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.14);color:#FFFFFF}#wf-tour .tc.tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}#wf-tour .tc[disabled]{opacity:.3;cursor:default}' +
+      '#wf-tour .tdot{position:absolute;width:80px;height:80px;margin:-40px 0 0 -40px;box-sizing:border-box;border-radius:50%;background:rgba(90,200,250,0.26);box-shadow:inset 0 0 0 1.5px rgba(90,200,250,0.7);pointer-events:none;opacity:0;transition:opacity .35s ease,left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1)}' +
+      '#wf-tour .tdot.on{opacity:1;animation:wftd 1.8s ease-in-out infinite}' +
+      '@keyframes wftd{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}' +
+      '@media (prefers-reduced-motion:reduce){#wf-tour .tdot.on{animation:none}}' +
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
       '@keyframes wfta{to{stroke-dashoffset:0}}';
@@ -242,10 +251,10 @@ if (WF_TOUR_ON) (function () {
     if (root && root.isConnected) return; css();
     root = document.createElement('div'); root.id = 'wf-tour'; root.setAttribute('translate', 'no');
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'tsv');
-    ring = document.createElement('div'); ring.className = 'tr';
+    ring = document.createElement('div'); ring.className = 'tr'; dot = document.createElement('div'); dot.className = 'tdot';
     bub = document.createElement('div'); bub.className = 'tb'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-live', 'polite');
     ['l', 'r'].forEach(function (k) { var g = document.createElement('div'); g.className = 'tgl ' + k; root.appendChild(g); });   // tour mode: a soft lime glow along both sides of the screen
-    root.appendChild(svg); root.appendChild(ring); root.appendChild(bub); document.body.appendChild(root); dragOn(bub);
+    root.appendChild(svg); root.appendChild(ring); root.appendChild(dot); root.appendChild(bub); document.body.appendChild(root); dragOn(bub);
   }
   // The bubble can be dragged out of the way (by its grabber or any part that isn't a button); it stays where it was put
   // for the rest of that step, kept on screen
@@ -334,12 +343,14 @@ if (WF_TOUR_ON) (function () {
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
     if (low && el && !st.find) el = null;
-    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? Math.max(180, vh * 0.4 - bh / 2) : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
+    if (!el) { ring.style.display = 'none'; dot.classList.remove('on'); svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? Math.max(180, vh * 0.4 - bh / 2) : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
-    if (big) { ring.style.display = 'none'; svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
+    if (big) { ring.style.display = 'none'; dot.classList.remove('on'); svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
     var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
-    ring.style.display = 'block'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
+    // blue circle guide: centred on the control, the yellow frame off (the helicopter profile keeps the frame)
+    if (!WF_TOUR_HELI) { dot.style.left = ((r.left + r.right) / 2) + 'px'; dot.style.top = ((r.top + r.bottom) / 2) + 'px'; dot.classList.add('on'); }
+    ring.style.display = WF_TOUR_HELI ? 'block' : 'none'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
     var gap = 76, below = vh - T.b - 32, above = T.t - 16, up;
     if (below >= bh + gap) up = false; else if (above >= bh + gap) up = true; else up = above > below;
     var cx = (T.l + T.r) / 2, left = Math.min(vw - 16 - bw, Math.max(16, cx - bw / 2));
@@ -364,6 +375,7 @@ if (WF_TOUR_ON) (function () {
   var heliPaths = '<path class="wf-rot" d="M2.5 5h15"></path><path class="wf-rot2" d="M9.79 5h0.42"></path><path d="M10 5v3M5 8h8a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2H8a3 3 0 0 1-3-3Z M13 8.2V12h3.9M17 11.5h4.5M21.5 9.5v4M7 19h9.5M9 15v4M14 15v4"></path>';
   function tourBtnIcon() { return document.querySelector('[data-wf-tourbtn] .wf-heli'); }
   function heliMake() {
+    if (!WF_TOUR_HELI) return { svg: { isConnected: false } };   // blue circle profiles: no helicopter
     if (H && H.svg.isConnected) return H;
     var o = document.createElementNS(NSV, 'svg'); o.id = 'wf-tourheli'; o.setAttribute('aria-hidden', 'true');
     o.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;overflow:visible;pointer-events:none;z-index:99992;color:#2C2C2E';
@@ -405,7 +417,7 @@ if (WF_TOUR_ON) (function () {
     else { var ic = tourBtnIcon(), r = ic && ic.getBoundingClientRect(); if (r && r.width) { h.x = r.left + HOOKU[0] * 28 / 24; h.y = r.top + HOOKU[1] * 28 / 24; h.sc = 1; h.flip = h.fl = 1; } else { h.x = VW() + 80; h.y = VH() * 0.4; } }
     h.vx = h.vy = 0; h.pp = h.pv = null; try { sessionStorage.removeItem(HK); } catch (e) {}
   }
-  function heliTakeOff() { var h = heliMake(), ic = tourBtnIcon(), r = ic && ic.getBoundingClientRect(); try { sessionStorage.removeItem(HK); } catch (e) {}
+  function heliTakeOff() { if (!WF_TOUR_HELI) return; var h = heliMake(), ic = tourBtnIcon(), r = ic && ic.getBoundingClientRect(); try { sessionStorage.removeItem(HK); } catch (e) {}
     if (r && r.width) { h.x = r.left + HOOKU[0] * 28 / 24; h.y = r.top + HOOKU[1] * 28 / 24; h.sc = 1; h.flip = h.fl = 1; h.vx = h.vy = 0; h.L = h.tL = 22; h.pp = h.pv = null; }
     h.tsc = 1.2; heliHome(true); }
   function heliHome(hide) { var b = document.querySelector('[data-wf-tourbtn]'); if (!b) return; [].forEach.call(b.querySelectorAll('.wf-heli,.wf-cable'), function (e) { e.style.visibility = hide ? 'hidden' : ''; }); }
