@@ -195,7 +195,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Menu (Oct 3, 17:18): the whole screen slides to the left to uncover the menu underneath, and back to the right to close it
        (or to leave just the menu's icon column showing) -->
-  <div data-wf-slide="1" style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.2,.8,.2,1), box-shadow .5s ease">
+  <div data-wf-slide="1" style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.65,0,.35,1), box-shadow .6s ease">
 
   <div style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 1">
   <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{ps.open}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
@@ -950,14 +950,15 @@ class Component extends DCLogic {
               const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '2'; cl.style.transition = 'none'; cl.style.boxShadow = '0 0 40px rgba(0,0,0,0.18)';
               sec.parentNode.appendChild(cl); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
-              requestAnimationFrame(() => requestAnimationFrame(() => { cl.style.transition = 'transform .5s cubic-bezier(.2,.8,.2,1)'; cl.style.transform = 'translateX(' + (-(w + 48)) + 'px)'; }));
-              setTimeout(() => { try { cl.remove(); } catch (e) {} }, 600); } } catch (e) {} }
+              requestAnimationFrame(() => requestAnimationFrame(() => { cl.style.transition = 'transform .6s cubic-bezier(.65,0,.35,1)'; cl.style.transform = 'translateX(' + (-(w + 48)) + 'px)'; }));
+              setTimeout(() => { try { cl.remove(); } catch (e) {} }, 700); } } catch (e) {} }
           try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (e) {}
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {})); };
         const items = ['profile', 'lang', 'theme', 'text', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = k === 'profile', hasPh = !!me.photo;
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
-        return { x: open ? -mw : rail ? -60 : 0, dur: boot ? '0s' : '.5s', sh: pmMode ? '0 0 40px rgba(0,0,0,0.18)' : 'none', catchD: open ? 'block' : 'none',
+        return { x: open ? -mw : rail ? -60 : 0, dur: boot ? '0s' : '.6s',   // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
+          sh: pmMode ? '0 0 40px rgba(0,0,0,0.18)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s', hbOp: rail ? 0 : 1, hbPE: rail ? 'none' : 'auto',
           dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
