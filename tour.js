@@ -212,7 +212,7 @@ if (WF_TOUR_ON) (function () {
   ];
 
   // ---- drawing ----------------------------------------------------------------------------------------------
-  var jumped = false, root, bub, ring, dot, svg, cur = -1, seen = 0, scrolled = false, ran = false, lastKey = '';
+  var jumped = false, root, bub, ring, dot, dotP = null, dotA = null, svg, cur = -1, seen = 0, scrolled = false, ran = false, lastKey = '';
   function css() {
     if (document.getElementById('wf-tour-css')) return;
     var st = document.createElement('style'); st.id = 'wf-tour-css';
@@ -244,17 +244,13 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
       '@keyframes wfta{to{stroke-dashoffset:0}}' +
-      // Circle-guide profiles (Oct 3): the information cards are light grey frosted glass with dark text (the helicopter profile keeps the dark glass)
+      // Circle-guide profiles (Oct 3): dark glass cards (as the helicopter profile), with these touches:
       (WF_TOUR_HELI ? '' :
-      '#wf-tour .tb{background:rgba(209,209,214,0.8);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18);color:#1C1C1E}' +
-      '#wf-tour .tb::before{background:rgba(28,28,30,0.2)}' +
-      '#wf-tour .tth,#wf-tour .tx{color:rgba(28,28,30,0.86)}#wf-tour .tn{color:rgba(28,28,30,0.74)}' +
-      '#wf-tour .te,#wf-tour .tc{background:rgba(28,28,30,0.08);color:#1C1C1E}' +
       // achievements stand out: the hi-vis yellow, solid, with dark text and a soft glow
       '#wf-tour .ta{background:var(--wf-y,#E5FF00);box-shadow:0 0 0 1px rgba(28,28,30,0.12),0 2px 12px rgba(var(--wf-y-rgb,229,255,0),0.55);color:#1C1C1E}' +
       // the card glows softly all round, pulsing with the screen-edge glow
       '#wf-tour .tb{animation:wftbg 3.6s ease-in-out infinite}' +
-      '@keyframes wftbg{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.5)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.2)}}' +
+      '@keyframes wftbg{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.5)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.2)}}' +
       '@media (prefers-reduced-motion:reduce){#wf-tour .tb{animation:none}}' +
       // the screen-edge glows ride with the card: 110% of its height, centred on it (positioned from script)
       '#wf-tour .tgl{transition:top .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1)}#wf-tour.drag .tgl{transition:none}');
@@ -267,7 +263,7 @@ if (WF_TOUR_ON) (function () {
     ring = document.createElement('div'); ring.className = 'tr'; dot = document.createElement('div'); dot.className = 'tdot';
     bub = document.createElement('div'); bub.className = 'tb'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-live', 'polite');
     ['l', 'r'].forEach(function (k) { var g = document.createElement('div'); g.className = 'tgl ' + k; root.appendChild(g); });   // tour mode: a soft lime glow along both sides of the screen
-    root.appendChild(svg); root.appendChild(ring); root.appendChild(dot); root.appendChild(bub); document.body.appendChild(root); dragOn(bub);
+    root.appendChild(svg); root.appendChild(ring); root.appendChild(bub); root.appendChild(dot); dotP = null; document.body.appendChild(root); dragOn(bub);
   }
   // The bubble can be dragged out of the way (by its grabber or any part that isn't a button); it stays where it was put
   // for the rest of that step, kept on screen
@@ -310,7 +306,7 @@ if (WF_TOUR_ON) (function () {
     var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
-  window.__wfTour = { warn: warn, start: function () { heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
+  window.__wfTour = { warn: warn, start: function () { try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
   function arrow(x1, y1, x2, y2, seed) {
@@ -326,6 +322,27 @@ if (WF_TOUR_ON) (function () {
       '<path d="' + d + '" stroke="rgba(255,255,255,0.92)" stroke-width="7"/><path d="' + hd + '" stroke="rgba(255,255,255,0.92)" stroke-width="7"/>' +
       '<path class="ar" style="--l:' + L + '" d="' + d + '" stroke="#1C1C1E" stroke-width="2.6"/><path class="ar" style="--l:40" d="' + hd + '" stroke="#1C1C1E" stroke-width="2.6"/></g>';
   }
+  // The guide circle (circle profiles, Oct 3). It always marks what to tap next: the control on screen, or the card's own
+  // Next / Start when the step moves on from the card. It never appears straight on its target: on a new screen it enters
+  // from where it was on the previous one (or from the Tour button when the tour starts) and moves there once the screen
+  // has loaded and the target has held still for 300 ms; after that it follows the target.
+  var DK = 'wf-tourdot';
+  function dotAim(x, y) {
+    if (WF_TOUR_HELI || !dot) return;
+    var now = Date.now();
+    if (!dotP) { var m = null; try { m = JSON.parse(sessionStorage.getItem(DK) || 'null'); } catch (e) {}
+      var sx = m && now - m.t < 15000 ? m.x : VW() / 2, sy = m && now - m.t < 15000 ? m.y : VH() + 60;
+      dot.style.transition = 'none'; dot.style.left = sx + 'px'; dot.style.top = sy + 'px'; void dot.offsetWidth; dot.style.transition = '';
+      dotP = { x: sx, y: sy, go: false }; dotA = { x: x, y: y, t: now }; dot.classList.add('on'); return; }
+    if (!dotP.go) {
+      if (!dotA || Math.abs(dotA.x - x) > 2 || Math.abs(dotA.y - y) > 2) { dotA = { x: x, y: y, t: now }; return; }
+      if (now - dotA.t < 300 || document.readyState !== 'complete') return;
+      dotP.go = true; }
+    dotP.x = x; dotP.y = y; dot.style.left = x + 'px'; dot.style.top = y + 'px'; dot.classList.add('on');
+    try { sessionStorage.setItem(DK, JSON.stringify({ x: x, y: y, t: now })); } catch (e) {}
+  }
+  function aimNext() { if (WF_TOUR_HELI || !bub) return; var g = bub.querySelector('.tg'); if (!g || !g.offsetWidth || g.disabled) { if (dot) dot.classList.remove('on'); return; }
+    var r = g.getBoundingClientRect(); dotAim((r.left + r.right) / 2, (r.top + r.bottom) / 2); }
   function draw(i, st, el, late, low) {
     build();
     var pt = PT(), L = function (a) { return a ? (pt ? a[1] : a[0]) : ''; }, s0back = !!(get() || {}).b;   // achievements show when reached going forward, not when stepping back
@@ -356,13 +373,13 @@ if (WF_TOUR_ON) (function () {
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
     if (low && el && !st.find) el = null;
-    if (!el) { ring.style.display = 'none'; dot.classList.remove('on'); svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? Math.max(180, vh * 0.4 - bh / 2) : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
+    if (!el) { ring.style.display = 'none'; setTimeout(aimNext, 0); svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? Math.max(180, vh * 0.4 - bh / 2) : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
-    if (big) { ring.style.display = 'none'; dot.classList.remove('on'); svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
+    if (big) { ring.style.display = 'none'; setTimeout(aimNext, 0); svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
     var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
     // blue circle guide: centred on the control, the yellow frame off (the helicopter profile keeps the frame)
-    if (!WF_TOUR_HELI) { dot.style.left = ((r.left + r.right) / 2) + 'px'; dot.style.top = ((r.top + r.bottom) / 2) + 'px'; dot.classList.add('on'); }
+    if (!WF_TOUR_HELI) { if (st.mode === 'next') setTimeout(aimNext, 0); else dotAim((r.left + r.right) / 2, (r.top + r.bottom) / 2); }
     ring.style.display = WF_TOUR_HELI ? 'block' : 'none'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
     var gap = 76, below = vh - T.b - 32, above = T.t - 16, up;
     if (below >= bh + gap) up = false; else if (above >= bh + gap) up = true; else up = above > below;
