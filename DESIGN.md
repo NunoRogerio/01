@@ -714,3 +714,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Menu button place (Oct 3, 19:36):** its resting place is set by layout (20px from the edge at rest, 8px with the menu showing, in line with the icon column); the travel and clack are drawn on top from the old spot, so it always ends exactly in line, on every screen.
 - **Clean-up (Oct 3, 19:36):** the old drop-down preferences panel's code (profile-picture X positioning, its scrim, grabber and slide values) and the unused language extras are gone. Every asset in the repo is in use (photos, faces and stations files are named in code).
 - **Language switcher (Oct 3, 19:39):** two equal-width options per line, in order of how many people speak each language worldwide: English, Español, Français, Português, Deutsch, 日本語.
+- **Menu slide 20% faster (Oct 3, 19:39):** 0.92 s (was 1.1 s), same sine ease in and out; the menu button's clack starts 0.47 s in. All screens.

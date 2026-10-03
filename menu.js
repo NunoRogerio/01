@@ -5,7 +5,7 @@
 // The main screen has its own copy of this behaviour built in; this file is for the other screens.
 (function () {
   if (window.top !== window || /Main\.dc\.html/.test(location.pathname)) return;
-  var DUR = 1100, EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
+  var DUR = 920, EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
   var mode = '', ifr = null, ready = false, btn = null, want = null;
   var css = document.createElement('style');
   css.textContent = 'html.wf-menujs [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +
@@ -43,7 +43,7 @@
   function clack(to) { if (!btn) return; var p = rest(); if (!p) return; var dx = btn.__dx || 12, d = to ? 1 : -1;
     // its place is set directly (8px from the edge with the menu showing); the move is drawn on top, from its old spot
     btn.style.left = (to ? p.l + dx : p.l) + 'px'; if (!btn.animate) return;
-    btn.animate([{ translate: (to ? -dx : dx) + 'px 0', easing: 'cubic-bezier(.6,0,1,.6)' }, { translate: (2 * d) + 'px 0', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { translate: (-d) + 'px 0', offset: 0.86 }, { translate: '0px 0' }], { duration: 450, delay: 560, fill: 'backwards' }); }
+    btn.animate([{ translate: (to ? -dx : dx) + 'px 0', easing: 'cubic-bezier(.6,0,1,.6)' }, { translate: (2 * d) + 'px 0', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { translate: (-d) + 'px 0', offset: 0.86 }, { translate: '0px 0' }], { duration: 450, delay: 470, fill: 'backwards' }); }
   // while the menu shows, touches go through the screen's frame to the menu underneath (the screen itself and the button keep theirs)
   function through(on) { var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
   function slide(x) { var p = page(); if (!p) return; p.style.transition = 'transform ' + DUR + 'ms ' + EASE; p.style.transform = x ? 'translateX(' + x + 'px)' : ''; p.style.boxShadow = x ? SH : ''; p.style.willChange = 'transform'; }
