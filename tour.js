@@ -670,7 +670,11 @@ if (WF_TOUR_ON) (function () {
   function glowSync() {
     if (WF_TOUR_HELI || !root || !bub || !root.isConnected) return;
     root.classList.toggle('drag', bub.classList.contains('drag'));
-    var r = bub.getBoundingClientRect(), G = root.querySelectorAll('.tgl'); if (!r.height || !bub.classList.contains('on')) return;
+    var r = bub.getBoundingClientRect(), G = root.querySelectorAll('.tgl');
+    // the card is away (fading out for a blade demo, or between steps): both glows run the full screen height, as when the card is centred
+    if (!r.height || !bub.classList.contains('on') || root.classList.contains('demo')) {
+      for (var j = 0; j < G.length; j++) { G[j].style.top = '0px'; G[j].style.height = VH() + 'px'; G[j].style.width = '37.2px'; G[j].style.setProperty('--gk', '1.44'); G[j].style.setProperty('--gbl', '2px'); }
+      return; }
     var h = r.height * 1.1, t = r.top + r.height / 2 - h / 2;   // 110% of the card's height, centred on it
     // Magnetism: the edge the card comes near swells and brightens; the far edge shrinks and dims
     var vw = VW(), k = Math.max(-1, Math.min(1, ((vw - r.right) - r.left) / Math.max(1, vw - r.width - 16)));   // full effect at the 8px limit the card can be dragged to   // +1: card at the left edge, -1: at the right

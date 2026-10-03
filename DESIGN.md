@@ -672,3 +672,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Edge glows (Oct 3, 12:07):** both edges 20% wider (base 37.2px) and 20% more opaque, on top of the magnetism.
 - **Edge glows (Oct 3, 12:20):** 20% more opacity again (1.44× the earlier base).
 - **Edge glows (Oct 3, 12:23):** the near edge is also up to 30% taller and 20% wider again (still centred, still pulsing).
+- **Edge glows without the card (Oct 3, 12:26):** whenever the card is away (fading out for a blade demo, or between steps) both glows stretch to the full screen height, with the same width, opacity and blur as when the card is in the middle; they gather back around the card when it returns.
