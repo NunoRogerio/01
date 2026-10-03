@@ -333,12 +333,16 @@ if (WF_TOUR_ON) (function () {
       var now = performance.now(); st.trail.push([now, e.clientX, e.clientY]); while (st.trail.length > 2 && now - st.trail[0][0] > 90) st.trail.shift();
       b.classList.add('drag'); place(parseFloat(b.dataset.l || 0), parseFloat(b.dataset.t || 0)); e.preventDefault(); });
     // Inertia (Oct 3): a swipe keeps the card sliding the way it was thrown, decelerating smoothly; screen edges stop it
+    // Left and right edges (Oct 3, 13:37): the bubble is nearly as wide as the screen, so there is no room to throw it back;
+    // it stretches past the edge like rubber (further the harder it hits, up to 32px) and springs back
+    var sideBump = function (v) { try { var d = (v > 0 ? 1 : -1) * Math.min(32, 10 + Math.abs(v) * 0.015); if (b.__wfSB) b.__wfSB.cancel();
+      b.__wfSB = b.animate([{ translate: '0px 0px', easing: 'cubic-bezier(.2,.9,.3,1)' }, { translate: d + 'px 0px', offset: 0.3, easing: 'cubic-bezier(.3,1.6,.5,1)' }, { translate: '0px 0px' }], { duration: 620 }); } catch (x) {} };
     var throwIt = function (vx, vy, i) {
       var last = 0, l = parseFloat(b.dataset.l || 0), t = parseFloat(b.dataset.t || 0);
       var stepF = function (now) { var s0 = get(); if (!s0 || s0.i !== i || !bub || !bub.isConnected) { fling = 0; return; }
         var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
         var bx = drag.dx, by = drag.dy; drag.dx += vx * dt; drag.dy += vy * dt; place(l, t); drag.dx = parseFloat(bub.style.left) - l; drag.dy = parseFloat(bub.style.top) - t;
-        if (Math.abs(drag.dx - bx - vx * dt) > 0.5 && Math.abs(vx) > 60) vx = -vx * 0.3; else if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by - vy * dt) > 0.5 && Math.abs(vy) > 60) vy = -vy * 0.3; else if (Math.abs(drag.dy - by) < 0.01) vy = 0;   // the same rubber bump at every edge: top, bottom, left and right (Oct 3, 13:36)
+        if (Math.abs(drag.dx - bx - vx * dt) > 0.5 && Math.abs(vx) > 60) { sideBump(vx); vx = 0; } else if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by - vy * dt) > 0.5 && Math.abs(vy) > 60) vy = -vy * 0.3; else if (Math.abs(drag.dy - by) < 0.01) vy = 0;   // the same rubber bump at every edge: top, bottom, left and right (Oct 3, 13:36)
         if (Math.hypot(vx, vy) < 12) { fling = 0; return; } fling = requestAnimationFrame(stepF); };
       fling = requestAnimationFrame(stepF);
     };
