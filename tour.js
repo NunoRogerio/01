@@ -667,25 +667,33 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     curEl = el; draw(i, st, el, late, st.low); window.__wfTour.el = el; window.__wfTour.i = i;
   }
   // Hold steps (Oct 3, Key figures): the card is placed once and stays still (no re-placing, no flicker) while the page
-  // scrolls by itself, slowly, to the end so every section is seen; any touch, wheel or scroll by the person stops it.
+  // scrolls by itself, slowly, until the step's last row of cards sits above the tour card (Oct 3, 19:53; it used to go to
+  // the end); any touch, wheel or scroll by the person stops it.
   // The circle stays on the area the card talks about, kept on screen.
   var holdI = -1, asRun = null;
   function holdTick(i, st) {
     var el = st.find ? st.find() : null;
     if (holdI !== i) { if (!el || !shown(el)) return false; holdI = i; draw(i, st, null, false, st.low);   // the card sits low and still; the page starts from its top
-      for (var n0 = el.parentElement; n0 && n0 !== document.body; n0 = n0.parentElement) if (scrollable(n0, 'y')) { n0.scrollTop = 0; break; } if (st.tourScroll) setTimeout(function () { var s0 = get(); if (s0 && s0.i === i) autoScroll(el, i); }, 1600); return true; }
+      for (var n0 = el.parentElement; n0 && n0 !== document.body; n0 = n0.parentElement) if (scrollable(n0, 'y')) { n0.scrollTop = 0; break; } if (st.tourScroll) { var t0 = Date.now(), wait = function () { var s0 = get(); if (!s0 || s0.i !== i) return; var ta = bub && bub.querySelector('.ta');
+          // (Oct 3, 19:53) the achievement chip and its sound come first; the page starts scrolling once the chip has landed
+          if (ta && !ta.classList.contains('go') && Date.now() - t0 < 4000) { setTimeout(wait, 100); return; } setTimeout(function () { var s1 = get(); if (s1 && s1.i === i) autoScroll(el, i); }, ta ? 900 : 0); };
+        setTimeout(wait, 1000); } return true; }
     if (el && !WF_TOUR_HELI) { var r = el.getBoundingClientRect(), y = Math.max(r.top + 40, Math.min(r.bottom - 40, VH() / 2)); var cb = bub ? bub.getBoundingClientRect().top - 56 : VH() - 150; y = Math.max(150, Math.min(cb, y)); dotAim((r.left + r.right) / 2, y); }
     return true;
   }
   function autoScroll(el, i) {
     var sc = null; for (var n = el.parentElement; n && n !== document.body; n = n.parentElement) if (scrollable(n, 'y')) { sc = n; break; }
     if (!sc) return; var stop = false, last = 0, pos = sc.scrollTop;
+    // (Oct 3, 19:53) it scrolls only until the last row of the step's own cards (the first mini KPIs) sits just above the
+    // tour card, so the circle never has to leave the area it points at
+    var K = el.querySelectorAll('[data-wf-kpi]'), lastK = K.length ? K[K.length - 1] : el, bt = bub ? bub.getBoundingClientRect().top : VH() - 150;
+    var maxPos = Math.max(pos, Math.min(sc.scrollHeight - sc.clientHeight, pos + (lastK.getBoundingClientRect().bottom - (bt - 24))));
     var halt = function () { stop = true; ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.removeEventListener(t, halt, true); }); };
     ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.addEventListener(t, halt, { capture: true, passive: true }); });
     var step = function (t) { var s0 = get(); if (stop || !s0 || s0.i !== i || !sc.isConnected) { halt(); return; }
       if (Math.abs(sc.scrollTop - pos) > 2) { halt(); return; }   // scrolled by hand (momentum, scrollbar): stop
-      var dt = last ? Math.min(50, t - last) : 16; last = t; pos = Math.min(sc.scrollHeight - sc.clientHeight, pos + 70 * dt / 1000); sc.scrollTop = pos;
-      if (pos >= sc.scrollHeight - sc.clientHeight - 0.5) { halt(); return; } requestAnimationFrame(step); };
+      var dt = last ? Math.min(50, t - last) : 16; last = t; pos = Math.min(maxPos, pos + 70 * dt / 1000); sc.scrollTop = pos;
+      if (pos >= maxPos - 0.5) { halt(); return; } requestAnimationFrame(step); };
     requestAnimationFrame(step);
   }
   // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
