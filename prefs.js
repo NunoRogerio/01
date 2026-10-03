@@ -422,7 +422,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
        on every side of the card, and clear of a vertical note (Estimate) by 4px. Set inline with !important so the text-size
        setting can't override it; each pass starts afresh, all in one frame (no flicker). If even 24px is too wide, the value
        wraps onto two lines at 24px. */
-    var SZ = [40, 32, 24], ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), rg = document.createRange();
+    // (Oct 3, 19:15) 32px is the default for every card; a value only steps down to 24px when it does not fit
+    var SZ = [32, 24], ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), rg = document.createRange();
     for (var i = 0; i < ns.length; i++) {
       var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]');
       if (!row || !card || !card.clientWidth) continue;

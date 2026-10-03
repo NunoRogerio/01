@@ -705,3 +705,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Language switcher (Oct 3, 18:54):** each option is a flag and the country initials (EN, PT, BR, ES, FR, IT, DE, NL, UA, PL… 日本), the first switcher's formula; the full name is read out by screen readers.
 - **About in the menu (Oct 3, 18:44):** scrolls further, so its last lines clear the bottom; in dark mode it takes the menu surface's colour.
 - **Translations (Oct 3, 18:56):** stopped at 32 languages; Bosnian not added.
+- **No jump on selection (Oct 3, 19:00):** a switcher option's label keeps room for its bold form (an invisible bold copy sets its width), so selecting it never shifts the options around. Language switcher and the menu's switchers; the tabs already did this.
+- **Share link (Oct 3, 19:04):** the Share section shows the app's link in the grey copy box (as the invite link): tap it to copy, the copy icon turns into a tick and a dark tooltip confirms.
+- **Languages not yet translated (Oct 3, 19:06):** translation work is stopped. The rest of Europe's languages are listed with their flags (Bosanski, Crnogorski, Беларуская, Lëtzebuergesch, Türkçe, ქართული, Հայերեն); tapping one shows a tooltip, "Not available yet", and nothing changes.
+- **Mini KPI values (Oct 3, 19:15):** 32px by default in every mini KPI card; a value only steps down to 24px when it doesn't fit (then wraps at 24px as a last resort). Replaces the 40/32/24 largest-that-fits rule.

@@ -17,8 +17,8 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=154"></script>
-<script src="i18n.js?v=145"></script>
+<script src="prefs.js?v=155"></script>
+<script src="i18n.js?v=146"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=56"></script>
 <script src="tour.js?v=57"></script>
@@ -528,7 +528,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div role="radiogroup" aria-label="Language" data-wf-langsw="1" translate="no" style="display: {{lg.d}}; position: relative; flex-wrap: wrap; gap: 4px; flex-shrink: 0; padding: 8px; border-radius: 30px; background: rgba(118,118,128,0.12)">
         <span class="wf-langthumb" aria-hidden="true" style="position: absolute; left: 8px; top: 8px; width: 0; height: 44px; border-radius: 999px; background: var(--wf-y); opacity: 0"></span>
         <sc-for list="{{lg.opts}}" as="o" hint-placeholder-count="10">
-          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 6px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><img src="{{o.flag}}" alt="" width="32" height="32" style="display: block; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.08)">{{o.short}}</button>
+          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" style="position: relative; z-index: {{o.z}}; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 6px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><img src="{{o.flag}}" alt="" width="32" height="32" style="display: block; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.08)"><span role="status" aria-live="polite" style="display: {{o.tipD}}; position: absolute; left: 0; bottom: calc(100% + 6px); padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; font-weight: 400; white-space: nowrap; pointer-events: none">{{o.tip}}</span><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.short}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.short}}</span></span></button>
         </sc-for>
       </div>
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
@@ -539,7 +539,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
             <span class="segthumb" aria-hidden="true" style="position: absolute; top: 10px; bottom: 10px; left: 10px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
-              <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: {{g.fs}}; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer">{{o.label}}</button>
+              <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: {{g.fs}}; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer"><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.label}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.label}}</span></span></button>
             </sc-for>
           </div>
         </div>
@@ -547,6 +547,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Share: the same group label and white card as Chat settings; the card opens the phone's share sheet with the app's link (copies it where there is none) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Share</span>
       <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #F2F2F7; overflow: hidden">
+        <div style="padding: 16px 16px 0">
+          <div role="button" tabindex="0" class="mbtn" onClick="{{shr.copy}}" aria-label="{{shr.copyAria}}" style="position: relative; display: flex; flex-direction: column; padding: 8px 16px; border-radius: 10px; background: rgba(118,118,128,0.12); cursor: pointer; -webkit-tap-highlight-color: transparent">
+            <span translate="no" style="font-size: 17px; line-height: 22px; color: #000000; word-break: break-all; -webkit-user-select: none; user-select: none">{{shr.link}}</span>
+            <span style="position: relative; display: flex; justify-content: flex-end; height: 22px; margin-top: 4px">
+              <span role="status" aria-live="polite" style="position: absolute; right: -6px; bottom: calc(100% + 6px); z-index: 5; padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; white-space: nowrap; pointer-events: none; opacity: {{shr.tipOp}}; transform: translateY({{shr.tipY}}); transition: opacity .2s ease, transform .2s ease">{{shr.tipTxt}}</span>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{shr.copyIc}}"></path></svg>
+            </span>
+          </div>
+        </div>
         <button type="button" class="opt" onClick="{{shr.go}}" aria-label="{{shr.title}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span role="status" aria-live="polite" style="flex-grow: 1; font-weight: 600">{{shr.title}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg></button>
       </div>
       <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
@@ -1026,8 +1035,12 @@ class Component extends DCLogic {
       // Tour entry: a warning tooltip first (tour.js, built on top of everything); the tour starts from its Start tour button
       tourGo: (e) => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (window.__wfTour) window.__wfTour.warn(e && e.currentTarget ? e.currentTarget : document.querySelector('[data-wf-tourbtn]')); },
       abt: { go: () => { try { window.sessionStorage.setItem('wf-about-from', 'prefs'); } catch (e) {} } },
-      shr: (() => { const pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
-        return { title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
+      shr: (() => { const pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), link = new URL('./', location.href).href + '#install';
+        // the link itself shows too (Oct 3, 19:04): the grey box copies it, as the invite link
+        const copyL = () => { const done = () => { this.setState({ shrLCopied: true }); clearTimeout(this._shrLT); this._shrLT = setTimeout(() => this.setState({ shrLCopied: false }), 1800); };
+          const old = () => { try { const t = document.createElement('textarea'); t.value = link; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0;left:0;top:0'; document.body.appendChild(t); t.select(); const ok = document.execCommand('copy'); t.remove(); if (ok) done(); } catch (e) {} };
+          try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} try { navigator.clipboard.writeText(link).then(done, old); } catch (e) { old(); } };
+        return { link, copy: copyL, copyAria: T('Copy link', 'Copiar ligação'), tipTxt: T('Copied to clipboard', 'Copiado para a área de transferência'), tipOp: s.shrLCopied ? 1 : 0, tipY: s.shrLCopied ? '0px' : '4px', copyIc: s.shrLCopied ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
             const url = new URL('./', location.href).href + '#install', copy = () => { try { navigator.clipboard.writeText(url); } catch (e) {} this.setState({ shrCopied: true }); clearTimeout(this._shrT); this._shrT = setTimeout(() => this.setState({ shrCopied: false }), 1800); };
             try { if (navigator.share) { navigator.share({ title: 'Forest Fire Watch', text: T('Forest Fire Watch: wildfire ignition detection.', 'Forest Fire Watch: deteção de ignições de incêndios florestais.'), url }).catch(() => {}); return; } } catch (e) {}
@@ -1140,8 +1153,9 @@ class Component extends DCLogic {
       openPrefs: (...a) => this.openPrefsFn(...a),
       closePrefs: (...a) => this.closePrefsFn(...a),
       lg: (() => { const cur = s.langPend || lang, LS = window.__wfLangs || [{ code: 'en', name: 'English', flag: 'assets/flags/gb.svg' }];
-        return { d: (s.pmSec || 'profile') === 'lang' ? 'flex' : 'none', opts: LS.map((o) => ({ name: o.name, short: o.short || o.name, flag: o.flag, on: o.code === cur ? 'true' : 'false', fg: o.code === cur ? '#1C1C1E' : '#3C3C43', w: o.code === cur ? 600 : 400,
+        return { d: (s.pmSec || 'profile') === 'lang' ? 'flex' : 'none', opts: LS.map((o) => ({ name: o.name, short: o.short || o.name, flag: o.flag, tipD: s.lgTip === o.code ? 'block' : 'none', z: s.lgTip === o.code ? 3 : 1, tip: 'Not available yet', on: o.code === cur ? 'true' : 'false', fg: o.code === cur ? '#1C1C1E' : '#3C3C43', w: o.code === cur ? 600 : 400,
           pick: () => { if (o.code === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+            if (o.na) { this.setState({ lgTip: o.code }); clearTimeout(this._lgTip); this._lgTip = setTimeout(() => this.setState({ lgTip: null }), 1800); return; }   // not translated yet: a tooltip says so
             this.setState({ langPend: o.code }, () => this.wfLangThumb(true)); clearTimeout(this._lgT);
             this._lgT = setTimeout(() => { if (window.__wfSetLang) window.__wfSetLang(o.code); this.setState({ langPend: null, lang: o.code }, () => this.wfLangThumb(false)); }, 700); } })) }; })(),
       pfGroups: [
