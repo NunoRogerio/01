@@ -327,11 +327,27 @@ if (WF_TOUR_ON) (function () {
     bub.style.left = L + 'px'; bub.style.top = T + 'px';
   }
   function dragOn(b) {
-    var st = null;
-    b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
-    b.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return; st.moved = true; drag.i = st.i; drag.dx = st.dx + mx; drag.dy = st.dy + my; b.classList.add('drag'); place(parseFloat(b.dataset.l || 0), parseFloat(b.dataset.t || 0)); e.preventDefault(); });
-    var up = function () { if (!st) return; if (st.moved) { tiltLock = st.i; tiltV = 0; tiltVX = 0; } st = null;   // dropped: it stays here for the rest of this step (tilt off until the next step)
-    b.classList.remove('drag'); setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
+    var st = null, fling = 0;
+    b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fling); fling = 0; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false, trail: [] }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
+    b.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return; st.moved = true; drag.i = st.i; drag.dx = st.dx + mx; drag.dy = st.dy + my;
+      var now = performance.now(); st.trail.push([now, e.clientX, e.clientY]); while (st.trail.length > 2 && now - st.trail[0][0] > 90) st.trail.shift();
+      b.classList.add('drag'); place(parseFloat(b.dataset.l || 0), parseFloat(b.dataset.t || 0)); e.preventDefault(); });
+    // Inertia (Oct 3): a swipe keeps the card sliding the way it was thrown, decelerating smoothly; screen edges stop it
+    var throwIt = function (vx, vy, i) {
+      var last = 0, l = parseFloat(b.dataset.l || 0), t = parseFloat(b.dataset.t || 0);
+      var stepF = function (now) { var s0 = get(); if (!s0 || s0.i !== i || !bub || !bub.isConnected) { fling = 0; return; }
+        var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
+        var bx = drag.dx, by = drag.dy; drag.dx += vx * dt; drag.dy += vy * dt; place(l, t); drag.dx = parseFloat(bub.style.left) - l; drag.dy = parseFloat(bub.style.top) - t;
+        if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by) < 0.01) vy = 0;
+        if (Math.hypot(vx, vy) < 12) { fling = 0; return; } fling = requestAnimationFrame(stepF); };
+      fling = requestAnimationFrame(stepF);
+    };
+    var up = function () { if (!st) return; var s1 = st; if (s1.moved) { tiltLock = s1.i; tiltV = 0; tiltVX = 0; } st = null;   // dropped: it stays where it lands for the rest of this step (tilt off until the next step)
+      b.classList.remove('drag');
+      var tr = s1.trail, a = tr[0], z = tr[tr.length - 1], vx = 0, vy = 0;
+      if (s1.moved && a && z && z[0] - a[0] > 8 && performance.now() - z[0] < 80) { vx = (z[1] - a[1]) / ((z[0] - a[0]) / 1000); vy = (z[2] - a[2]) / ((z[0] - a[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
+      if (Math.hypot(vx, vy) > 150) throwIt(vx, vy, s1.i);
+      setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
   }
   // End tour (Oct 3): back to the main screen, where the guide circle flies home into the Tour button, shrinking to its size
