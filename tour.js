@@ -330,6 +330,23 @@ if (WF_TOUR_ON) (function () {
     var w = bub.offsetWidth, h = bub.offsetHeight, L = Math.min(VW() - w - 8, Math.max(8, l + drag.dx)), T = Math.min(VH() - h - 8, Math.max(8, t + drag.dy));
     bub.style.left = L + 'px'; bub.style.top = T + 'px';
   }
+  // Achievement sound (Oct 3, 17:20): a short bright "prlim", a quick rising trill landing on a soft bell note.
+  // Web Audio, no file to load; the context is unlocked by the first touch (browsers block sound before one).
+  var actx = null;
+  function actxGet() { try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {} return actx; }
+  ['pointerdown', 'touchend'].forEach(function (ev) { window.addEventListener(ev, function () { actxGet(); }, { capture: true, passive: true }); });
+  function prlim() {
+    var c = actxGet(); if (!c) return;
+    try { var t0 = c.currentTime + 0.02, out = c.createGain(); out.gain.value = 0.22; out.connect(c.destination);
+      var note = function (f, t, d, peak) { var o = c.createOscillator(), g = c.createGain(), o2 = c.createOscillator(), g2 = c.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(f, t); o2.type = 'sine'; o2.frequency.setValueAtTime(f * 2.01, t);   // a faint octave shimmer
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+        g2.gain.setValueAtTime(0.0001, t); g2.gain.exponentialRampToValueAtTime(peak * 0.25, t + 0.008); g2.gain.exponentialRampToValueAtTime(0.0001, t + d * 0.6);
+        o.connect(g); g.connect(out); o2.connect(g2); g2.connect(out); o.start(t); o2.start(t); o.stop(t + d + 0.05); o2.stop(t + d + 0.05); };
+      // "pr": three quick rising grace notes; "lim": the bell, ringing out
+      note(1319, t0, 0.07, 0.35); note(1568, t0 + 0.045, 0.07, 0.4); note(1760, t0 + 0.09, 0.08, 0.45); note(2093, t0 + 0.14, 0.9, 0.8);
+    } catch (e) {}
+  }
   function dragOn(b) {
     var st = null, fling = 0;
     b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fling); fling = 0; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false, trail: [] }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
@@ -454,7 +471,7 @@ if (WF_TOUR_ON) (function () {
         '<button type="button" class="tc tb0"' + (i ? '' : ' disabled') + '>' + CH('m15 6-6 6 6 6') + '</button>' +
         (nl && nx ? '<button type="button" class="tg"></button>' : '<button type="button" class="tc' + (nx ? ' tg' : '') + '"' + (nx ? '' : ' disabled') + '>' + CH('m9 6 6 6-6 6') + '</button>') + '</div>';
       var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
-      if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }
+      if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} prlim(); }
       bub.querySelector('.tt').textContent = L(st.t);
       // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }
