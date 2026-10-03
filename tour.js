@@ -250,9 +250,13 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour .ta{background:var(--wf-y,#E5FF00);box-shadow:0 0 0 1px rgba(28,28,30,0.12),0 2px 12px rgba(var(--wf-y-rgb,229,255,0),0.55);color:#1C1C1E}' +
       // the card glows softly all round, pulsing with the screen-edge glow
       '#wf-tour .tb{animation:wftbg 3.6s ease-in-out infinite}' +
-      '@keyframes wftbg{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.5)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.2)}}' +
+      '@keyframes wftbg{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 16px 0 rgba(var(--wf-y-rgb,229,255,0),0.24)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18),0 0 16px 0 rgba(var(--wf-y-rgb,229,255,0),0.08)}}' +
       '@media (prefers-reduced-motion:reduce){#wf-tour .tb{animation:none}}' +
       // the screen-edge glows ride with the card: 110% of its height, centred on it (positioned from script)
+      // edge glows more evident here: wider, brighter, and never fading below 60%
+      '#wf-tour .tgl{width:26px;animation-name:wftg2}@keyframes wftg2{0%,100%{opacity:1}50%{opacity:.6}}' +
+      '#wf-tour .tgl.l{background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),0.95) 0,rgba(var(--wf-y-rgb,229,255,0),0.95) 2px,rgba(var(--wf-y-rgb,229,255,0),0.6) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
+      '#wf-tour .tgl.r{background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),0.95) 0,rgba(var(--wf-y-rgb,229,255,0),0.95) 2px,rgba(var(--wf-y-rgb,229,255,0),0.6) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
       '#wf-tour .tgl{transition:top .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1)}#wf-tour.drag .tgl{transition:none}');
     document.head.appendChild(st);
   }
