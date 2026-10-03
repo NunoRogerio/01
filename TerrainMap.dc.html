@@ -1751,10 +1751,14 @@ class Component extends DCLogic {
       const hit = (R) => occ.some((o) => R.l < o.r && R.r > o.l && R.t < o.b && R.b > o.t);
       order.forEach((i) => { const q = all[i]; if (q.isSel) return; const w = 32 + String(q.conf || '').length * 9 + 14, y0 = q.top - 14, y1 = q.top + 14;
         const Rr = { l: q.left + 16, r: q.left + 16 + w, t: y0, b: y1 }, Rl = { l: q.left - 16 - w, r: q.left - 16, t: y0, b: y1 };
-        // markers on the same spot (two detections of one place) count as one, and only the most likely of them gets the tag
-        if (done.some((d) => Math.abs(d.x - q.left) < 10 && Math.abs(d.y - q.top) < 10)) return;
-        const ownOut = (R) => { if (R.l < 8 || (MW && R.r > MW - 8)) return true; return occ.some((o) => (o.x == null || Math.abs(o.x - q.left) >= 10 || Math.abs(o.y - q.top) >= 10) && R.l < o.r && R.r > o.l && R.t < o.b && R.b > o.t); };   // inside the map, clear of the others
-        if (!ownOut(Rr)) { occ.push(Rr); res[i] = 'r'; done.push({ x: q.left, y: q.top }); } else if (!ownOut(Rl)) { occ.push(Rl); res[i] = 'l'; done.push({ x: q.left, y: q.top }); } });
+        // (Oct 3, 20:48) markers on (nearly) the same spot each get their tag: the first takes one side, the next the other
+        const twin = done.find((d) => Math.abs(d.x - q.left) < 24 && Math.abs(d.y - q.top) < 24); if (twin && twin.used >= 2) return;
+        const ownOut = (R) => { if (R.l < 8 || (MW && R.r > MW - 8)) return true; return occ.some((o) => (o.x == null || Math.abs(o.x - q.left) >= 24 || Math.abs(o.y - q.top) >= 24) && R.l < o.r && R.r > o.l && R.t < o.b && R.b > o.t); };   // inside the map, clear of the others
+        const near = (o) => o.x != null && Math.abs(o.x - q.left) < 24 && Math.abs(o.y - q.top) < 24;   // the twin's own marker doesn't block
+        const ownOut2 = (R) => { if (R.l < 8 || (MW && R.r > MW - 8)) return true; return occ.some((o) => !near(o) && R.l < o.r && R.r > o.l && R.t < o.b && R.b > o.t); };
+        const tryR = twin ? twin.side !== 'r' : true, tryL = twin ? twin.side !== 'l' : true;
+        if (tryR && !(twin ? ownOut2 : ownOut)(Rr)) { occ.push(Rr); res[i] = 'r'; if (twin) twin.used = 2; else done.push({ x: q.left, y: q.top, side: 'r', used: 1 }); }
+        else if (tryL && !(twin ? ownOut2 : ownOut)(Rl)) { occ.push(Rl); res[i] = 'l'; if (twin) twin.used = 2; else done.push({ x: q.left, y: q.top, side: 'l', used: 1 }); } });
       all.__placed = res; }
     const side = all.__placed[k];
     return side ? { ...m, tagD: 'inline-flex', tagL: side === 'r' ? '38px' : 'auto', tagR: side === 'l' ? '38px' : 'auto' } : { ...m, ...hide };
