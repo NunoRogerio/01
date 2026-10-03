@@ -19,7 +19,8 @@
   // where the button rests: on the screen's own menu button, in the top bar
   function rest() { var s = spot(), h = host(); if (!s || !h) return null; var r = s.getBoundingClientRect(), R = h.getBoundingClientRect(), z = k();
     return { l: (r.left - R.left) / z, t: (r.top - R.top) / z }; }
-  function place() { if (!btn || mode) return; var p = rest(); if (!p) { btn.style.display = 'none'; return; } btn.style.display = 'flex'; btn.style.left = p.l + 'px'; btn.style.top = p.t + 'px'; btn.__dx = (host().offsetWidth - 8 - 44) - p.l; }
+  var moving = 0;   // while the screen slides back, the button is on its way: leave it be
+  function place() { if (!btn || mode || Date.now() < moving) return; var p = rest(); if (!p) { btn.style.display = 'none'; return; } btn.style.display = 'flex'; btn.style.left = p.l + 'px'; btn.style.top = p.t + 'px'; btn.__restL = p.l; btn.__dx = (host().offsetWidth - 8 - 44) - p.l; }
   function make() {
     var h = host(); if (!h || btn || !spot()) return;
     btn = document.createElement('button'); btn.type = 'button'; btn.className = 'wf-mb opt'; btn.setAttribute('data-wf-burger', '1'); btn.setAttribute('aria-label', 'Preferences');
@@ -40,10 +41,12 @@
   }
   function send(m) { try { ifr.contentWindow.postMessage({ wfMenu: m }, location.origin); } catch (e) {} }
   // the button travels to (or from) the menu's icon column and locks with a "clack", as on the main screen
-  function clack(to) { if (!btn) return; var p = rest(); if (!p) return; var dx = btn.__dx || 12, d = to ? 1 : -1;
-    // its place is set directly (8px from the edge with the menu showing); the move is drawn on top, from its old spot
-    btn.style.left = (to ? p.l + dx : p.l) + 'px'; if (!btn.animate) return;
-    btn.animate([{ translate: (to ? -dx : dx) + 'px 0', easing: 'cubic-bezier(.6,0,1,.6)' }, { translate: (2 * d) + 'px 0', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { translate: (-d) + 'px 0', offset: 0.86 }, { translate: '0px 0' }], { duration: 450, delay: 470, fill: 'backwards' }); }
+  // the button slides with the screen to its place (same ease and time), then locks with a small clack (Oct 3, 19:49)
+  var ct = 0;
+  function clack(to) { if (!btn) return; var h = host(), d = to ? 1 : -1, restL = btn.__restL;
+    if (restL == null) { var p = rest(); if (!p) return; restL = btn.__restL = p.l; }
+    btn.style.transition = 'left ' + DUR + 'ms ' + EASE; btn.style.left = (to ? (h.offsetWidth - 8 - 44) : restL) + 'px';
+    clearTimeout(ct); ct = setTimeout(function () { btn.style.transition = ''; if (!to) btn.__restL = null; try { if (btn.animate) btn.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, DUR - 40); }
   // while the menu shows, touches go through the screen's frame to the menu underneath (the screen itself and the button keep theirs)
   function through(on) { var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
   function slide(x) { var p = page(); if (!p) return; p.style.transition = 'transform ' + DUR + 'ms ' + EASE; p.style.transform = x ? 'translateX(' + x + 'px)' : ''; p.style.boxShadow = x ? SH : ''; p.style.willChange = 'transform'; }
@@ -55,7 +58,7 @@
   }
   function close() {
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-    mode = ''; send('close'); slide(0); clack(false); through(false);
+    mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(0); clack(false); through(false);
     setTimeout(function () { if (!mode && ifr) ifr.style.visibility = 'hidden'; var p = page(); if (p && !mode) { p.style.boxShadow = ''; p.style.willChange = ''; } }, DUR + 50);
   }
   function toggle() { if (mode) close(); else open(); }
