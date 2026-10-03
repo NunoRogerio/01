@@ -80,6 +80,15 @@ if (WF_TOUR_ON) (function () {
 
   // own messages in the chat (the Ask the team step waits for one more)
   var meBase = 0; function mine() { return document.querySelectorAll('.chbubR').length; }
+  // The demo ignition always starts afresh: a chat left from an earlier tour (chats are kept on the phone, while a
+  // confirmation lasts only until the app closes) would skip the confirmation and open a fire the app doesn't know
+  function freshDemo() {
+    var C = window.__wfChat, k = window.__wfAlertKey || '', id = k.replace(/^c:/, '');
+    if (!C || !id || !C.forget) return;
+    var conf = null; try { conf = JSON.parse(sessionStorage.getItem('wf-confirmed') || 'null'); } catch (e) {} conf = conf || (window.__wfMem || {}).confirmed || {};
+    if (conf[id] || conf['F-' + id]) return;   // confirmed in this session: its chat is current
+    var c = C.get(k); if (c && (c.stage > 0 || c.closed || c.dismissed)) C.forget(k);
+  }
   // the fire page map's full-screen control: open (maximize) or close (minimize)
   function fsBtn(open) { var d = open ? 'M14 4h6v6' : 'M4 14h6v6'; return q('button.mbtn', function (b) { var p = b.querySelector('path[d^="' + d + '"]'); return !!p && getComputedStyle(p).display !== 'none'; }); }
   function closeDrone() { var f = q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); if (f) { selfTap = true; try { f.click(); } catch (e) {} selfTap = false; } }
@@ -103,7 +112,7 @@ if (WF_TOUR_ON) (function () {
       t: ['Key figures', 'Números principais'],
       b: ['Likelihood, heat power and people at risk first, to decide fast. Press and hold a card to reorder; tap + to choose which to show.',
           'Probabilidade, potência térmica e pessoas em risco primeiro, para decidir depressa. Prima e mantenha um cartão para reordenar; toque em + para escolher quais mostrar.'] },
-    { page: 'Alert.dc.html', mode: 'tap', find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
+    { page: 'Alert.dc.html', mode: 'tap', before: freshDemo, find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
       t: ['Confirm it with the team', 'Confirme com a equipa'],
       b: ['Confirming a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Confirmar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
 
@@ -139,6 +148,8 @@ if (WF_TOUR_ON) (function () {
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['Each stage brings its next action. Tap Configure dispatch to send crews.', 'Cada fase traz a ação seguinte. Toque em Configurar despacho para enviar equipas.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }); },
+      // the plan is already filled (an earlier tour): straight to Send the orders
+      skip: function () { if (!seen || Date.now() - seen < 2500) return false; var ai = q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }), snd = q('button.btn.primary', function (x) { return !x.closest('section[role=dialog]') && x.offsetParent !== null; }); return !ai && !!snd && snd.getAttribute('aria-disabled') !== 'true'; },
       t: ['Use the suggested resources', 'Use os meios sugeridos'],
       b: ['One tap fills the plan. Add resources lets you choose stations yourself.', 'Um toque preenche o plano. Adicionar meios deixa escolher os quartéis.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () {

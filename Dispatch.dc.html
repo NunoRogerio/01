@@ -18,8 +18,8 @@
 <script src="prefs.js?v=147"></script>
 <script src="i18n.js?v=137"></script>
 <script src="live.js?v=40"></script>
-<script src="chat.js?v=48"></script>
-<script src="tour.js?v=19"></script>
+<script src="chat.js?v=49"></script>
+<script src="tour.js?v=20"></script>
 
 <title>Dispatch sizing</title>
 <script src="./support.js"></script>
@@ -1244,9 +1244,10 @@ class Component extends DCLogic {
         if (m.tag !== 'Not evacuated' || !o.chat || !o.chat.open) return base;
         return Object.assign(base, { tagRole: 'button', tagCur: 'pointer', tagAria: 'Not evacuated. Open the chat to ask for an evacuation plan', tagGo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { sessionStorage.setItem('wf-chat-sugg', JSON.stringify({ fire: fid, s: 'evac', t: Date.now() })); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} o.chat.open(); } }); }) }); }
     // Full-screen map header: the fire's place, its county and its status band (kind and stage), as on the page
-    if (o.mapTtl) { const H0 = o.hd || {}, C0 = o.cc || {}; o.mapSub = H0.sub || ''; o.mapKind = H0.kind || ''; o.mapDot = o.kindDot || '#E8590C'; o.mapTag = C0.tag || ''; o.mapTagBg = C0.tagBg || 'transparent'; o.mapTagFg = C0.tagFg || '#1C1C1E'; }
+    // (Oct 3) no status band on the full-screen map: the place and its county in the compact title box at the top left, the legend in a column beside it, as on every full-screen map
+    if (o.mapTtl) { const H0 = o.hd || {}; o.mapSub = H0.sub || ''; o.mapKind = ''; o.mapDot = ''; o.mapTag = ''; o.mapTagBg = ''; o.mapTagFg = ''; }
     else { o.mapKind = ''; o.mapDot = ''; o.mapTag = ''; o.mapTagBg = ''; o.mapTagFg = ''; }
-    { const fsOn = !!(o.mapTtl && (this.state || {}).full && o.tlToggle && o.hdTagD !== 'none'), F = this._fsTag || { top: 120, right: 40 };
+    { const fsOn = false, F = this._fsTag || { top: 120, right: 40 };
       o.fsTag = { d: fsOn && F.ok ? 'block' : 'none', top: F.top, right: F.right };
       if (fsOn) { if (F.ok) { o.mapTag = (o.hs && o.hs.t ? o.mapTag + ' for ' + o.hs.t : o.mapTag); o.mapTagBg = 'transparent'; o.mapTagFg = 'transparent'; }   /* the band keeps the tag's room (so the kind shortens as on the page); the live tag lies over it */ setTimeout(() => this.wfFsTagMeasure(), 60); } }
     { const rnOn = o.reportNightD === 'flex' && !res && !(this.state || {}).full, rhOn = !!(o.rh && o.rh.op !== 0 && o.rh.pe !== 'none');

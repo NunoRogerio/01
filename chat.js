@@ -1048,27 +1048,34 @@
   // GPS) and the report already sent; the officer answers and the conversation goes on in character.
   // Photo: Arthur Ogleznev on Unsplash (Unsplash License), https://unsplash.com/photos/X1JI5iiZsmY
   var CAPTAIN_PHOTO = 'https://images.unsplash.com/photo-1744132116978-bbf797a1e689?w=240&h=240&fit=crop&crop=faces&q=80';
-  function policeOf(st, reg) { var cc = ccOf(st);
-    if (cc === 'us') return { org: (reg ? reg.replace(/ County$/, '') + ' County' : 'County') + ' Sheriff', roleEn: 'Captain', rolePt: 'Capitão', name: 'Jordan Reyes' };
-    if (cc === 'pt') return { org: 'GNR. SEPNA', roleEn: 'Captain', rolePt: 'Capitão', name: 'Capitão Martins' };
-    if (cc === 'br') return { org: 'Polícia Militar Ambiental', roleEn: 'Captain', rolePt: 'Capitão', name: 'Capitão Souza' };
-    return { org: 'Local police', roleEn: 'Captain', rolePt: 'Capitão', name: 'Captain Jordan Reyes' }; }
+  // The police leader for a night ignition report: a captain (or that country's equivalent rank) of the force that
+  // investigates fire causes there, named with the department and its area
+  function policeOf(st, reg) { var cc = ccOf(st), r = String(reg || '').replace(/ County$/, '').trim();
+    if (cc === 'us') return { org: (r ? r + ' County ' : '') + (st === 'CA' ? 'Sheriff\'s Department' : 'Sheriff\'s Office'), roleEn: 'Captain', rolePt: 'Capitão', name: 'Jordan Reyes' };
+    if (cc === 'pt') return { org: 'GNR. Comando Territorial' + (r ? ' de ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Rui Martins' };
+    if (cc === 'br') return { org: 'Polícia Militar Ambiental' + (r ? '. ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Carlos Souza' };
+    if (cc === 'es') return { org: 'Guardia Civil. SEPRONA' + (r ? '. ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Javier Morales' };
+    if (cc === 'fr') return { org: 'Gendarmerie nationale' + (r ? '. ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Julien Moreau' };
+    if (cc === 'it') return { org: 'Carabinieri Forestali' + (r ? '. ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Marco Bianchi' };
+    if (cc === 'gr') return { org: 'Hellenic Police' + (r ? '. ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Nikos Papadakis' };
+    if (cc === 'ca') return { org: 'RCMP' + (r ? '. ' + r : ''), roleEn: 'Inspector', rolePt: 'Inspetor', name: 'Daniel Tremblay' };
+    return { org: 'Police' + (r ? '. ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Jordan Reyes' }; }
   function police(inc) {
     var db = load(), k = 'p:' + inc.id;
     if (db.chats[k] && !db.chats[k].v2) delete db.chats[k];   // a report made before the captain's investigation: started again
-    if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.place = 'Night ignition report'; o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = 'Captain'; o.people[0].rolePt = 'Capitão'; o.people[0].org = P0.org; } save(); return o; }
+    if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.place = 'Night ignition report'; o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = P0.roleEn; o.people[0].rolePt = P0.rolePt; o.people[0].org = P0.org; } save(); return o; }
     var now = Date.now(), P = policeOf(inc.st, inc.reg);
     var ch = { key: k, kind: 'dm', police: true, v2: true, incId: inc.id, place: 'Night ignition report', reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
       stage: 0, startStage: 0, started: now, vNow: now, vAt: now, hist: [{ s: 0, vt: now }], people: [], stations: [], forces: [], air: null, evac: null,
       msgs: [], queue: [], seenAt: now, beat: 0, flags: {}, closed: false, dismissed: false, updated: now, face: {}, used: {}, step: 0 };
     var nm = P.name || pickNames(ch, 1, 'police')[0];
-    ch.people = [{ name: nm, code: initials(nm.replace(/^Capit[aã]o |^Captain /, '')), org: P.org, kind: 'lead', roleEn: P.roleEn, rolePt: P.rolePt }];
+    ch.people = [{ name: nm, code: initials(nm), org: P.org, kind: 'lead', roleEn: P.roleEn, rolePt: P.rolePt }];
     ch.topic = { id: inc.id, kind: 'fire', place: inc.place, reg: inc.reg || '', st: inc.st || '', lat: inc.lat, lon: inc.lon, x: inc.x, y: inc.y };
     var bodyEn = [inc.reg, inc.startTxt ? 'Started ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.', bodyPt = [inc.reg, inc.startTxt ? 'Início ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.';
     ch.msgs.push({ id: newId(), kind: 'card', from: 'me', topic: true, tag: { en: 'Night ignition', pt: 'Ignição noturna' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + inc.place, pt: 'Incêndio. ' + inc.place }, body: { en: bodyEn, pt: bodyPt }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic, t: now, vt: now });
     mine(ch, 'Reporting a night ignition, can you please investigate?', 'Reporto uma ignição noturna, podem investigar, por favor?');
-    say(ch, 0, 'Thank you for reporting it. I have opened a case for the night ignition at ' + inc.place + (inc.startTxt ? ', started ' + inc.startTxt : '') + '. A few questions to start: how was it detected, and did your crews see anyone or any vehicle near the point of origin?',
-      'Obrigado pela participação. Abri um processo para a ignição noturna em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
+    say(ch, 0, P.roleEn + ' ' + nm + ', ' + P.org + '. Thank you for reporting it. I have opened a case for the night ignition at ' + inc.place + (inc.startTxt ? ', started ' + inc.startTxt : '') + '. A few questions to start: how was it detected, and did your crews see anyone or any vehicle near the point of origin?',
+      P.rolePt + ' ' + nm + ', ' + P.org + '. Obrigado pela participação. Abri um processo para a ignição noturna em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
     db.chats[k] = ch; save(); emit(); return ch;
   }
   function policeReply(c, text) {
@@ -1163,6 +1170,7 @@
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { c.seenAt = Date.now(); save(); emit(); } },
+    forget: function (k) { var db = load(); if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
     send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
       setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
