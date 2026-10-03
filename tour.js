@@ -338,7 +338,7 @@ if (WF_TOUR_ON) (function () {
       var stepF = function (now) { var s0 = get(); if (!s0 || s0.i !== i || !bub || !bub.isConnected) { fling = 0; return; }
         var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
         var bx = drag.dx, by = drag.dy; drag.dx += vx * dt; drag.dy += vy * dt; place(l, t); drag.dx = parseFloat(bub.style.left) - l; drag.dy = parseFloat(bub.style.top) - t;
-        if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by - vy * dt) > 0.5 && Math.abs(vy) > 60) vy = -vy * 0.3; else if (Math.abs(drag.dy - by) < 0.01) vy = 0;   // the same rubber bump at the top and bottom
+        if (Math.abs(drag.dx - bx - vx * dt) > 0.5 && Math.abs(vx) > 60) vx = -vx * 0.3; else if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by - vy * dt) > 0.5 && Math.abs(vy) > 60) vy = -vy * 0.3; else if (Math.abs(drag.dy - by) < 0.01) vy = 0;   // the same rubber bump at every edge: top, bottom, left and right (Oct 3, 13:36)
         if (Math.hypot(vx, vy) < 12) { fling = 0; return; } fling = requestAnimationFrame(stepF); };
       fling = requestAnimationFrame(stepF);
     };
