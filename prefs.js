@@ -383,18 +383,25 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   /* Round controls: their press (swell + haptic) lives in fit.js, loaded on every screen */
   /* Mini card numbers: shrink the value until value + unit fit inside the card's 8px side padding */
   function fitKpi() {
-    var ns = document.querySelectorAll('[data-wf-kpicard] .wf-big');
+    /* Set inline with !important so it wins over the text-size setting's .kpi size (it used to override the fit). Each pass
+       starts from the natural size, so numbers also grow back when there is room; all in one frame, so nothing flickers. */
+    var ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), want = [];
+    for (var i0 = 0; i0 < ns.length; i0++) ns[i0].style.removeProperty('font-size');
     for (var i = 0; i < ns.length; i++) {
-      var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]');
-      if (!row || !card || !card.clientWidth) continue;
-      var avail = card.clientWidth - 16, w = row.scrollWidth, fs = parseFloat(getComputedStyle(n).fontSize) || 26;
-      if (w > avail + 0.5 && fs > 12) n.style.setProperty('--k', Math.max(12, Math.floor(fs * avail / w * 0.97)) + 'px');
+      var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]'), fs = parseFloat(getComputedStyle(n).fontSize) || 26;
+      want.push(fs); if (!row || !card || !card.clientWidth) continue;
+      var avail = card.clientWidth - 16, w = row.scrollWidth;   // the card's 8px padding on each side stays clear
+      if (w > avail + 0.5) {   // first guess, then measured down 1px at a time (units keep their size, so the row doesn't scale evenly)
+        var f2 = Math.max(12, Math.floor(fs * avail / w)); n.style.setProperty('font-size', f2 + 'px', 'important');
+        for (var t = 0; t < 24 && f2 > 12 && row.scrollWidth > avail + 0.5; t++) { f2--; n.style.setProperty('font-size', f2 + 'px', 'important'); }
+        want[i] = f2; n.style.removeProperty('font-size');
+      }
     }
     /* One size per row of cards: every number in the group takes the smallest size any of them needed */
     var G = new Map();
-    for (var j = 0; j < ns.length; j++) { var c = ns[j].closest('[data-wf-kpicard]'); if (!c || !c.clientWidth) continue; var g = c.parentElement; if (!G.has(g)) G.set(g, []); G.get(g).push(ns[j]); }
-    G.forEach(function (list) { if (list.length < 2) return; var mn = Infinity; list.forEach(function (x) { mn = Math.min(mn, parseFloat(getComputedStyle(x).fontSize) || 26); });
-      list.forEach(function (x) { if (Math.abs((parseFloat(getComputedStyle(x).fontSize) || 26) - mn) > 0.5) x.style.setProperty('--k', mn + 'px'); }); });
+    for (var j = 0; j < ns.length; j++) { var c = ns[j].closest('[data-wf-kpicard]'); if (!c || !c.clientWidth) continue; var g = c.parentElement && c.parentElement.parentElement; if (!G.has(g)) G.set(g, []); G.get(g).push(j); }
+    G.forEach(function (list) { var mn = Infinity; list.forEach(function (k) { mn = Math.min(mn, want[k]); }); list.forEach(function (k) { want[k] = mn; }); });
+    for (var k2 = 0; k2 < ns.length; k2++) { var nat = parseFloat(getComputedStyle(ns[k2]).fontSize) || 26; if (Math.abs(want[k2] - nat) > 0.5) ns[k2].style.setProperty('font-size', want[k2] + 'px', 'important'); }
   }
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
   var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;
