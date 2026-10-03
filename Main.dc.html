@@ -17,7 +17,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=156"></script>
+<script src="prefs.js?v=157"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=41"></script>
 <script src="chat.js?v=57"></script>
@@ -270,7 +270,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin: 0 16px 8px; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{it.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
-            <span data-wf-eqw="cand-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: {{it.valBg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
+            <span class="wf-ctag" data-wf-eqw="cand-tags" style="justify-self: end; background: {{it.valBg}}; color: {{it.valC}}">{{it.val}}</span>
             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
@@ -640,7 +640,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- The menu's icon column (Oct 3, 17:18), on the right edge: the menu button level with the top bar's, the sections
        (profile picture first), and Sign out at the bottom. 60px wide: 8px either side of the 44px icons (Oct 3, 17:56; was 84px). -->
-  <nav data-wf-rail="1" aria-label="Preferences" style="z-index: 3; background: #F2F2F7; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: {{pm.bTop}}px 0 48px; overflow-y: auto; scrollbar-width: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
+  <nav data-wf-rail="1" aria-label="Preferences" style="z-index: 3; background: #FFFFFF; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: {{pm.bTop}}px 0 48px; overflow-y: auto; scrollbar-width: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
     <span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0"></span>
     <!-- the section icons sit centred in the visible screen's height (Oct 3, 18:10): halfway between the top of what shows
          (--wf-top: the part of the frame under the browser's bar) and the bottom -->
@@ -730,7 +730,7 @@ class Component extends DCLogic {
   // reaches the icon column, just before it covers it. The moment comes from the slide's own ease (sine in and out).
   wfBurgerBack() { const vw = (window.__wfVP || {}).w || 390, travel = Math.min(vw, 564) + 32, f = Math.max(0, Math.min(1, (travel - 60) / travel));
     return Math.round(Math.acos(1 - 2 * f) / Math.PI * 740); }
-  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = (to ? 0 : this.wfBurgerBack()) + 380; if (!b) return;
+  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = (to ? 0 : this.wfBurgerBack()) + 740; if (!b) return;
       clearTimeout(this._clackT); this._clackT = setTimeout(() => { try { if (b.animate) b.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, T - 40); } catch (e) {} }
   // The language switcher's yellow (Oct 3, 18:23): placed on the chosen option; on a new choice it travels there, its height
   // shrinking to half on the way and growing back to full as it lands (as the other switchers' motion, in reverse)
@@ -999,6 +999,9 @@ class Component extends DCLogic {
               const csc = cl.querySelector('[data-wf-fadetop]'); if (csc) csc.removeAttribute('data-wf-fadetop');
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '1'; cl.style.transition = 'none';
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
+              // (Oct 3, 20:32) the section being covered darkens 10%, gradually, as the new one slides over it
+              const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .74s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
+              requestAnimationFrame(() => requestAnimationFrame(() => { dim.style.opacity = '0.1'; }));
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateX(' + (w + 60) + 'px)';
               requestAnimationFrame(() => requestAnimationFrame(() => { sec.style.transition = 'transform .74s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)'; }));
               setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 820); } } catch (e) {} }
@@ -1015,7 +1018,8 @@ class Component extends DCLogic {
           burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(20, L0.vw - (L0.colL + L0.colW) + 20) : 20; })(),   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
           bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
           slVis: MENU ? 'hidden' : 'visible', bTop: s.bTop != null ? s.bTop : 68, tTop: (s.bTop != null ? s.bTop : 68) - 56,   /* the section title stays level with the button */   // level with the top bar's buttons, measured from its spot (Oct 3, 20:08)
-          bDur: boot ? '0s' : '.38s', bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
+          bDur: boot ? '0s' : '.74s',   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time
+          bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
           bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 'auto' : 'none',   // (Oct 3, 20:19) shown with the area picker (its top row has the same buttons), hidden over the open incident list   // hidden while another top panel or the full-screen map is up
           dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',

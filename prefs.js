@@ -130,6 +130,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   };
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
   var BTN = '.sqrow::after{display:none!important}' +
+    // The likelihood tag, one component (Oct 3, 20:26): the stage tags' pill; colours from live.js __wfConfTag. Incident list, candidate picker, map
+    '.wf-ctag{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 16px;box-sizing:border-box;border-radius:14px;font-size:15px;line-height:20px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}' +
     // Stage tags (Oct 3, 18:50): the icon sits at the left, 8px in; the label stays centred on the whole tag (equal room both sides)
     '.wf-stg{position:relative;justify-content:center!important;padding-left:36px!important;padding-right:36px!important}.wf-stg>svg{position:absolute;left:8px;top:50%;margin:0!important;transform:translateY(-50%)}' +   /* lists: no divider between items, only the line under the list's header */
     '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
