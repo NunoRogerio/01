@@ -111,6 +111,8 @@ if (WF_TOUR_ON) (function () {
   }
   // the fire page map's full-screen control: open (maximize) or close (minimize)
   function fsBtn(open) { var d = open ? 'M14 4h6v6' : 'M4 14h6v6'; return q('button.mbtn', function (b) { var p = b.querySelector('path[d^="' + d + '"]'); return !!p && getComputedStyle(p).display !== 'none'; }); }
+  // the full-screen map has been left (exit tapped, or turned upright), with no drone feed open, a moment after the step began
+  function leftFull(ms) { if (!seen || Date.now() - seen < (typeof ms === 'number' ? ms : 1500)) return false; return !fsBtn(false) && !!fsBtn(true) && !q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); }
   function closeDrone() { var f = q('button.mbtn', function (x) { return !!x.querySelector('path[d^="M6 6l12 12"]'); }); if (f) { selfTap = true; try { f.click(); } catch (e) {} selfTap = false; } }
   // ---- the steps --------------------------------------------------------------------------------------------
   // t: the action (title); b: one or two short sentences; mode: 'tap' | 'next' | 'until'
@@ -153,9 +155,10 @@ if (WF_TOUR_ON) (function () {
       t: ['See the map full screen', 'Veja o mapa em ecrã inteiro'],
       b: ['Tap to open the fire\'s map full screen.', 'Toque para abrir o mapa do incêndio em ecrã inteiro.'] },
     { page: 'Dispatch.dc.html', mode: 'next', free: true, low: true, find: function () { return fsBtn(false); },
+      skip: leftFull,   // the map was left on its own: carry on (Back to the page skips too), never a screen without the guide
       t: ['Try the map', 'Experimente o mapa'],
       b: ['Pan and zoom, switch layers in the legend, see the spread with +1 h, +3 h or +6 h, or send a drone. Tap › when you\'re done.', 'Mova e aproxime, troque camadas na legenda, veja a propagação com +1 h, +3 h ou +6 h, ou envie um drone. Toque em › quando terminar.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', before: closeDrone, find: function () { return fsBtn(false); },
+    { page: 'Dispatch.dc.html', mode: 'tap', before: closeDrone, find: function () { return fsBtn(false); }, skip: function () { return leftFull(300); },
       t: ['Back to the page', 'Voltar à página'],
       b: ['Tap here to leave full screen.', 'Toque aqui para sair do ecrã inteiro.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
@@ -241,9 +244,9 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
       '@keyframes wfta{to{stroke-dashoffset:0}}' +
-      // Blue circle profiles (Oct 3): the information cards are light-blue frosted glass with dark text (the helicopter profile keeps the dark glass)
+      // Circle-guide profiles (Oct 3): the information cards are light grey frosted glass with dark text (the helicopter profile keeps the dark glass)
       (WF_TOUR_HELI ? '' :
-      '#wf-tour .tb{background:rgba(214,240,255,0.72);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,60,100,0.18),inset 0 0 0 1px rgba(90,200,250,0.55);color:#1C1C1E}' +
+      '#wf-tour .tb{background:rgba(229,229,234,0.72);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18);color:#1C1C1E}' +
       '#wf-tour .tb::before{background:rgba(28,28,30,0.2)}' +
       '#wf-tour .tth,#wf-tour .tx{color:rgba(28,28,30,0.8)}#wf-tour .tn{color:rgba(28,28,30,0.62)}' +
       '#wf-tour .te,#wf-tour .tc{background:rgba(28,28,30,0.08);color:#1C1C1E}' +
