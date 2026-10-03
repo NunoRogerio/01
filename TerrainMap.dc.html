@@ -1812,7 +1812,7 @@ class Component extends DCLogic {
     // The one number that leads: the burned area (real data only; '–' when the source gives none), with the time active as its annotation
     const kpiNum = held ? (held.took != null ? D(held.took) : '–') : I.startMs ? D(now - I.startMs) : '–', kpiUnit = '', kpiLbl = held ? 'Final duration' : 'Time active';   // no time published: the KPI group becomes one annotation line
     const noT = kpiNum === '–', kpiSub = '', kpiTT = '';
-    const TN = { hot: ['#963B00', 'rgba(184,74,0,0.14)'], warn: ['#963B00', 'rgba(184,74,0,0.14)'], amber: ['#745200', 'rgba(122,86,0,0.14)'], blue: ['#185A93', 'rgba(31,111,178,0.14)'], ok: ['#186B2D', 'rgba(52,199,89,0.14)'], watch: ['#14532D', 'rgba(20,83,45,0.16)'], off: ['#636366', 'rgba(118,118,128,0.14)'] }; let tn = TN[I.tone] || (held ? TN.ok : TN.hot); { const T = window.__wfStageTag && g ? window.__wfStageTag(g) : null; if (T) tn = [T.fg, T.bg]; }   /* the shared stage tag colours */;
+    const TN = { hot: ['#8A4B00', '#FDE7C4'], warn: ['#8A4B00', '#FDE7C4'], amber: ['#6B5300', '#FFF1B8'], blue: ['#1F64A6', '#E3EEFB'], ok: ['#2F6B12', '#E2F2D2'], watch: ['#14532D', '#CFE5D6'], off: ['#48484A', '#E0E0E5'] };   /* (Oct 3, 21:07) opaque, the stage tags' pairs: 5:1 or more in both themes */ let tn = TN[I.tone] || (held ? TN.ok : TN.hot); { const T = window.__wfStageTag && g ? window.__wfStageTag(g) : null; if (T) tn = [T.fg, T.bg]; }   /* the shared stage tag colours */;
     const hEst = 250 + time.length * 26 + (held ? 60 : 0) + (fz.length ? 58 : 20) + (I.ha != null ? 26 : 0);
     const win = this.win(), H = this.H(), top0 = Math.max(win.t, 8) + 8, bot0 = Math.min(win.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 8;
     const above = (y - top0) > (bot0 - y);
