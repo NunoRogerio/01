@@ -275,10 +275,11 @@ if (WF_TOUR_ON) (function () {
       '@media (prefers-reduced-motion:reduce){#wf-tour .tb{animation:none}}' +
       // the screen-edge glows ride with the card: 110% of its height, centred on it (positioned from script)
       // edge glows more evident here: wider, brighter, and never fading below 60%
-      '#wf-tour .tgl{width:31px;animation-name:wftg2}@keyframes wftg2{0%,100%{opacity:1}50%{opacity:.52}}' +
-      '#wf-tour .tgl.l{background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),0.95) 0,rgba(var(--wf-y-rgb,229,255,0),0.95) 2px,rgba(var(--wf-y-rgb,229,255,0),0.6) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
-      '#wf-tour .tgl.r{background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),0.95) 0,rgba(var(--wf-y-rgb,229,255,0),0.95) 2px,rgba(var(--wf-y-rgb,229,255,0),0.6) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
-      '#wf-tour .tgl{transition:top .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1)}#wf-tour.drag .tgl{transition:none}');
+      // a lens: widest in the middle, tapering to a 4px line at the top and bottom ends (Oct 3); --gk: the magnetism's opacity
+      '#wf-tour .tgl{width:31px;animation-name:wftg2;-webkit-mask-image:radial-gradient(100% 50% at var(--gx) 50%,#000 45%,transparent 100%),linear-gradient(#000,#000);mask-image:radial-gradient(100% 50% at var(--gx) 50%,#000 45%,transparent 100%),linear-gradient(#000,#000);-webkit-mask-size:100% 100%,4px 100%;mask-size:100% 100%,4px 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}@keyframes wftg2{0%,100%{opacity:1}50%{opacity:.52}}' +
+      '#wf-tour .tgl.l{--gx:0%;-webkit-mask-position:0 0,0 0;mask-position:0 0,0 0;background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 0,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 2px,rgba(var(--wf-y-rgb,229,255,0),calc(0.6*var(--gk,1))) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
+      '#wf-tour .tgl.r{--gx:100%;-webkit-mask-position:0 0,100% 0;mask-position:0 0,100% 0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 0,rgba(var(--wf-y-rgb,229,255,0),calc(0.95*var(--gk,1))) 2px,rgba(var(--wf-y-rgb,229,255,0),calc(0.6*var(--gk,1))) 3.5px,rgba(var(--wf-y-rgb,229,255,0),0) 100%)}' +
+      '#wf-tour .tgl{transition:top .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1),width .3s ease}#wf-tour.drag .tgl{transition:width .15s ease}');
     document.head.appendChild(st);
   }
   function build() {
@@ -618,8 +619,12 @@ if (WF_TOUR_ON) (function () {
     if (WF_TOUR_HELI || !root || !bub || !root.isConnected) return;
     root.classList.toggle('drag', bub.classList.contains('drag'));
     var r = bub.getBoundingClientRect(), G = root.querySelectorAll('.tgl'); if (!r.height || !bub.classList.contains('on')) return;
-    var h = r.height * 1.265, t = r.top + r.height / 2 - h / 2;
-    for (var i = 0; i < G.length; i++) { G[i].style.top = t.toFixed(1) + 'px'; G[i].style.height = h.toFixed(1) + 'px'; }
+    var h = r.height * 1.455, t = r.top + r.height / 2 - h / 2;   // 145.5% of the card's height, centred on it
+    // Magnetism: the edge the card comes near swells (up to +20%) and brightens (+5%); the far edge shrinks and dims as much
+    var vw = VW(), k = Math.max(-1, Math.min(1, ((vw - r.right) - r.left) / Math.max(1, vw - r.width)));   // +1: card at the left edge, -1: at the right
+    for (var i = 0; i < G.length; i++) { var sg = G[i].classList.contains('l') ? k : -k;
+      G[i].style.top = t.toFixed(1) + 'px'; G[i].style.height = h.toFixed(1) + 'px';
+      G[i].style.width = (31 * (1 + 0.2 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gk', (1 + 0.05 * sg).toFixed(3)); }
   }
   (function gl() { try { glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
