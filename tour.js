@@ -182,7 +182,7 @@ if (WF_TOUR_ON) (function () {
       b: ['Tap Return once every order is through.', 'Toque em Voltar quando todas as ordens tiverem passado.'] },
 
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!chip(['Close fire', 'Encerrar incêndio']); }, auto: true, noClose: true,
-      find: function () { return q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (b) { return !b.disabled; }) || chipRow(); },
+      find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
       t: ['Watch the fire move forward', 'Veja o incêndio avançar'],
       b: ['The tour plays the fire owner for you: it approves air support and moves each stage on. Status cards show every change.',
           'A visita faz de responsável pelo incêndio: aprova o meio aéreo e avança cada fase. Os cartões de estado mostram cada mudança.'] },
@@ -194,7 +194,7 @@ if (WF_TOUR_ON) (function () {
       t: ['Close the fire', 'Encerre o incêndio'],
       b: ['When the watch is over, close it.', 'Quando a vigilância terminar, encerre-o.'] },
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,
-      find: function () { return q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (b) { return !b.disabled; }) || chipRow(); },
+      find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
       t: ['Closing the fire', 'A encerrar o incêndio'],
       b: ['The team confirms the closing checks.', 'A equipa confirma as verificações de encerramento.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('wf-trophy'); },
@@ -334,7 +334,7 @@ if (WF_TOUR_ON) (function () {
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
     if (low && el && !st.find) el = null;
-    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? 64 : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
+    if (!el) { ring.style.display = 'none'; svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? Math.max(180, vh * 0.4 - bh / 2) : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
     if (big) { ring.style.display = 'none'; svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
@@ -471,17 +471,21 @@ if (WF_TOUR_ON) (function () {
     var sh0 = el && shown(el, st.strict); if (el && (sh0 === 'off' || sh0 === 'part') && !scrolled) { scrolled = true; try { var rr = el.getBoundingClientRect(), vOut = rr.bottom > VH() - 24 || rr.top < 24, hOut = rr.left < 0 || rr.right > VW(); reveal(el, vOut, hOut); } catch (e) {} }
     if (el) { var sh1 = shown(el, st.strict); if (sh1 !== true && !(sh1 === 'part' && scrolled)) el = null; }
     var late = st.find && !el && Date.now() - seen > (st.mode === 'until' && !s.b ? 1e9 : s.b ? 1500 : 9000);
-    if (st.find && !el && !late) { curEl = null; draw(i, st, null, false, 'top'); return; }   // waiting at the top: the app's controls mostly sit low   // still waiting for its control: the bubble stays, End tour always reachable
+    if (st.find && !el && !late) { curEl = null; draw(i, st, null, false, 'top'); return; }   // waiting just above the middle: clear of the header (pinned state, title) and of the controls that sit low   // still waiting for its control: the bubble stays, End tour always reachable
     curEl = el; draw(i, st, el, late, st.low); window.__wfTour.el = el; window.__wfTour.i = i;
   }
   // Plays the fire owner in the chat: taps the request card's main button, else the suggestion that moves the fire on
   var selfTap = false, lockEl = null, lockI = -1, armed = -1;
-  function drive() {
-    var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { return !x.disabled; });
-    if (!b) { var g0 = get(), st1 = g0 && S[g0.i], W = ['Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(st1 && st1.noClose ? [] : ['Close fire', 'Encerrar incêndio']);
-      b = q('button.chbtn', function (x) { if (!x.parentElement || x.parentElement.style.maxHeight !== '88px') return false; var t = txt(x); return W.some(function (w) { return t.indexOf(w) === 0; }); }); }
-    if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; }
+  // The control the tour presses next as the fire owner: a card's main action (Approve, Close fire), else a stage chip;
+  // a chat still left as a candidate (an earlier tour) is confirmed first. Never Dismiss or anything else.
+  function autoNext() {
+    var g0 = get(), st1 = g0 && S[g0.i], noClose = st1 && st1.noClose;
+    var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { var t = txt(x); return !x.disabled && (/^(Approve|Aprovar)/.test(t) || (!noClose && /^(Close fire|Encerrar incêndio)/.test(t))); });
+    if (b) return b;
+    var W = ['Confirm fire', 'Confirmar incêndio', 'Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(noClose ? [] : ['Close fire', 'Encerrar incêndio']);
+    return q('button.chbtn', function (x) { if (!x.parentElement || x.parentElement.style.maxHeight !== '88px') return false; var t = txt(x); return W.some(function (w) { return t.indexOf(w) === 0; }); });
   }
+  function drive() { var b = autoNext(); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } }
   // Tour mode is modal: only the bubble and the control it points at take touches (scrolling still works).
   var curEl = null;
   function allowed(e) {
