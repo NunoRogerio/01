@@ -19,7 +19,7 @@
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=156"></script>
 <script src="i18n.js?v=149"></script>
-<script src="live.js?v=40"></script>
+<script src="live.js?v=41"></script>
 <script src="chat.js?v=57"></script>
 <script src="tour.js?v=63"></script>
 
@@ -270,7 +270,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin: 0 16px 8px; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; text-decoration: none">
             <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{it.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
-            <span style="text-align: right; font-size: 17px; font-weight: {{it.valW}}; line-height: 20px; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
+            <span data-wf-eqw="cand-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: {{it.valBg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; color: {{it.valC}}">{{it.val}}</span>
             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
           </a>
         </sc-for>
@@ -1469,7 +1469,7 @@ class Component extends DCLogic {
     const ignList = CANDS.map((c, i) => {
       const col = colorOf(c.conf);
       return {
-        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Alert.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + '%', valW: 700, valC: (window.__wfConfTxt ? window.__wfConfTxt(c.conf) : '#0A66CC'), nameW: 600, moonD: window.__wfNight && window.__wfNight(c.live) ? 'inline-block' : 'none',
+        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Alert.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + '%', valW: 600, valC: (window.__wfConfTag ? window.__wfConfTag(c.conf).fg : '#185A93'), valBg: (window.__wfConfTag ? window.__wfConfTag(c.conf).bg : 'rgba(31,111,186,0.12)'), nameW: 600, moonD: window.__wfNight && window.__wfNight(c.live) ? 'inline-block' : 'none',
         bg: c.conf > 75 ? 'rgba(122,63,224,0.12)' : (c.conf >= 50 ? 'rgba(10,111,219,0.1)' : 'rgba(60,60,67,0.066)'),
         bd: i === 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
         ...anim(i),

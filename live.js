@@ -435,6 +435,9 @@ window.__wfRegionUp = function (st, co) {
   // Ignition-candidate confidence scale: above 75% purple, 50–75% blue, below 50% dark gray.
   window.__wfConfC=function(c){return '#0A6FDB';};   // map markers and icons: one candidate colour, as in the map legend
   // Likelihood percentages keep their colour coding: above 75% purple, 50-75% blue, below 50% grey
+  // Likelihood tags (Oct 3, 20:16): the stage tags' formula (tinted pill, coloured semibold label) on a scale of levels:
+  // 90-100% red, 75-89% orange, 60-74% amber, 40-59% blue, under 40% grey; colours as the stage tags and the remove button
+  window.__wfConfTag=function(c){c=+c||0;return c>=90?{fg:'#99000E',bg:'rgba(215,0,21,0.10)'}:c>=75?{fg:'#963B00',bg:'rgba(184,74,0,0.14)'}:c>=60?{fg:'#745200',bg:'rgba(122,86,0,0.14)'}:c>=40?{fg:'#185A93',bg:'rgba(31,111,186,0.12)'}:{fg:'#48484A',bg:'rgba(118,118,128,0.12)'};};
   window.__wfConfTxt=function(c){return c>75?'#7A3FE0':c>=50?'#0A66CC':'#48484A';};
   window.__wfAMZ=['Acre','Amapá','Amazonas','Maranhão','Mato Grosso','Pará','Rondônia','Roraima','Tocantins'];
   // Row filter for an area: a state id, or 'US' (all states) or 'AMZ' (the Legal Amazon states of Brazil).
