@@ -253,6 +253,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
   // A choice made in the menu (which on most screens is a frame underneath, menu.js) applies to the screen above at once
   try { window.addEventListener('storage', function (e) { if (!e.key || !/^wf-(theme|text|space)-/.test(e.key)) return; apply(); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} }); } catch (e) {}
+  // The tour always runs in California, Los Angeles (Oct 3, 19:44): while it runs, every screen treats California as the
+  // profile's region, whatever the profile's own region is; when it ends, the profile's own region and choice come back
+  window.__wfTourLock = function () { try { return sessionStorage.getItem('wf-tour') ? 'CA' : null; } catch (e) { return null; } };
   function apply() {
     var theme = get('theme', 'light'), size = get('text', 'normal');
     try { spApply(get('space', 'comfortable')); } catch (e) {}

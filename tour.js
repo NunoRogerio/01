@@ -97,16 +97,37 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     if (!st.demo || demoRan === i || get() && get().b) return; demoRan = i;
     var still = function () { var s0 = get(); return !!s0 && s0.i === i; };
     var press = function (sel) { var e = q(sel) || document.querySelector(sel); if (!e) return; selfTap = true; try { e.click(); } catch (x) {} selfTap = false; };
-    // the card and the circle fade away while the blade opens, stays 1 s and folds back, then fade in again (Oct 3)
+    // the card and the circle fade away while the blade opens, stays 2.5 s and folds back, then fade in again (Oct 3)
     var fade = function (on) { if (root) root.classList.toggle('demo', on); };
     // the circle taps the button first (Oct 3, 17:11): it swells 25% and quickly settles back, then the blade opens
     var tap = function () { try { if (dot) dot.animate([{ scale: '1' }, { scale: '1.25', offset: 0.4, easing: 'cubic-bezier(.2,.8,.3,1)' }, { scale: '1' }], { duration: 260, easing: 'cubic-bezier(.4,0,.2,1)' }); } catch (x) {} };
+    var next = function () { fade(false); dotHold = false; if (root) root.classList.remove('demopick'); if (still()) { go(i + 1); setTimeout(tick, 60); } };
     setTimeout(function () { if (still()) tap(); }, 900);
     setTimeout(function () { if (still()) fade(true); }, 1160);
     setTimeout(function () { if (still()) press(st.demo.open); }, 1200);
+    if (st.demo.pick) {
+      // (Oct 3, 19:44) in the open blade the circle comes back, goes to the chosen item and taps it; (19:45) it can hold
+      // there, then go to the close control and tap it too
+      var hold = st.demo.hold || 0, T = 2300;
+      var aimAt = function (el) { if (!el || !dot) return; var r = el.getBoundingClientRect(); if (root) root.classList.add('demopick'); dotHold = true; dot.style.left = (r.left + Math.min(40, r.width / 2)) + 'px'; dot.style.top = (r.top + r.height / 2) + 'px'; };
+      setTimeout(function () { if (!still()) return; var el = st.demo.pick(); if (!el) return; try { el.scrollIntoView({ block: 'nearest' }); } catch (x) {} setTimeout(function () { if (still()) aimAt(el); }, 120); }, T - 300);
+      setTimeout(function () { if (still()) tap(); }, T + 600);
+      setTimeout(function () { var el = still() && st.demo.pick(); if (el) { selfTap = true; try { el.click(); } catch (x) {} selfTap = false; } }, T + 860);
+      var C = T + 860 + Math.max(540, hold);
+      if (st.demo.tapClose) {
+        setTimeout(function () { if (still()) aimAt(q(st.demo.close) || document.querySelector(st.demo.close)); }, C);
+        setTimeout(function () { if (still()) tap(); }, C + 700);
+        setTimeout(function () { if (still()) press(st.demo.close); }, C + 960);
+        setTimeout(next, C + 960 + 1100);
+      } else {
+        setTimeout(function () { var sc = document.querySelector('section[data-swipe-key="sc"]'); if (sc && getComputedStyle(sc).pointerEvents !== 'none') press(st.demo.close); }, C);
+        setTimeout(next, C + 600);
+      }
+      return;
+    }
     setTimeout(function () { press(st.demo.close); }, 1200 + 500 + 2500);   // about 0.5 s to open, then 2.5 s open (Oct 3, 17:12; was 1 s)
     // once the blade has folded back, the tour moves on to the next step by itself (Oct 3, 17:11)
-    setTimeout(function () { fade(false); if (still()) { go(i + 1); setTimeout(tick, 60); } }, 1200 + 500 + 2500 + 550);
+    setTimeout(next, 1200 + 500 + 2500 + 550);
   }
   // the state card's Move to <next stage> button, when the card is open
   function stMove() { return q('[data-wf-stmove]'); }
@@ -154,7 +175,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo amarelo marca, ou use ‹ › para mudar de passo.'] },
     // Oct 3: the two blade selectors are shown (not opened), then the ignition is opened from the map
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Area:"]') || q('button[aria-label^="Área:"]'); },
-      t: ['Choose a region', 'Escolha uma região'], point: true, area: true, demo: demoOf('button[aria-haspopup="dialog"][aria-label^="Area:"]', 'section[data-swipe-key="sc"] button[data-swipe-go]'),
+      t: ['Choose a region', 'Escolha uma região'], point: true, area: true, demo: Object.assign(demoOf('button[aria-haspopup="dialog"][aria-label^="Area:"]', 'section[data-swipe-key="sc"] button[data-swipe-go]'), { pick: function () { var sec = document.querySelector('section[data-swipe-key="sc"]'); if (!sec) return null; var B = [].slice.call(sec.querySelectorAll('button,[role=button]')); for (var k = 0; k < B.length; k++) { var t = (B[k].getAttribute('aria-label') || B[k].textContent || ''); if (/^\s*Los Angeles/.test(t) && B[k].offsetHeight) return B[k]; } return null; } }),
       b: ['Tap here any time to change the region. For now we stay here.', 'Toque aqui a qualquer momento para mudar de região. Por agora ficamos aqui.'] },
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
       t: ['Or pick from the list', 'Ou escolha da lista'], point: true, demo: demoOf('section[data-swipe-key="li"] > div:last-child > button.opt', 'section[data-swipe-key="li"] button[data-swipe-go]'),
@@ -168,7 +189,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Notifications', 'Notificações'],
       b: ['New ignitions and changes to your incidents.', 'Novas ignições e mudanças nos seus incidentes.'] },
     { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('button[aria-label="Preferences"]') || q('button[aria-label="Preferências"]'); },
-      demo: demoOf('button[aria-label="Preferences"], button[aria-label="Preferências"]', 'button[data-pf-av]'),
+      demo: Object.assign(demoOf('button[aria-label="Preferences"], button[aria-label="Preferências"]', 'button[data-pf-av]'), { pick: function () { return document.querySelector('nav[data-wf-rail] div button[aria-label="About"], nav[data-wf-rail] div button[aria-label="Sobre"]') || [].slice.call(document.querySelectorAll('nav[data-wf-rail] div button')).pop() || null; }, hold: 2500, tapClose: true }),   // (Oct 3, 19:45) the circle opens About, holds it, then closes the menu with the menu button
       t: ['Your preferences', 'As suas preferências'],
       b: ['Your profile, theme, text size and language.', 'O seu perfil, tema, tamanho do texto e língua.'] },
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
@@ -294,6 +315,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       '@keyframes wftd{0%{transform:scale(1);animation-timing-function:ease-in-out}75%{transform:scale(1.1);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:scale(1)}}' +
       '@media (prefers-reduced-motion:reduce){#wf-tour .tdot.on{animation:none}}' +
       '#wf-tour.demo .tb,#wf-tour.demo .tdot{opacity:0!important;pointer-events:none!important}' +
+      '#wf-tour.demo.demopick .tdot{opacity:1!important}' +
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
       '@keyframes wfta{to{stroke-dashoffset:0}}' +
@@ -379,10 +401,15 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
   }
   // End tour (Oct 3): back to the main screen, where the guide circle flies home into the Tour button, shrinking to its size
+  // The tour always runs in California, Los Angeles (Oct 3, 19:44): the region shown before is kept aside and comes back at the end
+  function tourScope(on) { try { var K = 'wf-scope', B = 'wf-scope-pretour';
+      if (on) { if (sessionStorage.getItem(B) == null) sessionStorage.setItem(B, sessionStorage.getItem(K) || ''); sessionStorage.setItem(K, JSON.stringify({ st: 'CA', co: 'Los Angeles' })); window.__wfMem = Object.assign(window.__wfMem || {}, { scope: { st: 'CA', co: 'Los Angeles' } }); }
+      else { var b = sessionStorage.getItem(B); if (b == null) return; sessionStorage.removeItem(B); var v = null; try { v = b ? JSON.parse(b) : null; } catch (x) {} if (b) sessionStorage.setItem(K, b); else sessionStorage.removeItem(K); window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); }
+      window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   function end() {
     var d = dot && dot.classList.contains('on') ? dot.getBoundingClientRect() : null;
     if (d && d.width) { try { sessionStorage.setItem('wf-tourhome', JSON.stringify({ x: d.left + d.width / 2, y: d.top + d.height / 2, t: Date.now() })); } catch (e) {} }
-    put(null); try { sessionStorage.removeItem(DK); } catch (e) {} cur = -1; heliLand();
+    put(null); tourScope(false); try { sessionStorage.removeItem(DK); } catch (e) {} cur = -1; heliLand();
     if (PAGE !== 'Main.dc.html') { if (root) root.remove(); root = null; location.href = 'Main.dc.html'; return; }
     if (bub) bub.classList.remove('on'); var R0 = root; root = null; setTimeout(function () { if (R0) R0.remove(); }, 350);
     flyHome();
@@ -424,7 +451,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
-  window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; tiltNG = null; tiltLock = -1; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
+  window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; tiltNG = null; tiltLock = -1; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); tourScope(true); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
   function arrow(x1, y1, x2, y2, seed) {
@@ -444,9 +471,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // Next / Start when the step moves on from the card. It never appears straight on its target: on a new screen it enters
   // from where it was on the previous one (or from the Tour button when the tour starts) and moves there once the screen
   // has loaded and the target has held still for 300 ms; after that it follows the target.
-  var DK = 'wf-tourdot';
+  var DK = 'wf-tourdot', dotHold = false;   // dotHold: the circle is busy elsewhere (tapping the region in the picker)
   function dotAim(x, y) {
-    if (WF_TOUR_HELI || !dot) return;
+    if (WF_TOUR_HELI || !dot || dotHold) return;
     var now = Date.now();
     if (!dotP) { var m = null; try { m = JSON.parse(sessionStorage.getItem(DK) || 'null'); } catch (e) {}
       var sx = m && now - m.t < 15000 ? m.x : VW() / 2, sy = m && now - m.t < 15000 ? m.y : VH() + 60;

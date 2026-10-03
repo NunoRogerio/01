@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=155"></script>
+<script src="prefs.js?v=156"></script>
 <script src="menu.js?v=3"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=40"></script>
@@ -360,7 +360,7 @@ class Component extends DCLogic {
   }
   wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
-  wfLock() { return ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[this.wfRole()] || null; }
+  wfLock() { return (window.__wfTourLock && window.__wfTourLock()) || ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[this.wfRole()] || null; }   // the tour always runs in California (Oct 3, 19:44)
   wfSetScope(v) { window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); try { window.sessionStorage.setItem('wf-scope', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   wfScoped(scopeIn) {
     const W = this.wfWorld(), sc = scopeIn || this.wfScope(), dz = this.wfDismissed(), cf = this.wfConfirmed();
