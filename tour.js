@@ -684,9 +684,9 @@ if (WF_TOUR_ON) (function () {
     var b = tiltB, v = 0;
     if (b < 30) v = -Math.min(1, (30 - Math.max(-30, b)) / 60);          // 30° → 0, -30° and beyond → full speed up
     else if (b > 60) v = Math.min(1, (Math.min(120, b) - 60) / 30);      // 60° → 0, 90° and beyond → full speed down
-    // the angle sets a target speed (36 px/s just past the band, 630 px/s at full tilt); the card accelerates towards it and
+    // the angle sets a target speed (36 px/s just past the band, 1071 px/s at full tilt; +70% at 12:11); the card accelerates towards it and
     // decelerates smoothly back to rest inside the band (Oct 3: max +50%, slowest -10%)
-    var target = v ? (v < 0 ? -1 : 1) * (36 + (630 - 36) * Math.pow(Math.abs(v), 1.4)) : 0;
+    var target = v ? (v < 0 ? -1 : 1) * (36 + (1071 - 36) * Math.pow(Math.abs(v), 1.4)) : 0;
     tiltV += (target - tiltV) * Math.min(1, dt / 0.22);
     if (Math.abs(tiltV) < 2 && !target) { tiltV = 0; return; }
     var s0 = get(); if (!s0) return; if (drag.i !== s0.i) { drag.i = s0.i; drag.dx = 0; drag.dy = 0; }
