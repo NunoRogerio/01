@@ -18,7 +18,7 @@
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=155"></script>
-<script src="i18n.js?v=147"></script>
+<script src="i18n.js?v=149"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=57"></script>
 <script src="tour.js?v=57"></script>
@@ -84,7 +84,6 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
 .sqsearch::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
-.opt.avbtn{border-radius:50%!important}
 .opt{transition:background-color .2s ease,border-color .25s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
 .opt:hover{transform:translateY(-1px);background-color:rgba(60,60,67,0.055)}
 .opt[aria-disabled=true]:hover{transform:none;background-color:transparent}
@@ -523,12 +522,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <!-- Sign out belongs with the profile -->
         <a href="reset.html?out=1" class="wf-b wf-sec" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0">Sign out</a>
       </div>
-      <!-- Language (Oct 3, 18:23): a multi-line switcher, as many flag + language name options per line as fit; the yellow travels to the
+      <!-- Language (Oct 3, 18:23): a multi-line switcher, two equal-width options per line, each a flag and the language's name; the yellow travels to the
            new choice, shrinking in height on the way and growing back as it lands, then the language changes -->
-      <div role="radiogroup" aria-label="Language" data-wf-langsw="1" translate="no" style="display: {{lg.d}}; position: relative; flex-wrap: wrap; gap: 4px; flex-shrink: 0; padding: 8px; border-radius: 30px; background: rgba(118,118,128,0.12)">
+      <div role="radiogroup" aria-label="Language" data-wf-langsw="1" translate="no" style="display: {{lg.d}}; position: relative; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; flex-shrink: 0; padding: 8px; border-radius: 30px; background: rgba(118,118,128,0.12)">
         <span class="wf-langthumb" aria-hidden="true" style="position: absolute; left: 8px; top: 8px; width: 0; height: 44px; border-radius: 999px; background: var(--wf-y); opacity: 0"></span>
         <sc-for list="{{lg.opts}}" as="o" hint-placeholder-count="10">
-          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" style="position: relative; z-index: {{o.z}}; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><img src="{{o.flag}}" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.08)"><span role="status" aria-live="polite" style="display: {{o.tipD}}; position: absolute; left: 0; bottom: calc(100% + 6px); padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; font-weight: 400; white-space: nowrap; pointer-events: none">{{o.tip}}</span><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.name}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.name}}</span></span></button>
+          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><img src="{{o.flag}}" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.08)"><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.name}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.name}}</span></span></button>
         </sc-for>
       </div>
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
@@ -656,7 +655,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
   <!-- The menu button (Oct 3, 18:02): one button that stays put, above everything, at the top right (8px from the edge, in line
        with the menu's icon column); the screen slides out from under it and back under it. Opens and closes the menu. -->
-  <button type="button" class="opt" data-wf-burger="1" data-pf-av="1" onClick="{{pm.burger}}" aria-haspopup="true" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: absolute; z-index: 95; top: 68px; right: {{pm.bRight}}px; transform: translateX({{pm.bX}}px); display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; opacity: {{pm.bOp}}; pointer-events: {{pm.bPE}}; transition: opacity .3s ease"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button>
+  <button type="button" class="opt" data-wf-burger="1" data-pf-av="1" onClick="{{pm.burger}}" aria-haspopup="true" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: absolute; z-index: 95; top: 68px; right: {{pm.bRight}}px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; opacity: {{pm.bOp}}; pointer-events: {{pm.bPE}}; transition: opacity .3s ease"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button>
   <!-- Confirm role-play changes and key removal (no grabber: it is not expandable; Cancel or a tap outside closes it) -->
   <div class="wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-dlg" role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 0 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
@@ -725,8 +724,9 @@ class Component extends DCLogic {
   // The menu button: the screen slides left to the menu, profile first (Oct 3, 17:18)
   // The menu button's move (Oct 3, 18:05): as the screen slides, it travels 12px between the top bar and the icon column and
   // locks into place like a mechanism, a quick "clack": it speeds into the spot, overshoots 2px, knocks back 1px and settles
-  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'); if (!b || !b.animate) return; const from = to ? 0 : 12, d = to ? 1 : -1, x = to ? 12 : 0;
-      b.animate([{ transform: 'translateX(' + from + 'px)', easing: 'cubic-bezier(.6,0,1,.6)' }, { transform: 'translateX(' + (x + 2 * d) + 'px)', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { transform: 'translateX(' + (x - d) + 'px)', offset: 0.86 }, { transform: 'translateX(' + x + 'px)' }], { duration: 450, delay: 560, fill: 'backwards' });
+  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'); if (!b || !b.animate) return; const dx = 12, from = to ? -dx : dx, d = to ? 1 : -1;
+      // the button already sits at its new place; it is drawn from its old spot and travels there with the clack
+      b.animate([{ translate: from + 'px 0', easing: 'cubic-bezier(.6,0,1,.6)' }, { translate: (2 * d) + 'px 0', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { translate: (-d) + 'px 0', offset: 0.86 }, { translate: '0px 0' }], { duration: 450, delay: 560, fill: 'backwards' });
       setTimeout(() => { try { if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, 560 + 324); } catch (e) {} }
   // The language switcher's yellow (Oct 3, 18:23): placed on the chosen option; on a new choice it travels there, its height
   // shrinking to half on the way and growing back to full as it lands (as the other switchers' motion, in reverse)
@@ -837,18 +837,6 @@ class Component extends DCLogic {
     this._flipT = setTimeout(() => this.setState({ flip: null }), 3000);
     this.setState({ flip: { n0: rec.n0, n1, f0: rec.f0, f1, t: rec.t } });
   }
-  wfPfAvPos() { try { const ov = document.querySelector('[data-pf-av]'), O = ov.offsetParent.getBoundingClientRect(), R = document.querySelector('[data-wfroot]').getBoundingClientRect(),
-      k = R.width / ((window.__wfVP || {}).w || 390) || 1, b = [...document.querySelectorAll('button.avbtn[aria-haspopup="dialog"]')].find((x) => { const r = x.getBoundingClientRect(); return r.width && getComputedStyle(x).visibility !== 'hidden'; }), q = b.getBoundingClientRect();
-      return { top: Math.round((q.top - O.top) / k), left: Math.round((q.left - O.left) / k) }; } catch (x) { return null; } }
-  // Keeps the fixed profile picture exactly on its spot: measured from the top bar before opening, then checked against the
-  // panel's own spacer once the panel has settled (and again when the screen size changes), so it can never drift off.
-  wfPfAvFix() { try { const ov = document.querySelector('[data-pf-av]'), sp = document.querySelector('[data-pf-av-spot]'); if (!ov || !sp) return;
-      // The X never moves from the profile picture's spot: the panel's top row (Forest Fire Watch and the spot) is moved to it
-      // instead. Measured with offsets (not screen rects), so the panel's slide does not matter and it is right before it shows.
-      const P = ov.offsetParent; let t = 0, l = 0, e = sp; while (e && e !== P) { t += e.offsetTop; l += e.offsetLeft; e = e.offsetParent; } if (e !== P) return;
-      const c = this.state || {}, av = c.pfAvPos || this._pfAvLast; if (!av) return;
-      const dy = av.top - t, dx = l - av.left, rd = (c.pfRowDy != null ? c.pfRowDy : 11) + dy, rp = (c.pfRowPr != null ? c.pfRowPr : 16) + dx;
-      if (Math.abs(dy) > 0.5 || Math.abs(dx) > 0.5) this.setState({ pfRowDy: rd, pfRowPr: rp }); } catch (x) {} }
   // The top blade's real height (it grows with its header: larger text, longer names, a resized screen); the panels that
   // fold into it (area picker, search) and the map's top edge follow it instead of a fixed 163px
   wfTopWatch() { const m = () => { const e = document.querySelector('[data-wf-topbg]'); if (!e) return; const h = Math.round(e.offsetHeight); if (h > 40 && h !== this._tbh) { this._tbh = h; try { this.forceUpdate(); } catch (x) {} } };
@@ -867,9 +855,8 @@ class Component extends DCLogic {
   wfMenuPost(m) { if (!window.__wfMenuOnly) return; try { window.parent.postMessage({ wfMenu: m }, location.origin); } catch (e) {} }
   componentDidMount() {
     if (window.__wfMenuOnly) { window.addEventListener('message', (e) => { if (e.origin !== location.origin || !e.data || !e.data.wfMenu) return;
-      if (e.data.wfMenu === 'open') { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (x) {} this.setState({ pf: true, pm: 'open', pmSec: 'profile' }); } }); } /* the About row's symbol blinks every 4 s (only while the preferences show it) */ this._abtBlink = setInterval(() => { try { const e = document.querySelector('[data-wf-about-eye]'); if (e && e.getBoundingClientRect().height && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 4000); this.wfTopWatch(); setTimeout(() => this.wfLiSeg(), 300); setTimeout(() => this.wfLiSeg(), 1500); try { const u = () => this.wfPsKb(), vv = window.visualViewport; if (vv) { vv.addEventListener('resize', u); vv.addEventListener('scroll', u); } document.addEventListener('focusin', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); /* Find a place on the map: the field takes focus inside the tap itself, so iOS opens the keyboard at once */ document.addEventListener('touchstart', (e) => { try { const t = e.touches && e.touches[0]; this._psT0 = t ? [t.clientX, t.clientY] : null; } catch (x) {} }, { capture: true, passive: true }); document.addEventListener('touchend', (e) => { try { const b = e.target && e.target.closest && e.target.closest('button[aria-label="Find a place"]'); if (!b || !this._psOpen) return; const t = e.changedTouches && e.changedTouches[0], o = this._psT0; if (t && o && Math.hypot(t.clientX - o[0], t.clientY - o[1]) > 10) return; /* a drag over the button is not a tap */ this._psOpen(); this._psEat = Date.now(); } catch (x) {} }, true); /* the tap's own click lands on the panel that just opened over the button: it is swallowed so it cannot close it again */ document.addEventListener('click', (e) => { if (this._psEat && Date.now() - this._psEat < 600) { this._psEat = 0; e.preventDefault(); e.stopPropagation(); } }, true); document.addEventListener('focusout', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); setInterval(u, 1000); } catch (x) {} [60, 600, 1600].forEach((t) => setTimeout(() => { if (this.state.pf) this.wfPfAvFix(); else { const av = this.wfPfAvPos(); if (av) this.setState({ pfAvPos: av }); } }, t));
+      if (e.data.wfMenu === 'open') { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (x) {} this.setState({ pf: true, pm: 'open', pmSec: 'profile' }); } }); } /* the About row's symbol blinks every 4 s (only while the preferences show it) */ this._abtBlink = setInterval(() => { try { const e = document.querySelector('[data-wf-about-eye]'); if (e && e.getBoundingClientRect().height && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 4000); this.wfTopWatch(); setTimeout(() => this.wfLiSeg(), 300); setTimeout(() => this.wfLiSeg(), 1500); try { const u = () => this.wfPsKb(), vv = window.visualViewport; if (vv) { vv.addEventListener('resize', u); vv.addEventListener('scroll', u); } document.addEventListener('focusin', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); /* Find a place on the map: the field takes focus inside the tap itself, so iOS opens the keyboard at once */ document.addEventListener('touchstart', (e) => { try { const t = e.touches && e.touches[0]; this._psT0 = t ? [t.clientX, t.clientY] : null; } catch (x) {} }, { capture: true, passive: true }); document.addEventListener('touchend', (e) => { try { const b = e.target && e.target.closest && e.target.closest('button[aria-label="Find a place"]'); if (!b || !this._psOpen) return; const t = e.changedTouches && e.changedTouches[0], o = this._psT0; if (t && o && Math.hypot(t.clientX - o[0], t.clientY - o[1]) > 10) return; /* a drag over the button is not a tap */ this._psOpen(); this._psEat = Date.now(); } catch (x) {} }, true); /* the tap's own click lands on the panel that just opened over the button: it is swallowed so it cannot close it again */ document.addEventListener('click', (e) => { if (this._psEat && Date.now() - this._psEat < 600) { this._psEat = 0; e.preventDefault(); e.stopPropagation(); } }, true); document.addEventListener('focusout', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); setInterval(u, 1000); } catch (x) {}
     try { const lt = () => setTimeout(() => this.wfLangThumb(false), 140); window.addEventListener('resize', lt); window.addEventListener('wf-prefs', lt); window.addEventListener('wf-lang', lt); } catch (e) {}
-    try { window.addEventListener('resize', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 120)); window.addEventListener('pageshow', () => setTimeout(() => (this.state.pf ? this.wfPfAvFix() : null), 300)); } catch (x) {}
  window.__wfSwipeDrag = (k, dy) => this.setState({ hdK: dy ? k : null, hdY: dy });   // a whole-blade swipe (fit.js) shows as the blade's own drag
     try { sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { clearInterval(this._abtBlink); try { window.removeEventListener('wf-vp', this._wfVp); } catch (e) {} try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
@@ -1014,17 +1001,12 @@ class Component extends DCLogic {
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s',
-          burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(20, L0.vw - (L0.colL + L0.colW) + 20) : 20; })(),
-          bX: pmMode ? 12 : 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
+          burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(20, L0.vw - (L0.colL + L0.colW) + 20) : 20; })(),   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
+          bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
           slVis: MENU ? 'hidden' : 'visible',
           bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.scOpen || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.scOpen || s.full) ? 'auto' : 'none',   // hidden while another top panel or the full-screen map is up
           dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
-      // the fixed profile picture: where the top bar has it (measured on open), shown while the panel is open or closing
-      pfAv: (() => { const P = s.pfAvPos || this._pfAvLast || { top: 15, left: ((window.__wfVP || {}).w || 390) - 56 }; this._pfAvLast = P; return { top: P.top, left: P.left, rowDy: s.pfRowDy != null ? s.pfRowDy : 11, rowPr: s.pfRowPr != null ? s.pfRowPr : 16, op: pf ? 1 : 0, delay: pf ? '.15s' : '0s', ring: pf ? 1 : 0 }; })(),
-      pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true', pfPE: pf ? 'auto' : 'none', pfScrimOp: pf ? 1 : 0, pfDy: 0, pfCl: this.wfDrag('pf').y ? Math.max(0, -this.wfDrag('pf').y) : -80, pfClT: this.wfDrag('pf').y ? '0s' : '.3s', hPf: this.wfHandle('pf', 'up', () => this.setState({ pf: false })),
-      pfY: pf ? '0%' : '-104%', pfDur: boot ? '0s' : pf ? '.55s' : '.45s', pfEase: pf ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)',
-      pfVis: pf ? 'visible' : 'hidden', pfVisDelay: pf ? '0s' : '.5s',
-      pfInOp: pf ? 1 : 0, pfInY: pf ? '0px' : '-12px', pfInDelay: boot ? '0s' : pf ? '.15s' : '.5s', pfXRot: s.pfSpin ? '90deg' : '0deg',   // closing: the content stays put and slides away with the panel (reset only once it is gone)
+      pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',
       cs: (() => { const o = !!s.chatSet, pt = lang === 'pt';
         return { title: pt ? 'Encenação e chave' : (window.__wfJA ? window.__wfJA('Chat role-play and key') : 'Chat role-play and key'), str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
@@ -1153,9 +1135,8 @@ class Component extends DCLogic {
       openPrefs: (...a) => this.openPrefsFn(...a),
       closePrefs: (...a) => this.closePrefsFn(...a),
       lg: (() => { const cur = s.langPend || lang, LS = window.__wfLangs || [{ code: 'en', name: 'English', flag: 'assets/flags/gb.svg' }];
-        return { d: (s.pmSec || 'profile') === 'lang' ? 'flex' : 'none', opts: LS.map((o) => ({ name: o.name, short: o.short || o.name, flag: o.flag, tipD: s.lgTip === o.code ? 'block' : 'none', z: s.lgTip === o.code ? 3 : 1, tip: 'Not available yet', on: o.code === cur ? 'true' : 'false', fg: o.code === cur ? '#1C1C1E' : '#3C3C43', w: o.code === cur ? 600 : 400,
+        return { d: (s.pmSec || 'profile') === 'lang' ? 'grid' : 'none', opts: LS.map((o) => ({ name: o.name, flag: o.flag, on: o.code === cur ? 'true' : 'false', fg: o.code === cur ? '#1C1C1E' : '#3C3C43', w: o.code === cur ? 600 : 400,
           pick: () => { if (o.code === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-            if (o.na) { this.setState({ lgTip: o.code }); clearTimeout(this._lgTip); this._lgTip = setTimeout(() => this.setState({ lgTip: null }), 1800); return; }   // not translated yet: a tooltip says so
             this.setState({ langPend: o.code }, () => this.wfLangThumb(true)); clearTimeout(this._lgT);
             this._lgT = setTimeout(() => { if (window.__wfSetLang) window.__wfSetLang(o.code); this.setState({ langPend: null, lang: o.code }, () => this.wfLangThumb(false)); }, 700); } })) }; })(),
       pfGroups: [

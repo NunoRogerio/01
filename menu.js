@@ -40,9 +40,10 @@
   }
   function send(m) { try { ifr.contentWindow.postMessage({ wfMenu: m }, location.origin); } catch (e) {} }
   // the button travels to (or from) the menu's icon column and locks with a "clack", as on the main screen
-  function clack(to) { if (!btn || !btn.animate) return; var dx = btn.__dx || 12, from = to ? 0 : dx, x = to ? dx : 0, d = to ? 1 : -1;
-    btn.animate([{ transform: 'translateX(' + from + 'px)', easing: 'cubic-bezier(.6,0,1,.6)' }, { transform: 'translateX(' + (x + 2 * d) + 'px)', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { transform: 'translateX(' + (x - d) + 'px)', offset: 0.86 }, { transform: 'translateX(' + x + 'px)' }], { duration: 450, delay: 560, fill: 'backwards' });
-    btn.style.transform = 'translateX(' + x + 'px)'; }
+  function clack(to) { if (!btn) return; var p = rest(); if (!p) return; var dx = btn.__dx || 12, d = to ? 1 : -1;
+    // its place is set directly (8px from the edge with the menu showing); the move is drawn on top, from its old spot
+    btn.style.left = (to ? p.l + dx : p.l) + 'px'; if (!btn.animate) return;
+    btn.animate([{ translate: (to ? -dx : dx) + 'px 0', easing: 'cubic-bezier(.6,0,1,.6)' }, { translate: (2 * d) + 'px 0', offset: 0.72, easing: 'cubic-bezier(.2,.8,.4,1)' }, { translate: (-d) + 'px 0', offset: 0.86 }, { translate: '0px 0' }], { duration: 450, delay: 560, fill: 'backwards' }); }
   // while the menu shows, touches go through the screen's frame to the menu underneath (the screen itself and the button keep theirs)
   function through(on) { var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
   function slide(x) { var p = page(); if (!p) return; p.style.transition = 'transform ' + DUR + 'ms ' + EASE; p.style.transform = x ? 'translateX(' + x + 'px)' : ''; p.style.boxShadow = x ? SH : ''; p.style.willChange = 'transform'; }
