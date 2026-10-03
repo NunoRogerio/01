@@ -22,6 +22,7 @@
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=59"></script>
 <script src="tour.js?v=68"></script>
+<script src="mapsearch.js?v=1"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -197,8 +198,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 [data-wf-about-in] [data-wf-page] [style*="border-radius: 16px"]{background:transparent!important;padding:0!important}
 </style>
 <style>
-/* (Oct 3, 23:29, trial) firefighter stripes: diagonal bands 24px wide (measured along the edge), hi-vis yellow and near black */
-.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,#1C1C1E 16.97px 33.94px)}
+/* (Oct 3, 23:29, trial) firefighter stripes: diagonal bands 24px wide (measured along the edge), hi-vis yellow */
+.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px)}   /* (23:58) lime stripes only, the blade shows between them */
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
@@ -207,7 +208,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .53s ease">
 
   <div style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 1">
-  <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{ps.open}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
+  <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{psFloat}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
   </div>
 
   <!-- Panels column: the full width in portrait; a side column over the map in landscape and on big screens. -->
@@ -1208,6 +1209,23 @@ class Component extends DCLogic {
   }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
   // Find a place (OpenStreetMap's Nominatim) in the live regions this account can see; offline, the map's own town list
+  // Find a place, the query alone (Oct 3, 23:26): places matching the text in the regions this account sees (OpenStreetMap's
+  // Nominatim); offline, the map's own towns. Used by the floating map search box (mapsearch.js).
+  wfPlaceQuery(qq) {
+    const map = () => { const e = document.querySelector('[role=application]'); return e && e.__wfMap; };
+    const lock = this.wfLock(), only = Object.keys(window.__wfOnly || { PT: 1, CA: 1 }).filter((k) => !lock || k === lock);
+    const cc = [...new Set(only.map((k) => (k === 'PT' ? 'pt' : k === 'BRA' || k === 'AMZ' ? 'br' : 'us')))].join(','), lang = window.__wfLang === 'pt' ? 'pt' : 'en';
+    const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=12&countrycodes=' + cc + '&accept-language=' + lang + '&q=' + encodeURIComponent(qq);
+    const nk = (t) => String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(), km = (a, b) => Math.hypot((a.lat - b.lat) * 111, (a.lon - b.lon) * 111 * Math.cos(a.lat * Math.PI / 180));
+    return fetch(url).then((r) => r.json()).then((J) => {
+      const list = (J || []).filter((x) => { const a = x.address || {}; return a.country_code === 'pt' ? only.indexOf('PT') >= 0 : a.country_code === 'br' ? (only.indexOf('BRA') >= 0 || only.indexOf('AMZ') >= 0) : a.country_code === 'us' ? only.some((k) => /^[A-Z]{2}$/.test(k) && k !== 'PT') : false; }).map((x) => {
+        const a = x.address || {}, nm = x.name || String(x.display_name).split(',')[0], sub = [...new Set([a.city || a.town || a.village || a.municipality, a.county, a.state].filter((v) => v && v !== nm))].slice(0, 3).join(', '), b = (x.boundingbox || []).map(Number);
+        return { name: nm, sub, lat: +x.lat, lon: +x.lon, bb: b.length === 4 ? b : null }; });
+      const uniq = []; list.forEach((r) => { if (!uniq.some((q) => nk(q.name) === nk(r.name) && km(q, r) < 40)) uniq.push(r); });
+      return { list: uniq.slice(0, 8) }; }).catch(() => {
+      const m = map(), G = m && m.geo(), n = nk(qq), list = G && G.cities ? G.cities.map((c) => (Array.isArray(c) ? { name: c[0], lat: c[1], lon: c[2], st: c[3], co: c[4], lm: c[5] } : c)).filter((c) => !c.lm && c.lat != null && (only.indexOf(c.st) >= 0 || (c.st !== 'PT' && only.some((k) => /^[A-Z]{2}$/.test(k) && k !== 'PT' && k === c.st))) && nk(c.name).indexOf(n) >= 0).slice(0, 8).map((c) => ({ name: c.name, sub: c.co || '', lat: c.lat, lon: c.lon, bb: null })) : [];
+      return { list, off: !list.length }; });
+  }
   wfPlaceSearch() {
     const s = this.state || {}, on = !!s.psOpen, q = s.psQ || '', R = this._psR || { q: '', list: [], st: '' };
     const map = () => { const e = document.querySelector('[role=application]'); return e && e.__wfMap; };
@@ -1554,7 +1572,8 @@ class Component extends DCLogic {
       signOutNow: () => { try { window.localStorage.removeItem('wf-role'); window.localStorage.removeItem('wf-last-user'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
       backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : brObj && brObj.id === 'AMZ' ? 'Back to Brazil' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
       scOp: scOpen ? 1 : 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? (this.wfDrag('sc').y ? (-this.wfDrag('sc').y) + 'px' : '0px') : Math.max(0, L.vh - 48 - (this._tbh || 163)) + 'px', scClipT: this.wfDrag('sc').y ? '0s' : '.55s', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
-      ps: (() => { const P = this.wfPlaceSearch(); this._psOpen = P.open; return P; })(), hPs: this.wfHandle('ps', 'up', () => this.wfPlaceSearch().close()),   // the grabber: a tap or a swipe up folds Find a place
+      ps: (() => { const P = this.wfPlaceSearch(); this._psOpen = P.open; return P; })(),
+      psFloat: (e) => { if (!window.__wfMapSearch) return; window.__wfMapSearch.open({ anchor: e && e.currentTarget, query: (q) => this.wfPlaceQuery(q), go: (r) => { const el = document.querySelector('[role=application]'), m = el && el.__wfMap; if (m) m.flyTo(r.lat, r.lon, r.bb); } }); },   // (Oct 3, 23:26) the floating search box hPs: this.wfHandle('ps', 'up', () => this.wfPlaceSearch().close()),   // the grabber: a tap or a swipe up folds Find a place
       scopeStr: scOpen ? 'true' : 'false', scopeRot: scOpen ? '180deg' : '0deg',
       scopeAria: 'Area: ' + scope.title + ', ' + scope.parent + '. Change area',
       fireCount: NF, fireChips: FIRES.map((f) => ({ ...f, aria: 'Active fire ' + f.id + ', ' + f.place + '. ' + f.note })), fireMarks: FIRES, flN: (() => { const f = s.flip; const mv = !!f && f.n0 !== f.n1; return { still: !mv, moving: mv, from: mv ? f.n0 : N, to: N, w: mv && String(f.n0).length > String(N).length ? f.n0 : N }; })(),
