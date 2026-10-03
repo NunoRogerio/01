@@ -15,7 +15,7 @@
   // The language the role-played crews write in: the app's language (Oct 3, 18:13: more languages)
   var LNAME = function (full) { var l = window.__wfLang || 'en', M = { pt: ['European Portuguese (pt-PT)', 'Portuguese bombeiros'], 'pt-BR': ['Brazilian Portuguese (pt-BR)', 'Brazilian bombeiros and Defesa Civil'],
       es: ['Spanish (es-ES)', 'Spanish bomberos'], fr: ['French (fr-FR)', 'French sapeurs-pompiers'], it: ['Italian (it-IT)', 'Italian Vigili del Fuoco'], de: ['German (de-DE)', 'German Feuerwehr'],
-      nl: ['Dutch (nl-NL)', 'Dutch brandweer'], uk: ['Ukrainian (uk-UA)', 'Ukrainian State Emergency Service (DSNS) firefighters'], ja: ['Japanese (ja-JP)', 'Japanese fire services'] }, m = M[l];
+      nl: ['Dutch (nl-NL)', 'Dutch brandweer'], uk: ['Ukrainian (uk-UA)', 'Ukrainian State Emergency Service (DSNS) firefighters'], pl: ['Polish (pl-PL)', 'Polish State Fire Service'], ro: ['Romanian (ro-RO)', 'Romanian IGSU firefighters'], el: ['Greek (el-GR)', 'the Hellenic Fire Service'], cs: ['Czech (cs-CZ)', 'the Czech Fire Rescue Service'], sv: ['Swedish (sv-SE)', 'Swedish räddningstjänst'], hu: ['Hungarian (hu-HU)', 'Hungarian firefighters'], ja: ['Japanese (ja-JP)', 'Japanese fire services'] }, m = M[l];
     return m ? m[0] + (full ? ', fireground vocabulary used by ' + m[1] : '') : 'English'; };
   var L = function (en, pt) { return PT() && pt ? pt : (window.__wfJA ? window.__wfJA(en) : en); };
   var MIN = 60000;

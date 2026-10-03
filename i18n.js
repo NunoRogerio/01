@@ -9,7 +9,7 @@
   // The languages on offer (Oct 3, 18:13): each with its native name and its round flag (assets/flags, circle-flags, MIT).
   // English, Portuguese and Japanese live here; the others load from data/i18n/<code>.json when chosen. A language is
   // listed only once it is translated.
-  var LANGS=[['en','English','gb'],['pt','Português','pt'],['pt-BR','Brasileiro','br'],['es','Español','es'],['fr','Français','fr'],['it','Italiano','it'],['de','Deutsch','de'],['nl','Nederlands','nl'],['uk','Українська','ua'],['ja','日本語','jp']];
+  var LANGS=[['en','English','gb'],['pt','Português','pt'],['pt-BR','Brasileiro','br'],['es','Español','es'],['fr','Français','fr'],['it','Italiano','it'],['de','Deutsch','de'],['nl','Nederlands','nl'],['uk','Українська','ua'],['pl','Polski','pl'],['ro','Română','ro'],['el','Ελληνικά','gr'],['cs','Čeština','cz'],['sv','Svenska','se'],['hu','Magyar','hu'],['ja','日本語','jp']];
   window.__wfLangs=LANGS.map(function(a){return {code:a[0],name:a[1],flag:'assets/flags/'+a[2]+'.svg'};});
   var OK={};LANGS.forEach(function(a){OK[a[0]]=1;});
   try{var role=localStorage.getItem('wf-role')||'',sv=localStorage.getItem('wf-lang-'+role);lang=OK[sv]?sv:((role==='pt'||role==='design')?'pt':'en');}catch(e){}
