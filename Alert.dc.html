@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=172"></script>
-<script src="i18n.js?v=150"></script>
+<script src="prefs.js?v=173"></script>
+<script src="i18n.js?v=151"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=59"></script>
 <script src="tour.js?v=68"></script>
@@ -75,7 +75,6 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .fill{transform-origin:left center;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) .3s both}
 .scan{animation:scan 3.4s linear infinite}
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
-:focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#545458}
 .lbl{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6E6E73}
@@ -132,7 +131,6 @@ a.card:hover .go{transform:translateX(4px)}
 /* iOS layer */
 body{background:#F2F2F7;color:#000}
 a{color:#0062CC}a:hover{color:#004FA3}
-:focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
 .btn:active,.chip:active,.opt:active,.card:active,.navi:active,.fsbtn:active,.mbtn:active{opacity:.6;transform:none!important;transition:opacity .06s}
@@ -355,7 +353,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
       <!-- Key figures: cards three per row, reorderable (press, hold, move), a vertical note when a figure is estimated or simulated -->
       <section aria-label="Key figures" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px">
-        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73"><span style="white-space: nowrap; font-weight: 600">Key figures</span><span class="wf-hint" style="font-size: 15px; font-weight: 400; line-height: 20px; color: #6E6E73; text-align: right">(move cards to reorder)</span></span>
+        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px; font-size: 15px; font-weight: 400; line-height: 20px; color: #636366"><span style="white-space: nowrap; font-weight: 600">Key figures</span><span class="wf-hint" style="font-size: 15px; font-weight: 400; line-height: 20px; color: #636366; text-align: right">(move cards to reorder)</span></span>
         <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px">
           <sc-for list="{{ig.kpis}}" as="m" hint-placeholder-count="6">
             <div role="listitem" data-wf-kpi="{{m.key}}" data-g="ign" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
@@ -369,7 +367,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <path d="{{m.bars}}" fill="{{m.barC}}" stroke="none"></path>
                   <path d="{{m.bar2}}" fill="#3A3A3C" stroke="none"></path>
                 </svg>
-                <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; opacity: 0.4; pointer-events: none">{{m.note}}</span>
+                <span class="wf-note wf-note-t" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; pointer-events: none">{{m.note}}</span>
               </div>
             </div>
           </sc-for>
@@ -389,7 +387,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <span style="display: {{m.numD}}; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                   <span style="display: {{m.txtD}}; margin-top: 0; font-size: 17px; line-height: 22px; font-weight: 700; color: #3A3A3C">{{m.txt}}</span>
                   <span style="display: {{m.subD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.sub}}</span>
-                  <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 8px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; opacity: 0.4; pointer-events: none">{{m.note}}</span>
+                  <span class="wf-note wf-note-t" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 8px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; pointer-events: none">{{m.note}}</span>
                 </div>
               </div>
             </sc-for>
@@ -557,11 +555,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- Cards picker: the group's cards with toggles (shared by every card group on this screen) -->
   <div class="wf-glass scrim" onClick="{{pk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{pk.op}}; pointer-events: {{pk.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-label="{{pk.title}}" aria-hidden="{{pk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{pk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
+  <section role="dialog" aria-modal="true" aria-labelledby="pkTitle" aria-hidden="{{pk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{pk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down (on it, or anywhere when the list does not scroll) closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{pk.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 32px; padding: 0 16px">
-      <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 style="margin: 0; padding-top: 8px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{pk.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
+      <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="pkTitle" style="margin: 0; padding-top: 8px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{pk.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
       <button type="button" class="mbtn wf-reset wf-rpill" onClick="{{pk.reset}}" aria-label="Reset to the default cards" aria-disabled="{{pk.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; margin-top: 8px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; cursor: pointer; flex-shrink: 0">Reset</button>
     </div>
     <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">

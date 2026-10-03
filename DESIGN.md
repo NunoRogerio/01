@@ -39,7 +39,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 - **Shortest wording** that keeps the meaning, in every language. Examples: "Surveillance", not "Under surveillance"; "Final duration", not "Time it took to resolve".
 - **Relative times** say "ago" ("3 min ago"). Live counters use short units ("58 min 12 s").
 - **Real data only.** When something isn't published, say so plainly ("Start time not published.").
-- **"Estimate"** is the one word for estimated or simulated figures everywhere (the shortest of Estimate / Simulated / Simulation): cards' vertical notes, section labels, Endurance, stations. The vertical note sits at 40% opacity.
+- **"Estimate"** is the one word for estimated or simulated figures everywhere (the shortest of Estimate / Simulated / Simulation): cards' vertical notes, section labels, Endurance, stations. The vertical note is solid mid grey (no transparency) and screen readers hear it.
 - **Simulated data** (no public feed exists yet: units, shifts, water, aircraft cycles) is allowed for the demo but is always labelled "Estimate" next to its title.
 - **Burned area always shows** on a fire detail: the source's figure; where it has none yet, the fire model's estimate with an "Estimate" note; else "—" with "Not published yet."
 - **Detail pages don't repeat the tooltip's KPI in big.** The tooltip already gave it; the detail leads with the next question (fire: containment as a big % where it is published; where only a stage exists, e.g. ANEPC, the stage is a colour-matched tag, never a big word), and the tooltip's KPI moves to a medium KPI beside the others (time active, burned area).
@@ -795,3 +795,14 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Profile section (Oct 3, 23:25): 40px from the title to the picture (was 44px); Sign out sits 24px under the profile (was 8px).
 - Share link card (Oct 3, 23:25): 16px padding all round (was 8px top and bottom).
 - About, phase list (Oct 3, 23:25): the rows' icons line up with the other content at the section's 16px edge (were indented 16px more).
+- Pinch zoom (Oct 3, 23:30, accessibility): no screen blocks zooming (no user-scalable=no or maximum-scale in the viewport); `touch-action: manipulation` on the page and its controls stops accidental double-tap zoom.
+- Estimate notes (Oct 3, 23:30): the vertical "Estimate" note in key figure cards is solid, not 40% transparent, and is read aloud with the card.
+- Darker mid grey on tinted surfaces (Oct 3, 23:30): `#6E6E73` stays only on pure white (5.07:1); text on grey, tinted, orange or frosted surfaces uses `#636366` (token `--wf-mid-grey-tint` in prefs.js): key figure card labels, units and notes, the map credit, the "Key figures" label and hint, the profile's access line.
+- Hidden layers and zero counts (Oct 3, 23:30): a hidden map layer chip's text and a zero count use `#636366` (was `#8E8E93`, too faint).
+- Login (Oct 3, 23:30): the empty Username field and the Password placeholder are `#3A3A3C` (a disabled Password field keeps its faded grey).
+- Spoken names (Oct 3, 23:30): every aria-label starts with the words on screen, in the screen's language. Labels built from parts ("Ignition candidates, 14, hidden. Tap to show") are translated part by part (i18n.js); in Portuguese the stage chip's time reads "há 4 h".
+- Closed panels (Oct 3, 23:30): any sheet, dialog, dropdown or menu section with aria-hidden="true" is also inert (prefs.js keeps them in step), so nothing off screen can be focused, read or tapped. Dialogs are named by their title (aria-labelledby); a panel that is always on screen (the main list) is not a dialog.
+- Switches and selections (Oct 3, 23:30): switch tracks, on and off, have a 1px `#8A8A8E` inner edge (3:1); the lime thumb of a switcher, the language picker and the tab bar have a 1px `#3A3A3C` inner edge, so the choice never relies on the lime alone.
+- Focus ring (Oct 3, 23:30): one ring everywhere, `2px solid #007AFF`, 2px out (`:focus-visible`, prefs.js).
+- Small targets (Oct 3, 23:30): the clear-search button keeps its 20px grey circle but has a 24px press area.
+- Reduced motion (Oct 3, 23:30): when the phone asks for reduced motion, transitions and animations finish at once (prefs.js); the forest photos and their credit stay still.

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="i18n.js?v=150"></script>
+<script src="i18n.js?v=151"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -28,13 +28,15 @@
 html{background:#000000}body{margin:0;background:#000000;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 a{color:#0062CC}a:hover{color:#004FA3}
 :focus-visible{outline:2px solid #007AFF;outline-offset:2px}
+html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-action:manipulation}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 .opt{transition:background-color .15s ease}
 .opt:active{background-color:#E5E5EA}
 @media (hover:hover){.opt:hover{background-color:#F2F2F7}}
 .go{transition:background-color .15s ease}
 @media (hover:hover){.go:hover{background:#E2F74D}}
 .go:active{background:#C3DE12}
-.pw::placeholder{color:#545458}
+.pw::placeholder{color:#3A3A3C}
 .pw:disabled::placeholder,.pw.off::placeholder{color:#77777C;-webkit-text-fill-color:#77777C}
 .pw:disabled{-webkit-text-fill-color:#77777C;opacity:1}
 </style>
@@ -449,7 +451,7 @@ class Component extends DCLogic {
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
       xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
       dOp: s.phase === 'out' ? 0 : 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
-      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#545458', userFs: '17px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
+      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#3A3A3C', userFs: '17px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
       pwBlur: (e) => { if (!sel) { try { e.target.blur(); } catch (x) {} } },
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + (sel[4] ? ' · ' + sel[4] : '') + '. ' + (sel[7] ? sel[7] + ' ' : '') + 'Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[9] || sel[0]] + '.' : 'Tap username to choose a demo profile.',

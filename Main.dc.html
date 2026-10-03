@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -17,8 +17,8 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=172"></script>
-<script src="i18n.js?v=150"></script>
+<script src="prefs.js?v=173"></script>
+<script src="i18n.js?v=151"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=59"></script>
 <script src="tour.js?v=68"></script>
@@ -77,7 +77,6 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .fill{transform-origin:left center;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) .3s both}
 .scan{animation:scan 3.4s linear infinite}
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
-:focus-visible{outline:2px solid #0079A6;outline-offset:3px}
 .kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .kpi small{font-size:15px;font-weight:500;letter-spacing:0;color:#545458}
 .lbl{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#6E6E73}
@@ -144,7 +143,6 @@ a.card:hover .go{transform:translateX(4px)}
 /* iOS layer */
 body{background:#F2F2F7;color:#000}
 a{color:#0062CC}a:hover{color:#004FA3}
-:focus-visible{outline:2px solid #007AFF;outline-offset:2px}
 .btn,.chip,.opt,.card,.navi,.fsbtn,.mbtn{-webkit-tap-highlight-color:transparent}
 .btn:hover,.chip:hover,.opt:hover,a.card:hover,.ddopt:hover,.fsbtn:hover,.navi:hover svg{transform:none!important}
 .btn:active,.chip:active,.opt:active,.card:active,.navi:active,.fsbtn:active,.mbtn:active{opacity:.6;transform:none!important;transition:opacity .06s}
@@ -239,7 +237,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <sc-if value="{{hasCard}}" hint-placeholder-val="{{ true }}">
   <div class="scrim {{glass}}" onClick="{{closeList}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 3; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{listOp}}; pointer-events: {{listPE}}; transition: opacity .35s ease"></div>
   <div style="position: absolute; inset: 0; z-index: 4; pointer-events: none; filter: drop-shadow(0 0 16px rgba(0,0,0,0.08))">
-  <section role="dialog" data-swipe="down" data-swipe-key="li" aria-labelledby="ignListTitle" style="position: absolute; left: {{padLn}}px; right: 0; top: {{liTop}}px; bottom: 0; z-index: 4; display: flex; flex-direction: column; box-sizing: border-box; padding-left: {{padL}}px; background: #F2F2F7; pointer-events: auto; clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); -webkit-clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); transform: translateY({{downY}}); opacity: {{downOp}}; translate: 0 {{liDy}}px; transition: clip-path {{liClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{liClipT}} cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease, translate {{liDyT}} ease">
+  <section data-swipe="down" data-swipe-key="li" aria-labelledby="ignListTitle" style="position: absolute; left: {{padLn}}px; right: 0; top: {{liTop}}px; bottom: 0; z-index: 4; display: flex; flex-direction: column; box-sizing: border-box; padding-left: {{padL}}px; background: #F2F2F7; pointer-events: auto; clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); -webkit-clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); transform: translateY({{downY}}); opacity: {{downOp}}; translate: 0 {{liDy}}px; transition: clip-path {{liClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{liClipT}} cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease, translate {{liDyT}} ease">
     <!-- One grabber for the bottom blade, fixed to its top edge: it rides the edge as the blade opens and closes (the two drag areas below keep their touch, without their own line) -->
     <span aria-hidden="true" style="position: absolute; z-index: 5; left: 50%; top: calc({{liClip}} + 8px); width: 86px; height: 3px; margin-left: -43px; border-radius: 999px; background: rgba(60,60,67,0.2); pointer-events: none; transition: top {{liClipT}} cubic-bezier(.2,.8,.2,1)"></span>
     <h2 id="ignListTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">{{listTitle}}</h2>
@@ -264,7 +262,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <label style="display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12); color: #545458">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>
           <input class="sqsearch" type="search" enterkeyhint="search" autocomplete="off" aria-label="{{li.ph}}" placeholder="{{li.ph}}" value="{{li.q}}" onInput="{{li.onQ}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; background: transparent; font: inherit; font-size: 17px; color: #000000">
-          <sc-if value="{{li.hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{li.clearQ}}" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: #8E8E93; color: #FFFFFF; cursor: pointer"><svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.88" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
+          <sc-if value="{{li.hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{li.clearQ}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 24px; height: 24px; margin: -2px; padding: 2px; box-sizing: border-box; border: 0; border-radius: 50%; background: #8E8E93; background-clip: content-box; color: #FFFFFF; cursor: pointer"><svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.88" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
         </label>
       </div>
       <div class="wf-snap" style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none">
@@ -343,7 +341,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <label style="display: flex; align-items: center; gap: 8px; height: 48px; margin: 24px 0 0; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12); color: #545458">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>
         <input class="sqsearch" type="search" aria-label="{{searchPh}}" placeholder="{{searchPh}}" value="{{q}}" onInput="{{onQ}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; background: transparent; font: inherit; font-size: 17px; color: #000000">
-        <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: #8E8E93; color: #FFFFFF; cursor: pointer"><svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.88" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
+        <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 24px; height: 24px; margin: -2px; padding: 2px; box-sizing: border-box; border: 0; border-radius: 50%; background: #8E8E93; background-clip: content-box; color: #FFFFFF; cursor: pointer"><svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.88" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if>
       </label>
     </sc-if>
     <div role="row" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; column-gap: 16px; margin: 32px -16px 16px; padding: 0 max(24px, {{rowPadR}}) 2px 32px; border-bottom: 0; font-size: 15px; font-weight: 400; color: #545458">
@@ -527,7 +525,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span class="wf-title-m" style="margin-bottom: 4px; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{me.name}}</span>
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.title}}</span>
           <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
-          <span class="wf-dot" style="margin-top: 4px; font-size: 15px; line-height: 20px; color: #6E6E73">{{me.access}}</span>
+          <span class="wf-dot" style="margin-top: 4px; font-size: 15px; line-height: 20px; color: #636366">{{me.access}}</span>
         </span>
       </div>
         <!-- Sign out belongs with the profile -->
@@ -1437,7 +1435,7 @@ class Component extends DCLogic {
     const CHEV = 'M5 12h14M13 6l6 6-6 6',   /* forward arrow with its stem (drill in), not a chevron */ TICK = 'm5 12 5 5 9-10';
     // Counts stay dark grey: colour on numbers is only for an ignition's likelihood percentage
     const NUMC = '#3C3C43';
-    const num = (v) => ({ v, c: v > 0 ? '#000000' : '#8E8E93' });
+    const num = (v) => ({ v, c: v > 0 ? '#000000' : '#636366' });
     const rowOf = (o, selected, pick, sub, drill) => { const dis = !selected && !o.live && (o.cands || 0) + (o.fires || 0) === 0; return {
       name: o.name, sub, subD: sub ? 'block' : 'none', ...selSty(selected), dis, disA: dis ? 'true' : 'false', ...(dis ? { fg: '#AEAEB2', subC: '#C7C7CC' } : {}),
       fires: o.fires, firesC: dis ? '#AEAEB2' : NUMC, cands: o.cands, candsC: dis ? '#AEAEB2' : NUMC,

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=172"></script>
-<script src="i18n.js?v=150"></script>
+<script src="prefs.js?v=173"></script>
+<script src="i18n.js?v=151"></script>
 <script src="live.js?v=42"></script>
 
 <title>Terrain map</title>
@@ -446,7 +446,7 @@ image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </div>
 
-  <span class="wf-note" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; color: #6E6E73; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+  <span class="wf-note wf-note-t" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"onBgTap":{"editor":null},"$preview":{"width":366,"height":380}}'>
@@ -1226,7 +1226,7 @@ class Component extends DCLogic {
       const on = LY[k], last = on && onN <= 1;
             const C = false, off = (c) => (on ? c : 'none');
       const n = NC && NC[k] != null ? String(NC[k]) : '';
-      return { n, nD: n ? 'inline' : 'none', label, d, sw: k === 'cands' ? 1.8 : (k === 'burn' || k === 'active' || k === 'held') ? 1 : 1.3, glowD: k === 'active' && on ? 'M1.5 8.3C4 2.8 9 9.8 12.5 3.3' : '', fill: on ? fill : (fill === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), stroke: on ? stroke : (stroke === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), bg: on ? 'rgba(242,242,247,0.62)' : 'rgba(230,230,235,0.62)', fg: on ? '#3C3C43' : '#8E8E93', pressed: on ? 'true' : 'false',
+      return { n, nD: n ? 'inline' : 'none', label, d, sw: k === 'cands' ? 1.8 : (k === 'burn' || k === 'active' || k === 'held') ? 1 : 1.3, glowD: k === 'active' && on ? 'M1.5 8.3C4 2.8 9 9.8 12.5 3.3' : '', fill: on ? fill : (fill === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), stroke: on ? stroke : (stroke === 'none' ? 'none' : 'rgba(142,142,147,0.2)'), bg: on ? 'rgba(242,242,247,0.62)' : 'rgba(230,230,235,0.62)', fg: on ? '#3C3C43' : '#636366', pressed: on ? 'true' : 'false',
         w: C ? 26 : 14, vb: C ? '0 0 26 14' : '0 0 14 14', d2: C ? 'M0.6 3.2H8.4L4.5 10.4Z' : '', f2: C ? off('#48484A') : 'none', d3: C ? 'M9.1 3.2H16.9L13 10.4Z' : '', f3: C ? off('#0A6FDB') : 'none',
         aria: label + (n ? ', ' + n : '') + (last ? ', shown' : on ? ', shown. Tap to hide' : ', hidden. Tap to show'), toggle: () => { if (last) return; this.toggleLayer(k); } };
     });

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -15,9 +15,9 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=172"></script>
+<script src="prefs.js?v=173"></script>
 <script src="menu.js?v=11"></script>
-<script src="i18n.js?v=150"></script>
+<script src="i18n.js?v=151"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=59"></script>
 
@@ -111,7 +111,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center; overflow-wrap: anywhere">{{m.l}}</span>
                 <span style="display: flex; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 15px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                 <span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
-                <span class="wf-note" aria-hidden="true" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; opacity: 0.4; pointer-events: none">{{m.note}}</span>
+                <span class="wf-note wf-note-t" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; pointer-events: none">{{m.note}}</span>
               </div>
             </div>
           </sc-for>
@@ -190,12 +190,12 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- People sheet: a crew or the command team, each person with their role; the button opens the chat (crew chief, or the team as a group) -->
   <div class="wf-glass" onClick="{{sq.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{sq.op}}; pointer-events: {{sq.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-label="{{sq.title}}" aria-hidden="{{sq.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sq.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
+  <section role="dialog" aria-modal="true" aria-labelledby="sqTitle" aria-hidden="{{sq.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sq.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{sq.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 0 0 0 8px; margin-bottom: 32px">
       <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-        <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
+        <h2 id="sqTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{sq.sub}}</span>
       </div>
       <!-- No X: the grabber closes the dialog. The command team's group chat (the primary action) sits here as a round primary button -->
@@ -219,11 +219,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- Cards picker: the key figures with toggles -->
   <div class="wf-glass" onClick="{{kp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{kp.op}}; pointer-events: {{kp.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-label="Key figures" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
+  <section role="dialog" aria-modal="true" aria-labelledby="kpTitle" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down (on it, or anywhere when the list does not scroll) closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{kp.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 32px; padding: 0 16px">
-      <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 style="margin: 0; padding-top: 8px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">Key figures</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
+      <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="kpTitle" style="margin: 0; padding-top: 8px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">Key figures</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
       <button type="button" class="mbtn wf-reset wf-rpill" onClick="{{kp.reset}}" aria-label="Reset to the default cards" aria-disabled="{{kp.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; margin-top: 8px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #3A3A3C; font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; cursor: pointer; flex-shrink: 0">Reset</button>
     </div>
     <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">
@@ -279,7 +279,7 @@ class Component extends DCLogic {
     const back = () => {};   // the app-wide back (fit.js): the screen visited just before, the map only when opened straight here
     const tx = { cmd: L('Command', 'Comando'), cmdTeam: L('Command team', 'Equipa de coordenação'), groupChat: L('Group chat', 'Conversa de grupo'), res: L('Resources', 'Recursos'),
       note: L('Resources, crews, people and the extra figures are simulated for this demonstration. Station details from OpenStreetMap contributors.', 'Recursos, equipas, pessoas e os indicadores extra são simulados para esta demonstração. Dados do quartel dos contribuidores do OpenStreetMap.') };
-    const closed = { y: '105%', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: '', close: () => {}, chat: () => {}, reset: () => {} };
+    const closed = { y: '105%', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: L('Open chat', 'Abrir conversa'), close: () => {}, chat: () => {}, reset: () => {} };
     if (!S) return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Incident chats', open: null } }, none: true, some: false, hasMap: false, fullLayer: false, back, tx, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], rowsD: 'none', loc: { gps: '', rows: '0fr', op: 0, copyIc: '', copyC: '', copyAria: '', dir: '', copy: null }, fires: [], noFires: false, firesD: 'none', kpis: [], kp: closed, sq: closed, cmd: { faces: [] }, rs: { tabs: [], rows: [] } };
     const name = S.name || T.official_name || 'Fire station';
     const op = T.operator || '';

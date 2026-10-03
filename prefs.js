@@ -228,6 +228,14 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '@keyframes wfKenSo{0%{transform:scale(1.3);animation-timing-function:cubic-bezier(.3,.1,.3,1)}38%{transform:scale(1)}100%{transform:scale(1)}}' +
     '@keyframes wfKenOne{from{transform:scale(1)}to{transform:scale(1.3)}}' +
     '@media (prefers-reduced-motion:reduce){.wf-forest>i{animation:none!important}.wf-forest>i:nth-of-type(1){opacity:1}}';   // switch thumbs stay white in both themes
+  // Accessibility, shared by every screen (Oct 3, 23:30)
+  BTN += 'html,body,a,button,input,select,textarea,label,summary,[role=button],[role=switch],[role=radio],[role=tab]{touch-action:manipulation}' +   // pinch zoom allowed (no user-scalable=no); no accidental double-tap zoom
+    ':focus-visible{outline:2px solid #007AFF;outline-offset:2px}' +   // one focus ring for keyboard and switch-control users
+    ':root{--wf-mid-grey:#6E6E73;--wf-mid-grey-tint:#636366}' +   // mid grey on white (5.07:1); on grey, tinted or frosted surfaces the darker one (4.5:1 or more)
+    '[data-wf-kpicard] [style*="color: #6e6e73" i],[data-wf-kpicard] [style*="color: rgb(110, 110, 115)"],[data-wf-kpicard] .wf-note,.wf-note.wf-note-t{color:var(--wf-mid-grey-tint)!important}' +   // KPI cards can be tinted (grey, orange): their labels, units and notes take the darker grey
+    '.wf-tog{box-shadow:inset 0 0 0 1px #8A8A8E!important}' +   // switch tracks, on and off, keep a 3:1 edge
+    '.segblob,.wf-langthumb{box-shadow:inset 0 0 0 1px #3A3A3C}.wf-tabs>.tabbar{box-shadow:inset 0 0 0 1px #3A3A3C}' +   // the selected option is marked by more than the lime
+    '@media (prefers-reduced-motion: reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}.wf-credit>span{animation:none!important}.wf-credit>span:first-child{opacity:1}}';
 
   // ---- Spacing (Oct 3, 18:10): condensed, comfortable (as designed) or spacious ----
   // Every inline padding, margin and gap of 16px or more moves one step along the app's spacing scale: down for condensed,
@@ -505,4 +513,17 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
         clear(d.el); try { comp.forceUpdate(); } catch (x) {} }
     };
   };
+})();
+
+// Closed panels are out of reach (Oct 3, 23:30): every sheet, dialog, dropdown or menu section marked aria-hidden="true"
+// is also made inert, so neither a screen reader, the keyboard nor a stray tap can reach what is off screen
+(function () {
+  var SEL = '[role=dialog],[role=alertdialog],[aria-modal],[data-wf-dd],[data-wf-menusec],.sheet,.wf-dlg,.wf-panel';
+  function sync(el) { if (!el.hasAttribute('aria-hidden')) { if (el.__wfInert) { el.inert = false; el.__wfInert = false; } return; } var h = el.getAttribute('aria-hidden') === 'true'; if (el.inert !== h) el.inert = h; el.__wfInert = h; }
+  function all() { document.querySelectorAll(SEL).forEach(sync); }
+  var q = 0; function later() { if (q) return; q = 1; (window.requestAnimationFrame || setTimeout)(function () { q = 0; all(); }); }
+  function go() { if (!window.MutationObserver) return; all();
+    new MutationObserver(function (L) { for (var i = 0; i < L.length; i++) { var r = L[i]; if (r.type === 'attributes') { if (r.target.matches && r.target.matches(SEL)) sync(r.target); } else if (r.addedNodes.length) later(); } })
+      .observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-hidden'] }); }
+  if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);
 })();
