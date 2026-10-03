@@ -675,19 +675,24 @@ if (WF_TOUR_ON) (function () {
   }
   // Tilt (Oct 3): held between 30° and 60° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
   // upright (above 60°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
-  var tiltB = null, tiltT = 0;
+  var tiltB = null, tiltT = 0, tiltV = 0;
   window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; });
   function askTilt() { try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
   function tiltSync(now) {
     var dt = tiltT ? Math.min(0.05, (now - tiltT) / 1000) : 0; tiltT = now;
-    if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) return;
+    if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) { tiltV = 0; return; }
     var b = tiltB, v = 0;
     if (b < 30) v = -Math.min(1, (30 - Math.max(-30, b)) / 60);          // 30° → 0, -30° and beyond → full speed up
     else if (b > 60) v = Math.min(1, (Math.min(120, b) - 60) / 30);      // 60° → 0, 90° and beyond → full speed down
-    if (!v) return;
+    // the angle sets a target speed (36 px/s just past the band, 630 px/s at full tilt); the card accelerates towards it and
+    // decelerates smoothly back to rest inside the band (Oct 3: max +50%, slowest -10%)
+    var target = v ? (v < 0 ? -1 : 1) * (36 + (630 - 36) * Math.pow(Math.abs(v), 1.4)) : 0;
+    tiltV += (target - tiltV) * Math.min(1, dt / 0.22);
+    if (Math.abs(tiltV) < 2 && !target) { tiltV = 0; return; }
     var s0 = get(); if (!s0) return; if (drag.i !== s0.i) { drag.i = s0.i; drag.dx = 0; drag.dy = 0; }
     var l = +bub.dataset.l, t = +bub.dataset.t; if (!isFinite(l) || !isFinite(t)) return;
-    drag.dy += v * 420 * dt; place(l, t); drag.dy = parseFloat(bub.style.top) - t;   // kept on screen: no build-up past the edges
+    var before = drag.dy; drag.dy += tiltV * dt; place(l, t); drag.dy = parseFloat(bub.style.top) - t;   // kept on screen: no build-up past the edges
+    if (Math.abs(drag.dy - before) < 0.01 && Math.abs(tiltV * dt) > 0.5) tiltV = 0;   // stopped by a screen edge
   }
   (function gl(now) { try { tiltSync(now || performance.now()); glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
