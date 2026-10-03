@@ -686,3 +686,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Menu icon column (Oct 3, 17:56):** 60px wide, 8px either side of the 44px icons (was 84px). Folded to the column, the screen slides back leaving 60px.
 - **Menu icon column (Oct 3, 17:56):** the section icons sit centred in the screen's height; the menu button stays at the top (level with the top bar) and Sign out at the bottom.
 - **Menu slide motion (Oct 3, 17:57):** the screen sliding over the menu (and a section sliding away inside it) eases in and out: starts slow, accelerates, and slows down as it arrives (0.6 s, cubic-bezier(.65,0,.35,1)).
+- **Menu profile icon (Oct 3, 17:59):** the profile's icon is a person outline like the other section icons (yellow fill when open), not the photo; the photo appears in the profile section itself.
