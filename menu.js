@@ -5,7 +5,8 @@
 // The main screen has its own copy of this behaviour built in; this file is for the other screens.
 (function () {
   if (window.top !== window || /Main\.dc\.html/.test(location.pathname)) return;
-  var DUR = 740, BD = Math.round(DUR / 3), EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
+  var DUR = 530, BD = 247,   // the screen's slide, 40% faster (Oct 3, 21:44); the button's move stays as locked
+      EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
   var mode = '', ifr = null, ready = false, btn = null, want = null;
   var css = document.createElement('style');
   css.textContent = 'html.wf-menujs [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +

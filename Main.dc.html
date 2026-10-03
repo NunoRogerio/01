@@ -17,7 +17,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=164"></script>
+<script src="prefs.js?v=165"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=57"></script>
@@ -195,7 +195,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Menu (Oct 3, 17:18): the whole screen slides to the left to uncover the menu underneath, and back to the right to close it
        (or to leave just the menu's icon column showing) -->
-  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .74s ease">
+  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .53s ease">
 
   <div style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 1">
   <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{ps.open}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
@@ -209,7 +209,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
   <!-- 21px from the subtitle to the grabber, the same as from the bottom blade's grabber to its first line (was 36px) -->
-  <header class="fade" data-pull="down" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px">
+  <header class="fade" data-pull="down" data-wf-keepsp="1" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px 16px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
@@ -317,7 +317,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <div class="scrim {{glass}}" onClick="{{closeScope}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{scOp}}; pointer-events: {{scPE}}"></div>
   <section role="dialog" data-swipe="up" data-swipe-key="sc" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path {{scClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{scClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
-    <div style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px; flex-shrink: 0">
+    <div data-wf-keepsp="1" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px; flex-shrink: 0">
       <button type="button" class="opt" data-swipe-go="1" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
           <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 32px">{{scope.title}}</span>
@@ -731,7 +731,7 @@ class Component extends DCLogic {
   // Closing (Oct 3, 20:13): the menu button waits while the screen slides back, and only moves home as the screen's edge
   // reaches the icon column, just before it covers it. The moment comes from the slide's own ease (sine in and out).
   wfBurgerBack() { const vw = (window.__wfVP || {}).w || 390, travel = Math.min(vw, 564) + 32, f = Math.max(0, Math.min(1, (travel - 60) / travel));
-    return Math.round(Math.acos(1 - 2 * f) / Math.PI * 740); }
+    return Math.round(Math.acos(1 - 2 * f) / Math.PI * 530); }   // the screen's slide (Oct 3, 21:44: 0.53s)
   wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = (to ? 0 : this.wfBurgerBack()) + 247; if (!b) return;
       // (Oct 3, 21:36) the icon: three lines turn into an X as the button arrives at the open spot, and back to three lines at once when it is tapped to close
       if (!to) b.removeAttribute('data-wf-x');
@@ -1009,18 +1009,18 @@ class Component extends DCLogic {
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '1'; cl.style.transition = 'none';
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
               // (Oct 3, 20:32) the section being covered darkens 24% (10% + 14%, Oct 3, 21:14), gradually, as the new one slides over it
-              const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .74s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
+              const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .53s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateX(' + (w + 60) + 'px)';
               // (Oct 3, 21:27) no jump: the slide (and the darkening) start only once the new section has rendered, off to the
               // right, so it never changes or settles while it is moving in
-              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; (() => { dim.style.opacity = '0.24'; sec.style.transition = 'transform .74s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)';
-                setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 800); })(); }; } } catch (e) {} }
+              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; (() => { dim.style.opacity = '0.24'; sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)';
+                setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 590); })(); }; } } catch (e) {} }
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {}), () => { if (go) go(); }); };
         const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         return { x: open ? -(mw + 32) : rail ? -60 : 0,   // open: 32px further, so the screen's shadow stays off the menu
-          dur: boot ? '0s' : '.74s',   // (Oct 3, 20:13) 25% faster
+          dur: boot ? '0s' : '.53s',   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items, op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
@@ -1169,8 +1169,8 @@ class Component extends DCLogic {
         // (Oct 3, 21:13) the Theme choice is hidden while the dark theme is off (prefs.js DARK_ON)
         group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),
         // Spacing (Oct 3, 18:10): every space of 16px or more one step down or up the spacing scale (prefs.js)
-        group('Spacing', P ? P.get('space') || 'comfortable' : 'comfortable', [   // (Oct 3, 20:52) icons: three squares, close together, comfortable, far apart
-          ['condensed', '', 'M5.5 9.5h5v5h-5Z M11.5 9.5h5v5h-5Z M17.5 9.5h5v5h-5Z', 'Condensed'], ['comfortable', '', 'M3 9.5h5v5H3Z M11.5 9.5h5v5h-5Z M20 9.5h5v5h-5Z', 'Comfortable'], ['spacious', '', 'M.9 9.5h5v5h-5Z M11.5 9.5h5v5h-5Z M22.1 9.5h5v5h-5Z', 'Spacious']], (v) => setPref('space', v))
+        group('Spacing', P ? P.get('space') || 'comfortable' : 'comfortable', [   // (Oct 3, 20:52) icons: three squares, close together, comfortable, far apart; (Oct 3, 21:48) two rows, so the vertical spacing shows too
+          ['condensed', '', 'M5.5 6.5h5v5h-5Z M11.5 6.5h5v5h-5Z M17.5 6.5h5v5h-5Z M5.5 12.5h5v5h-5Z M11.5 12.5h5v5h-5Z M17.5 12.5h5v5h-5Z', 'Condensed'], ['comfortable', '', 'M3 5.25h5v5h-5Z M11.5 5.25h5v5h-5Z M20 5.25h5v5h-5Z M3 13.75h5v5h-5Z M11.5 13.75h5v5h-5Z M20 13.75h5v5h-5Z', 'Comfortable'], ['spacious', '', 'M0.9 4.2h5v5h-5Z M11.5 4.2h5v5h-5Z M22.1 4.2h5v5h-5Z M0.9 14.8h5v5h-5Z M11.5 14.8h5v5h-5Z M22.1 14.8h5v5h-5Z', 'Spacious']], (v) => setPref('space', v))
       ]
     };
   }
