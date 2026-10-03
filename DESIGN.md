@@ -672,5 +672,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Edge glows (Oct 3, 12:07):** both edges 20% wider (base 37.2px) and 20% more opaque, on top of the magnetism.
 - **Edge glows (Oct 3, 12:20):** 20% more opacity again (1.44× the earlier base).
 - **Edge glows (Oct 3, 12:23):** the near edge is also up to 30% taller and 20% wider again (still centred, still pulsing).
-- **Edge glows without the card (Oct 3, 12:26):** whenever the card is away (fading out for a blade demo, or between steps) both glows stretch to the full screen height, with the same width, opacity and blur as when the card is in the middle; they gather back around the card when it returns.
+- **Edge glows without the card (Oct 3, 12:45; replaces the full-height version):** whenever the card is away (fading out for a blade demo, or between steps) the edge glows fade away with it, and fade back in when it returns.
 - **Tour card inertia (Oct 3, 12:28):** a swipe on the card throws it: it keeps sliding the way it was swiped and decelerates smoothly (about 0.3 s decay), stopping at the screen edges; a touch catches it. Where it comes to rest it stays for the rest of the step.

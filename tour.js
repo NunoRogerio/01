@@ -683,21 +683,22 @@ if (WF_TOUR_ON) (function () {
       if (S[was + 1] && S[was + 1].page !== PAGE) setTimeout(function () { var s4 = get(); if (s4 && s4.i === was + 1) { put({ i: was, max: s4.max || was }); cur = -1; lastKey = ''; tick(); } }, 2000); }
   }, true);
   // Edge glows follow the card (circle-guide profiles): 110% of the card's height, centred on it, every frame (drags included)
+  var glowF = { v: 1, t: 0 };
   function glowSync() {
     if (WF_TOUR_HELI || !root || !bub || !root.isConnected) return;
     root.classList.toggle('drag', bub.classList.contains('drag'));
     var r = bub.getBoundingClientRect(), G = root.querySelectorAll('.tgl');
-    // the card is away (fading out for a blade demo, or between steps): both glows run the full screen height, as when the card is centred
-    if (!r.height || !bub.classList.contains('on') || root.classList.contains('demo')) {
-      for (var j = 0; j < G.length; j++) { G[j].style.top = '0px'; G[j].style.height = VH() + 'px'; G[j].style.width = '37.2px'; G[j].style.setProperty('--gk', '1.44'); G[j].style.setProperty('--gbl', '2px'); }
-      return; }
+    // the card is away (fading out for a blade demo, or between steps): the glows fade away with it and come back with it (Oct 3, 12:45)
+    var away = !r.height || !bub.classList.contains('on') || root.classList.contains('demo'), nowF = performance.now(), dtF = glowF.t ? Math.min(0.05, (nowF - glowF.t) / 1000) : 0.016;
+    glowF.t = nowF; glowF.v += ((away ? 0 : 1) - glowF.v) * Math.min(1, dtF / 0.12);
+    if (away) { for (var j = 0; j < G.length; j++) G[j].style.setProperty('--gk', ((+G[j].dataset.gk || 1.44) * glowF.v).toFixed(3)); return; }
     var h = r.height * 1.1, t = r.top + r.height / 2 - h / 2;   // 110% of the card's height, centred on it
     // Magnetism: the edge the card comes near swells and brightens; the far edge shrinks and dims
     var vw = VW(), k = Math.max(-1, Math.min(1, ((vw - r.right) - r.left) / Math.max(1, vw - r.width - 16)));   // full effect at the 8px limit the card can be dragged to   // +1: card at the left edge, -1: at the right
     for (var i = 0; i < G.length; i++) { var sg = G[i].classList.contains('l') ? k : -k;
       var hh = sg < 0 ? h * (1 + 0.2 * sg) : h * (1 + 0.3 * sg), tt = r.top + r.height / 2 - hh / 2;   // the far edge is also up to 20% shorter, still centred
       G[i].style.top = tt.toFixed(1) + 'px'; G[i].style.height = hh.toFixed(1) + 'px';
-      G[i].style.width = (37.2 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) * (1 + 0.2 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); G[i].style.setProperty('--gk', (1.44 * (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg)).toFixed(3)); /* both edges +20% wide and +20% opacity (Oct 3) */ }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
+      G[i].style.width = (37.2 * (sg > 0 ? (1 + 0.55 * sg) * (1 + 0.2 * sg) * (1 + 0.25 * sg) * (1 + 0.2 * sg) : 1 + 0.6 * sg)).toFixed(1) + 'px'; G[i].style.setProperty('--gbl', (2 * (sg > 0 ? 1 + 0.2 * sg : 1 - 0.1 * sg)).toFixed(2) + 'px'); var gk = 1.44 * (sg > 0 ? 1 + 0.2 * sg : 1 + 0.45 * sg); G[i].dataset.gk = gk; G[i].style.setProperty('--gk', (gk * glowF.v).toFixed(3)); /* both edges +20% wide and +20% opacity (Oct 3) */ }   // near edge: up to +55% wide, +20% opacity; far edge: -60% wide, -45% opacity, -20% tall
   }
   // Tilt (Oct 3): held between 30° and 50° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
   // upright (above 50°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
