@@ -144,12 +144,8 @@ if (WF_TOUR_ON) (function () {
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return chip(['Confirm fire', 'Confirmar incêndio', '確認']); },
       t: ['Confirm the fire', 'Confirme o incêndio'],
       b: ['Suggestions under the message field are the quick actions. Tap Confirm fire.', 'As sugestões sob o campo de mensagem são as ações rápidas. Toque em Confirmar incêndio.'] },
-    { page: 'Chat.dc.html', mode: 'until', before: function () { meBase = mine(); }, until: function () { return mine() > meBase; },
-      find: function () { return q('label:has(> input.sqsearch)'); },
-      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now talk with the team.', 'Agora fale com a equipa.'],
-      t: ['Ask the team something', 'Pergunte algo à equipa'],
-      b: ['Type a question, like "Is the access road open?", and send it.', 'Escreva uma pergunta, como "O acesso está livre?", e envie.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('a[data-wf-firettl]'); },
+      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now open the fire.', 'Agora abra o incêndio.'],
       t: ['Open the fire', 'Abra o incêndio'],
       b: ['Tap the fire\'s name for its page.', 'Toque no nome do incêndio para abrir a sua página.'] },
 
