@@ -1023,7 +1023,7 @@ class Component extends DCLogic {
           // column, and covers the current one, which stays in place underneath until it is covered
           let go = null;
           if (open && pmSec !== k) { try { const sec = document.querySelector('[data-wf-menusec]'), sc0 = sec && sec.querySelector('[data-wf-fadetop]');
-            if (sec) { const cl = sec.cloneNode(true), w = sec.offsetWidth; cl.removeAttribute('data-wf-menusec'); cl.setAttribute('aria-hidden', 'true'); cl.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id'));
+            if (sec) { const cl = sec.cloneNode(true), w = sec.offsetWidth; cl.removeAttribute('data-wf-menusec'); cl.setAttribute('aria-hidden', 'true'); cl.setAttribute('data-wf-nospace', '1');   /* (Oct 4) the copy keeps its spacing exactly: the spacing preference must not rewrite it a second time (that shifted it 1-2px) */ cl.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id'));
               // (Oct 3, 21:49) a section shown in a frame (About) stays on screen while it is covered, like every other section:
               // its copy shows a still snapshot of the frame's page (scroll position kept); the slide waits for it, briefly
               const lives = [...sec.querySelectorAll('iframe')], waits = [];
@@ -1037,10 +1037,13 @@ class Component extends DCLogic {
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
               // (Oct 3, 20:32) the section being covered darkens 24% (10% + 14%, Oct 3, 21:14), gradually, as the new one slides over it
               const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .53s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
-              sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateX(' + (w + 60) + 'px)';
+              // (Oct 4, 00:01) a push along the icon column: an icon below the open one pushes the new section up from below, one above
+              // pushes it down from above; the old section moves out the other way, darkening as it goes
+              const ORD = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'], dir = ORD.indexOf(k) > ORD.indexOf(pmSec) ? 1 : -1, hh = sec.offsetHeight;
+              sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateY(' + (dir * hh) + 'px)';
               // (Oct 3, 21:27) no jump: the slide (and the darkening) start only once the new section has rendered, off to the
               // right, so it never changes or settles while it is moving in
-              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; Promise.all(waits).then(() => { dim.style.opacity = '0.24'; sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateX(0)';
+              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; Promise.all(waits).then(() => { dim.style.opacity = '0.24'; sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateY(0)'; cl.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; cl.style.transform = 'translateY(' + (-dir * hh) + 'px)';
                 setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 590); }); }; } } catch (e) {} }
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {}), () => { if (go) go(); }); };
         const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself

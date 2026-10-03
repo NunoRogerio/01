@@ -261,9 +261,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
     <!-- the title sits in its own solid container (the legend chips' surface and shadow) so the map never runs through it -->
-    <div style="position: absolute; z-index: 50; left: {{ttlLeftCss}}; right: {{ttlRightCss}}; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px); display: flex; flex-direction: column; justify-content: center; gap: 4px; box-sizing: border-box; height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
-      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapTtl}}</span>
-      <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
+    <div style="position: absolute; z-index: 50; left: {{ttlLeftCss}}; right: {{ttlRightCss}}; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px); display: flex; flex-direction: column; justify-content: center; gap: 4px; box-sizing: border-box; min-height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+      <!-- (Oct 3, 23:36) lines size with the text (any text size setting), the card grows with them, so the title is never cropped -->
+      <span style="font-size: 17px; font-weight: 700; line-height: 1.3; flex-shrink: 0; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapTtl}}</span>
+      <span style="font-size: 15px; line-height: 1.33; flex-shrink: 0; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapSub}}</span>
     </div>
   </sc-if>
 
