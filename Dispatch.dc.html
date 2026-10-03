@@ -19,7 +19,7 @@
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=57"></script>
-<script src="tour.js?v=62"></script>
+<script src="tour.js?v=63"></script>
 <script src="menu.js?v=6"></script>
 
 <title>Dispatch sizing</title>
@@ -900,7 +900,7 @@ class Component extends DCLogic {
       if (h > 120 && Math.abs(h - (this._sbMin || 0)) > 2) { this._sbMin = h; this.forceUpdate(); } } catch (e) {} }
   // Where the fire is: its own coordinates when known, else from its place on the map
   wfFireLL(frow, I) { const lat = I && isFinite(I.lat) && I.lat != null ? +I.lat : frow && isFinite(frow.lat) && frow.lat != null ? +frow.lat : frow ? 34.19 - (frow.y - 662) / 2829 : NaN, lon = I && isFinite(I.lon) && I.lon != null ? +I.lon : frow && isFinite(frow.lon) && frow.lon != null ? +frow.lon : frow ? (frow.x - 518) / 2345 - 118.13 : NaN; return { lat, lon }; }
-  componentDidMount() { window.__wfFluidLand = true; try { window.dispatchEvent(new Event('resize')); } catch (e) {} try { this._wfVpU = () => this.forceUpdate(); window.addEventListener('wf-vp', this._wfVpU); } catch (e) {}   /* landscape: the fire's full-screen map fills the whole screen, as on the candidate */
+  componentDidMount() { window.__wfDispPlanReset = () => this.setState({ plan: [], flow: null });   /* the tour empties the plan so the AI suggested pack shows (Oct 3, 20:06) */ window.__wfFluidLand = true; try { window.dispatchEvent(new Event('resize')); } catch (e) {} try { this._wfVpU = () => this.forceUpdate(); window.addEventListener('wf-vp', this._wfVpU); } catch (e) {}   /* landscape: the fire's full-screen map fills the whole screen, as on the candidate */
     try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} setTimeout(() => this.wfHdrMeasure(), 0); this._actT = setInterval(() => this.forceUpdate(), 20000);
     // The current stage's elapsed time counts every second (only its text is updated).
     const tick = () => { try { document.querySelectorAll('[data-tl-since]').forEach((el) => { const t = +el.getAttribute('data-tl-since'); if (!t) { el.textContent = ''; return; } let x = Math.max(0, Math.floor((Date.now() - t) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60; const txt = d ? d + ' d ' + h + ' h' : h ? h + ' h ' + m + ' min' : m + ' min'; if (el.textContent !== txt) el.textContent = txt; }); } catch (e) {} };

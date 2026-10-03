@@ -247,9 +247,12 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Chat.dc.html', mode: 'tap', before: stExpand, find: function () { return stMove() || chip(['Configure dispatch', 'Configurar despacho', '出動']); },
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['The state card moves the fire on. Tap Move to Ongoing to send crews.', 'O cartão de estado faz o incêndio avançar. Toque em Passar a Em curso para enviar equipas.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }); },
-      // the plan is already filled (an earlier tour): straight to Send the orders
-      skip: function () { if (!seen || Date.now() - seen < 2500) return false; var ai = q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }), snd = q('button.btn.primary', function (x) { return !x.closest('section[role=dialog]') && x.offsetParent !== null; }); return !ai && !!snd && snd.getAttribute('aria-disabled') !== 'true'; },
+    // (Oct 3, 20:06) a plan left from an earlier tour is emptied first, so the AI suggested pack always shows; the circle
+    // goes to it and, if it isn't tapped, taps it itself after a moment
+    { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () { if (window.__wfDispPlanReset && !q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; })) window.__wfDispPlanReset(); if (++t < 10) setTimeout(f, 300); }; f(); },
+      find: function () { var b = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; });
+        if (b && seen && Date.now() - seen > 3200 && !b.__wfAutoTap) { b.__wfAutoTap = 1; try { if (dot) dot.animate([{ scale: '1' }, { scale: '1.25', offset: 0.4, easing: 'cubic-bezier(.2,.8,.3,1)' }, { scale: '1' }], { duration: 260 }); } catch (x) {} setTimeout(function () { if (b.isConnected) b.click(); }, 260); }
+        return b; },
       t: ['Use the suggested resources', 'Use os meios sugeridos'],
       b: ['One tap fills the plan. Add resources lets you choose stations yourself.', 'Um toque preenche o plano. Adicionar meios deixa escolher os quartéis.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () {
