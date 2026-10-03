@@ -196,6 +196,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 [data-wf-about-in] [data-wf-page]{flex:none!important;overflow:visible!important;padding:0!important}
 [data-wf-about-in] [data-wf-page] [style*="border-radius: 16px"]{background:transparent!important;padding:0!important}
 </style>
+<style>
+/* (Oct 3, 23:29, trial) firefighter stripes: diagonal bands 24px wide (measured along the edge), hi-vis yellow and near black */
+.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,#1C1C1E 16.97px 33.94px)}
+</style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Menu (Oct 3, 17:18): the whole screen slides to the left to uncover the menu underneath, and back to the right to close it
@@ -210,7 +214,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: absolute; left: {{colL}}px; top: 0; width: {{colW}}px; height: {{vh}}px; z-index: 2; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 56px; pointer-events: none">
 
   <div style="position: relative; z-index: 2; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <span aria-hidden="true" data-wf-topbg="1" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; bottom: 0; z-index: -1; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 0 16px rgba(0,0,0,0.08)"></span>
+  <span aria-hidden="true" data-wf-topbg="1" style="position: absolute; left: {{padLn}}px; right: 0; top: -56px; bottom: 0; z-index: -1; overflow: hidden; background: #F2F2F7; border-radius: 0 0 28px 28px; box-shadow: 0 0 16px rgba(0,0,0,0.08)"><span class="wf-stripes" style="position: absolute; left: 0; right: 0; bottom: 0; height: 8px"></span></span>
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
   <!-- 21px from the subtitle to the grabber, the same as from the bottom blade's grabber to its first line (was 36px) -->
@@ -239,6 +243,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div style="position: absolute; inset: 0; z-index: 4; pointer-events: none; filter: drop-shadow(0 0 16px rgba(0,0,0,0.08))">
   <section data-swipe="down" data-swipe-key="li" aria-labelledby="ignListTitle" style="position: absolute; left: {{padLn}}px; right: 0; top: {{liTop}}px; bottom: 0; z-index: 4; display: flex; flex-direction: column; box-sizing: border-box; padding-left: {{padL}}px; background: #F2F2F7; pointer-events: auto; clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); -webkit-clip-path: inset({{liClip}} 0 0 0 round 28px 28px 0 0); transform: translateY({{downY}}); opacity: {{downOp}}; translate: 0 {{liDy}}px; transition: clip-path {{liClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{liClipT}} cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease, translate {{liDyT}} ease">
     <!-- One grabber for the bottom blade, fixed to its top edge: it rides the edge as the blade opens and closes (the two drag areas below keep their touch, without their own line) -->
+    <!-- (Oct 3, 23:29, trial) firefighter stripes along the blade's top edge: 8px tall, diagonal, 24px wide -->
+    <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; top: {{liClip}}; height: 8px; pointer-events: none; transition: top {{liClipT}} cubic-bezier(.2,.8,.2,1)"></span>
     <span aria-hidden="true" style="position: absolute; z-index: 5; left: 50%; top: calc({{liClip}} + 8px); width: 86px; height: 3px; margin-left: -43px; border-radius: 999px; background: rgba(60,60,67,0.2); pointer-events: none; transition: top {{liClipT}} cubic-bezier(.2,.8,.2,1)"></span>
     <h2 id="ignListTitle" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">{{listTitle}}</h2>
     <button type="button" data-swipe-go="1" tabindex="-1" aria-hidden="true" onClick="{{closeList}}" style="position: absolute; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none"></button>
