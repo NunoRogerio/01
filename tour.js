@@ -121,8 +121,8 @@ if (WF_TOUR_ON) (function () {
       t: ['Quick tour', 'Visita rápida'],
       b: WF_TOUR_HELI ? ['Follow one ignition from detection to a closed fire. Tap what the helicopter points to, or use ‹ › to move between steps.',
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
-          ['Follow one ignition from detection to a closed fire. Tap what the blue circle marks, or use ‹ › to move between steps.',
-          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo azul marca, ou use ‹ › para mudar de passo.'] },
+          ['Follow one ignition from detection to a closed fire. Tap what the yellow circle marks, or use ‹ › to move between steps.',
+          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo amarelo marca, ou use ‹ › para mudar de passo.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
       skip: function () { return !!listRow(); },
       t: ['Open the list', 'Abra a lista'],
@@ -246,11 +246,18 @@ if (WF_TOUR_ON) (function () {
       '@keyframes wfta{to{stroke-dashoffset:0}}' +
       // Circle-guide profiles (Oct 3): the information cards are light grey frosted glass with dark text (the helicopter profile keeps the dark glass)
       (WF_TOUR_HELI ? '' :
-      '#wf-tour .tb{background:rgba(229,229,234,0.72);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18);color:#1C1C1E}' +
+      '#wf-tour .tb{background:rgba(209,209,214,0.8);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18);color:#1C1C1E}' +
       '#wf-tour .tb::before{background:rgba(28,28,30,0.2)}' +
-      '#wf-tour .tth,#wf-tour .tx{color:rgba(28,28,30,0.8)}#wf-tour .tn{color:rgba(28,28,30,0.62)}' +
+      '#wf-tour .tth,#wf-tour .tx{color:rgba(28,28,30,0.86)}#wf-tour .tn{color:rgba(28,28,30,0.74)}' +
       '#wf-tour .te,#wf-tour .tc{background:rgba(28,28,30,0.08);color:#1C1C1E}' +
-      '#wf-tour .ta{background:rgba(28,28,30,0.08);box-shadow:inset 0 0 0 1px rgba(28,28,30,0.18);color:#1C1C1E}');
+      // achievements stand out: the hi-vis yellow, solid, with dark text and a soft glow
+      '#wf-tour .ta{background:var(--wf-y,#E5FF00);box-shadow:0 0 0 1px rgba(28,28,30,0.12),0 2px 12px rgba(var(--wf-y-rgb,229,255,0),0.55);color:#1C1C1E}' +
+      // the card glows softly all round, pulsing with the screen-edge glow
+      '#wf-tour .tb{animation:wftbg 3.6s ease-in-out infinite}' +
+      '@keyframes wftbg{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.5)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.18),inset 0 0 0 1px rgba(60,60,67,0.18),0 0 24px 2px rgba(var(--wf-y-rgb,229,255,0),0.2)}}' +
+      '@media (prefers-reduced-motion:reduce){#wf-tour .tb{animation:none}}' +
+      // the screen-edge glows ride with the card: 110% of its height, centred on it (positioned from script)
+      '#wf-tour .tgl{transition:top .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1)}#wf-tour.drag .tgl{transition:none}');
     document.head.appendChild(st);
   }
   function build() {
@@ -542,6 +549,15 @@ if (WF_TOUR_ON) (function () {
       // 3) never lost: if the tap should have opened the next screen and nothing happened, the step comes back so it can be tapped again
       if (S[was + 1] && S[was + 1].page !== PAGE) setTimeout(function () { var s4 = get(); if (s4 && s4.i === was + 1) { put({ i: was, max: s4.max || was }); cur = -1; lastKey = ''; tick(); } }, 2000); }
   }, true);
+  // Edge glows follow the card (circle-guide profiles): 110% of the card's height, centred on it, every frame (drags included)
+  function glowSync() {
+    if (WF_TOUR_HELI || !root || !bub || !root.isConnected) return;
+    root.classList.toggle('drag', bub.classList.contains('drag'));
+    var r = bub.getBoundingClientRect(), G = root.querySelectorAll('.tgl'); if (!r.height || !bub.classList.contains('on')) return;
+    var h = r.height * 1.1, t = r.top + r.height / 2 - h / 2;
+    for (var i = 0; i < G.length; i++) { G[i].style.top = t.toFixed(1) + 'px'; G[i].style.height = h.toFixed(1) + 'px'; }
+  }
+  (function gl() { try { glowSync(); } catch (e) {} requestAnimationFrame(gl); })();
   var last = 0, loop = function (t) { if (t - last > 80) { last = t; try { if (get()) tick(); } catch (e) {} } requestAnimationFrame(loop); };
   var boot = function () { requestAnimationFrame(loop); try { if (get()) heliEnter(); } catch (e) {} };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
