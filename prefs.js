@@ -119,7 +119,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       '<feComponentTransfer><feFuncR type="table" tableValues="1 0"/><feFuncG type="table" tableValues="1 0"/><feFuncB type="table" tableValues="1 0"/></feComponentTransfer>' +
       '<feColorMatrix type="hueRotate" values="180"/><feColorMatrix type="saturate" values="0.55"/>' +
       '<feComponentTransfer><feFuncR type="linear" slope="0.62" intercept="0.25"/><feFuncG type="linear" slope="0.62" intercept="0.25"/><feFuncB type="linear" slope="0.64" intercept="0.26"/></feComponentTransfer>' +
-      '</filter><filter id="wfDayTiles" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0.7"/></filter></svg>';
+      '</filter><filter id="wfDayTiles" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0.7"/><feComponentTransfer><feFuncR type="linear" slope="0.9"/><feFuncG type="linear" slope="0.9"/><feFuncB type="linear" slope="0.9"/></feComponentTransfer></filter></svg>';
     document.body.appendChild(d);
   }
 
@@ -139,7 +139,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // Stage tags (Oct 3, 18:50; 21:09): the icon sits at the left, 8px in; the label is centred in the space between the icon and the tag's right edge
     '.wf-qual>svg:first-child{width:24px!important;height:24px!important}.wf-qual>svg:first-child path[stroke]{vector-effect:non-scaling-stroke;stroke-width:2px}html.wf-black,html.wf-black body{background:#000000!important}html.wf-black .wf-mb{opacity:0!important;pointer-events:none!important}.wf-bi path{transform-box:view-box;transform-origin:12px 12px;transition:transform .2s cubic-bezier(.3,0,.2,1),opacity .12s ease}.wf-bi .b1{transform:translateY(-5px)}.wf-bi .b3{transform:translateY(5px)}[data-wf-x] .wf-bi .b1{transform:rotate(45deg)}[data-wf-x] .wf-bi .b2{opacity:0}[data-wf-x] .wf-bi .b3{transform:rotate(-45deg)}.qtag.wf-stg,.wf-hst-fs .qtag.wf-stg,.wf-qual.hd .qtag.wf-stg,.wf-qual .qtag.wf-stg{padding-left:32px!important;padding-right:8px!important}.wf-stg{position:relative;justify-content:center!important;padding-left:32px!important;padding-right:8px!important}.wf-stg>svg{position:absolute;left:8px;top:50%;margin:0!important;transform:translateY(-50%)}' +   /* lists: no divider between items, only the line under the list's header */
     '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
-  'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated
+  'html:not(.wf-dark) image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated and 10% darker (Oct 4, 00:06; markers and legends untouched)
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over an 8px lime bar, rounded at both ends, that glides between them; shared by every tab set */
   '[data-wf-kpicard]>span:first-child[style*="min-height: 40px"]{min-height:40px!important}' +   // mini cards: the title sits 40% closer to its value (all cards)
   '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:none;margin-bottom:16px!important}' +

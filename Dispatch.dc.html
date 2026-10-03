@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <script src="fit.js?v=133"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=173"></script>
+<script src="prefs.js?v=174"></script>
 <script src="i18n.js?v=151"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=59"></script>
+<script src="chat.js?v=60"></script>
 <script src="tour.js?v=68"></script>
 <script src="feedcam.js?v=6"></script>
 <script src="menu.js?v=11"></script>
@@ -1144,13 +1144,14 @@ class Component extends DCLogic {
     // The incident chat's stations come first and are the ones offered: their coordinators said they are available, so the
     // dispatch lists every one of them (at least two), with crews free; further stations follow only when reinforcing
     const CH = this.wfChatFor(fv), hs = (x) => { let h = 0; for (const c of String(x)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
-    const pinned = ((CH && CH.stations) || []).filter((q) => q && q.name).map((q, i) => {
+    // (Oct 4) only the stations whose lead is in the fire's chat (the ones sent): the resources and the chat's team always match
+    const pinned = ((CH && CH.stations) || []).filter((q, i) => q && q.name && !(CH.people && CH.people[i] && CH.people[i].left)).map((q, i) => {
       const r = file.rows.find((r) => (r[1] || 'n') + r[0] === q.ck);
       if (r) return { osm: r[0], t: r[1], ck: q.ck, name: r[4] || q.name, la: r[2], lo: r[3], km: hav(r[2], r[3]), chat: true };
       const b = (hs(q.ck || q.name) % 360) * rad, k = +q.km || 6 + i * 7;   /* a local station without coordinates: placed at its distance */
       return { osm: q.ck || 'loc' + i, t: '', ck: q.ck || 'loc' + i, name: q.name, la: lat + k * Math.cos(b) / 110.57, lo: lon + k * Math.sin(b) / (111.32 * Math.cos(lat * rad)), km: k, chat: true }; });
     const pin = (q) => pinned.some((p) => p.ck === (q.t || 'n') + q.osm);
-    const close = all.filter((q) => q.km <= 10).slice(0, 3), L = pinned.length ? (wide ? pinned.concat(all.filter((q) => q.km <= 40 && !pin(q))).slice(0, Math.max(8, pinned.length)) : pinned)
+    const close = all.filter((q) => q.km <= 10).slice(0, 3), L = pinned.length ? (wide && (this.state || {}).reinforce ? pinned.concat(all.filter((q) => q.km <= 40 && !pin(q))).slice(0, Math.max(8, pinned.length)) : pinned)   /* (Oct 4) with a chat: its stations only, more only when reinforcing */
       : wide ? all.filter((q) => q.km <= 40).slice(0, 8) : close.length >= 3 ? close : all.slice(0, 3);   /* always at least three stations to choose from (the nearest) */   // reinforcing: stations further away too
     const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
     return { du, live: true, rows: L.map((q, i) => {
@@ -1352,7 +1353,7 @@ class Component extends DCLogic {
     // Dispatch orders sent from this app for this fire, per station: [{ id, code, name, km, n: [crews, tenders, helicopters, air tankers, jets, swarms], at }]
     const ORD = this.wfOrders()[fireId] || [], reinforce = !!s.reinforce;
     const sentN = (id) => { const o = ORD.find((q) => q.id === id); return o ? o.n : null; };
-    const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC, reinforce || !!s.crew || !!s.inl);   /* configuring crews: stations further away too, for the full list */
+    const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC, reinforce || (!!s.crew && !this.wfChatFor(fv)) || !!s.inl);   /* (Oct 4) a fire with a chat: its crews are the chat's stations, nothing else */   /* configuring crews: stations further away too, for the full list */
     const DU = NEAR.du;
     const data = (NEAR.rows.length ? NEAR.rows : NEAR.live ? [{ id: 'none', code: '—', name: NEAR.loading ? 'Finding recommended stations…' : 'No fire station found nearby', x: FIRE[0], y: FIRE[1], km: 0, free: null, total: null, t: null, busy: NEAR.loading ? 'OpenStreetMap' : 'OpenStreetMap has none mapped near this fire', real: true }] : [
       { id: 'st7', code: 'ST-7', name: 'Sierra Madre', x: 674, y: 566, km: 2.5, free: 0, total: 3, t: null, busy: 'All crews on F-0924-01' },

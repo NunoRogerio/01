@@ -84,6 +84,13 @@
   function leadRole(c) { return isUS(c) ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' }; }
   // who is in the chat now: once the fire is declared, only the leads of the stations that were sent stay
   function active(c) { return (c.people || []).filter(function (p) { return !p.left; }); }
+  // (Oct 4, 00:00) the air side of a fire in progress has its own lead in the chat: the Air Tactical Group Supervisor (US) or
+  // the air operations coordinator (Coordenador de Meios Aéreos, Portugal and elsewhere); one per chat, never a station's
+  function airLead(c) { var us = isUS(c), n = pickNames(c, 1, 'air')[0];
+    return { name: n, code: initials(n), org: us ? (ccOf(c.st) === 'us' && c.st === 'CA' ? 'CAL FIRE Air Attack' : 'Air Attack') : 'ANEPC. Meios aéreos', kind: 'air',
+      roleEn: us ? 'Air Tactical Group Supervisor' : 'Air operations coordinator', rolePt: us ? 'Supervisor de meios aéreos' : 'Coordenador de meios aéreos' }; }
+  function wantsAir(c) { return !c.dismissed && c.kind !== 'dm' && (c.stage >= 3 || (c.flags && c.flags.air)); }
+  function ensureAir(c) { if (!wantsAir(c) || (c.people || []).some(function (p) { return p.kind === 'air'; })) return false; c.people.push(airLead(c)); return true; }
   // Portraits for the team (illustrated, avatar.js), only on fires in California, Nevada and Portugal: each person in
   // their own service's uniform; coordinators wear the command helmet.
   var PHOTO_ST = { CA: 'us', PT: 'pt' };   // only Portugal and California chats show photos (a team of 8 each); the rest show initials
@@ -210,6 +217,7 @@
       if (c.stage >= 2) {   // a fire already in progress: the first two stations are working it
         c.flags.dispatched = true;
         c.people.forEach(function (p, pi) { if (pi >= 2) p.left = true; });   // (Oct 3, 22:03) only the stations working it are in the chat
+        ensureAir(c);
         c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); });
       }
       var kept = d.sent && d.sent[k]; if (kept) delete d.sent[k];
@@ -230,7 +238,9 @@
   function say(c, who, en, pt, delay, adv) { var P = c.people || []; if (P[who] && P[who].left) { var j = P.findIndex(function (p) { return !p.left; }); if (j >= 0) who = j; }
     push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
-  function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0); }
+  function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0);
+    // (Oct 4) crews on the fire line: the air lead joins the chat
+    if (s >= 3 && !c.dismissed && !(c.people || []).some(function (p) { return p.kind === 'air'; })) { var a = airLead(c); c.people.push(a); sys(c, a.name + ', ' + a.roleEn.toLowerCase() + ', joined', a.name + ', ' + a.rolePt.toLowerCase() + ', entrou na conversa', (delay || 0) + 500, 0); } }
   function lead(c, i) { return Math.min(i, Math.max(0, c.people.length - 1)); }
   function mine(c, en, pt) { c.msgs.push({ id: newId(), kind: 'msg', from: 'me', en: en, pt: pt, t: Date.now(), vt: vnow(c) }); }
 
@@ -638,7 +648,7 @@
     (c.forces || []).forEach(function (f) { if (!sent.some(function (x) { return x.i === f.si; }) && f.st !== 'enroute') f.st = 'standby'; });
     c.flags.dispatched = true; c.sentIdx = sent.map(function (x) { return x.i; });
     // (Oct 3, 22:03) the fire is declared: the chat keeps the leads of the stations sent; the others leave it
-    c.people.forEach(function (p, pi) { if (p.left || sent.some(function (x) { return x.i === pi; })) return; p.left = true;
+    c.people.forEach(function (p, pi) { if (p.left || p.kind === 'air' || sent.some(function (x) { return x.i === pi; })) return; p.left = true;
       sys(c, p.name + ' (' + p.org + ') left the chat: station not sent', p.name + ' (' + p.org + ') saiu da conversa: quartel não enviado', d + 400, 0); });
     // Confirmed outside the chat (alert or drone screen): the chat catches up with the confirmation first
     if (c.stage === 0) {
@@ -805,7 +815,7 @@
     var us = isUS(c), S = stats(c), pt = PT(), H = c.hist || [];
     var tl = H.map(function (h, i) { var nx = H[i + 1]; return STAGES[h.s].en + ' from ' + hhmm(h.vt) + (nx ? ' for ' + dur(nx.vt - h.vt) : ' (current, ' + dur(vnow(c) - h.vt) + ' so far)'); }).join('; ');
     var team = c.people.map(function (p, i) { if (p.left) return ''; var f = (c.forces || []).find(function (x) { return x.si === i; });
-      return '#' + i + ' ' + p.name + ', ' + leadRole(c).en.toLowerCase() + ' of ' + p.org + (c.stations[i] ? ' (' + kmTxt(c.stations[i].km) + ' away, ~' + c.stations[i].min + ' min drive)' : '') +
+      return '#' + i + ' ' + p.name + ', ' + (p.roleEn ? p.roleEn.toLowerCase() : leadRole(c).en.toLowerCase()) + ' of ' + p.org + (c.stations[i] ? ' (' + kmTxt(c.stations[i].km) + ' away, ~' + c.stations[i].min + ' min drive)' : '') +
         (f ? ', crew: ' + f.crew.join(', ') + ', vehicles: ' + f.veh.join(', ') + ', status: ' + f.st : ', not dispatched yet') + '. Voice: ' + VOICES[i % 3] + '.'; }).filter(Boolean).join('\n');
     var tr = c.msgs.slice(-28).map(function (m) {
       var at = '[' + hhmm(m.vt || m.t) + '] ';
@@ -1164,7 +1174,7 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS, leadRole: leadRole, active: active,
+    }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
@@ -1231,10 +1241,11 @@
   function healTeam() {
     var d = load(), fixed = false;
     Object.keys(d.chats).forEach(function (k) { var c = d.chats[k]; if (!c || c.kind === 'dm' || /^p:/.test(k) || c.dismissed || !c.people || !c.people.length) return;
-      if (c.flags && c.flags.dispatched && c.sentIdx && c.sentIdx.length) c.people.forEach(function (p, i) { if (!p.left && c.sentIdx.indexOf(i) < 0) { p.left = true; fixed = true; } });
-      else if (c.flags && c.flags.dispatched && !c.sentIdx && c.stage >= 2) c.people.forEach(function (p, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); if (!p.left && (!f || f.st === 'standby')) { p.left = true; fixed = true; } });
+      if (c.flags && c.flags.dispatched && c.sentIdx && c.sentIdx.length) c.people.forEach(function (p, i) { if (!p.left && p.kind !== 'air' && c.sentIdx.indexOf(i) < 0) { p.left = true; fixed = true; } });
+      else if (c.flags && c.flags.dispatched && !c.sentIdx && c.stage >= 2) c.people.forEach(function (p, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); if (!p.left && p.kind !== 'air' && (!f || f.st === 'standby')) { p.left = true; fixed = true; } });
       else if (!c.closed && c.stage === 0 && c.people.length < 4 && c.reserve) { var r = c.reserve; c.reserve = null; var n = pickNames(c, 1, 'more')[0];
-        c.people.push({ name: n, code: initials(n), org: r.short, kind: 'lead' }); c.stations.push(r); fixed = true; } });
+        c.people.push({ name: n, code: initials(n), org: r.short, kind: 'lead' }); c.stations.push(r); fixed = true; }
+      if (!c.closed && ensureAir(c)) fixed = true; });
     if (fixed) { save(); emit(); }
   }
   if (role) setTimeout(healTeam, 1500);
