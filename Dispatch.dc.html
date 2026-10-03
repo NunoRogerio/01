@@ -18,7 +18,7 @@
 <script src="prefs.js?v=167"></script>
 <script src="i18n.js?v=150"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=58"></script>
+<script src="chat.js?v=59"></script>
 <script src="tour.js?v=66"></script>
 <script src="menu.js?v=11"></script>
 
@@ -1179,7 +1179,8 @@ class Component extends DCLogic {
     if (ch && ch.stage === stg && C.stageDurs) C.stageDurs(ch).forEach((d) => { ms[d.s] = (ms[d.s] || 0) + d.ms; });
     else if (I.startMs && now > I.startMs) { /* typical times for the earlier stages, shrunk to fit at most 70% of the time since the start; the current stage has the rest */ const M = 60000, TYP = { 0: 10 * M, 1: 15 * M, 2: 40 * M, 3: 300 * M, 4: 240 * M, 5: 180 * M, 6: 600 * M }, T = now - I.startMs; let sum = 0; for (let i = first; i < stg; i++) sum += TYP[i]; const k = sum ? Math.min(1, 0.7 * T / sum) : 1; let used = 0; for (let i = first; i < stg; i++) { ms[i] = TYP[i] * k; used += ms[i]; } ms[stg] = T - used; }
     const dur = (v) => { if (!(v > 0)) return ''; const m = Math.floor(v / 60000); return m >= 1440 ? Math.floor(m / 1440) + ' d' : m >= 60 ? Math.floor(m / 60) + ' h' : Math.max(1, m) + ' min'; };
-    const label = I.stEn || I.st || (S.HELD ? 'Contained' : 'Not contained');
+    // (Oct 3, 22:23) the chip names the stage it shows: the same words, colour and icon as the stage tag in every list (not the feed's own wording, which can disagree)
+    const label = C.STAGES[stg] ? (window.__wfLang === 'pt' ? C.STAGES[stg].pt : C.STAGES[stg].en) : (I.stEn || I.st || (S.HELD ? 'Contained' : 'Not contained'));
     // text widths, measured in the band's own fonts
     const cv = this._hsCv || (this._hsCv = document.createElement('canvas').getContext('2d'));
     const FF = "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif";
@@ -1986,7 +1987,7 @@ class Component extends DCLogic {
       cc: (() => { if (!RO) return { d: 'none', big: '', fs: 64, bigD: 'none', tagD: 'none', tag: '', tagBg: '', tagFg: '', medMt: '0', med: [], medD: 'none', aria: '' };
         const I = INFO || {}, now = Date.now(), us = frow && frow.st !== 'PT' && frow.st !== 'BRA';
         // Containment: the % contained where the source publishes it (NIFC), else the official stage (ANEPC publishes stages only)
-        const pcT = !HELD && us && I.pc != null ? I.pc + '%' : '', stage = I.stEn || I.st || (HELD ? 'Contained' : 'Not contained'), big = pcT || stage;
+        const pcT = !HELD && us && I.pc != null ? I.pc + '%' : '', stage = (window.__wfStageTag && frow ? window.__wfStageTag(frow).label : '') || I.stEn || I.st || (HELD ? 'Contained' : 'Not contained'), big = pcT || stage;   /* (Oct 3, 22:23) the stage's own name, as everywhere */
         const TN = { hot: ['#8A4B00', '#FDE7C4'], warn: ['#8A4B00', '#FDE7C4'], amber: ['#6B5300', '#FFF1B8'], blue: ['#1F64A6', '#E3EEFB'], ok: ['#2F6B12', '#E2F2D2'], watch: ['#14532D', '#CFE5D6'], off: ['#48484A', '#E0E0E5'] };   /* (Oct 3, 21:07) opaque, the stage tags' pairs: 5:1 or more in both themes */ let tn = TN[I.tone] || (HELD ? TN.ok : TN.hot); { const T = window.__wfStageTag && frow ? window.__wfStageTag(frow) : null; if (T) tn = [T.fg, T.bg]; }   /* the shared stage tag colours */;
         const n = String(big).length, fs = Math.max(26, Math.min(64, Math.floor(330 / ((n * 0.6) || 1))));
         const t = HELD ? (HELD.took != null ? DUR(HELD.took) : '') : I.startMs ? DUR(now - I.startMs) : '';

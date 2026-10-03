@@ -19,7 +19,7 @@
 <script src="menu.js?v=11"></script>
 <script src="i18n.js?v=150"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=58"></script>
+<script src="chat.js?v=59"></script>
 
 <title>Projection</title>
 <script src="./support.js"></script>
@@ -151,7 +151,7 @@ class Component extends DCLogic {
     // the map legend's values: the burned area now and, from +1 h, the projected one, each as its area and its perimeter
     const legNow = area(A0) + ' ' + aU + '. ' + km(perKm(A0)), legGrow = hz ? area(Ah) + ' ' + aU + '. ' + km(perKm(Ah)) : '', legGrowL = L('In ' + hz + ' h', 'Em ' + hz + ' h');
     return { hx, bandH, legNow, legGrow, legGrowL,
-      f: { id: v.id, x: v.x, y: v.y, st: r ? r[0] : '', place: v.place || (r && r[3]) || 'Fire', region: (r && r[1]) || String(v.note || '').split(' · ')[0] || '', tag: I.stEn || I.st || '', tagD: (I.stEn || I.st) ? 'inline-flex' : 'none', tagBg: tn[1], tagFg: tn[0] },
+      f: { id: v.id, x: v.x, y: v.y, st: r ? r[0] : '', place: v.place || (r && r[3]) || 'Fire', region: (r && r[1]) || String(v.note || '').split(' · ')[0] || '', tag: (window.__wfStageTag && r ? window.__wfStageTag({ id: r[2], note: r[4], info: I }).label : '') || I.stEn || I.st || '', tagD: (I.stEn || I.st) ? 'inline-flex' : 'none', tagBg: tn[1], tagFg: tn[0] },
       tx: { kind: L('Projection', 'Projeção'), hz: L('Projection horizon', 'Horizonte da projeção'), est: L('Estimate', 'Estimativa'), fire: L('View fire', 'Ver incêndio') },
       hz, grow: gk, fakeHz: ({ 0: 0, 1: 1, 3: 2, 6: 3 })[hz], zero: 0, yes: true, no: false, full: F, view, viewF, kpis,
       tabs: HZ.map((h) => ({ label: h ? '+' + h + ' h' : L('Now', 'Agora'), sel: String(h === hz), w: h === hz ? 600 : 400, fgD: h === hz ? '#1C1C1E' : '#FFFFFF', pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ hz: h }); } })),

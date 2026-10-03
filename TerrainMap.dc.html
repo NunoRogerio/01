@@ -1818,7 +1818,7 @@ class Component extends DCLogic {
     const maxH = Math.max(220, (above ? y - 22 - top0 : bot0 - (y + 26)) - 8);
     return {
       aria: (held ? 'Held fire, ' : 'Active fire, ') + g.place + ', ' + I.st + (I.stEn ? ' (' + I.stEn + ')' : ''), name: g.place, sub: ((window.__wfRegionUp && g.co) ? window.__wfRegionUp(g.st, g.co) : String(I.place || '').replace(/, [^,]+$/, '')), subD: (((window.__wfRegionUp && g.co) ? window.__wfRegionUp(g.st, g.co) : String(I.place || '').replace(/, [^,]+$/, ''))) ? 'block' : 'none',
-      stTxt: I.stEn || I.st || (held ? 'Held' : 'Active'), stEn: '', stBg: tn[1], stFg: tn[0],
+      stTxt: (window.__wfStageTag && g ? window.__wfStageTag(g).label : '') || I.stEn || I.st || (held ? 'Held' : 'Active'),   /* (Oct 3, 22:23) the stage's own name, as in the lists */ stEn: '', stBg: tn[1], stFg: tn[0],
       kpiNum: kpiNum, kpiLbl: (kpiNum === '–' ? (held ? 'Final duration not published.' : 'Start time not published.') : kpiLbl), kpiNumD: kpiNum === '–' ? 'none' : 'block', kpiTagMt: kpiNum === '–' ? '12px' : '8px', kpiFs: Math.max(20, Math.min(45, Math.floor(150 / ((kpiNum.replace(/[ ,.]/g, '').length * 0.62 + (kpiNum.split(' ').length - 1) * 0.28) || 1)))), kpiSub: kpiSub, kpiSubD: kpiSub ? 'block' : 'none', kpiTT: kpiTT,
       hasType: !!(I.type || beh), typeTxt: I.type || beh, typeEn: I.type && I.typeEn ? I.typeEn : '', typeIcon: TYPE_ICON[I.typeEn] || 'M12 21c4 0 6.5-2.7 6.5-6.3 0-3.8-3.3-6-4.4-9.7-2.2 1.6-3.6 3.8-3.6 6.2-1-.6-1.6-1.8-1.8-3C6.9 10 5.5 12.3 5.5 14.7 5.5 18.3 8 21 12 21Z',
       held: !!held, heldTitle: held ? (held.official ? 'Held. ' + held.label : 'Held. Edge fully contained') : '',
