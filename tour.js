@@ -97,8 +97,12 @@ if (WF_TOUR_ON) (function () {
     if (!st.demo || demoRan === i || get() && get().b) return; demoRan = i;
     var still = function () { var s0 = get(); return !!s0 && s0.i === i; };
     var press = function (sel) { var e = q(sel) || document.querySelector(sel); if (!e) return; selfTap = true; try { e.click(); } catch (x) {} selfTap = false; };
-    setTimeout(function () { if (still()) press(st.demo.open); }, 900);
-    setTimeout(function () { press(st.demo.close); }, 900 + 1000);   // the blade takes about 0.5 s to open, then stays 0.5 s
+    // the card and the circle fade away while the blade opens, stays 1 s and folds back, then fade in again (Oct 3)
+    var fade = function (on) { if (root) root.classList.toggle('demo', on); };
+    setTimeout(function () { if (still()) fade(true); }, 900);
+    setTimeout(function () { if (still()) press(st.demo.open); }, 1200);
+    setTimeout(function () { press(st.demo.close); }, 1200 + 500 + 1000);   // about 0.5 s to open, then 1 s open
+    setTimeout(function () { fade(false); }, 1200 + 500 + 1000 + 550);
   }
   // the state card's Move to <next stage> button, when the card is open
   function stMove() { return q('[data-wf-stmove]'); }
@@ -282,6 +286,7 @@ if (WF_TOUR_ON) (function () {
       '#wf-tour .tdot.on{opacity:1;animation:wftd 1.8s infinite}' +
       '@keyframes wftd{0%{transform:scale(1);animation-timing-function:ease-in-out}75%{transform:scale(1.1);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:scale(1)}}' +
       '@media (prefers-reduced-motion:reduce){#wf-tour .tdot.on{animation:none}}' +
+      '#wf-tour.demo .tb,#wf-tour.demo .tdot{opacity:0!important;pointer-events:none!important}' +
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
       '#wf-tour .ar{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:wfta .55s cubic-bezier(.4,0,.2,1) .15s forwards}' +
       '@keyframes wfta{to{stroke-dashoffset:0}}' +
