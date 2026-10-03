@@ -89,6 +89,12 @@ if (WF_TOUR_ON) (function () {
   }
   // The map step points at a circle whose summary panel has room to open whole: away from the screen sides and from
   // the top and bottom bands, closest to the upper middle of the map (the bubble then sits clear of the panel)
+  // the most likely candidate on the map (highest percent in its label), on screen
+  function topMarker() {
+    var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap[aria-label*="ignition candidate"]')), best = null, bp = -1;
+    L.forEach(function (b) { if (shown(b) !== true) return; var m = /(\d+) percent/.exec(b.getAttribute('aria-label') || ''), v = m ? +m[1] : 0; if (v > bp) { bp = v; best = b; } });
+    return best;
+  }
   function pickMarker() {
     var sel = document.querySelector('[data-wf-maproot] button.tipwrap.igsel'); if (sel && document.querySelector('[data-wf-pop]') && shown(sel) === true) return sel;
     var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap')), vw = VW(), vh = VH(), best = null, bs = 1e9;
@@ -123,13 +129,19 @@ if (WF_TOUR_ON) (function () {
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
           ['Follow one ignition from detection to a closed fire. Tap what the yellow circle marks, or use ‹ › to move between steps.',
           'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo amarelo marca, ou use ‹ › para mudar de passo.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
-      skip: function () { return !!listRow(); },
-      t: ['Open the list', 'Abra a lista'],
-      b: ['Every candidate and fire in this region, the most likely first.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: listRow, lock: true, also: 'section[data-swipe-key="li"] a.sqrow[href="Alert.dc.html"]',   // any candidate row carries on
+    // Oct 3: the two blade selectors are shown (not opened), then the ignition is opened from the map
+    { page: 'Main.dc.html', mode: 'next', find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Area:"]') || q('button[aria-label^="Área:"]'); },
+      t: ['Choose a region', 'Escolha uma região'], point: true,
+      b: ['Tap here any time to change the region. For now we stay here.', 'Toque aqui a qualquer momento para mudar de região. Por agora ficamos aqui.'] },
+    { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
+      t: ['Or pick from the list', 'Ou escolha da lista'], point: true,
+      b: ['Every candidate and fire in this region, the most likely first. Open it any time to pick one.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro. Abra-a a qualquer momento para escolher um.'] },
+    { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
+      t: ['Pick a candidate on the map', 'Escolha um candidato no mapa'],
+      b: ['We marked the most likely one. Tap it.', 'Marcámos o mais provável. Toque nele.'] },
+    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('[data-wf-pop] a[href="Alert.dc.html"]'); }, also: '[data-wf-pop] a[href="Alert.dc.html"]',
       t: ['Open the demo ignition', 'Abra a ignição de demonstração'],
-      b: ['We chose the most likely candidate for this tour. Tap it.', 'Escolhemos o candidato mais provável para esta visita. Toque nele.'] },
+      b: ['Its summary. Tap View for the whole picture.', 'O resumo. Toque em Ver para ver tudo.'] },
 
     { page: 'Alert.dc.html', mode: 'next', interact: true, find: function () { return q('[role=list]:has(> [data-wf-kpi][data-g="ign"])') || q('[data-wf-ighdr]'); },
       ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Now let\'s take a closer look.', 'Agora vamos ver de perto.'],
@@ -408,7 +420,7 @@ if (WF_TOUR_ON) (function () {
     if (big) { ring.style.display = 'none'; setTimeout(aimNext, 0); svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
     var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
     // blue circle guide: centred on the control, the yellow frame off (the helicopter profile keeps the frame)
-    if (!WF_TOUR_HELI) { if (st.mode === 'next') setTimeout(aimNext, 0); else dotAim((r.left + r.right) / 2, (r.top + r.bottom) / 2); }
+    if (!WF_TOUR_HELI) { if (st.mode === 'next' && !st.point) setTimeout(aimNext, 0); else dotAim((r.left + r.right) / 2, (r.top + r.bottom) / 2); }
     ring.style.display = WF_TOUR_HELI ? 'block' : 'none'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
     var gap = 76, below = vh - T.b - 32, above = T.t - 16, up;
     if (below >= bh + gap) up = false; else if (above >= bh + gap) up = true; else up = above > below;
