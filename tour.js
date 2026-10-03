@@ -373,7 +373,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // The bubble can be dragged out of the way (by its grabber or any part that isn't a button); it stays where it was put
   // for the rest of that step, kept on screen
   var drag = { dx: 0, dy: 0, i: -1 };
+  var exiting = false;   // the card is leaving through the top edge (swipe up ends the tour)
   function place(l, t) {
+    if (exiting) return;
     var s0 = get(); if (!s0 || drag.i !== s0.i) { drag.dx = 0; drag.dy = 0; }
     var w = bub.offsetWidth, h = bub.offsetHeight, L = Math.min(VW() - w - 8, Math.max(8, l + drag.dx)), T = Math.min(VH() - h - 8, Math.max(8, t + drag.dy));
     bub.style.left = L + 'px'; bub.style.top = T + 'px';
@@ -415,10 +417,23 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
         if (Math.hypot(vx, vy) < 12) { fling = 0; return; } fling = requestAnimationFrame(stepF); };
       fling = requestAnimationFrame(stepF);
     };
+    // Swipe up ends the tour (Oct 3, 22:32): thrown upward, the card flies to the top edge; there it slows a little and slides on
+    // into the edge, swallowed by it (cut flat along the edge) until it has gone, and the tour ends
+    var exitTop = function (vy) { exiting = true; cancelAnimationFrame(fling); fling = 0; b.classList.add('drag');
+      var y = parseFloat(b.style.top) || 0, h = b.offsetHeight, edge = 0, v = Math.min(vy, -700), hit = false, last = 0;
+      try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
+      var stepX = function (now) { var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
+        if (hit) v = Math.min(-280, v * Math.exp(-dt / 0.9)); y += v * dt;
+        if (!hit && y <= edge) { hit = true; v *= 0.55; }   // touching the edge: a little slower from here
+        var cut = Math.max(0, edge - y); b.style.top = y + 'px'; b.style.clipPath = cut ? 'inset(' + cut + 'px 0 0 0)' : '';
+        if (y + h <= edge) { b.style.visibility = 'hidden'; exiting = false; end(); return; }
+        requestAnimationFrame(stepX); };
+      requestAnimationFrame(stepX); };
     var up = function () { if (!st) return; var s1 = st; if (s1.moved) { tiltLock = s1.i; tiltV = 0; tiltVX = 0; } st = null;   // dropped: it stays where it lands for the rest of this step (tilt off until the next step)
       b.classList.remove('drag');
       var tr = s1.trail, a = tr[0], z = tr[tr.length - 1], vx = 0, vy = 0;
       if (s1.moved && a && z && z[0] - a[0] > 8 && performance.now() - z[0] < 80) { vx = (z[1] - a[1]) / ((z[0] - a[0]) / 1000); vy = (z[2] - a[2]) / ((z[0] - a[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
+      if (vy < -600 && Math.abs(vy) > Math.abs(vx) * 1.2) { exitTop(vy); return; }   // a swipe up: the tour leaves through the top
       if (Math.hypot(vx, vy) > 150) throwIt(vx, vy, s1.i);
       setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
