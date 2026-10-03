@@ -702,11 +702,13 @@ if (WF_TOUR_ON) (function () {
   }
   // Tilt (Oct 3): held between 30° and 50° the card stays put; tilted flatter (below 30°, down to -30°) it slides up, more
   // upright (above 50°, to 90° and past) it slides down, faster the further past the band. Never while it is being dragged.
+  var TILT_ON = false;   // tilt switched off for now (Oct 3, 13:32): the card moves only by dragging; set true to bring it back
   var tiltB = null, tiltG = null, tiltT = 0, tiltV = 0, tiltVX = 0, tiltN = null, tiltNG = null, tiltLock = -1, tiltBump = 0, tiltBumped = false;
   window.addEventListener('deviceorientation', function (e) { if (e && typeof e.beta === 'number') tiltB = e.beta; if (e && typeof e.gamma === 'number') tiltG = e.gamma; });
-  function askTilt() { try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
+  function askTilt() { if (!TILT_ON) return; try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(function () {}); } catch (e) {} }
   function tiltSync(now) {
     var dt = tiltT ? Math.min(0.05, (now - tiltT) / 1000) : 0; tiltT = now;
+    if (!TILT_ON) { tiltV = 0; tiltVX = 0; return; }
     if (tiltB == null || !dt || !root || !bub || !root.isConnected || !bub.classList.contains('on') || bub.classList.contains('drag')) { tiltV = 0; tiltVX = 0; return; }
     var sL = get(); if (sL && tiltLock === sL.i) { tiltV = 0; tiltVX = 0; return; }   // dragged in this step: it stays where it was put until the next step
     var b = tiltB, v = 0;

@@ -15,6 +15,8 @@
 try { var m = /#invite=([A-Za-z0-9_-]+)/.exec(location.hash);
   if (m) { var j = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/')))));
     if (j && j.k) { localStorage.setItem('wf-ai-key', j.k); localStorage.setItem('wf-invited-by', j.by || ''); localStorage.removeItem('wf-ai-status'); } } } catch (e) {}
+// A shared link (…/#install, or an invite) offers to add the app to the Home Screen when it opens in a browser (fit.js)
+try { if (/#(install|invite=)/.test(location.hash)) sessionStorage.setItem('wf-install', '1'); } catch (e) {}
 // Straight to the right first screen: sign in when nobody is signed in (no detour through the incidents screen)
 var signed = ''; try { signed = localStorage.getItem('wf-role') || ''; } catch (e) {}
 location.replace(signed ? 'Main.dc.html' : 'Login.dc.html');

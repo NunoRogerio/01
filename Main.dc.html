@@ -14,13 +14,13 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
-<script src="fit.js?v=126"></script>
+<script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=152"></script>
 <script src="i18n.js?v=137"></script>
 <script src="live.js?v=40"></script>
 <script src="chat.js?v=51"></script>
-<script src="tour.js?v=49"></script>
+<script src="tour.js?v=50"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -935,7 +935,7 @@ class Component extends DCLogic {
         return { title: pt ? 'Encenação e chave' : (window.__wfJA ? window.__wfJA('Chat role-play and key') : 'Chat role-play and key'), str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chatSet: !o, dsOpen: false }); } }; })(),   // one drawer open at a time
-      // Share with other people: the app's own link through the phone's share sheet; without one, the link is copied
+      // Share with other people: the app's own link (…/#install: opened in a browser it offers to add the app to the Home Screen) through the phone's share sheet; without one, the link is copied
       /* Chopper tour test profile keeps the helicopter; every other profile shows the blue circle guide (Oct 3) */ tourHeliD: (function () { try { return localStorage.getItem('wf-custom') === 'heli'; } catch (e) { return false; } })() ? 'block' : 'none', tourTxtAnim: (function () { try { return localStorage.getItem('wf-custom') === 'heli'; } catch (e) { return false; } })() ? 'wfHeliT' : 'none', tourDotD: (function () { try { return localStorage.getItem('wf-custom') === 'heli'; } catch (e) { return false; } })() ? 'none' : 'block',
       tourTxt: window.__wfLang === 'pt' ? 'Vamos fazer uma visita' : 'Let\'s take a tour', tourAria: window.__wfLang === 'pt' ? 'Visita rápida à app' : 'Quick tour of the app',
       // Tour entry: a warning tooltip first (tour.js, built on top of everything); the tour starts from its Start tour button
@@ -944,7 +944,7 @@ class Component extends DCLogic {
       shr: (() => { const pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         return { title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-            const url = new URL('./', location.href).href, copy = () => { try { navigator.clipboard.writeText(url); } catch (e) {} this.setState({ shrCopied: true }); clearTimeout(this._shrT); this._shrT = setTimeout(() => this.setState({ shrCopied: false }), 1800); };
+            const url = new URL('./', location.href).href + '#install', copy = () => { try { navigator.clipboard.writeText(url); } catch (e) {} this.setState({ shrCopied: true }); clearTimeout(this._shrT); this._shrT = setTimeout(() => this.setState({ shrCopied: false }), 1800); };
             try { if (navigator.share) { navigator.share({ title: 'Forest Fire Watch', text: T('Forest Fire Watch: wildfire ignition detection.', 'Forest Fire Watch: deteção de ignições de incêndios florestais.'), url }).catch(() => {}); return; } } catch (e) {}
             copy(); } }; })(),
       // The data sources the app reads, with when this phone last loaded each (from the live-data cache)

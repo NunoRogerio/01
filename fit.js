@@ -588,13 +588,43 @@ window.__wfBlink=function(path,dur){
     var b=document.createElement('p');b.textContent=o.body||'';b.style.cssText='margin:4px 0 0;font-size:17px;line-height:22px;color:#000000';if(!o.body)b.style.display='none';
     var a=document.createElement('div');a.style.cssText='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px';
     var btn=function(txt,pri){var e=document.createElement('button');e.type='button';e.textContent=txt;e.style.cssText='display:flex;align-items:center;justify-content:center;height:48px;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:17px;font-weight:600;cursor:pointer;'+(pri?'background:var(--wf-y,#E5FF00);color:#1C1C1E;-webkit-text-fill-color:#1C1C1E;box-shadow:none':'background:var(--wf-sec-bg,#737376);color:var(--wf-sec-fg,#FFFFFF);-webkit-text-fill-color:var(--wf-sec-fg,#FFFFFF)');return e;};
-    var no=btn(o.cancel||'Cancel',false),yes=btn(o.ok||'OK',true);no.setAttribute('data-swipe-go','1');a.appendChild(no);a.appendChild(yes);
+    var no=btn(o.cancel||'Cancel',false),yes=btn(o.ok||'OK',true);no.setAttribute('data-swipe-go','1');if(o.cancel===false)a.style.gridTemplateColumns='minmax(0,1fr)';else a.appendChild(no);a.appendChild(yes);   // cancel:false = one full-width primary (an information dialog)
     p.appendChild(h);p.appendChild(b);p.appendChild(a);w.appendChild(sc);w.appendChild(p);root.appendChild(w);
     var done=false,close=function(ok){if(done)return;done=true;try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}sc.style.opacity='0';p.style.transform='translateY(105%)';setTimeout(function(){w.remove();},520);try{(ok?o.onOk:o.onCancel)&&(ok?o.onOk:o.onCancel)();}catch(x){}};
     sc.onclick=function(){close(false);};no.onclick=function(){close(false);};yes.onclick=function(){close(true);};
     requestAnimationFrame(function(){requestAnimationFrame(function(){sc.style.opacity='1';p.style.transform='translateY(0)';});});
     return {close:close};
   };
+})();
+
+// Install offer (Oct 3): a shared link (Share with other people: …/#install; the administrator's …/#invite=…) offers to put
+// the app on the Home Screen when it opens in a browser tab. Android and desktop Chrome: the browser's own install
+// prompt behind an Install button (Not now | Install). iPhone and iPad (Safari, Chrome): no page can install there, so a
+// one-button dialog says where Add to Home Screen is. Shown once per opened link, never inside the installed app; on
+// Android, Chrome opens links into the installed app on its own, so the offer never shows there.
+(function(){
+  var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+  var want=false;try{want=sessionStorage.getItem('wf-install')==='1';}catch(e){}
+  var ua=navigator.userAgent||'',IOS=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),CRI=/CriOS/.test(ua);
+  var evt=null,shown=false;
+  var pt=function(){var l=window.__wfLang||(document.documentElement.lang||navigator.language||'');return /^pt/i.test(l);};
+  var T=function(en,p){return pt()?p:(window.__wfJA?window.__wfJA(en):en);};
+  var done=function(){try{sessionStorage.removeItem('wf-install');}catch(e){}};
+  function show(){
+    if(shown||SA||!want||!window.__wfConfirm)return;
+    if(IOS){shown=true;done();
+      window.__wfConfirm({title:T('Add to Home Screen','Adicionar ao ecrã principal'),
+        body:CRI?T('Tap Share in the address bar, then Add to Home Screen.','Toque em Partilhar na barra de endereço e depois em Adicionar ao ecrã principal.')
+                :T('Tap Share (in the … menu), then Add to Home Screen.','Toque em Partilhar (no menu …) e depois em Adicionar ao ecrã principal.'),
+        cancel:false,ok:T('OK','OK')});return;}
+    if(!evt)return;shown=true;done();
+    window.__wfConfirm({title:T('Install Fire Watch','Instalar Fire Watch'),body:T('Open it from your Home Screen, full screen.','Abra-a no ecrã principal, em ecrã inteiro.'),
+      cancel:T('Not now','Agora não'),ok:T('Install','Instalar'),onOk:function(){try{var e=evt;evt=null;e.prompt();}catch(x){}}});
+  }
+  // Chrome hands over its install prompt; held back only when this page was opened from a shared link
+  window.addEventListener('beforeinstallprompt',function(e){if(!want||SA)return;e.preventDefault();evt=e;setTimeout(show,1200);});
+  window.addEventListener('appinstalled',function(){evt=null;done();});
+  if(want&&!SA&&IOS){var go=function(){setTimeout(show,1200);};if(document.readyState==='complete')go();else window.addEventListener('load',go);}
 })();
 
 // Round controls, every screen (close X, back, chat, bell, avatars, counts, map buttons): a press gives a light haptic and
