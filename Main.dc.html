@@ -18,9 +18,9 @@
 <script src="fit.js?v=127"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=155"></script>
-<script src="i18n.js?v=146"></script>
+<script src="i18n.js?v=147"></script>
 <script src="live.js?v=40"></script>
-<script src="chat.js?v=56"></script>
+<script src="chat.js?v=57"></script>
 <script src="tour.js?v=57"></script>
 
 <title>Incidents</title>
@@ -523,12 +523,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <!-- Sign out belongs with the profile -->
         <a href="reset.html?out=1" class="wf-b wf-sec" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0">Sign out</a>
       </div>
-      <!-- Language (Oct 3, 18:23): a multi-line switcher, as many flag + initials options per line as fit; the yellow travels to the
+      <!-- Language (Oct 3, 18:23): a multi-line switcher, as many flag + language name options per line as fit; the yellow travels to the
            new choice, shrinking in height on the way and growing back as it lands, then the language changes -->
       <div role="radiogroup" aria-label="Language" data-wf-langsw="1" translate="no" style="display: {{lg.d}}; position: relative; flex-wrap: wrap; gap: 4px; flex-shrink: 0; padding: 8px; border-radius: 30px; background: rgba(118,118,128,0.12)">
         <span class="wf-langthumb" aria-hidden="true" style="position: absolute; left: 8px; top: 8px; width: 0; height: 44px; border-radius: 999px; background: var(--wf-y); opacity: 0"></span>
         <sc-for list="{{lg.opts}}" as="o" hint-placeholder-count="10">
-          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" style="position: relative; z-index: {{o.z}}; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><img src="{{o.flag}}" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.08)"><span role="status" aria-live="polite" style="display: {{o.tipD}}; position: absolute; left: 0; bottom: calc(100% + 6px); padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; font-weight: 400; white-space: nowrap; pointer-events: none">{{o.tip}}</span><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.short}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.short}}</span></span></button>
+          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" style="position: relative; z-index: {{o.z}}; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><img src="{{o.flag}}" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.08)"><span role="status" aria-live="polite" style="display: {{o.tipD}}; position: absolute; left: 0; bottom: calc(100% + 6px); padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 15px; line-height: 20px; font-weight: 400; white-space: nowrap; pointer-events: none">{{o.tip}}</span><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.name}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.name}}</span></span></button>
         </sc-for>
       </div>
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">

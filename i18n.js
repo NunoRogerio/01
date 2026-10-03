@@ -9,9 +9,7 @@
   // The languages on offer (Oct 3, 18:13): each with its native name and its round flag (assets/flags, circle-flags, MIT).
   // English, Portuguese and Japanese live here; the others load from data/i18n/<code>.json when chosen. A language is
   // listed only once it is translated.
-  var LANGS=[['en','English','gb'],['pt','Português','pt'],['pt-BR','Brasileiro','br'],['es','Español','es'],['fr','Français','fr'],['it','Italiano','it'],['de','Deutsch','de'],['nl','Nederlands','nl'],['uk','Українська','ua'],['pl','Polski','pl'],['ro','Română','ro'],['el','Ελληνικά','gr'],['cs','Čeština','cz'],['sv','Svenska','se'],['hu','Magyar','hu'],['bg','Български','bg'],['da','Dansk','dk'],['fi','Suomi','fi'],['sk','Slovenčina','sk'],['hr','Hrvatski','hr'],['sl','Slovenščina','si'],['lt','Lietuvių','lt'],['lv','Latviešu','lv'],['et','Eesti','ee'],['ga','Gaeilge','ie'],['mt','Malti','mt'],['nb','Norsk','no'],['is','Íslenska','is'],['sq','Shqip','al'],['sr','Српски','rs'],['mk','Македонски','mk'],['ca','Català','es-ct'],['ja','日本語','jp'],
-    // listed, not yet translated (Oct 3, 19:06): a tap says so
-    ['bs','Bosanski','ba',0],['cnr','Crnogorski','me',0],['be','Беларуская','by',0],['lb','Lëtzebuergesch','lu',0],['tr','Türkçe','tr',0],['ka','ქართული','ge',0],['hy','Հայերեն','am',0]];
+  var LANGS=[['en','English','gb'],['pt','Português','pt'],['es','Español','es'],['fr','Français','fr'],['de','Deutsch','de'],['ja','日本語','jp']];   // Oct 3, 19:33: these six only
   // short: the country initials shown on the switcher (Oct 3, 18:54: back to the first switcher's formula, EN PT 日本)
   window.__wfLangs=LANGS.map(function(a){return {code:a[0],name:a[1],flag:'assets/flags/'+a[2]+'.svg',na:a[3]===0,short:a[0]==='en'?'EN':a[0]==='ja'?'日本':a[2]==='es-ct'?'CAT':a[2].toUpperCase()};});
   var OK={};LANGS.forEach(function(a){if(a[3]!==0)OK[a[0]]=1;});

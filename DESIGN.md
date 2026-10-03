@@ -710,3 +710,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Languages not yet translated (Oct 3, 19:06):** translation work is stopped. The rest of Europe's languages are listed with their flags (Bosanski, Crnogorski, Беларуская, Lëtzebuergesch, Türkçe, ქართული, Հայերեն); tapping one shows a tooltip, "Not available yet", and nothing changes.
 - **Mini KPI values (Oct 3, 19:15):** 32px by default in every mini KPI card; a value only steps down to 24px when it doesn't fit (then wraps at 24px as a last resort). Replaces the 40/32/24 largest-that-fits rule.
 - **Language flags (Oct 3, 19:17):** 24px round flags (was 32px), 12px in from the option's left edge.
+- **Languages trimmed (Oct 3, 19:33):** six languages only: English, Português, Español, Français, Deutsch, 日本語, each with its round flag and its full name (no initials). All other languages, their translation files and flags removed. Supersedes the 32-language and initials notes above.
