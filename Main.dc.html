@@ -1016,7 +1016,7 @@ class Component extends DCLogic {
           bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
           slVis: MENU ? 'hidden' : 'visible', bTop: s.bTop != null ? s.bTop : 68, tTop: (s.bTop != null ? s.bTop : 68) - 56,   /* the section title stays level with the button */   // level with the top bar's buttons, measured from its spot (Oct 3, 20:08)
           bDur: boot ? '0s' : '.38s', bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
-          bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.scOpen || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.scOpen || s.full) ? 'auto' : 'none',   // hidden while another top panel or the full-screen map is up
+          bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 'auto' : 'none',   // (Oct 3, 20:19) shown with the area picker (its top row has the same buttons), hidden over the open incident list   // hidden while another top panel or the full-screen map is up
           dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',
       cs: (() => { const o = !!s.chatSet, pt = lang === 'pt';
