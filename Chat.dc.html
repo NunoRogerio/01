@@ -18,7 +18,7 @@
 <script src="prefs.js?v=165"></script>
 <script src="i18n.js?v=149"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=57"></script>
+<script src="chat.js?v=58"></script>
 <script src="tour.js?v=66"></script>
 <script src="trophy.js?v=18"></script>
 
@@ -779,7 +779,7 @@ class Component extends DCLogic {
     });
     // The team: you, the fire owner, then the crew coordinator of each station
     const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
-      .concat(c.people.map((p, i) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : L('Coordinator · ', 'Coordenador · ') + p.org, code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))
+      .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left).map(([p, i]) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
     const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' ? 'inline' : 'none', go: () => run(a.key) }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;

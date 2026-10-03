@@ -79,6 +79,11 @@
   }
   function ccOf(st) { return st === 'PT' ? 'pt' : (st === 'BRA' || st === 'AMZ') ? 'br' : /^[A-Z]{2}$/.test(st || '') ? 'us' : { CAN: 'ca', ESP: 'es', FRA: 'fr', ITA: 'it', GRC: 'gr' }[st] || 'pt'; }
   function isUS(c) { return ccOf(c.st) === 'us'; }
+  // (Oct 3, 22:03) the person each station puts in the incident chat, by their real title: a company Captain in the US,
+  // the crew chief (chefe de equipa) of the fire brigade elsewhere
+  function leadRole(c) { return isUS(c) ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' }; }
+  // who is in the chat now: once the fire is declared, only the leads of the stations that were sent stay
+  function active(c) { return (c.people || []).filter(function (p) { return !p.left; }); }
   // Portraits for the team (illustrated, avatar.js), only on fires in California, Nevada and Portugal: each person in
   // their own service's uniform; coordinators wear the command helmet.
   var PHOTO_ST = { CA: 'us', PT: 'pt' };   // only Portugal and California chats show photos (a team of 8 each); the rest show initials
@@ -198,12 +203,13 @@
     db.chats[k] = ch; save();
     stationsFor(ch.st, ch.lat, ch.lon, function (S) {
       var d = load(), c = d.chats[k]; if (!c) return;
-      c.stations = S.slice(0, 3);
-      c.reserve = S[3] || null;
+      c.stations = S.slice(0, 4);   // (Oct 3, 22:04) while a candidate: the leads of the four nearest stations
+      c.reserve = S[4] || null;
       var nm = pickNames(c, c.stations.length, 'coord');
       c.people = c.stations.map(function (s, i) { return { name: nm[i], code: initials(nm[i]), org: s.short, kind: 'lead' }; });
       if (c.stage >= 2) {   // a fire already in progress: the first two stations are working it
         c.flags.dispatched = true;
+        c.people.forEach(function (p, pi) { if (pi >= 2) p.left = true; });   // (Oct 3, 22:03) only the stations working it are in the chat
         c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); });
       }
       var kept = d.sent && d.sent[k]; if (kept) delete d.sent[k];
@@ -221,7 +227,8 @@
   function newId() { mid++; return Date.now().toString(36) + mid; }
   function push(c, m, delay, adv) { m.id = newId(); m.adv = adv == null ? 0 : adv; c.queue.push({ due: Date.now() + (delay || 0), m: m }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
   function sys(c, en, pt, delay, adv) { push(c, { kind: 'sys', en: en, pt: pt }, delay, adv == null ? 1 : adv); }
-  function say(c, who, en, pt, delay, adv) { push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
+  function say(c, who, en, pt, delay, adv) { var P = c.people || []; if (P[who] && P[who].left) { var j = P.findIndex(function (p) { return !p.left; }); if (j >= 0) who = j; }
+    push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
   function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0); }
   function lead(c, i) { return Math.min(i, Math.max(0, c.people.length - 1)); }
@@ -369,7 +376,7 @@
     var wait = function () { var d = load().chats[c.key]; if (!d) return; if (!d.people.length) return setTimeout(wait, 150);
       // The same stations and coordinators as the real fire; if the real fire has no team on record, the drill keeps its own
       if (src.people && src.people.length && src.stations && src.stations.length) {
-        d.stations = src.stations.slice(0, 3); d.reserve = src.reserve || d.reserve; d.used = {};
+        d.stations = src.stations.slice(0, 4); d.reserve = src.reserve || d.reserve; d.used = {};
         d.people = src.people.slice(0, d.stations.length).map(function (p) { d.used[p.name] = 1; return { name: p.name, code: p.code, org: p.org, kind: 'lead' }; });
       }
       (src.forces || []).forEach(function (f) { f.crew.forEach(function (x) { d.used[x] = 1; }); });
@@ -622,7 +629,7 @@
         c.stations.push({ name: o.name, short: shortStation(o.name), km: o.km || 5, min: o.eta || 10 });
         i = c.stations.length - 1; var nm = pickNames(c, 1, 'd' + i)[0];
         c.people.push({ name: nm, code: initials(nm), org: shortStation(o.name), kind: 'lead' });
-        sys(c, nm + ', crew coordinator of ' + shortStation(o.name) + ', joined', nm + ', coordenador de equipa de ' + shortStation(o.name) + ', entrou na conversa', d + 300, 0);
+        sys(c, nm + ', ' + leadRole(c).en.toLowerCase() + ' of ' + shortStation(o.name) + ', joined', nm + ', ' + leadRole(c).pt.toLowerCase() + ' de ' + shortStation(o.name) + ', entrou na conversa', d + 300, 0);
       }
       var f = (c.forces || []).find(function (x) { return x.si === i; }) || (function () { var ff = forceFor(c, i, 'enroute'); c.forces = (c.forces || []).concat([ff]); return ff; })();
       f.st = 'enroute'; if (o.units && o.units.length) f.veh = o.units.map(function (u) { return u.n + ' × ' + u.label; });
@@ -630,6 +637,9 @@
     });
     (c.forces || []).forEach(function (f) { if (!sent.some(function (x) { return x.i === f.si; }) && f.st !== 'enroute') f.st = 'standby'; });
     c.flags.dispatched = true; c.sentIdx = sent.map(function (x) { return x.i; });
+    // (Oct 3, 22:03) the fire is declared: the chat keeps the leads of the stations sent; the others leave it
+    c.people.forEach(function (p, pi) { if (p.left || sent.some(function (x) { return x.i === pi; })) return; p.left = true;
+      sys(c, p.name + ' (' + p.org + ') left the chat: station not sent', p.name + ' (' + p.org + ') saiu da conversa: quartel não enviado', d + 400, 0); });
     // Confirmed outside the chat (alert or drone screen): the chat catches up with the confirmation first
     if (c.stage === 0) {
       push(c, { kind: 'msg', from: 'me', en: 'Confirming the fire.', pt: 'Confirmo o incêndio.' }, d, 1);
@@ -794,9 +804,9 @@
   function aiBrief(c) {
     var us = isUS(c), S = stats(c), pt = PT(), H = c.hist || [];
     var tl = H.map(function (h, i) { var nx = H[i + 1]; return STAGES[h.s].en + ' from ' + hhmm(h.vt) + (nx ? ' for ' + dur(nx.vt - h.vt) : ' (current, ' + dur(vnow(c) - h.vt) + ' so far)'); }).join('; ');
-    var team = c.people.map(function (p, i) { var f = (c.forces || []).find(function (x) { return x.si === i; });
-      return '#' + i + ' ' + p.name + ', crew coordinator of ' + p.org + (c.stations[i] ? ' (' + kmTxt(c.stations[i].km) + ' away, ~' + c.stations[i].min + ' min drive)' : '') +
-        (f ? ', crew: ' + f.crew.join(', ') + ', vehicles: ' + f.veh.join(', ') + ', status: ' + f.st : ', not dispatched yet') + '. Voice: ' + VOICES[i % 3] + '.'; }).join('\n');
+    var team = c.people.map(function (p, i) { if (p.left) return ''; var f = (c.forces || []).find(function (x) { return x.si === i; });
+      return '#' + i + ' ' + p.name + ', ' + leadRole(c).en.toLowerCase() + ' of ' + p.org + (c.stations[i] ? ' (' + kmTxt(c.stations[i].km) + ' away, ~' + c.stations[i].min + ' min drive)' : '') +
+        (f ? ', crew: ' + f.crew.join(', ') + ', vehicles: ' + f.veh.join(', ') + ', status: ' + f.st : ', not dispatched yet') + '. Voice: ' + VOICES[i % 3] + '.'; }).filter(Boolean).join('\n');
     var tr = c.msgs.slice(-28).map(function (m) {
       var at = '[' + hhmm(m.vt || m.t) + '] ';
       if (m.kind === 'msg') return at + (m.from === 'me' ? 'FIRE OWNER' : (c.people[m.from] || {}).name || '?') + ': ' + (pt ? m.pt || m.en : m.en);
@@ -1153,7 +1163,7 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS,
+    }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS, leadRole: leadRole, active: active,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },
@@ -1196,7 +1206,7 @@
     if (fixed) { save(); emit(); }
     Object.keys(d.chats).forEach(function (k) { var c0 = d.chats[k]; if (!c0 || c0.dismissed || (c0.people && c0.people.length)) return;
       stationsFor(c0.st, c0.lat, c0.lon, function (S) { var dd = load(), c = dd.chats[k]; if (!c || (c.people && c.people.length) || !S.length) return;
-        c.stations = S.slice(0, 3); c.reserve = S[3] || null;
+        c.stations = S.slice(0, 4); c.reserve = S[4] || null;
         var nm = pickNames(c, c.stations.length, 'coord');
         c.people = c.stations.map(function (s, i) { return { name: nm[i], code: initials(nm[i]), org: s.short, kind: 'lead' }; });
         if (c.stage >= 2) { c.flags.dispatched = true;
@@ -1215,6 +1225,18 @@
           var n = pickNames(c, 1, 'more')[0]; c.people.push({ name: n, code: initials(n), org: s.short, kind: 'lead' }); c.stations.push(s); });
         save(); emit(); }); });
   }
+  // (Oct 3, 22:04) older chats follow the team rule: a candidate's chat has the leads of the four nearest stations; once the
+  // fire is declared, only the leads of the stations sent stay (the others have left)
+  function healTeam() {
+    var d = load(), fixed = false;
+    Object.keys(d.chats).forEach(function (k) { var c = d.chats[k]; if (!c || c.kind === 'dm' || /^p:/.test(k) || c.dismissed || !c.people || !c.people.length) return;
+      if (c.flags && c.flags.dispatched && c.sentIdx && c.sentIdx.length) c.people.forEach(function (p, i) { if (!p.left && c.sentIdx.indexOf(i) < 0) { p.left = true; fixed = true; } });
+      else if (c.flags && c.flags.dispatched && !c.sentIdx && c.stage >= 2) c.people.forEach(function (p, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); if (!p.left && (!f || f.st === 'standby')) { p.left = true; fixed = true; } });
+      else if (!c.closed && c.stage === 0 && c.people.length < 4 && c.reserve) { var r = c.reserve; c.reserve = null; var n = pickNames(c, 1, 'more')[0];
+        c.people.push({ name: n, code: initials(n), org: r.short, kind: 'lead' }); c.stations.push(r); fixed = true; } });
+    if (fixed) { save(); emit(); }
+  }
+  if (role) setTimeout(healTeam, 1500);
   if (role) setTimeout(heal, 900);
   if (role) setTimeout(healTwo, 1200);
 })();
