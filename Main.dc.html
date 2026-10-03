@@ -730,7 +730,7 @@ class Component extends DCLogic {
   // reaches the icon column, just before it covers it. The moment comes from the slide's own ease (sine in and out).
   wfBurgerBack() { const vw = (window.__wfVP || {}).w || 390, travel = Math.min(vw, 564) + 32, f = Math.max(0, Math.min(1, (travel - 60) / travel));
     return Math.round(Math.acos(1 - 2 * f) / Math.PI * 740); }
-  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = (to ? 0 : this.wfBurgerBack()) + 740; if (!b) return;
+  wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'), d = to ? 1 : -1, T = (to ? 0 : this.wfBurgerBack()) + 370; if (!b) return;
       clearTimeout(this._clackT); this._clackT = setTimeout(() => { try { if (b.animate) b.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }, T - 40); } catch (e) {} }
   // The language switcher's yellow (Oct 3, 18:23): placed on the chosen option; on a new choice it travels there, its height
   // shrinking to half on the way and growing back to full as it lands (as the other switchers' motion, in reverse)
@@ -1022,7 +1022,7 @@ class Component extends DCLogic {
           burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(20, L0.vw - (L0.colL + L0.colW) + 20) : 20; })(),   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
           bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
           slVis: MENU ? 'hidden' : 'visible', bTop: s.bTop != null ? s.bTop : 68, tTop: (s.bTop != null ? s.bTop : 68) - 56,   /* the section title stays level with the button */   // level with the top bar's buttons, measured from its spot (Oct 3, 20:08)
-          bDur: boot ? '0s' : '.74s',   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time
+          bDur: boot ? '0s' : '.37s',   // (Oct 3, 20:54) twice as fast as the screen   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time
           bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
           bOp: MENU ? 0 : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 1 : 0, bPE: MENU ? 'none' : pmMode || !(s.ntOpen || s.cbOpen || s.list || s.full) ? 'auto' : 'none',   // (Oct 3, 20:19) shown with the area picker (its top row has the same buttons), hidden over the open incident list   // hidden while another top panel or the full-screen map is up
           dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmSec === 'about' || this._abtSeen ? (this._abtSeen = 'About.dc.html?embed=1') : 'about:blank' }; })(),
