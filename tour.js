@@ -99,10 +99,14 @@ if (WF_TOUR_ON) (function () {
     var press = function (sel) { var e = q(sel) || document.querySelector(sel); if (!e) return; selfTap = true; try { e.click(); } catch (x) {} selfTap = false; };
     // the card and the circle fade away while the blade opens, stays 1 s and folds back, then fade in again (Oct 3)
     var fade = function (on) { if (root) root.classList.toggle('demo', on); };
-    setTimeout(function () { if (still()) fade(true); }, 900);
+    // the circle taps the button first (Oct 3, 17:11): it swells 25% and quickly settles back, then the blade opens
+    var tap = function () { try { if (dot) dot.animate([{ scale: '1' }, { scale: '1.25', offset: 0.4, easing: 'cubic-bezier(.2,.8,.3,1)' }, { scale: '1' }], { duration: 260, easing: 'cubic-bezier(.4,0,.2,1)' }); } catch (x) {} };
+    setTimeout(function () { if (still()) tap(); }, 900);
+    setTimeout(function () { if (still()) fade(true); }, 1160);
     setTimeout(function () { if (still()) press(st.demo.open); }, 1200);
-    setTimeout(function () { press(st.demo.close); }, 1200 + 500 + 1000);   // about 0.5 s to open, then 1 s open
-    setTimeout(function () { fade(false); }, 1200 + 500 + 1000 + 550);
+    setTimeout(function () { press(st.demo.close); }, 1200 + 500 + 2500);   // about 0.5 s to open, then 2.5 s open (Oct 3, 17:12; was 1 s)
+    // once the blade has folded back, the tour moves on to the next step by itself (Oct 3, 17:11)
+    setTimeout(function () { fade(false); if (still()) { go(i + 1); setTimeout(tick, 60); } }, 1200 + 500 + 2500 + 550);
   }
   // the state card's Move to <next stage> button, when the card is open
   function stMove() { return q('[data-wf-stmove]'); }
