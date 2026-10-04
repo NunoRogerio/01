@@ -833,3 +833,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **No list icons (Oct 4):** the region (top) and incidents (bottom) blades no longer show the list icon after their subtitle; the blades open their lists on a tap or swipe as before.
 - **Smart marker count (Oct 4):** the number of things drawn follows the zoom. With over 100 candidates in view (country level, wide regions) no markers are drawn: soft warm blobs show where candidates are more frequent, bigger and stronger where denser, with no numbers. Below that, one marker per 44px (the likeliest), at most 60; likelihood percentages show only when few markers remain (24 or fewer) and the map is zoomed in 300% or more. Fire stations thin the same way (at most about 70 in view).
 - **Tapped item survives (Oct 4, Green Valley fix):** the menu loaded in an iframe no longer takes the live flag for a crash and wipes the saved area and the tapped item; every fire or candidate tapped now opens itself, not the first one. A version update reload also keeps them.
+
+## Data sources: what each source brings
+- Each source row ends with two groups. "Shows in the app" lists the markers, tags and shapes the source feeds, each with its real symbol (28px in a 32px box) and a 15px label. "Examples" shows real items from the loaded data: bold title, grey subtitle, and the same status or likelihood pill the app uses.
+- Group labels are 15px 600 #545458, with 16px above each group and 8px between rows. No invented figures: sources with no loaded item show no example.

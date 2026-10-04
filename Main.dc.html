@@ -649,6 +649,56 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <button type="button" role="switch" class="wf-tog" aria-checked="{{d.onStr}}" aria-label="{{d.name}}" aria-disabled="{{d.lockStr}}" onClick="{{d.toggle}}" style="display: {{d.togD}}; position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{d.swBg}}; opacity: {{d.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{d.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
                   <!-- What the source brings, across the full row (under the switch too), in the annotation style -->
                   <span style="display: {{d.whyD}}; grid-column: 1 / -1; margin-top: 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{d.why}}</span>
+                  <!-- What it shows in the app: the real marker, tag or shape, with a label -->
+                  <span style="display: {{d.showsD}}; grid-column: 1 / -1; margin-top: 16px">
+                    <span style="display: block; font-size: 15px; line-height: 20px; font-weight: 600; color: #545458">{{d.showsT}}</span>
+                    <sc-for list="{{d.shows}}" as="s">
+                      <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
+                        <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#3A3A3C" transform="translate(5 0) scale(.5) translate(6 6)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_fire}}"><path d="M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z" fill="#E86A00"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_proj}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="none" stroke="#E8590C" stroke-width="1.5" stroke-dasharray="3 3" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_pill}}"><rect x="3" y="8" width="18" height="8" rx="4" fill="rgba(142,142,147,.3)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_danger}}"><path d="M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_wx}}"><path d="M12 20V5M6 11l6-6 6 6" fill="none" stroke="#3A3A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_pin}}"><path d="M12 21s6-5.6 6-10.5a6 6 0 0 0-12 0C6 15.4 12 21 12 21Z" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="10.5" r="2" fill="#3A3A3C"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_tile}}"><path d="M4 4h16v16H4zM4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16" fill="none" stroke="#3A3A3C" stroke-width="1.3"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_crew}}"><circle cx="9" cy="8" r="3" fill="none" stroke="#3A3A3C" stroke-width="1.5"/><path d="M3.5 19c0-3.2 2.4-5 5.5-5s5.5 1.8 5.5 5" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span style="font-size: 15px; line-height: 20px; color: #3A3A3C">{{s.text}}</span>
+                      </span>
+                    </sc-for>
+                  </span>
+                  <!-- Real examples taken from the data loaded in the app -->
+                  <span style="display: {{d.exsD}}; grid-column: 1 / -1; margin-top: 16px">
+                    <span style="display: block; font-size: 15px; line-height: 20px; font-weight: 600; color: #545458">{{d.exsT}}</span>
+                    <sc-for list="{{d.exs}}" as="e">
+                      <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
+                        <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_fire}}"><path d="M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z" fill="#E86A00"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_proj}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="none" stroke="#E8590C" stroke-width="1.5" stroke-dasharray="3 3" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_pill}}"><rect x="3" y="8" width="18" height="8" rx="4" fill="rgba(142,142,147,.3)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_danger}}"><path d="M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_wx}}"><path d="M12 20V5M6 11l6-6 6 6" fill="none" stroke="#3A3A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_pin}}"><path d="M12 21s6-5.6 6-10.5a6 6 0 0 0-12 0C6 15.4 12 21 12 21Z" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="10.5" r="2" fill="#3A3A3C"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_tile}}"><path d="M4 4h16v16H4zM4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16" fill="none" stroke="#3A3A3C" stroke-width="1.3"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_crew}}"><circle cx="9" cy="8" r="3" fill="none" stroke="#3A3A3C" stroke-width="1.5"/><path d="M3.5 19c0-3.2 2.4-5 5.5-5s5.5 1.8 5.5 5" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span style="display: block; flex: 1; min-width: 0">
+                          <span style="display: block; font-size: 15px; line-height: 20px; font-weight: 600; color: #1C1C1E">{{e.title}}</span>
+                          <span style="display: block; font-size: 15px; line-height: 20px; color: #6E6E73">{{e.sub}}</span>
+                        </span>
+                        <span style="display: {{e.tagD}}; flex: none; padding: 0 8px; border-radius: 999px; font-size: 13px; line-height: 24px; font-weight: 600; background: {{e.tagBg}}; color: {{e.tagFg}}">{{e.tag}}</span>
+                      </span>
+                    </sc-for>
+                  </span>
                 </li>
               </sc-for>
             </ul>
@@ -1098,6 +1148,40 @@ class Component extends DCLogic {
           if (lang === 'ja') return '読み込み: ' + (m < 1 ? 'たった今' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前');   // Japanese units
           if (pt && m < 1) return 'Carregado agora';
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
+        // (Oct 4) What each source brings: the markers, tags and shapes it draws, as the app draws them, and real examples from the data loaded on this phone (nothing invented)
+        const LC = window.__wfLiveCandsAll || [], LF = window.__wfLiveFiresAll || [], CH = window.__wfChat, CT = (n) => (window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#185A93', bg: '#E3EEFB' });
+        const skey = (r) => (r[0] === 'PT' ? 'PT' : r[0] === 'CAN' ? 'CAN' : r[0] === 'BRA' ? 'BR' : /^CF-/.test(r[2] || '') ? 'CF' : 'US');
+        const isGoes = (r) => /GOES/i.test((r[9] && r[9].sat) || '');
+        const ll = (r) => { const L = r[9] || {}; return L.lat != null ? Math.abs(L.lat).toFixed(2) + '°' + (L.lat < 0 ? 'S' : 'N') + ' ' + Math.abs(L.lon).toFixed(2) + '°' + (L.lon < 0 ? 'W' : 'E') : ''; };
+        const candEx = (r, geo) => { if (!r) return null; const L = r[9] || {}, g = CT(r[4]);
+          return { k: L.night ? 'night' : 'cand', title: r[3], sub: geo ? T('Nearest town to a detection at ', 'Localidade mais próxima de uma deteção em ') + ll(r) : [r[1], r[0]].filter((x) => x && x !== r[3]).join(', ') + (L.sat ? '. ' + L.sat : ''), tag: r[4] + '%', tagFg: g.fg, tagBg: g.bg }; };
+        const stageOf = (r) => { const I = (r && r[9]) || {}, S = CH && CH.STAGES; if (!S) return null; const sc = I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5, i = sc >= 10 ? 7 : sc === 9 ? 6 : sc === 8 ? 5 : sc === 7 ? 4 : sc === 6 ? 3 : sc === 5 ? 2 : 1, g = S[i]; return g ? { t: pt ? g.pt : g.en, fg: g.c, bg: g.bg } : null; };
+        const fireEx = (key, poly) => { const A = LF.filter((q) => skey(q) === key), act = A.filter((q) => !(q[9] && q[9].resolved)), L = (act.length ? act : A).slice().sort((a, b) => ((b[9] && b[9].ha) || 0) - ((a[9] && a[9].ha) || 0)), r = L[0]; if (!r) return null;
+          const I = r[9] || {}, st = poly ? null : stageOf(r);
+          return { k: poly ? 'poly' : 'fire', title: r[3], sub: [r[1], r[0]].filter((x) => x && x !== r[3]).join(', ') + (I.ha ? '. ' + I.ha + ' ha' : ''), tag: st ? st.t : '', tagFg: st ? st.fg : '', tagBg: st ? st.bg : '' }; };
+        const stEx = () => { const D = window.__wfStFile || {}; for (const k in D) { const r = (D[k].rows || []).find((q) => q[4]); if (r) return { k: 'station', title: r[4], sub: Math.abs(r[2]).toFixed(2) + '°' + (r[2] < 0 ? 'S' : 'N') + ' ' + Math.abs(r[3]).toFixed(2) + '°' + (r[3] < 0 ? 'W' : 'E'), tag: '', tagFg: '', tagBg: '' }; } return null; };
+        const wxNames = ['Low', 'Moderate', 'High', 'Very high', 'Maximum'];
+        const SH = {
+          cand: [['cand', 'Ignition candidate markers', 'Marcadores de candidatos a ignição'], ['night', 'A moon when the heat was seen at night', 'Uma lua quando o calor foi visto de noite'], ['pill', 'Likelihood tags', 'Etiquetas de probabilidade']],
+          fire: [['fire', 'Active fire markers', 'Marcadores de incêndios ativos'], ['pill', 'Stage tags', 'Etiquetas de fase'], ['poly', 'Burned area on the map', 'Área ardida no mapa']]
+        };
+        const best = (f) => LC.filter(f).sort((x, y) => y[4] - x[4])[0];
+        const X = {
+          'NASA FIRMS': { shows: SH.cand, ex: [candEx(best((r) => !isGoes(r)))] },
+          'NOAA GOES-18 and GOES-19': { shows: SH.cand.slice(0, 1).concat(SH.cand.slice(2)), ex: [candEx(best(isGoes))] },
+          'NIFC · WFIGS': { shows: SH.fire, ex: [fireEx('US')] },
+          'CAL FIRE': { shows: SH.fire, ex: [fireEx('CF')] },
+          'EFFIS · Copernicus': { shows: [['poly', 'The real shape of each burned area', 'A forma real de cada área ardida']], ex: [fireEx('PT', true)] },
+          'IPMA': { shows: [['danger', 'A fire danger chip in the weather row', 'Uma etiqueta de perigo de incêndio na linha da meteorologia']], ex: [{ k: 'danger', title: wxNames.map((n) => n + ' danger').join('. '), sub: T('The five levels the chip can show', 'Os cinco níveis que a etiqueta pode mostrar'), tag: '', tagFg: '', tagBg: '' }] },
+          'Fogos.pt · ANEPC': { shows: SH.fire, ex: [fireEx('PT')] },
+          'INPE · Programa Queimadas': { shows: [['fire', 'Fire event markers', 'Marcadores de eventos de fogo'], ['pill', 'Stage tags', 'Etiquetas de fase'], ['poly', 'Burned area on the map', 'Área ardida no mapa']], ex: [fireEx('BR')] },
+          'BC Wildfire Service': { shows: [['fire', 'Active fire markers', 'Marcadores de incêndios ativos'], ['pill', 'Stage tags', 'Etiquetas de fase'], ['crew', 'Crew, aircraft and equipment counts', 'Número de equipas, aeronaves e máquinas']], ex: [fireEx('CAN')] },
+          'GeoNames': { shows: [['pin', 'The place name in every candidate title', 'O nome da localidade no título de cada candidato']], ex: [candEx(best(() => true), true)] },
+          'OpenStreetMap': { shows: [['tile', 'The map itself', 'O próprio mapa'], ['station', 'Fire station markers', 'Marcadores de quartéis']], ex: [stEx()] },
+          'Open-Meteo': { shows: [['wx', 'Temperature, humidity, wind and air quality chips', 'Etiquetas de temperatura, humidade, vento e qualidade do ar'], ['proj', 'Projection shapes: now, +1 h, +3 h, +6 h', 'Formas de projeção: agora, +1 h, +3 h, +6 h']], ex: [] }
+        };
+        const KS = ['cand', 'night', 'fire', 'station', 'poly', 'proj', 'pill', 'danger', 'wx', 'pin', 'tile', 'crew'];
+        const flags = (k) => { const o = {}; KS.forEach((q) => { o['d_' + q] = q === k ? 'block' : 'none'; }); return o; };
         const items = [
           ['NASA FIRMS', T('Satellite heat detections (VIIRS, MODIS, Landsat). Europe and the Americas', 'Deteções de calor por satélite (VIIRS, MODIS, Landsat). Europa e Américas'), c.tSat, false, 26, 'SAT', 9, T('Polar-orbiting satellites, each passing about twice a day: together they spot most new fires within hours.', 'Satélites em órbita polar, cada um passa cerca de duas vezes por dia: juntos detetam a maioria dos novos incêndios em poucas horas.')],
           ['NOAA GOES-18 and GOES-19', T('Geostationary heat detections every 10 minutes. The Americas', 'Deteções de calor geostacionárias a cada 10 minutos. Américas'), c.tSat, false, 1, null, 10, T('A new scan every 10 minutes, so an ignition can show within the hour instead of at the next satellite pass. Coarser: a spot needs two scans.', 'Uma nova leitura a cada 10 minutos: uma ignição pode surgir na primeira hora, sem esperar pela próxima passagem de satélite. Menos detalhe: um ponto precisa de duas leituras.')],
@@ -1111,8 +1195,9 @@ class Component extends DCLogic {
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27, null, 9, T('Names the town nearest each satellite detection.', 'Dá o nome da localidade mais próxima de cada deteção de satélite.')],
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26, null, 9, T('The map itself, and the fire stations shown on it.', 'O próprio mapa e os quartéis de bombeiros nele mostrados.')],
           ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10, T('Wind and temperature drive the projections; air quality and terrain add context.', 'O vento e a temperatura conduzem as projeções; a qualidade do ar e o relevo dão contexto.')]
-        ].map(([name, what, t, still, day, key, mon, why]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key;
-          return { name, sub: what, why: why || '', whyD: why ? 'block' : 'none', loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
+        ].map(([name, what, t, still, day, key, mon, why]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key, XX = X[name] || { shows: [], ex: [] }, EX = (XX.ex || []).filter(Boolean);
+          return { shows: XX.shows.map(([k, en, ptt]) => ({ ...flags(k), text: T(en, ptt) })), showsD: XX.shows.length ? 'block' : 'none', exs: EX.map((e) => ({ ...flags(e.k), title: e.title, sub: e.sub, tag: e.tag, tagD: e.tag ? 'inline-flex' : 'none', tagFg: e.tagFg, tagBg: e.tagBg })), exsD: EX.length ? 'block' : 'none', noExD: XX.shows.length && !EX.length && X[name] && X[name].ex.length ? 'block' : 'none', showsT: T('Shows in the app', 'Mostra na app'), exsT: T('Examples', 'Exemplos'),
+            name, sub: what, why: why || '', whyD: why ? 'block' : 'none', loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
           onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
