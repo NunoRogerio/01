@@ -909,3 +909,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Opening the menu with the burger, the whole map screen (map, top bar, blades) slides to the right and rests under the icon column; the menu section is uncovered on the left. Closing, the screen slides back from the right to the left. (Replaces the slide to the left of Oct 3; the 32px extra offset is gone.)
 - Choosing a section from the folded column slides the screen right; folding a section to the column (tapping its active icon) slides it back left, to the narrower screen beside the column.
 - The screen is cut at the icon column's edge, so the column is always on top and its taps are never blocked. The column wipes in from the right as the screen leaves (0.25 s) and wipes out as it returns.
+
+## About: Goal and Where we are are titles (Oct 4, 15:16)
+- The two parts of About, "Goal" and "Where we are", are titles, not 16px subtitles: 20px semibold in black (24px line), smaller than the page title, 8px above their content. Same pattern for any part title inside a menu page.
