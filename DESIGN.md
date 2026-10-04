@@ -1021,3 +1021,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - On the fire page the stage tag spans the full width of its container: icon and stage name anchored left, the time ("for 1 d" / "há 1 d") anchored right of the tag. Earlier stages stack at the same width.
 - The full-screen fire map card keeps a content-width tag with no time; the time is plain text under the place/region, and the tag sits 8px from the card's left, right and bottom.
 - Open report (fire already has its police chat): opens the chat and starts the video call, like Report ignition (Oct 4).
+- View push-up: the sessionStorage snapshot is taken after the card's handlers run (it was taken before, so the arriving screen lost the chosen fire and fell back to the main screen) (Oct 4).
