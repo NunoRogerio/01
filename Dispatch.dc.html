@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=148"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=185"></script>
+<script src="prefs.js?v=186"></script>
 <script src="i18n.js?v=161"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=67"></script>
@@ -1202,12 +1202,12 @@ class Component extends DCLogic {
     function cur0(t) { return t ? (window.__wfLang === 'pt' ? 'há ' : 'for ') + t : ''; }   // (Oct 3, 23:30) in Portuguese "há 4 h"
     // One width, set by the widest, within what the band leaves beside its kind. Open, the current chip grows 8px each side
     // and every chip above and below is 2px narrower each side than its neighbour nearer the current one.
-    const natW = (p) => 12 + 18 + 6 + tw(p.l, 600) + (p.t ? 6 + tw(p.t, 400) : 0) + 12;
-    const cap = Math.min(window.innerWidth || 390, 600) - 32 - 6 - 16 - 8;   /* the tag stands alone (no kind beside it) */
+    const natW = (p) => 12 + 18 + 6 + tw(p.l, 600) + (p.t ? 6 + tw(p.t, 400) : 0) + 16;
+    const cap = Math.min((window.__wfVP && window.__wfVP.w) || window.innerWidth || 390, 600) - 32 - 6 - 16 - 8;   /* the tag stands alone (no kind beside it) */
     const deep = Math.max(prev.length, next.length);
     const need = Math.max(natW(cur), ...prev.map((p) => natW(p) + 8), ...next.map((p) => natW(p) + 8));
-    const Wn = Math.min(cap, Math.max(natW(cur) - (cur.t ? 6 + tw(cur.t, 400) : 0), ...prev.map((p) => natW(p) + 8), ...next.map((p) => natW(p) + 8))), Wc = Math.max(Wn, Math.min(window.innerWidth || 390, 600) - 32), GROW = 0, wOf = () => Wc - 8;   // the current chip keeps one size; every other chip is 8px narrower (4px each side), centred
-    const lab = (p, w) => Math.max(40, w - 12 - 18 - 6 - (p.t ? 6 + tw(p.t, 400) : 0) - 12) + 'px';
+    const Wn = Math.min(cap, Math.max(natW(cur) - (cur.t ? 6 + tw(cur.t, 400) : 0), ...prev.map((p) => natW(p) + 8), ...next.map((p) => natW(p) + 8))), Wc = Math.max(Wn, Math.min((window.__wfVP && window.__wfVP.w) || window.innerWidth || 390, 600) - 32), GROW = 0, wOf = () => Wc - 8;   // the current chip keeps one size; every other chip is 8px narrower (4px each side), centred
+    const lab = (p, w) => Math.max(40, w - 12 - 18 - 6 - (p.t ? 6 + tw(p.t, 400) : 0) - 16) + 'px';
     const n = prev.length, m = next.length, STEP = 44, TUCK = 0;   /* separate chips, 4px apart, fully rounded */
     const chip = (p, k, up) => ({ l: p.l, t: p.t, c: p.c, ic: p.ic, tD: p.t ? 'inline' : 'none', tFs: p.note ? '15px' : 'inherit', tC: p.note ? '#6E6E73' : 'inherit', lMw: lab(p, wOf(k)), bg: p.bg,
       w: wOf(k) + 'px', wN: (Wn - 8) + 'px', r: '4px', z: 19 - k,
