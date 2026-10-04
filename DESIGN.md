@@ -904,3 +904,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Dragging at normal speed: a feed meets the other like a wall and cannot pass through it; a throw bounces off the other feed the way it bounces off a screen edge (30% of the speed back).
 - A flick at the speed that ends the tour (2340 px/s) toward the other feed swaps their places: the thrown one takes the other's place, the other takes the thrown one's starting place, gliding together in 0.55 s, with a double haptic tap.
 - The same button again closes its own feed only; maximize applies to one feed.
+
+## Menu: the map slides the other way (main screen)
+- Opening the menu with the burger, the screen's panels slide left as before while the map slides right, ending tucked under the icon column. Closing, the map slides back from the right to the left. Same 0.53 s ease as the screen, so both move together.
+- Choosing a section from the folded column (or folding a section to the column by tapping its active icon) moves the map the same way: right when a section opens, left when it folds.
+- The map is cut at the icon column's edge once the screen has passed it, so the column is never covered and its taps are never blocked.
