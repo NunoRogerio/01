@@ -17,9 +17,9 @@
   if (window.customElements && customElements.get('wf-trophy')) return;
   // crew photos by size (credits shown for the photo on screen); aerial photos: 3 helicopters then 3 planes
   var PHOTO = {
-    s: [['assets/crews/crew-s.jpg?v=1', 'Photo: Everglades National Park / U.S. National Park Service'], ['assets/crews/crew-s2.jpg?v=1', 'Photo: USDA / U.S. Forest Service'], ['assets/crews/crew-s3.jpg?v=1', 'Photo: U.S. Marine Corps / Lance Cpl. Hannah Hollerud']],
-    m: [['assets/crews/crew-m.jpg?v=1', 'Photo: U.S. Army / Balmina Sehra'], ['assets/crews/crew-m2.jpg?v=1', 'Photo: Region 5 Photography. CC BY 2.0']],
-    l: [['assets/crews/crew-l.jpg?v=1', 'Photo: U.S. Navy / Brianna Bonilla'], ['assets/crews/crew-l2.jpg?v=1', 'Photo: Vlada Republike Slovenije'], ['assets/crews/crew-l3.jpg?v=1', 'Photo: U.S. Air Force / Airman 1st Class Nichelle Griffiths']] };
+    s: [['assets/crews/crew-s.jpg?v=1', 'Photo: Everglades National Park / U.S. National Park Service'], ['assets/crews/crew-s2.jpg?v=1', 'Photo: USDA / U.S. Forest Service'], ['assets/crews/crew-s3.jpg?v=1', 'Photo: U.S. Marine Corps / Lance Cpl. Hannah Hollerud'], ['assets/crews/crew-s4.jpg?v=1', 'Photo: U.S. Space Force / Airman Wyatt Stabler']],
+    m: [['assets/crews/crew-m.jpg?v=1', 'Photo: U.S. Army / Balmina Sehra'], ['assets/crews/crew-m2.jpg?v=1', 'Photo: Region 5 Photography. CC BY 2.0'], ['assets/crews/crew-m3.jpg?v=1', 'Photo: Michael Rieger / FEMA']],
+    l: [['assets/crews/crew-l.jpg?v=1', 'Photo: U.S. Navy / Brianna Bonilla'], ['assets/crews/crew-l2.jpg?v=1', 'Photo: Vlada Republike Slovenije'], ['assets/crews/crew-l3.jpg?v=1', 'Photo: U.S. Air Force / Airman 1st Class Nichelle Griffiths'], ['assets/crews/crew-l4.jpg?v=1', 'Photo: Bureau of Land Management California']] };
   var AIRP = [['assets/air/air-h1.jpg?v=1', 'Photo: Alan Radecki. CC BY 2.5'], ['assets/air/air-h2.jpg?v=1', 'Photo: Jim Bahn. CC BY 2.0'], ['assets/air/air-h3.jpg?v=1', 'Photo: U.S. Forest Service'],
     ['assets/air/air-p1.jpg?v=1', 'Photo: Lisa Cox / U.S. Forest Service'], ['assets/air/air-p2.jpg?v=1', 'Photo: Michael Rieger / FEMA'], ['assets/air/air-p3.jpg?v=1', 'Photo: Adam Dubrowa / FEMA']];
   var hash = function (t) { var h = 7; t = String(t || ''); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; };
