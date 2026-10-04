@@ -105,7 +105,7 @@
     // repeated one pick again), and the air lead gets a pilot
     var me = '', P0 = window.__wfPrefs && window.__wfPrefs.person; try { me = (P0 && window.__wfDemoFace && window.__wfDemoFace(P0.name)) || ''; } catch (e) {}
     var dup = F[name] && (F[name] === me || Object.keys(F).some(function (k) { return k !== name && k < name && F[k] === F[name]; }));
-    var isAir = (c.people || []).some(function (p) { return p.name === name && p.kind === 'air'; }), wasAir = !!F['~air:' + name];
+    var isAir = (c.people || []).some(function (p) { return p.name === name && p.kind === 'air'; }) || !!(c.air && c.air.pilot === name), wasAir = !!F['~air:' + name];
     if (!F[name] || dup || (isAir && !wasAir)) { var used = Object.keys(F).filter(function (k) { return k !== name && k.charAt(0) !== '~'; }).map(function (k) { return F[k]; }); if (me) used.push(me);
       F[name] = window.__wfFacePick(team, window.__wfGender(name) || (/a$/.test(name.split(' ')[0]) ? 'f' : 'm'), used, isAir); if (isAir) F['~air:' + name] = 1; try { save(); } catch (e) {} }
     return F[name] ? window.__wfFaceUrl(F[name]) : '';

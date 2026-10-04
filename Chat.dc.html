@@ -17,12 +17,12 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=149"></script>
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=186"></script>
-<script src="i18n.js?v=161"></script>
+<script src="i18n.js?v=162"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=67"></script>
+<script src="chat.js?v=68"></script>
 <script src="tour.js?v=73"></script>
 <script src="feedcam.js?v=20"></script>
-<script src="trophy.js?v=20"></script>
+<script src="trophy.js?v=21"></script>
 
 <title>Chats</title>
 <script src="./support.js"></script>
@@ -376,8 +376,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <section style="display: flex; flex-direction: column; gap: 24px">
         <div style="display: flex; flex-direction: column; gap: 4px; padding: 0"><h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.wonBy}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{sum.forcesSub}}</span></div>
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
-          <article style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden">
-            <div style="display: flex; align-items: center; gap: 8px; padding: 16px; background: transparent; color: #000000"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 24px">{{f.station}}</span><span style="font-size: 15px; line-height: 20px; color: #545458">{{f.veh}}</span></div></div>
+          <!-- (Oct 5) the same team card as the fire's Crews tab: the station (or air team) heads it and folds its people away and back; a full-width line between the head and the people -->
+          <article style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); overflow: hidden">
+            <button type="button" class="chrow" onClick="{{f.tog}}" aria-expanded="{{f.exp}}" style="display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.station}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{f.veh}}</span></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{f.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></button>
+            <div style="display: grid; grid-template-rows: {{f.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><div style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; border-top: 1px solid rgba(60,60,67,0.12)">
             <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
               <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 20px; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: {{p.bg}}; font-size: 15px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
@@ -386,6 +388,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
               </button>
             </sc-for>
+            </div></div>
           </article>
         </sc-for>
         <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
@@ -719,10 +722,18 @@ class Component extends DCLogic {
     const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby');
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
-      return { hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
+      const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk];
+      return { tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fxClosed: Object.assign({}, (this.state || {}).fxClosed, { [fk]: open }) }); }, exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg',
+        hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
         people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: p.name + ', ' + p.role, go: openPerson(p.name)   /* a full-width line between the station and its people */ })) }; });
     const extras = [];
-    if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2], icon: window.__wfHeliBadge ? window.__wfHeliBadge() : '', iconD: 'block' }); }
+    /* (Oct 5) the air team is a team card like the stations: the shared air badge, its aircraft, and its pilot */
+    if (c.air) { if (!c.air.pilot) { const taken = {}; (c.people || []).forEach((p) => { taken[p.name] = 1; }); FF.forEach((f) => { taken[f.coord] = 1; f.crew.forEach((n) => { taken[n] = 1; }); });
+        const pool = (C.names ? C.names(c.st) : []).filter((n) => !taken[n]); let h = 7; for (const ch of String(c.key)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; c.air.pilot = pool.length ? pool[h % pool.length] : ''; }
+      const fk = 'f:air', open = !(s.fxClosed || {})[fk], pl = c.air.pilot;
+      forces.push({ tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fxClosed: Object.assign({}, (this.state || {}).fxClosed, { [fk]: open }) }); }, exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg',
+        crest: window.__wfAirBadge ? window.__wfAirBadge() : '', station: c.air.name, veh: String(us ? c.air.kind : L('Firefighting helicopter', c.air.kind)).replace(/ · /g, '. '),
+        people: pl ? [{ name: pl, role: L('Pilot', 'Piloto'), w: 600, bg: '#E5E5EA', photo: pic(pl), ring: ring('#1C3A5E'), code: pl.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: pl + ', ' + L('Pilot', 'Piloto'), go: openPerson(pl) }] : [] }); }
     if (c.evac) extras.push({ icon: '', iconD: 'none', name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
     const live = FF.filter((f) => f.st !== 'standby');
     // Published counts win over the scenario's (the named crews stay illustrative)

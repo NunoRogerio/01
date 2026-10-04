@@ -20,6 +20,10 @@
     s: [['assets/crews/crew-s.jpg?v=1', 'Photo: Everglades National Park / U.S. National Park Service'], ['assets/crews/crew-s2.jpg?v=1', 'Photo: USDA / U.S. Forest Service'], ['assets/crews/crew-s3.jpg?v=1', 'Photo: U.S. Marine Corps / Lance Cpl. Hannah Hollerud'], ['assets/crews/crew-s4.jpg?v=1', 'Photo: U.S. Space Force / Airman Wyatt Stabler']],
     m: [['assets/crews/crew-m.jpg?v=1', 'Photo: U.S. Army / Balmina Sehra'], ['assets/crews/crew-m2.jpg?v=1', 'Photo: Region 5 Photography. CC BY 2.0'], ['assets/crews/crew-m3.jpg?v=1', 'Photo: Michael Rieger / FEMA']],
     l: [['assets/crews/crew-l.jpg?v=1', 'Photo: U.S. Navy / Brianna Bonilla'], ['assets/crews/crew-l2.jpg?v=1', 'Photo: Vlada Republike Slovenije'], ['assets/crews/crew-l3.jpg?v=1', 'Photo: U.S. Air Force / Airman 1st Class Nichelle Griffiths'], ['assets/crews/crew-l4.jpg?v=1', 'Photo: Bureau of Land Management California']] };
+  // (Oct 5) the aerial team's own people with their aircraft: pilots in front of their helicopters, ground crews at work
+  var UX = function (id) { return 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop'; }, PX = function (id) { return 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=900'; };
+  var AIRPEOPLE = [[UX('photo-1761357294320-af17a49848d4'), 'Photo: luke fancher / Unsplash'], [UX('photo-1761357294010-062e0df6d3a0'), 'Photo: luke fancher / Unsplash'], [UX('photo-1780768160920-fcca9193b7bc'), 'Photo: Niklas Jonasson / Unsplash'],
+    [UX('photo-1772140994501-a12bbc57a1e5'), 'Photo: Navy Medicine / Unsplash'], [PX(15974654), 'Photo: Toulouse / Pexels'], [PX(33954113), 'Photo: sametkarakocofficial / Pexels'], [PX(9691823), 'Photo: mutecevvil / Pexels']];
   var AIRP = [['assets/air/air-h1.jpg?v=1', 'Photo: Alan Radecki. CC BY 2.5'], ['assets/air/air-h2.jpg?v=1', 'Photo: Jim Bahn. CC BY 2.0'], ['assets/air/air-h3.jpg?v=1', 'Photo: U.S. Forest Service'],
     ['assets/air/air-p1.jpg?v=1', 'Photo: Lisa Cox / U.S. Forest Service'], ['assets/air/air-p2.jpg?v=1', 'Photo: Michael Rieger / FEMA'], ['assets/air/air-p3.jpg?v=1', 'Photo: Adam Dubrowa / FEMA']];
   var hash = function (t) { var h = 7; t = String(t || ''); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; };
@@ -40,7 +44,7 @@
     '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.40) 0%,rgba(0,0,0,.06) 28%,rgba(0,0,0,.30) 46%,rgba(0,0,0,.74) 66%,rgba(0,0,0,.88) 100%)}' +
     '.dots{position:absolute;left:0;right:0;top:12px;display:flex;justify-content:center;gap:8px;pointer-events:none}.dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);box-shadow:0 0 6px rgba(0,0,0,.35);transition:background .3s ease,transform .3s ease}.dots i.on{background:#FFFFFF;transform:scale(1.25)}' +
     '.bd{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin-bottom:auto}' +
-    '.bd img{display:block;box-sizing:border-box;width:min(120px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:120px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
+    '.bd img{display:block;box-sizing:border-box;width:min(60px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:60px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
     '.kicker{font-size:15px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
     '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:var(--wf-y);text-shadow:0 0 12px rgba(0,0,0,.45)}' +
     '.fire{font-size:20px;font-weight:700;line-height:24px;color:#FFFFFF;text-wrap:balance;text-shadow:0 0 10px rgba(0,0,0,.5)}' +
@@ -69,19 +73,21 @@
   Trophy.prototype.attributeChangedCallback = function () { if (this._root) this.fill(); };
   Trophy.prototype.fill = function () {
     var r = this._root, self = this, esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
-    [['kicker', '.kicker'], ['headline', '.headline'], ['fire', '.fire'], ['meta', '.meta'], ['size', '.size'], ['action', '.act']].forEach(function (a) {
-      var el = r.querySelector(a[1]), v = self.getAttribute(a[0]) || ''; if (el.textContent !== v) el.textContent = v; el.hidden = !v; });
+    /* (Oct 5) the big yellow line names the fire's place (it replaced "Well done"); no separate place line */
+    [['kicker', '.kicker'], ['fire', '.headline'], ['meta', '.meta'], ['size', '.size'], ['action', '.act']].forEach(function (a) {
+      var el = r.querySelector(a[1]), v = self.getAttribute(a[0]) || (a[0] === 'fire' ? self.getAttribute('headline') || '' : ''); if (el.textContent !== v) el.textContent = v; el.hidden = !v; });
+    r.querySelector('.fire').hidden = true;
     var C = []; try { C = JSON.parse(self.getAttribute('crests') || '[]') || []; } catch (e) {}
     var air = self.getAttribute('air') === '1', seed = hash(self.getAttribute('fire') || ''), n = parseInt(self.getAttribute('n') || '0', 10) || 0;
     // the photos: one per station (the size of the crew follows the number of stations), one of aircraft when air support helped
     var k = n >= 6 ? 'l' : n >= 3 ? 'm' : 's', pool = PHOTO[k], ns = Math.max(1, Math.max(n, C.length)), S = [];
     for (var i = 0; i < ns; i++) S.push(pool[(seed + i) % pool.length]);
-    if (air && AIRP.length) S.push(AIRP[(seed >>> 3) % AIRP.length]);
+    if (air) S.push(AIRPEOPLE[(seed >>> 3) % AIRPEOPLE.length]);   /* the air team: its people by their aircraft */
     var sk = S.map(function (x) { return x[0]; }).join('|');
     if (sk !== this._sk) { this._sk = sk; this.slides(S); }
     var cr = r.querySelector('.credit'); cr.hidden = self.getAttribute('credit') !== '1'; this._cr = S.map(function (x) { return x[1]; }); cr.textContent = this._cr[this._i || 0] || '';
     // the crests of every station, then the air team's badge (original, from the fire's name), all shown
-    var A = C.slice(); if (air) A.push({ n: 'Air support', air: 1, u: BADGES[seed % BADGES.length] });
+    var A = C.slice(); if (air) A.push({ n: 'Air support', air: 1, u: window.__wfAirBadge ? window.__wfAirBadge() : BADGES[seed % BADGES.length] });   /* (Oct 5) the same air badge as the crews and dispatch screens */
     var bd = r.querySelector('.bd'), key = JSON.stringify(A); if (bd.getAttribute('data-k') !== key) { bd.setAttribute('data-k', key);
       bd.style.setProperty('--pr', A.length <= 2 ? Math.max(1, A.length) : A.length <= 6 ? 3 : 4);
       bd.innerHTML = A.map(function (c) { return '<img src="' + esc(c.u) + '" alt="' + esc(c.n) + '" title="' + esc(c.n) + '">'; }).join(''); }
