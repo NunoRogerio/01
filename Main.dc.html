@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=146"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=184"></script>
-<script src="i18n.js?v=159"></script>
+<script src="i18n.js?v=160"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=66"></script>
 <script src="tour.js?v=73"></script>
@@ -1147,7 +1147,7 @@ class Component extends DCLogic {
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items,
-          desc: ({ profile: 'Who you are signed in as and what you can see. Sign out here.', lang: 'Choose the language of every screen.', look: 'Set the text size and spacing. Choices other than the defaults are not fully tested yet, so you may find visual inconsistencies.', maps: 'Choose the map and how it looks. One map at a time. Turning one on turns the other off.', share: 'Share the app with other people.', chat: 'Turn on role-play with Claude in the incident chats, using your Anthropic key.', ds: 'The open data the app uses, and what each source shows.', about: 'How the app works, where it stands and how it started.' })[pmSec] || '', dsCntD: pmSec === 'ds' ? 'inline' : 'none', op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
+          desc: ({ profile: 'Who you are signed in as and what you can see. Sign out here.', lang: 'Choose the language of every screen.', look: 'Set the text size and spacing. Choices other than the defaults are not fully tested yet, so you may find visual inconsistencies.', maps: 'Select one map engine from the list and choose how it looks.', share: 'Share the app with other people.', chat: 'Turn on role-play with Claude in the incident chats, using your Anthropic key.', ds: 'The open data the app uses, and what each source shows.', about: 'How the app works, where it stands and how it started.' })[pmSec] || '', dsCntD: pmSec === 'ds' ? 'inline' : 'none', op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s',
           burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(16, L0.vw - (L0.colL + L0.colW) + 16) : 16; })(),   // (Oct 3, 21:41) at rest 16px from the edge, like every round button   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
           bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
