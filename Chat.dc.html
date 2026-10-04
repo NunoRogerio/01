@@ -574,6 +574,10 @@ class Component extends DCLogic {
     const L = (en, pt) => C.L(en, pt), p = (c.people || [])[0] || {}, face = C.callFace ? C.callFace(c.key) : 'police-a';
     F.open({ anchor, title: 'Video call', label: L('Video call', 'Videochamada'), who: (p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + (p.name || ''),
       call: { id: c.key, photo: 'assets/faces/' + face + '.jpg?v=1', alt: p.name || '', calling: L('Calling…', 'A chamar…'), hangup: L('End call', 'Terminar chamada'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Video call', 'Em direto. Videochamada') } }); }
+  // (Oct 4) the night report opens the call by itself: waits for the panel script, the chat and the call button (slow phones), then calls; never gives up silently before ~8 s
+  wfAutoCall(key) { let n = 0; const go = () => { const C = window.__wfChat, F = window.__wfCamFeed, c = C && C.get ? C.get(key) : null, b = document.querySelector('[data-call]');
+      if (C && F && F.open && c && b && (this.state || {}).view === 'chat' && (this.state || {}).key === key) { this.wfCall(c, b); return; }
+      if (++n < 40) setTimeout(go, 200); }; setTimeout(go, 600); }
   pin() { const el = this._sc; if (!el || !this._stick) return; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; }); }
   componentDidUpdate() {
     this.fitRows();
@@ -904,7 +908,7 @@ class Component extends DCLogic {
       // station lead than the first (the second in the chat when there is one); only for fires with crews out
       camD: (() => { const P = C.active ? C.active(c) : (c.people || []); return c.kind !== 'dm' && c.stage >= 2 && c.stage < 7 && !c.dismissed && P.length ? 'flex' : 'none'; })(),
       callD: (() => { if (!c.police) { const P = C.active ? C.active(c) : (c.people || []); return c.kind !== 'dm' && c.stage >= 2 && c.stage < 7 && !c.dismissed && !c.closed && P.length > 1 ? 'flex' : 'none'; }
-        try { if (sessionStorage.getItem('wf-call-auto') === c.key && !this._autoCall) { this._autoCall = 1; sessionStorage.removeItem('wf-call-auto'); setTimeout(() => this.wfCall(c, document.querySelector('[data-call]')), 700); } } catch (e) {}
+        try { if (sessionStorage.getItem('wf-call-auto') === c.key && !this._autoCall) { this._autoCall = 1; sessionStorage.removeItem('wf-call-auto'); this.wfAutoCall(c.key); } } catch (e) {}
         return 'flex'; })(),
       callAria: c.police ? t.call : L('Video call with the team', 'Videochamada com a equipa'),
       callGo: (e) => this.wfCall(c, e && e.currentTarget),
