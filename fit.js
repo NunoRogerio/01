@@ -412,6 +412,7 @@ window.__wfBlink=function(path,dur){
 // plus a light tap on the phone (vibration where the browser allows it; on iPhone, the system haptic that
 // Safari gives a switch control, which is the only haptic web pages can reach).
 (function(){
+  var SEL2='.scrim,.wf-hap-scrim';
   var SEL='a[href],button:not([disabled]),[role=button],[role=option],[role=tab],[role=switch],label,summary,.opt,.sqrow,[data-avtip],[tabindex="0"]';   // cards that are dragged (press, hold, move) give their own haptic: no tap overlay on them
   var st=document.createElement('style');
   st.textContent='#wf-fx{position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:99998}'+
@@ -457,13 +458,19 @@ window.__wfBlink=function(path,dur){
   // then passed on to the element underneath, which behaves exactly as before. Moving the finger (scrolling) removes it.
   var IOS=!navigator.vibrate&&/iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)&&'ontouchend' in document,ov=null,ovT=null,ovX=0,ovY=0;
   function ovOff(){if(ov){var o=ov;ov=null;o.remove();}clearTimeout(ovT);}
+  // A grabber (or any drag zone) that calls setPointerCapture on a finger would make the tap's click land on itself, never on the
+  // invisible switch laid over it, so the phone gave no tick. A finger is captured by the element it touched anyway, so on iPhone
+  // the explicit capture is skipped for touch: the drag works the same and the tap now ticks.
+  if(IOS){var PT={},oc=Element.prototype.setPointerCapture;
+    document.addEventListener('pointerdown',function(e){PT[e.pointerId]=e.pointerType;},{capture:true,passive:true});
+    Element.prototype.setPointerCapture=function(id){if(PT[id]==='touch')return;return oc.apply(this,arguments);};}
   if(IOS){
     document.addEventListener('touchstart',function(e){
       ovOff();if(e.touches.length!==1)return;var p=e.touches[0],tg=e.target;
       // A text field (e.g. Write a message, search): the tap ticks too, then focuses the field inside the same tap so the keyboard opens
       var fl=tg&&tg.closest?(tg.closest(FIELD)||((tg.closest('label')||{}).querySelector?tg.closest('label').querySelector(FIELD):null)):null;
       if(fl&&document.activeElement===fl)return;   // already typing: taps move the caret, untouched
-      var t=fl||(tg&&tg.closest&&tg.closest(SEL));if(!t||(!fl&&skip(t,tg))||t.closest('#wf-hapov'))return;
+      var t=fl||(tg&&tg.closest&&tg.closest(SEL)||tg.closest(SEL2));if(!t||(!fl&&skip(t,tg))||t.closest('#wf-hapov'))return;
       if(tg.closest('[data-wf-kpi]'))return;
       // inside a row that scrolls sideways (map legends, chips): the overlay would take the swipe and the row could not scroll
       for(var hs=tg;hs&&hs!==document.body;hs=hs.parentElement){var ox=getComputedStyle(hs).overflowX;if((ox==='auto'||ox==='scroll')&&hs.scrollWidth>hs.clientWidth+1)return;}   // a mini card may be pressed and held to move it: the overlay would take the drag   // the map too: markers tick as well (a pan removes the overlay at once)
@@ -488,7 +495,7 @@ window.__wfBlink=function(path,dur){
   document.addEventListener('pointerup',function(){if(live){live=false;setTimeout(function(){fade(false);},120);}},{capture:true,passive:true});
   document.addEventListener('pointercancel',function(){live=false;fade(true);},{capture:true,passive:true});
   document.addEventListener('click',function(e){if(!IOS&&isField(e.target)&&document.activeElement!==e.target.closest(FIELD)){try{navigator.vibrate&&navigator.vibrate(8);}catch(x){}}   // a text field ticks too
-    var t=e.target&&e.target.closest&&e.target.closest(SEL);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||t.closest('#wf-hapov')||skip(t,e.target))return;
+    var t=e.target&&e.target.closest&&e.target.closest(SEL)||e.target.closest(SEL2);if(!t||t.id==='wf-hap'||t.closest('#wf-hap')||t.closest('#wf-hapov')||skip(t,e.target))return;
     if(IOS)return;   // iPhone: the tap itself already ticked through the overlay switch
     if(t.matches('[role=switch]:not(.wf-tog),[data-hap=late]')){hapticAt(215);return;}   // a toggle: the vibration lands with the thumb
     haptic();},{capture:true});

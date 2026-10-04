@@ -947,3 +947,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Menu on every screen: the whole screen slides right (Oct 4, 16:00)
 - Same as the main screen: tapping the burger on any screen (fire, candidate, station, drone, projection) slides the whole screen to the right, tucked under the 60px icon column, cut at the column's edge; closing slides it back left. Tapping the active section icon folds the open menu to the column and back (inverse slide).
 - Shared in `menu.js` (`slide()`), so a new screen with the menu gets it by loading the script. On these screens the column mode crops the screen at the column instead of resizing it as on Main.
+
+## Every tap gives its haptic, including blade grabbers and the dim area behind panels (Oct 4, 16:10)
+- Tapping a blade's grabber (top or bottom) now ticks like any button. On iPhone the explicit pointer capture the grabbers took on touch stole the tap from the invisible switch that gives the tick; `fit.js` now skips that capture for fingers (a finger is captured by what it touched anyway), so the drag is unchanged.
+- Tapping the dimmed / blurred area behind a panel to close it ticks too (those layers carry the class `scrim` or `wf-hap-scrim`; no ripple, just the tick). Any new close-on-tap layer gets one of these classes.
+- Standing rule: anything that reacts to a tap gives the haptic; a new kind of tappable element is added to the shared list in `fit.js`.

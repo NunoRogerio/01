@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<script src="fit.js?v=136"></script>
+<script src="fit.js?v=137"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=180"></script>
 <script src="i18n.js?v=152"></script>
@@ -516,7 +516,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   </div>
   <!-- Open, the part of the screen still showing closes the menu with a tap -->
-  <div aria-hidden="true" onClick="{{closePrefs}}" style="display: {{pm.catchD}}; position: absolute; inset: 0; z-index: 90"></div>
+  <div class="wf-hap-scrim" aria-hidden="true" onClick="{{closePrefs}}" style="display: {{pm.catchD}}; position: absolute; inset: 0; z-index: 90"></div>
   </div>
   </div>
   <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: 1; background: #F2F2F7">
@@ -738,7 +738,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
        with the menu's icon column); the screen slides out from under it and back under it. Opens and closes the menu. -->
   <button type="button" class="opt" data-wf-burger="1" data-pf-av="1" onClick="{{pm.burger}}" aria-haspopup="true" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: absolute; z-index: {{pm.bZ}}; top: {{pm.bTop}}px; right: {{pm.bRight}}px; transition: right {{pm.bDur}} cubic-bezier(.37,0,.63,1) {{pm.bDelay}}, opacity .3s ease; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; opacity: {{pm.bOp}}; pointer-events: {{pm.bPE}}"><svg class="wf-bi" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path class="b1" d="M5 12h14"></path><path class="b2" d="M5 12h14"></path><path class="b3" d="M5 12h14"></path></svg></button>
   <!-- Confirm role-play changes and key removal (no grabber: it is not expandable; Cancel or a tap outside closes it) -->
-  <div class="wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
+  <div class="wf-hap-scrim wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-dlg" role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 0 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
     <!-- Text styles as in the user settings: title, description, annotation -->
     <h2 id="aicTitle" style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; color: #000000">{{aic.title}}</h2>

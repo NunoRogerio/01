@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=136"></script>
+<script src="fit.js?v=137"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=180"></script>
 <script src="menu.js?v=13"></script>
@@ -189,7 +189,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- No foot button: Directions sits in the location card, Call in the details -->
 
   <!-- People sheet: a crew or the command team, each person with their role; the button opens the chat (crew chief, or the team as a group) -->
-  <div class="wf-glass" onClick="{{sq.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{sq.op}}; pointer-events: {{sq.pe}}; transition: opacity .35s ease"></div>
+  <div class="wf-hap-scrim wf-glass" onClick="{{sq.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{sq.op}}; pointer-events: {{sq.pe}}; transition: opacity .35s ease"></div>
   <section role="dialog" aria-modal="true" aria-labelledby="sqTitle" aria-hidden="{{sq.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sq.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{sq.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
@@ -218,7 +218,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   </section>
 
   <!-- Cards picker: the key figures with toggles -->
-  <div class="wf-glass" onClick="{{kp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{kp.op}}; pointer-events: {{kp.pe}}; transition: opacity .35s ease"></div>
+  <div class="wf-hap-scrim wf-glass" onClick="{{kp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{kp.op}}; pointer-events: {{kp.pe}}; transition: opacity .35s ease"></div>
   <section role="dialog" aria-modal="true" aria-labelledby="kpTitle" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 56px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down (on it, or anywhere when the list does not scroll) closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{kp.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 53px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
