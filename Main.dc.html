@@ -205,7 +205,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Menu (Oct 3, 17:18): the whole screen slides to the left to uncover the menu underneath, and back to the right to close it
        (or to leave just the menu's icon column showing) -->
-  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .53s ease">
+  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), width {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .53s ease">
 
   <div style="position: absolute; left: 0; top: 0; width: {{vw}}px; height: {{vh}}px; z-index: 1">
   <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{psFloat}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
@@ -1109,7 +1109,7 @@ class Component extends DCLogic {
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
-        return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.53s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? -(mw + 32) : rail ? -60 : 0,   // open: 32px further, so the screen's shadow stays off the menu
+        return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.53s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? -(mw + 32) : rail && this.wfLayout().side ? -60 : 0,   // open: 32px further, so the screen's shadow stays off the menu
           dur: boot ? '0s' : '.53s',   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
@@ -1502,8 +1502,9 @@ class Component extends DCLogic {
   wfLayout() {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
-    const colW = side ? 390 : V.w;
-    return { vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 132, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
+    // (Oct 4) menu folded to its icon column on a phone: the screen takes the room that is left (60px less) instead of sliding off
+    const st0 = this.state || {}, railOn = !side && st0.pm === 'rail' && (st0.pf === undefined ? !!this._pfBoot : !!st0.pf), colW = side ? 390 : railOn ? V.w - 60 : V.w;
+    return { svw: railOn ? V.w - 60 : V.w, vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 132, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
     const L = this.wfLayout();
@@ -1707,7 +1708,7 @@ class Component extends DCLogic {
       barTitle: N + ' ignition candidate' + (N === 1 ? '' : 's'), barC: '#000000', barSub: NF + ' fire' + (NF === 1 ? '' : 's'),   /* (Oct 4) counts always, 0 included */
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
-      ...L, mapW: L.vw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,
+      ...L, mapW: L.svw, mapH: L.vh, zoom: 0.7, fx: top.x || 610, fy: top.y || 290, yes: true, no: false, zero: 0, radius: 0, attrBottom: s.full || L.side ? 40 : L.barH + 6,
       /* full screen: the map is titled with the place in view and the level above it (county > state > country; a country has none) */
       mapTtl: s.full ? scope.title : '', mapSub: s.full ? (coObj ? stObj.name : stObj.n ? stObj.n + ((stObj.id === 'US' || stObj.id === 'AMZ' || stObj.id === 'BRA') ? ' states' : stObj.id === 'PT' ? ' districts' : stObj.country === 'US' ? ' counties' : ' regions') : '') : '',   /* full-screen map card: the area and how many subdivisions it has ("58 counties") */
       full: !!s.full, toggleFull: () => this.setState({ full: !s.full, list: false }),

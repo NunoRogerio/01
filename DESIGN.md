@@ -878,3 +878,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Group subtitles 16px; no dividers (Oct 4, supersedes the 15px group titles and the row dividers)
 - Every group subtitle (Text size, Spacing, Goal, Where we are, Shows in the app, Examples, and the group titles on the fire, station, drone, dispatch and alert pages) is 16px semibold in mid grey (20px line). 16px is now a text size, used only for these.
 - All dividers are off for now: the lines between list rows (About stages, chats, dispatch and station lists), the rule above the dispatch list and the vertical rule between dispatch columns. Spacing alone separates content. The 1px outlines of whole elements (tooltips, pills) stay.
+
+## Menu folded to its icon column: the screen resizes (Oct 4)
+- On a phone, when the settings menu is folded to its icon column, the main screen no longer slides left and gets cut. It stays in place and takes the width that is left (60px less): the top blade, the map, the legend and the bottom blade all fit it. Closing the menu extends the screen back to the full width, animated with the same ease. With a section open, the screen still slides away to uncover it. Wide layouts (tablets) are unchanged.
