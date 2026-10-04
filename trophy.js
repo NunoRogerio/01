@@ -16,8 +16,12 @@
 (function () {
   if (window.customElements && customElements.get('wf-trophy')) return;
   // crew photos by size (credits shown for the photo on screen); aerial photos: 3 helicopters then 3 planes
-  var PHOTO = { s: [['assets/crews/crew-s.jpg?v=1', 'Photo: Everglades National Park / U.S. National Park Service']], m: [['assets/crews/crew-m.jpg?v=1', 'Photo: U.S. Army / Balmina Sehra']], l: [['assets/crews/crew-l.jpg?v=1', 'Photo: U.S. Navy / Brianna Bonilla']] };
-  var AIRP = [];
+  var PHOTO = {
+    s: [['assets/crews/crew-s.jpg?v=1', 'Photo: Everglades National Park / U.S. National Park Service'], ['assets/crews/crew-s2.jpg?v=1', 'Photo: USDA / U.S. Forest Service'], ['assets/crews/crew-s3.jpg?v=1', 'Photo: U.S. Marine Corps / Lance Cpl. Hannah Hollerud']],
+    m: [['assets/crews/crew-m.jpg?v=1', 'Photo: U.S. Army / Balmina Sehra'], ['assets/crews/crew-m2.jpg?v=1', 'Photo: Region 5 Photography. CC BY 2.0']],
+    l: [['assets/crews/crew-l.jpg?v=1', 'Photo: U.S. Navy / Brianna Bonilla'], ['assets/crews/crew-l2.jpg?v=1', 'Photo: Vlada Republike Slovenije'], ['assets/crews/crew-l3.jpg?v=1', 'Photo: U.S. Air Force / Airman 1st Class Nichelle Griffiths']] };
+  var AIRP = [['assets/air/air-h1.jpg?v=1', 'Photo: Alan Radecki. CC BY 2.5'], ['assets/air/air-h2.jpg?v=1', 'Photo: Jim Bahn. CC BY 2.0'], ['assets/air/air-h3.jpg?v=1', 'Photo: U.S. Forest Service'],
+    ['assets/air/air-p1.jpg?v=1', 'Photo: Lisa Cox / U.S. Forest Service'], ['assets/air/air-p2.jpg?v=1', 'Photo: Michael Rieger / FEMA'], ['assets/air/air-p3.jpg?v=1', 'Photo: Adam Dubrowa / FEMA']];
   var hash = function (t) { var h = 7; t = String(t || ''); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; };
   // five original squadron-style badges for aerial teams (drawn here, no real insignia)
   var BADGES = [
@@ -72,7 +76,7 @@
     // the photos: one per station (the size of the crew follows the number of stations), one of aircraft when air support helped
     var k = n >= 6 ? 'l' : n >= 3 ? 'm' : 's', pool = PHOTO[k], ns = Math.max(1, Math.max(n, C.length)), S = [];
     for (var i = 0; i < ns; i++) S.push(pool[(seed + i) % pool.length]);
-    if (air && AIRP.length) S.push(AIRP[(seed >> 3) % AIRP.length]);
+    if (air && AIRP.length) S.push(AIRP[(seed >>> 3) % AIRP.length]);
     var sk = S.map(function (x) { return x[0]; }).join('|');
     if (sk !== this._sk) { this._sk = sk; this.slides(S); }
     var cr = r.querySelector('.credit'); cr.hidden = self.getAttribute('credit') !== '1'; this._cr = S.map(function (x) { return x[1]; }); cr.textContent = this._cr[this._i || 0] || '';
