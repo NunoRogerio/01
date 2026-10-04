@@ -4,3 +4,4 @@
 - Rules apply app-wide unless a place is named.
 - For changes touching several screens, show screenshots of every affected screen before calling it done.
 - Bump the ?v= of any changed shared script (prefs.js, i18n.js, live.js, fit.js, chat.js) in every .html, update version.txt, commit and push to main.
+- To clean unused files and sync, use the Cleaner agent (`.claude/agents/cleaner.md`).
