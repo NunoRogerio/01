@@ -552,7 +552,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span class="wf-langthumb" aria-hidden="true" style="position: absolute; left: 8px; top: 8px; width: 0; height: 44px; border-radius: 999px; background: var(--wf-y); opacity: 0"></span>
         <!-- (Oct 3, 22:11) languages by their own names only (endonyms), no flags: a flag stands for a country, and one language is spoken in many; (Oct 4, 06:44) one centred column, no grey track, 32px apart -->
         <sc-for list="{{lg.opts}}" as="o" hint-placeholder-count="10">
-          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" lang="{{o.code}}" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; width: auto; min-width: 160px; height: 44px; padding: 0 24px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.name}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.name}}</span></span></button>
+          <button type="button" role="radio" aria-checked="{{o.on}}" aria-label="{{o.name}}" onClick="{{o.pick}}" lang="{{o.code}}" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; width: auto; min-width: 160px; height: 44px; padding: 0 40px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; font: inherit; font-size: 17px; font-weight: {{o.w}}; white-space: nowrap; cursor: pointer; transition: color .3s ease"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 16px; top: 14px; opacity: {{o.ck}}; transition: opacity .25s ease {{o.ckD}}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{o.name}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.name}}</span></span></button>
         </sc-for>
       </div>
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
@@ -1325,7 +1325,8 @@ class Component extends DCLogic {
       openPrefs: (...a) => this.openPrefsFn(...a),
       closePrefs: (...a) => this.closePrefsFn(...a),
       lg: (() => { const cur = s.langPend || lang, LS = window.__wfLangs || [{ code: 'en', name: 'English' }];
-        return { d: (s.pmSec || 'profile') === 'lang' ? 'flex' : 'none', opts: LS.map((o) => ({ name: o.name, code: o.code, on: o.code === cur ? 'true' : 'false', fg: o.code === cur ? '#1C1C1E' : '#3C3C43', w: o.code === cur ? 600 : 400,
+        return { d: (s.pmSec || 'profile') === 'lang' ? 'flex' : 'none', opts: LS.map((o) => ({ name: o.name, code: o.code, on: o.code === cur ? 'true' : 'false', fg: o.code === cur ? '#1C1C1E' : '#3C3C43', w: o.code === cur ? 600 : 400, ck: o.code === cur ? 1 : 0, ckD: o.code === cur ? '.45s' : '0s',   /* (Oct 4, 22:11) a check on the left of the chosen language, shown once the yellow has landed; the name never moves */
+         
           pick: () => { if (o.code === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
             this.setState({ langPend: o.code }, () => this.wfLangThumb(true)); clearTimeout(this._lgT);
             this._lgT = setTimeout(() => { if (window.__wfSetLang) window.__wfSetLang(o.code); this.setState({ langPend: null, lang: o.code }, () => this.wfLangThumb(false)); }, 700); } })) }; })(),
