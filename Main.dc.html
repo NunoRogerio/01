@@ -205,12 +205,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Menu (Oct 3, 17:18): the whole screen slides to the left to uncover the menu underneath, and back to the right to close it
        (or to leave just the menu's icon column showing) -->
-  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 2; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), width {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .53s ease">
+  <!-- (Oct 4, 15:02) menu open: the whole screen slides to the RIGHT instead and rests under the icon column; this still frame cuts it at the column's edge, so the column shows on top. Closing, the screen slides back from the right to the left -->
+  <div data-wf-slideframe="1" style="position: absolute; inset: 0; z-index: 2; pointer-events: none; clip-path: inset(0 {{pm.cr}}px 0 0); -webkit-clip-path: inset(0 {{pm.cr}}px 0 0); transition: clip-path {{pm.crD}} ease {{pm.crDel}}, -webkit-clip-path {{pm.crD}} ease {{pm.crDel}}">
+  <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 2; pointer-events: auto; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), width {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .53s ease">
 
-  <div style="position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 1; transform: translateX({{pm.ax}}px); clip-path: inset(0 {{pm.cr}}px 0 0); transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), clip-path 0s linear {{pm.cd}}">   <!-- (Oct 4, 14:22) menu open: the map slides the other way, to the right, and rests under the icon column; closing, it slides back from the right. This frame stays still on the screen (it undoes the screen's slide) and cuts the map at the icon column's edge -->
-  <div style="position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; transform: translateX({{pm.mx}}px); transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1)">
+  <div style="position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 1">
   <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{psFloat}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
-  </div></div>
+  </div>
 
   <!-- Panels column: the full width in portrait; a side column over the map in landscape and on big screens. -->
   <div style="position: absolute; left: {{colL}}px; top: 0; width: {{colW}}px; height: {{vh}}px; z-index: 2; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 56px; pointer-events: none">
@@ -516,6 +517,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </div>
   <!-- Open, the part of the screen still showing closes the menu with a tap -->
   <div aria-hidden="true" onClick="{{closePrefs}}" style="display: {{pm.catchD}}; position: absolute; inset: 0; z-index: 90"></div>
+  </div>
   </div>
   <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: 1; background: #F2F2F7">
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
@@ -1111,7 +1113,7 @@ class Component extends DCLogic {
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
-        return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.53s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? -(mw + 32) : rail && this.wfLayout().side ? -60 : 0, ax: -(open ? -(mw + 32) : rail && this.wfLayout().side ? -60 : 0) + 0, mx: open ? vw - 60 : 0, cr: open ? 60 : 0, cd: (() => { if (this._pmClipMode !== pmMode) { const p0 = this._pmClipMode; this._pmClipMode = pmMode; this._pmClipDelay = p0 === '' && pmMode === 'open' ? '.11s' : p0 === 'open' && pmMode === '' ? '.42s' : '0s'; } return boot ? '0s' : this._pmClipDelay; })(),   /* the map's cut at the icon column waits until the screen's edge has passed it */   // open: 32px further, so the screen's shadow stays off the menu
+        return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.53s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? vw - 60 : rail && this.wfLayout().side ? -60 : 0, cr: open ? 60 : 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
           dur: boot ? '0s' : (() => { if (pmMode === '' && this._pmPrevMode === 'rail') this._pmSlowUntil = Date.now() + 900; this._pmPrevMode = pmMode; return Date.now() < (this._pmSlowUntil || 0) ? '.74s' : '.53s'; })(),   /* (Oct 4) the screen widening back to full width after the icon column closes: 40% slower (.74s) */   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',

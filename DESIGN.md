@@ -905,7 +905,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - A flick at the speed that ends the tour (2340 px/s) toward the other feed swaps their places: the thrown one takes the other's place, the other takes the thrown one's starting place, gliding together in 0.55 s, with a double haptic tap.
 - The same button again closes its own feed only; maximize applies to one feed.
 
-## Menu: the map slides the other way (main screen)
-- Opening the menu with the burger, the screen's panels slide left as before while the map slides right, ending tucked under the icon column. Closing, the map slides back from the right to the left. Same 0.53 s ease as the screen, so both move together.
-- Choosing a section from the folded column (or folding a section to the column by tapping its active icon) moves the map the same way: right when a section opens, left when it folds.
-- The map is cut at the icon column's edge once the screen has passed it, so the column is never covered and its taps are never blocked.
+## Menu: the whole screen slides right (main screen)
+- Opening the menu with the burger, the whole map screen (map, top bar, blades) slides to the right and rests under the icon column; the menu section is uncovered on the left. Closing, the screen slides back from the right to the left. (Replaces the slide to the left of Oct 3; the 32px extra offset is gone.)
+- Choosing a section from the folded column slides the screen right; folding a section to the column (tapping its active icon) slides it back left, to the narrower screen beside the column.
+- The screen is cut at the icon column's edge, so the column is always on top and its taps are never blocked. The column wipes in from the right as the screen leaves (0.25 s) and wipes out as it returns.
