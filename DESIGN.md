@@ -862,3 +862,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Zoomed out: fewer markers, no blobs (Oct 4)
 - The warm density blobs are gone; zoomed out the map shows markers, not haze.
 - Fires, ignition candidates and stations thin out together as the map zooms out: wider cells (3x the base spacing at the whole-country fit, 2x, 1.4x, then the base), and lower caps (fires 20, candidates 24 at country level; 40 and 40 a step in; then 90 and 60). Zooming in shows more. The selected item always stays.
+
+## Data sources: title to count 8px (Oct 4)
+- The count under "Connected data sources" sits 8px below the title's line (was about 16px visually), whether the title takes one line or two. The title keeps its place level with the menu button.
