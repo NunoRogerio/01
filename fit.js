@@ -21,6 +21,18 @@ window.__wfFrameFire=function(pts,g6,W,H){if(!pts||!pts.length)return null;var x
   var z=Math.min(W*0.6/bw,H*0.9/bh);
   if(g6&&g6.length){var hx=2,hy=2;g6.forEach(function(q){hx=Math.max(hx,Math.abs(q[0]-cx));hy=Math.max(hy,Math.abs(q[1]-cy));});z=Math.min(z,Math.min(W/2/(0.7*hx),H/2/(0.7*hy)));}
   return {z:Math.max(0.0015,Math.min(40,z)),cx:cx,cy:cy};};
+// (Oct 5) every scrolling screen, panel and list ends with at least 56px of room under its last item (larger paddings are
+// kept, e.g. a list that clears a keyboard or a foot button). Re-applied whenever a screen redraws its styles.
+(function(){
+  var T=0,MIN=56;
+  function fix(){T=0;try{var L=document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.chscroll,[data-wf-fadetop]');
+    for(var i=0;i<L.length;i++){var el=L[i];if(el.tagName==='TEXTAREA'||el.closest('[data-wf-maproot]')||el.hasAttribute('data-wf-nopb'))continue;var cs=getComputedStyle(el);if(!/auto|scroll/.test(cs.overflowY))continue;
+      if(el.style.getPropertyPriority('padding-bottom')==='important'&&parseFloat(el.style.paddingBottom)>=MIN)continue;if((parseFloat(cs.paddingBottom)||0)<MIN)el.style.setProperty('padding-bottom',MIN+'px','important');}}catch(e){}}
+  function soon(){if(!T)T=setTimeout(fix,60);}
+  /* map pans and zooms rewrite styles many times a second: those never schedule a pass */
+  try{new MutationObserver(function(R){for(var i=0;i<R.length;i++){var t=R[i].target;if(t.nodeType===1&&t.closest&&t.closest('[data-wf-maproot],[data-wf-gl],.wf-cf'))continue;soon();return;}}).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});}catch(e){}
+  window.addEventListener('load',soon);
+})();
 // Nature photos, one list for the whole app (loading screen, sign in, alert header, chat header, trophy cards, forest
 // headers): forests from above (Unsplash), in a random order. Groups are kept for future sets: photos are shown one group
 // at a time in turn (never two of the same group in a row), and the photo from each

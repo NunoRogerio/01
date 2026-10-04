@@ -1056,3 +1056,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Team card, one widget (Oct 5):** the fire's Crews tab and the resolution summary share the same team card: crest, name in bold, description, chevron (down folded, up open); a tap folds the people or units away and back; a full-width line between the head and the list.
 - **Stage stack (Oct 5):** while the fire page's stage stack is open, the rest of the screen blurs behind it (the app's glass); a tap outside closes it.
 - **Report incident (Oct 5):** once the ignition report chat exists, its button reads "Report incident" (was "Open report").
+- **Room at the end of every scroll (Oct 5):** every scrolling screen, panel and list (settings sections included) ends with at least 56px of padding under its last item; larger paddings (a list clearing a foot button or keyboard) are kept. One rule in fit.js, applied app-wide.
