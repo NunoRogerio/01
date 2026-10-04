@@ -1006,3 +1006,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 4) Video calls: the hang-up is a solid white phone on the red bubble; the chat's call button is a green circle with the same solid phone (not a camera icon).
 - (Oct 4) Map: the redraw-throttle / look-ahead / low-res underlay experiment was too sluggish on the phone and is reverted; back to the earlier panning behaviour.
 - (Oct 4) A night ignition candidate (moon) keeps its night flag when declared a fire: the fire page shows the moon and the Report night ignition button, using the same night test as the candidate page.
+- (Oct 4) Evidence (satellite image, drone feed, citizen photo) opens in the floating card (feedcam.js image mode), like camera and call feeds: draggable, maximizable, X to close; no more dark lightbox. Any future evidence viewer uses the same card.

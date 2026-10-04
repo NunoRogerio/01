@@ -20,7 +20,7 @@
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=65"></script>
 <script src="tour.js?v=72"></script>
-<script src="feedcam.js?v=17"></script>
+<script src="feedcam.js?v=18"></script>
 <script src="menu.js?v=16"></script>
 
 <title>Ignition candidates</title>
@@ -167,16 +167,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: var(--wf-w, 390px); height: var(--wf-h, 844px); box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: {{rootBg}}; transition: background-color .6s ease; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
-  <!-- Evidence viewer: the satellite image, the drone feed or the photo, large, over a dark scrim; X or a tap outside closes it -->
-  <div aria-hidden="{{ex.hidden}}" onClick="{{ex.close}}" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; box-sizing: border-box; background: rgba(0,0,0,0.82); opacity: {{ex.op}}; pointer-events: {{ex.pe}}; transition: opacity .3s ease">
-    <button type="button" class="mbtn" onClick="{{ex.close}}" aria-label="Close" style="position: absolute; right: 16px; top: 64px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: #F2F2F7; color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-    <div style="position: relative; width: 358px; height: {{ex.h}}px; border-radius: 16px; overflow: hidden; background: #1C1C1E; transform: scale({{ex.sc}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)">
-      <sc-if value="{{ex.img}}" hint-placeholder-val="{{ false }}"><img src="{{ex.src}}" alt="{{ex.alt}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><span aria-hidden="true" style="display: {{ex.ringD}}; position: absolute; left: {{ex.rx}}%; top: {{ex.ry}}%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
-      <sc-if value="{{ex.vid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ex.src}}" autoplay="" muted="" loop="" playsinline="" preload="auto" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>
-      <sc-if value="{{ex.smoke}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" viewBox="0 0 358 240" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%"><defs><filter id="wfSmkL" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter></defs><path d="M210 200c-12-40 20-60 10-100s20-60 60-80c-10 40-30 50-20 90s-10 70-50 90Z" fill="rgba(235,235,240,0.8)" filter="url(#wfSmkL)"></path></svg></sc-if>
-    </div>
-    <span style="max-width: 358px; font-size: 15px; line-height: 20px; color: #E8E8ED; text-align: center">{{ex.cap}}</span>
-  </div>
   <sc-if value="{{mapLayer}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1">
       <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-bg-tap="{{bgTap}}" close-x="true" pin-grow="{{cp.h}}" mode="pin" pin-close="16" locked="true" no-view="true" no-routes="true" st-names="true" cams="{{noCams}}" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" on-cycle="{{cycleTo}}" w="{{mapW}}" h="{{mapH}}" clip-left="{{mapCL}}" clip-right="{{mapCR}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{clipB}}" ctrl-top="{{ctrlTop}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{curRow.place}}" pin-coords="{{region}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attr}}" hint-size="390px,844px"></dc-import>
@@ -527,6 +517,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  // (Oct 4) evidence (satellite image, drone feed, photo) opens in the floating card, like the camera and call feeds
+  wfEv(o) { const F = window.__wfCamFeed; if (F && F.open) F.open(Object.assign({ title: o.label }, o)); }
   wfHandle(key, dir, close) {
     const self = this;
     return {
@@ -1090,13 +1082,13 @@ class Component extends DCLogic {
         const ERR = () => null;
         const TH = { err: null, imgSt: 'inset: 0; width: 100%; height: 100%; object-fit: cover', padR: '16px', minH: 'auto', thD: 'none', thImg: false, thVid: false, thSmoke: false, ringD: 'none', src: '', thAria: '', cur: 'default', open: null };
         const th = (o) => Object.assign({}, TH, { padR: '80px', minH: '72px', thD: 'block', cur: 'pointer' }, o);
-        const sat = { ...(isLive && gibs ? th({ thImg: true, src: gibs.src, err: ERR(gibs.src2), ringD: 'block', imgSt: 'left: ' + (28 - gibs.rx * 2.24).toFixed(1) + 'px; top: ' + (28 - gibs.ry * 2.24).toFixed(1) + 'px; width: 224px; height: 224px; max-width: none',   /* zoomed to the detection, centred */ thAria: 'Satellite image of the area. Open', open: () => this.setState({ exv: { kind: 'sat', src: gibs.src, src2: gibs.src2, rx: gibs.rx, ry: gibs.ry, cap: 'True colour, ' + dt + ' (VIIRS NOAA-20, daytime pass). The ring marks the heat detection. NASA GIBS.' } }) }) : TH),
+        const sat = { ...(isLive && gibs ? th({ thImg: true, src: gibs.src, err: ERR(gibs.src2), ringD: 'block', imgSt: 'left: ' + (28 - gibs.rx * 2.24).toFixed(1) + 'px; top: ' + (28 - gibs.ry * 2.24).toFixed(1) + 'px; width: 224px; height: 224px; max-width: none',   /* zoomed to the detection, centred */ thAria: 'Satellite image of the area. Open', open: (e) => this.wfEv({ image: { src: gibs.src, src2: gibs.src2, rx: gibs.rx, ry: gibs.ry, ring: true, alt: 'Satellite image of the area' }, label: 'Satellite image', who: 'True colour, ' + dt + '. NASA GIBS.', anchor: e && e.currentTarget }) }) : TH),
           title: isLive ? 'Satellite: ' + String(cur.verdict || 'heat anomaly').toLowerCase() : cur.verdict,
           rows: cur.reasons.filter(([t]) => !(droneSeen && /^Not confirmed on the ground/.test(t))).map(([t, ok]) => row(t, ok)), noteD: 'none', note: '' };
         const out = [sat];
         if (isLive) {
-          if (droneSeen) out.push({ ...th({ thVid: true, src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', thAria: 'Drone thermal feed. Open', open: () => this.setState({ exv: { kind: 'vid', src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', cap: 'Drone ' + (cur.drone || 'D-5') + ', thermal feed over the ignition. Simulation.' } }) }), title: 'Drone confirmation', rows: [row('Drone ' + (cur.drone || 'D-5') + ' over the ignition'), row('Smoke and a hot spot on the thermal feed')], noteD: 'block', note: sim });
-          if (h % 5 < 2) out.push({ ...th({ thImg: true, thSmoke: true, src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', thAria: 'Shared photo. Open', open: () => this.setState({ exv: { kind: 'photo', src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', cap: 'Photo shared by a citizen. Simulation.' } }) }), title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
+          if (droneSeen) out.push({ ...th({ thVid: true, src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', thAria: 'Drone thermal feed. Open', open: (e) => this.wfEv({ src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', label: 'Drone ' + (cur.drone || 'D-5') + '. Thermal', who: 'Over the ignition. Simulation.', anchor: e && e.currentTarget }) }), title: 'Drone confirmation', rows: [row('Drone ' + (cur.drone || 'D-5') + ' over the ignition'), row('Smoke and a hot spot on the thermal feed')], noteD: 'block', note: sim });
+          if (h % 5 < 2) out.push({ ...th({ thImg: true, thSmoke: true, src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', thAria: 'Shared photo. Open', open: (e) => this.wfEv({ image: { src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', smoke: true, alt: 'Photo shared by a citizen' }, label: 'Citizen photo', who: 'Shared by a citizen. Simulation.', anchor: e && e.currentTarget }) }), title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
           if ((h >> 3) % 5 < 2) out.push({ ...TH, title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
         }
         const X = s.exv || null;
