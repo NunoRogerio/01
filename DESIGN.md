@@ -963,3 +963,12 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The captain's face is one of three (a: African American man, b: European woman, c: veteran man in his 60s), chosen at random once per report and the same in every call of that report (`__wfChat.callFace`). Files: `assets/faces/police-a|b|c.jpg`.
 - Entry point on the police chat: the round 44px button at the left of the message bar, the same slot and style as the helmet camera button of the fire chats (a video-camera icon; only one of the two shows, by chat type). It calls the captain again; the feed grows from that button.
 - The captain's picture sits whole inside the feed (portrait over a blurred copy of itself), and is also the captain's photo in the chat, so the chat and the call always show the same person. The three portraits are official public-domain portraits of real police chiefs (Wikimedia Commons, see `assets/faces/CREDITS-police.txt`) used as placeholders: swap them for stock photos before any public release.
+
+## Full-screen maps: location on the left, legend on the right (Oct 4, 16:45)
+- On every full-screen map the location / title card (name and region or coordinates) sits top-left and the legend top-right; the card's width stops short of the legend, so they never overlap. Same TerrainMap code for the candidate, fire, station and projection pages.
+
+## Fire band: the polygon itself is centred (Oct 4, 16:45)
+- The small map on the fire page centres the fire polygon in the clear part of the band (between the legend chips and the projection switcher); the zoom is the largest at which the +6 h shape, measured from that centre, still fits. Previously the centre of polygon plus projection was used, which pushed the current polygon up under the chips.
+
+## Menu folded to the column: the icons work (Oct 4, 16:45)
+- The resized screen is also exactly as wide as the visible area (it used to keep its full-width box over the icon column and swallowed the taps), so tapping any icon opens its section and slides the screen back.
