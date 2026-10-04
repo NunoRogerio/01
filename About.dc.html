@@ -50,7 +50,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
 
     <!-- Title M -->
     <div data-wf-about-ttl="1" style="display: flex; flex-direction: column; gap: 32px; flex-shrink: 0">
-      <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; text-align: center">{{tx.title}}</h1>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; text-align: left">{{tx.title}}</h1>
     </div>
 
     <!-- Part 2, The goal: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
@@ -100,12 +100,12 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
     </div>
 
     <!-- A simple thank you, the authors as a note, then the build line as on Login -->
-    <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: center">{{tx.thanks}}</span>
+    <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: left">{{tx.thanks}}</span>
     <!-- (Oct 4) The story and thanks: right under the thank you, as its description (4px) -->
-    <p style="flex-shrink: 0; margin-top: -52px; font-size: 17px; line-height: 22px; text-align: center">{{tx.story}}</p>
+    <p style="flex-shrink: 0; margin-top: -52px; font-size: 17px; line-height: 22px; text-align: left">{{tx.story}}</p>
     <!-- The authors: "Project by", then one line each (Anastasia first) -->
-    <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: center">{{tx.by}}<br>Anastasia Osling, {{tx.des}}<br>Nuno Rogério, {{tx.des}}</p>
-    <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span><br>{{verTxt}}</p>
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: left">{{tx.by}}<br>Anastasia Osling, {{tx.des}}<br>Nuno Rogério, {{tx.des}}</p>
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: left"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span><br>{{verTxt}}</p>
   </div>
 </div>
 </x-dc>
