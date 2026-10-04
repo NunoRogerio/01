@@ -815,3 +815,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Maps 10% darker in the light theme (Oct 4, 00:06): only the map tiles (the day-tiles filter), never markers, legends or controls.
 - Menu section switch (Oct 4, 00:08): the previous section is no longer darkened; it only moves out as the new one pushes in.
 - Menu button over panels (Oct 4): it hides whenever a panel covers the top bar, including notifications or chats opened on arrival from another screen (it was overlapping their X).
+- Map search on touch (Oct 4, 06:36): a tap on the map's search button opens only the floating search box (never the old full Find a place panel), with the text field focused so the keyboard opens at once. Suggestions show in a panel under it, or above it when there is more room there.
+- Empty regions (Oct 4, 06:38): the bottom blade always stays, with its counts (0 ignition candidates, 0 fires) and the tour entry.

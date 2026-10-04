@@ -69,6 +69,9 @@
     requestAnimationFrame(function () { if (!el) return; bx.style.transition = 'width .45s ' + EASE; el.style.transition = 'transform .45s ' + EASE; bx.style.width = st.w + 'px'; el.classList.add('on'); place(x1, y1);
       setTimeout(function () { if (el) { el.style.transition = 'none'; bx.style.transition = 'none'; } }, 480); });
     try { inp.focus({ preventScroll: true }); } catch (x) {}
+    // the tap that opened it still sends its mouse events onto the growing box: keep the text field focused (keyboard up)
+    [60, 250, 500].forEach(function (ms) { setTimeout(function () { if (el && document.activeElement !== inp) { try { inp.focus({ preventScroll: true }); } catch (x) {} } }, ms); });
+    bx.addEventListener('mousedown', function (e) { if (!e.target.closest('input')) e.preventDefault(); });
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     inp.addEventListener('input', onInput);
     inp.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); else if (e.key === 'Enter') { var f = el && el.querySelector('.ls button'); if (f) f.click(); } });
