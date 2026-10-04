@@ -829,3 +829,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **No pulse on ignition markers (Oct 4):** ignition candidate markers (main map, selected ring, detail pin) no longer pulse anywhere.
 - **Connected data sources header (Oct 4):** no "Manage data sources" drawer row, count or chevron; the panel's content is always open, and under the title a line reads "**12** data sources connected" (count bold, words regular).
 - **Stripes at 80% (Oct 4):** the firefighter stripes (blade edges, panel edges, dialog tops) are drawn at 80% opacity.
+- **Maps 16% darker (Oct 4):** the map tiles are darkened a further 16% in both themes (light: brightness 0.9 → 0.756; dark: slope and offset ×0.84). Markers and legends are untouched.
