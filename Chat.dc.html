@@ -20,7 +20,7 @@
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=65"></script>
 <script src="tour.js?v=72"></script>
-<script src="feedcam.js?v=15"></script>
+<script src="feedcam.js?v=16"></script>
 <script src="trophy.js?v=20"></script>
 
 <title>Chats</title>
@@ -570,10 +570,10 @@ class Component extends DCLogic {
     // (Oct 4) a team call: the same floating panel, divided into one rectangle per coordinator of the stations sent (and the air lead)
     if (!c.police) { const L = (en, pt) => C.L(en, pt), P = C.active ? C.active(c) : (c.people || []); if (P.length < 2) return;
       F.open({ anchor, title: 'Video call', label: L('Video call', 'Videochamada'), who: L(P.length + ' members', P.length + ' membros'),
-        call: { id: c.key, grid: P.map((p) => ({ name: p.name, code: p.code, photo: p.photo || (C.photo ? C.photo(c, p.name) : '') })), calling: L('Calling the team…', 'A chamar a equipa…'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Video call', 'Em direto. Videochamada') } }); return; }
+        call: { id: c.key, grid: P.map((p) => ({ name: p.name, code: p.code, photo: p.photo || (C.photo ? C.photo(c, p.name) : '') })), calling: L('Calling the team…', 'A chamar a equipa…'), hangup: L('End call', 'Terminar chamada'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Video call', 'Em direto. Videochamada') } }); return; }
     const L = (en, pt) => C.L(en, pt), p = (c.people || [])[0] || {}, face = C.callFace ? C.callFace(c.key) : 'police-a';
     F.open({ anchor, title: 'Video call', label: L('Video call', 'Videochamada'), who: (p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + (p.name || ''),
-      call: { id: c.key, photo: 'assets/faces/' + face + '.jpg?v=1', alt: p.name || '', calling: L('Calling…', 'A chamar…'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Video call', 'Em direto. Videochamada') } }); }
+      call: { id: c.key, photo: 'assets/faces/' + face + '.jpg?v=1', alt: p.name || '', calling: L('Calling…', 'A chamar…'), hangup: L('End call', 'Terminar chamada'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Video call', 'Em direto. Videochamada') } }); }
   pin() { const el = this._sc; if (!el || !this._stick) return; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; }); }
   componentDidUpdate() {
     this.fitRows();
