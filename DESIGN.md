@@ -855,3 +855,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Candidate markers stand out (Oct 4)
 - The maps got darker, so the ignition candidate fill goes from 20% to 80% lime by day (it was already 80% at night). Every symbol of a candidate follows: map markers, legend, tooltips, lists, notifications, chats and the data sources.
+
+## Stripes 40% opacity (Oct 4)
+- All stripes (shared `.wf-stripes`, the dialog top stripe, the settings stripe) are 20 points more transparent: 40% opacity (was 60%).
