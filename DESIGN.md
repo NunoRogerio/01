@@ -1035,3 +1035,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Share button (Oct 4, 22:32):** the Share button in Share is primary.
 - **About texts left-aligned (Oct 4, 22:33):** the thanks, story, project credits and version lines read from the left, like the rest of the section (no centred text).
 - **Title descriptions use the full width (Oct 4, 22:40):** no text-wrap pretty/balance on descriptions (Safari narrows them); a no-break space holds the last two words together instead, so no word hangs alone (i18n keeps it in every language). Data sources put the count sentence last: "…what each source shows. **13** data sources connected."
+- **About credits (Oct 4, 22:44):** each name is followed by its country (Anastasia Osling, USA. Nuno Rogério, Portugal), no role; the story describes the two as UX designers who could not stand by while fires destroy forests around the planet, year after year.
