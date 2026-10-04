@@ -881,3 +881,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Menu folded to its icon column: the screen resizes (Oct 4)
 - On a phone, when the settings menu is folded to its icon column, the main screen no longer slides left and gets cut. It stays in place and takes the width that is left (60px less): the top blade, the map, the legend and the bottom blade all fit it. Closing the menu extends the screen back to the full width, animated with the same ease. With a section open, the screen still slides away to uncover it. Wide layouts (tablets) are unchanged.
+
+## Map search box and the bottom blade; slower widening (Oct 4)
+- The floating map search box stays clear of the keyboard: it is kept inside the part of the screen the keyboard leaves free (16px above it), follows the keyboard as it comes and goes, and returns to the spot it was put in once the keyboard leaves.
+- While the search box is up, the bottom blade (ignition candidates and fires) slides away; when the box folds back into its icon, the blade returns.
+- When the icon column closes and the screen widens back to full width, the move takes .74s (40% slower than the .53s of the other menu slides).

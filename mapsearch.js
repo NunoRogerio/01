@@ -27,13 +27,17 @@
   function showAnchor(a, on) { if (!a || !a.style) return; a.style.transition = on ? 'opacity .2s ease' : 'none'; a.style.opacity = on ? '' : '0'; a.style.pointerEvents = on ? '' : 'none'; }
   var PT = function () { return window.__wfLang === 'pt'; };
   function area() { var m = st && st.map; var r = m && m.isConnected ? m.getBoundingClientRect() : { left: 0, top: 0, right: innerWidth, bottom: innerHeight };
-    return { x0: Math.max(8, r.left + 8), y0: Math.max(8, r.top + 8), x1: Math.min(innerWidth, r.right) - 8, y1: Math.min(innerHeight, r.bottom) - 8 }; }
-  function place(x, y) { var A = area(), w = st.w; st.x = Math.max(A.x0, Math.min(A.x1 - w, x)); st.y = Math.max(A.y0, Math.min(A.y1 - 44, y));
+    var vv = window.visualViewport, vt = vv ? vv.offsetTop : 0, vb = vv ? vv.offsetTop + vv.height : innerHeight;   // (Oct 4) the part of the screen the keyboard leaves free
+    return { x0: Math.max(8, r.left + 8), y0: Math.max(8, vt + 8, r.top + 8), x1: Math.min(innerWidth, r.right) - 8, y1: Math.min(vb, innerHeight, r.bottom) - 16 }; }
+  function place(x, y, keep) { var A = area(), w = st.w; if (!keep) { st.wx = x; st.wy = y; } st.x = Math.max(A.x0, Math.min(A.x1 - w, x)); st.y = Math.max(A.y0, Math.min(A.y1 - 44, y));
     el.style.transform = 'translate(' + st.x + 'px,' + st.y + 'px)'; listSide(); }
   function listSide() { var ls = el.querySelector('.ls'), A = area(), below = A.y1 - (st.y + 44), above = st.y - A.y0;
     if (below >= 180 || below >= above) { ls.style.top = '52px'; ls.style.bottom = 'auto'; ls.style.maxHeight = Math.max(120, Math.min(288, below - 8)) + 'px'; }
     else { ls.style.bottom = '52px'; ls.style.top = 'auto'; ls.style.maxHeight = Math.max(120, Math.min(288, above - 8)) + 'px'; } }
-  function close() { if (!el) return; var e = el, s = st, bx = e.querySelector('.bx'); el = null; st = null;
+  function refit() { if (el && st) place(st.wx != null ? st.wx : st.x, st.wy != null ? st.wy : st.y, true); }   // the keyboard came or went: stay clear of it, and go back to the chosen spot when it leaves
+  try { if (window.visualViewport) { visualViewport.addEventListener('resize', refit); visualViewport.addEventListener('scroll', refit); } } catch (x) {}
+  function tell(on) { try { document.documentElement.toggleAttribute('data-wf-ms', on); window.dispatchEvent(new CustomEvent('wf-ms', { detail: { open: on } })); } catch (x) {} }
+  function close() { if (!el) return; tell(false); var e = el, s = st, bx = e.querySelector('.bx'); el = null; st = null;
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     try { e.querySelector('input').blur(); } catch (x) {}
     e.classList.remove('on'); e.querySelector('.ls').classList.remove('on'); e.querySelector('.x svg').style.transform = 'rotate(90deg)';
@@ -62,7 +66,7 @@
     el = document.createElement('div'); el.className = 'wf-ms'; el.setAttribute('role', 'search');
     el.innerHTML = '<div class="bx"><span class="ic" aria-hidden="true">' + MAG + '</span><input type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="' + (PT() ? 'Procurar um local' : 'Find a place') + '" placeholder="' + (PT() ? 'Procurar um local' : 'Find a place') + '">' +
       '<button type="button" class="x mbtn" aria-label="' + (PT() ? 'Fechar a pesquisa' : 'Close search') + '"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div><ul class="ls" role="listbox"></ul>';
-    document.body.appendChild(el); showAnchor(a, false);   // the box takes the button's place: the button under it hides
+    document.body.appendChild(el); showAnchor(a, false); tell(true);   // the bottom blade steps away while the box is up   // the box takes the button's place: the button under it hides
     st = { anchor: a, map: a && a.closest ? a.closest('[data-wf-maproot]') : null, query: o.query, go: o.go, w: Math.min(358, innerWidth - 32), x: r.left, y: r.top };
     var bx = el.querySelector('.bx'), inp = el.querySelector('input');
     // starts as the round button and grows leftwards from it into the full box
@@ -86,6 +90,6 @@
     var up = function () { if (D && !D.moved && el) { try { inp.focus({ preventScroll: true }); } catch (x) {} } D = null; bx.style.cursor = ''; };
     bx.addEventListener('pointerup', up); bx.addEventListener('pointercancel', up);
   }
-  addEventListener('pagehide', function () { if (el) { showAnchor(st && st.anchor, true); try { el.remove(); } catch (x) {} el = null; st = null; } });
+  addEventListener('pagehide', function () { tell(false); if (el) { showAnchor(st && st.anchor, true); try { el.remove(); } catch (x) {} el = null; st = null; } });
   window.__wfMapSearch = { open: open, close: close, isOpen: function () { return !!el; } };
 })();
