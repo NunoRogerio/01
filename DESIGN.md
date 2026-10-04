@@ -1005,3 +1005,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 4) The night report's video call starts by itself: it waits until the panel script, the chat and the call button are ready (up to ~8 s) instead of one blind 0.7 s try.
 - (Oct 4) Video calls: the hang-up is a solid white phone on the red bubble; the chat's call button is a green circle with the same solid phone (not a camera icon).
 - (Oct 4) Map: the redraw-throttle / look-ahead / low-res underlay experiment was too sluggish on the phone and is reverted; back to the earlier panning behaviour.
+- (Oct 4) A night ignition candidate (moon) keeps its night flag when declared a fire: the fire page shows the moon and the Report night ignition button, using the same night test as the candidate page.
