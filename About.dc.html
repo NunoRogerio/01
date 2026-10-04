@@ -29,7 +29,7 @@
 *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}img,svg{-webkit-user-drag:none}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 html.wf-embed #dc-root{top:0!important;width:100%!important;height:100%!important;zoom:1!important}html.wf-embed [data-wf-about-root]{width:100%!important;height:100vh!important;padding-top:0!important}html.wf-embed [data-wf-about-hdr],html.wf-embed [data-wf-about-ttl]{display:none!important}html.wf-embed [data-wf-page]{padding-top:0!important}html.wf-embed #wf-load{display:none!important}html.wf-embed:not(.wf-dark),html.wf-embed:not(.wf-dark) body,html.wf-embed:not(.wf-dark) #dc-root,html.wf-embed:not(.wf-dark) [data-wf-about-root]{background:#FFFFFF!important}html.wf-embed:not(.wf-dark) [data-wf-page] [style*="background: #FFFFFF"]{background:#F2F2F7!important}html.wf-embed.wf-dark,html.wf-embed.wf-dark body,html.wf-embed.wf-dark #dc-root,html.wf-embed.wf-dark [data-wf-about-root]{background:#333336!important}html.wf-embed.wf-dark [data-wf-page] [style*="background: #FFFFFF"],html.wf-embed.wf-dark [data-wf-page] [style*="background: rgb(255, 255, 255)"]{background:#262629!important}html.wf-embed [data-wf-page]{padding-bottom:160px!important}
-p{margin:0}[data-wf-page] p,[data-wf-page] span,[data-wf-page] b{text-wrap:pretty}
+html.wf-embed [data-wf-card]{padding:0!important;background:transparent!important}p{margin:0}[data-wf-page] p,[data-wf-page] span,[data-wf-page] b{text-wrap:pretty}
 </style>
 </helmet>
 <!-- About, in three parts: how it started (the problem, in short), the goal and its flow, where we are and what the expert
@@ -56,7 +56,7 @@ p{margin:0}[data-wf-page] p,[data-wf-page] span,[data-wf-page] b{text-wrap:prett
     <!-- Part 2, The goal: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
       <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.idea}}</span>
-      <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
+      <div data-wf-card="1" style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
         <p style="font-size: 17px; line-height: 22px">{{tx.goal}}<br><b style="font-weight: 700">{{tx.goalQ}}</b></p>
         <ol aria-label="{{tx.idea}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
@@ -155,7 +155,7 @@ class Component extends DCLogic {
           '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命や家、森を奪っています。ただ座って見ているだけでいいのか。答えは「いいえ」でした。1年にわたる対話、シナリオ、既存ツールの調査を経て、UXの専門家として、見つけたコンセプトから2人でインターフェースを形にしました。'),
         by: L('Project by', 'Projeto de', 'プロジェクト'),
         des: L('designer', 'designer', 'デザイナー'),
-        idea: L('Goal:', 'Objetivo:', '目標:'),
+        idea: L('Goal', 'Objetivo', '目標'),
         goal: L('In a wildfire, every first second counts. Our question is:',
           'Num incêndio rural, cada primeiro segundo conta. A nossa pergunta é:',
           '山火事では、最初の一秒一秒が重要です。私たちの問いは:'),
@@ -165,7 +165,7 @@ class Component extends DCLogic {
         chat: L('Can one chat per incident keep everyone aligned?',
           'Pode uma conversa por incidente manter todos alinhados?',
           'インシデントごとのひとつのチャットで、全員をつなげられるでしょうか。'),
-        stage: L('Where we are:', 'Em que fase estamos:', '現在の段階:'),
+        stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
         now: L('Now', 'Agora', '現在'),
         stage1: L('Look at this prototype as a conversation starter. The goal is for us to get closer to the problem and the people who face it.',
           'Veja este protótipo como um ponto de partida para a conversa. O objetivo é aproximarmo-nos do problema e de quem o enfrenta.',

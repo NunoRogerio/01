@@ -870,3 +870,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Panning never makes a marker blink, jump or change. Which markers show depends only on the zoom step (a grid fixed to the map, in power-of-two steps) and never on what is in view: no strides or caps based on the number in view, no reordering. Markers join and leave the list 240px beyond the screen edge, off sight, and keep a fixed order (the data's own order; active fires before resolved).
 - Likelihood tags show from a close zoom (4x the fit) and are decided by the zoom alone.
 - Station spacing on screen: 140 / 100 / 80 / 64px from the whole country in to the closest zoom, so a screen holds about 100 to 250 at most.
+
+## Group subtitles in all menus (Oct 4)
+- One style for the title of a group in every menu panel (Text size, Spacing, Goal, Where we are, Shows in the app, Examples): 15px semibold, mid grey #6E6E73, sentence case, no colon, 8px above what it names. The data sources were the reference; their "Shows in the app" and "Examples" moved from #545458 to #6E6E73.
+- In About inside the menu, the goal card has no padding or fill of its own, so "Goal" sits 8px above its text like the other labels.
