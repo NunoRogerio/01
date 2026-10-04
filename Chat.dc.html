@@ -130,7 +130,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="chsurf" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0">
     <div class="chscroll" data-wf-keepscroll="1" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
       <sc-for list="{{items}}" as="m" hint-placeholder-count="4">
-        <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
+        <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
         <sc-if value="{{m.isSys}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="align-self: center; max-width: 300px; font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{m.text}} · {{m.time}}</div>
         </sc-if>
@@ -301,7 +301,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </section>
           <!-- Time in each stage: a calm list, like the incidents (stage in Title S, when it began as annotation, its time on the right) -->
           <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; margin: 0 -16px">
-            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 16px 8px; border-bottom: 0"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 16px 8px; border-bottom: 0"><h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
             <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
               <div style="display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 80px; padding: 16px 16px; box-sizing: border-box; opacity: {{r.op}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: {{r.bg}}"><svg width="32" height="32" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
@@ -653,7 +653,7 @@ class Component extends DCLogic {
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
       return { hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
-        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: i ? '0' : '1px solid rgba(60,60,67,0.14)', aria: p.name + ', ' + p.role, go: openPerson(p.name)   /* a full-width line between the station and its people */ })) }; });
+        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: p.name + ', ' + p.role, go: openPerson(p.name)   /* a full-width line between the station and its people */ })) }; });
     const extras = [];
     if (c.air) { const x = stTxt[c.air.st] || stTxt.assigned; extras.push({ name: c.air.name, sub: us ? c.air.kind : L('Firefighting helicopter', c.air.kind), stTxt: x[0], pillBg: x[1], pillFg: x[2], icon: window.__wfHeliBadge ? window.__wfHeliBadge() : '', iconD: 'block' }); }
     if (c.evac) extras.push({ icon: '', iconD: 'none', name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });

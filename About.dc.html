@@ -55,7 +55,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
 
     <!-- Part 2, The goal: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
-      <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.idea}}</span>
+      <span class="wf-label" style="font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.idea}}</span>
       <div data-wf-card="1" style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
         <p style="font-size: 17px; line-height: 22px">{{tx.goal}}<br><b style="font-weight: 700">{{tx.goalQ}}</b></p>
         <ol aria-label="{{tx.idea}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
@@ -82,7 +82,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
 
     <!-- Part 3, Where we are: the stages so far (the current one tagged), then what the feedback sessions are for -->
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
-      <span class="wf-label" style="font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.stage}}</span>
+      <span class="wf-label" style="font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.stage}}</span>
       <ol aria-label="{{tx.stage}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
         <sc-for list="{{stages}}" as="sg" hint-placeholder-count="3">
           <li aria-current="{{sg.cur}}" style="display: flex; align-items: center; gap: 16px; min-height: 52px; padding: 16px 0; box-sizing: border-box; border-top: {{sg.bt}}">
@@ -140,7 +140,7 @@ class Component extends DCLogic {
       [L('Alpha version', 'Versão alfa', 'アルファ版'), false],
       [L('Feedback from experts', 'Feedback de especialistas', '専門家からのフィードバック'), true]
     ].map(([t, now], i) => ({ t, cur: now ? 'step' : 'false', w: now ? 600 : 400, tagD: now ? 'inline-flex' : 'none', ic: now ? NOW : DONE,
-      bg: now ? 'var(--wf-y)' : '#3A3A3C', fg: now ? '#1C1C1E' : '#FFFFFF', bt: i ? '1px solid rgba(60,60,67,0.12)' : '0' }));
+      bg: now ? 'var(--wf-y)' : '#3A3A3C', fg: now ? '#1C1C1E' : '#FFFFFF', bt: '0' }));
     return {
       verTxt, steps, stages,
       backHref: role ? 'Main.dc.html' : 'Login.dc.html',

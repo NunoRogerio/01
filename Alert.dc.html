@@ -379,7 +379,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Weather and terrain at the candidate, as on the fire detail -->
         <sc-for list="{{ig.cond}}" as="d" hint-placeholder-count="2">
         <section style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
-          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note" style="display: {{d.simD}}">{{d.sim}}</span></span>
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px"><h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note" style="display: {{d.simD}}">{{d.sim}}</span></span>
           <div role="list" aria-label="{{d.title}}. Press and hold a card, then move it to reorder" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
             <sc-for list="{{d.cards}}" as="m" hint-placeholder-count="6">
               <div role="listitem" data-wf-kpi="{{m.key}}" data-g="{{d.grp}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
@@ -398,7 +398,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-for>
       <!-- Evidence: the media (photos, sensors, calls) when there is any, then what the sources say -->
       <section aria-label="Evidence" style="display: flex; flex-direction: column; flex-shrink: 0">
-        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 16px 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Evidence</h3><span class="wf-note">{{evCount}}</span></span>
+        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 16px 8px"><h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Evidence</h3><span class="wf-note">{{evCount}}</span></span>
     <figure style="display: {{figD}}; color: #FFFFFF; position: relative; width: 358px; height: 248px; margin: 0 16px; flex-shrink: 0; overflow: hidden; border-radius: 16px; background: {{figBg}}; pointer-events: {{figPE}}">
         <sc-if value="{{tab.isImg}}" hint-placeholder-val="{{ true }}">
           <img src="{{tab.src}}" alt="{{tab.alt}}" style="display: block; width: 358px; height: 248px; object-fit: cover">

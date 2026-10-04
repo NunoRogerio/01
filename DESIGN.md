@@ -874,3 +874,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Group subtitles in all menus (Oct 4)
 - One style for the title of a group in every menu panel (Text size, Spacing, Goal, Where we are, Shows in the app, Examples): 15px semibold, mid grey #6E6E73, sentence case, no colon, 8px above what it names. The data sources were the reference; their "Shows in the app" and "Examples" moved from #545458 to #6E6E73.
 - In About inside the menu, the goal card has no padding or fill of its own, so "Goal" sits 8px above its text like the other labels.
+
+## Group subtitles 16px; no dividers (Oct 4, supersedes the 15px group titles and the row dividers)
+- Every group subtitle (Text size, Spacing, Goal, Where we are, Shows in the app, Examples, and the group titles on the fire, station, drone, dispatch and alert pages) is 16px semibold in mid grey (20px line). 16px is now a text size, used only for these.
+- All dividers are off for now: the lines between list rows (About stages, chats, dispatch and station lists), the rule above the dispatch list and the vertical rule between dispatch columns. Spacing alone separates content. The 1px outlines of whole elements (tooltips, pills) stay.

@@ -555,7 +555,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-for list="{{pfGroups}}" as="g" hint-placeholder-count="3">
         <div role="radiogroup" aria-label="{{g.label}}" style="display: {{g.d}}; flex-direction: column; gap: 8px; flex-shrink: 0">
           <!-- Group label in the annotation style (smaller, mid grey) -->
-          <span class="wf-label" aria-hidden="true" style="display: {{g.ld}}; margin-left: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{g.label}}</span>
+          <span class="wf-label" aria-hidden="true" style="display: {{g.ld}}; margin-left: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{g.label}}</span>
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 8px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
             <span class="segthumb" aria-hidden="true" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
@@ -566,7 +566,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </div>
       </sc-for>
       <!-- Share: the same group label and white card as Chat settings; the card opens the phone's share sheet with the app's link (copies it where there is none) -->
-      <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Share</span>
+      <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Share</span>
       <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0">
           <!-- (Oct 3, 22:00) Share = invite people (administrator): links that switch on Claude role-play on the invitee's phone; it replaces the app link here and left Chat settings -->
         <div style="display: {{inv.d}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 0">
@@ -599,7 +599,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       </div>
       <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
-      <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Chat settings</span>
+      <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Chat settings</span>
       <!-- Chat settings: a drawer row like Connect data sources; opens in place to the Claude key and the invite links -->
       <div style="display: {{pm.dChat}}; flex-direction: column; flex-shrink: 0">
         <button type="button" class="opt" onClick="{{cs.toggle}}" aria-expanded="{{cs.str}}" style="display: none; align-items: center; gap: 16px; height: 52px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{cs.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ai.pill}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{cs.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
@@ -624,7 +624,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
       </div>
-      <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Connected data sources</span>
+      <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Connected data sources</span>
       <!-- Connect data sources: a drawer like Chat settings; Add data source on top, then the sources the app reads -->
       <div style="display: {{pm.dDs}}; flex-direction: column; flex-shrink: 0">
         <!-- (Oct 4) no drawer row: the count sits under the panel title -->

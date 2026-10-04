@@ -159,7 +159,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
         <label class="opt" style="position: relative; display: flex; align-items: center; justify-content: center; height: 44px; padding: 0 24px; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font-size: 17px; font-weight: 600; cursor: pointer; overflow: hidden">{{cp.photoLbl}}<input type="file" accept="image/*" onChange="{{cp.onFile}}" aria-label="{{cp.photoLbl}}" style="position: absolute; inset: 0; opacity: 0; cursor: pointer"></label>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px">
-        <span style="margin: 0 4px; font-size: 15px; font-weight: 600; line-height: 20px; color: #545458; text-align: center">Or pick one</span>
+        <span style="margin: 0 4px; font-size: 16px; font-weight: 600; line-height: 20px; color: #545458; text-align: center">Or pick one</span>
         <div role="listbox" aria-label="Photos" style="display: flex; gap: 8px; margin: 0 -16px; padding: 4px 16px 8px; overflow-x: auto; scrollbar-width: none">
           <sc-for list="{{cp.faces}}" as="f" hint-placeholder-count="8">
             <button type="button" role="option" aria-selected="{{f.sel}}" aria-label="{{f.aria}}" onClick="{{f.pick}}" style="flex: 0 0 60px; width: 60px; height: 60px; padding: 0; border: 0; border-radius: 50%; background: #E5E5EA url('{{f.url}}') center / cover; box-shadow: {{f.ring}}; cursor: pointer"></button>

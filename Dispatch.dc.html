@@ -463,7 +463,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <!-- A fire confirmed from a candidate: the entry to assign its crews (opens the dispatch configuration; Done comes back here) -->
       <div style="display: {{rs.d}}; align-self: stretch; margin: 0 0 56px; text-align: left">
-        <span style="display: block; margin: 0 0 8px; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Resources</span>
+        <span style="display: block; margin: 0 0 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Resources</span>
         <!-- Assign crews in place: tap the card, it shrinks 20% to show the grey surface under it, then slides away under that
              surface's edge like a safety cover, uncovering Add resources (N); chosen stations fill the surface, newest on top -->
         <div style="position: relative; border-radius: 16px; background: {{inl.surf}}; overflow: {{inl.ov}}; transition: background-color .3s ease">
@@ -533,7 +533,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span class="lbl">{{k1L}}</span>
         <span style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span class="kpi wf-big">{{k1V}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{k1Sub}}</span></span>
       </div>
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; border-left: 1px solid rgba(60,60,67,0.14)">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; border-left: 0">
         <span class="lbl">{{k2L}}</span>
         <span style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span class="kpi wf-big">{{k2Val}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{k2Sub}}</span></span>
       </div>
@@ -589,7 +589,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{gp.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
               </button></li>
-              <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.14)">   <!-- a full-width line between the station and its units -->
+              <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 0">   <!-- a full-width line between the station and its units -->
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">
               <!-- Unit row: the icon in the crest's column; the name on the first row with the status tag (one width for all) anchored at the row's right; the description under them -->
               <li class="wf-unit" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; padding: 16px 16px">
@@ -611,7 +611,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-if>
         <sc-if value="{{d.cx}}" hint-placeholder-val="{{ false }}">
         <li role="presentation" style="display: flex; flex-direction: column; flex-shrink: 0; padding: 0 16px; box-sizing: border-box">
-          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note" style="display: {{d.simD}}">{{d.sim}}</span></span>
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px"><h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note" style="display: {{d.simD}}">{{d.sim}}</span></span>
           <div role="list" aria-label="{{d.title}}. Press and hold a card, then move it to reorder" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
             <sc-for list="{{d.cards}}" as="m" hint-placeholder-count="6">
               <div role="listitem" data-wf-kpi="{{m.key}}" data-g="{{d.grp}}" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
@@ -630,7 +630,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-if>
         <sc-if value="{{d.stc}}" hint-placeholder-val="{{ false }}">
         <li role="presentation" style="flex-shrink: 0; padding: 0">
-          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 16px 8px"><h3 style="margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note">{{d.note}}</span></span>
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 16px 8px"><h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{d.title}}</h3><span class="wf-note">{{d.note}}</span></span>
           <div class="wf-hscroll" role="list" aria-label="Nearest stations" style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 0 16px 16px; margin-bottom: -12px">
             <sc-for list="{{d.cards}}" as="c" hint-placeholder-count="3">
               <div role="listitem" aria-label="{{c.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; flex: 0 0 168px; box-sizing: border-box; padding: 16px 16px 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
@@ -1804,7 +1804,7 @@ class Component extends DCLogic {
         const draft = F && F.draft ? F.draft : (id ? recFor(id) : []), recD = id ? recFor(id) : [], isRec = id ? draft.every((v, i) => v === recD[i]) : true;
         const setD = (arr) => this.setState({ flow: { ...F, draft: arr } });
         const KR = this.wfKinds(stC), resRows = !id ? [] : (id === 'air' ? [2, 3, 4, 5] : KST).map((k, j) => { const cap = id === 'air' ? airCap[j] : capSt(dSel || {})[j], n = draft[j] || 0, lessDis = n <= 0, moreDis = n >= cap, m = meta[k], each = id === 'air' ? '' : (KR[k] || {}).each || '';
-          return { cap, name: m.name, icon: m.icon, n, sep: j ? '1px solid rgba(60,60,67,0.14)' : '0',   /* a full-width line between resource rows */ avail: ((cap >= 99 ? '' : (cap - n) + ' of ' + cap + ' free. ') + each).trim(), avD: cap >= 99 && !each ? 'none' : 'block',
+          return { cap, name: m.name, icon: m.icon, n, sep: '0',   /* a full-width line between resource rows */ avail: ((cap >= 99 ? '' : (cap - n) + ' of ' + cap + ' free. ') + each).trim(), avD: cap >= 99 && !each ? 'none' : 'block',
             less: () => { if (lessDis) return; const a = draft.slice(); a[j] = n - 1; setD(a); }, more: () => { if (moreDis) return; const a = draft.slice(); a[j] = n + 1; setD(a); },
             lessDis: lessDis ? 'true' : 'false', moreDis: moreDis ? 'true' : 'false', lessOp: lessDis ? 0.35 : 1, moreOp: moreDis ? 0.35 : 1, lessLbl: 'Fewer ' + m.name.toLowerCase(), moreLbl: 'More ' + m.name.toLowerCase() }; }).filter((r) => id === 'air' || r.cap > 0);   /* a station lists only the unit types it keeps */
         const inPlan = (x) => plan.some((p) => p.id === x);
