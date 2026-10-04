@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
-// Find a place on the map (Oct 3, 23:26): the map's search button grows into a search box (dark map-control glass, 44px tall,
+// Find a place on the map (Oct 3, 23:26; Oct 4: box anchored on the button's centre so its right end sits on the round-button column, button hidden while open): the map's search button grows into a search box (dark map-control glass, 44px tall,
 // fully rounded) that floats over the map and can be dragged anywhere on it. Typing lists matching places from the third
 // character; a tap flies the map there. X folds the box back into its button. One shared widget for every map.
 (function () {
@@ -23,6 +23,8 @@
   (document.head || document.documentElement).appendChild(css);
   var el = null, st = null;
   var MAG = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>';
+  function home(a) { var r = a.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2; return { left: cx - 22, top: cy - 22, width: 44 }; }
+  function showAnchor(a, on) { if (!a || !a.style) return; a.style.transition = on ? 'opacity .2s ease' : 'none'; a.style.opacity = on ? '' : '0'; a.style.pointerEvents = on ? '' : 'none'; }
   var PT = function () { return window.__wfLang === 'pt'; };
   function area() { var m = st && st.map; var r = m && m.isConnected ? m.getBoundingClientRect() : { left: 0, top: 0, right: innerWidth, bottom: innerHeight };
     return { x0: Math.max(8, r.left + 8), y0: Math.max(8, r.top + 8), x1: Math.min(innerWidth, r.right) - 8, y1: Math.min(innerHeight, r.bottom) - 8 }; }
@@ -35,10 +37,11 @@
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     try { e.querySelector('input').blur(); } catch (x) {}
     e.classList.remove('on'); e.querySelector('.ls').classList.remove('on'); e.querySelector('.x svg').style.transform = 'rotate(90deg)';
-    var r = s.anchor && s.anchor.isConnected ? s.anchor.getBoundingClientRect() : null;
+    var r = s.anchor && s.anchor.isConnected ? home(s.anchor) : null;
     bx.style.transition = 'width .4s ' + EASE + ', opacity .3s ease .15s'; e.style.transition = 'transform .4s ' + EASE;
     bx.style.width = '44px'; if (r) e.style.transform = 'translate(' + r.left + 'px,' + r.top + 'px)';
     setTimeout(function () { bx.style.opacity = '0'; }, 120);
+    setTimeout(function () { showAnchor(s.anchor, true); }, 400);
     setTimeout(function () { try { e.remove(); } catch (x) {} }, 520); }
   function render(list, msg) { if (!el) return; var ls = el.querySelector('.ls'); ls.innerHTML = '';
     if (msg) { var p = document.createElement('p'); p.textContent = msg; ls.appendChild(p); }
@@ -55,11 +58,11 @@
         .catch(function () { if (el && st === me) render([], PT() ? 'A pesquisa precisa de ligação.' : 'Search needs a connection.'); }); }, 300); }
   function open(o) {
     o = o || {}; if (el) { close(); return; }   // the button again folds it
-    var a = o.anchor && o.anchor.getBoundingClientRect ? o.anchor : null, r = a ? a.getBoundingClientRect() : { left: innerWidth - 60, top: innerHeight / 2, width: 44 };
+    var a = o.anchor && o.anchor.getBoundingClientRect ? o.anchor : null, r = a ? home(a) : { left: innerWidth - 60, top: innerHeight / 2, width: 44 };
     el = document.createElement('div'); el.className = 'wf-ms'; el.setAttribute('role', 'search');
     el.innerHTML = '<div class="bx"><span class="ic" aria-hidden="true">' + MAG + '</span><input type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="' + (PT() ? 'Procurar um local' : 'Find a place') + '" placeholder="' + (PT() ? 'Procurar um local' : 'Find a place') + '">' +
       '<button type="button" class="x mbtn" aria-label="' + (PT() ? 'Fechar a pesquisa' : 'Close search') + '"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div><ul class="ls" role="listbox"></ul>';
-    document.body.appendChild(el);
+    document.body.appendChild(el); showAnchor(a, false);   // the box takes the button's place: the button under it hides
     st = { anchor: a, map: a && a.closest ? a.closest('[data-wf-maproot]') : null, query: o.query, go: o.go, w: Math.min(358, innerWidth - 32), x: r.left, y: r.top };
     var bx = el.querySelector('.bx'), inp = el.querySelector('input');
     // starts as the round button and grows leftwards from it into the full box
@@ -83,6 +86,6 @@
     var up = function () { if (D && !D.moved && el) { try { inp.focus({ preventScroll: true }); } catch (x) {} } D = null; bx.style.cursor = ''; };
     bx.addEventListener('pointerup', up); bx.addEventListener('pointercancel', up);
   }
-  addEventListener('pagehide', function () { if (el) { try { el.remove(); } catch (x) {} el = null; st = null; } });
+  addEventListener('pagehide', function () { if (el) { showAnchor(st && st.anchor, true); try { el.remove(); } catch (x) {} el = null; st = null; } });
   window.__wfMapSearch = { open: open, close: close, isOpen: function () { return !!el; } };
 })();

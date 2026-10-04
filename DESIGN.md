@@ -206,6 +206,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
   - while a finger moves the map (and while it glides), the drawn map and markers move as one picture; the full redraw follows about four times a second and on release;
   - fire stations thin out as the map zooms out (wider spacing near the whole state or country), so the map stays light and readable.
 - **Find a place:** a round search button above the full-screen button (bottom right of the main map), same size and look. It opens a panel dropping from the top (like the area picker) with a pill search field and a round X. Results are list rows (place bold, the levels above as an annotation), one row per place (a city, its municipality and district of the same name are one result). A pick closes the panel, moves the map there and the area follows the map. Searches only the live regions the account can see.
+- **Find a place box over the map:** the search button grows leftwards into the floating box; the box's right end sits exactly where the button was (its centre, ignoring the press swell), in line with the round-button column, so the X lands where the magnifier was. While the box is open the button under it is hidden; it reappears as the box folds back into it.
 
 ## 6. Motion and touch
 
