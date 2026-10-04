@@ -872,25 +872,30 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
 //   window.__wfNudge.on(selector, flagKey)  flagKey: the sessionStorage flag that keeps it alive across screens until the control is used
 (function () {
   if (window.__wfMenuOnly || window.__wfNudge || typeof document === 'undefined') return;
-  var el = null, dot = null, raf = 0, sel = '', flag = '', last = 0, shown = false;
+  var el = null, dot = null, gl = [], raf = 0, sel = '', flag = '', last = 0, shown = false;
   function css() { if (document.getElementById('wf-nudge-css')) return; var st = document.createElement('style'); st.id = 'wf-nudge-css';
     st.textContent = '#wf-nudge{position:fixed;left:0;top:0;z-index:99990;width:80px;height:80px;margin:-40px 0 0 -40px;box-sizing:border-box;border-radius:50%;background:rgba(var(--wf-y-rgb,229,255,0),0.3);box-shadow:inset 0 0 0 2px rgba(var(--wf-y-rgb,229,255,0),0.95),0 0 0 1px rgba(28,28,30,0.35);pointer-events:none;opacity:0;transition:opacity .35s ease;animation:wfnd 1.8s infinite}#wf-nudge.on{opacity:1}' +
+      '.wf-ndg{position:fixed;z-index:99989;width:31px;height:0;opacity:0;pointer-events:none;filter:blur(2px);transition:opacity .35s ease,height .35s ease,top .35s ease}.wf-ndg.on{opacity:1;animation:wfndg 1.8s ease-in-out infinite}.wf-ndg.l{left:0;background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),.95) 0,rgba(var(--wf-y-rgb,229,255,0),.55) 4px,transparent 100%)}.wf-ndg.r{right:0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),.95) 0,rgba(var(--wf-y-rgb,229,255,0),.55) 4px,transparent 100%)}@keyframes wfndg{0%,100%{opacity:1}50%{opacity:.4}}@media (prefers-reduced-motion:reduce){.wf-ndg.on{animation:none}}' +
       '@keyframes wfnd{0%,100%{transform:translate(var(--x),var(--y)) scale(1)}50%{transform:translate(var(--x),var(--y)) scale(1.1)}}@media (prefers-reduced-motion:reduce){#wf-nudge{animation:none;transform:translate(var(--x),var(--y))}}';
     document.head.appendChild(st); }
   function find() { var L = document.querySelectorAll(sel); for (var i = 0; i < L.length; i++) { var r = L[i].getBoundingClientRect(); if (r.width > 4 && r.height > 4 && getComputedStyle(L[i]).visibility !== 'hidden') return L[i]; } return null; }
   function frame() {
     raf = requestAnimationFrame(frame);
     if (flag) { try { if (!sessionStorage.getItem(flag)) return off(); } catch (e) {} }
-    var e = el && el.isConnected ? el : (el = find()); if (!e) { dot.classList.remove('on'); return; }
+    var e = el && el.isConnected ? el : (el = find()); if (!e) { dot.classList.remove('on'); edge(0); return; }
     var r = e.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, ok = r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
     if (ok) { var h = document.elementFromPoint(Math.min(innerWidth - 2, Math.max(2, x)), Math.min(innerHeight - 2, Math.max(2, y))); ok = !!h && (e === h || e.contains(h)); }   // a sheet or panel over it: the circle waits
+    // the control is scrolled out of view: the screen's vertical edges glow on the side it is on (top or bottom) until it is back
+    edge(r.bottom <= 0 ? -1 : r.top >= innerHeight ? 1 : 0);
     dot.style.setProperty('--x', x + 'px'); dot.style.setProperty('--y', y + 'px'); dot.classList.toggle('on', ok);
     var n = Date.now(); if (ok && n - last > 2600) { last = n; try { dot.animate([{ opacity: 1 }, { opacity: 0.55, offset: 0.4 }, { opacity: 1 }], { duration: 260 }); var ic = e.querySelector('svg'); if (ic && ic.animate) ic.animate([{ scale: '1' }, { scale: '1.25', offset: 0.4, easing: 'cubic-bezier(.2,.8,.3,1)' }, { scale: '1' }], { duration: 260 }); } catch (x2) {} }
   }
+  function edge(d) { gl.forEach(function (g) { g.classList.toggle('on', d !== 0); if (d) { g.style.top = d < 0 ? '0' : (innerHeight * 0.6) + 'px'; g.style.height = (innerHeight * 0.4) + 'px'; } else g.style.height = '0'; }); }
   function used(ev) { if (ev && ev.target && ev.target.closest && ev.target.closest(sel)) off(true); }
-  function off(clear) { cancelAnimationFrame(raf); raf = 0; if (dot) { dot.remove(); dot = null; } document.removeEventListener('pointerdown', used, true); el = null; if (clear && flag) { try { sessionStorage.removeItem(flag); } catch (e) {} } }
+  function off(clear) { cancelAnimationFrame(raf); raf = 0; if (dot) { dot.remove(); dot = null; } gl.forEach(function (g) { g.remove(); }); gl = []; document.removeEventListener('pointerdown', used, true); el = null; if (clear && flag) { try { sessionStorage.removeItem(flag); } catch (e) {} } }
   window.__wfNudge = {
     on: function (s, k) { if (raf) return; sel = s; flag = k || ''; css(); dot = document.createElement('div'); dot.id = 'wf-nudge'; dot.setAttribute('aria-hidden', 'true'); document.body.appendChild(dot);
+      gl = ['l', 'r'].map(function (k) { var g = document.createElement('div'); g.className = 'wf-ndg ' + k; g.setAttribute('aria-hidden', 'true'); document.body.appendChild(g); return g; });
       document.addEventListener('pointerdown', used, true); last = Date.now() - 1800; raf = requestAnimationFrame(frame); },
     off: function () { off(true); }
   };
