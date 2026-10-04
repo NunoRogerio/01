@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
-// The menu on every screen (Oct 3, 18:34). The menu button stays put; the screen slides left from under it to uncover the
+// The menu on every screen (Oct 3, 18:34). The menu button stays put; the screen slides right from under it to uncover the
 // menu, and slides back to the same screen to close it (it never goes to the main screen). The menu itself is the main
 // screen's menu, loaded underneath in menu-only mode (Main.dc.html?menu=1), so there is one menu for the whole app.
 // The main screen has its own copy of this behaviour built in; this file is for the other screens.
@@ -54,23 +54,30 @@
     clearTimeout(ct); ct = setTimeout(function () { btn.style.transition = ''; if (!to) btn.__restL = null; try { if (btn.animate) btn.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} if (to && mode) btn.setAttribute('data-wf-x', '1'); }, (to ? 0 : back()) + BD - 40); }
   // while the menu shows, touches go through the screen's frame to the menu underneath (the screen itself and the button keep theirs)
   function through(on) { var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
-  function slide(x) { var p = page(); if (!p) return; p.style.transition = 'transform ' + DUR + 'ms ' + EASE; p.style.transform = x ? 'translateX(' + x + 'px)' : ''; p.style.boxShadow = x ? SH : ''; p.style.willChange = 'transform'; }
+  // (Oct 4, 15:56) as on the main screen: the screen slides to the RIGHT and rests under the icon column (cut at the column's edge,
+  // wiping the column in as it goes); folded to the column it stays in place, cut at the column; closing, it slides back from the right
+  function slide(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
+    var ease = DUR + 'ms ' + EASE; p.style.willChange = 'transform, clip-path';
+    if (m && !p.style.clipPath) { p.style.transition = 'none'; p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; void p.offsetWidth; }
+    p.style.transition = 'transform ' + ease + ', clip-path ' + ease + ', -webkit-clip-path ' + ease;
+    p.style.transform = D ? 'translateX(' + D + 'px)' : ''; p.style.boxShadow = m ? SH : '';
+    if (m) p.style.clipPath = p.style.webkitClipPath = 'inset(0px ' + R + 'px 0px -24px)'; else { p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; setTimeout(function () { if (!mode && p) { p.style.clipPath = p.style.webkitClipPath = ''; } }, DUR + 60); } }
   function mw() { var h = host(); return Math.min(h ? h.offsetWidth : 390, MW); }
   function open() {
     frame(); if (!ready) { want = open; return; }
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-    place(); mode = 'open'; through(true); ifr.style.visibility = 'visible'; send('open'); slide(-(mw() + 32)); clack(true);
+    place(); mode = 'open'; through(true); ifr.style.visibility = 'visible'; send('open'); slide('open'); clack(true);
   }
   function close() {
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-    mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(0); clack(false); through(false);
+    mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(''); clack(false); through(false);
     setTimeout(function () { if (!mode && ifr) ifr.style.visibility = 'hidden'; var p = page(); if (p && !mode) { p.style.boxShadow = ''; p.style.willChange = ''; } }, DUR + 50);
   }
   function toggle() { if (mode) close(); else open(); }
   // the menu tells which way it is: a section open, or folded to its icon column
   window.addEventListener('message', function (e) { if (e.origin !== location.origin || !e.data || !e.data.wfMenu) return; var m = e.data.wfMenu;
     if (m === 'dlgon' || m === 'dlgoff') { if (btn) { btn.style.opacity = m === 'dlgon' ? '0' : ''; btn.style.pointerEvents = m === 'dlgon' ? 'none' : 'auto'; } return; }   // (Oct 4) a dialog in the menu: the button gives way
-    if (m === 'rail' && mode) { mode = 'rail'; slide(-60); } else if (m === 'open' && mode) { mode = 'open'; slide(-(mw() + 32)); } else if (m === 'close' && mode) close(); });
+    if (m === 'rail' && mode) { mode = 'rail'; slide('rail'); } else if (m === 'open' && mode) { mode = 'open'; slide('open'); } else if (m === 'close' && mode) close(); });
   // keep the button on its spot while the screen is showing (the screen can re-render or resize)
   function tick() { if (!btn) make(); else if (!mode) place(); }
   if (document.readyState !== 'loading') setTimeout(tick, 300); else document.addEventListener('DOMContentLoaded', function () { setTimeout(tick, 300); });

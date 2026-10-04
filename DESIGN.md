@@ -943,3 +943,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Supersedes the "drone feed on the candidate screen / full-screen map / maximized" entries: the candidate page's drone button now opens the same floating feed as the fire page and the chats (shared `feedcam.js`), above the map, not in place of it. It drags, throws, bounces and swaps with other feeds, shrinks at the edges, restores on long press, closes with the X or a fast swipe up. The old in-band, full-screen and maximized drone panels of the candidate page are gone.
 - Its Thermal / Visual switch uses the drone's real thermal footage (a second video fading in); feeds without thermal footage show the false-colour view.
 - Standing rule: similar items look and behave the same; a behaviour added to one (drag, swipe, shrink, close) is added to all.
+
+## Menu on every screen: the whole screen slides right (Oct 4, 16:00)
+- Same as the main screen: tapping the burger on any screen (fire, candidate, station, drone, projection) slides the whole screen to the right, tucked under the 60px icon column, cut at the column's edge; closing slides it back left. Tapping the active section icon folds the open menu to the column and back (inverse slide).
+- Shared in `menu.js` (`slide()`), so a new screen with the menu gets it by loading the script. On these screens the column mode crops the screen at the column instead of resizing it as on Main.
