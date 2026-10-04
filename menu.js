@@ -67,8 +67,8 @@
   // viewport the screens read both shrink, and everything that reads them (maps, bands, rows) lays out again, as on the main screen
   var vp0 = null;
   function rail(on, p) { var V = window.__wfVP; if (!V) return; var HW = host() ? host().offsetWidth : 390;
-    if (on) { if (!vp0) vp0 = V; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); }
-    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); }
+    if (on) { if (!vp0) vp0 = V; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); p.style.width = (HW - 60) + 'px'; p.style.overflow = 'hidden'; }
+    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); p.style.width = ''; p.style.overflow = ''; }
     try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }
   function mw() { var h = host(); return Math.min(h ? h.offsetWidth : 390, MW); }
   function open() {
