@@ -17,8 +17,8 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=146"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=183"></script>
-<script src="i18n.js?v=157"></script>
+<script src="prefs.js?v=184"></script>
+<script src="i18n.js?v=158"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=66"></script>
 <script src="tour.js?v=73"></script>
@@ -541,6 +541,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{me.title}}</span>
           <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
           <span class="wf-dot" style="margin-top: 4px; font-size: 15px; line-height: 20px; color: #636366">{{me.access}}</span>
+          <!-- (Oct 4) the profile's description from its login card, a group of its own (24px), with a "Demo profile" tag at the end of the text -->
+          <span style="display: {{me.sumD}}; margin-top: 24px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty">{{me.sum}}<span style="display: {{me.demoD}}; align-items: center; vertical-align: 1px; height: 24px; margin-left: 8px; padding: 0 8px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C; font-size: 13px; line-height: 16px; font-weight: 600; white-space: nowrap">Demo profile</span></span>
         </span>
       </div>
         <!-- Sign out belongs with the profile -->
@@ -1095,7 +1097,7 @@ class Component extends DCLogic {
         clearTimeout((this._segT = this._segT || {})[label]);
         this._segT[label] = setTimeout(() => { pick(o[0]); const P2 = Object.assign({}, (this.state || {}).segPend); delete P2[label]; this.setState({ segPend: P2 }); }, 640); } })) }; };
     return {
-      me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none' },
+      me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none', sum: me.sum || '', sumD: me.sum || me.demo ? 'block' : 'none', demoD: me.demo ? 'inline-flex' : 'none' },
       // Menu (Oct 3, 17:18): the screen slides left to uncover it; the icon column stays on the right edge
       pm: (() => { const vw = (window.__wfVP || {}).w || 390, mw = Math.min(vw, 564), open = pmMode === 'open', rail = pmMode === 'rail';
         const sel = (k) => open && pmSec === k, Y = 'var(--wf-y)';

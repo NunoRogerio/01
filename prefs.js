@@ -42,6 +42,14 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
     admin: ['JW', 'James Whitmore', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/faces/us-m1.jpg', 'en']
   };
+  // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)
+  var SUMS = {
+    pt: 'Leads the national wildfire command. Sets the national alert level, moves reinforcement groups and aerial means between districts, and decides when a fire goes to national command.',
+    ca: 'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.',
+    nv: 'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.',
+    amz: 'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.',
+    admin: 'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.'
+  };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
   var SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 34];
@@ -113,10 +121,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
     o.push('image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{filter:url(#wfNightTiles)}');
     o.push('rect[fill="#F2F2F7"]{fill:#262629}');
-    o.push('path[fill="#3A3A3C"][fill-opacity="0.4"]{fill:#E5E5EA;fill-opacity:.22;stroke:#F2F2F7;stroke-opacity:.8}');   /* burned area reads on the night map */
     o.push('[aria-label^="Map legend"] path[stroke="#1C1C1E"]{stroke:#E5E5EA}');
     o.push('[data-wf-maploader] path[fill="#3A3A3C"]{fill:#D1D1D6}[data-wf-maploader] path[stroke="#3A3A3C"]{stroke:#D1D1D6}');   /* the loader's flame reads light on the dark grey */
-    o.push('path[fill-rule="evenodd"][fill="#FFFFFF"]{fill:#141416;fill-opacity:0.2}');   // outside the chosen region: a light dim, not a bright veil
     return o.join('\n');
   }
 
@@ -129,7 +135,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       '<feComponentTransfer><feFuncR type="table" tableValues="1 0"/><feFuncG type="table" tableValues="1 0"/><feFuncB type="table" tableValues="1 0"/></feComponentTransfer>' +
       '<feColorMatrix type="hueRotate" values="180"/><feColorMatrix type="saturate" values="0.55"/>' +
       '<feComponentTransfer><feFuncR type="linear" slope="0.52" intercept="0.21"/><feFuncG type="linear" slope="0.52" intercept="0.21"/><feFuncB type="linear" slope="0.54" intercept="0.22"/></feComponentTransfer>' +
-      '</filter><filter id="wfDayTiles" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0.7"/><feComponentTransfer><feFuncR type="linear" slope="0.756"/><feFuncG type="linear" slope="0.756"/><feFuncB type="linear" slope="0.756"/></feComponentTransfer></filter></svg>';
+      '</filter></svg>';
     document.body.appendChild(d);
   }
 
@@ -149,7 +155,6 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // Stage tags (Oct 3, 18:50; 21:09): the icon sits at the left, 8px in; the label is centred in the space between the icon and the tag's right edge
     '.wf-qual>svg:first-child{width:24px!important;height:24px!important}.wf-qual>svg:first-child path[stroke]{vector-effect:non-scaling-stroke;stroke-width:2px}html.wf-black,html.wf-black body{background:#000000!important}html.wf-black .wf-mb{opacity:0!important;pointer-events:none!important}.wf-dlg,section[role=dialog][data-swipe="down"],section[role=alertdialog][data-swipe="down"]{overflow:hidden}.wf-dlg::before,section[role=dialog][data-swipe="down"]::before,section[role=alertdialog][data-swipe="down"]::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;z-index:3;pointer-events:none;opacity:.4;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px)}.wf-dlg [data-grab-close],section[role=dialog][data-swipe="down"] [data-grab-close],section[role=alertdialog][data-swipe="down"] [data-grab-close]{padding-top:16px!important}.wf-bi path{transform-box:view-box;transform-origin:12px 12px;transition:transform .2s cubic-bezier(.3,0,.2,1),opacity .12s ease}.wf-bi .b1{transform:translateY(-5px)}.wf-bi .b3{transform:translateY(5px)}[data-wf-x] .wf-bi .b1{transform:rotate(45deg)}[data-wf-x] .wf-bi .b2{opacity:0}[data-wf-x] .wf-bi .b3{transform:rotate(-45deg)}.qtag.wf-stg,.wf-hst-fs .qtag.wf-stg,.wf-qual.hd .qtag.wf-stg,.wf-qual .qtag.wf-stg{padding-left:32px!important;padding-right:8px!important}.wf-stg{position:relative;justify-content:center!important;padding-left:32px!important;padding-right:8px!important}.wf-stg>svg{position:absolute;left:8px;top:50%;margin:0!important;transform:translateY(-50%)}' +   /* lists: no divider between items, only the line under the list's header */
     '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
-  'html:not(.wf-dark) image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{filter:url(#wfDayTiles)}' +   // light theme: the map a little less saturated and 10% darker, then 16% darker again (Oct 4, 07:37) (Oct 4, 00:06; markers and legends untouched)
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over an 8px lime bar, rounded at both ends, that glides between them; shared by every tab set */
   '[data-wf-kpicard]>span:first-child[style*="min-height: 40px"]{min-height:40px!important}' +   // mini cards: the title sits 40% closer to its value (all cards)
   '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:none;margin-bottom:16px!important}' +
@@ -307,9 +312,10 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   var who = PEOPLE[role] || (role === 'design' ? PEOPLE.admin : null);   // a removed demo profile falls back to the administrator
   // A profile created on this phone (login screen, New profile) signs in with its area's role and shows as itself
   var cu = null; try { var cid = localStorage.getItem('wf-custom'); if (cid) cu = (JSON.parse(localStorage.getItem('wf-custom-profiles') || '[]') || []).find(function (x) { return x && x.id === cid && x.base === role; }) || null; } catch (e) {}
+  var sumOf = function (r) { var e = null; try { e = (JSON.parse(localStorage.getItem('wf-profile-edits') || '{}') || {})[r]; } catch (x) {} return e && e.sum != null ? e.sum : (SUMS[r] || ''); };   /* an edit made on the login card wins */
   window.__wfPrefs = {
     role: role,
-    person: cu ? { id: role, code: cu.code, name: cu.name, title: cu.title || '', org: cu.org || '', access: 'All features. ' + (who ? who[4] : 'All regions'), photo: cu.photo || '', lang: who ? who[6] : 'en', custom: true } : who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'All features. ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6] } : null,
+    person: cu ? { id: role, code: cu.code, name: cu.name, title: cu.title || '', org: cu.org || '', access: 'All features. ' + (who ? who[4] : 'All regions'), photo: cu.photo || '', lang: who ? who[6] : 'en', custom: true, sum: cu.sum || '', demo: false } : who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'All features. ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6], sum: sumOf(role === 'design' ? 'admin' : role), demo: true } : null,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) {
       // Applied at once, like the language: no animation on the text size (the switcher's yellow has already landed)

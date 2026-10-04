@@ -15,8 +15,8 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=146"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=183"></script>
-<script src="i18n.js?v=157"></script>
+<script src="prefs.js?v=184"></script>
+<script src="i18n.js?v=158"></script>
 <script src="live.js?v=42"></script>
 
 <title>Terrain map</title>
@@ -73,7 +73,6 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
   <div style="position: absolute; left: 0; top: 0; width: 1000px; height: 1000px; transform-origin: 0 0; transform: translate({{tx}}px, {{ty}}px) scale({{s}}); transition: {{mapTr}}">
     <svg width="1" height="1" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
       <rect x="-400000" y="-200000" width="1000000" height="400000" fill="{{pal.bg}}"></rect>
-      <path d="{{geo.selState}}" fill="{{pal.sel}}"></path>
       <sc-if value="{{pal.img}}" hint-placeholder-val="{{ false }}">
         <sc-if value="{{pal.reg}}" hint-placeholder-val="{{ false }}"><image href="{{pal.reg}}" x="-22627" y="-45479" width="65660" height="57995" preserveAspectRatio="none"></image></sc-if>
         <defs>
@@ -97,21 +96,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <path d="{{geo.coast}}" fill="none" stroke="{{pal.coast}}" stroke-width="1.3" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       <path d="{{geo.roads}}" fill="none" stroke="{{pal.roadCase}}" stroke-width="{{geo.roadCaseW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       <path d="{{geo.roads}}" fill="none" stroke="{{pal.roads}}" stroke-width="{{geo.roadW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-      <path d="{{geo.mask}}" fill="{{pal.mask}}" fill-opacity="{{pal.maskOp}}" fill-rule="evenodd"></path>
-      <path d="{{geo.selCounty}}" fill="#E86A00" fill-opacity="0.06" stroke="#E86A00" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="7 5" vector-effect="non-scaling-stroke"></path>
     </svg>
     <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
-      <g opacity="0.34">
-      <sc-for list="{{burns}}" as="bn" hint-placeholder-count="0">
-        <path d="{{bn.area}}" fill="#3A3A3C" stroke="#1C1C1E" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-      </sc-for>
-      </g>
-      <sc-for list="{{burns}}" as="bn" hint-placeholder-count="0">
-        <path d="{{bn.front}}" fill="none" stroke="#E8590C" stroke-opacity="0.95" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-      </sc-for>
-      <sc-for list="{{burnFx}}" as="bf" hint-placeholder-count="0">
-        <path d="{{bf.front}}" fill="none" stroke="#E8590C" stroke-opacity="0.95" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><animate attributeName="stroke" values="#D9480F;#FF7A1A;#D9480F" dur="2.4s" repeatCount="indefinite"></animate></path>
-      </sc-for>
       <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
            wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
@@ -903,75 +889,6 @@ class Component extends DCLogic {
     }
     return { cx, cy, s };
   }
-  // Real heat areas for the live map: the VIIRS detections (375 m pixels) near the visible fires, clustered by
-  // proximity so fires that have grown together show as one area, each cluster outlined by its convex hull.
-  heatAreas(FIRES_V) {
-    const C = window.__wfLiveCands || [];
-    const key = FIRES_V.map((g) => g.id).join(',') + '|' + C.length;
-    if (this._haK === key) return this._ha;
-    const G = this.geo(), pts = [];
-    FIRES_V.forEach((g) => {
-      const la = 34.19 - (g.y - 662) / 2829, lo = (g.x - 518) / 2345 - 118.13;
-      C.forEach((c) => { const m = c[9]; if (!m || Math.abs(m.lat - la) > 0.08 || Math.abs(m.lon - lo) > 0.1) return;
-        const km = Math.hypot((m.lat - la) * 111.32, (m.lon - lo) * 111.32 * Math.cos(la * Math.PI / 180)); if (km > 6) return;
-        const q = G.P(m.lat, m.lon); if (!pts.some((r) => Math.abs(r[0] - q[0]) < 0.5 && Math.abs(r[1] - q[1]) < 0.5)) pts.push([q[0], q[1], m.lat]); });
-    });
-    // single-link clusters: detections within ~1.5 km belong to the same fire area
-    const par = pts.map((_, i) => i), find = (i) => (par[i] === i ? i : (par[i] = find(par[i])));
-    const LIM = 1500 / 111320 * 2829;
-    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) if (Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]) < LIM) par[find(i)] = find(j);
-    const groups = {}; pts.forEach((q, i) => { (groups[find(i)] = groups[find(i)] || []).push(q); });
-    const hull = (P) => { P = P.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); if (P.length < 3) return P; const x = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-      const lo = []; P.forEach((q) => { while (lo.length >= 2 && x(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); });
-      const up = []; P.slice().reverse().forEach((q) => { while (up.length >= 2 && x(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); });
-      return lo.slice(0, -1).concat(up.slice(0, -1)); };
-    const out = Object.values(groups).map((g) => {
-      const hy = 187.5 / 111320 * 2829, hx = 187.5 / (111320 * Math.cos((g[0][2] || 40) * Math.PI / 180)) * 2345, sq = [];
-      g.forEach((q) => { sq.push([q[0] - hx, q[1] - hy], [q[0] + hx, q[1] - hy], [q[0] + hx, q[1] + hy], [q[0] - hx, q[1] + hy]); });
-      const H = hull(sq);
-      return { area: 'M' + H.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' L') + ' Z', front: '', pts: H, bb: [Math.min(...H.map((q) => q[0])), Math.min(...H.map((q) => q[1])), Math.max(...H.map((q) => q[0])), Math.max(...H.map((q) => q[1]))] };
-    });
-    this._haK = key; this._ha = out; return out;
-  }
-  fireBurn(g) {
-    const FB = window.__wfBurnMemo || (window.__wfBurnMemo = new Map()), mk = (g && g.id) + '|' + (g && g.x) + '|' + (g && g.y) + '|' + (g && g.note);
-    const hit = FB.get(mk); if (hit) return hit;
-    const out = this.fireBurn0(g); if (FB.size > 3000) FB.clear(); FB.set(mk, out); return out;
-  }
-  fireBurn0(g) {
-    // Burned area in map units: a wind-driven teardrop that grows downwind from the ignition point,
-    // with canyon "fingers" at the head and an uneven perimeter. Fronts = the still-active edges.
-    g = g || {}; const id = String(g.id || 'f');
-    let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-    const rnd = (k) => { let x = (h ^ (k * 2654435761)) >>> 0; x ^= x << 13; x >>>= 0; x ^= x >> 17; x ^= x << 5; x >>>= 0; return (x % 10000) / 10000; };
-    const phi = ((135 + (h % 120) - 60) * Math.PI) / 180;
-    const m = /(\d+)%/.exec(String(g.note || '')), cont = m ? Number(m[1]) / 100 : 0.3;
-    const R = 38 + (h % 60), N = 96, P = [], act = [];
-    const f1 = phi + (rnd(1) - 0.5) * 0.9, f2 = phi + (rnd(2) - 0.5) * 1.3;
-    for (let i = 0; i < N; i++) {
-      const a = (i / N) * Math.PI * 2, c = Math.cos(a - phi);
-      let r = R * (0.22 + 1.55 * Math.pow(Math.max(0, (c + 0.2) / 1.2), 2.2));
-      r *= 1 + 0.4 * Math.exp(-Math.pow(Math.atan2(Math.sin(a - f1), Math.cos(a - f1)) / 0.16, 2)) + 0.28 * Math.exp(-Math.pow(Math.atan2(Math.sin(a - f2), Math.cos(a - f2)) / 0.13, 2));
-      r *= 1 + 0.07 * Math.sin(a * 5 + rnd(3) * 6) + 0.05 * Math.sin(a * 9 + rnd(4) * 6) + 0.03 * Math.sin(a * 17 + rnd(5) * 6);
-      P.push([+(g.x + r * Math.cos(a)).toFixed(1), +(g.y + r * Math.sin(a)).toFixed(1)]);
-      // Head front: the downwind arc, shortened as containment grows. Some fires also run up one flank.
-      const head = c > -1 + 2 * Math.min(0.92, 0.55 + cont * 0.45);
-      const side = h % 2 === 0 ? 1 : -1, fl = Math.cos(a - (phi + side * 1.35));
-      act.push(head || (cont < 0.6 && fl > 0.93));
-    }
-    const area = 'M' + P.map((q) => q[0] + ' ' + q[1]).join(' L') + ' Z';
-    const bb = [Math.min(...P.map((q) => q[0])), Math.min(...P.map((q) => q[1])), Math.max(...P.map((q) => q[0])), Math.max(...P.map((q) => q[1]))];
-    let front = '', open = false;
-    const start = act.findIndex((v, i) => v && !act[(i - 1 + N) % N]);
-    if (start < 0) return { area, pts: P, bb, front: act[0] ? area : '' };
-    for (let k = 0; k <= N; k++) {
-      const i = (start + k) % N;
-      if (act[i]) { front += (open ? ' L' : ' M') + P[i][0] + ' ' + P[i][1]; open = true; } else open = false;
-    }
-    return { area, pts: P, bb, front: front.trim() };
-  }
-  // Stable thinning: one marker per cell of a grid fixed to the map (not the screen), sized for the zoom in
-  // power-of-two steps. Panning never changes which markers show; only a real zoom step does.
   thinKeep(key, items, xy, better, px, sc) {
     const k = Math.ceil(Math.log2(px / Math.max(1e-9, sc))), T = this._thin || (this._thin = {}), c = T[key];
     if (c && c.items === items && c.k === k) return c.keep;
@@ -1370,9 +1287,7 @@ class Component extends DCLogic {
     const FK = Array.isArray(p.fires) ? this.thinKeep('fires', p.fires, (g) => [g.x, g.y], (i, j) => { const A = p.fires[i], B = p.fires[j], a1 = A.info && !A.info.resolved ? 1 : 0, b1 = B.info && !B.info.resolved ? 1 : 0; return a1 !== b1 ? a1 > b1 : (A.ha || 0) > (B.ha || 0); }, 30 * SP, s) : null;
     // A fire stays drawn while any part of its shape is on screen (not only its centre), and a shape big enough
     // to read is never thinned away: once the polygon shows, it keeps showing at every zoom.
-    const fBB = (g) => { const b = this.fireBurn(g).bb || [g.x, g.y, g.x, g.y]; return b; };
-    const visF = (g) => { const b = fBB(g); return tx + b[2] * s > -40 && tx + b[0] * s < W + 40 && ty + b[3] * s > WN0.t - 40 && ty + b[1] * s < WN0.b + 40; };
-    const bigF = (g) => { const b = fBB(g); return (b[2] - b[0]) * s >= 24 || (b[3] - b[1]) * s >= 24; };
+    const visF = (g) => vis(g.x, g.y), bigF = () => false;   /* (Oct 4) no burn shapes on the map: a fire is its marker */
     const FIRES_V = Array.isArray(p.fires) ? p.fires.map((g, i) => [g, i]).filter(([g, i]) => visF(g) && (FK.has(i) || bigF(g))).sort((a, b) => ((b[0].info && !b[0].info.resolved ? 1 : 0) - (a[0].info && !a[0].info.resolved ? 1 : 0)) || (a[1] - b[1])).map((q) => q[0]) : [];   /* (Oct 4) stable order and no cap tied to the view: panning never reshuffles or drops markers */
     const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
     const IK = IGN_ALL ? this.thinKeep('ign', IGN_ALL, (g) => [g.x, g.y], (i, j) => IGN_ALL[i].conf > IGN_ALL[j].conf, 44 * SP, s) : null;   /* (Oct 4) fewer markers: one per 44px cell, the likeliest */
@@ -1632,10 +1547,9 @@ class Component extends DCLogic {
         const seaPt = s < 0.06 ? seaFar : sea;
         const laScope = !p.scopeSt || (p.scopeSt === 'CA' && (!p.scopeCo || p.scopeCo === 'Los Angeles'));
         const inScope = (c) => p.scopeSt ? (c.st === p.scopeSt && (!p.scopeCo || c.co === p.scopeCo)) : c.co === 'Los Angeles';
-        const selShape = selC ? selC.d : (selS ? selS.d : '');
         return {
           geo: { ocean: G.ocean, lakes: G.lakes, coast: G.coast, stateLines: G.stateLines, countyLines: G.countyLines, roads: G.roads, forest: G.forest,
-            roadW: near ? 3 : 1.8, roadCaseW: near ? 5 : 3.4, selState: selS ? selS.d : '', selCounty: selC ? selC.d : '', mask: selShape ? G.world + selShape : '' },
+            roadW: near ? 3 : 1.8, roadCaseW: near ? 5 : 3.4 },
           stateLabels: [],   // the chosen country/state is already named in the header above the map
           ...(() => {
             // Declutter: markers first, then state, county and city labels; anything that would overlap is dropped.
@@ -1690,20 +1604,14 @@ class Component extends DCLogic {
       })(),
       otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: (window.__wfY || '#E5FF00'), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% likelihood.\nTap the crosshair to cycle to it.')) : [],
       fireMarks: (LY.fires || LY.resolved) && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.filter((g) => (g.info && g.info.resolved) ? LY.resolved : LY.fires).map((g) => {
-        const B = this.fireBurn(g), sp = B.pts.map(([x, y]) => [tx + x * s, ty + y * s]);
-        let x0 = Math.min(...sp.map((q) => q[0])), x1 = Math.max(...sp.map((q) => q[0])), y0 = Math.min(...sp.map((q) => q[1])), y1 = Math.max(...sp.map((q) => q[1]));
-        const small = MANY || !!window.__wfLiveMap || x1 - x0 < 24 || y1 - y0 < 24, ox = tx + g.x * s, oy = ty + g.y * s;
-        const zone = small
-          ? { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' }
-          : { zl: +x0.toFixed(1), zt: +y0.toFixed(1), zw: +(x1 - x0).toFixed(1), zh: +(y1 - y0).toFixed(1), rad: '0', flameD: 'none', clip: "path('M" + sp.map((q) => (q[0] - x0).toFixed(1) + ' ' + (q[1] - y0).toFixed(1)).join(' L') + " Z')" };
-        const anc = small ? { left: +ox.toFixed(1), top: +(oy - 14).toFixed(1) } : { left: +((x0 + x1) / 2).toFixed(1), top: +y0.toFixed(1) };
+        const ox = tx + g.x * s, oy = ty + g.y * s;
+        const zone = { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' };
+        const anc = { left: +ox.toFixed(1), top: +(oy - 14).toFixed(1) };
         return withTip({ ...anc, ...zone, pulseD: MANY ? 'none' : 'inline', _g: g, fill: (g.info && g.info.resolved) ? '#6F2B06' : '#E8590C', aria: ((g.info && g.info.resolved) ? 'Resolved fire ' : 'Active fire ') + g.id + ', ' + g.place + '. Open forces dispatched', pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const v = { id: g.id, place: g.place, note: g.note, x: g.x, y: g.y, det: g.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (err) {} } }, ((g.info && g.info.resolved) ? 'Resolved fire · ' : 'Active fire · ') + g.place, (/^Confirmed from /.test(g.note || '') ? 'Confirmed by satellite' : (g.note || g.id)) + '.\nTap to see forces dispatched.');
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
       ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow ? gFake : '' }, gNowD: LY.burn ? 'inline' : 'none', ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
-      burns: LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? (window.__wfLiveMap ? this.heatAreas(FIRES_V) : FIRES_V.map((g) => { const b = this.fireBurn(g); return MANY ? b : { ...b, front: '' }; })) : [],
-      burnFx: !MANY && !window.__wfLiveMap && LY.fires && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.map((g) => this.fireBurn(g)).filter((b) => b.front) : [],
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */
