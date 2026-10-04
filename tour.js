@@ -426,14 +426,14 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
         if (hit) v = Math.min(-280, v * Math.exp(-dt / 0.9)); y += v * dt;
         if (!hit && y <= edge) { hit = true; v *= 0.55; }   // touching the edge: a little slower from here
         var cut = Math.max(0, edge - y); b.style.top = y + 'px'; b.style.clipPath = cut ? 'inset(' + cut + 'px 0 0 0)' : '';
-        if (y + h <= edge) { b.style.visibility = 'hidden'; exiting = false; end(); return; }
+        if (y + h <= edge) { b.style.visibility = 'hidden'; exiting = false; end(); endedCard(); return; }
         requestAnimationFrame(stepX); };
       requestAnimationFrame(stepX); };
     var up = function () { if (!st) return; var s1 = st; if (s1.moved) { tiltLock = s1.i; tiltV = 0; tiltVX = 0; } st = null;   // dropped: it stays where it lands for the rest of this step (tilt off until the next step)
       b.classList.remove('drag');
       var tr = s1.trail, a = tr[0], z = tr[tr.length - 1], vx = 0, vy = 0;
       if (s1.moved && a && z && z[0] - a[0] > 8 && performance.now() - z[0] < 80) { vx = (z[1] - a[1]) / ((z[0] - a[0]) / 1000); vy = (z[2] - a[2]) / ((z[0] - a[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
-      if (vy < -1800 && Math.abs(vy) > Math.abs(vx) * 1.5) { exitTop(vy); return; }   // only a very fast swipe up ends the tour through the top (Oct 3, 22:36); normal throws bounce
+      if (vy < -2340 && Math.abs(vy) > Math.abs(vx) * 1.5) { exitTop(vy); return; }   // only a very fast swipe up ends the tour through the top (Oct 3, 22:36; Oct 4: 30% faster, 1800 to 2340 px/s); slower throws bounce
       if (Math.hypot(vx, vy) > 150) throwIt(vx, vy, s1.i);
       setTimeout(function () { try { var r = bub.getBoundingClientRect(); if (curEl) tick(); else heliPark(r); } catch (x) {} }, 0); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
@@ -444,6 +444,22 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       if (on) { if (sessionStorage.getItem(B) == null) sessionStorage.setItem(B, sessionStorage.getItem(K) || ''); sessionStorage.setItem(K, JSON.stringify({ st: 'CA', co: 'Los Angeles' })); window.__wfMem = Object.assign(window.__wfMem || {}, { scope: { st: 'CA', co: 'Los Angeles' } }); }
       else { var b = sessionStorage.getItem(B); if (b == null) return; sessionStorage.removeItem(B); var v = null; try { v = b ? JSON.parse(b) : null; } catch (x) {} if (b) sessionStorage.setItem(K, b); else sessionStorage.removeItem(K); window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); }
       window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
+  // (Oct 4) after a swipe up ended the tour: a card in the middle of the screen says so; it fades out by itself after 3 s, or with its X
+  function endedCard() { try {
+      var old = document.getElementById('wf-tour-ended'); if (old) old.remove();
+      var c = document.createElement('div'); c.id = 'wf-tour-ended'; c.setAttribute('role', 'status');
+      c.style.cssText = 'position:fixed;left:50%;top:50%;z-index:2147483000;width:min(300px,calc(100vw - 32px));box-sizing:border-box;padding:16px;display:flex;align-items:flex-start;gap:16px;border-radius:28px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);box-shadow:0 8px 32px rgba(0,0,0,.16);font:inherit;color:#000;opacity:0;transform:translate(-50%,-50%) scale(.96);transition:opacity .3s ease,transform .3s ease';
+      var t = document.createElement('p'); t.style.cssText = 'margin:0;flex:1 1 auto;min-width:0;padding-top:11px;font-size:17px;line-height:22px;font-weight:400;color:#000';
+      t.textContent = PT() ? 'Tour terminado. Recomece no ecrã inicial.' : 'Tour ended. Restart on the Home screen.';
+      var x = document.createElement('button'); x.type = 'button'; x.className = 'mbtn'; x.setAttribute('aria-label', PT() ? 'Fechar' : 'Close');
+      x.style.cssText = 'flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,.12);color:#1C1C1E;cursor:pointer';
+      x.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>';
+      c.appendChild(t); c.appendChild(x); document.body.appendChild(c);
+      var gone = false, bye = function () { if (gone) return; gone = true; c.style.opacity = '0'; c.style.transform = 'translate(-50%,-50%) scale(.96)'; setTimeout(function () { try { c.remove(); } catch (e) {} }, 400); };
+      x.addEventListener('click', bye);
+      requestAnimationFrame(function () { requestAnimationFrame(function () { c.style.opacity = '1'; c.style.transform = 'translate(-50%,-50%)'; }); });
+      setTimeout(bye, 3000);
+    } catch (e) {} }
   function end() {
     var d = dot && dot.classList.contains('on') ? dot.getBoundingClientRect() : null;
     if (d && d.width) { try { sessionStorage.setItem('wf-tourhome', JSON.stringify({ x: d.left + d.width / 2, y: d.top + d.height / 2, t: Date.now() })); } catch (e) {} }

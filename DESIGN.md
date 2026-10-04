@@ -889,3 +889,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Main map default layers (Oct 4, supersedes "only ignition candidates")
 - The main map opens with the ignition candidates and the active fires showing. Resolved fires and fire stations stay off until their chips are tapped.
+
+## Tour: swipe up to end, "Tour ended" card (Oct 4)
+- Ending the tour by swiping its text card up now needs a swipe 30% faster (2340 px/s, was 1800); anything slower still bounces back.
+- When a swipe up ends the tour, a card appears in the middle of the screen: "Tour ended. Restart on the Home screen." (PT: "Tour terminado. Recomece no ecrã inicial."). White frosted card, 28px corners, 17px text and a 44px round X. It fades out after 3 s, or at once with the X. The normal end of the tour does not show it.
