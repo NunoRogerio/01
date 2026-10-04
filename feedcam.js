@@ -59,6 +59,14 @@
       order.forEach(function (c) { if (done) return; var q = clampB(f, c.x, c.y); if (!hits(q.x, q.y, d.w, d.h, g, GAP - 0.5)) { p = q; done = true; if (c.h === 'x') hx = 1; else hy = 1; } });
       if (!done) { p = clampB(f, order[0].x, order[0].y); if (order[0].h === 'x') hx = 1; else hy = 1; } });
     return { x: p.x, y: p.y, hx: hx, hy: hy }; }
+  // (Oct 4, 23:03) never left overlapping: when a feed rests on another (or closer than the gap), it moves to the nearest
+  // place beside any open feed or along the edges that keeps the gap from all of them
+  function overlaps(f, x, y) { var d = dims(f); return others(f).some(function (g) { return hits(x, y, d.w, d.h, g, GAP - 0.5); }); }
+  function nearest(f, x, y) { var d = dims(f), B = boundsF(f), c = [{ x: x, y: y }, { x: x, y: B.y0 }, { x: x, y: B.y1 }, { x: B.x0, y: y }, { x: B.x1, y: y }];
+    others(f).forEach(function (g) { var e = dims(g); [x, B.x0, B.x1, g.st.x].forEach(function (cx) { c.push({ x: cx, y: g.st.y + e.h + GAP }, { x: cx, y: g.st.y - d.h - GAP }); }); [y, B.y0, B.y1, g.st.y].forEach(function (cy) { c.push({ x: g.st.x + e.w + GAP, y: cy }, { x: g.st.x - d.w - GAP, y: cy }); }); });
+    var best = null, bd = 1e9; c.forEach(function (q) { q = clampB(f, q.x, q.y); if (overlaps(f, q.x, q.y)) return; var dd = Math.hypot(q.x - x, q.y - y); if (dd < bd) { bd = dd; best = q; } });
+    return best || clampB(f, x, y); }
+  function settle(f) { if (feeds.indexOf(f) < 0 || f.el.classList.contains('max') || !overlaps(f, f.st.x, f.st.y)) return; var q = nearest(f, f.st.x, f.st.y); setPos(f, q.x, q.y, true); }
   function tf(f, x, y) { return 'translate(' + x + 'px,' + y + 'px)'; }
   function applySize(f) { var d = dims(f); f.el.style.width = d.w + 'px'; f.el.style.height = d.h + 'px'; }   // a shrunk feed is really smaller (not scaled), so its X stays a plain 44px button
   function setPos(f, x, y, anim) { f.st.x = x; f.st.y = y;
@@ -97,12 +105,12 @@
     f.el.style.zIndex = 122; g.el.style.zIndex = 121; setPos(f, ax, ay, true); setPos(g, fx, fy, true);
     setTimeout(function () { if (!f.el.classList.contains('max')) f.el.style.zIndex = ''; if (!g.el.classList.contains('max')) g.el.style.zIndex = ''; }, 600); }
   // a swipe up at the speed that ends the tour closes a feed the same way: it flies to the top edge and is swallowed by it
-  function flyOut(f, vy) { var st = f.st, el = f.el, d = dims(f), y = st.y, v = Math.min(vy, -700), hit = false, last = 0;
+  function flyOut(f, vy) { var st = f.st, el = f.el, d = dims(f), y = st.y, v = Math.min(vy, -700) * 0.6, hit = false, last = 0;   /* (Oct 4, 23:04) 40% slower, so the exit reads as intended */
     feeds.splice(feeds.indexOf(f), 1); cancelAnimationFrame(st.fling || 0); el.style.transition = 'none';
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     try { document.documentElement.classList.toggle('wf-black', feeds.some(function (g) { return g.el.classList.contains('max'); })); } catch (x) {}
     var stepX = function (now) { var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
-      if (hit) v = Math.min(-280, v * Math.exp(-dt / 0.9)); y += v * dt;
+      if (hit) v = Math.min(-168, v * Math.exp(-dt / 0.9)); y += v * dt;
       if (!hit && y <= 0) { hit = true; v *= 0.55; }
       var cut = Math.max(0, -y); el.style.transform = tf(f, st.x, y); el.style.clipPath = cut ? 'inset(' + cut + 'px 0 0 0)' : '';
       if (y + d.h <= 0) { try { el.remove(); } catch (x) {} return; }
@@ -156,7 +164,9 @@
     var clearLP = function () { if (LP) { clearTimeout(LP); LP = 0; } };
     var restore = function () { if (st.sc >= 1) return; cancelAnimationFrame(st.fling || 0); st.sc = 1; el.classList.remove('mini'); applySize(f);
       try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
-      var r = sep(f, st.x, st.y); setPos(f, r.x, r.y, true); };
+      var q = nearest(f, st.x, st.y); setPos(f, q.x, q.y, true);
+      /* (Oct 4, 23:03) the hang-up bounce (swells 10% and settles quickly about its centre), but the feed stays */
+      try { var d0 = dims(f), k = 1.1, cx = q.x + d0.w / 2, cy = q.y + d0.h / 2;   /* scaled about its own centre (the feed's origin is the screen's top left) */ el.animate([{ scale: '1', translate: '0 0' }, { scale: String(k), translate: (cx * (1 - k)) + 'px ' + (cy * (1 - k)) + 'px', offset: 0.5 }, { scale: '1', translate: '0 0' }], { duration: 200, easing: 'ease-in-out' }); } catch (x) {} };
     el.addEventListener('pointerdown', function (e) { if (e.target.closest('button') || e.target.closest('.cam') || el.classList.contains('max')) return; cancelAnimationFrame(st.fling || 0); D = { x: e.clientX, y: e.clientY, x0: st.x, y0: st.y, sc0: st.sc, tr: [] }; try { el.setPointerCapture(e.pointerId); } catch (x) {}
       clearLP(); LP = setTimeout(function () { LP = 0; if (D && !D.moved) restore(); }, 550); });
     el.addEventListener('pointermove', function (e) { if (!D) return; var mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true; clearLP();
@@ -166,7 +176,7 @@
       put(f, tx, ty, false); e.preventDefault(); });
     var up = function () { clearLP(); if (!D || feeds.indexOf(f) < 0) { D = null; return; } var d = D; D = null; if (st.sc < 1) el.classList.add('mini'); var tr = d.tr, A = tr[0], Z = tr[tr.length - 1], vx = 0, vy = 0;
       if (d.moved && A && Z && Z[0] - A[0] > 8 && performance.now() - Z[0] < 80) { vx = (Z[1] - A[1]) / ((Z[0] - A[0]) / 1000); vy = (Z[2] - A[2]) / ((Z[0] - A[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
-      var spd = Math.hypot(vx, vy); if (spd < 150) return;
+      var spd = Math.hypot(vx, vy); if (spd < 150) { settle(f); return; }
       if (spd >= SWAP) { var g = swapTarget(f, vx, vy); if (g) { swap(f, g, d.x0, d.y0); return; } if (vy < -SWAP && Math.abs(vy) > Math.abs(vx) * 1.5) { flyOut(f, vy); return; } }
       var last = 0;
       var step = function (now) { if (feeds.indexOf(f) < 0) return; var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
@@ -174,7 +184,7 @@
         if (x < B.x0) { x = B.x0; vx = -vx * 0.3; } else if (x > B.x1) { x = B.x1; vx = -vx * 0.3; }
         if (y < B.y0) { y = B.y0; vy = -vy * 0.3; } else if (y > B.y1) { y = B.y1; vy = -vy * 0.3; }
         var q = put(f, x, y, false); if (q.hx) vx = -vx * 0.3; if (q.hy) vy = -vy * 0.3;   // bounces off another feed like off an edge
-        if (Math.hypot(vx, vy) < 12) { st.fling = 0; return; } st.fling = requestAnimationFrame(step); };
+        if (Math.hypot(vx, vy) < 12) { st.fling = 0; settle(f); return; } st.fling = requestAnimationFrame(step); };
       st.fling = requestAnimationFrame(step); };
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
   }
