@@ -1004,3 +1004,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - **Video calls, hang-up and corners (Oct 4):** in every video call (police captain and team calls alike) the close X is a red round hang-up button (44px, #D70015, white handset turned down, "End call" / "Terminar chamada"), in the X's place at the top right. The panel keeps the video feeds' 16px corners: the call's pictures sit in a clipped layer so no corner ever shows square on iPhone.
 - (Oct 4) The night report's video call starts by itself: it waits until the panel script, the chat and the call button are ready (up to ~8 s) instead of one blind 0.7 s try.
+- (Oct 4) Video calls: the hang-up is a solid white phone on the red bubble; the chat's call button is a green circle with the same solid phone (not a camera icon).
