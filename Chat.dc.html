@@ -18,7 +18,7 @@
 <script src="prefs.js?v=180"></script>
 <script src="i18n.js?v=154"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=64"></script>
+<script src="chat.js?v=65"></script>
 <script src="tour.js?v=72"></script>
 <script src="feedcam.js?v=15"></script>
 <script src="trophy.js?v=19"></script>
@@ -836,7 +836,7 @@ class Component extends DCLogic {
         ...(() => { const ex = !!s.stEx; return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-12px', tmPb: '0',
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
           mv: (() => { const st = c.stage, nx = C.STAGES[st + 1]; if (c.kind === 'dm' || c.dismissed || c.closed || st >= 7 || !nx) return { d: 'none', label: '', go: null };
-            const key = st === 0 ? 'confirm' : st === 1 && !c.flags.dispatched ? 'dispatch' : st === 6 ? (c.flags.closeCard ? '' : 'closeCheck') : 'next'; if (!key) return { d: 'none', label: '', go: null };
+            const key = st === 0 ? 'confirm' : st === 1 && !c.flags.dispatched ? 'dispatch' : st === 6 ? 'closeCheck' : 'next'; if (!key) return { d: 'none', label: '', go: null };
             return { d: 'flex', label: L('Move to ', 'Passar a ') + T(nx), go: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: false }); run(key); } }; })(),
           tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: !ex }); } }; })(),
         elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),

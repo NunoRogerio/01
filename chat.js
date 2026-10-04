@@ -457,7 +457,7 @@
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     if (s === 4) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
     if (s === 5) A.push({ key: 'next', en: 'Move to surveillance', pt: 'Passar a Vigilância', primary: true });
-    if (s === 6 && !c.flags.closeCard) A.push({ key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true });
+    if (s === 6) A.push({ key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true });
     return A;
   }
 
@@ -547,6 +547,8 @@
       setStage(c, nx, 800, 0);
     } else if (a === 'closeCheck') {
       c.flags.closeCard = true;
+      // (Oct 4) asked again while the "Ready to close" card is still waiting far up the chat: it comes down to the bottom, so closing is never out of reach
+      c.msgs = c.msgs.filter(function (m) { return !(m.kind === 'card' && m.close); }); c.queue = c.queue.filter(function (q) { return !(q.m && q.m.kind === 'card' && q.m.close); });
       card(c, { close: true, tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00606A', title: { en: 'Close fire', pt: 'Encerrar incêndio' },
         checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.flags.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.flags.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
         actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }, 400, 0);
