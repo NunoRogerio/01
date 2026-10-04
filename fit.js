@@ -762,11 +762,10 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   function puGrey(){return document.documentElement.classList.contains('wf-dark')?'#000000':'#C7C7CC';}
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-wf-split]');if(!a||a.__wfPu)return;
     if(e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;var dc=document.getElementById('dc-root');if(!dc||!window.Element||!dc.animate)return;
-    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;
-    var navigate=function(){if(gone)return;gone=true;try{if(snap){sessionStorage.clear();Object.keys(snap).forEach(function(k){sessionStorage.setItem(k,snap[k]);});}}catch(x){}window.location.href=href;};
+    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false;
+    var navigate=function(){if(gone)return;gone=true;   /* no storage restore: the frame already took the chosen fire and set it as the current one; putting an older copy back made the real page open the previous fire */
+      window.location.href=href;};
     setTimeout(function(){   /* after the card's own handlers have set the destination up */
-      /* the snapshot is taken now, after the card's handlers set the destination (the fire chosen...): the frame's own writes are then undone, never the card's */
-      try{snap={};for(var q=0;q<sessionStorage.length;q++){var kk=sessionStorage.key(q);snap[kk]=sessionStorage.getItem(kk);}}catch(x){}
       try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.textContent=L[lb]||'…';a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads */
         var w=document.createElement('div'),f=document.createElement('iframe'),dim=document.createElement('div'),T0=Date.now(),loaded=false,rose=false,lift=false;
         w.setAttribute('aria-hidden','true');w.setAttribute('data-wf-pushup','1');w.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;z-index:300;overflow:hidden;pointer-events:none;background:'+puGrey()+';transform:translateY(100%);box-shadow:0 0 28px rgba(0,0,0,.25)';
