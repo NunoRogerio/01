@@ -824,3 +824,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Split transition safety (Oct 4): if a navigation is cancelled after the screen was split for it, the screen is made whole again after 2.5s.
 - **Fire header (Oct 4):** the fire shows only its stage tag (icon, stage, "for 7 h") under the place, left-aligned, with no grey kind band, no dot and no "Active"; a tap still unfolds the stage history from the tag.
 - **Fire page Situation / Crews (Oct 4, trial):** the segmented control (the app's switcher, as the projection Now / +1 h) replaces the tabs, 16px under the stage tag; the attention dot stays on the inactive option.
+- **Grabbers hidden (Oct 4):** no blade shows a grabber line any more; every blade keeps its behaviours (swipe across its area, drag, tap where the grabber sat to close). Supersedes the visible-grabber rules above.
+- **Stripes on top-dropping panels (Oct 4):** the area picker, place search, notifications and chats panels (and the alert's candidates dropdown) carry the firefighter stripes along their bottom edge, as the top blade does; the stripes ride the edge as the panel is dragged.
+- **No pulse on ignition markers (Oct 4):** ignition candidate markers (main map, selected ring, detail pin) no longer pulse anywhere.

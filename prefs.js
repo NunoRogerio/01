@@ -207,6 +207,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // Grabbers (the grey line that opens and closes blades), one rule for the whole app: the line sits 8px from the blade's edge
     // and keeps 40px clear between it and the blade's content. gb = line at the bottom (top blades), gt = line at the top (bottom blades).
     '.wf-grab{box-sizing:border-box!important;height:53px!important;flex-shrink:0}' +
+    '[style*="width: 86px; height: 3px"]{opacity:0!important}#wf-tour .tb::before{opacity:0!important}' +   /* (Oct 4) grabbers hidden everywhere; the blades keep their swipe, drag and tap behaviours */
+    '.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px)}' +   /* the firefighter stripes, shared by every page */
     '.wf-grab.gb{padding:0 0 8px!important;align-items:flex-end!important}' +
     '.wf-grab.gt{padding:8px 0 0!important;align-items:flex-start!important}' +
     // Forest headers, one definition for the whole app: the aerial forest photos zoom in slowly as on the login screen.
