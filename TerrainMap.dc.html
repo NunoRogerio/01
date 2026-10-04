@@ -611,7 +611,8 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
+  componentDidMount() { this._wfShow = (e) => { if (e && e.persisted && (this.state || {}).pop) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow);   /* (Oct 4) coming back (Back) to a map: no card left open */
+    this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
       if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); };
@@ -638,7 +639,7 @@ class Component extends DCLogic {
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
   }
-  componentWillUnmount() { try { window.removeEventListener('wf-rail', this._wfRail); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
+  componentWillUnmount() { try { window.removeEventListener('wf-rail', this._wfRail); window.removeEventListener('pageshow', this._wfShow); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
     if (this._uT) clearInterval(this._uT);
     if (this.el) this.el.removeEventListener('wheel', this.onWheel);
     if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync);
