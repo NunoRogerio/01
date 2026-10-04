@@ -282,6 +282,18 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <p style="display: {{tp.noneD}}; margin: 0; padding: 16px; font-size: 17px; line-height: 22px; color: #000000">{{tp.none}}</p>
       </div>
     </section>
+    <!-- The fire card's map full screen: its own layer over the chat, the projection at the foot, left of the map buttons -->
+    <sc-if value="{{pj.full}}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 0; top: 0; width: var(--wf-w, 390px); height: 844px; z-index: 60">
+        <dc-import name="TerrainMap" on-drone="{{pj.drone}}" on-cam="{{pj.cam}}" mode="spread" fire-id="{{pj.id}}" fire-x="{{pj.x}}" fire-y="{{pj.y}}" stations-st="{{pj.st}}" fire-only="true" loader="true" no-routes="true" horizon="{{pj.hz}}" grow="{{pj.grow}}" fake-hz="{{pj.fakeHz}}" leg-now="{{pj.legNow}}" leg-grow="{{pj.legGrow}}" leg-grow-label="{{pj.legGrowL}}" w="{{pj.w}}" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="60" zoom="{{pj.view.zoom}}" focus-x="{{pj.view.fx}}" focus-y="{{pj.view.fy}}" controls="side" radius="{{zero}}" attr-bottom="40" on-full="{{pj.toggleFull}}" is-full="{{yes}}" close-x="true" hint-size="390px,844px"></dc-import>
+        <div role="tablist" aria-label="{{pj.hzLabel}}" class="wf-seg" style="position: absolute; left: 16px; right: 68px; bottom: 20px; z-index: 30; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
+          <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 4); transform: translateX({{pj.segX}})"><span class="segblob"></span></span>
+          <sc-for list="{{pj.tabs}}" as="tb" hint-placeholder-count="4">
+            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fgD}}">{{tb.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
     <!-- ===== Fire card: drops from the state card, stops 32px above the bottom, glass over the chat ===== -->
     <div class="wf-hap-scrim wf-glass" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{sh.b}}px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{sh.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
@@ -294,11 +306,15 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </header>
       <div class="chscroll" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 16px">
         <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
-          <!-- Spread projection -->
-          <section aria-label="{{t.proj}}" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: #FFFFFF">
-            <div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{t.proj}}</h3><span style="font-size: 17px; line-height: 22px; color: #000000">{{t.projSub}}</span></div>
-
-            <a href="Projection.dc.html" class="chbtn wf-b wf-pri" onClick="{{goProj}}" style="display: flex; align-items: center; justify-content: center">{{t.openFire}}</a>
+          <!-- The fire's map, the same widget as on the fire page: its legend, the projection (Now, +1 h, +3 h, +6 h) over its foot, drone, helmet camera, full screen -->
+          <section aria-label="{{t.proj}}" style="position: relative; flex-shrink: 0; height: 310px; margin: 0 -16px; overflow: hidden">
+            <dc-import name="TerrainMap" on-drone="{{pj.drone}}" on-cam="{{pj.cam}}" mode="spread" fire-id="{{pj.id}}" fire-x="{{pj.x}}" fire-y="{{pj.y}}" stations-st="{{pj.st}}" fire-only="true" loader="true" no-routes="true" no-title="true" leg-now="{{pj.legNow}}" leg-grow="{{pj.legGrow}}" leg-grow-label="{{pj.legGrowL}}" horizon="{{pj.hz}}" grow="{{pj.grow}}" fake-hz="{{pj.fakeHz}}" w="{{pj.w}}" h="310" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" locked="true" zoom="{{pj.view.zoom}}" focus-x="{{pj.view.fx}}" focus-y="{{pj.view.fy}}" radius="{{zero}}" attr-bottom="{{pj.attrB}}" on-full="{{pj.toggleFull}}" is-full="{{no}}" hint-size="390px,310px"></dc-import>
+            <div role="tablist" aria-label="{{pj.hzLabel}}" class="wf-seg" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
+              <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 4); transform: translateX({{pj.segX}})"><span class="segblob"></span></span>
+              <sc-for list="{{pj.tabs}}" as="tb" hint-placeholder-count="4">
+                <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="padding: 0; font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fgD}}">{{tb.label}}</button>
+              </sc-for>
+            </div>
           </section>
           <!-- Time in each stage: a calm list, like the incidents (stage in Title S, when it began as annotation, its time on the right) -->
           <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; margin: 0 -16px">
@@ -515,6 +531,36 @@ class Component extends DCLogic {
     m[key] = { t: Math.round(el.scrollTop), b: el.scrollHeight - el.scrollTop - el.clientHeight < 60 }; const ks = Object.keys(m); ks.slice(0, Math.max(0, ks.length - 60)).forEach((k) => delete m[k]);
     localStorage.setItem('wf-chat-pos', JSON.stringify(m)); } catch (e) {} }, 150); }
   // (Oct 4, 16:30) a video call with the police captain: the floating feed rings, connects, then shows the captain (one of three faces, fixed per report)
+  // (Oct 4) the fire card's map (the fire page's widget): the fire's model and framing, the projection horizon, the feeds
+  wfPj(c) {
+    const st = this.state || {}, PT = window.__wfLang === 'pt', L = (en, pt) => (PT ? pt : en), C = window.__wfChat;
+    const id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, x = c.x, y = c.y;
+    const live = Array.isArray(window.__wfLiveFires) ? window.__wfLiveFires : [], r = live.find((q) => String(q[2]) === String(id)) || null;
+    const lat = 34.19 - (y - 662) / 2829, lon = (x - 518) / 2345 - 118.13;
+    const M = r && window.__wfLiveMap && window.__wfFireModel ? (window.__wfFireModel({ id: r[2], st: r[0], lat, lon, ha: r[8], res: r[7], note: r[4] }) || null) : null;
+    const mdl = M && !M.failed && M.snaps && M.snaps[0] ? M : null;
+    const HZ = [0, 1, 3, 6], hz = st.pjHz != null ? st.pjHz : 0, GROW = { 0: 1, 1: 1.6, 3: 2, 6: 3.6 }, gk = GROW[hz] || 1;
+    const snapAt = (h) => { if (!mdl) return null; for (let k = h; k > 0; k--) if (mdl.snaps[k]) return mdl.snaps[k]; return mdl.snaps[0]; };
+    const S0 = snapAt(0), P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
+    const ring0 = S0 && S0.ring && S0.ring.length ? S0.ring.map((p) => P(p[0], p[1])) : null, W = (window.__wfVP && window.__wfVP.w) || 390;
+    const frame = (w, h) => { if (!ring0) return { zoom: 2.4, fx: x - 12, fy: y + 8 };
+      const cx = ring0.reduce((a, p) => a + p[0], 0) / ring0.length, cy = ring0.reduce((a, p) => a + p[1], 0) / ring0.length, k = 2.4;
+      const pts = ring0.map((p) => [cx + (p[0] - cx) * k, cy + (p[1] - cy) * k]), xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      return { zoom: Math.max(0.4, Math.min(4, Math.min(w / (x1 - x0 + 120), h / (y1 - y0 + 120)))), fx: (x0 + x1) / 2, fy: (y0 + y1) / 2 }; };
+    const US = r ? /^[A-Z]{2}$/.test(r[0]) && r[0] !== 'PT' : !PT, dec = (n) => String(n).replace('.', PT ? ',' : '.');
+    const area = (ha) => (ha == null ? '—' : US ? String(Math.round(ha * 2.471)) : (ha < 10 ? dec(Math.round(ha * 10) / 10) : String(Math.round(ha)))), aU = US ? 'acres' : 'ha';
+    const A0 = S0 && S0.ha > 0 ? S0.ha : (r && Number(r[8]) > 0 ? Number(r[8]) : 12), Ah = A0 * gk;
+    const perKm = (ha) => 1.3 * 2 * Math.sqrt(Math.PI * ha * 10000) / 1000, km = (n) => (US ? dec(Math.round(n * 0.6214 * 10) / 10) + ' mi' : dec(Math.round(n * 10) / 10) + ' km');
+    const F = window.__wfCamFeed;
+    return { id, x, y, st: r ? r[0] : (c.st || ''), w: W, view: frame(W, 310), hz, grow: gk, fakeHz: ({ 0: 0, 1: 1, 3: 2, 6: 3 })[hz], attrB: 76, full: !!st.pjFull,
+      legNow: area(A0) + ' ' + aU + '. ' + km(perKm(A0)), legGrow: hz ? area(Ah) + ' ' + aU + '. ' + km(perKm(Ah)) : '', legGrowL: L('In ' + hz + ' h', 'Em ' + hz + ' h'),
+      hzLabel: L('Projection horizon', 'Horizonte da projeção'), segX: (HZ.indexOf(hz) * 100) + '%',
+      tabs: HZ.map((h) => ({ label: h ? '+' + h + ' h' : L('Now', 'Agora'), sel: String(h === hz), w: h === hz ? 600 : 400, fgD: h === hz ? '#1C1C1E' : '#FFFFFF', pick: () => { if (hz === h) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ pjHz: h }); } })),
+      toggleFull: () => this.setState({ pjFull: !(this.state || {}).pjFull }),
+      drone: (e) => { if (F) F.open({ anchor: e && e.currentTarget, src: 'assets/dronefire.mp4?v=1', cross: true, title: 'Drone feed', label: PT ? 'Em direto. 120 m' : 'Live. 400 ft' }); },
+      cam: (e) => { let who = ''; try { const P0 = C && C.active ? C.active(c) : [], p = P0[0], R = C && C.leadRole ? C.leadRole(c) : null; if (p) who = p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org; } catch (x2) {}
+        if (F) F.open({ anchor: e && e.currentTarget, who, label: PT ? 'Em direto. Câmara de capacete' : 'Live. Helmet camera' }); } };
+  }
   wfCall(c, anchor) { const C = window.__wfChat, F = window.__wfCamFeed; if (!C || !F || !c) return;
     // (Oct 4) a team call: the same floating panel, divided into one rectangle per coordinator of the stations sent (and the air lead)
     if (!c.police) { const L = (en, pt) => C.L(en, pt), P = C.active ? C.active(c) : (c.people || []); if (P.length < 2) return;
@@ -817,7 +863,7 @@ class Component extends DCLogic {
       isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, items, team, tl, tlTotal, forces, extras, fk, fkPx: window.__wfKpiPx ? window.__wfKpiPx(fk.map((k) => k.v), 3, 326) : '44px',
       meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
-      noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, zero: 0,
+      noForces: !FF.length, hasForces: FF.length > 0, sheetOpen: sh, fire: firePt, no: false, yes: true, zero: 0,
       tp: (() => { const on = !!s.topicPick, N = on && C.nearby ? C.nearby(c.key) : [];
         return { op: on ? 1 : 0, pe: on ? 'auto' : 'none', y: on ? '0%' : '105%', hidden: on ? 'false' : 'true', close: () => this.setState({ topicPick: false }),
           title: L('Set the topic', 'Definir o tópico'), sub: L('Incidents within 50 km of the station.', 'Incidentes a 50 km do quartel.'), noneD: on && !N.length ? 'block' : 'none', none: L('No fires or ignition candidates within 50 km.', 'Sem incêndios nem candidatos a ignição a 50 km.'),
@@ -829,8 +875,8 @@ class Component extends DCLogic {
         open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), h: this.shHandle('team', 'tmDy'),
         mh: s.tmDy && this._tmH0 ? Math.max(120, this._tmH0 + s.tmDy) + 'px' : 'calc(100% - 48px)', mhT: s.tmDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none', xRot: on ? '0deg' : '90deg' }; })(),
       sh: { h: this.shHandle(), b: 48 - (s.shDy || 0), bT: s.shDy ? '0s' : '.35s', y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
-      openSheet, closeSheet: () => this.setState({ sheet: false, shDy: 0 }), goFire: inc.go,
-      goProj: () => { const v = { id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, place: c.place, note: c.kind === 'cand' ? 'Confirmed from ' + c.incId : (c.note || c.reg || ''), x: c.x, y: c.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { proj: v }); try { sessionStorage.setItem('wf-proj', JSON.stringify(v)); } catch (e) {} },
+      openSheet, closeSheet: () => this.setState({ sheet: false, shDy: 0, pjFull: false, pjHz: 0 }), goFire: inc.go,
+      pj: sh ? this.wfPj(c) : { full: false, view: {}, tabs: [], hz: 0, grow: 1, w: 390 },
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ex = !!s.stEx; return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-12px', tmPb: '0',
