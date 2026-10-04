@@ -15,9 +15,9 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=147"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=148"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=184"></script>
+<script src="prefs.js?v=185"></script>
 <script src="i18n.js?v=161"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=66"></script>
@@ -571,6 +571,30 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </div>
         </div>
       </sc-for>
+      <!-- (Oct 4, 22:58) Appearance: primary colour (profile default, four suggestions, or any colour from the picker) and the palette; both kept on this phone -->
+      <div style="display: {{ap.d}}; flex-direction: column; gap: 56px; flex-shrink: 0">
+        <div role="radiogroup" aria-label="{{ap.colL}}" style="display: flex; flex-direction: column; gap: 8px">
+          <span class="wf-label" aria-hidden="true" style="font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{ap.colL}}</span>
+          <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); justify-items: center; padding: 8px 0">
+            <sc-for list="{{ap.cols}}" as="c" hint-placeholder-count="5">
+              <button type="button" role="radio" class="opt" aria-checked="{{c.on}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: {{c.bg}}; box-shadow: {{c.ring}}; cursor: pointer; transition: box-shadow .25s ease"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{c.tick}}; transition: opacity .25s ease"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+            </sc-for>
+            <!-- Any colour: the phone's own colour picker, opened by the rainbow swatch -->
+            <label aria-label="{{ap.pickL}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: conic-gradient(#FF6B6B, #FFD93D, #E5FF00, #6FF0CF, #6FB7FF, #C7B3FF, #FFA3D2, #FF6B6B); box-shadow: {{ap.ownRing}}; cursor: pointer; overflow: hidden"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; background: {{ap.ownDot}}; box-shadow: 0 0 0 2px #FFFFFF"></span><input type="color" value="{{ap.own}}" onInput="{{ap.onPick}}" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; padding: 0; cursor: pointer"></label>
+          </div>
+          <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ap.colName}}</span>
+        </div>
+        <div role="radiogroup" aria-label="{{ap.palL}}" style="display: flex; flex-direction: column; gap: 8px">
+          <span class="wf-label" aria-hidden="true" style="font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{ap.palL}}</span>
+          <sc-for list="{{ap.pals}}" as="q" hint-placeholder-count="6">
+            <button type="button" role="radio" aria-checked="{{q.sel}}" onClick="{{q.pick}}" style="display: flex; align-items: center; gap: 16px; min-height: 44px; padding: 0; border: 0; background: none; font: inherit; text-align: left; cursor: pointer">
+              <span aria-hidden="true" style="position: relative; flex: none; width: 24px; height: 24px; border-radius: 50%; box-sizing: border-box; border: 2px solid {{q.ring}}"><span style="position: absolute; left: 4px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #1C1C1E; opacity: {{q.dot}}; transition: opacity .25s ease"></span></span>
+              <span style="flex-grow: 1; min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{q.name}}</span>
+              <span aria-hidden="true" style="display: flex; flex: none; border-radius: 999px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(60,60,67,0.2)"><span data-wf-swatch="1" style="--wf-sw: {{q.c1}}; width: 24px; height: 24px; background: var(--wf-sw)"></span><span data-wf-swatch="1" style="--wf-sw: {{q.c2}}; width: 24px; height: 24px; background: var(--wf-sw)"></span><span data-wf-swatch="1" style="--wf-sw: {{q.c3}}; width: 24px; height: 24px; background: var(--wf-sw)"></span><span data-wf-swatch="1" style="--wf-sw: {{q.c4}}; width: 24px; height: 24px; background: var(--wf-sw)"></span></span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
       <!-- Share: the same group label and white card as Chat settings; the card opens the phone's share sheet with the app's link (copies it where there is none) -->
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Share</span>
       <div style="display: {{pm.dShare}}; flex-direction: column; flex-shrink: 0">
@@ -1345,6 +1369,27 @@ class Component extends DCLogic {
             rs: window.__wfTiles.styles[k].map(([id]) => { const sel = on && id === curSt; return { label: T(RN[id][0], RN[id][1]), sel: sel ? 'true' : 'false', ring: sel ? '#1C1C1E' : '#8E8E93', dot: sel ? 1 : 0,
               pick: () => { if (sel) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k, id); this.forceUpdate(); } }; }), rsT: T('Look', 'Aspeto') }; }),
           note: T('One map at a time. Turning one on turns the other off.', 'Um mapa de cada vez. Ativar um desativa o outro.') }; })(),
+      ap: (() => {
+        const T = (en, ptt) => (lang === 'pt' ? ptt : en), role = this.wfRole() || '', def = window.__wfYDefault ? window.__wfYDefault(role) : '#E5FF00';
+        let own = ''; try { own = localStorage.getItem('wf-primary') || ''; } catch (e) {}
+        const cur = /^#[0-9A-F]{6}$/i.test(own) ? own.toUpperCase() : def;
+        // labels on the primary stay dark (#1C1C1E): a picked colour too dark for them is lightened, keeping its hue, until it reads at 4.5:1 or more
+        const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4))); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+        const ok = (h) => (lum(h) + 0.05) / (lum('#1C1C1E') + 0.05) >= 4.5;
+        const lift = (h) => { let c = [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16)); for (let k = 0; k < 40 && !ok('#' + c.map((v) => ('0' + v.toString(16)).slice(-2)).join('')); k++) c = c.map((v) => Math.round(v + (255 - v) * 0.08)); return ('#' + c.map((v) => ('0' + v.toString(16)).slice(-2)).join('')).toUpperCase(); };
+        const setC = (h) => { try { if (!h || h === def) localStorage.removeItem('wf-primary'); else localStorage.setItem('wf-primary', h); } catch (e) {} if (window.__wfSetY) window.__wfSetY(role); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} this.forceUpdate(); };
+        const SUG = [[def, def === '#CCFF00' ? T('Fire lime', 'Lima dos bombeiros') : T('Reflective yellow', 'Amarelo refletor')], ['#FFA3D2', T('Heather', 'Urze')], ['#C7B3FF', T('Lupine', 'Tremoceiro')], ['#6FF0CF', T('Surf', 'Rebentação')], ['#FFE14D', T('Pollen', 'Pólen')]];
+        const known = SUG.find((x) => x[0] === cur);
+        const ring = (on) => (on ? '0 0 0 3px #FFFFFF, 0 0 0 5px #3A3A3C' : 'inset 0 0 0 1px rgba(60,60,67,0.2)');
+        const pal = window.__wfPalette ? window.__wfPalette.get() : 'snow', PS = window.__wfPalettes || {};
+        return { d: pmSec === 'look' ? 'flex' : 'none', colL: T('Primary colour', 'Cor principal'), palL: T('Palette', 'Paleta'), pickL: T('Choose any colour', 'Escolher qualquer cor'),
+          cols: SUG.map(([h, name]) => ({ name, bg: h, on: h === cur ? 'true' : 'false', tick: h === cur ? 1 : 0, ring: ring(h === cur), pick: () => { if (h === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} setC(h); } })),
+          own: cur, ownDot: known ? '#FFFFFF' : cur, ownRing: ring(!known),
+          onPick: (e) => { const v = String((e && e.target && e.target.value) || '').toUpperCase(); if (!/^#[0-9A-F]{6}$/.test(v)) return; setC(lift(v)); },
+          colName: known ? known[1] : T('Your colour', 'A sua cor') + ' ' + cur,
+          pals: Object.keys(PS).map((k) => { const P = PS[k], sel = k === pal; return { name: lang === 'pt' ? P.name[1] : P.name[0], sel: sel ? 'true' : 'false', ring: sel ? '#1C1C1E' : '#8E8E93', dot: sel ? 1 : 0, c1: P.page, c2: P.surface, c3: P.fill, c4: P.ink,
+            pick: () => { if (sel) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfPalette.set(k); this.forceUpdate(); } }; }) };
+      })(),
       pfGroups: [
         // (Oct 3, 21:13) the Theme choice is hidden while the dark theme is off (prefs.js DARK_ON)
         group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),

@@ -6,8 +6,11 @@
   var US={ca:1,nv:1};
   // Toggle tracks when on: the primary colour 4% darker, so the white thumb reads clearly on it (one definition for every toggle)
   window.__wfTogY=function(){var h=(window.__wfY||'#E5FF00').replace('#','');var c=function(i){var v=Math.round(parseInt(h.substr(i,2),16)*0.96);return ('0'+v.toString(16)).slice(-2);};return '#'+c(0)+c(2)+c(4);};
-  window.__wfSetY=function(role){var us=!!US[role||''];window.__wfY=us?'#CCFF00':'#E5FF00';
-    var d=document.documentElement.style;d.setProperty('--wf-y',window.__wfY);d.setProperty('--wf-y-rgb',us?'204,255,0':'229,255,0');};
+  // (Oct 4, 22:58) a primary colour chosen in Appearance (kept on this phone, localStorage wf-primary) replaces the profile's
+  window.__wfYDefault=function(role){return US[role||'']?'#CCFF00':'#E5FF00';};
+  window.__wfSetY=function(role){var c=window.__wfYDefault(role),own='';try{own=localStorage.getItem('wf-primary')||'';}catch(e){}if(/^#[0-9A-Fa-f]{6}$/.test(own))c=own.toUpperCase();window.__wfY=c;
+    var h=c.replace('#',''),rgb=[0,2,4].map(function(i){return parseInt(h.substr(i,2),16);}).join(',');
+    var d=document.documentElement.style;d.setProperty('--wf-y',c);d.setProperty('--wf-y-rgb',rgb);};
   var r='';try{r=localStorage.getItem('wf-role')||'';}catch(e){}
   window.__wfSetY(r);
 })();

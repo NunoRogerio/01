@@ -283,8 +283,40 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       var go = function () { spObs.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['style'] }); spAll(document.documentElement); };
       if (document.body) go(); else document.addEventListener('DOMContentLoaded', go); }
   }
+  // ---- Palettes (Oct 4, 22:58): variations of the light theme, kept on this phone (localStorage wf-palette) ----
+  // Each palette is three surfaces (page, surface, fill) and three inks (text, strong grey, secondary grey), all checked
+  // for contrast (secondary text 4.5:1 or more on every surface). Markers, fire colours, photos and maps are untouched,
+  // and every primary colour works on every palette because labels on the primary stay dark.
+  var PALS = {
+    snow: { name: ['Snow', 'Neve'], page: '#F2F2F7', surface: '#FFFFFF', fill: '#E5E5EA', ink: '#000000', ink2: '#3A3A3C', sec: '#6E6E73' },
+    moonstone: { name: ['Moonstone', 'Pedra da lua'], page: '#ECEEF4', surface: '#FBFCFE', fill: '#DEE2EC', ink: '#171A22', ink2: '#343A48', sec: '#5B6273' },
+    bone: { name: ['Bone', 'Osso'], page: '#F3F0EA', surface: '#FDFBF7', fill: '#E6E1D7', ink: '#1B1915', ink2: '#3A3630', sec: '#67615A' },
+    cork: { name: ['Cork oak', 'Sobreiro'], page: '#E8DAC4', surface: '#F6EEE1', fill: '#D9C6AA', ink: '#000000', ink2: '#2E2418', sec: '#5A4A36' },
+    lichen: { name: ['Lichen', 'Líquen'], page: '#E2EADC', surface: '#F4F8F1', fill: '#D1DDC9', ink: '#0F170D', ink2: '#283423', sec: '#4C5A46' },
+    glacier: { name: ['Glacier', 'Glaciar'], page: '#DDE8F1', surface: '#F3F8FC', fill: '#CADAE7', ink: '#0B1520', ink2: '#22334A', sec: '#475A6C' }
+  };
+  function rgbOf(h) { h = h.replace('#', ''); return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)].join(','); }
+  function palId() { var v = ''; try { v = localStorage.getItem('wf-palette') || ''; } catch (e) {} return PALS[v] ? v : 'snow'; }
+  function palCss(P) {
+    var o = [], pg = rgbOf(P.page), sf = rgbOf(P.surface), fl = rgbOf(P.fill), sc = rgbOf(P.sec);
+    [['rgb(242, 242, 247)', P.page], ['rgb(255, 255, 255)', P.surface], ['rgb(238, 238, 240)', P.surface], ['rgb(229, 229, 234)', P.fill], ['rgb(227, 227, 232)', P.fill], ['rgb(230, 230, 235)', P.fill], ['rgb(232, 232, 237)', P.fill],
+      ['rgba(118, 118, 128, 0.12)', 'rgba(' + sc + ',0.14)'], ['rgba(242, 242, 247, 0.62)', 'rgba(' + pg + ',0.62)'], ['rgba(230, 230, 235, 0.62)', 'rgba(' + fl + ',0.62)']
+    ].concat([0.7, 0.72, 0.78, 0.8, 0.82, 0.85, 0.88, 0.9, 0.92, 0.94, 0.95, 0.97, 0.98].map(function (a) { return ['rgba(255, 255, 255, ' + a + ')', 'rgba(' + sf + ',' + a + ')']; }))
+     .concat([0.7, 0.78, 0.8, 0.85, 0.88, 0.9, 0.92, 0.94, 0.96, 0.97, 0.98].map(function (a) { return ['rgba(242, 242, 247, ' + a + ')', 'rgba(' + pg + ',' + a + ')']; }))
+     .forEach(function (q) { o.push(col('background', q[0], q[1])); o.push(col('background-color', q[0], q[1])); });
+    [['rgb(0, 0, 0)', P.ink], ['rgb(28, 28, 30)', P.ink], ['rgb(44, 44, 46)', P.ink2], ['rgb(58, 58, 60)', P.ink2], ['rgb(60, 60, 67)', P.ink2], ['rgb(72, 72, 74)', P.ink2],
+      ['rgb(84, 84, 88)', P.sec], ['rgb(99, 99, 102)', P.sec], ['rgb(108, 108, 112)', P.sec], ['rgb(110, 110, 115)', P.sec]
+    ].forEach(function (q) { o.push(col('color', q[0], q[1])); });
+    o.push('html,body{background:' + P.page + '!important;color:' + P.ink + '}html::view-transition{background:' + P.page + '}');
+    o.push('.tip,.ctip,.igpill,a.card,.stackbtn,html:root .sheet{background:' + P.surface + '!important}.igpill::after{background:' + P.surface + '!important}');
+    o.push('.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder,html:root .wf-note,.wf-tabs .tabopt{color:' + P.sec + '!important}.wf-tabs .tabopt[aria-selected=true],html:root .wf-title-xs,html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:' + P.ink + '!important}.wf-tabs::before{background:' + P.fill + '}');
+    o.push(':root{--wf-mid-grey:' + P.sec + ';--wf-mid-grey-tint:' + P.sec + ';--wf-ter-fg:' + P.ink2 + '}');
+    return o.join('\n');
+  }
+  window.__wfPalettes = PALS;
+  window.__wfPalette = { get: palId, set: function (k) { try { localStorage.setItem('wf-palette', PALS[k] ? k : 'snow'); } catch (e) {} apply(); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} } };
   // A choice made in the menu (which on most screens is a frame underneath, menu.js) applies to the screen above at once
-  try { window.addEventListener('storage', function (e) { if (!e.key || !/^wf-(theme|text|space)-/.test(e.key)) return; apply(); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} }); } catch (e) {}
+  try { window.addEventListener('storage', function (e) { if (!e.key || !/^wf-(theme|text|space)-|^wf-(palette|primary)$/.test(e.key)) return; if (e.key === 'wf-primary' && window.__wfSetY) window.__wfSetY(role); apply(); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} }); } catch (e) {}
   // The tour always runs in California, Los Angeles (Oct 3, 19:44): while it runs, every screen treats California as the
   // profile's region, whatever the profile's own region is; when it ends, the profile's own region and choice come back
   window.__wfTourLock = function () { try { return sessionStorage.getItem('wf-tour') ? 'CA' : null; } catch (e) { return null; } };
@@ -294,11 +326,12 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     try { spApply(get('space', 'comfortable')); } catch (e) {}
     var el = document.getElementById('wf-prefs');
     if (!el) { el = document.createElement('style'); el.id = 'wf-prefs'; (document.head || document.documentElement).appendChild(el); }
-    el.textContent = (theme === 'dark' ? darkCss() : '') + '\n' + BTN + '\n' + fontCss(size);
+    var pal = theme === 'dark' ? 'snow' : palId();
+    el.textContent = (theme === 'dark' ? darkCss() : '') + '\nsvg [fill="#E5FF00"],svg [fill="#CCFF00"]{fill:var(--wf-y)}svg [stroke="#E5FF00"],svg [stroke="#CCFF00"]{stroke:var(--wf-y)}\n' + BTN + '\n' + fontCss(size) + (pal !== 'snow' ? '\n' + palCss(PALS[pal]) : '');
     var root = document.documentElement;
     root.classList.toggle('wf-dark', theme === 'dark');
     root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
-    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme === 'dark' ? '#262629' : '#F2F2F7');
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme === 'dark' ? '#262629' : PALS[pal].page);
     var sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]'); if (sb) sb.setAttribute('content', 'black-translucent');   /* the map and the blur run under the status bar */
     if (document.body) ensureNightFilter(); else document.addEventListener('DOMContentLoaded', ensureNightFilter);   // both tile filters: night, and the less saturated day map
     // Scroll fades take the new theme's colours at once (measured again now and once colour transitions have settled)
