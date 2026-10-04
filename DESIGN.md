@@ -952,3 +952,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Tapping a blade's grabber (top or bottom) now ticks like any button. On iPhone the explicit pointer capture the grabbers took on touch stole the tap from the invisible switch that gives the tick; `fit.js` now skips that capture for fingers (a finger is captured by what it touched anyway), so the drag is unchanged.
 - Tapping the dimmed / blurred area behind a panel to close it ticks too (those layers carry the class `scrim` or `wf-hap-scrim`; no ripple, just the tick). Any new close-on-tap layer gets one of these classes.
 - Standing rule: anything that reacts to a tap gives the haptic; a new kind of tappable element is added to the shared list in `fit.js`.
+
+## Menu folded to the icon column: the screen is resized, not cropped (Oct 4, 16:20)
+- With the menu folded to its icon column, every screen (fire, candidate, station, drone, projection) lays out again in the visible width (screen width − 60px), as the main screen does: texts, switchers, bands and maps all fit; nothing is cut at the column. Opening the menu fully still slides the whole screen right, cut at the column.
+- How: `menu.js` sets the screen's `--wf-w` and `__wfVP.w` and fires `wf-rail`; screens size their root with `var(--wf-w, 390px)` and maps cap their width to `__wfVP.w` while `__wfVP.rail`. A new screen must use `var(--wf-w, 390px)` for its width (never a fixed 390px) and re-render on `wf-rail`.

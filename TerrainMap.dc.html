@@ -607,7 +607,7 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { this.unitTick();
+  componentDidMount() { this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
       if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); };
@@ -634,7 +634,7 @@ class Component extends DCLogic {
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
   }
-  componentWillUnmount() { if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
+  componentWillUnmount() { try { window.removeEventListener('wf-rail', this._wfRail); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
     if (this._uT) clearInterval(this._uT);
     if (this.el) this.el.removeEventListener('wheel', this.onWheel);
     if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync);
@@ -819,7 +819,7 @@ class Component extends DCLogic {
   mapStyle() { return 'standard'; }
   mapStyleSaved() { let v = null; try { v = window.sessionStorage.getItem('wf-mapstyle'); } catch (e) {} v = v || (window.__wfMem || {}).mapStyle; return ['standard', 'vector'].indexOf(v) >= 0 ? v : 'standard'; }
   setMapStyle(k) { window.__wfMem = Object.assign(window.__wfMem || {}, { mapStyle: k }); try { window.sessionStorage.setItem('wf-mapstyle', k); } catch (e) {} this.setState({ msv: Date.now(), msOpen: false }); try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
-  W() { return Number(this.props.w) || 366; }
+  W() { const p = Number(this.props.w) || 366, V = window.__wfVP || {}; return V.rail && V.w < p ? V.w : p; }   /* folded menu: the screen is narrower (menu.js) */
   H() { return Number(this.props.h) || 380; }
   scaleK() {
     if (!this.el) return 1;

@@ -21,7 +21,7 @@
 <script src="chat.js?v=60"></script>
 <script src="tour.js?v=70"></script>
 <script src="feedcam.js?v=11"></script>
-<script src="menu.js?v=13"></script>
+<script src="menu.js?v=15"></script>
 
 <title>Ignition candidates</title>
 <script src="./support.js"></script>
@@ -677,6 +677,7 @@ class Component extends DCLogic {
     // Landscape: the map goes full screen and fills the whole screen (the page asks fit.js to fill it); back in portrait it
     // returns to the page if rotating had opened it
     window.__wfFluidLand = true; try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+    this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); 
     this._wfVp = () => { const V = window.__wfVP || {}, st = this.state || {}; if (V.land && !st.full) { this._landFull = true; this.setState({ tab: 'map', full: true, dd: false }); } else if (!V.land && this._landFull && st.full) { this._landFull = false; this.setState({ full: false, tab: null }); } else this.forceUpdate(); };
     try { window.addEventListener('wf-vp', this._wfVp); setTimeout(this._wfVp, 350); } catch (e) {}
     try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} setTimeout(() => this.wfHdrMeasure(), 0); this.wfFocus(); this._wfSync = () => { if (!this.wfFocus()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted) { this._toFire = false; this._redir = false; this.forceUpdate(); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
@@ -1109,7 +1110,7 @@ class Component extends DCLogic {
       mapIgn: [cur].map((c) => ({ id: c.id, x: c.x, y: c.y, place: c.place, conf: c.conf, src: c.src, live: c.L || c.live })),   // only this candidate (live carries the detection's time and place, so a night detection shows its moon) and its suggested stations
       mapFires: [], noCams: [],
       cycleTo: (id) => this.setState({ focusId: id, confirm: false }),
-      ...(() => { const V = window.__wfVP || {}, L = !!V.land; return { mapW: L ? V.w : 390, mapH: L ? V.h : 844, fsW: L ? V.w : 390, fsH: L ? V.h : 844, mapCL: L ? (V.sl || 0) : 0, mapCR: L ? Math.min(V.sr || 0, 16) : 0 }; })(), zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
+      ...(() => { const V = window.__wfVP || {}, L = !!V.land; return { mapW: L || V.rail ? V.w : 390, mapH: L ? V.h : 844, fsW: L || V.rail ? V.w : 390, fsH: L ? V.h : 844, mapCL: L ? (V.sl || 0) : 0, mapCR: L ? Math.min(V.sr || 0, 16) : 0 }; })(), zero: 0, attr: s.full && tab.isMap ? 96 : 34, no: false, yes: true,
       full: !!s.full, fullImg: !!s.full && !!tab.isImg, mapLayer: n > 0 && onMap, figD: hasFig ? 'block' : 'none', panelMt: hasFig ? '-28px' : '8px', ddTop: this._hdrB || 92, panelSh: hasFig ? '0 0 16px rgba(0,0,0,0.08)' : 'none',
       openMap: () => this.setState({ tab: 'map', full: true, dd: false }),
       toggleFull: () => { const st = this.state || {}; this.setState(st.full && st.tab === 'map' ? { full: false, tab: null } : { full: !st.full }); },   // reads the live state: the map may hold an older copy of this handler

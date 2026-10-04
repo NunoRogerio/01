@@ -60,8 +60,16 @@
     var ease = DUR + 'ms ' + EASE; p.style.willChange = 'transform, clip-path';
     if (m && !p.style.clipPath) { p.style.transition = 'none'; p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; void p.offsetWidth; }
     p.style.transition = 'transform ' + ease + ', clip-path ' + ease + ', -webkit-clip-path ' + ease;
+    rail(m === 'rail', p);
     p.style.transform = D ? 'translateX(' + D + 'px)' : ''; p.style.boxShadow = m ? SH : '';
-    if (m) p.style.clipPath = p.style.webkitClipPath = 'inset(0px ' + R + 'px 0px -24px)'; else { p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; setTimeout(function () { if (!mode && p) { p.style.clipPath = p.style.webkitClipPath = ''; } }, DUR + 60); } }
+    if (m === 'rail') p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; else if (m) p.style.clipPath = p.style.webkitClipPath = 'inset(0px ' + R + 'px 0px -24px)'; else { p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; setTimeout(function () { if (!mode && p) { p.style.clipPath = p.style.webkitClipPath = ''; } }, DUR + 60); } }
+  // (Oct 4, 16:10) folded to the icon column, the screen is really resized to the visible 330px (not cropped): its width variable and the
+  // viewport the screens read both shrink, and everything that reads them (maps, bands, rows) lays out again, as on the main screen
+  var vp0 = null;
+  function rail(on, p) { var V = window.__wfVP; if (!V) return; var HW = host() ? host().offsetWidth : 390;
+    if (on) { if (!vp0) vp0 = V; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); }
+    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); }
+    try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }
   function mw() { var h = host(); return Math.min(h ? h.offsetWidth : 390, MW); }
   function open() {
     frame(); if (!ready) { want = open; return; }
