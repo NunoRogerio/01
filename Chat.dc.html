@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=150"></script>
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=186"></script>
-<script src="i18n.js?v=162"></script>
+<script src="i18n.js?v=163"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=68"></script>
 <script src="tour.js?v=73"></script>
@@ -64,7 +64,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
       </sc-for>
     </div>
-    <div class="chscroll" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 8px 16px 40px">
+    <div class="chscroll" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <sc-if value="{{noChats}}" hint-placeholder-val="{{ false }}"><p style="margin: 56px 8px; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{t.none}}</p></sc-if>
       <sc-for list="{{groups}}" as="g" hint-placeholder-count="1">
         <!-- Calm list, like the incidents list: rows edge to edge between full-width dividers, the place in Title S, grey
