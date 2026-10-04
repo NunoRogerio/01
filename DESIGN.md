@@ -912,3 +912,13 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## About: Goal and Where we are are titles (Oct 4, 15:16)
 - The two parts of About, "Goal" and "Where we are", are titles, not 16px subtitles: 20px semibold in black (24px line), smaller than the page title, 8px above their content. Same pattern for any part title inside a menu page.
+
+## Standing rule (Oct 4, 15:20): a change to one case applies to every similar case
+- When a decision is given for one screen, apply it to all similar screens in the same pass; when in doubt whether a screen is similar, ask before changing it.
+
+## Ignition candidate page: projection over the map (Oct 4, 15:20)
+- Same as the fire page: the Now / +1 h / +3 h / +6 h switcher sits inside the map band, dark map-control style, 16px from the left, right and bottom edges; the band is 310px tall (234 + 76); the pin is centred in the clear part above the switcher, the round buttons and the map credit sit above it; the GPS card is 56px under the map. Without a switcher the band stays 234px.
+
+## Camera feeds: Thermal / Visual and a 4px gap (Oct 4, 15:22)
+- Every camera feed (drone, helmet) has the Thermal / Visual switch of the first drone feed, bottom left, 200px wide, same dark glass; Visual is the default. Thermal shows the same feed in false colour (violet, red, orange, yellow, white from cold to hot): there is no separate thermal footage for these feeds.
+- Feeds open together keep 4px between them (was 8px), when dragged, thrown, swapped or placed.

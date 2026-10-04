@@ -17,9 +17,14 @@
     '.wf-cf button{position:absolute;display:flex;align-items:center;justify-content:center;width:44px;height:44px;box-sizing:border-box;padding:0;border-radius:50%;background:rgba(0,0,0,.5);border:0;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#FFFFFF;cursor:pointer}' +
     '.wf-cf .x{right:16px;top:16px}.wf-cf .mx{right:16px;bottom:16px}' +
     '.wf-cf .x svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}' +
+    '.wf-cf .cam{position:absolute;left:16px;bottom:16px;width:200px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}.wf-cf.max .cam{bottom:calc(24px + env(safe-area-inset-bottom))}.wf-cf .cam button{position:relative;width:auto;height:auto;padding:0 4px;border-radius:999px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf.heat video{filter:url(#wf-thermal) contrast(1.15)}' +
     '.wf-cf.max .x{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .lb{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .mx{bottom:calc(24px + env(safe-area-inset-bottom))}';
   (document.head || document.documentElement).appendChild(css);
-  var feeds = [], GAP = 8, SWAP = 2340;   // several feeds can be open at once (drone, helmet); they never overlap
+  // the heat camera: the feed in false colour (dark violet, red, orange, yellow, white from cold to hot)
+  var heat = document.createElement('div'); heat.setAttribute('aria-hidden', 'true'); heat.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+  heat.innerHTML = '<svg width="0" height="0"><filter id="wf-thermal" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 1 0"/><feComponentTransfer><feFuncR type="table" tableValues="0.08 0.3 0.75 1 1 1"/><feFuncG type="table" tableValues="0 0 0.1 0.5 0.88 1"/><feFuncB type="table" tableValues="0.2 0.5 0.3 0 0.1 0.9"/></feComponentTransfer></filter></svg>';
+  (document.body || document.documentElement).appendChild(heat);
+  var feeds = [], GAP = 4, SWAP = 2340;   // several feeds can be open at once (drone, helmet); they never overlap
   var MAXI = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"></path></svg>';
   var MINI = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M10 14l-7 7M14 10l7-7"></path></svg>';
   function size() { var w = Math.min(358, innerWidth - 32); return { w: w, h: Math.round(w * 202 / 358) }; }
@@ -43,7 +48,7 @@
   function put(f, x, y, anim) { var r = sep(f, x, y); setPos(f, r.x, r.y, anim); return r; }
   // a free place for a new feed: where asked, else below or above the ones open
   function free(x, y) { var s = size(), c = [{ x: x, y: y }];
-    feeds.forEach(function (g) { c.push({ x: x, y: g.st.y + s.h + 16 }, { x: x, y: g.st.y - s.h - 16 }); });
+    feeds.forEach(function (g) { c.push({ x: x, y: g.st.y + s.h + GAP }, { x: x, y: g.st.y - s.h - GAP }); });
     c.push({ x: x, y: innerHeight - s.h - 96 }, { x: x, y: 64 });
     for (var i = 0; i < c.length; i++) { var q = clampB(c[i].x, c[i].y), ok = true; if (Math.abs(q.y - c[i].y) > 1 && i) ok = false; feeds.forEach(function (g) { if (hits(q.x, q.y, g, GAP)) ok = false; }); if (ok) return q; }
     return clampB(x, y); }
@@ -82,6 +87,7 @@
       (o.cross ? '<svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position:absolute;left:50%;top:50%;margin:-22px 0 0 -22px;pointer-events:none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>' : '') +
       '<span class="lb"><i aria-hidden="true"></i><span>' + (o.label || 'Live. Helmet camera') + (o.who ? '<small>' + o.who + '</small>' : '') + '</span></span>' +
       '<button type="button" class="x mbtn" aria-label="Close camera feed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>' +
+      '<div role="group" aria-label="Camera" class="wf-seg cam"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 2);transform:translateX(100%)"><span class="segblob"></span></span><button type="button" class="segopt" data-cam="t" aria-selected="false" style="font-size:17px">Thermal</button><button type="button" class="segopt" data-cam="v" aria-selected="true" style="font-size:17px">Visual</button></div>' +
       '<button type="button" class="mx mbtn" aria-label="Maximize camera feed">' + MAXI + '</button>';
     document.body.appendChild(el);
     // starts as a small feed on its button, then glides, growing, to its place: above the button, centred
@@ -95,9 +101,11 @@
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     el.querySelector('.x').addEventListener('click', function (e) { e.stopPropagation(); close(f); });
     el.querySelector('.mx').addEventListener('click', function (e) { e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} maxi(f, !el.classList.contains('max')); });
+    Array.prototype.forEach.call(el.querySelectorAll('.cam .segopt'), function (b) { b.addEventListener('click', function (e) { e.stopPropagation(); var t = b.getAttribute('data-cam') === 't'; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
+      el.classList.toggle('heat', t); el.querySelector('.segthumb').style.transform = 'translateX(' + (t ? 0 : 100) + '%)'; Array.prototype.forEach.call(el.querySelectorAll('.cam .segopt'), function (o) { o.setAttribute('aria-selected', String(o === b)); }); }); });   // Thermal / Visual, as on the first drone feed
     // dragging, as the tour cards
     var D = null;
-    el.addEventListener('pointerdown', function (e) { if (e.target.closest('button') || el.classList.contains('max')) return; cancelAnimationFrame(st.fling || 0); D = { x: e.clientX, y: e.clientY, x0: st.x, y0: st.y, tr: [] }; try { el.setPointerCapture(e.pointerId); } catch (x) {} });
+    el.addEventListener('pointerdown', function (e) { if (e.target.closest('button') || e.target.closest('.cam') || el.classList.contains('max')) return; cancelAnimationFrame(st.fling || 0); D = { x: e.clientX, y: e.clientY, x0: st.x, y0: st.y, tr: [] }; try { el.setPointerCapture(e.pointerId); } catch (x) {} });
     el.addEventListener('pointermove', function (e) { if (!D) return; var mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true;
       var now = performance.now(); D.tr.push([now, e.clientX, e.clientY]); while (D.tr.length > 2 && now - D.tr[0][0] > 90) D.tr.shift(); put(f, D.x0 + mx, D.y0 + my, false); e.preventDefault(); });
     var up = function () { if (!D || feeds.indexOf(f) < 0) { D = null; return; } var d = D; D = null; var tr = d.tr, A = tr[0], Z = tr[tr.length - 1], vx = 0, vy = 0;
