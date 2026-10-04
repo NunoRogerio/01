@@ -82,6 +82,9 @@ image[href*="tile.openstreetmap"]{opacity:.72}
           <mask id="wfTileMaskY" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#wfTileFadeY)"></rect></mask>
           <mask id="wfTileMask" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#wfTileFadeX)" mask="url(#wfTileMaskY)"></rect></mask>
         </defs>
+        <sc-for list="{{tilesLo}}" as="tl" hint-placeholder-count="0">
+          <image href="{{tl.href}}" x="{{tl.x}}" y="{{tl.y}}" width="{{tl.w}}" height="{{tl.h}}" preserveAspectRatio="none" mask="{{tl.mask}}"></image>
+        </sc-for>
         <sc-for list="{{tilesOld}}" as="tl" hint-placeholder-count="0">
           <image href="{{tl.href}}" x="{{tl.x}}" y="{{tl.y}}" width="{{tl.w}}" height="{{tl.h}}" preserveAspectRatio="none" mask="{{tl.mask}}"></image>
         </sc-for>
@@ -1293,12 +1296,20 @@ class Component extends DCLogic {
     clearTimeout(this._rgT); this._rgT = setTimeout(() => this.regionCheck(), 1000);
     // Remember the view right away: touch events can arrive faster than the screen updates, and each pinch step
     // must build on the last one (not on a view that has not been drawn yet), so the zoom follows the fingers smoothly.
-    const v = this.clampView(cx, cy, s); this._pv = Object.assign({}, this._pv || {}, v);
+    const v = this.clampView(cx, cy, s);
+    // (Oct 4) Speed of the view in screen px per second (smoothed), so the tiles ahead can be fetched in the direction of travel
+    { const t0 = performance.now(), q = this._pv, V = this._vel; if (q && V && t0 > V.t && this._gest) { const dt = Math.max(8, t0 - V.t), a = 0.35, vx = (v.cx - q.cx) * v.s / dt * 1000, vy = (v.cy - q.cy) * v.s / dt * 1000; this._vel = { x: V.x + (vx - V.x) * a, y: V.y + (vy - V.y) * a, t: t0 }; } else this._vel = { x: 0, y: 0, t: t0 }; }
+    this._pv = Object.assign({}, this._pv || {}, v);
     // One redraw per screen frame: touch events arrive faster than the phone draws (120 Hz screens send even more),
     // so moves in between only update the remembered view and the next frame draws the latest one
     this._pvNext = v; if (!this._pvRaf) this._pvRaf = requestAnimationFrame(() => { this._pvRaf = 0; const n = this._pvNext; this._pvNext = null; if (!n) return;
       // During a drag, pinch or glide the drawn layers move as one picture; a full redraw (new tiles, markers) at most ~4 times a second
-      const t = performance.now(); if (this._gest && this._rv && t - (this._fullT || 0) < 450 && this.imgMove(n)) return;
+      // (Oct 4) While moving, the picture just moves (cheap). A full redraw (tiles, markers) is only needed when the view has left the
+      // area drawn by more than 120 px, when the zoom changed by more than a quarter, or after 1.2 s at the latest.
+      const t = performance.now(), R = this._rv;
+      const far = R && (Math.abs(n.cx - R.cx) * n.s > 120 || Math.abs(n.cy - R.cy) * n.s > 120 || n.s / R.s > 1.25 || n.s / R.s < 0.8);
+      const dist = R ? Math.max(Math.abs(n.cx - R.cx), Math.abs(n.cy - R.cy)) * n.s : 0, calm = t - (this._fullT || 0) < 250 && dist < 200 && n.s / R.s < 1.5 && n.s / R.s > 0.67;
+      if (this._gest && R && (calm || (!far && t - (this._fullT || 0) < 1200)) && this.imgMove(n)) return;
       this._fullT = t; this.setState(n); });
   }
   imgMove(n) {
@@ -1525,7 +1536,7 @@ class Component extends DCLogic {
         const opts = [['standard', 'Street'], ['vector', 'Vector']];
         const pl = PAL[st] || PAL.standard;
         const vx0 = -tx / s, vy0 = -ty / s, vx1 = (W - tx) / s, vy1 = (H - ty) / s;
-        const tiles = [];
+        const tiles = [], lo = [];
         if (window.__wfLiveMap && st === 'standard') {
           const lonOf = (x) => (x - 518) / 2345 - 118.13, latOf = (y) => 34.19 - (y - 662) / 2829;
           const X = (lon) => (lon + 118.13) * 2345 + 518, Y = (lat) => (34.19 - lat) * 2829 + 662;
@@ -1538,19 +1549,28 @@ class Component extends DCLogic {
           if (!(z >= 2) || Math.abs(zf - z) > 0.62) z = Math.round(zf);
           z = Math.max(2, Math.min(17, z));
           let n, tX, tY, lonT, latT, x0, x1, y0, y1, PAD = 1;
+          // (Oct 4) Look-ahead: at a medium pace (80 to 1400 px/s) one more ring of tiles on the side the map is moving towards; flicks and slow drags get none
+          const VL = this._vel || { x: 0, y: 0 }, sp = Math.hypot(VL.x, VL.y), ah = this._gest === true && sp > 80 && sp < 1400 ? 1 : 0, aL = ah && VL.x < -40 ? 1 : 0, aR = ah && VL.x > 40 ? 1 : 0, aT = ah && VL.y < -40 ? 1 : 0, aB = ah && VL.y > 40 ? 1 : 0;   /* the view moving left (x < 0) uncovers the left side */
           const setZ = () => {
             n = Math.pow(2, z);
             tX = (lon) => Math.floor((lon + 180) / 360 * n);
             tY = (lat) => { const r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n); };
             lonT = (x) => x / n * 360 - 180;
             latT = (y) => { const m = Math.PI - 2 * Math.PI * y / n; return 180 / Math.PI * Math.atan(0.5 * (Math.exp(m) - Math.exp(-m))); };
-            x0 = tX(lonOf(vx0)) - PAD; x1 = tX(lonOf(vx1)) + PAD; y0 = tY(lat1) - PAD; y1 = tY(lat0) + PAD;   /* a ring of tiles around the view, loaded ahead, so a swipe never uncovers grey squares */
+            x0 = tX(lonOf(vx0)) - PAD - aL; x1 = tX(lonOf(vx1)) + PAD + aR; y0 = tY(lat1) - PAD - aT; y1 = tY(lat0) + PAD + aB;   /* a ring of tiles around the view, loaded ahead, so a swipe never uncovers grey squares */
           };
           setZ();
           // Too many tiles for this view (hysteresis held a high level while zooming out): step down until it fits.
           while ((x1 - x0 + 1) * (y1 - y0 + 1) > 160 && z > 2) { z--; setZ(); }
           this._tz = z;
           const url = (x, y) => 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
+          if (z >= 6 && (x1 - x0 + 1) * (y1 - y0 + 1) <= 160) {
+            const zc = z - 2, nc = Math.pow(2, zc), f = 4, cx0 = Math.floor(x0 / f), cx1 = Math.floor(x1 / f), cy0 = Math.max(0, Math.floor(y0 / f)), cy1 = Math.min(nc - 1, Math.floor(y1 / f));
+            for (let cy = cy0; cy <= cy1; cy++) for (let cxx = cx0; cxx <= cx1; cxx++) {
+              const wx = ((cxx % nc) + nc) % nc, nz = Math.pow(2, z), a = X(lonT(cxx * f)), b = X(lonT((cxx + 1) * f)), c0 = Y(latT(cy * f)), c1 = Y(latT((cy + 1) * f));
+              lo.push({ href: 'https://tile.openstreetmap.org/' + zc + '/' + wx + '/' + cy + '.png', x: +a.toFixed(4), y: +c0.toFixed(4), w: +(b - a + 0.6 / s).toFixed(4), h: +(c1 - c0 + 0.6 / s).toFixed(4), mask: 'none' });
+            }
+          }
           if ((x1 - x0 + 1) * (y1 - y0 + 1) <= 160) {
             for (let ty2 = Math.max(0, y0); ty2 <= Math.min(n - 1, y1); ty2++) {
               for (let tx2 = x0; tx2 <= x1; tx2++) {
@@ -1569,17 +1589,21 @@ class Component extends DCLogic {
         const TS = this._ts || (this._ts = { cur: [], old: [], done: new Set(), busy: new Set() }), now = Date.now();
         const want = new Map(tiles.map((t) => [t.href, t]));
         let pending = 0;
-        want.forEach((t, h) => {
-          if (TS.done.has(h)) return;
-          pending++;
-          if (TS.busy.has(h)) return;
+        // (Oct 4) A tile is decoded before it counts as loaded, so placing it never stalls a frame
+        const load = (h) => {
+          if (TS.done.has(h) || TS.busy.has(h)) return;
           TS.busy.add(h);
           const im = new Image();
           const fin = () => { TS.busy.delete(h); TS.done.add(h); if (TS.done.size > 3000) TS.done.clear();
             if (!this._tsR) this._tsR = requestAnimationFrame(() => { this._tsR = 0; this.forceUpdate(); }); };
-          im.onload = fin; im.onerror = () => { TS.busy.delete(h); };
+          im.onload = () => { if (im.decode) im.decode().then(fin, fin); else fin(); }; im.onerror = () => { TS.busy.delete(h); };
           im.src = h;
-        });
+        };
+        want.forEach((t, h) => { if (TS.done.has(h)) return; pending++; load(h); });
+        // (Oct 4) Low-resolution underlay: the same area two zoom levels up (a sixteenth of the tiles), fetched first, so a fast swipe
+        // shows soft map instead of grey; the sharp tiles come in over it
+        lo.forEach((t) => load(t.href));
+        const LO = lo.filter((t) => TS.done.has(t.href));
         const freeAt = (A) => { const i = A.indexOf(null); return i < 0 ? A.length : i; };
         // Old tiles leave once the new set has fully loaded (plus a frame or two), or after a safety limit.
         const keepOld = pending > 0 ? now + 4000 : now + 250;
@@ -1590,7 +1614,7 @@ class Component extends DCLogic {
         if (TS.old.length && !this._tsT) this._tsT = setTimeout(() => { this._tsT = 0; this.forceUpdate(); }, pending > 0 ? 4100 : 300);
         const EMPTY = { href: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', x: 0, y: 0, w: 0, h: 0, mask: 'none' };
         return {
-          tiles: TS.cur.map((t) => t || EMPTY), tilesOld: TS.old.map((t) => t || EMPTY),
+          tilesLo: LO.length ? LO : [EMPTY], tiles: TS.cur.map((t) => t || EMPTY), tilesOld: TS.old.map((t) => t || EMPTY),
           pal: pl,
           ms: { pressed: st === 'vector' ? 'true' : 'false', name: (PAL[st] || PAL.standard).name,
             icon: st === 'vector' ? 'M12 3 2 8l10 5 10-5-10-5ZM2 12.5l10 5 10-5M2 17l10 5 10-5' : 'M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20ZM9 4v13.5M15 6.5V20',
