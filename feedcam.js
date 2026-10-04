@@ -17,7 +17,7 @@
     '.wf-cf button{position:absolute;display:flex;align-items:center;justify-content:center;width:44px;height:44px;box-sizing:border-box;padding:0;border-radius:50%;background:rgba(0,0,0,.5);border:0;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#FFFFFF;cursor:pointer}' +
     '.wf-cf .x{right:16px;top:16px}.wf-cf .mx{right:16px;bottom:16px}' +
     '.wf-cf .x svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}' +
-    '.wf-cf .cam{position:absolute;left:16px;bottom:16px;width:200px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}.wf-cf.max .cam{bottom:calc(24px + env(safe-area-inset-bottom))}.wf-cf .cam button{position:relative;width:auto;height:auto;padding:0 4px;border-radius:999px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf.mini .lb,.wf-cf.mini .cam,.wf-cf.mini .mx,.wf-cf.mini .cross{display:none}.wf-cf.mini .x{transform-origin:100% 0;transform:scale(var(--isc,1))}.wf-cf.heat video{filter:url(#wf-thermal) contrast(1.15)}' +
+    '.wf-cf .cam{position:absolute;left:16px;bottom:16px;width:200px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}.wf-cf.max .cam{bottom:calc(24px + env(safe-area-inset-bottom))}.wf-cf .cam button{position:relative;width:auto;height:auto;padding:0 4px;border-radius:999px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf.mini .lb,.wf-cf.mini .cam,.wf-cf.mini .mx,.wf-cf.mini .cross{display:none}.wf-cf.heat video{filter:url(#wf-thermal) contrast(1.15)}' +
     '.wf-cf.max .x{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .lb{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .mx{bottom:calc(24px + env(safe-area-inset-bottom))}';
   (document.head || document.documentElement).appendChild(css);
   // the heat camera: the feed in false colour (dark violet, red, orange, yellow, white from cold to hot)
@@ -47,7 +47,8 @@
       order.forEach(function (c) { if (done) return; var q = clampB(f, c.x, c.y); if (!hits(q.x, q.y, d.w, d.h, g, GAP - 0.5)) { p = q; done = true; if (c.h === 'x') hx = 1; else hy = 1; } });
       if (!done) { p = clampB(f, order[0].x, order[0].y); if (order[0].h === 'x') hx = 1; else hy = 1; } });
     return { x: p.x, y: p.y, hx: hx, hy: hy }; }
-  function tf(f, x, y) { return 'translate(' + x + 'px,' + y + 'px)' + (f.st.sc < 1 ? ' scale(' + f.st.sc + ')' : ''); }
+  function tf(f, x, y) { return 'translate(' + x + 'px,' + y + 'px)'; }
+  function applySize(f) { var d = dims(f); f.el.style.width = d.w + 'px'; f.el.style.height = d.h + 'px'; }   // a shrunk feed is really smaller (not scaled), so its X stays a plain 44px button
   function setPos(f, x, y, anim) { f.st.x = x; f.st.y = y;
     f.el.style.transition = anim ? 'transform .55s ' + EASE + ', opacity .5s cubic-bezier(.4,0,.6,1)' : 'none';
     f.el.style.transform = tf(f, x, y); }
@@ -61,7 +62,7 @@
   function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return;
     var e = f.el, a = f.st.anchor; e.querySelector('.x svg').style.transform = 'rotate(90deg)';
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
-    var r = a && a.isConnected ? a.getBoundingClientRect() : null, s = size();
+    var r = a && a.isConnected ? a.getBoundingClientRect() : null, s = dims(f);
     feeds.splice(feeds.indexOf(f), 1); cancelAnimationFrame(f.st.fling || 0);
     e.classList.remove('max'); e.style.width = s.w + 'px'; e.style.height = s.h + 'px';
     e.style.transition = 'transform .45s ' + EASE + ', opacity .45s ' + EASE;
@@ -90,7 +91,7 @@
     var stepX = function (now) { var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
       if (hit) v = Math.min(-280, v * Math.exp(-dt / 0.9)); y += v * dt;
       if (!hit && y <= 0) { hit = true; v *= 0.55; }
-      var cut = Math.max(0, -y); el.style.transform = tf(f, st.x, y); el.style.clipPath = cut ? 'inset(' + (cut / st.sc) + 'px 0 0 0)' : '';
+      var cut = Math.max(0, -y); el.style.transform = tf(f, st.x, y); el.style.clipPath = cut ? 'inset(' + cut + 'px 0 0 0)' : '';
       if (y + d.h <= 0) { try { el.remove(); } catch (x) {} return; }
       requestAnimationFrame(stepX); };
     requestAnimationFrame(stepX); }
@@ -125,7 +126,7 @@
     var D = null;
     var LP = 0, R = 240;   // pushing a feed against a screen edge shrinks it (240px of push = down to 40%); a long press brings it back
     var clearLP = function () { if (LP) { clearTimeout(LP); LP = 0; } };
-    var restore = function () { if (st.sc >= 1) return; cancelAnimationFrame(st.fling || 0); st.sc = 1; el.classList.remove('mini'); el.style.removeProperty('--isc');
+    var restore = function () { if (st.sc >= 1) return; cancelAnimationFrame(st.fling || 0); st.sc = 1; el.classList.remove('mini'); applySize(f);
       try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
       var r = sep(f, st.x, st.y); setPos(f, r.x, r.y, true); };
     el.addEventListener('pointerdown', function (e) { if (e.target.closest('button') || e.target.closest('.cam') || el.classList.contains('max')) return; cancelAnimationFrame(st.fling || 0); D = { x: e.clientX, y: e.clientY, x0: st.x, y0: st.y, sc0: st.sc, tr: [] }; try { el.setPointerCapture(e.pointerId); } catch (x) {}
@@ -133,7 +134,7 @@
     el.addEventListener('pointermove', function (e) { if (!D) return; var mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true; clearLP();
       var now = performance.now(); D.tr.push([now, e.clientX, e.clientY]); while (D.tr.length > 2 && now - D.tr[0][0] > 90) D.tr.shift();
       var tx = D.x0 + mx, ty = D.y0 + my, B0 = boundsF(f, D.sc0), ov = Math.max(B0.x0 - tx, tx - B0.x1, B0.y0 - ty, ty - B0.y1, 0);
-      if (ov > 0) { var k = Math.max(0.4, Math.min(st.sc, D.sc0 - ov / R * 0.6)); if (k < st.sc) { st.sc = k; el.style.setProperty('--isc', String(1 / k)); } }   // only ever smaller while pushing
+      if (ov > 0) { var k = Math.max(0.4, Math.min(st.sc, D.sc0 - ov / R * 0.6)); if (k < st.sc) { st.sc = k; el.classList.add('mini'); applySize(f); } }   // only ever smaller while pushing
       put(f, tx, ty, false); e.preventDefault(); });
     var up = function () { clearLP(); if (!D || feeds.indexOf(f) < 0) { D = null; return; } var d = D; D = null; if (st.sc < 1) el.classList.add('mini'); var tr = d.tr, A = tr[0], Z = tr[tr.length - 1], vx = 0, vy = 0;
       if (d.moved && A && Z && Z[0] - A[0] > 8 && performance.now() - Z[0] < 80) { vx = (Z[1] - A[1]) / ((Z[0] - A[0]) / 1000); vy = (Z[2] - A[2]) / ((Z[0] - A[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }

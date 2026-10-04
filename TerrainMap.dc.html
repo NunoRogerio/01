@@ -845,15 +845,16 @@ class Component extends DCLogic {
     // legend row, above the map credit, with room for the distance labels.
     let spanC = null;
     const NSs = this.nearSt(), PC = Number(p.pinClose);
-    if (this.pinCloseOn()) { s0 = PC; fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = this.win().c; }   // close on the ignition, centred in the visible map
+    const LIFT = Math.max(0, Number(p.pinLift) || 0);   // the pin sits that much higher, clear of something laid over the map's foot (the projection switcher)
+    if (this.pinCloseOn()) { s0 = PC; fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = this.win().c - LIFT; }   // close on the ignition, centred in the visible map
     // A candidate's projection (+1 / +3 / +6 h) keeps the zoom locked: the shape fills the map band as it grows; the full-screen map is where to zoom out
     else if (NSs.length && p.mode === 'pin') {   // fire maps frame the perimeter and projection instead (set by the screen)
-      const w1 = this.win(), top = Math.max(52, w1.t) + 14 + 88 + 36, bot = w1.b - 40, left = w1.l + 56, right = this.W() - w1.r - 84;   // below the title box (with its legend) plus a distance label; above the credit   // clear of the legend, the map credit and the full-screen button
+      const w1 = this.win(), top = Math.max(52, w1.t) + 14 + 88 + 36, bot = w1.b - 40 - 2 * LIFT, left = w1.l + 56, right = this.W() - w1.r - 84;   // below the title box (with its legend) plus a distance label; above the credit   // clear of the legend, the map credit and the full-screen button
       // The pin stays in the middle of the clear area; zoom out just enough for every suggested station around it.
       const dx = Math.max.apply(null, NSs.map((q) => Math.abs(q.x - fx))), dy = Math.max.apply(null, NSs.map((q) => Math.abs(q.y - fy)));
       const hw = Math.max(20, Math.min(this.W() / 2 - left, right - this.W() / 2)), hh = Math.max(20, Math.min(w1.c - top, bot - w1.c));
       s0 = Math.min(24, dx > 0 ? hw / dx : 24, dy > 0 ? hh / dy : 24);
-      spanC = w1.c;
+      spanC = w1.c - LIFT;
     }
     const w0 = this.win(), key = fx + ',' + fy + ',' + s0 + ',' + this.fitWin().c + ',' + spanC + ',' + w0.l + ',' + w0.r + ',' + this.W() + ',' + this.H();
     if (this._bk !== key) {

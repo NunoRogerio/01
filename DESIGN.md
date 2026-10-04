@@ -931,3 +931,10 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Tour dismissed message (Oct 4, 15:29)
 - After the tour card is swiped away, the centred card says "You've dismissed the tour. Restart on the Home screen." (Portuguese: "Dispensou o tour. Recomece no ecrã inicial."), not "Tour ended". It still fades after 3 s or closes with its X. Wording for the same action elsewhere: dismissed, not ended.
+
+## Map with the projection: one formula for fire and candidate pages (Oct 4, 15:46)
+- Fire page and ignition candidate page share the same map band: 310px tall, the map itself fills all 310px (nothing clipped), the switcher over its foot 16px from left, right and bottom, the subject (fire with its +6 h shape, or the pin) centred in the 234px clear above the switcher, round buttons 24px above the switcher, map credit above it, 56px to the next group. Do not clip the map to make room: lift the subject (the map's `pin-lift`, or the fire framing).
+- Any new page that shows a map with the projection copies this; when one changes, change both.
+
+## Camera feeds: shrinking is a real resize (Oct 4, 15:47)
+- A shrunk feed is smaller in layout (not scaled), so its X stays a plain 44px button that closes it; the label, Thermal / Visual and maximize hide as soon as it starts to shrink.
