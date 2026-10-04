@@ -755,38 +755,29 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   // Back (Oct 3, 22:06; 22:41 from the left): the screen you go back to slides in from the left over the current one, which darkens 20%
   // as it is covered, exactly like the sections of the settings menu (same 0.53s, same ease). Other screen changes keep their dissolve.
   try{var vs=document.createElement('style');vs.textContent='html:active-view-transition-type(wfback)::view-transition-old(root){animation:wfvtDim .53s cubic-bezier(.37,0,.63,1) both}html:active-view-transition-type(wfback)::view-transition-new(root){animation:wfvtIn .53s cubic-bezier(.37,0,.63,1) both}@keyframes wfvtDim{from{filter:brightness(1)}to{filter:brightness(.8)}}@keyframes wfvtIn{from{transform:translateX(-100%)}to{transform:none}}';(document.head||document.documentElement).appendChild(vs);}catch(x){}
-  // (Oct 4, replaces the split) View on a map card: the current screen slides up and away, and the incident's (or station's) screen pushes
-  // up from the bottom over the grey beneath (0.53s, same ease each way). Done with plain script, so it never depends on the browser's
-  // view transitions: the old screen slides up, the page changes, the new one slides up from the bottom.
+  // (Oct 4, replaces the split) View on a map card: the destination screen pushes up from the bottom over the current one (0.53s). It is
+  // loaded in a frame first (the card's label says Loading while it does); if it needs more time it starts from grey and its content fades
+  // in as it rises. When it has covered the screen the real page opens in its place: no grey screen in between.
   var PU_E='cubic-bezier(.37,0,.63,1)',PU_D=530;
   function puGrey(){return document.documentElement.classList.contains('wf-dark')?'#000000':'#C7C7CC';}
-  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-wf-split]');if(!a||e.defaultPrevented&&a.__wfPu)return;
-    if(e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;var dc=document.getElementById('dc-root');if(!dc||!window.Element||!dc.animate||a.__wfPu)return;
+  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-wf-split]');if(!a||a.__wfPu)return;
+    if(e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;var dc=document.getElementById('dc-root');if(!dc||!window.Element||!dc.animate)return;
     a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;
     try{snap={};for(var q=0;q<sessionStorage.length;q++){var kk=sessionStorage.key(q);snap[kk]=sessionStorage.getItem(kk);}}catch(x){}
     var navigate=function(){if(gone)return;gone=true;try{if(snap){sessionStorage.clear();Object.keys(snap).forEach(function(k){sessionStorage.setItem(k,snap[k]);});}}catch(x){}window.location.href=href;};
-    var slide=function(pre){   /* the old screen slides up; the destination, already loaded under it, brightens from 20% darker */
-      try{var r=dc.getBoundingClientRect();document.documentElement.style.background=puGrey();document.body.style.background=puGrey();
-        var an=dc.animate([{transform:'translateY(0)'},{transform:'translateY(-'+Math.round(r.height)+'px)'}],{duration:PU_D,easing:PU_E,fill:'forwards'});
-        if(pre&&pre.dim)pre.dim.animate([{opacity:.2},{opacity:0}],{duration:PU_D,easing:PU_E,fill:'forwards'});
-        an.onfinish=navigate;setTimeout(navigate,PU_D+150);}catch(x){navigate();}};
-    var fallback=function(){try{sessionStorage.setItem('wf-push-up',JSON.stringify({t:Date.now(),g:puGrey()}));}catch(x){}slide(null);};
     setTimeout(function(){   /* after the card's own handlers have set the destination up */
-      try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.textContent=L[lb]||'…';a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads underneath */
-        var f=document.createElement('iframe'),dim=document.createElement('div'),ready=false,done=false;
-        f.setAttribute('aria-hidden','true');f.setAttribute('tabindex','-1');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;z-index:0;pointer-events:none;background:'+puGrey();
-        dim.style.cssText='position:fixed;inset:0;background:#000;opacity:.2;z-index:0;pointer-events:none';
-        dc.style.position=dc.style.position||'relative';dc.style.zIndex='1';document.body.appendChild(f);document.body.appendChild(dim);
-        var go=function(){if(done)return;done=true;slide({dim:dim});};
-        var poll=function(){try{var d=f.contentDocument;if(d&&d.readyState==='complete'){var r=d.getElementById('dc-root');if(r&&r.firstElementChild){setTimeout(go,350);return;}}}catch(x){}if(!done&&Date.now()-t0<2500)setTimeout(poll,80);else if(!done){done=true;try{f.remove();dim.remove();}catch(x){}fallback();}};
-        var t0=Date.now();f.src=href;setTimeout(poll,150);}catch(x){fallback();}},0);},true);
-  addEventListener('pageshow',function(){try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});var dc=document.getElementById('dc-root');if(dc){dc.getAnimations().forEach(function(x){x.cancel();});}document.documentElement.style.background='';document.body.style.background='';document.querySelectorAll('body > iframe[aria-hidden=true]').forEach(function(n){n.remove();});if(dc)dc.style.zIndex='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
-  // the arriving screen: held below, then pushed up from the bottom
-  try{var PU=null;try{PU=JSON.parse(sessionStorage.getItem('wf-push-up')||'null');sessionStorage.removeItem('wf-push-up');}catch(x){}
-    if(PU&&Date.now()-PU.t<8000){var hold=document.createElement('style');hold.textContent='html{background:'+PU.g+'!important}body{background:'+PU.g+'!important}#dc-root{transform:translateY(100%)}';(document.head||document.documentElement).appendChild(hold);
-      var started=false,run=function(){if(started)return;var dc=document.getElementById('dc-root');if(!dc||!dc.firstElementChild)return;started=true;
-        requestAnimationFrame(function(){requestAnimationFrame(function(){try{hold.remove();var an=dc.animate([{transform:'translateY(100%)'},{transform:'translateY(0)'}],{duration:PU_D,easing:PU_E});an.onfinish=function(){try{document.documentElement.style.background='';document.body.style.background='';}catch(x){}};}catch(x){try{hold.remove();}catch(y){}}});});};
-      var mo=new MutationObserver(run);mo.observe(document.documentElement,{childList:true,subtree:true});addEventListener('load',function(){setTimeout(run,60);});setTimeout(function(){try{hold.remove();mo.disconnect();}catch(x){}},3500);}}catch(x){}
+      try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.textContent=L[lb]||'…';a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads */
+        var w=document.createElement('div'),f=document.createElement('iframe'),dim=document.createElement('div'),T0=Date.now(),loaded=false,rose=false,lift=false;
+        w.setAttribute('aria-hidden','true');w.setAttribute('data-wf-pushup','1');w.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;z-index:300;overflow:hidden;pointer-events:none;background:'+puGrey()+';transform:translateY(100%);box-shadow:0 0 28px rgba(0,0,0,.25)';
+        f.setAttribute('tabindex','-1');f.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;border:0;opacity:0;background:transparent';w.appendChild(f);
+        dim.setAttribute('data-wf-pushup','1');dim.style.cssText='position:fixed;inset:0;background:#000;opacity:0;z-index:299;pointer-events:none';document.body.appendChild(dim);document.body.appendChild(w);
+        var fade=function(){if(loaded&&!f.__in){f.__in=1;f.animate([{opacity:0},{opacity:1}],{duration:rose?320:120,easing:'ease-out',fill:'forwards'});}};
+        var rise=function(){if(rose)return;rose=true;fade();var an=w.animate([{transform:'translateY(100%)'},{transform:'translateY(0)'}],{duration:PU_D,easing:PU_E,fill:'forwards'});dim.animate([{opacity:0},{opacity:.2}],{duration:PU_D,easing:PU_E,fill:'forwards'});
+          an.onfinish=function(){var wait=function(){if(loaded||Date.now()-T0>2500)navigate();else setTimeout(wait,60);};wait();};};
+        var poll=function(){try{var d=f.contentDocument;if(!loaded&&d&&d.readyState==='complete'){var r=d.getElementById('dc-root');if(r&&r.firstElementChild){loaded=true;fade();}}}catch(x){}
+          if(!rose&&(loaded?Date.now()-T0>350:Date.now()-T0>700))rise();if(Date.now()-T0>2500&&!loaded){rise();return;}if(!gone)setTimeout(poll,70);};
+        f.src=href;setTimeout(poll,100);}catch(x){navigate();}},0);},true);
+  addEventListener('pageshow',function(){try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});document.querySelectorAll('[data-wf-pushup]').forEach(function(n){n.remove();});document.documentElement.style.background='';document.body.style.background='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
   addEventListener('pagereveal',function(e){if(!e.viewTransition)return;var t=0;try{t=+sessionStorage.getItem('wf-vt-back')||0;sessionStorage.removeItem('wf-vt-back');}catch(x){}if(Date.now()-t<15000){try{e.viewTransition.types.add('wfback');}catch(x){}return;}});
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(a)mark();},true);
   var ob=window.__wfBackOrHome;if(typeof ob==='function'){window.__wfBackOrHome=function(){mark();return ob.apply(this,arguments);};}
