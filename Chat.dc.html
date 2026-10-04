@@ -18,9 +18,9 @@
 <script src="prefs.js?v=180"></script>
 <script src="i18n.js?v=152"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=60"></script>
+<script src="chat.js?v=61"></script>
 <script src="tour.js?v=70"></script>
-<script src="feedcam.js?v=11"></script>
+<script src="feedcam.js?v=12"></script>
 <script src="trophy.js?v=18"></script>
 
 <title>Chats</title>
@@ -224,6 +224,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 0">
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
         <button type="button" class="chbtn" data-round="1" onClick="{{camGo}}" aria-label="{{t.cam}}" style="display: {{camD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16a7.5 7.5 0 0 1 15 0M2 16h18.5c.8 0 1.5.7 1.5 1.5V19H6M10.2 9.6h3.6v3.4L12 14.2 10.2 13Z M12 8.5v-3"></path></svg></button>
+        <button type="button" class="chbtn" data-round="1" onClick="{{callGo}}" data-call="1" aria-label="{{t.call}}" style="display: {{callD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="3"></rect><path d="M15.5 10.5 21 7.5v9l-5.5-3"></path></svg></button>
         <label style="display: flex; align-items: center; gap: 8px; flex-grow: 1; min-width: 0; height: 48px; padding: 0 4px 0 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); color: #545458"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" class="sqsearch" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"><!-- Send sits inside the field: a small dark grey round button with a white arrow, faint until there is something to send -->
           <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" aria-disabled="{{sendDis}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #3A3A3C; color: #FFFFFF; opacity: {{sendOp}}; transition: opacity .2s ease; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button></label>
       </div>
@@ -513,6 +514,11 @@ class Component extends DCLogic {
   savePos(el, key) { clearTimeout(this._posT); this._posT = setTimeout(() => { try { const m = JSON.parse(localStorage.getItem('wf-chat-pos') || '{}'); delete m[key];
     m[key] = { t: Math.round(el.scrollTop), b: el.scrollHeight - el.scrollTop - el.clientHeight < 60 }; const ks = Object.keys(m); ks.slice(0, Math.max(0, ks.length - 60)).forEach((k) => delete m[k]);
     localStorage.setItem('wf-chat-pos', JSON.stringify(m)); } catch (e) {} }, 150); }
+  // (Oct 4, 16:30) a video call with the police captain: the floating feed rings, connects, then shows the captain (one of three faces, fixed per report)
+  wfCall(c, anchor) { const C = window.__wfChat, F = window.__wfCamFeed; if (!C || !F || !c || !c.police) return;
+    const L = (en, pt) => C.L(en, pt), p = (c.people || [])[0] || {}, face = C.callFace ? C.callFace(c.key) : 'police-a';
+    F.open({ anchor, title: 'Video call', label: L('Video call', 'Videochamada'), who: (p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + (p.name || ''),
+      call: { id: c.key, photo: 'assets/faces/' + face + '.jpg?v=1', alt: p.name || '', calling: L('Calling…', 'A chamar…'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Video call', 'Em direto. Videochamada') } }); }
   pin() { const el = this._sc; if (!el || !this._stick) return; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; }); }
   componentDidUpdate() {
     this.fitRows();
@@ -536,7 +542,7 @@ class Component extends DCLogic {
     const T = (o) => (o ? L(o.en, o.pt) : '');
     const PTL = L('en', 'pt') === 'pt';
     const t = { back: L('Back', 'Voltar'), close: L('Close', 'Fechar'), chats: L('Chats', 'Conversas'), none: L('No chats yet. Open one from an ignition candidate or a fire.', 'Ainda sem conversas. Abra uma a partir de um candidato a ignição ou de um incêndio.'),
-      msg: L('Write a message…', 'Escrever mensagem…'), send: L('Send', 'Enviar'), cam: L('Helmet camera', 'Câmara de capacete'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
+      msg: L('Write a message…', 'Escrever mensagem…'), send: L('Send', 'Enviar'), cam: L('Helmet camera', 'Câmara de capacete'), call: L('Video call with the police captain', 'Videochamada com o capitão da polícia'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
       fireCard: L('Fire card', 'Cartão do incêndio'), details: L('Details', 'Detalhes'), fireCardSub: L('Progress and projection', 'Progresso e projeção'),
       reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
@@ -839,6 +845,10 @@ class Component extends DCLogic {
       // (Oct 3, 22:51) pull a coordinator's live helmet camera from the chat, like the fire screen's camera button: from another
       // station lead than the first (the second in the chat when there is one); only for fires with crews out
       camD: (() => { const P = C.active ? C.active(c) : (c.people || []); return c.kind !== 'dm' && c.stage >= 2 && c.stage < 7 && !c.dismissed && P.length ? 'flex' : 'none'; })(),
+      callD: (() => { if (!c.police) return 'none';
+        try { if (sessionStorage.getItem('wf-call-auto') === c.key && !this._autoCall) { this._autoCall = 1; sessionStorage.removeItem('wf-call-auto'); setTimeout(() => this.wfCall(c, document.querySelector('[data-call]')), 700); } } catch (e) {}
+        return 'flex'; })(),
+      callGo: (e) => this.wfCall(c, e && e.currentTarget),
       camGo: (e) => { const P = C.active ? C.active(c) : (c.people || []), p = P[1] || P[0], R = C.leadRole ? C.leadRole(c) : null;
         if (window.__wfCamFeed && p) window.__wfCamFeed.open({ anchor: e && e.currentTarget, who: p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org, label: L('Live. Helmet camera', 'Em direto. Câmara de capacete') }); },
       setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; if ((this.state || {}).avTip) this.setState({ avTip: null }); if (this._restoring) return; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; const k = (this.state || {}).key; if (k && (this.state || {}).view === 'chat') this.savePos(el, k); },

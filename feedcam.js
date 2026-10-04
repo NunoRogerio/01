@@ -5,7 +5,7 @@
 // the screen; X folds it back into its button. One shared widget for the fire screen and the chats.
 (function () {
   if (window.__wfCamFeed) return;
-  var SRC = 'assets/helmetcam.mp4?v=1', EASE = 'cubic-bezier(.2,.8,.2,1)';
+  var SRC = 'assets/helmetcam.mp4?v=1', THERMAL = { 'assets/helmetcam.mp4': 'assets/helmetcam-thermal.mp4?v=1', 'assets/dronefire.mp4': 'assets/dronefire-thermal.mp4?v=1', 'assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4': 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4' }, EASE = 'cubic-bezier(.2,.8,.2,1)';
   var css = document.createElement('style');
   css.textContent =
     '.wf-cf{position:fixed;left:0;top:0;z-index:120;margin:0;overflow:hidden;border-radius:16px;background:#1C1C1E;color:#FFFFFF;box-shadow:0 0 28px rgba(0,0,0,.28);touch-action:none;cursor:grab;transform-origin:0 0;opacity:0;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif}' +
@@ -19,6 +19,13 @@
     '.wf-cf .x svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}' +
     '.wf-cf .cam{position:absolute;left:16px;bottom:16px;width:200px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}.wf-cf.max .cam{bottom:calc(24px + env(safe-area-inset-bottom))}.wf-cf .cam button{position:relative;width:auto;height:auto;padding:0 4px;border-radius:999px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf.mini .lb,.wf-cf.mini .cam,.wf-cf.mini .mx,.wf-cf.mini .cross{display:none}.wf-cf.heat video{filter:url(#wf-thermal) contrast(1.15)}' +
     '.wf-cf.max .x{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .lb{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .mx{bottom:calc(24px + env(safe-area-inset-bottom))}';
+  css.textContent += '.wf-cf .lb{right:76px}.wf-cf.call .cam{display:none}.wf-cf .pf{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity .9s ease,transform 6s ease-out}.wf-cf.on .pf{opacity:1;transform:scale(1)}' +
+    '.wf-cf .cl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(120% 120% at 50% 40%,#3A3F4A 0%,#15171C 70%);transition:opacity .9s ease}.wf-cf.on .cl{opacity:0;pointer-events:none}' +
+    '.wf-cf .cl .av{position:relative;display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.12);color:#FFFFFF}' +
+    '.wf-cf .cl .av:before,.wf-cf .cl .av:after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.35);animation:wfring 2s ease-out infinite}.wf-cf .cl .av:after{animation-delay:1s}' +
+    '.wf-cf .cl.cn .av:before,.wf-cf .cl.cn .av:after{animation:none;opacity:0}' +
+    '@keyframes wfring{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.1);opacity:0}}' +
+    '.wf-cf .cl span{font-size:15px;line-height:20px;font-weight:600;text-shadow:0 0 4px rgba(0,0,0,.6)}.wf-cf.mini .cl span{display:none}';
   (document.head || document.documentElement).appendChild(css);
   // the heat camera: the feed in false colour (dark violet, red, orange, yellow, white from cold to hot)
   var heat = document.createElement('div'); heat.setAttribute('aria-hidden', 'true'); heat.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
@@ -59,7 +66,7 @@
     c.push({ x: x, y: innerHeight - s.h - 96 }, { x: x, y: 64 });
     for (var i = 0; i < c.length; i++) { var q = clampB(null, c[i].x, c[i].y, 1), ok = true; if (Math.abs(q.y - c[i].y) > 1 && i) ok = false; feeds.forEach(function (g) { if (hits(q.x, q.y, s.w, s.h, g, GAP)) ok = false; }); if (ok) return q; }
     return clampB(null, x, y, 1); }
-  function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return;
+  function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return; (f.timers || []).forEach(clearTimeout);
     var e = f.el, a = f.st.anchor; e.querySelector('.x svg').style.transform = 'rotate(90deg)';
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     var r = a && a.isConnected ? a.getBoundingClientRect() : null, s = dims(f);
@@ -96,20 +103,27 @@
       requestAnimationFrame(stepX); };
     requestAnimationFrame(stepX); }
   function open(o) {
-    o = o || {}; var key = o.src || SRC, old = feeds.filter(function (g) { return g.st.src === key; })[0];
+    o = o || {}; var CALL = o.call || null, key = CALL ? 'call:' + (CALL.id || 'police') : (o.src || SRC), old = feeds.filter(function (g) { return g.st.src === key; })[0];
     if (old) { close(old); if (old.st.who === o.who) return; }   // the same button again closes it
     var s = size(), a = o.anchor && o.anchor.getBoundingClientRect ? o.anchor : null, r = a ? a.getBoundingClientRect() : null;
     var el = document.createElement('figure'), st = { anchor: a, x: 0, y: 0, sc: 1, src: key, who: o.who }, f = { el: el, st: st };
-    el.className = 'wf-cf'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', (o.title || 'Helmet camera') + (o.who ? ', ' + o.who : ''));
+    el.className = 'wf-cf' + (CALL ? ' call' : ''); el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', (o.title || 'Helmet camera') + (o.who ? ', ' + o.who : ''));
     el.style.width = s.w + 'px'; el.style.height = s.h + 'px';
-    el.innerHTML = '<video src="' + key + '" autoplay muted loop playsinline preload="auto" aria-label="' + (o.title || 'Live helmet camera') + '"></video>' +
-      (o.thermalSrc ? '<video class="tv" src="' + o.thermalSrc + '" autoplay muted loop playsinline preload="auto" aria-label="' + (o.title || 'Live helmet camera') + ', thermal" style="opacity:0"></video>' : '') +
+    var TS = o.thermalSrc || THERMAL[String(key).split('?')[0]] || '';
+    el.innerHTML = (CALL ? '<img class="pf" alt="' + (CALL.alt || '') + '" src="' + (CALL.photo || '') + '"><div class="cl"><div class="av"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></div><span class="ct">' + (CALL.calling || 'Calling') + '</span></div>' : '<video src="' + key + '" autoplay muted loop playsinline preload="auto" aria-label="' + (o.title || 'Live helmet camera') + '"></video>') +
+      (TS && !CALL ? '<video class="tv" src="' + TS + '" autoplay muted loop playsinline preload="auto" aria-label="' + (o.title || 'Live helmet camera') + ', thermal" style="opacity:0"></video>' : '') +
       (o.cross ? '<svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position:absolute;left:50%;top:50%;margin:-22px 0 0 -22px;pointer-events:none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>' : '') +
-      '<span class="lb"><i aria-hidden="true"></i><span>' + (o.label || 'Live. Helmet camera') + (o.who ? '<small>' + o.who + '</small>' : '') + '</span></span>' +
+      '<span class="lb"><i aria-hidden="true"></i><span><b class="lt" style="font:inherit">' + (o.label || 'Live. Helmet camera') + '</b>' + (o.who ? '<small>' + o.who + '</small>' : '') + '</span></span>' +
       '<button type="button" class="x mbtn" aria-label="Close camera feed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>' +
-      '<div role="group" aria-label="Camera" class="wf-seg cam"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 2);transform:translateX(100%)"><span class="segblob"></span></span><button type="button" class="segopt" data-cam="t" aria-selected="false" style="font-size:17px">Thermal</button><button type="button" class="segopt" data-cam="v" aria-selected="true" style="font-size:17px">Visual</button></div>' +
+      (CALL ? '' : '<div role="group" aria-label="Camera" class="wf-seg cam"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 2);transform:translateX(100%)"><span class="segblob"></span></span><button type="button" class="segopt" data-cam="t" aria-selected="false" style="font-size:17px">Thermal</button><button type="button" class="segopt" data-cam="v" aria-selected="true" style="font-size:17px">Visual</button></div>') +
       '<button type="button" class="mx mbtn" aria-label="Maximize camera feed">' + MAXI + '</button>';
     document.body.appendChild(el);
+    // a video call: rings (calling), then connects, then the other person's picture fades in
+    if (CALL) { var ct = el.querySelector('.ct'), cl = el.querySelector('.cl'), lt = el.querySelector('.lt'), im = el.querySelector('.pf');
+      var tm = [setTimeout(function () { if (ct) ct.textContent = CALL.connecting || 'Connecting'; if (cl) cl.classList.add('cn'); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} }, 2600),
+        setTimeout(function () { if (im && im.complete && im.naturalWidth) el.classList.add('on'); else if (im) im.addEventListener('load', function () { el.classList.add('on'); }); if (lt) lt.textContent = CALL.live || 'Live. Video call'; try { if (navigator.vibrate) navigator.vibrate([8, 40, 8]); } catch (x) {} }, 4300)];
+      if (im) im.addEventListener('error', function () { if (cl) { cl.style.opacity = '1'; } if (ct) ct.textContent = CALL.noPhoto || ''; });
+      f.timers = tm; }
     // starts as a small feed on its button, then glides, growing, to its place: above the button, centred
     var x1 = (innerWidth - s.w) / 2, y1 = r ? r.top - s.h - 16 : innerHeight - s.h - 96; if (y1 < 64) y1 = r ? r.bottom + 16 : 64;
     var mr = a && a.closest ? a.closest('[data-wf-maproot]') : null;   // from a map: inside the map, 16px from its top-left, like the drone feed in the band

@@ -1188,6 +1188,7 @@
       return Object.keys(db.chats).reduce(function (a, k) { var c = db.chats[k]; return a + (!c.closed && inSc(c) ? unread(c) : 0); }, 0); },
     nearby: function (key) { var c = load().chats[key]; return c ? nearby(c, 50) : []; }, setTopic: setTopic,
     police: function (inc) { var c = police(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
+    callFace: function (key) { var db = load(), c = db.chats[key]; if (!c) return 'police-a'; if (!c.callFace) { c.callFace = ['police-a', 'police-b', 'police-c'][Math.floor(Math.random() * 3)]; save(); } return c.callFace; },   /* the police leader's face for this report: one of three, chosen at random once, then the same in every call */
     policeChat: function (id) { return load().chats['p:' + id] || null; },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },

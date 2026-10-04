@@ -1,0 +1,26 @@
+name: Police leader portraits
+# Candidate portraits (free licences, Wikimedia Commons) for the video call with the police captain. Runs by hand or when its script changes.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/police.py', '.github/workflows/police.yml']
+permissions:
+  contents: write
+concurrency:
+  group: police
+  cancel-in-progress: false
+jobs:
+  police:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find portraits
+        run: python3 scripts/police.py
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/faces/police-cands
+          git diff --cached --quiet || (git commit -m "Police leader portrait candidates" && git pull --rebase -q && git push)
