@@ -634,10 +634,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <button type="button" class="opt wf-b wf-pri" onClick="{{ds.add}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{ds.addTxt}}</button>
               <span style="display: {{ds.noteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.note}}</span>
             </div>
-            <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
+            <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; gap: 56px; margin: 40px 0 0; padding: 0; list-style: none">
               <sc-for list="{{ds.items}}" as="d" hint-placeholder-count="7">
                 <!-- Rows: the name in bold, dividers edge to edge -->
-                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 16px 0; border-top: 0">
+                <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 0; border-top: 0">
                   <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
                   <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{d.name}}</span>
                   <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{d.sub}}</span>
@@ -650,14 +650,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <!-- What the source brings, across the full row (under the switch too), in the annotation style -->
                   <span style="display: {{d.whyD}}; grid-column: 1 / -1; margin-top: 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{d.why}}</span>
                   <!-- What it shows in the app: the real marker, tag or shape, with a label -->
-                  <span style="display: {{d.showsD}}; grid-column: 1 / -1; margin-top: 16px">
+                  <span style="display: {{d.showsD}}; grid-column: 1 / -1; margin-top: 32px">
                     <span style="display: block; font-size: 15px; line-height: 20px; font-weight: 600; color: #545458">{{d.showsT}}</span>
                     <sc-for list="{{d.shows}}" as="s">
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#3A3A3C" transform="translate(5 0) scale(.5) translate(6 6)"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_fire}}"><path d="M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z" fill="#E86A00"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="#E8590C"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_proj}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="none" stroke="#E8590C" stroke-width="1.5" stroke-dasharray="3 3" stroke-linejoin="round"/></svg>
@@ -673,14 +673,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                     </sc-for>
                   </span>
                   <!-- Real examples taken from the data loaded in the app -->
-                  <span style="display: {{d.exsD}}; grid-column: 1 / -1; margin-top: 16px">
+                  <span style="display: {{d.exsD}}; grid-column: 1 / -1; margin-top: 32px">
                     <span style="display: block; font-size: 15px; line-height: 20px; font-weight: 600; color: #545458">{{d.exsT}}</span>
                     <sc-for list="{{d.exs}}" as="e">
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_fire}}"><path d="M12.5 2.2c.4 2.9-1.2 4.6-2.8 6.2C8 10.1 6.3 11.9 6.3 14.8A5.7 5.7 0 0 0 12 20.6a5.7 5.7 0 0 0 5.7-5.8c0-2.6-1.3-4.4-2.6-5.7-.2 1.5-1 2.6-2 3 .5-3.6-.2-6.9-.6-9.9Z" fill="#E86A00"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="{{e.fc}}"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_proj}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="none" stroke="#E8590C" stroke-width="1.5" stroke-dasharray="3 3" stroke-linejoin="round"/></svg>
@@ -1160,7 +1160,7 @@ class Component extends DCLogic {
         const stageOf = (r) => { const I = (r && r[9]) || {}, S = CH && CH.STAGES; if (!S) return null; const sc = I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5, i = sc >= 10 ? 7 : sc === 9 ? 6 : sc === 8 ? 5 : sc === 7 ? 4 : sc === 6 ? 3 : sc === 5 ? 2 : 1, g = S[i]; return g ? { t: pt ? g.pt : g.en, fg: g.c, bg: g.bg } : null; };
         const fireEx = (key, poly) => { const A = LF.filter((q) => skey(q) === key), act = A.filter((q) => !(q[9] && q[9].resolved)), L = (act.length ? act : A).slice().sort((a, b) => ((b[9] && b[9].ha) || 0) - ((a[9] && a[9].ha) || 0)), r = L[0]; if (!r) return null;
           const I = r[9] || {}, st = poly ? null : stageOf(r);
-          return { k: poly ? 'poly' : 'fire', title: r[3], sub: [r[1], r[0]].filter((x) => x && x !== r[3]).join(', ') + (I.ha ? '. ' + I.ha + ' ha' : ''), tag: st ? st.t : '', tagFg: st ? st.fg : '', tagBg: st ? st.bg : '' }; };
+          return { k: poly ? 'poly' : 'fire', title: r[3], sub: [r[1], r[0]].filter((x) => x && x !== r[3]).join(', ') + (I.ha ? '. ' + I.ha + ' ha' : ''), tag: st ? st.t : '', tagFg: st ? st.fg : '', tagBg: st ? st.bg : '', fc: I.resolved ? '#6F2B06' : '#E8590C' }; };
         const stEx = () => { const D = window.__wfStFile || {}; for (const k in D) { const r = (D[k].rows || []).find((q) => q[4]); if (r) return { k: 'station', title: r[4], sub: Math.abs(r[2]).toFixed(2) + '°' + (r[2] < 0 ? 'S' : 'N') + ' ' + Math.abs(r[3]).toFixed(2) + '°' + (r[3] < 0 ? 'W' : 'E'), tag: '', tagFg: '', tagBg: '' }; } return null; };
         const wxNames = ['Low', 'Moderate', 'High', 'Very high', 'Maximum'];
         const SH = {
@@ -1198,7 +1198,7 @@ class Component extends DCLogic {
           ['OpenStreetMap', T('Map and fire stations', 'Mapa e quartéis de bombeiros'), null, true, 26, null, 9, T('The map itself, and the fire stations shown on it.', 'O próprio mapa e os quartéis de bombeiros nele mostrados.')],
           ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10, T('Wind and temperature drive the projections; air quality and terrain add context.', 'O vento e a temperatura conduzem as projeções; a qualidade do ar e o relevo dão contexto.')]
         ].map(([name, what, t, still, day, key, mon, why]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key, XX = X[name] || { shows: [], ex: [] }, EX = (XX.ex || []).filter(Boolean);
-          return { shows: XX.shows.map(([k, en, ptt]) => ({ ...flags(k), text: T(en, ptt) })), showsD: XX.shows.length ? 'block' : 'none', exs: EX.map((e) => ({ ...flags(e.k), title: e.title, sub: e.sub, tag: e.tag, tagD: e.tag ? 'inline-flex' : 'none', tagFg: e.tagFg, tagBg: e.tagBg })), exsD: EX.length ? 'block' : 'none', noExD: XX.shows.length && !EX.length && X[name] && X[name].ex.length ? 'block' : 'none', showsT: T('Shows in the app', 'Mostra na app'), exsT: T('Examples', 'Exemplos'),
+          return { shows: XX.shows.map(([k, en, ptt]) => ({ ...flags(k), text: T(en, ptt) })), showsD: XX.shows.length ? 'block' : 'none', exs: EX.map((e) => ({ ...flags(e.k), fc: e.fc, title: e.title, sub: e.sub, tag: e.tag, tagD: e.tag ? 'inline-flex' : 'none', tagFg: e.tagFg, tagBg: e.tagBg })), exsD: EX.length ? 'block' : 'none', noExD: XX.shows.length && !EX.length && X[name] && X[name].ex.length ? 'block' : 'none', showsT: T('Shows in the app', 'Mostra na app'), exsT: T('Examples', 'Exemplos'),
             name, sub: what, why: why || '', whyD: why ? 'block' : 'none', loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
           onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },

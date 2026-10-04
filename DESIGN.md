@@ -847,3 +847,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Density multibutton squares
 - The squares in the spacing (density) multibutton are drawn with a 1px outline (non-scaling, so it stays 1px at any size).
+
+## Data sources: structure and marker shapes (Oct 4, Deepspace pass)
+- Marker symbols in "Shows in the app" and "Examples" are the map's own: an active fire is the solid orange circle (#E8590C; resolved #6F2B06), a candidate the pale lime circle with a dark outline, a night candidate the same with the small moon centred. The flame icon stays only for the fire danger chip, where the app uses it.
+- Spacing scale in the list: 56px between sources, 32px between a source's parts (header, "Shows in the app", "Examples"), 8px between label and rows, 4px between name and description. Sources carry no padding or lines, so the gaps alone separate them (no horizontal lines rule).
+- Tags in the About stage list use the 13px tag size like every other tag.
