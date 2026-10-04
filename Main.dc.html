@@ -17,7 +17,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <script src="fit.js?v=134"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=176"></script>
+<script src="prefs.js?v=177"></script>
 <script src="i18n.js?v=152"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=60"></script>
@@ -199,7 +199,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </style>
 <style>
 /* (Oct 3, 23:29, trial) firefighter stripes: diagonal bands 24px wide (measured along the edge), hi-vis yellow */
-.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px)}   /* (23:58) lime stripes only, the blade shows between them */
+.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.8}   /* (23:58) lime stripes only, the blade shows between them */
 </style>
 </helmet>
 <div data-wfroot="1" style="position: relative; width: {{vw}}px; height: {{vh}}px; box-sizing: border-box; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
@@ -524,6 +524,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- (Oct 3, 22:20) the section darkens 20% while the screen slides back over it (folding to the icon column or closing), like a covered section -->
     <span aria-hidden="true" data-wf-secdim="1" style="position: absolute; inset: 0; z-index: 6; background: #000000; opacity: {{pm.dimOp}}; transition: opacity {{pm.dimT}}; pointer-events: none"></span>
     <h2 id="pfTitle" class="wf-title-m" data-wf-keepsp="1" style="display: flex; align-items: center; min-height: 44px; margin: {{pm.tTop}}px 0 0; padding: 0 16px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
+    <span data-wf-keepsp="1" style="display: {{pm.dDs}}; padding: 0 16px; margin: 4px 0 0; flex-shrink: 0; font-size: 17px; line-height: 22px; color: #000000"><b style="font-weight: 700">{{ds.count}}</b>&nbsp;{{ds.subW}}</span>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
     <!-- (Oct 3, 21:27) 16px all round the section (top: the title level with the menu button, 16px down; left; bottom), whatever the spacing preference; items sit on the panel itself, no containers (to be designed later) -->
     <div data-wf-fadetop="1" data-wf-keepsp="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 16px">
@@ -627,7 +628,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">Connected data sources</span>
       <!-- Connect data sources: a drawer like Chat settings; Add data source on top, then the sources the app reads -->
       <div style="display: {{pm.dDs}}; flex-direction: column; flex-shrink: 0">
-        <button type="button" class="opt" onClick="{{ds.toggle}}" aria-expanded="{{ds.str}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span style="flex-grow: 1; font-weight: 600">{{ds.title}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.count}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{ds.rot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="m9 6 6 6-6 6"></path></svg></button>
+        <!-- (Oct 4) no drawer row: the count sits under the panel title -->
         <div style="display: grid; grid-template-rows: {{ds.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
             <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px 0; border-top: 0">
@@ -1092,7 +1093,7 @@ class Component extends DCLogic {
             try { if (navigator.share) { navigator.share({ title: 'Forest Fire Watch', text: T('Forest Fire Watch: wildfire ignition detection.', 'Forest Fire Watch: deteção de ignições de incêndios florestais.'), url }).catch(() => {}); return; } } catch (e) {}
             copy(); } }; })(),
       // The data sources the app reads, with when this phone last loaded each (from the live-data cache)
-      ds: (() => { const o = !!s.dsOpen, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
+      ds: (() => { const o = true, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         let c = {}; try { c = JSON.parse(localStorage.getItem('wf-live-fires-v15') || 'null') || {}; } catch (e) {}
         const ago = (t) => { if (!t) return T('Not loaded on this phone yet', 'Ainda não carregado neste telemóvel'); const m = Math.max(0, Math.round((Date.now() - t) / 60000));
           if (lang === 'ja') return '読み込み: ' + (m < 1 ? 'たった今' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前');   // Japanese units
@@ -1118,7 +1119,7 @@ class Component extends DCLogic {
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
             const m = mon || 9; return lang === 'ja' ? (yr ? '2026年' : '') + m + '月' + day + '日に追加' : pt ? 'Adicionada a ' + day + (m === 10 ? ' out' : ' set') + yr : 'Added ' + day + (m === 10 ? ' Oct' : ' Sep') + yr; })() }; });
-        return { title: T('Manage data sources', 'Gerir fontes de dados'), count: String(items.length), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
+        return { title: T('Manage data sources', 'Gerir fontes de dados'), count: String(items.length), subW: T('data sources connected', 'fontes de dados ligadas'), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
           addTxt: T('Add data source', 'Adicionar fonte de dados'), noteD: s.dsAddTried ? 'block' : 'none',

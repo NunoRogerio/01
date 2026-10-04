@@ -827,3 +827,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Grabbers hidden (Oct 4):** no blade shows a grabber line any more; every blade keeps its behaviours (swipe across its area, drag, tap where the grabber sat to close). Supersedes the visible-grabber rules above.
 - **Stripes on top-dropping panels (Oct 4):** the area picker, place search, notifications and chats panels (and the alert's candidates dropdown) carry the firefighter stripes along their bottom edge, as the top blade does; the stripes ride the edge as the panel is dragged.
 - **No pulse on ignition markers (Oct 4):** ignition candidate markers (main map, selected ring, detail pin) no longer pulse anywhere.
+- **Connected data sources header (Oct 4):** no "Manage data sources" drawer row, count or chevron; the panel's content is always open, and under the title a line reads "**12** data sources connected" (count bold, words regular).
+- **Stripes at 80% (Oct 4):** the firefighter stripes (blade edges, panel edges, dialog tops) are drawn at 80% opacity.
