@@ -858,3 +858,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Stripes 40% opacity (Oct 4)
 - All stripes (shared `.wf-stripes`, the dialog top stripe, the settings stripe) are 20 points more transparent: 40% opacity (was 60%).
+
+## Zoomed out: fewer markers, no blobs (Oct 4)
+- The warm density blobs are gone; zoomed out the map shows markers, not haze.
+- Fires, ignition candidates and stations thin out together as the map zooms out: wider cells (3x the base spacing at the whole-country fit, 2x, 1.4x, then the base), and lower caps (fires 20, candidates 24 at country level; 40 and 40 a step in; then 90 and 60). Zooming in shows more. The selected item always stays.

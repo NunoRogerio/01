@@ -1359,25 +1359,19 @@ class Component extends DCLogic {
     // Draw only what is on screen, and at most the most important markers, so thousands of incidents stay fast.
     const WN0 = this.win(), vis = (x, y) => { const L = tx + x * s, T = ty + y * s; return L > -40 && L < W + 40 && T > WN0.t - 40 && T < WN0.b + 40; };
     const CAP = 90, selNow = (this.state || {}).selId;
-    const FK = Array.isArray(p.fires) ? this.thinKeep('fires', p.fires, (g) => [g.x, g.y], (i, j) => { const A = p.fires[i], B = p.fires[j], a1 = A.info && !A.info.resolved ? 1 : 0, b1 = B.info && !B.info.resolved ? 1 : 0; return a1 !== b1 ? a1 > b1 : (A.ha || 0) > (B.ha || 0); }, 30, s) : null;
+    const ZR0 = s / Math.max(1e-9, this.zMin()), SP = ZR0 < 2 ? 3 : ZR0 < 4 ? 2 : ZR0 < 8 ? 1.4 : 1, CAPF = ZR0 < 2 ? 20 : ZR0 < 4 ? 40 : CAP, CAPI = ZR0 < 2 ? 24 : ZR0 < 4 ? 40 : 60;
+    const FK = Array.isArray(p.fires) ? this.thinKeep('fires', p.fires, (g) => [g.x, g.y], (i, j) => { const A = p.fires[i], B = p.fires[j], a1 = A.info && !A.info.resolved ? 1 : 0, b1 = B.info && !B.info.resolved ? 1 : 0; return a1 !== b1 ? a1 > b1 : (A.ha || 0) > (B.ha || 0); }, 30 * SP, s) : null;
     // A fire stays drawn while any part of its shape is on screen (not only its centre), and a shape big enough
     // to read is never thinned away: once the polygon shows, it keeps showing at every zoom.
     const fBB = (g) => { const b = this.fireBurn(g).bb || [g.x, g.y, g.x, g.y]; return b; };
     const visF = (g) => { const b = fBB(g); return tx + b[2] * s > -40 && tx + b[0] * s < W + 40 && ty + b[3] * s > WN0.t - 40 && ty + b[1] * s < WN0.b + 40; };
     const bigF = (g) => { const b = fBB(g); return (b[2] - b[0]) * s >= 24 || (b[3] - b[1]) * s >= 24; };
-    const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g, i) => visF(g) && (FK.has(i) || bigF(g))).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAP) : [];
+    const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g, i) => visF(g) && (FK.has(i) || bigF(g))).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAPF) : [];
     const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
-    const IK = IGN_ALL ? this.thinKeep('ign', IGN_ALL, (g) => [g.x, g.y], (i, j) => IGN_ALL[i].conf > IGN_ALL[j].conf, 44, s) : null;   /* (Oct 4) fewer markers: one per 44px cell, the likeliest */
-    // (Oct 4) Smart marker count. Zoomed out with many candidates in view (over 100), no markers at all: soft warm blobs show
-    // where candidates are more frequent (no counts, no numbers). Zoomed in, thinned markers; tags only when few remain.
-    const IVIEW = IGN_ALL && window.__wfLiveMap ? IGN_ALL.filter((g) => vis(g.x, g.y)) : [];
-    const HEAT = IVIEW.length > 100 && this.props.mode !== 'pin';
-    const IGN_H = HEAT ? (() => { const C = 40, bin = new Map();
-      IVIEW.forEach((g) => { const L = tx + g.x * s, T = ty + g.y * s, k = Math.floor(L / C) + ',' + Math.floor(T / C), b = bin.get(k) || { n: 0, sx: 0, sy: 0 }; b.n++; b.sx += L; b.sy += T; bin.set(k, b); });
-      const cells = [...bin.values()], mx = Math.max(1, ...cells.map((b) => b.n));
-      return cells.sort((a, b) => a.n - b.n).slice(-260).map((b) => { const f = Math.log(1 + b.n) / Math.log(1 + mx), r = 24 + 24 * f, a = +(0.16 + 0.5 * f).toFixed(2);
-        return { left: +(b.sx / b.n).toFixed(1), top: +(b.sy / b.n).toFixed(1), d: Math.round(r * 2), m: -Math.round(r), bg: 'radial-gradient(circle, rgba(232,89,12,' + a + ') 0%, rgba(232,89,12,0) 70%)' }; }); })() : [];
-    const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => (!HEAT && IK.has(q.i) && vis(q.g.x, q.g.y)) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, 60) : null;
+    const IK = IGN_ALL ? this.thinKeep('ign', IGN_ALL, (g) => [g.x, g.y], (i, j) => IGN_ALL[i].conf > IGN_ALL[j].conf, 44 * SP, s) : null;   /* (Oct 4) fewer markers: one per 44px cell, the likeliest */
+    // (Oct 4) Smart marker count: the farther out, the fewer markers (wider cells, lower caps), never blobs. Zoom in to see more.
+    const HEAT = false, IGN_H = [];
+    const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => (!HEAT && IK.has(q.i) && vis(q.g.x, q.g.y)) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, CAPI) : null;
     // Whole countries (and any crowded view): markers stay still — no pulses or animated edges — to keep phones light.
     const MANY = ['US', 'BRA', 'AMZ', 'PT', 'CAN'].indexOf(p.scopeSt) >= 0 || (IGN_V ? IGN_V.length : 0) + FIRES_V.length > 40;
     const mode = p.mode || 'risk';
@@ -1410,7 +1404,7 @@ class Component extends DCLogic {
     const SF = this.stationFile();
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
-      const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 110 : zr < 4 ? 80 : zr < 8 ? 56 : 38, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
+      const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 140 : zr < 4 ? 100 : zr < 8 ? 70 : 38, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
       // On a fire or candidate only the recommended stations show (see nearSt), labelled with their distance;
       // who is actually committed is not published.
       const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km])), onlyRec = this.recMode();
