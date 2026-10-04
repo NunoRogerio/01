@@ -69,6 +69,7 @@
   function toggle() { if (mode) close(); else open(); }
   // the menu tells which way it is: a section open, or folded to its icon column
   window.addEventListener('message', function (e) { if (e.origin !== location.origin || !e.data || !e.data.wfMenu) return; var m = e.data.wfMenu;
+    if (m === 'dlgon' || m === 'dlgoff') { if (btn) { btn.style.opacity = m === 'dlgon' ? '0' : ''; btn.style.pointerEvents = m === 'dlgon' ? 'none' : 'auto'; } return; }   // (Oct 4) a dialog in the menu: the button gives way
     if (m === 'rail' && mode) { mode = 'rail'; slide(-60); } else if (m === 'open' && mode) { mode = 'open'; slide(-(mw() + 32)); } else if (m === 'close' && mode) close(); });
   // keep the button on its spot while the screen is showing (the screen can re-render or resize)
   function tick() { if (!btn) make(); else if (!mode) place(); }
