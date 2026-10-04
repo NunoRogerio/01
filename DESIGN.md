@@ -1027,3 +1027,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Back to a map: any open tooltip card closes on return from the page cache (pageshow), so no card is left active or 'Loading…' (Oct 4).
 - View push-up arrival (Oct 4, 21:50): the risen screen's last picture stays until the real page has drawn itself (its plain loading surface gone), then the real page appears over it in a 0.2s dissolve between identical pictures; no blank flash when the new screen settles.
 - About (Oct 4, 22:06): under "Thank you." a short story-and-thanks paragraph (a year of conversations between two nature-loving UX designers from Portugal and the USA; thanks to the public platforms in Data sources and to Claude.ai), 4px below it as its description, centred like the thanks.
+- About (Oct 4, 22:08): the stage paragraph reads 'a conversation starter, not an end goal'.
