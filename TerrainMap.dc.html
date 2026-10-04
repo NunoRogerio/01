@@ -1875,7 +1875,17 @@ class Component extends DCLogic {
     const P = (this.state || {}).pop, strip = (t) => String(t || '').replace(/\n?Tap to [^\n]*\.?$/, '').trim();
     const closePop = this._closePop = () => { if (this._popT) return; this.setState({ popSpin: true }); this._popT = setTimeout(() => { this._popT = null; this.setState({ pop: null, popSpin: false }); }, 260); };
     // Tapping the same marker again closes its tooltip panel; another marker opens its own (unfolding again from it)
-    const sel = (kind, key) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault();
+    // (Oct 4) Markers that overlap (within 26px of each other): a tap on the spot goes to each in turn, one tooltip per tap, then round again,
+    // so a marker hidden under another can always be reached. Every map uses this component, so every map does it.
+    const MK = []; (OUT.fireMarks || []).forEach((m, i) => MK.push({ kind: 'fire', key: m._g ? m._g.id : i, x: Number(m.left) || 0, y: (Number(m.top) || 0) + (m.flameD === 'block' ? 14 : 0), o: 0 }));
+    (OUT.ignMarks || []).forEach((m, i) => MK.push({ kind: 'ign', key: m._id || i, x: Number(m.left) || 0, y: Number(m.top) || 0, o: 1 }));
+    (OUT.stations || []).forEach((m, i) => MK.push({ kind: 'st', key: m._st ? m._st.id : m.tt, x: Number(m.left) || 0, y: (Number(m.top) || 0) - 13, o: 2 }));
+    this._mk = MK;
+    const sel = (kind0, key0) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault();
+      let kind = kind0, key = key0;
+      { const me = MK.find((q) => q.kind === kind0 && q.key === key0), G = me ? MK.filter((q) => Math.hypot(q.x - me.x, q.y - me.y) < 26).sort((a, b) => a.o - b.o || String(a.key).localeCompare(String(b.key))) : [];
+        if (G.length > 1) { const c0 = (this.state || {}).pop, ci = c0 ? G.findIndex((q) => q.kind === c0.kind && q.key === c0.key) : -1, nx = ci < 0 ? me : G[(ci + 1) % G.length]; kind = nx.kind; key = nx.key;
+          try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} } }
       const cur = (this.state || {}).pop; if (cur && cur.kind === kind && cur.key === key) { closePop(); return; }
       if (cur) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); requestAnimationFrame(() => this.setState({ pop: { kind, key } })); return; }
       this.setState({ pop: { kind, key } }); };
