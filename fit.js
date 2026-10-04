@@ -128,6 +128,7 @@ window.__wfBlink=function(path,dur){
 // forget the area and screen it was showing, so the app reopens on the default view instead of crashing again.
 (function(){
   // (Oct 4) What the page was opened with (area, tapped item, screen): kept, so a version update that reloads the page does not lose it
+  try{var fr0=false;try{fr0=window.self!==window.top;}catch(e){fr0=true;}var pu=sessionStorage.getItem('wf-pu-state');if(pu&&!fr0){sessionStorage.removeItem('wf-pu-state');var P=JSON.parse(pu);['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus','wf-verify'].forEach(function(k){if(P[k]!=null&&sessionStorage.getItem(k)==null)sessionStorage.setItem(k,P[k]);});}}catch(e){}   // (Oct 4) arriving by the View push-up: the tapped item the loading frame already used
   try{var S={};['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus','wf-verify'].forEach(function(k){var v=sessionStorage.getItem(k);if(v!=null)S[k]=v;});window.__wfSnap=S;}catch(e){}
   var K='wf-alive';
   try{
@@ -762,10 +763,12 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   function puGrey(){return document.documentElement.classList.contains('wf-dark')?'#000000':'#C7C7CC';}
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-wf-split]');if(!a||a.__wfPu)return;
     if(e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;var dc=document.getElementById('dc-root');if(!dc||!window.Element||!dc.animate)return;
-    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false;
-    var navigate=function(){if(gone)return;gone=true;   /* no storage restore: the frame already took the chosen fire and set it as the current one; putting an older copy back made the real page open the previous fire */
+    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;
+    var navigate=function(){if(gone)return;gone=true;   /* the frame took the one-shot state (the tapped item) while it loaded: the real page gets it back */
+      try{if(snap)sessionStorage.setItem('wf-pu-state',JSON.stringify(snap));}catch(x){}   /* read once by the real page (fit.js top), where the frame cannot reach it */
       window.location.href=href;};
     setTimeout(function(){   /* after the card's own handlers have set the destination up */
+      try{snap={};for(var q=0;q<sessionStorage.length;q++){var kk=sessionStorage.key(q);snap[kk]=sessionStorage.getItem(kk);}}catch(x){}   /* now, after the card's handlers */
       try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.textContent=L[lb]||'…';a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads */
         var w=document.createElement('div'),f=document.createElement('iframe'),dim=document.createElement('div'),T0=Date.now(),loaded=false,rose=false,lift=false;
         w.setAttribute('aria-hidden','true');w.setAttribute('data-wf-pushup','1');w.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;z-index:300;overflow:hidden;pointer-events:none;background:'+puGrey()+';transform:translateY(100%);box-shadow:0 0 28px rgba(0,0,0,.25)';

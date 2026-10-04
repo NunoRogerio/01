@@ -1023,3 +1023,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Open report (fire already has its police chat): opens the chat and starts the video call, like Report ignition (Oct 4).
 - View push-up: the sessionStorage snapshot is taken after the card's handlers run (it was taken before, so the arriving screen lost the chosen fire and fell back to the main screen) (Oct 4).
 - View push-up: no storage restore on arrival (the loading frame already makes the chosen fire current; restoring an older copy opened the previous fire) (Oct 4).
+- View push-up: the loading frame consumes the one-shot tapped item (focus / fire / station); the card's state is handed to the real page via a one-time 'wf-pu-state' key that fit.js restores at load (the frame never reads it). Verified: tapping Pasadena opens Pasadena (Oct 4).
