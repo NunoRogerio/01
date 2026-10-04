@@ -8,10 +8,11 @@ OKLIC = re.compile(r'^(public domain|pd|cc0|cc[- ]by(-sa)?[- ]\d|attribution|us 
 QS0 = ['firefighters group photo fire engines', 'fire department crew group photo fire trucks', 'firefighters team photo in front of fire engine',
       'wildland firefighters crew group photo', 'hotshot crew group photo', 'bombeiros voluntários grupo foto', 'firefighters posing group fire trucks behind',
       'fire brigade group photograph fire engines', 'CAL FIRE crew group photo', 'firefighters crew portrait trucks']
-QS = ['firefighters group photo fire engines', 'wildland firefighters crew group photo', 'hotshot crew group photo', 'firefighters posing group fire trucks behind',
-      'fire department personnel group photograph station', 'fire crew team photo fire engine', 'firefighters class graduation group photo', 'bombeiros grupo fotografia viaturas',
-      'firefighters team portrait engine company', 'volunteer fire company members group photo apparatus']
+QS = ['wildland firefighters pose for a group photo', 'hotshot crew pose group photo', 'firefighters pose for a group photo in front of fire engine', 'fire department members pose group photo fire trucks',
+      'engine crew poses for photo wildland fire', 'firefighters group photo with their fire truck', 'fire station crew group photo apparatus bay', 'volunteer fire brigade group photo members',
+      'bombeiros voluntários posam grupo viaturas', 'smokejumpers group photo', 'handcrew firefighters group photo', 'firefighters crew photo base camp group']
 AIRQ = ['firefighting helicopter water drop', 'helicopter firefighting crew aircraft', 'air tanker wildfire aircraft', 'firefighting aircraft Canadair', 'fire fighting plane water bomber', 'CAL FIRE helicopter', 'firefighting helitack crew helicopter', 'Super Scooper aircraft']
+BAD = re.compile(r'pickup|interior|engine bay|dodge|ford |ram |BLM|workshop|repair|historic|1[89]\d\d|monument|memorial|rally|union|strike|protest|poster|map', re.I)
 USED = ('Southeast Conservation Corps', 'USAG Stuttgart commemorates', 'CNRJ Fire')
 def get(url):
     with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r: return r.read()
@@ -28,7 +29,7 @@ def run(qs, out, mx, wide, label):
         for pg in sorted(search(q), key=lambda x: x.get('index', 99)):
             ii = (pg.get('imageinfo') or [{}])[0]; md = ii.get('extmetadata') or {}
             lic = (md.get('LicenseShortName') or {}).get('value', '')
-            if pg['title'] in seen or ii.get('mime') != 'image/jpeg' or not OKLIC.search(lic) or any(u in pg['title'] for u in USED): continue
+            if pg['title'] in seen or ii.get('mime') != 'image/jpeg' or not OKLIC.search(lic) or any(u in pg['title'] for u in USED) or (label == 'c' and BAD.search(pg['title'])): continue
             if ii.get('width', 0) < 900 or ii.get('width', 0) < ii.get('height', 0) * (1.1 if wide else 1) or not ii.get('thumburl'): continue
             seen.add(pg['title'])
             try: data = get(ii['thumburl'])
@@ -41,4 +42,3 @@ def run(qs, out, mx, wide, label):
     open(out + '/CREDITS.txt', 'w').write('\n'.join(cred) + '\n')
     print(n, 'candidates', out)
 run(QS, 'assets/crews-cands', 50, False, 'c')
-run(AIRQ, 'assets/air-cands', 40, True, 'a')
