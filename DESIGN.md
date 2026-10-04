@@ -893,3 +893,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Tour: swipe up to end, "Tour ended" card (Oct 4)
 - Ending the tour by swiping its text card up now needs a swipe 30% faster (2340 px/s, was 1800); anything slower still bounces back.
 - When a swipe up ends the tour, a card appears in the middle of the screen: "Tour ended. Restart on the Home screen." (PT: "Tour terminado. Recomece no ecrã inicial."). White frosted card, 28px corners, 17px text and a 44px round X. It fades out after 3 s, or at once with the X. The normal end of the tour does not show it.
+
+## Fire page: projection switcher over the map
+- The Now / +1 h / +3 h / +6 h switcher sits inside the map band, on its foot: 16px from the left, right and bottom edges, in the dark map-control style (rgba(0,0,0,.5) with frosted blur), as in full screen.
+- The band is 310px tall (234 + 76 for the switcher); the fire (with its +6 h shape) is framed in the clear part above the switcher, and the round map buttons and the attribution sit above it.
+- The gap from the map to the next group is 56px. A held fire has no switcher but keeps the same band height.
