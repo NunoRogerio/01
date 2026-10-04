@@ -840,3 +840,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Settings icon column stripe
 - The settings (menu) icon column carries the lime stripe down its left edge, full height, 8px wide at 80% opacity, the same shared `.wf-stripes` as the top-dropping panels. It sits in the column's 8px side padding, so the 44px icons do not move.
+
+## Stripe moved to the screen's left edge, 60% opacity
+- The settings stripe moved off the icon column to the left edge of the screen: full height, 8px wide, no padding.
+- All stripes (shared `.wf-stripes` and the dialog top stripe) now use 60% opacity (was 80%).
