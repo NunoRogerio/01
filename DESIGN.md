@@ -922,3 +922,9 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Camera feeds: Thermal / Visual and a 4px gap (Oct 4, 15:22)
 - Every camera feed (drone, helmet) has the Thermal / Visual switch of the first drone feed, bottom left, 200px wide, same dark glass; Visual is the default. Thermal shows the same feed in false colour (violet, red, orange, yellow, white from cold to hot): there is no separate thermal footage for these feeds.
 - Feeds open together keep 4px between them (was 8px), when dragged, thrown, swapped or placed.
+
+## Camera feeds: shrink at the edges, long press, swipe away (Oct 4, 15:26)
+- Pushing a feed against a screen edge (dragging past where it stops) shrinks it proportionally, down to 40% of its size (240px of push reaches the minimum). It only gets smaller while pushed; the pushed edge stays 8px from the screen edge.
+- When the finger lifts on a shrunk feed, everything goes except the X button (label, Thermal / Visual and maximize are hidden); the X keeps its 44px tap size.
+- A long press (about half a second, without moving) on a shrunk feed brings it back to its original size, with a haptic tap.
+- A swipe up at the speed that ends the tour (2340 px/s) closes a feed the way it closes the tour: it flies to the top edge and is swallowed by it. If another feed is in its way, the same flick swaps places instead.

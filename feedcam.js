@@ -17,7 +17,7 @@
     '.wf-cf button{position:absolute;display:flex;align-items:center;justify-content:center;width:44px;height:44px;box-sizing:border-box;padding:0;border-radius:50%;background:rgba(0,0,0,.5);border:0;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#FFFFFF;cursor:pointer}' +
     '.wf-cf .x{right:16px;top:16px}.wf-cf .mx{right:16px;bottom:16px}' +
     '.wf-cf .x svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}' +
-    '.wf-cf .cam{position:absolute;left:16px;bottom:16px;width:200px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}.wf-cf.max .cam{bottom:calc(24px + env(safe-area-inset-bottom))}.wf-cf .cam button{position:relative;width:auto;height:auto;padding:0 4px;border-radius:999px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf.heat video{filter:url(#wf-thermal) contrast(1.15)}' +
+    '.wf-cf .cam{position:absolute;left:16px;bottom:16px;width:200px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}.wf-cf.max .cam{bottom:calc(24px + env(safe-area-inset-bottom))}.wf-cf .cam button{position:relative;width:auto;height:auto;padding:0 4px;border-radius:999px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf.mini .lb,.wf-cf.mini .cam,.wf-cf.mini .mx,.wf-cf.mini .cross{display:none}.wf-cf.mini .x{transform-origin:100% 0;transform:scale(var(--isc,1))}.wf-cf.heat video{filter:url(#wf-thermal) contrast(1.15)}' +
     '.wf-cf.max .x{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .lb{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .mx{bottom:calc(24px + env(safe-area-inset-bottom))}';
   (document.head || document.documentElement).appendChild(css);
   // the heat camera: the feed in false colour (dark violet, red, orange, yellow, white from cold to hot)
@@ -28,30 +28,36 @@
   var MAXI = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"></path></svg>';
   var MINI = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M10 14l-7 7M14 10l7-7"></path></svg>';
   function size() { var w = Math.min(358, innerWidth - 32); return { w: w, h: Math.round(w * 202 / 358) }; }
-  function bounds() { var s = size(); return { x0: 8, x1: innerWidth - s.w - 8, y0: 8, y1: innerHeight - s.h - 8 }; }
+  function dims(f) { var s = size(), k = f && f.st ? f.st.sc : 1; return { w: s.w * k, h: s.h * k }; }
+  function boundsF(f, k) { var s = size(), kk = k == null ? (f && f.st ? f.st.sc : 1) : k; return { x0: 8, x1: innerWidth - s.w * kk - 8, y0: 8, y1: innerHeight - s.h * kk - 8 }; }
   function others(f) { return feeds.filter(function (g) { return g !== f && !g.el.classList.contains('max'); }); }
-  function clampB(x, y) { var B = bounds(); return { x: Math.max(B.x0, Math.min(B.x1, x)), y: Math.max(B.y0, Math.min(B.y1, y)) }; }
-  function hits(x, y, g, gap) { var s = size(); return Math.abs(x - g.st.x) < s.w + gap && Math.abs(y - g.st.y) < s.h + gap; }
+  function clampB(f, x, y, k) { var B = boundsF(f, k); return { x: Math.max(B.x0, Math.min(B.x1, x)), y: Math.max(B.y0, Math.min(B.y1, y)) }; }
+  // does a w x h feed at (x, y) come within gap of feed g?
+  function hits(x, y, w, h, g, gap) { var d = dims(g); return x < g.st.x + d.w + gap && g.st.x < x + w + gap && y < g.st.y + d.h + gap && g.st.y < y + h + gap; }
   // keeps a feed out of the others: pushed out along the shorter way, on the side it came from (it never tunnels through)
-  function sep(f, x, y) { var s = size(), p = clampB(x, y), hx = 0, hy = 0;
-    others(f).forEach(function (g) { var cross = (Math.abs(p.x - g.st.x) < s.w + GAP && (f.st.y - g.st.y) * (p.y - g.st.y) < 0) || (Math.abs(p.y - g.st.y) < s.h + GAP && (f.st.x - g.st.x) * (p.x - g.st.x) < 0);   // also when it jumped clean across
-      if (!cross && !hits(p.x, p.y, g, GAP)) return;
-      var px = s.w + GAP - Math.abs(p.x - g.st.x), py = s.h + GAP - Math.abs(p.y - g.st.y), sx = (f.st.x - g.st.x) || (p.x - g.st.x) || 1, sy = (f.st.y - g.st.y) || (p.y - g.st.y) || 1;
-      var ax = { x: g.st.x + (sx < 0 ? -1 : 1) * (s.w + GAP), y: p.y, h: 'x' }, ay = { x: p.x, y: g.st.y + (sy < 0 ? -1 : 1) * (s.h + GAP), h: 'y' };
+  function sep(f, x, y) { var d = dims(f), p = clampB(f, x, y), hx = 0, hy = 0;
+    others(f).forEach(function (g) { var e = dims(g), gx = g.st.x, gy = g.st.y;
+      var ovX = p.x < gx + e.w + GAP && gx < p.x + d.w + GAP, ovY = p.y < gy + e.h + GAP && gy < p.y + d.h + GAP;
+      var leftSide = f.st.x + d.w / 2 < gx + e.w / 2, upSide = f.st.y + d.h / 2 < gy + e.h / 2;
+      var cross = (ovY && (leftSide !== (p.x + d.w / 2 < gx + e.w / 2))) || (ovX && (upSide !== (p.y + d.h / 2 < gy + e.h / 2)));   // also when it jumped clean across
+      if (!cross && !(ovX && ovY)) return;
+      var px = leftSide ? p.x + d.w + GAP - gx : gx + e.w + GAP - p.x, py = upSide ? p.y + d.h + GAP - gy : gy + e.h + GAP - p.y;
+      var ax = { x: leftSide ? gx - d.w - GAP : gx + e.w + GAP, y: p.y, h: 'x' }, ay = { x: p.x, y: upSide ? gy - d.h - GAP : gy + e.h + GAP, h: 'y' };
       var order = px < py ? [ax, ay] : [ay, ax], done = false;
-      order.forEach(function (c) { if (done) return; var q = clampB(c.x, c.y); if (!hits(q.x, q.y, g, GAP - 0.5)) { p = q; done = true; if (c.h === 'x') hx = 1; else hy = 1; } });
-      if (!done) { p = clampB(order[0].x, order[0].y); if (order[0].h === 'x') hx = 1; else hy = 1; } });
+      order.forEach(function (c) { if (done) return; var q = clampB(f, c.x, c.y); if (!hits(q.x, q.y, d.w, d.h, g, GAP - 0.5)) { p = q; done = true; if (c.h === 'x') hx = 1; else hy = 1; } });
+      if (!done) { p = clampB(f, order[0].x, order[0].y); if (order[0].h === 'x') hx = 1; else hy = 1; } });
     return { x: p.x, y: p.y, hx: hx, hy: hy }; }
+  function tf(f, x, y) { return 'translate(' + x + 'px,' + y + 'px)' + (f.st.sc < 1 ? ' scale(' + f.st.sc + ')' : ''); }
   function setPos(f, x, y, anim) { f.st.x = x; f.st.y = y;
     f.el.style.transition = anim ? 'transform .55s ' + EASE + ', opacity .5s cubic-bezier(.4,0,.6,1)' : 'none';
-    f.el.style.transform = 'translate(' + x + 'px,' + y + 'px)'; }
+    f.el.style.transform = tf(f, x, y); }
   function put(f, x, y, anim) { var r = sep(f, x, y); setPos(f, r.x, r.y, anim); return r; }
   // a free place for a new feed: where asked, else below or above the ones open
   function free(x, y) { var s = size(), c = [{ x: x, y: y }];
-    feeds.forEach(function (g) { c.push({ x: x, y: g.st.y + s.h + GAP }, { x: x, y: g.st.y - s.h - GAP }); });
+    feeds.forEach(function (g) { var e = dims(g); c.push({ x: x, y: g.st.y + e.h + GAP }, { x: x, y: g.st.y - s.h - GAP }); });
     c.push({ x: x, y: innerHeight - s.h - 96 }, { x: x, y: 64 });
-    for (var i = 0; i < c.length; i++) { var q = clampB(c[i].x, c[i].y), ok = true; if (Math.abs(q.y - c[i].y) > 1 && i) ok = false; feeds.forEach(function (g) { if (hits(q.x, q.y, g, GAP)) ok = false; }); if (ok) return q; }
-    return clampB(x, y); }
+    for (var i = 0; i < c.length; i++) { var q = clampB(null, c[i].x, c[i].y, 1), ok = true; if (Math.abs(q.y - c[i].y) > 1 && i) ok = false; feeds.forEach(function (g) { if (hits(q.x, q.y, s.w, s.h, g, GAP)) ok = false; }); if (ok) return q; }
+    return clampB(null, x, y, 1); }
   function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return;
     var e = f.el, a = f.st.anchor; e.querySelector('.x svg').style.transform = 'rotate(90deg)';
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
@@ -69,18 +75,30 @@
     else { el.style.width = s.w + 'px'; el.style.height = s.h + 'px'; el.style.transform = 'translate(' + st.px + 'px,' + st.py + 'px)'; st.x = st.px; st.y = st.py; }
     var b = el.querySelector('.mx'); b.innerHTML = on ? MINI : MAXI; b.setAttribute('aria-label', on ? 'Back to the smaller camera feed' : 'Maximize camera feed'); }
   // a hard flick (the speed that ends the tour) toward another feed swaps their places; slower throws bounce off it
-  function swapTarget(f, vx, vy) { var sp = Math.hypot(vx, vy), L = sp * 0.3, best = null, bt = 2;
-    others(f).forEach(function (g) { for (var i = 1; i <= 24; i++) { var t = i / 24; if (hits(f.st.x + vx / sp * L * t, f.st.y + vy / sp * L * t, g, 0)) { if (t < bt) { bt = t; best = g; } break; } } });
+  function swapTarget(f, vx, vy) { var sp = Math.hypot(vx, vy), L = sp * 0.3, best = null, bt = 2, d = dims(f);
+    others(f).forEach(function (g) { for (var i = 1; i <= 24; i++) { var t = i / 24; if (hits(f.st.x + vx / sp * L * t, f.st.y + vy / sp * L * t, d.w, d.h, g, 0)) { if (t < bt) { bt = t; best = g; } break; } } });
     return best; }
   function swap(f, g, fx, fy) { var ax = g.st.x, ay = g.st.y; cancelAnimationFrame(f.st.fling || 0); cancelAnimationFrame(g.st.fling || 0);
     try { if (navigator.vibrate) navigator.vibrate([8, 40, 8]); } catch (x) {}
     f.el.style.zIndex = 122; g.el.style.zIndex = 121; setPos(f, ax, ay, true); setPos(g, fx, fy, true);
     setTimeout(function () { if (!f.el.classList.contains('max')) f.el.style.zIndex = ''; if (!g.el.classList.contains('max')) g.el.style.zIndex = ''; }, 600); }
+  // a swipe up at the speed that ends the tour closes a feed the same way: it flies to the top edge and is swallowed by it
+  function flyOut(f, vy) { var st = f.st, el = f.el, d = dims(f), y = st.y, v = Math.min(vy, -700), hit = false, last = 0;
+    feeds.splice(feeds.indexOf(f), 1); cancelAnimationFrame(st.fling || 0); el.style.transition = 'none';
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
+    try { document.documentElement.classList.toggle('wf-black', feeds.some(function (g) { return g.el.classList.contains('max'); })); } catch (x) {}
+    var stepX = function (now) { var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
+      if (hit) v = Math.min(-280, v * Math.exp(-dt / 0.9)); y += v * dt;
+      if (!hit && y <= 0) { hit = true; v *= 0.55; }
+      var cut = Math.max(0, -y); el.style.transform = tf(f, st.x, y); el.style.clipPath = cut ? 'inset(' + (cut / st.sc) + 'px 0 0 0)' : '';
+      if (y + d.h <= 0) { try { el.remove(); } catch (x) {} return; }
+      requestAnimationFrame(stepX); };
+    requestAnimationFrame(stepX); }
   function open(o) {
     o = o || {}; var key = o.src || SRC, old = feeds.filter(function (g) { return g.st.src === key; })[0];
     if (old) { close(old); if (old.st.who === o.who) return; }   // the same button again closes it
     var s = size(), a = o.anchor && o.anchor.getBoundingClientRect ? o.anchor : null, r = a ? a.getBoundingClientRect() : null;
-    var el = document.createElement('figure'), st = { anchor: a, x: 0, y: 0, src: key, who: o.who }, f = { el: el, st: st };
+    var el = document.createElement('figure'), st = { anchor: a, x: 0, y: 0, sc: 1, src: key, who: o.who }, f = { el: el, st: st };
     el.className = 'wf-cf'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', (o.title || 'Helmet camera') + (o.who ? ', ' + o.who : ''));
     el.style.width = s.w + 'px'; el.style.height = s.h + 'px';
     el.innerHTML = '<video src="' + key + '" autoplay muted loop playsinline preload="auto" aria-label="' + (o.title || 'Live helmet camera') + '"></video>' +
@@ -105,16 +123,25 @@
       el.classList.toggle('heat', t); el.querySelector('.segthumb').style.transform = 'translateX(' + (t ? 0 : 100) + '%)'; Array.prototype.forEach.call(el.querySelectorAll('.cam .segopt'), function (o) { o.setAttribute('aria-selected', String(o === b)); }); }); });   // Thermal / Visual, as on the first drone feed
     // dragging, as the tour cards
     var D = null;
-    el.addEventListener('pointerdown', function (e) { if (e.target.closest('button') || e.target.closest('.cam') || el.classList.contains('max')) return; cancelAnimationFrame(st.fling || 0); D = { x: e.clientX, y: e.clientY, x0: st.x, y0: st.y, tr: [] }; try { el.setPointerCapture(e.pointerId); } catch (x) {} });
-    el.addEventListener('pointermove', function (e) { if (!D) return; var mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true;
-      var now = performance.now(); D.tr.push([now, e.clientX, e.clientY]); while (D.tr.length > 2 && now - D.tr[0][0] > 90) D.tr.shift(); put(f, D.x0 + mx, D.y0 + my, false); e.preventDefault(); });
-    var up = function () { if (!D || feeds.indexOf(f) < 0) { D = null; return; } var d = D; D = null; var tr = d.tr, A = tr[0], Z = tr[tr.length - 1], vx = 0, vy = 0;
+    var LP = 0, R = 240;   // pushing a feed against a screen edge shrinks it (240px of push = down to 40%); a long press brings it back
+    var clearLP = function () { if (LP) { clearTimeout(LP); LP = 0; } };
+    var restore = function () { if (st.sc >= 1) return; cancelAnimationFrame(st.fling || 0); st.sc = 1; el.classList.remove('mini'); el.style.removeProperty('--isc');
+      try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
+      var r = sep(f, st.x, st.y); setPos(f, r.x, r.y, true); };
+    el.addEventListener('pointerdown', function (e) { if (e.target.closest('button') || e.target.closest('.cam') || el.classList.contains('max')) return; cancelAnimationFrame(st.fling || 0); D = { x: e.clientX, y: e.clientY, x0: st.x, y0: st.y, sc0: st.sc, tr: [] }; try { el.setPointerCapture(e.pointerId); } catch (x) {}
+      clearLP(); LP = setTimeout(function () { LP = 0; if (D && !D.moved) restore(); }, 550); });
+    el.addEventListener('pointermove', function (e) { if (!D) return; var mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true; clearLP();
+      var now = performance.now(); D.tr.push([now, e.clientX, e.clientY]); while (D.tr.length > 2 && now - D.tr[0][0] > 90) D.tr.shift();
+      var tx = D.x0 + mx, ty = D.y0 + my, B0 = boundsF(f, D.sc0), ov = Math.max(B0.x0 - tx, tx - B0.x1, B0.y0 - ty, ty - B0.y1, 0);
+      if (ov > 0) { var k = Math.max(0.4, Math.min(st.sc, D.sc0 - ov / R * 0.6)); if (k < st.sc) { st.sc = k; el.style.setProperty('--isc', String(1 / k)); } }   // only ever smaller while pushing
+      put(f, tx, ty, false); e.preventDefault(); });
+    var up = function () { clearLP(); if (!D || feeds.indexOf(f) < 0) { D = null; return; } var d = D; D = null; if (st.sc < 1) el.classList.add('mini'); var tr = d.tr, A = tr[0], Z = tr[tr.length - 1], vx = 0, vy = 0;
       if (d.moved && A && Z && Z[0] - A[0] > 8 && performance.now() - Z[0] < 80) { vx = (Z[1] - A[1]) / ((Z[0] - A[0]) / 1000); vy = (Z[2] - A[2]) / ((Z[0] - A[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
       var spd = Math.hypot(vx, vy); if (spd < 150) return;
-      if (spd >= SWAP) { var g = swapTarget(f, vx, vy); if (g) { swap(f, g, d.x0, d.y0); return; } }
+      if (spd >= SWAP) { var g = swapTarget(f, vx, vy); if (g) { swap(f, g, d.x0, d.y0); return; } if (vy < -SWAP && Math.abs(vy) > Math.abs(vx) * 1.5) { flyOut(f, vy); return; } }
       var last = 0;
       var step = function (now) { if (feeds.indexOf(f) < 0) return; var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
-        var B = bounds(), x = st.x + vx * dt, y = st.y + vy * dt;
+        var B = boundsF(f), x = st.x + vx * dt, y = st.y + vy * dt;
         if (x < B.x0) { x = B.x0; vx = -vx * 0.3; } else if (x > B.x1) { x = B.x1; vx = -vx * 0.3; }
         if (y < B.y0) { y = B.y0; vy = -vy * 0.3; } else if (y > B.y1) { y = B.y1; vy = -vy * 0.3; }
         var q = put(f, x, y, false); if (q.hx) vx = -vx * 0.3; if (q.hy) vy = -vy * 0.3;   // bounces off another feed like off an edge
