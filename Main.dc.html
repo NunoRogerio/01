@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<script src="fit.js?v=134"></script>
+<script src="fit.js?v=136"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=178"></script>
 <script src="i18n.js?v=152"></script>
@@ -226,8 +226,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <span class="wf-title-m" style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 32px">{{scope.title}}</span>
       </span>
       <span style="display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap"><span><b style="display: {{scope.pND}}; font-weight: 700">{{scope.pN}} </b>{{scope.pW}}</span>
-        <!-- Same list icon as the bottom blade: the area line opens the area picker list -->
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; color: #8E8E93"><path d="M9 6h12M9 12h12M9 18h12" stroke-width="1.2"></path><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="1.8"></path></svg></span>
+        <!-- (Oct 4) no list icon: the area line opens the area picker list -->
+</span>
     </button>
     <span aria-hidden="true" style="flex: 1 1 auto"></span>
     <a href="Chat.dc.html" class="opt" onClick="{{ch.open}}" aria-label="{{ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 8px 8px 0 0; padding: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{ch.badgeD}}; position: absolute; top: -4px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{ch.n}}</span></a>
@@ -308,8 +308,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         
         <span style="display: flex; align-items: center; gap: 8px; height: 22px; max-width: 100%; min-width: 0">
           <span style="font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 22px; color: {{barC}}">{{barTitle}}</span>
-          <!-- List icon after the candidates count: says the blade opens the incidents list (20px, 1.8 stroke = 1.5px on screen) -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; color: #8E8E93"><path d="M9 6h12M9 12h12M9 18h12" stroke-width="1.2"></path><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="1.8"></path></svg>
+          <!-- (Oct 4) no list icon after the count: the blade itself opens the list -->
         </span>
         <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap">{{barSub}}</span>
       </button>

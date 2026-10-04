@@ -127,14 +127,18 @@ window.__wfBlink=function(path,dur){
 // Crash guard: if the last screen died without closing normally (Safari's "A problem repeatedly occurred"),
 // forget the area and screen it was showing, so the app reopens on the default view instead of crashing again.
 (function(){
+  // (Oct 4) What the page was opened with (area, tapped item, screen): kept, so a version update that reloads the page does not lose it
+  try{var S={};['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus','wf-verify'].forEach(function(k){var v=sessionStorage.getItem(k);if(v!=null)S[k]=v;});window.__wfSnap=S;}catch(e){}
   var K='wf-alive';
   try{
-    if(sessionStorage.getItem(K)||localStorage.getItem(K)){['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus'].forEach(function(k){sessionStorage.removeItem(k);});}
+    var upd=sessionStorage.getItem('wf-updating');if(upd)sessionStorage.removeItem('wf-updating');   // reloaded by the self-update: not a crash
+    var framed=false;try{framed=window.self!==window.top;}catch(e){framed=true;}   // (Oct 4) the menu is loaded in an iframe: it must not take the parent's live flag for a crash and wipe the area and the tapped item (the Green Valley bug)
+    if(!upd&&!framed&&(sessionStorage.getItem(K)||localStorage.getItem(K))){['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus'].forEach(function(k){sessionStorage.removeItem(k);});}
     var on=function(){try{sessionStorage.setItem(K,'1');localStorage.setItem(K,'1');}catch(e){}};
     var off=function(){try{sessionStorage.removeItem(K);localStorage.removeItem(K);}catch(e){}};
-    on();
+    if(!framed){on();
     window.addEventListener('pagehide',off);window.addEventListener('pageshow',on);
-    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')off();else on();});
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')off();else on();});}
   }catch(e){}
 })();
 // Self-update: the home-screen app can keep an old copy for a while. On open and whenever it comes back
@@ -158,7 +162,7 @@ window.__wfBlink=function(path,dur){
       // the phone's copy of every file first; otherwise the new page could still run an old map.
       var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js','About.dc.html','tour.js','index.html'];
       // The new page opens as this one would have: the opening loading screen, or the one after log in, plays there once
-      var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');}catch(e){}location.replace(u);};
+      var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');var S=window.__wfSnap||{};Object.keys(S).forEach(function(k){if(sessionStorage.getItem(k)==null)sessionStorage.setItem(k,S[k]);});sessionStorage.setItem('wf-updating','1');}catch(e){}location.replace(u);};   // (Oct 4) the new page opens on the same area and item (Green Valley bug: every first tap after a new version lost the tapped item)
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
       return true;
     }).catch(function(){return false;});

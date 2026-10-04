@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<script src="fit.js?v=134"></script>
+<script src="fit.js?v=136"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=178"></script>
 <script src="i18n.js?v=152"></script>
@@ -279,6 +279,10 @@ image[href*="tile.openstreetmap"]{opacity:.72}
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="overflow: visible; scale: 1.54;"><circle cx="8" cy="8" r="5.6" fill="#E5FF00" style="fill: var(--wf-y, #E5FF00); fill-opacity: 0.2; stroke: #3A3A3C" stroke="#3A3A3C" stroke-width="2" vector-effect="non-scaling-stroke"></circle></svg>
         <span class="{{om.tip}}" role="tooltip"><b>{{om.tt}}</b>{{om.td}}</span>
       </span>
+    </sc-for>
+    <!-- (Oct 4) zoomed out: where candidates are more frequent, as soft warm blobs (no markers, no numbers) -->
+    <sc-for list="{{ignHeat}}" as="hh" hint-placeholder-count="0">
+      <span aria-hidden="true" style="position: absolute; left: {{hh.left}}px; top: {{hh.top}}px; width: {{hh.d}}px; height: {{hh.d}}px; margin: {{hh.m}}px 0 0 {{hh.m}}px; border-radius: 50%; pointer-events: none; background: {{hh.bg}}"></span>
     </sc-for>
     <sc-for list="{{ignMarks}}" as="ig" hint-placeholder-count="2">
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mvI}}">
@@ -1363,8 +1367,17 @@ class Component extends DCLogic {
     const bigF = (g) => { const b = fBB(g); return (b[2] - b[0]) * s >= 24 || (b[3] - b[1]) * s >= 24; };
     const FIRES_V = Array.isArray(p.fires) ? p.fires.filter((g, i) => visF(g) && (FK.has(i) || bigF(g))).sort((a, b) => ((b.info && !b.info.resolved ? 1 : 0) - (a.info && !a.info.resolved ? 1 : 0)) || ((b.ha || 0) - (a.ha || 0))).slice(0, CAP) : [];
     const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
-    const IK = IGN_ALL ? this.thinKeep('ign', IGN_ALL, (g) => [g.x, g.y], (i, j) => IGN_ALL[i].conf > IGN_ALL[j].conf, 30, s) : null;
-    const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => (IK.has(q.i) && vis(q.g.x, q.g.y)) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, CAP) : null;
+    const IK = IGN_ALL ? this.thinKeep('ign', IGN_ALL, (g) => [g.x, g.y], (i, j) => IGN_ALL[i].conf > IGN_ALL[j].conf, 44, s) : null;   /* (Oct 4) fewer markers: one per 44px cell, the likeliest */
+    // (Oct 4) Smart marker count. Zoomed out with many candidates in view (over 100), no markers at all: soft warm blobs show
+    // where candidates are more frequent (no counts, no numbers). Zoomed in, thinned markers; tags only when few remain.
+    const IVIEW = IGN_ALL && window.__wfLiveMap ? IGN_ALL.filter((g) => vis(g.x, g.y)) : [];
+    const HEAT = IVIEW.length > 100 && this.props.mode !== 'pin';
+    const IGN_H = HEAT ? (() => { const C = 40, bin = new Map();
+      IVIEW.forEach((g) => { const L = tx + g.x * s, T = ty + g.y * s, k = Math.floor(L / C) + ',' + Math.floor(T / C), b = bin.get(k) || { n: 0, sx: 0, sy: 0 }; b.n++; b.sx += L; b.sy += T; bin.set(k, b); });
+      const cells = [...bin.values()], mx = Math.max(1, ...cells.map((b) => b.n));
+      return cells.sort((a, b) => a.n - b.n).slice(-260).map((b) => { const f = Math.log(1 + b.n) / Math.log(1 + mx), r = 24 + 24 * f, a = +(0.16 + 0.5 * f).toFixed(2);
+        return { left: +(b.sx / b.n).toFixed(1), top: +(b.sy / b.n).toFixed(1), d: Math.round(r * 2), m: -Math.round(r), bg: 'radial-gradient(circle, rgba(232,89,12,' + a + ') 0%, rgba(232,89,12,0) 70%)' }; }); })() : [];
+    const IGN_V = IGN_ALL ? IGN_ALL.map((g, i) => ({ g, i })).filter((q) => (!HEAT && IK.has(q.i) && vis(q.g.x, q.g.y)) || q.g.id === selNow).sort((a, b) => (b.g.id === selNow ? 1 : 0) - (a.g.id === selNow ? 1 : 0) || b.g.conf - a.g.conf).slice(0, 60) : null;
     // Whole countries (and any crowded view): markers stay still — no pulses or animated edges — to keep phones light.
     const MANY = ['US', 'BRA', 'AMZ', 'PT', 'CAN'].indexOf(p.scopeSt) >= 0 || (IGN_V ? IGN_V.length : 0) + FIRES_V.length > 40;
     const mode = p.mode || 'risk';
@@ -1397,13 +1410,13 @@ class Component extends DCLogic {
     const SF = this.stationFile();
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
-      const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 72 : zr < 4 ? 52 : 34, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
+      const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 110 : zr < 4 ? 80 : zr < 8 ? 56 : 38, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
       // On a fire or candidate only the recommended stations show (see nearSt), labelled with their distance;
       // who is actually committed is not published.
       const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km])), onlyRec = this.recMode();
       const inSc = onlyRec ? null : this.inScopeFn();
       for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((onlyRec ? NEAR.has(i) : (SK.has(i) || NEAR.has(i))) && vis(q[0], q[1]) && (!inSc || NEAR.has(i) || inSc(q[0], q[1]))) V.push(i); }
-      const k = Math.max(1, Math.ceil(V.length / 160));
+      const k = Math.max(1, Math.ceil(V.length / 70));
       const out = [];
       for (let j = 0; j < V.length; j++) { if (j % k && !NEAR.has(V[j])) continue;
         const r = SF.rows[V[j]], xy = SF.pts[V[j]], la = r[2], lo = r[3], ex = G.P(la, lo + 0.01), ey = G.P(la + 0.01, lo);
@@ -1726,6 +1739,7 @@ class Component extends DCLogic {
         return { pinTagD: 'inline-flex', pinTagL: right ? '44px' : 'auto', pinTagR: right ? 'auto' : '44px', pinConf: L0.conf + '%', pinTagFg: T.fg, pinTagBg: T.bg }; })(),
       pinMoonD: (() => { if (p.mode !== 'pin') return 'none'; const L0 = (Array.isArray(p.ignitions) ? p.ignitions : []).find((g) => g && g.id === p.pinId); return L0 && window.__wfNight && window.__wfNight(L0.live) ? 'inline' : 'none'; })(),
       recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
+      ignHeat: LY.cands && (isRisk && on(p.linkCandidate)) ? IGN_H : [],
       ignMarks: LY.cands && (isRisk && on(p.linkCandidate)) ? ((list) => (IGN_V ? IGN_V.map((q) => [q.g, q.i]) : list.map((g, i) => [g, i])).map(([g, gi]) => {
         const selId = ((this.state || {}).selId === '__all' || (this.state || {}).selId === '__none') ? null : (list.some((q) => q.id === (this.state || {}).selId) ? (this.state || {}).selId : null);
         const sel = g.id === selId;
@@ -1746,7 +1760,7 @@ class Component extends DCLogic {
   // or tag. (Oct 3, 21:12) No tag is ever hidden, the selected one included: when neither side is clear they may overlap.
   wfTagPlace(m, k, all, sc, MW) {
     const zf = sc / ((this.base() || {}).s || 1), hide = { tagD: 'none', tagL: 'auto', tagR: 'auto' };
-    if (zf < 3) return { ...m, ...hide };
+    if (zf < 3 || all.length > 24) return { ...m, ...hide };   // (Oct 4) a crowded view shows no percentages
     if (!all.__placed) { const occ = all.map((q) => ({ l: q.left - 14, r: q.left + 14, t: q.top - 14, b: q.top + 14, x: q.left, y: q.top })), res = {}, done = [];
       const order = all.map((q, i) => i).sort((a, b) => (all[b].conf || 0) - (all[a].conf || 0));
       const hit = (R) => occ.some((o) => R.l < o.r && R.r > o.l && R.t < o.b && R.b > o.t);
