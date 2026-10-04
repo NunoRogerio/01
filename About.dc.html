@@ -101,6 +101,8 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
 
     <!-- A simple thank you, the authors as a note, then the build line as on Login -->
     <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: center">{{tx.thanks}}</span>
+    <!-- (Oct 4) The story and thanks: right under the thank you, as its description (4px) -->
+    <p style="flex-shrink: 0; margin-top: -52px; font-size: 17px; line-height: 22px; text-align: center">{{tx.story}}</p>
     <!-- The authors: "Project by", then one line each (Anastasia first) -->
     <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: center">{{tx.by}}<br>Anastasia Osling, {{tx.des}}<br>Nuno Rogério, {{tx.des}}</p>
     <p style="flex-shrink: 0; margin-top: -32px; font-size: 15px; line-height: 20px; color: #6E6E73; text-align: center"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span><br>{{verTxt}}</p>
@@ -180,6 +182,9 @@ class Component extends DCLogic {
           'O que nos está a escapar?',
           '私たちは何を見落としているのか。'),
         thanks: L('Thank you.', 'Obrigado.', 'ありがとうございます。'),
+        story: L('Forest Fire Watch grew from more than a year of conversations between two nature-loving UX designers, from Portugal and the USA: research, interviews, books, films and existing tools, with constant brainstorming and testing of ideas. Our thanks to the public platforms that inspired us, many of them in Data sources, and to Claude.ai for its key role in shaping this prototype.',
+          'O Forest Fire Watch nasceu de mais de um ano de conversas entre dois designers de UX apaixonados pela natureza, de Portugal e dos EUA: investigação, entrevistas, livros, filmes e ferramentas existentes, com constante troca de ideias e teste de hipóteses. O nosso obrigado às plataformas públicas que nos inspiraram, muitas delas nas Fontes de dados, e ao Claude.ai pelo papel essencial em dar forma a este protótipo.',
+          'Forest Fire Watchは、自然を愛するポルトガルと米国の2人のUXデザイナーによる1年以上の対話から生まれました。調査、インタビュー、書籍、映画、既存のツールを通じ、アイデアを出し合い、検証を重ねてきました。私たちに着想を与えてくれた公開プラットフォーム(その多くはデータソースにあります)、そしてこのプロトタイプを形にするうえで重要な役割を果たしたClaude.aiに感謝します。'),
         alpha: L('Alpha version.', 'Versão alfa.', 'アルファ版。')
       }
     };
