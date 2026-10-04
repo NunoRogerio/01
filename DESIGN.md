@@ -865,3 +865,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Data sources: title to count 8px (Oct 4)
 - The count under "Connected data sources" sits 8px below the title's line (was about 16px visually), whether the title takes one line or two. The title keeps its place level with the menu button.
+
+## Stable markers while panning (Oct 4, standing)
+- Panning never makes a marker blink, jump or change. Which markers show depends only on the zoom step (a grid fixed to the map, in power-of-two steps) and never on what is in view: no strides or caps based on the number in view, no reordering. Markers join and leave the list 240px beyond the screen edge, off sight, and keep a fixed order (the data's own order; active fires before resolved).
+- Likelihood tags show from a close zoom (4x the fit) and are decided by the zoom alone.
+- Station spacing on screen: 140 / 100 / 80 / 64px from the whole country in to the closest zoom, so a screen holds about 100 to 250 at most.
