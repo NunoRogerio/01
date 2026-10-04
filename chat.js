@@ -660,8 +660,10 @@
     if (d) push(c, { kind: 'msg', from: 'me', en: en, pt: pt }, d, 1); else mine(c, en, pt);
     // The stage card lists the stations: those that got an order are marked dispatched, the others on standby
     c.msgs.concat(c.queue.map(function (q) { return q.m; })).forEach(function (m) { if (m.kind === 'card' && m.stage === 1 && m.rows) sentRows(c, m.rows); });
-    say(c, sent[0].i < c.people.length ? sent[0].i : 0, 'Order received. Rolling now.', 'Ordem recebida. A sair agora.', d + 1500, 1);
-    setStage(c, 2, d + 3000, 2);
+    // (Oct 4) every coordinator whose station got an order confirms it, one after the other, so the chat shows the team has received the orders
+    var OK = [['Order received. Rolling now.', 'Ordem recebida. A sair agora.'], ['Copy that. Crew on the way.', 'Recebido. Equipa a caminho.'], ['Received. We are moving.', 'Recebido. Estamos a mover-nos.'], ['Order confirmed. Leaving the station.', 'Ordem confirmada. A sair do quartel.']];
+    sent.forEach(function (x, n) { say(c, x.i < c.people.length ? x.i : 0, OK[n % OK.length][0], OK[n % OK.length][1], d + 1500 + n * 1700, 1); });
+    setStage(c, 2, d + 3000 + (sent.length - 1) * 1700, 2);
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
   }
   function sentRows(c, rows) { rows.forEach(function (r, i) { var on = (c.sentIdx || []).indexOf(i) >= 0; r.r = on ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = on ? '#186B2D' : '#875800'; }); }
@@ -1200,6 +1202,7 @@
     policeChat: function (id) { return load().chats['p:' + id] || null; },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
+    ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
