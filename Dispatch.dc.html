@@ -30,6 +30,7 @@
 <x-dc>
 <helmet>
 <style>
+.wf-qual.hd.solo,html .wf-qual.hd.solo{background:transparent!important;padding:0!important;min-height:0!important;border-radius:0!important}.wf-qual.solo>svg:first-child,.wf-qual.solo>span:first-of-type{display:none!important}.wf-qual.solo .wf-hst{margin-left:0!important}
 .wf-unit+.wf-unit{border-top: 0}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 a{color:#006A91}a:hover{color:#006A91}
@@ -234,11 +235,11 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Header actions, as on the main screen: this incident's chat, notifications, your profile (always at the top; the chat is an option, not a foot button) -->
       <div data-wf-keepsp="1" style="grid-column: 3; grid-row: 1; display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; margin-top: 8px"><a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -4px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a><button type="button" class="opt" onClick="{{hx.openNt}}" aria-haspopup="dialog" aria-label="{{hx.ntAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{hx.ntD}}; position: absolute; top: -4px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ntN}}</span></button><button type="button" class="opt" data-wf-burger="1" onClick="{{hx.openPf}}" aria-haspopup="true" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button></div>
   </header>
-  <!-- Two tabs over the map: Fire (the map and the fire's analysis) and Resources (everything about crews and orders, full width) -->
-  <div role="tablist" aria-label="Fire page" class="wf-tabs" style="display: {{ft.d}}; z-index: 0; margin: 0 16px 0">
-    <span class="tabbar" aria-hidden="true" style="left: 2px; width: calc(50% - 4px); transform: translateX({{ft.x}})"></span>
-    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" aria-label="{{ft.fireAria}}"><span style="position: relative">Situation<span aria-hidden="true" style="display: {{ft.fireDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
-    <button type="button" role="tab" class="tabopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}"><span style="position: relative">Crews<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
+  <!-- Situation / Crews as the segmented control (Oct 4, trying it instead of the tabs): Situation keeps the map and the fire's analysis; Crews everything about crews and orders -->
+  <div role="tablist" aria-label="Fire page" class="wf-seg wf-ftseg" style="display: {{ft.d}}; z-index: 0; margin: 0 16px 16px">
+    <span class="segthumb" aria-hidden="true" style="width: calc(50% - 8px); transform: translateX({{ft.sx}})"><span class="segblob"></span></span>
+    <button type="button" role="tab" class="segopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" aria-label="{{ft.fireAria}}" style="font-size: 17px"><span style="position: relative">Situation<span aria-hidden="true" style="display: {{ft.fireDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
+    <button type="button" role="tab" class="segopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}" style="font-size: 17px"><span style="position: relative">Crews<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
   </div>
   </div>
 
@@ -1195,7 +1196,7 @@ class Component extends DCLogic {
     // One width, set by the widest, within what the band leaves beside its kind. Open, the current chip grows 8px each side
     // and every chip above and below is 2px narrower each side than its neighbour nearer the current one.
     const natW = (p) => 12 + 18 + 6 + tw(p.l, 600) + (p.t ? 6 + tw(p.t, 400) : 0) + 12;
-    const cap = Math.min(window.innerWidth || 390, 600) - 32 - 6 - 16 - 14 - 8 - (() => { cv.font = '600 17px ' + FF; return Math.ceil(cv.measureText((o.hd && o.hd.kind) || 'Active').width); })() - 8;
+    const cap = Math.min(window.innerWidth || 390, 600) - 32 - 6 - 16 - 8;   /* the tag stands alone (no kind beside it) */
     const deep = Math.max(prev.length, next.length);
     const need = Math.max(natW(cur), ...prev.map((p) => natW(p) + 8), ...next.map((p) => natW(p) + 8));
     const Wc = Math.min(cap, need), GROW = 0, wOf = () => Wc - 8;   // the current chip keeps one size; every other chip is 8px narrower (4px each side), centred
@@ -1216,7 +1217,7 @@ class Component extends DCLogic {
       tlToggle: n || m ? () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const op = !(this.state || {}).hsOpen; this.setState({ hsOpen: op });
         /* the open stack also closes on a tap anywhere outside the stage tag */ if (this._hsOut) { document.removeEventListener('pointerdown', this._hsOut, true); this._hsOut = null; }
         if (op) { const out = (e) => { if (e.target && e.target.closest && e.target.closest('.wf-qual,.wf-hst-fs')) return; document.removeEventListener('pointerdown', out, true); this._hsOut = null; if ((this.state || {}).hsOpen) this.setState({ hsOpen: false }); }; this._hsOut = out; setTimeout(() => { if (this._hsOut === out) document.addEventListener('pointerdown', out, true); }, 0); } } : null,
-      kindMw: '220px', kindOp: 1, qualCls: 'hd', dotD: 'block', hsStg: stg };
+      kindMw: '220px', kindOp: 1, qualCls: 'hd solo', dotD: 'none', hsStg: stg };   /* (Oct 4) a fire shows only its stage tag: no band, no dot, no "Active" */
   }
   renderVals() {
     // Fire page tabs: Situation keeps the map and the fire's analysis; Crews holds the crews' alerts and station management, full width
@@ -1227,7 +1228,7 @@ class Component extends DCLogic {
     { const on = !!(o._hsSrc && o._hsSrc.RO && !o._hsSrc.crew && !o._hsSrc.HELD) && (o.hsStg == null || o.hsStg <= 4) && (o.full || (o.floc && o.floc.d !== 'none')), HZ = [0, 1, 3, 6], h = on ? ((this.state || {}).fhz || 0) : 0, G = { 0: 1, 1: 1.6, 3: 2, 6: 3.6 };
       o.fp = { d: on && !o.full ? 'grid' : 'none', fullD: on && o.full ? 'grid' : 'none', grow: on ? G[h] : 0, x: (HZ.indexOf(h) * 100) + '%',
         tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fgD: k === h ? '#1C1C1E' : '#FFFFFF', pick: () => { if (((this.state || {}).fhz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: k }); } })) }; }
-    if (o.pgMapD !== 'block') return Object.assign(o, { ft: { d: 'none', x: '0%', fireSel: 'true', resSel: 'false', goFire: () => {}, goRes: () => {} } });
+    if (o.pgMapD !== 'block') return Object.assign(o, { ft: { d: 'none', x: '0%', sx: '0%', fireSel: 'true', resSel: 'false', goFire: () => {}, goRes: () => {} } });
     const tab0 = st.ftab || (st.reinforce ? 'res' : 'fire'), res = tab0 === 'res', go = (t) => () => { if (tab0 === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
     // Something that needs attention on the other tab: a red dot (no count) on its label
     const crewAlert = (o.deployed || []).some((d) => d.fx && d.conf && !(d.groups || []).length);
@@ -1254,7 +1255,7 @@ class Component extends DCLogic {
       if (fsOn) { if (F.ok) { o.mapTag = (o.hs && o.hs.t ? o.mapTag + (window.__wfLang === 'pt' ? ' há ' : ' for ') + o.hs.t : o.mapTag); o.mapTagBg = 'transparent'; o.mapTagFg = 'transparent'; }   /* the band keeps the tag's room (so the kind shortens as on the page); the live tag lies over it */ setTimeout(() => this.wfFsTagMeasure(), 60); } }
     { const rnOn = o.reportNightD === 'flex' && !res && !(this.state || {}).full, rhOn = !!(o.rh && o.rh.op !== 0 && o.rh.pe !== 'none');
       o.rn = { d: rnOn ? 'flex' : 'none' }; o.rh = Object.assign({ op: 0, pe: 'none' }, o.rh || {}, { b: rnOn && rhOn ? '112px' : '52px' }); }   /* night report pill under the dispatch pill */
-    o.ft = { d: 'grid', x: res ? 'calc(100% + 4px)' : '0%',   /* the bar is 80% of its tab's width, centred under it */ fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
+    o.ft = { d: 'grid', x: res ? 'calc(100% + 4px)' : '0%', sx: res ? '100%' : '0%',   /* the bar is 80% of its tab's width, centred under it */ fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
       resDot: !res && crewAlert ? 'block' : 'none', fireDot: res && sitAlert ? 'block' : 'none',
       resAria: 'Crews' + (!res && crewAlert ? '. Needs attention' : ''), fireAria: 'Situation' + (res && sitAlert ? '. Needs attention' : '') };
     // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
