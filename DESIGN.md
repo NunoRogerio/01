@@ -972,3 +972,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Menu folded to the column: the icons work (Oct 4, 16:45)
 - The resized screen is also exactly as wide as the visible area (it used to keep its full-width box over the icon column and swallowed the taps), so tapping any icon opens its section and slides the screen back.
+
+## "Night ignition reported" only while the report is alive (Oct 4, 17:45)
+- The information that replaces the Report night ignition button shows only while the report chat exists and has not been put away (dismissed). Otherwise the button is back.
