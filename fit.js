@@ -762,13 +762,25 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   function puGrey(){return document.documentElement.classList.contains('wf-dark')?'#000000':'#C7C7CC';}
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-wf-split]');if(!a||e.defaultPrevented&&a.__wfPu)return;
     if(e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;var dc=document.getElementById('dc-root');if(!dc||!window.Element||!dc.animate||a.__wfPu)return;
-    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false;
-    try{sessionStorage.setItem('wf-push-up',JSON.stringify({t:Date.now(),g:puGrey()}));}catch(x){}
-    setTimeout(function(){   /* after the card's own handlers have set the destination up */
-      try{document.documentElement.style.background=puGrey();document.body.style.background=puGrey();var r=dc.getBoundingClientRect();
+    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;
+    try{snap={};for(var q=0;q<sessionStorage.length;q++){var kk=sessionStorage.key(q);snap[kk]=sessionStorage.getItem(kk);}}catch(x){}
+    var navigate=function(){if(gone)return;gone=true;try{if(snap){sessionStorage.clear();Object.keys(snap).forEach(function(k){sessionStorage.setItem(k,snap[k]);});}}catch(x){}window.location.href=href;};
+    var slide=function(pre){   /* the old screen slides up; the destination, already loaded under it, brightens from 20% darker */
+      try{var r=dc.getBoundingClientRect();document.documentElement.style.background=puGrey();document.body.style.background=puGrey();
         var an=dc.animate([{transform:'translateY(0)'},{transform:'translateY(-'+Math.round(r.height)+'px)'}],{duration:PU_D,easing:PU_E,fill:'forwards'});
-        var go=function(){if(gone)return;gone=true;window.location.href=href;};an.onfinish=go;setTimeout(go,PU_D+120);}catch(x){window.location.href=href;}},0);},true);
-  addEventListener('pageshow',function(){try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});var dc=document.getElementById('dc-root');if(dc){dc.getAnimations().forEach(function(x){x.cancel();});}document.documentElement.style.background='';document.body.style.background='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
+        if(pre&&pre.dim)pre.dim.animate([{opacity:.2},{opacity:0}],{duration:PU_D,easing:PU_E,fill:'forwards'});
+        an.onfinish=navigate;setTimeout(navigate,PU_D+150);}catch(x){navigate();}};
+    var fallback=function(){try{sessionStorage.setItem('wf-push-up',JSON.stringify({t:Date.now(),g:puGrey()}));}catch(x){}slide(null);};
+    setTimeout(function(){   /* after the card's own handlers have set the destination up */
+      try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.textContent=L[lb]||'…';a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads underneath */
+        var f=document.createElement('iframe'),dim=document.createElement('div'),ready=false,done=false;
+        f.setAttribute('aria-hidden','true');f.setAttribute('tabindex','-1');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;z-index:0;pointer-events:none;background:'+puGrey();
+        dim.style.cssText='position:fixed;inset:0;background:#000;opacity:.2;z-index:0;pointer-events:none';
+        dc.style.position=dc.style.position||'relative';dc.style.zIndex='1';document.body.appendChild(f);document.body.appendChild(dim);
+        var go=function(){if(done)return;done=true;slide({dim:dim});};
+        var poll=function(){try{var d=f.contentDocument;if(d&&d.readyState==='complete'){var r=d.getElementById('dc-root');if(r&&r.firstElementChild){setTimeout(go,350);return;}}}catch(x){}if(!done&&Date.now()-t0<2500)setTimeout(poll,80);else if(!done){done=true;try{f.remove();dim.remove();}catch(x){}fallback();}};
+        var t0=Date.now();f.src=href;setTimeout(poll,150);}catch(x){fallback();}},0);},true);
+  addEventListener('pageshow',function(){try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});var dc=document.getElementById('dc-root');if(dc){dc.getAnimations().forEach(function(x){x.cancel();});}document.documentElement.style.background='';document.body.style.background='';document.querySelectorAll('body > iframe[aria-hidden=true]').forEach(function(n){n.remove();});if(dc)dc.style.zIndex='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
   // the arriving screen: held below, then pushed up from the bottom
   try{var PU=null;try{PU=JSON.parse(sessionStorage.getItem('wf-push-up')||'null');sessionStorage.removeItem('wf-push-up');}catch(x){}
     if(PU&&Date.now()-PU.t<8000){var hold=document.createElement('style');hold.textContent='html{background:'+PU.g+'!important}body{background:'+PU.g+'!important}#dc-root{transform:translateY(100%)}';(document.head||document.documentElement).appendChild(hold);
