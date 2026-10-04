@@ -153,7 +153,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function stMove() { return q('[data-wf-stmove]'); }
   function stExpand() { var c = q('header + button.chrow[aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
   // the candidate was confirmed: its Confirm / Dismiss suggestions are gone (checked a moment after the step began)
-  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Confirm fire', 'Confirmar incêndio', '確認']) && !chip(['Dismiss fire', 'Descartar incêndio']) && !!q('header + button.chrow[aria-expanded]'); }
+  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss fire', 'Descartar incêndio']) && !!q('header + button.chrow[aria-expanded]'); }
   function topMarker() {
     var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap[aria-label*="ignition candidate"]')), best = null, bp = -1;
     L.forEach(function (b) { if (shown(b) !== true) return; var m = /(\d+) percent/.exec(b.getAttribute('aria-label') || ''), v = m ? +m[1] : 0; if (v > bp) { bp = v; best = b; } });
@@ -225,16 +225,16 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       b: ['Likelihood, heat power and people at risk first, to decide fast. Press and hold a card to reorder; tap + to choose which to show.',
           'Probabilidade, potência térmica e pessoas em risco primeiro, para decidir depressa. Prima e mantenha um cartão para reordenar; toque em + para escolher quais mostrar.'] },
     { page: 'Alert.dc.html', mode: 'tap', before: freshDemo, find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
-      t: ['Confirm it with the team', 'Confirme com a equipa'],
-      b: ['Confirming a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Confirmar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
+      t: ['Declare it with the team', 'Declare com a equipa'],
+      b: ['Declaring a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Declarar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
 
     // Oct 3: the state card is where the status changes: tap it, then its Move to <next stage> button
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('header + button.chrow[aria-expanded="true"]'); }, find: function () { return q('header + button.chrow[aria-expanded]'); },
       t: ["The incident's state", 'O estado do incidente'],
       b: ['Always pinned at the top. Tap it to see the stage and move the incident on.', 'Sempre no topo. Toque nele para ver a fase e fazer o incidente avançar.'] },
     { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
-      t: ['Confirm the fire', 'Confirme o incêndio'],
-      b: ['Tap Move to First alert to confirm it. The Confirm fire suggestion does the same.', 'Toque em Passar a Despacho de 1.º alerta para o confirmar. A sugestão Confirmar incêndio faz o mesmo.'] },
+      t: ['Declare the fire', 'Declare o incêndio'],
+      b: ['Tap Move to First alert to declare it. The Declare fire suggestion does the same.', 'Toque em Passar a Despacho de 1.º alerta para o declarar. A sugestão Declarar incêndio faz o mesmo.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('a[data-wf-firettl]'); },
       ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now open the fire.', 'Agora abra o incêndio.'],
       t: ['Open the fire', 'Abra o incêndio'],
@@ -760,7 +760,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var g0 = get(), st1 = g0 && S[g0.i], noClose = st1 && st1.noClose;
     var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { var t = txt(x); return !x.disabled && (/^(Approve|Aprovar)/.test(t) || (!noClose && /^(Close fire|Encerrar incêndio)/.test(t))); });
     if (b) return b;
-    var W = ['Confirm fire', 'Confirmar incêndio', 'Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(noClose ? [] : ['Close fire', 'Encerrar incêndio']);
+    var W = ['Declare fire', 'Declarar incêndio', 'Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(noClose ? [] : ['Close fire', 'Encerrar incêndio']);
     return q('button.chbtn', function (x) { if (!x.parentElement || x.parentElement.style.maxHeight !== '88px') return false; var t = txt(x); return W.some(function (w) { return t.indexOf(w) === 0; }); });
   }
   function drive() { var b = autoNext(); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } }

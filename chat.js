@@ -294,7 +294,7 @@
     msg(0, 'Seen. Crew of 5 and ' + (us ? 'an engine' : 'one fire engine') + ' ready at ' + (P[0] || {}).org + '.', 'Visto. Equipa de 5 e um veículo prontos em ' + (P[0] || {}).org + '.', at(0) + 3 * MIN);
     if (P[2]) msg(2, 'Smoke visible from the station, looks like it is growing.', 'Fumo visível do quartel, parece estar a crescer.', at(0) + 5 * MIN);
     if (s >= 1) {
-      me('Confirming the fire.', 'Confirmo o incêndio.', at(1));
+      me('Declaring the fire.', 'Declaro o incêndio.', at(1));
       var c1 = cardAt(1, at(1) + 20000);
       if (c1.rows) c1.rows.forEach(function (r, i) { r.r = s >= 2 ? (i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }) : r.r; r.rc = s >= 2 ? (i < 2 ? '#186B2D' : '#875800') : r.rc; });
       msg(1, 'Available now.', 'Disponíveis agora.', at(1) + MIN);
@@ -449,7 +449,7 @@
     if (c.kind === 'dm') return c.topic ? [] : [{ key: 'topic', en: 'Set the topic', pt: 'Definir o tópico', primary: true }];
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
-    if (s === 0) { if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Enviar drone' }); A.push({ key: 'dismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }); A.push({ key: 'confirm', en: 'Confirm fire', pt: 'Confirmar incêndio', primary: true }); }   // Dismiss then Confirm, as everywhere
+    if (s === 0) { if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Enviar drone' }); A.push({ key: 'dismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }); }   // Dismiss then Confirm, as everywhere
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air) A.push({ key: 'next', en: 'Move to Being resolved', pt: 'Passar a Em resolução', primary: true }); }
@@ -478,7 +478,7 @@
     if (msgId) { var m = c.msgs.find(function (x) { return x.id === msgId; }); if (m) m.done = a; }
     var me = function (en, pt) { mine(c, en, pt); };
     if (a === 'confirm') {
-      me('Confirming the fire.', 'Confirmo o incêndio.');
+      me('Declaring the fire.', 'Declaro o incêndio.');
       markConfirmed(c);
       setStage(c, 1, 600, 1);
     } else if (a === 'drone') {
@@ -655,7 +655,7 @@
       sys(c, p.name + ' (' + p.org + ') left the chat: station not sent', p.name + ' (' + p.org + ') saiu da conversa: quartel não enviado', d + 400, 0); });
     // Confirmed outside the chat (alert or drone screen): the chat catches up with the confirmation first
     if (c.stage === 0) {
-      push(c, { kind: 'msg', from: 'me', en: 'Confirming the fire.', pt: 'Confirmo o incêndio.' }, d, 1);
+      push(c, { kind: 'msg', from: 'me', en: 'Declaring the fire.', pt: 'Declaro o incêndio.' }, d, 1);
       setStage(c, 1, d + 600, 1); d += 1600;
     }
     var en = 'Dispatch orders sent: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.', pt = 'Ordens de despacho enviadas: ' + sent.map(function (x) { return x.txt; }).join('; ') + '.';
@@ -1099,19 +1099,19 @@
   function police(inc) {
     var db = load(), k = 'p:' + inc.id;
     if (db.chats[k] && !db.chats[k].v2) delete db.chats[k];   // a report made before the captain's investigation: started again
-    if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.dismissed = false; o.place = 'Night ignition report';   /* reported again: a chat that was put away comes back */ o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = P0.roleEn; o.people[0].rolePt = P0.rolePt; o.people[0].org = P0.org; } save(); return o; }
+    if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.dismissed = false; o.place = inc.night ? 'Night ignition report' : 'Ignition report';   /* reported again: a chat that was put away comes back */ o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = P0.roleEn; o.people[0].rolePt = P0.rolePt; o.people[0].org = P0.org; } save(); return o; }
     var now = Date.now(), P = policeOf(inc.st, inc.reg);
-    var ch = { key: k, kind: 'dm', police: true, v2: true, incId: inc.id, place: 'Night ignition report', reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
+    var ch = { key: k, kind: 'dm', police: true, v2: true, incId: inc.id, place: inc.night ? 'Night ignition report' : 'Ignition report', reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
       stage: 0, startStage: 0, started: now, vNow: now, vAt: now, hist: [{ s: 0, vt: now }], people: [], stations: [], forces: [], air: null, evac: null,
       msgs: [], queue: [], seenAt: now, beat: 0, flags: {}, closed: false, dismissed: false, updated: now, face: {}, used: {}, step: 0 };
     var nm = P.name || pickNames(ch, 1, 'police')[0];
     ch.people = [{ name: nm, code: initials(nm), org: P.org, kind: 'lead', roleEn: P.roleEn, rolePt: P.rolePt }];
     ch.topic = { id: inc.id, kind: 'fire', place: inc.place, reg: inc.reg || '', st: inc.st || '', lat: inc.lat, lon: inc.lon, x: inc.x, y: inc.y };
     var bodyEn = [inc.reg, inc.startTxt ? 'Started ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.', bodyPt = [inc.reg, inc.startTxt ? 'Início ' + inc.startTxt : '', inc.gps].filter(Boolean).join('. ') + '.';
-    ch.msgs.push({ id: newId(), kind: 'card', from: 'me', topic: true, tag: { en: 'Night ignition', pt: 'Ignição noturna' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + inc.place, pt: 'Incêndio. ' + inc.place }, body: { en: bodyEn, pt: bodyPt }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic, t: now, vt: now });
-    mine(ch, 'Reporting a night ignition, can you please investigate?', 'Reporto uma ignição noturna, podem investigar, por favor?');
-    say(ch, 0, 'Thank you for reporting it. I have opened a case for the night ignition at ' + inc.place + (inc.startTxt ? ', started ' + inc.startTxt : '') + '. A few questions to start: how was it detected, and did your crews see anyone or any vehicle near the point of origin?',
-      'Obrigado pela participação. Abri um processo para a ignição noturna em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
+    ch.msgs.push({ id: newId(), kind: 'card', from: 'me', topic: true, tag: inc.night ? { en: 'Night ignition', pt: 'Ignição noturna' } : { en: 'Ignition', pt: 'Ignição' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + inc.place, pt: 'Incêndio. ' + inc.place }, body: { en: bodyEn, pt: bodyPt }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic, t: now, vt: now });
+    mine(ch, inc.night ? 'Reporting a night ignition, can you please investigate?' : 'Reporting an ignition, can you please investigate?', inc.night ? 'Reporto uma ignição noturna, podem investigar, por favor?' : 'Reporto uma ignição, podem investigar, por favor?');
+    say(ch, 0, 'Thank you for reporting it. I have opened a case for the ' + (inc.night ? 'night ' : '') + 'ignition at ' + inc.place + (inc.startTxt ? ', started ' + inc.startTxt : '') + '. A few questions to start: how was it detected, and did your crews see anyone or any vehicle near the point of origin?',
+      'Obrigado pela participação. Abri um processo para a ignição ' + (inc.night ? 'noturna ' : '') + 'em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
     db.chats[k] = ch; save(); emit(); return ch;
   }
   function policeReply(c, text) {
