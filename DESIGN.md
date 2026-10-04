@@ -844,3 +844,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Stripe moved to the screen's left edge, 60% opacity
 - The settings stripe moved off the icon column to the left edge of the screen: full height, 8px wide, no padding.
 - All stripes (shared `.wf-stripes` and the dialog top stripe) now use 60% opacity (was 80%).
+
+## Density multibutton squares
+- The squares in the spacing (density) multibutton are drawn with a 1px outline (non-scaling, so it stays 1px at any size).
