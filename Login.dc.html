@@ -101,7 +101,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
   </div>
   <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; opacity: {{dOp}}; transition: clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), opacity {{dOpT}}">
     <!-- Title and description share one text column that stops 24px before the close button and wraps when needed -->
-    <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 16px 8px; opacity: {{pOp}}; transform: translateY({{pY}}); transition: opacity .35s ease {{pDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pDelay}}">
+    <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 16px 32px; opacity: {{pOp}}; transform: translateY({{pY}}); transition: opacity .35s ease {{pDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pDelay}}">
       <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
         <h2 id="pickTitle" style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">Choose a demo profile</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">Demo users · each role sets the areas and features</span>
@@ -143,7 +143,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
 
   <!-- New profile: photo (camera, library or one of the team's), the profile's texts with an offer to polish each one, and its area -->
   <div role="dialog" aria-modal="true" aria-labelledby="cpTitle" aria-hidden="{{cp.hidden}}" style="position: absolute; inset: 0 0 -80px 0; z-index: 30; display: flex; flex-direction: column; padding: 64px 0 0; background: #F2F2F7; transform: translateY({{cp.y}}); visibility: {{cp.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear {{cp.visDelay}}">
-    <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 16px 8px">
+    <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 16px 24px">
       <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
         <h2 id="cpTitle" style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{cp.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">Kept on this phone.</span>
