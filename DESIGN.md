@@ -886,3 +886,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The floating map search box stays clear of the keyboard: it is kept inside the part of the screen the keyboard leaves free (16px above it), follows the keyboard as it comes and goes, and returns to the spot it was put in once the keyboard leaves.
 - While the search box is up, the bottom blade (ignition candidates and fires) slides away; when the box folds back into its icon, the blade returns.
 - When the icon column closes and the screen widens back to full width, the move takes .74s (40% slower than the .53s of the other menu slides).
+
+## Main map default layers (Oct 4, supersedes "only ignition candidates")
+- The main map opens with the ignition candidates and the active fires showing. Resolved fires and fire stations stay off until their chips are tapped.

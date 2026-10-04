@@ -1075,9 +1075,9 @@ class Component extends DCLogic {
     const out = Object.assign(d, v || {});
     // Every legend chip toggles its layer, on every map (nothing is forced on: a chip that does nothing reads as broken)
     if (this.props.fireOnly === true || this.props.fireOnly === 'true') out.stations = false;   // a fire's detail map: only its perimeter (no stations chip there)
-    // The main map (areas and incidents) opens with only the ignition candidates showing; its Active fires, Resolved fires and
+    // The main map (areas and incidents) opens with the ignition candidates and the active fires showing; its Resolved fires and
     // Fire stations chips show those layers (each with its own main-map setting, so other maps keep theirs)
-    else if ((this.props.mode || 'risk') === 'risk') ['fires', 'resolved', 'stations'].forEach((k) => { out[k] = out[k + 'Main'] === true; });
+    else if ((this.props.mode || 'risk') === 'risk') ['fires', 'resolved', 'stations'].forEach((k) => { out[k] = k === 'fires' ? out.firesMain !== false : out[k + 'Main'] === true; });   // (Oct 4) opens with the ignition candidates and the active fires showing
     return out;
   }
   toggleLayer(k) {
