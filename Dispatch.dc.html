@@ -1910,7 +1910,7 @@ class Component extends DCLogic {
               window.__wfChat.dispatched(back, ORDS);
               try { sessionStorage.removeItem('wf-chat-return'); sessionStorage.setItem('wf-chat-open', back); } catch (e) {}
               try { window.location.href = 'Chat.dc.html'; } catch (e) {} return; }
-            if (s.crew || (frow && /^Confirmed from/.test(frow.note || ''))) { this.setState({ sending: 0, sndN: 0, crew: false, reinforce: false, stPick: false, cfPick: false, open: false, cfg: false }); try { sessionStorage.setItem('wf-nudge-chat', '1'); } catch (e) {} this.wfNudge(); return; }   /* crews configured from the fire page: Done goes back to it */
+            if (s.crew || (frow && /^Confirmed from/.test(frow.note || ''))) { this.setState({ sending: 0, sndN: 0, crew: false, reinforce: false, stPick: false, cfPick: false, open: false, cfg: false, ftab: 'fire' }); try { sessionStorage.setItem('wf-nudge-chat', '1'); } catch (e) {} this.wfNudge(); return; }   /* crews configured from the fire page: Done goes back to it */
             this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
         SN.back = () => SN.done(null, true);   /* the round back by the title: Return, also before every order is through */
         return SN;
