@@ -852,3 +852,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Marker symbols in "Shows in the app" and "Examples" are the map's own: an active fire is the solid orange circle (#E8590C; resolved #6F2B06), a candidate the pale lime circle with a dark outline, a night candidate the same with the small moon centred. The flame icon stays only for the fire danger chip, where the app uses it.
 - Spacing scale in the list: 56px between sources, 32px between a source's parts (header, "Shows in the app", "Examples"), 8px between label and rows, 4px between name and description. Sources carry no padding or lines, so the gaps alone separate them (no horizontal lines rule).
 - Tags in the About stage list use the 13px tag size like every other tag.
+
+## Candidate markers stand out (Oct 4)
+- The maps got darker, so the ignition candidate fill goes from 20% to 80% lime by day (it was already 80% at night). Every symbol of a candidate follows: map markers, legend, tooltips, lists, notifications, chats and the data sources.

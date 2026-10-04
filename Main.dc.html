@@ -655,8 +655,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                     <sc-for list="{{d.shows}}" as="s">
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="#E8590C"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -678,8 +678,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                     <sc-for list="{{d.exs}}" as="e">
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".2" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="{{e.fc}}"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -1436,10 +1436,10 @@ class Component extends DCLogic {
     const unread = out.filter((n) => n.t > seen).length;
     const items = out.map((n, i) => {
       const un = n.t > seen;
-      const ic = n.kind === 'ign' ? [CIR, 'color-mix(in srgb, var(--wf-y, #E5FF00) 20%, transparent)', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
+      const ic = n.kind === 'ign' ? [CIR, 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
       // The type, as an icon in its own round (like the chat timeline): the ignition candidate's marker, the fire's stage icon (in the stage's colour), the station's house
       const CH = window.__wfChat, SG = n.kind === 'fire' && CH && CH.STAGES ? CH.STAGES.find((q) => String(n.stage || '').toLowerCase().indexOf(q.en.toLowerCase()) >= 0 || q.en.toLowerCase().indexOf(String(n.stage || '').toLowerCase()) >= 0) : null;
-      const ty = n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 20%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
+      const ty = n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
         : SG ? { vb: '0 0 24 24', d: CH.ICON[SG.icon], f: 'none', s: SG.c, sw: 1.8, bg: SG.bg }
         : n.kind === 'fire' ? { vb: '0 0 14 14', d: CIR, f: '#E8590C', s: 'none', sw: 0, bg: '#FCE9E1' }
         /* station updates by what they are about: a vehicle returning (truck), crews released (crew), an aircraft (helicopter); the station's house otherwise */
