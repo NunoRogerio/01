@@ -1,0 +1,26 @@
+name: Crew group photos
+# Candidate group photos (free licences, Wikimedia Commons) for the resolution card. Runs by hand or when its script changes.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/crews.py', '.github/workflows/crews.yml']
+permissions:
+  contents: write
+concurrency:
+  group: crews
+  cancel-in-progress: false
+jobs:
+  crews:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find photos
+        run: python3 scripts/crews.py
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/crews-cands
+          git diff --cached --quiet || (git commit -m "Crew photo candidates" && git pull --rebase -q && git push)
