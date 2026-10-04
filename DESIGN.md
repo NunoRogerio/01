@@ -938,3 +938,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Camera feeds: shrinking is a real resize (Oct 4, 15:47)
 - A shrunk feed is smaller in layout (not scaled), so its X stays a plain 44px button that closes it; the label, Thermal / Visual and maximize hide as soon as it starts to shrink.
+
+## One camera feed everywhere: the drone feed on the candidate page too (Oct 4, 15:54)
+- Supersedes the "drone feed on the candidate screen / full-screen map / maximized" entries: the candidate page's drone button now opens the same floating feed as the fire page and the chats (shared `feedcam.js`), above the map, not in place of it. It drags, throws, bounces and swaps with other feeds, shrinks at the edges, restores on long press, closes with the X or a fast swipe up. The old in-band, full-screen and maximized drone panels of the candidate page are gone.
+- Its Thermal / Visual switch uses the drone's real thermal footage (a second video fading in); feeds without thermal footage show the false-colour view.
+- Standing rule: similar items look and behave the same; a behaviour added to one (drag, swipe, shrink, close) is added to all.

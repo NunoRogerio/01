@@ -20,6 +20,7 @@
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=60"></script>
 <script src="tour.js?v=70"></script>
+<script src="feedcam.js?v=11"></script>
 <script src="menu.js?v=12"></script>
 
 <title>Ignition candidates</title>
@@ -189,39 +190,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </div>
   </sc-if>
-    <!-- On the full-screen map the feed keeps the band's size and floats over the map; it comes out from behind the drone button the
-         same way, and drags anywhere (portrait or landscape) -->
-    <figure aria-hidden="{{ff.hidden}}" onPointerDown="{{ff.down}}" onPointerMove="{{ff.move}}" onPointerUp="{{ff.up}}" onPointerCancel="{{ff.up}}" style="position: absolute; left: {{ff.left}}px; top: {{ff.top}}px; width: 358px; height: 202px; z-index: 40; margin: 0; overflow: hidden; border-radius: 16px; background: #1C1C1E; color: #FFFFFF; box-shadow: 0 0 28px rgba(0,0,0,0.28); touch-action: none; cursor: grab; transform-origin: 0 0; transform: {{ff.tf}}; opacity: {{ff.op}}; pointer-events: {{ff.pe}}; transition: transform {{ff.tT}}, opacity {{ff.opT}}">
-      <sc-if value="{{ff.vid}}" hint-placeholder-val="{{ false }}">
-        <video ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{visualOp}}; transition: opacity .45s ease"></video>
-        <video ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{thermalOp}}; transition: opacity .45s ease"></video>
-      </sc-if>
-      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; margin: -22px 0 0 -22px; pointer-events: none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>
-      <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 8px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
-      <button type="button" class="mbtn" onClick="{{closeFeed}}" aria-label="Close drone feed" style="position: absolute; right: 16px; top: 16px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.5); border: 0; backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #FFFFFF; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{feedXRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-      <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 16px; bottom: 16px; width: 200px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
-        <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
-        <button type="button" class="segopt" aria-pressed="{{thermal.pressed}}" aria-selected="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="color: {{thermal.fg}}; font-size: 17px">Thermal</button>
-        <button type="button" class="segopt" aria-pressed="{{visual.pressed}}" aria-selected="{{visual.pressed}}" onClick="{{visual.pick}}" style="color: {{visual.fg}}; font-size: 17px">Visual</button>
-      </div>
-      <div style="position: absolute; right: 16px; bottom: 16px; display: flex; gap: 8px"><button type="button" class="mbtn" onClick="{{maxFeed}}" aria-label="Maximize drone feed" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.5); border: 0; backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #FFFFFF; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"></path></svg></button></div>
-    </figure>
-    <!-- Maximized drone feed: the whole screen (portrait or landscape), 2px past every edge so no hairline shows at the sides -->
-    <figure aria-hidden="{{mf.hidden}}" style="position: absolute; inset: -2px; z-index: 60; margin: 0; overflow: hidden; background: #000000; color: #FFFFFF; transform: scale({{mf.sc}}); opacity: {{mf.op}}; pointer-events: {{mf.pe}}; transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-      <sc-if value="{{mf.vid}}" hint-placeholder-val="{{ false }}">
-        <video ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{visualOp}}; transition: opacity .45s ease"></video>
-        <video ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{thermalOp}}; transition: opacity .45s ease"></video>
-      </sc-if>
-      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; margin: -22px 0 0 -22px; pointer-events: none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>
-      <span style="position: absolute; left: 18px; top: 66px; display: flex; align-items: center; gap: 8px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
-      <button type="button" class="mbtn" onClick="{{closeFeed}}" aria-label="Close drone feed" style="position: absolute; right: 18px; top: 66px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.5); border: 0; backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #FFFFFF; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{feedXRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-      <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 18px; bottom: 42px; width: 200px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
-        <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
-        <button type="button" class="segopt" aria-pressed="{{thermal.pressed}}" aria-selected="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="color: {{thermal.fg}}; font-size: 17px">Thermal</button>
-        <button type="button" class="segopt" aria-pressed="{{visual.pressed}}" aria-selected="{{visual.pressed}}" onClick="{{visual.pick}}" style="color: {{visual.fg}}; font-size: 17px">Visual</button>
-      </div>
-      <div style="position: absolute; right: 18px; bottom: 42px; display: flex; gap: 8px"><button type="button" class="mbtn" onClick="{{minFeed}}" aria-label="Back to the smaller drone feed" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.5); border: 0; backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #FFFFFF; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M10 14l-7 7M14 10l7-7"></path></svg></button></div>
-    </figure>
 
 
   <div style="display: {{hdrD}}; position: relative; z-index: 6; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
@@ -317,23 +285,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="padding: 0; font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fg}}">{{tb.label}}</button>
           </sc-for>
         </div>
-        <!-- The drone's live feed in the map band: a container 16px inside the band on every side (the map shows around it). It
-             comes out from behind the drone button at the feed's proportions, gliding and growing to its place; X folds it back -->
-        <figure aria-hidden="{{bf.hidden}}" style="position: absolute; left: 16px; top: 16px; width: 358px; height: 202px; z-index: 30; margin: 0; overflow: hidden; border-radius: 16px; background: #1C1C1E; color: #FFFFFF; box-shadow: 0 0 24px rgba(0,0,0,0.24); transform-origin: 0 0; transform: {{bf.tf}}; opacity: {{bf.op}}; pointer-events: {{bf.pe}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity {{bf.opT}}">
-          <sc-if value="{{bf.vid}}" hint-placeholder-val="{{ false }}">
-            <video ref="{{setVid}}" src="assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live visual feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{visualOp}}; transition: opacity .45s ease"></video>
-            <video ref="{{setVid}}" src="assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4" autoplay="" muted="" loop="" playsinline="" preload="auto" aria-label="Live thermal feed from the drone over the ignition" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{thermalOp}}; transition: opacity .45s ease"></video>
-          </sc-if>
-          <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; margin: -22px 0 0 -22px; pointer-events: none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>
-          <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 8px; height: 52px; font-size: 15px; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.7)"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #FF453A"></span>Live. 400 ft</span>
-          <button type="button" class="mbtn" onClick="{{closeFeed}}" aria-label="Close drone feed" style="position: absolute; right: 16px; top: 16px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.5); border: 0; backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #FFFFFF; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="transform: rotate({{feedXRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
-          <div role="group" aria-label="Camera" class="wf-seg" style="position: absolute; left: 16px; bottom: 16px; width: 200px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
-            <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{segX}})"><span class="segblob"></span></span>
-            <button type="button" class="segopt" aria-pressed="{{thermal.pressed}}" aria-selected="{{thermal.pressed}}" onClick="{{thermal.pick}}" style="color: {{thermal.fg}}; font-size: 17px">Thermal</button>
-            <button type="button" class="segopt" aria-pressed="{{visual.pressed}}" aria-selected="{{visual.pressed}}" onClick="{{visual.pick}}" style="color: {{visual.fg}}; font-size: 17px">Visual</button>
-          </div>
-          <div style="position: absolute; right: 16px; bottom: 16px; display: flex; gap: 8px"><button type="button" class="mbtn" onClick="{{maxFeed}}" aria-label="Maximize drone feed" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.5); border: 0; backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #FFFFFF; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"></path></svg></button></div>
-        </figure>
       </div>
 
       <!-- The GPS component, 56px under the projection switcher (16px under the map when there is none) -->
@@ -1196,48 +1147,9 @@ class Component extends DCLogic {
       chat: (() => { const C = window.__wfChat, raw = SC.cands[ci]; if (!C || !raw) return { badgeD: 'none', n: '', aria: 'Chat', open: null, go: null, label: '', btnD: 'none' };
         const inc = C.incCand(raw), ex = C.find(inc), u = ex ? C.unread(ex) : 0; window.__wfAlertKey = C.keyOf(inc);   /* the candidate on screen (the tour starts its chat afresh) */
         return { badgeD: u ? 'block' : 'none', n: C.badge ? C.badge(u) : String(u), aria: ex ? 'Open this candidate\'s chat' + (u ? ', ' + u + ' unread' : '') : 'Start a chat about this candidate', open: () => C.open(inc), go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} C.open(inc); window.location.href = 'Chat.dc.html'; }, label: 'Team chat', btnD: 'inline-flex' }; })(),
-      hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), goDrone: () => { this.wfSetVerify(cur.id); window.__wfDroneSeen = Object.assign(window.__wfDroneSeen || {}, { [cur.id]: true }); this.setState({ feed: cur.id }); },   // the drone's feed opens in place: in the map band, or floating over the full-screen map
-      ...(() => {   // the feed comes out from behind the drone button at its own proportions and glides, growing, to its place; X folds it back
-        const on = !!s.feed && s.feed === cur.id, closing = Date.now() - (this._feedOff || 0) < 650, inFull = !!s.full, mx = on && !!s.feedMax;
-        const bOn = on && !inFull && !mx, fOn = on && inFull && !mx;
-        const mk = (open, start, place) => ({ tf: open ? place : start, op: open ? 1 : 0, opT: open ? '.5s cubic-bezier(.4,0,.6,1)' : '.45s cubic-bezier(.2,.8,.2,1)',   /* opacity follows the whole journey: 0 at the drone button, 100% at its place (and back), so the small panel never sits on the button */ pe: open ? 'auto' : 'none', hidden: open ? 'false' : 'true', vid: open || closing });
-        const bf = mk(bOn, 'translate(252px, 162px) scale(0.1788)', 'none');   /* starts as a 64 x 36 feed centred on the drone button (300, 196 in the band) */
-        // full screen: 16px from the sides, its bottom above the map controls; the drone button sits 46px above the bottom, at x 300
-        // Portrait or landscape: placed from the live screen size and its safe areas (landscape full screen is as wide and tall as the phone turned)
-        const VP = window.__wfVP || {}, LND = !!VP.land, RW = LND ? (VP.w || 844) : 390, RH = LND ? (VP.h || 390) : (this._rootH || 844), SL = LND ? (VP.sl || 0) : 0, SR = 0, CR = LND ? Math.min(VP.sr || 0, 16) : 0;   /* the feed may go to 8px from the right edge; the controls sit 32px from it */
-        const top0 = RH - (LND ? 24 : 76) - 202, left0 = 16 + SL, cx = RW - CR - 90;   /* cx: the drone button's centre */
-        const dxMin = 8 - left0, dxMax = RW - SR - 358 - 8 - left0, dyMin = (LND ? 8 : 64) - top0, dyMax = RH - 202 - 8 - top0;
-        const dx = Math.max(dxMin, Math.min(dxMax, this._fdx || 0)), dy = Math.max(dyMin, Math.min(dyMax, this._fdy || 0));
-        this._fB = { dxMin, dxMax, dyMin, dyMax };
-        const ff = mk(fOn, 'translate(' + (cx - 32 - left0) + 'px, ' + (RH - 64 - top0) + 'px) scale(0.1788)', 'translate(' + dx + 'px, ' + dy + 'px)');
-        ff.top = top0; ff.left = left0; ff.tT = this._fDrag || this._fGlide ? '0s' : '.55s cubic-bezier(.2,.8,.2,1)';
-        ff.down = (e) => { if (e.target.closest && e.target.closest('button')) return; cancelAnimationFrame(this._fFling || 0); this._fFling = 0; this._fGlide = false; let k = 1; try { const el = e.currentTarget, P = el.parentElement; k = el.getBoundingClientRect().width / 358 || 1; this._rootW = P.offsetWidth || 390; this._rootH = P.offsetHeight || 844; } catch (x) {} this._fDrag = { x: e.clientX, y: e.clientY, x0: dx, y0: dy, k }; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} };
-        // (Oct 3, 22:09) dragged like the tour's cards: it follows the finger after a 6px slop, a throw keeps it gliding the way it
-        // went, slowing smoothly; at an edge (8px in) it bounces back gently, no magnet; it stays where it lands
-        ff.move = (e) => { const D = this._fDrag, B = this._fB; if (!D || !B) return; const mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true;
-          const now = performance.now(); (D.tr = D.tr || []).push([now, e.clientX, e.clientY]); while (D.tr.length > 2 && now - D.tr[0][0] > 90) D.tr.shift();
-          this._fdx = Math.max(B.dxMin, Math.min(B.dxMax, D.x0 + mx / D.k)); this._fdy = Math.max(B.dyMin, Math.min(B.dyMax, D.y0 + my / D.k)); this.forceUpdate(); };
-        ff.up = () => { const D = this._fDrag; if (!D) return; this._fDrag = null; cancelAnimationFrame(this._fFling || 0);
-          const tr = D.tr || [], a = tr[0], z = tr[tr.length - 1]; let vx = 0, vy = 0;
-          if (D.moved && a && z && z[0] - a[0] > 8 && performance.now() - z[0] < 80) { vx = (z[1] - a[1]) / ((z[0] - a[0]) / 1000) / D.k; vy = (z[2] - a[2]) / ((z[0] - a[0]) / 1000) / D.k; const sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
-          if (Math.hypot(vx, vy) > 150) { let last = 0; const B = this._fB; this._fGlide = true;
-            const step = (now) => { const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; const k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
-              let x = (this._fdx || 0) + vx * dt, y = (this._fdy || 0) + vy * dt;
-              if (x < B.dxMin) { x = B.dxMin; vx = -vx * 0.3; } else if (x > B.dxMax) { x = B.dxMax; vx = -vx * 0.3; }
-              if (y < B.dyMin) { y = B.dyMin; vy = -vy * 0.3; } else if (y > B.dyMax) { y = B.dyMax; vy = -vy * 0.3; }
-              this._fdx = x; this._fdy = y; this.forceUpdate();
-              if (Math.hypot(vx, vy) < 12) { this._fGlide = false; this._fFling = 0; this.forceUpdate(); return; } this._fFling = requestAnimationFrame(step); };
-            this._fFling = requestAnimationFrame(step); }
-          this.forceUpdate(); };
-        try { document.documentElement.classList.toggle('wf-black', mx); } catch (x) {}   // (Oct 3, 23:00) maximized: the strips beside the app's frame go black too, so no light lines show at the sides
-        const mf = { sc: mx ? 1 : 0.94, op: mx ? 1 : 0, pe: mx ? 'auto' : 'none', hidden: mx ? 'false' : 'true', vid: mx };
-        return { bf, ff, mf, feedXRot: on ? '0deg' : '90deg', maxFeed: () => this.setState({ feedMax: true }), minFeed: () => this.setState({ feedMax: false }) };
-      })(),
-      closeFeed: () => { this._feedOff = Date.now(); this.setState({ feed: false, feedMax: false }); setTimeout(() => this.forceUpdate(), 700); },
+      hdrD: n > 0 ? 'none' : 'block', confirmCur: () => { this._toFire = true; this.wfConfirm(cur.id); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, verifyCur: () => this.wfSetVerify(cur.id), goDrone: (e) => { this.wfSetVerify(cur.id); window.__wfDroneSeen = Object.assign(window.__wfDroneSeen || {}, { [cur.id]: true }); if (window.__wfCamFeed) window.__wfCamFeed.open({ anchor: e && e.currentTarget, src: 'assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4', thermalSrc: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', cross: true, title: 'Drone feed', label: window.__wfLang === 'pt' ? 'Em direto. Drone' : 'Live. Drone' }); },   // the drone's feed opens in place: in the map band, or floating over the full-screen map
       setVid: this.setVid || (this.setVid = (el) => { if (!el) return; el.muted = true; el.defaultMuted = true; el.loop = true; el.playsInline = true; const pl = el.play && el.play(); if (pl && pl.catch) pl.catch(() => {}); }),
-      thermalOp: s.camMode === 'thermal' ? 1 : 0, visualOp: s.camMode === 'thermal' ? 0 : 1, segX: s.camMode === 'thermal' ? '0%' : '100%',
-      thermal: { pressed: s.camMode === 'thermal' ? 'true' : 'false', fg: s.camMode === 'thermal' ? '#1C1C1E' : '#E5E5EA', pick: () => this.setState({ camMode: 'thermal' }) },
-      visual: { pressed: s.camMode === 'thermal' ? 'false' : 'true', fg: s.camMode === 'thermal' ? '#E5E5EA' : '#1C1C1E', pick: () => this.setState({ camMode: 'visual' }) }, scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
+      scopeName, navMap: () => this.wfNav('menu'), navBack: () => this.wfNav('back'), bgTap: () => { try { const a = document.querySelector('[data-wf-back]'); if (a) a.click(); } catch (e) {} },  alertCount: n, hasAlerts: n > 0, noAlerts: n === 0, alertLabel: n > 0 ? 'Alerts, ' + n + ' active' : 'Alerts'
     };
   }
 }

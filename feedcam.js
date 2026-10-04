@@ -10,7 +10,7 @@
   css.textContent =
     '.wf-cf{position:fixed;left:0;top:0;z-index:120;margin:0;overflow:hidden;border-radius:16px;background:#1C1C1E;color:#FFFFFF;box-shadow:0 0 28px rgba(0,0,0,.28);touch-action:none;cursor:grab;transform-origin:0 0;opacity:0;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif}' +
     '.wf-cf.max{border-radius:0;cursor:default}' +
-    '.wf-cf video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}' +
+    '.wf-cf video.tv{transition:opacity .45s ease}.wf-cf video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}' +
     '.wf-cf .lb{position:absolute;left:16px;top:16px;display:flex;align-items:center;gap:8px;min-height:52px;font-size:15px;font-weight:600;line-height:20px;text-shadow:0 0 2px rgba(0,0,0,.9),0 0 4px rgba(0,0,0,.8),0 0 8px rgba(0,0,0,.7);pointer-events:none}' +
     '.wf-cf .lb i{width:6px;height:6px;border-radius:50%;background:#FF453A;flex-shrink:0}' +
     '.wf-cf .lb small{display:block;font-size:13px;font-weight:400;opacity:.9}' +
@@ -103,6 +103,7 @@
     el.className = 'wf-cf'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', (o.title || 'Helmet camera') + (o.who ? ', ' + o.who : ''));
     el.style.width = s.w + 'px'; el.style.height = s.h + 'px';
     el.innerHTML = '<video src="' + key + '" autoplay muted loop playsinline preload="auto" aria-label="' + (o.title || 'Live helmet camera') + '"></video>' +
+      (o.thermalSrc ? '<video class="tv" src="' + o.thermalSrc + '" autoplay muted loop playsinline preload="auto" aria-label="' + (o.title || 'Live helmet camera') + ', thermal" style="opacity:0"></video>' : '') +
       (o.cross ? '<svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="position:absolute;left:50%;top:50%;margin:-22px 0 0 -22px;pointer-events:none"><g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"><circle cx="22" cy="22" r="14" stroke-opacity="0.45"></circle><path d="M22 0v10M22 34v10M0 22h10M34 22h10" stroke-opacity="0.55"></path></g></svg>' : '') +
       '<span class="lb"><i aria-hidden="true"></i><span>' + (o.label || 'Live. Helmet camera') + (o.who ? '<small>' + o.who + '</small>' : '') + '</span></span>' +
       '<button type="button" class="x mbtn" aria-label="Close camera feed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>' +
@@ -116,12 +117,12 @@
     var P = free(x1, y1); st.x = P.x; st.y = P.y; feeds.push(f);
     el.style.transition = 'none'; el.style.transform = r ? 'translate(' + (r.left + r.width / 2 - 32) + 'px,' + (r.top + r.height / 2 - 18) + 'px) scale(' + (64 / s.w) + ')' : 'translate(' + P.x + 'px,' + (P.y + 24) + 'px) scale(.9)';
     void el.offsetWidth; requestAnimationFrame(function () { if (feeds.indexOf(f) < 0) return; el.style.opacity = '1'; setPos(f, P.x, P.y, true); });
-    try { var v = el.querySelector('video'); v.muted = true; v.play().catch(function () {}); } catch (x) {}
+    try { Array.prototype.forEach.call(el.querySelectorAll('video'), function (v) { v.muted = true; v.play().catch(function () {}); }); } catch (x) {}
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     el.querySelector('.x').addEventListener('click', function (e) { e.stopPropagation(); close(f); });
     el.querySelector('.mx').addEventListener('click', function (e) { e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} maxi(f, !el.classList.contains('max')); });
     Array.prototype.forEach.call(el.querySelectorAll('.cam .segopt'), function (b) { b.addEventListener('click', function (e) { e.stopPropagation(); var t = b.getAttribute('data-cam') === 't'; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
-      el.classList.toggle('heat', t); el.querySelector('.segthumb').style.transform = 'translateX(' + (t ? 0 : 100) + '%)'; Array.prototype.forEach.call(el.querySelectorAll('.cam .segopt'), function (o) { o.setAttribute('aria-selected', String(o === b)); }); }); });   // Thermal / Visual, as on the first drone feed
+      /* real thermal footage when the feed has it, else the false-colour view */ var tv = el.querySelector('.tv'); if (tv) { tv.style.opacity = t ? '1' : '0'; } else el.classList.toggle('heat', t); el.querySelector('.segthumb').style.transform = 'translateX(' + (t ? 0 : 100) + '%)'; Array.prototype.forEach.call(el.querySelectorAll('.cam .segopt'), function (o) { o.setAttribute('aria-selected', String(o === b)); }); }); });   // Thermal / Visual, as on the first drone feed
     // dragging, as the tour cards
     var D = null;
     var LP = 0, R = 240;   // pushing a feed against a screen edge shrinks it (240px of push = down to 40%); a long press brings it back
