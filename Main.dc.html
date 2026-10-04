@@ -15,10 +15,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<script src="fit.js?v=137"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=137"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=181"></script>
-<script src="i18n.js?v=156"></script>
+<script src="prefs.js?v=182"></script>
+<script src="i18n.js?v=157"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=66"></script>
 <script src="tour.js?v=73"></script>
@@ -629,6 +629,22 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <span class="wf-label" aria-hidden="true" style="display: none; margin: 0 0 -48px 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Connected data sources</span>
       <!-- Connect data sources: a drawer like Chat settings; Add data source on top, then the sources the app reads -->
+      <!-- Maps (Oct 4): the tile providers under test; one on at a time (turning one on turns the other off) -->
+      <div style="display: {{pm.dMaps}}; flex-direction: column; gap: 56px; flex-shrink: 0">
+        <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{mp.note}}</span>
+        <ul aria-label="Maps" style="display: flex; flex-direction: column; gap: 56px; margin: 0; padding: 0; list-style: none">
+          <sc-for list="{{mp.items}}" as="m" hint-placeholder-count="2">
+            <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 0">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{m.name}}</span>
+                <span style="font-size: 17px; line-height: 22px; color: #000000">{{m.sub}}</span>
+              </span>
+              <button type="button" role="switch" class="wf-tog" aria-checked="{{m.onStr}}" aria-label="{{m.name}}" onClick="{{m.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{m.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{m.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
+              <span style="grid-column: 1 / -1; margin-top: 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.why}}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
       <div style="display: {{pm.dDs}}; flex-direction: column; flex-shrink: 0">
         <!-- (Oct 4) no drawer row: the count sits under the panel title -->
         <div style="display: grid; grid-template-rows: {{ds.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
@@ -1076,9 +1092,10 @@ class Component extends DCLogic {
         const sel = (k) => open && pmSec === k, Y = 'var(--wf-y)';
         const IC = { profile: 'M12 4a4 4 0 1 0 0 8a4 4 0 1 0 0-8ZM4.5 20c.8-3.6 3.8-6 7.5-6s6.7 2.4 7.5 6', lang: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17ZM3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5s1.2-6.1 3.5-8.5Z',
           look: 'M3.5 18.5 8.5 5.5l5 13M5.4 13.8h6.2M15 18.5l3-8 3 8M16 16h4',   // Appearance: theme, text size and spacing (Oct 3, 18:10)
+          maps: 'M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20ZM9 4v13.5M15 6.5V20',   // Maps: the map tiles (Oct 4)
           share: 'M12 4v11M8 7.5 12 3.5l4 4M8 11H5.5v9h13v-9H16', chat: 'M4 5.5h16v10H9l-5 4ZM8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01',
           ds: 'M12 4c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3ZM4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3', about: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17ZM12 11v5.5M12 7.8h.01' };
-        const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', look: 'Appearance', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
+        const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', look: 'Appearance', maps: 'Maps', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
         const pick = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
           if (open && pmSec === k) { this.setState({ pm: 'rail' }); this.wfMenuPost('rail'); return; }
           this.wfMenuPost('open');   // tapping the open section folds the menu to its icon column
@@ -1102,14 +1119,14 @@ class Component extends DCLogic {
               const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .53s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
               // (Oct 4, 00:01) a push along the icon column: an icon below the open one pushes the new section up from below, one above
               // pushes it down from above; the old section moves out the other way, darkening as it goes
-              const ORD = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'], dir = ORD.indexOf(k) > ORD.indexOf(pmSec) ? 1 : -1, hh = sec.offsetHeight;
+              const ORD = ['profile', 'lang', 'look', 'maps', 'share', 'chat', 'ds', 'about'], dir = ORD.indexOf(k) > ORD.indexOf(pmSec) ? 1 : -1, hh = sec.offsetHeight;
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateY(' + (dir * hh) + 'px)';
               // (Oct 3, 21:27) no jump: the slide (and the darkening) start only once the new section has rendered, off to the
               // right, so it never changes or settles while it is moving in
               go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; Promise.all(waits).then(() => { /* (Oct 4, 00:08) no darkening of the previous section */ sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateY(0)'; cl.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; cl.style.transform = 'translateY(' + (-dir * hh) + 'px)';
                 setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 590); }); }; } } catch (e) {} }
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {}), () => { if (go) go(); }); };
-        const items = ['profile', 'lang', 'look', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
+        const items = ['profile', 'lang', 'look', 'maps', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
@@ -1125,7 +1142,7 @@ class Component extends DCLogic {
           bDur: boot ? '0s' : '.25s',   // (Oct 3, 21:36) 50% faster   // (Oct 3, 20:54) twice as fast as the screen   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time
           bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
           bZ: (() => { if (MENU && this._dlgPosted !== !!s.aiAsk) { this._dlgPosted = !!s.aiAsk; try { window.parent.postMessage({ wfMenu: s.aiAsk ? 'dlgon' : 'dlgoff' }, location.origin); } catch (x) {} } return s.aiAsk ? 49 : 95; })(),   /* (Oct 4) under a dialog and its glass; on other screens the menu button hides while a dialog shows */ bOp: MENU ? 0 : pmMode || !this.wfTopPanel() ? 1 : 0, bPE: MENU ? 'none' : pmMode || !this.wfTopPanel() ? 'auto' : 'none',   // (Oct 3, 20:19) shown with the area picker (its top row has the same buttons), hidden over the open incident list   // hidden while another top panel or the full-screen map is up
-          dProf: pmSec === 'profile' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmMode || pmSec === 'about' || this._abtSeen ?   /* (Oct 3, 21:49) loaded as soon as the menu opens, so About is ready when it slides in */ (this._abtSeen = 'About.dc.html?embed=1&v=3') : 'about:blank' }; })(),
+          dProf: pmSec === 'profile' ? 'flex' : 'none', dMaps: pmSec === 'maps' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmMode || pmSec === 'about' || this._abtSeen ?   /* (Oct 3, 21:49) loaded as soon as the menu opens, so About is ready when it slides in */ (this._abtSeen = 'About.dc.html?embed=1&v=3') : 'about:blank' }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',
       cs: (() => { const o = true, pt = lang === 'pt';   // (Oct 3, 23:18) no drawer row: the section shows its content directly
         return { title: pt ? 'Encenação e chave' : (window.__wfJA ? window.__wfJA('Chat role-play and key') : 'Chat role-play and key'), str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
@@ -1184,7 +1201,7 @@ class Component extends DCLogic {
           'BC Wildfire Service': { shows: [['fire', 'Active fire markers', 'Marcadores de incêndios ativos'], ['pill', 'Stage tags', 'Etiquetas de fase'], ['crew', 'Crew, aircraft and equipment counts', 'Número de equipas, aeronaves e máquinas']], ex: [fireEx('CAN')] },
           'GeoNames': { shows: [['pin', 'The place name in every candidate title', 'O nome da localidade no título de cada candidato']], ex: [candEx(best(() => true), true)] },
           'MapTiler': { shows: [['tile', 'The map itself', 'O próprio mapa']], ex: [] },
-          'OpenStreetMap': { shows: [['station', 'Fire station markers', 'Marcadores de quartéis']], ex: [stEx()] },
+          'OpenStreetMap': { shows: (window.__wfTiles && window.__wfTiles.get() === 'osm' ? [['tile', 'The map itself', 'O próprio mapa']] : []).concat([['station', 'Fire station markers', 'Marcadores de quartéis']]), ex: [stEx()] },
           'Open-Meteo': { shows: [['wx', 'Temperature, humidity, wind and air quality chips', 'Etiquetas de temperatura, humidade, vento e qualidade do ar'], ['proj', 'Projection shapes: now, +1 h, +3 h, +6 h', 'Formas de projeção: agora, +1 h, +3 h, +6 h']], ex: [] }
         };
         const KS = ['cand', 'night', 'fire', 'station', 'poly', 'proj', 'pill', 'danger', 'wx', 'pin', 'tile', 'crew'];
@@ -1200,8 +1217,10 @@ class Component extends DCLogic {
           ['INPE · Programa Queimadas', T('Fire events. Brazil', 'Eventos de fogo. Brasil'), c.tBR, false, 27, 'BR', 9, T('Brazil\'s fire events, built from satellite detections, with their burned areas.', 'Eventos de fogo no Brasil, construídos a partir de deteções de satélite, com as áreas ardidas.')],
           ['BC Wildfire Service', T('Wildfires. British Columbia', 'Incêndios florestais. Colúmbia Britânica'), c.tCAN, false, 26, 'CAN', 9, T('British Columbia\'s fires, with crew, aircraft and equipment counts.', 'Incêndios da Colúmbia Britânica, com número de equipas, aeronaves e máquinas.')],
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27, null, 9, T('Names the town nearest each satellite detection.', 'Dá o nome da localidade mais próxima de cada deteção de satélite.')],
-          ['MapTiler', T('Map tiles, from OpenStreetMap data', 'Mosaicos do mapa, a partir de dados do OpenStreetMap'), null, true, 4, null, 10, T('The map itself: street tiles served by MapTiler.', 'O próprio mapa: mosaicos de ruas fornecidos pela MapTiler.')],
-          ['OpenStreetMap', T('Fire stations, place search and routes', 'Quartéis de bombeiros, pesquisa de locais e percursos'), null, true, 26, null, 9, T('The fire stations on the map, the place search and the road routes to a fire.', 'Os quartéis de bombeiros no mapa, a pesquisa de locais e os percursos de estrada até um incêndio.')],
+          ...(() => { const osmMap = window.__wfTiles && window.__wfTiles.get() === 'osm';   /* (Oct 4) the map's own source follows the Maps menu: only the one in use is listed */
+            return osmMap ? [['OpenStreetMap', T('Map, fire stations, place search and routes', 'Mapa, quartéis de bombeiros, pesquisa de locais e percursos'), null, true, 26, null, 9, T('The map itself, the fire stations on it, the place search and the road routes to a fire.', 'O próprio mapa, os quartéis de bombeiros nele, a pesquisa de locais e os percursos de estrada até um incêndio.')]]
+              : [['MapTiler', T('Map tiles, from OpenStreetMap data', 'Mosaicos do mapa, a partir de dados do OpenStreetMap'), null, true, 4, null, 10, T('The map itself: street tiles served by MapTiler.', 'O próprio mapa: mosaicos de ruas fornecidos pela MapTiler.')],
+                ['OpenStreetMap', T('Fire stations, place search and routes', 'Quartéis de bombeiros, pesquisa de locais e percursos'), null, true, 26, null, 9, T('The fire stations on the map, the place search and the road routes to a fire.', 'Os quartéis de bombeiros no mapa, a pesquisa de locais e os percursos de estrada até um incêndio.')]]; })(),
           ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10, T('Wind and temperature drive the projections; air quality and terrain add context.', 'O vento e a temperatura conduzem as projeções; a qualidade do ar e o relevo dão contexto.')]
         ].map(([name, what, t, still, day, key, mon, why]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key, XX = X[name] || { shows: [], ex: [] }, EX = (XX.ex || []).filter(Boolean);
           return { shows: XX.shows.map(([k, en, ptt]) => ({ ...flags(k), text: T(en, ptt) })), showsD: XX.shows.length ? 'block' : 'none', exs: EX.map((e) => ({ ...flags(e.k), fc: e.fc, title: e.title, sub: e.sub, tag: e.tag, tagD: e.tag ? 'inline-flex' : 'none', tagFg: e.tagFg, tagBg: e.tagBg })), exsD: EX.length ? 'block' : 'none', noExD: XX.shows.length && !EX.length && X[name] && X[name].ex.length ? 'block' : 'none', showsT: T('Shows in the app', 'Mostra na app'), exsT: T('Examples', 'Exemplos'),
@@ -1301,6 +1320,13 @@ class Component extends DCLogic {
           pick: () => { if (o.code === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
             this.setState({ langPend: o.code }, () => this.wfLangThumb(true)); clearTimeout(this._lgT);
             this._lgT = setTimeout(() => { if (window.__wfSetLang) window.__wfSetLang(o.code); this.setState({ langPend: null, lang: o.code }, () => this.wfLangThumb(false)); }, 700); } })) }; })(),
+      mp: (() => { const cur = window.__wfTiles ? window.__wfTiles.get() : 'maptiler', pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
+        const INFO = { maptiler: [T('Street tiles from OpenStreetMap data, served by MapTiler.', 'Mosaicos de ruas com dados do OpenStreetMap, fornecidos pela MapTiler.'), T('Faster. Free plan with a monthly limit.', 'Mais rápido. Plano gratuito com limite mensal.')],
+          osm: [T('The OpenStreetMap community\'s own public tiles.', 'Os mosaicos públicos da própria comunidade OpenStreetMap.'), T('Shared by everyone, so slower at busy times. For light use.', 'Partilhados por todos, por isso mais lentos nas horas de maior uso. Para uso leve.')] };
+        return { items: (window.__wfTiles ? window.__wfTiles.list : []).map(([k, name]) => { const on = k === cur;
+          return { name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px',
+            toggle: () => { if (on) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k); this.forceUpdate(); } }; }),
+          note: T('One map at a time. Turning one on turns the other off.', 'Um mapa de cada vez. Ativar um desativa o outro.') }; })(),
       pfGroups: [
         // (Oct 3, 21:13) the Theme choice is hidden while the dark theme is off (prefs.js DARK_ON)
         group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),
