@@ -928,3 +928,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - When the finger lifts on a shrunk feed, everything goes except the X button (label, Thermal / Visual and maximize are hidden); the X keeps its 44px tap size.
 - A long press (about half a second, without moving) on a shrunk feed brings it back to its original size, with a haptic tap.
 - A swipe up at the speed that ends the tour (2340 px/s) closes a feed the way it closes the tour: it flies to the top edge and is swallowed by it. If another feed is in its way, the same flick swaps places instead.
+
+## Tour dismissed message (Oct 4, 15:29)
+- After the tour card is swiped away, the centred card says "You've dismissed the tour. Restart on the Home screen." (Portuguese: "Dispensou o tour. Recomece no ecrã inicial."), not "Tour ended". It still fades after 3 s or closes with its X. Wording for the same action elsewhere: dismissed, not ended.

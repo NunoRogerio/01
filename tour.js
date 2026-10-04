@@ -450,7 +450,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       var c = document.createElement('div'); c.id = 'wf-tour-ended'; c.setAttribute('role', 'status');
       c.style.cssText = 'position:fixed;left:50%;top:50%;z-index:2147483000;width:min(300px,calc(100vw - 32px));box-sizing:border-box;padding:16px;display:flex;align-items:flex-start;gap:16px;border-radius:28px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);box-shadow:0 8px 32px rgba(0,0,0,.16);font:inherit;color:#000;opacity:0;transform:translate(-50%,-50%) scale(.96);transition:opacity .3s ease,transform .3s ease';
       var t = document.createElement('p'); t.style.cssText = 'margin:0;flex:1 1 auto;min-width:0;padding-top:11px;font-size:17px;line-height:22px;font-weight:400;color:#000';
-      t.textContent = PT() ? 'Tour terminado. Recomece no ecrã inicial.' : 'Tour ended. Restart on the Home screen.';
+      t.textContent = PT() ? 'Dispensou o tour. Recomece no ecrã inicial.' : 'You\'ve dismissed the tour. Restart on the Home screen.';
       var x = document.createElement('button'); x.type = 'button'; x.className = 'mbtn'; x.setAttribute('aria-label', PT() ? 'Fechar' : 'Close');
       x.style.cssText = 'flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,.12);color:#1C1C1E;cursor:pointer';
       x.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>';
