@@ -1025,3 +1025,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - View push-up: no storage restore on arrival (the loading frame already makes the chosen fire current; restoring an older copy opened the previous fire) (Oct 4).
 - View push-up: the loading frame consumes the one-shot tapped item (focus / fire / station); the card's state is handed to the real page via a one-time 'wf-pu-state' key that fit.js restores at load (the frame never reads it). Verified: tapping Pasadena opens Pasadena (Oct 4).
 - Back to a map: any open tooltip card closes on return from the page cache (pageshow), so no card is left active or 'Loading…' (Oct 4).
+- View push-up arrival (Oct 4, 21:50): the risen screen's last picture stays until the real page has drawn itself (its plain loading surface gone), then the real page appears over it in a 0.2s dissolve between identical pictures; no blank flash when the new screen settles.

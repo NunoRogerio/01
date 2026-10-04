@@ -766,6 +766,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
     a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;
     var navigate=function(){if(gone)return;gone=true;   /* the frame took the one-shot state (the tapped item) while it loaded: the real page gets it back */
       try{if(snap)sessionStorage.setItem('wf-pu-state',JSON.stringify(snap));}catch(x){}   /* read once by the real page (fit.js top), where the frame cannot reach it */
+      try{sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}   /* the real page holds this last picture until it has drawn itself */
       window.location.href=href;};
     setTimeout(function(){   /* after the card's own handlers have set the destination up */
       try{snap={};for(var q=0;q<sessionStorage.length;q++){var kk=sessionStorage.key(q);snap[kk]=sessionStorage.getItem(kk);}}catch(x){}   /* now, after the card's handlers */
@@ -781,6 +782,15 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
           if(!rose&&(loaded?Date.now()-T0>350:Date.now()-T0>700))rise();if(Date.now()-T0>2500&&!loaded){rise();return;}if(!gone)setTimeout(poll,70);};
         f.src=href;setTimeout(poll,100);}catch(x){navigate();}},0);},true);
   addEventListener('pageshow',function(){try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});document.querySelectorAll('[data-wf-pushup]').forEach(function(n){n.remove();});document.documentElement.style.background='';document.body.style.background='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
+  // (Oct 4, 21:50) The push-up arrival: the last picture of the risen screen stays over the real page until it has drawn itself
+  // (the live page, held invisible above it, waits for its plain loading surface to go), then appears in a short 0.2s dissolve between two identical pictures, so no blank flash.
+  try{var pus=document.createElement('style');pus.textContent='html:active-view-transition-type(wfpu)::view-transition-old(root){animation:none;opacity:1}html:active-view-transition-type(wfpu)::view-transition-new(root){animation:wfpuHold 3s linear both}@keyframes wfpuHold{0%,93%{opacity:0}100%{opacity:1}}';(document.head||document.documentElement).appendChild(pus);}catch(x){}
+  addEventListener('pagereveal',function(e){var t=0,fr=false;try{fr=window.self!==window.top;}catch(x){fr=true;}if(fr)return;try{t=+sessionStorage.getItem('wf-pu-arrive')||0;sessionStorage.removeItem('wf-pu-arrive');}catch(x){}
+    if(!(e.viewTransition&&Date.now()-t<10000))return;var vt=e.viewTransition;try{vt.types.add('wfpu');}catch(x){}
+    vt.ready.then(function(){var T0=Date.now(),an=null;try{an=document.getAnimations().filter(function(a){return a.effect&&a.effect.pseudoElement==='::view-transition-new(root)';})[0]||null;}catch(x){}
+      var ok=function(){var r=document.getElementById('dc-root');return !document.getElementById('wf-load')&&r&&r.firstElementChild&&r.textContent.trim().length>20;};
+      (function wait(){if(ok()||Date.now()-T0>2600){requestAnimationFrame(function(){requestAnimationFrame(function(){   /* drawn and painted: dissolve over the last 7% (0.21s) */
+        try{if(an){var d=an.effect.getComputedTiming().duration;if(an.currentTime<d*.93)an.currentTime=d*.93;}else vt.skipTransition();}catch(x){try{vt.skipTransition();}catch(y){}}});});return;}setTimeout(wait,40);})();}).catch(function(){});},true);
   addEventListener('pagereveal',function(e){if(!e.viewTransition)return;var t=0;try{t=+sessionStorage.getItem('wf-vt-back')||0;sessionStorage.removeItem('wf-vt-back');}catch(x){}if(Date.now()-t<15000){try{e.viewTransition.types.add('wfback');}catch(x){}return;}});
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(a)mark();},true);
   var ob=window.__wfBackOrHome;if(typeof ob==='function'){window.__wfBackOrHome=function(){mark();return ob.apply(this,arguments);};}
