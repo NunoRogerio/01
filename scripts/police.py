@@ -1,7 +1,7 @@
 # Finds candidate portraits of police leaders on Wikimedia Commons (free licences only) for the video call with the police
 # captain: three profiles (a: African American man, b: European woman, c: veteran man in his 60s). Saves up to 8 candidates per
-# profile in assets/faces/police-cands/ with their licences in CREDITS-police.txt; a person then picks one per profile and saves it
-# as assets/faces/police-a.jpg, -b.jpg, -c.jpg (never overwritten here).
+# profile in assets/faces/police-cands/; the chosen ones were copied to
+# assets/faces/police-a.jpg, -b.jpg, -c.jpg and the candidates removed (see CREDITS-police.txt).
 import json, os, re, urllib.parse, urllib.request
 API = 'https://commons.wikimedia.org/w/api.php'
 UA = {'User-Agent': 'ForestFireWatch/1.0 (+https://github.com/NunoRogerio/01)'}

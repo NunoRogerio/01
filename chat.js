@@ -94,8 +94,9 @@
   // Portraits for the team (illustrated, avatar.js), only on fires in California, Nevada and Portugal: each person in
   // their own service's uniform; coordinators wear the command helmet.
   var PHOTO_ST = { CA: 'us', PT: 'pt' };   // only Portugal and California chats show photos (a team of 8 each); the rest show initials
+  function faceOfPolice(c) { if (!c.callFace) { c.callFace = ['police-a', 'police-b', 'police-c'][Math.floor(Math.random() * 3)]; try { save(); } catch (e) {} } return c.callFace; }
   function photoOf(c, name) {
-    if (c && c.police) return CAPTAIN_PHOTO;   // the police captain: a real photo (Unsplash), not a fire service face
+    if (c && c.police) return 'assets/faces/' + faceOfPolice(c) + '.jpg?v=1';   // the police captain: a real photo (Unsplash), not a fire service face
     var team = c && PHOTO_ST[c.st];
     if (!team || !name || !window.__wfFacePick) return '';
     // each person in this chat gets a random photo of their gender from the team, never one already used in this chat
@@ -1071,7 +1072,6 @@
   // sheriff's deputy in the US, the GNR's nature protection service in Portugal), with the fire's card (place, start time,
   // GPS) and the report already sent; the officer answers and the conversation goes on in character.
   // Photo: Arthur Ogleznev on Unsplash (Unsplash License), https://unsplash.com/photos/X1JI5iiZsmY
-  var CAPTAIN_PHOTO = 'https://images.unsplash.com/photo-1744132116978-bbf797a1e689?w=240&h=240&fit=crop&crop=faces&q=80';
   // The police leader for a night ignition report: a captain (or that country's equivalent rank) of the force that
   // investigates fire causes there, named with the department and its area
   function policeOf(st, reg) { var cc = ccOf(st), r = String(reg || '').replace(/ County$/, '').trim();
@@ -1188,7 +1188,7 @@
       return Object.keys(db.chats).reduce(function (a, k) { var c = db.chats[k]; return a + (!c.closed && inSc(c) ? unread(c) : 0); }, 0); },
     nearby: function (key) { var c = load().chats[key]; return c ? nearby(c, 50) : []; }, setTopic: setTopic,
     police: function (inc) { var c = police(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
-    callFace: function (key) { var db = load(), c = db.chats[key]; if (!c) return 'police-a'; if (!c.callFace) { c.callFace = ['police-a', 'police-b', 'police-c'][Math.floor(Math.random() * 3)]; save(); } return c.callFace; },   /* the police leader's face for this report: one of three, chosen at random once, then the same in every call */
+    callFace: function (key) { var c = load().chats[key]; return c ? faceOfPolice(c) : 'police-a'; },   /* the police leader's face for this report: one of three, chosen at random once, then the same in every call */
     policeChat: function (id) { return load().chats['p:' + id] || null; },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
