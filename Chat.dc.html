@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=148"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=149"></script>
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=186"></script>
 <script src="i18n.js?v=161"></script>
@@ -546,9 +546,10 @@ class Component extends DCLogic {
     const S0 = snapAt(0), P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
     const ring0 = S0 && S0.ring && S0.ring.length ? S0.ring.map((p) => P(p[0], p[1])) : null, W = (window.__wfVP && window.__wfVP.w) || 390;
     const frame = (w, h) => { if (!ring0) return { zoom: 2.4, fx: x - 12, fy: y + 8 };
-      const cx = ring0.reduce((a, p) => a + p[0], 0) / ring0.length, cy = ring0.reduce((a, p) => a + p[1], 0) / ring0.length, k = 2.4;
-      const pts = ring0.map((p) => [cx + (p[0] - cx) * k, cy + (p[1] - cy) * k]), xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-      return { zoom: Math.max(0.4, Math.min(4, Math.min(w / (x1 - x0 + 120), h / (y1 - y0 + 120)))), fx: (x0 + x1) / 2, fy: (y0 + y1) / 2 }; };
+      /* (Oct 4, 23:30) the shared fire framing: the polygon ~60% of the clear width (under the legend, above the projection switcher), 70% of the +6 h in view */
+      const S6 = snapAt(6), g6 = S6 && S6.ring && S6.ring.length ? S6.ring.map((p) => P(p[0], p[1])) : (() => { const cx = ring0.reduce((a, p) => a + p[0], 0) / ring0.length, cy = ring0.reduce((a, p) => a + p[1], 0) / ring0.length; return ring0.map((p) => [cx + (p[0] - cx) * 2.4, cy + (p[1] - cy) * 2.4]); })();
+      const F = window.__wfFrameFire(ring0, g6, w - 32, h - 64 - 76);
+      return { zoom: +F.z.toFixed(4), fx: F.cx, fy: +(F.cy + 6 / F.z).toFixed(2) }; };
     const US = r ? /^[A-Z]{2}$/.test(r[0]) && r[0] !== 'PT' : !PT, dec = (n) => String(n).replace('.', PT ? ',' : '.');
     const area = (ha) => (ha == null ? '—' : US ? String(Math.round(ha * 2.471)) : (ha < 10 ? dec(Math.round(ha * 10) / 10) : String(Math.round(ha)))), aU = US ? 'acres' : 'ha';
     const A0 = S0 && S0.ha > 0 ? S0.ha : (r && Number(r[8]) > 0 ? Number(r[8]) : 12), Ah = A0 * gk;

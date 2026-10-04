@@ -14,6 +14,13 @@
   var r='';try{r=localStorage.getItem('wf-role')||'';}catch(e){}
   window.__wfSetY(r);
 })();
+// (Oct 4, 23:30) One framing for every map of a fire: the fire's polygon centred, about 60% of the clear width (never under
+// 50%), the whole polygon within 90% of the clear height, and at least 70% of the +6 h projection (g6) still in view.
+// pts / g6: [[x, y]] in map units; W, H: the clear part of the map in screen px. Returns { z, cx, cy }.
+window.__wfFrameFire=function(pts,g6,W,H){if(!pts||!pts.length)return null;var xs=pts.map(function(q){return q[0];}),ys=pts.map(function(q){return q[1];}),x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys),cx=(x0+x1)/2,cy=(y0+y1)/2,bw=Math.max(1,x1-x0),bh=Math.max(1,y1-y0);
+  var z=Math.min(W*0.6/bw,H*0.9/bh);
+  if(g6&&g6.length){var hx=2,hy=2;g6.forEach(function(q){hx=Math.max(hx,Math.abs(q[0]-cx));hy=Math.max(hy,Math.abs(q[1]-cy));});z=Math.min(z,Math.min(W/2/(0.7*hx),H/2/(0.7*hy)));}
+  return {z:Math.max(0.0015,Math.min(40,z)),cx:cx,cy:cy};};
 // Nature photos, one list for the whole app (loading screen, sign in, alert header, chat header, trophy cards, forest
 // headers): forests from above (Unsplash), in a random order. Groups are kept for future sets: photos are shown one group
 // at a time in turn (never two of the same group in a row), and the photo from each
