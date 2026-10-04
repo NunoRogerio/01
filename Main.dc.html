@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=146"></script>
 <script src="avatar.js?v=9"></script>
 <script src="prefs.js?v=184"></script>
-<script src="i18n.js?v=160"></script>
+<script src="i18n.js?v=161"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=66"></script>
 <script src="tour.js?v=73"></script>
@@ -527,7 +527,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <span aria-hidden="true" data-wf-secdim="1" style="position: absolute; inset: 0; z-index: 6; background: #000000; opacity: {{pm.dimOp}}; transition: opacity {{pm.dimT}}; pointer-events: none"></span>
     <h2 id="pfTitle" class="wf-title-m" data-wf-keepsp="1" style="display: flex; align-items: center; min-height: {{pm.tMin}}px; margin: {{pm.tTop}}px 0 0; padding: 0 16px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
     <!-- (Oct 4, 22:30) every settings section: a short description under its title (4px), what you see and can do there; data sources lead with their count -->
-    <span data-wf-keepsp="1" style="display: block; padding: 0 16px; margin: 4px 0 0; flex-shrink: 0; font-size: 17px; line-height: 22px; color: #6E6E73; text-wrap: pretty"><span style="display: {{pm.dsCntD}}"><b style="font-weight: 700; color: #3A3A3C; margin-right: 0.25em">{{ds.count}}</b><span>{{ds.subW}}</span>. </span><span>{{pm.desc}}</span></span>
+    <span data-wf-keepsp="1" style="display: block; padding: 0 16px; margin: 4px 0 0; flex-shrink: 0; font-size: 17px; line-height: 22px; color: #6E6E73"><span>{{pm.desc}}</span><span style="display: {{pm.dsCntD}}"> <b style="font-weight: 700; color: #3A3A3C; margin-right: 0.25em">{{ds.count}}</b><span>{{ds.subW}}</span>.</span></span>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
     <!-- (Oct 3, 21:27) 16px all round the section (top: the title level with the menu button, 16px down; left; bottom), whatever the spacing preference; items sit on the panel itself, no containers (to be designed later) -->
     <div data-wf-fadetop="1" data-wf-keepsp="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 16px">
@@ -543,7 +543,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span class="wf-dot" style="font-size: 17px; line-height: 22px; color: #000000">{{me.org}}</span>
           <span class="wf-dot" style="margin-top: 4px; font-size: 15px; line-height: 20px; color: #636366">{{me.access}}</span>
           <!-- (Oct 4) the profile's description from its login card, a group of its own (24px), with a "Demo profile" tag at the end of the text -->
-          <span style="display: {{me.sumD}}; margin-top: 24px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty">{{me.sum}}<span style="display: {{me.demoD}}; align-items: center; vertical-align: 1px; height: 24px; margin-left: 8px; padding: 0 8px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C; font-size: 13px; line-height: 16px; font-weight: 600; white-space: nowrap">Demo profile</span></span>
+          <span style="display: {{me.sumD}}; margin-top: 24px; font-size: 17px; line-height: 22px; color: #000000">{{me.sum}}<span style="display: {{me.demoD}}; align-items: center; vertical-align: 1px; height: 24px; margin-left: 8px; padding: 0 8px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C; font-size: 13px; line-height: 16px; font-weight: 600; white-space: nowrap">Demo profile</span></span>
         </span>
       </div>
         <!-- Sign out belongs with the profile -->
@@ -1098,7 +1098,7 @@ class Component extends DCLogic {
         clearTimeout((this._segT = this._segT || {})[label]);
         this._segT[label] = setTimeout(() => { pick(o[0]); const P2 = Object.assign({}, (this.state || {}).segPend); delete P2[label]; this.setState({ segPend: P2 }); }, 640); } })) }; };
     return {
-      me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none', sum: me.sum || '', sumD: me.sum || me.demo ? 'block' : 'none', demoD: me.demo ? 'inline-flex' : 'none' },
+      me: { ...me, photoBg: me.photo ? 'url("' + me.photo + '")' : 'none', sum: (me.sum || '').replace(/ (\S+)$/, '\u00A0$1'), sumD: me.sum || me.demo ? 'block' : 'none', demoD: me.demo ? 'inline-flex' : 'none' },
       // Menu (Oct 3, 17:18): the screen slides left to uncover it; the icon column stays on the right edge
       pm: (() => { const vw = (window.__wfVP || {}).w || 390, mw = Math.min(vw, 564), open = pmMode === 'open', rail = pmMode === 'rail';
         const sel = (k) => open && pmSec === k, Y = 'var(--wf-y)';
@@ -1147,7 +1147,7 @@ class Component extends DCLogic {
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items,
-          desc: ({ profile: 'Who you are signed in as and what you can see. Sign out here.', lang: 'Choose the language of every screen.', look: 'Set the text size and spacing. Choices other than the defaults are not fully tested yet, so you may find visual inconsistencies.', maps: 'Select one map engine from the list and choose how it looks.', share: 'Share the app with other people.', chat: 'Turn on role-play with Claude in the incident chats, using your Anthropic key.', ds: 'The open data the app uses, and what each source shows.', about: 'How the app works, where it stands and how it started.' })[pmSec] || '', dsCntD: pmSec === 'ds' ? 'inline' : 'none', op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
+          desc: (({ profile: 'Who you are signed in as and what you can see. Sign out here.', lang: 'Choose the language of every screen.', look: 'Set the text size and spacing. Choices other than the defaults are not fully tested yet, so you may find visual inconsistencies.', maps: 'Select one map engine from the list and choose how it looks.', share: 'Share the app with other people.', chat: 'Turn on role-play with Claude in the incident chats, using your Anthropic key.', ds: 'The open data the app uses, and what each source shows.', about: 'How the app works, where it stands and how it started.' })[pmSec] || '').replace(/ (\S+)$/, '\u00A0$1'), dsCntD: pmSec === 'ds' ? 'inline' : 'none', op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s',
           burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(16, L0.vw - (L0.colL + L0.colW) + 16) : 16; })(),   // (Oct 3, 21:41) at rest 16px from the edge, like every round button   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
           bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
@@ -1155,7 +1155,7 @@ class Component extends DCLogic {
           bDur: boot ? '0s' : '.25s',   // (Oct 3, 21:36) 50% faster   // (Oct 3, 20:54) twice as fast as the screen   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time
           bDelay: pmMode || boot ? '0s' : (this.wfBurgerBack() / 1000) + 's',   // the menu button moves twice as fast as the screen (Oct 3, 19:58)
           bZ: (() => { if (MENU && this._dlgPosted !== !!s.aiAsk) { this._dlgPosted = !!s.aiAsk; try { window.parent.postMessage({ wfMenu: s.aiAsk ? 'dlgon' : 'dlgoff' }, location.origin); } catch (x) {} } return s.aiAsk ? 49 : 95; })(),   /* (Oct 4) under a dialog and its glass; on other screens the menu button hides while a dialog shows */ bOp: MENU ? 0 : pmMode || !this.wfTopPanel() ? 1 : 0, bPE: MENU ? 'none' : pmMode || !this.wfTopPanel() ? 'auto' : 'none',   // (Oct 3, 20:19) shown with the area picker (its top row has the same buttons), hidden over the open incident list   // hidden while another top panel or the full-screen map is up
-          dProf: pmSec === 'profile' ? 'flex' : 'none', dMaps: pmSec === 'maps' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmMode || pmSec === 'about' || this._abtSeen ?   /* (Oct 3, 21:49) loaded as soon as the menu opens, so About is ready when it slides in */ (this._abtSeen = 'About.dc.html?embed=1&v=5') : 'about:blank' }; })(),
+          dProf: pmSec === 'profile' ? 'flex' : 'none', dMaps: pmSec === 'maps' ? 'flex' : 'none', dShare: pmSec === 'share' ? 'flex' : 'none', dChat: pmSec === 'chat' ? 'flex' : 'none', dDs: pmSec === 'ds' ? 'flex' : 'none', dAbout: pmSec === 'about' ? 'block' : 'none', aboutSrc: pmMode || pmSec === 'about' || this._abtSeen ?   /* (Oct 3, 21:49) loaded as soon as the menu opens, so About is ready when it slides in */ (this._abtSeen = 'About.dc.html?embed=1&v=6') : 'about:blank' }; })(),
       pfStr: pf ? 'true' : 'false', pfHidden: pf ? 'false' : 'true',
       cs: (() => { const o = true, pt = lang === 'pt';   // (Oct 3, 23:18) no drawer row: the section shows its content directly
         return { title: pt ? 'Encenação e chave' : (window.__wfJA ? window.__wfJA('Chat role-play and key') : 'Chat role-play and key'), str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',

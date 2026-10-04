@@ -251,7 +251,10 @@
   function sets(l){if(l==='pt'){X=XP;R=RP;F=FP;}else if(l==='ja'){X=XJ;R=RJ;F=FJ;window.__wfJaNames&&window.__wfJaNames();}else if(l!=='en'&&OK[l]){var D=loadDict(l)||{x:{},r:[],f:[]};X=D.x;R=D.r;F=D.f;}else{X={};R=[];F=[];}
     try{document.documentElement.lang=l==='ja'?'ja':l==='pt'?'pt-PT':l;}catch(e){}}
   sets(lang);
-  function tr(s){
+  // (Oct 4) a text whose last two words are held together by a no-break space (so no word hangs alone on its last line)
+  // is looked up as the plain sentence, and its translation gets its last two words held together the same way
+  function tr(s){var m=/^([^\u00A0]*)\u00A0(\S+\s*)$/.exec(s);if(!m)return tr0(s);var o=tr0(m[1]+' '+m[2]);return lang==='ja'?o:o.replace(/ (\S+\s*)$/,'\u00A0$1');}
+  function tr0(s){
     var k=s.trim();if(!k||k.length>600)return s;
     if(cache.has(k))return rewrap(s,cache.get(k));
     var out=null;
