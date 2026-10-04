@@ -985,3 +985,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## The fire's stage tag goes along into the full-screen map (Oct 4, 18:05)
 - On the fire page's full-screen map the stage tag (icon, stage, "for 3 d") and the stack that unfolds from it sit inside the title card, under the place and its region, left-aligned as on the page; the card grows by one row (a placeholder the page measures, `map-tag-w`). Tap the tag to unfold the history, tap outside to fold it. The legend stays on the right.
+
+- **Crews tab guidance (Oct 4):** above the AI suggested pack (all three places it shows: the Crews tab, the plan sheet, the inline plan), while nothing is chosen, a 15px secondary note: "Choose the stations and crews for this fire. Talk with the station coordinators first: the AI pack already counts those talks. As fire owner, you can always choose by hand." It hides with the pack.
