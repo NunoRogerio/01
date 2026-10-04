@@ -17,7 +17,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=138"></script>
 <script src="avatar.js?v=9"></script>
-<script src="prefs.js?v=182"></script>
+<script src="prefs.js?v=183"></script>
 <script src="i18n.js?v=157"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=66"></script>
@@ -641,6 +641,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               </span>
               <button type="button" role="switch" class="wf-tog" aria-checked="{{m.onStr}}" aria-label="{{m.name}}" onClick="{{m.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{m.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{m.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
               <span style="grid-column: 1 / -1; margin-top: 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.why}}</span>
+              <div role="radiogroup" aria-label="{{m.name}}" style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; margin-top: 24px">
+                <span style="font-size: 15px; line-height: 20px; font-weight: 600; color: #6E6E73">{{m.rsT}}</span>
+                <sc-for list="{{m.rs}}" as="r" hint-placeholder-count="3">
+                  <button type="button" role="radio" aria-checked="{{r.sel}}" onClick="{{r.pick}}" style="display: flex; align-items: center; gap: 16px; min-height: 44px; padding: 0; border: 0; background: none; font: inherit; text-align: left; cursor: pointer">
+                    <span aria-hidden="true" style="position: relative; flex: none; width: 24px; height: 24px; border-radius: 50%; box-sizing: border-box; border: 2px solid {{r.ring}}"><span style="position: absolute; left: 4px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #1C1C1E; opacity: {{r.dot}}; transition: opacity .25s ease"></span></span>
+                    <span style="font-size: 17px; line-height: 22px; color: #000000">{{r.label}}</span>
+                  </button>
+                </sc-for>
+              </div>
             </li>
           </sc-for>
         </ul>
@@ -1219,7 +1228,7 @@ class Component extends DCLogic {
           ['GeoNames', T('Nearest place names for satellite detections', 'Nomes das localidades mais próximas das deteções'), null, true, 27, null, 9, T('Names the town nearest each satellite detection.', 'Dá o nome da localidade mais próxima de cada deteção de satélite.')],
           ...(() => { const osmMap = window.__wfTiles && window.__wfTiles.get() === 'osm';   /* (Oct 4) the map's own source follows the Maps menu: only the one in use is listed */
             return osmMap ? [['OpenStreetMap', T('Map, fire stations, place search and routes', 'Mapa, quartéis de bombeiros, pesquisa de locais e percursos'), null, true, 26, null, 9, T('The map itself, the fire stations on it, the place search and the road routes to a fire.', 'O próprio mapa, os quartéis de bombeiros nele, a pesquisa de locais e os percursos de estrada até um incêndio.')]]
-              : [['MapTiler', T('Map tiles, from OpenStreetMap data', 'Mosaicos do mapa, a partir de dados do OpenStreetMap'), null, true, 4, null, 10, T('The map itself: street tiles served by MapTiler.', 'O próprio mapa: mosaicos de ruas fornecidos pela MapTiler.')],
+              : [['MapTiler', T('Map tiles. Streets and satellite', 'Mosaicos do mapa. Ruas e satélite'), null, true, 4, null, 10, T('The map itself, in the look chosen in Maps.', 'O próprio mapa, no aspeto escolhido em Mapas.')],
                 ['OpenStreetMap', T('Fire stations, place search and routes', 'Quartéis de bombeiros, pesquisa de locais e percursos'), null, true, 26, null, 9, T('The fire stations on the map, the place search and the road routes to a fire.', 'Os quartéis de bombeiros no mapa, a pesquisa de locais e os percursos de estrada até um incêndio.')]]; })(),
           ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10, T('Wind and temperature drive the projections; air quality and terrain add context.', 'O vento e a temperatura conduzem as projeções; a qualidade do ar e o relevo dão contexto.')]
         ].map(([name, what, t, still, day, key, mon, why]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key, XX = X[name] || { shows: [], ex: [] }, EX = (XX.ex || []).filter(Boolean);
@@ -1320,12 +1329,16 @@ class Component extends DCLogic {
           pick: () => { if (o.code === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
             this.setState({ langPend: o.code }, () => this.wfLangThumb(true)); clearTimeout(this._lgT);
             this._lgT = setTimeout(() => { if (window.__wfSetLang) window.__wfSetLang(o.code); this.setState({ langPend: null, lang: o.code }, () => this.wfLangThumb(false)); }, 700); } })) }; })(),
-      mp: (() => { const cur = window.__wfTiles ? window.__wfTiles.get() : 'maptiler', pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
-        const INFO = { maptiler: [T('Street tiles from OpenStreetMap data, served by MapTiler.', 'Mosaicos de ruas com dados do OpenStreetMap, fornecidos pela MapTiler.'), T('Faster. Free plan with a monthly limit.', 'Mais rápido. Plano gratuito com limite mensal.')],
+      mp: (() => { const cur = window.__wfTiles ? window.__wfTiles.get() : 'maptiler', curSt = window.__wfTiles ? window.__wfTiles.style() : '', pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
+        const INFO = { maptiler: [T('Map tiles served by MapTiler: streets from OpenStreetMap data, and satellite.', 'Mosaicos do mapa fornecidos pela MapTiler: ruas com dados do OpenStreetMap, e satélite.'), T('Faster. Free plan with a monthly limit.', 'Mais rápido. Plano gratuito com limite mensal.')],
           osm: [T('The OpenStreetMap community\'s own public tiles.', 'Os mosaicos públicos da própria comunidade OpenStreetMap.'), T('Shared by everyone, so slower at busy times. For light use.', 'Partilhados por todos, por isso mais lentos nas horas de maior uso. Para uso leve.')] };
+        const RN = { openstreetmap: ['Standard', 'Padrão'], standard: ['Standard', 'Padrão'], 'streets-v2': ['Streets', 'Ruas'], 'outdoor-v2': ['Outdoor', 'Ar livre'], 'topo-v2': ['Topographic', 'Topográfico'], satellite: ['Satellite', 'Satélite'], hybrid: ['Satellite with labels', 'Satélite com nomes'] };
         return { items: (window.__wfTiles ? window.__wfTiles.list : []).map(([k, name]) => { const on = k === cur;
           return { name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px',
-            toggle: () => { if (on) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k); this.forceUpdate(); } }; }),
+            toggle: () => { if (on) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k); this.forceUpdate(); },
+            /* the renders this provider offers: a radio list; choosing one turns its provider on */
+            rs: window.__wfTiles.styles[k].map(([id]) => { const sel = on && id === curSt; return { label: T(RN[id][0], RN[id][1]), sel: sel ? 'true' : 'false', ring: sel ? '#1C1C1E' : '#8E8E93', dot: sel ? 1 : 0,
+              pick: () => { if (sel) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k, id); this.forceUpdate(); } }; }), rsT: T('Look', 'Aspeto') }; }),
           note: T('One map at a time. Turning one on turns the other off.', 'Um mapa de cada vez. Ativar um desativa o outro.') }; })(),
       pfGroups: [
         // (Oct 3, 21:13) the Theme choice is hidden while the dark theme is off (prefs.js DARK_ON)

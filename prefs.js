@@ -1,10 +1,13 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 /* Map tiles (Oct 4): one provider at a time, chosen in the Maps menu; kept on this phone (default MapTiler) */
 window.__wfTiles = { list: [['maptiler', 'MapTiler'], ['osm', 'OpenStreetMap']],
+  /* renders (looks) of each provider: [id, name, extension]; only what the free plans give */
+  styles: { maptiler: [['openstreetmap', 'Standard', 'jpg'], ['streets-v2', 'Streets', 'png'], ['outdoor-v2', 'Outdoor', 'png'], ['topo-v2', 'Topographic', 'png'], ['satellite', 'Satellite', 'jpg'], ['hybrid', 'Satellite with labels', 'jpg']], osm: [['standard', 'Standard', 'png']] },
   get: function () { var v = ''; try { v = localStorage.getItem('wf-maptiles') || ''; } catch (e) {} return v === 'osm' ? 'osm' : 'maptiler'; },
-  set: function (k) { try { localStorage.setItem('wf-maptiles', k === 'osm' ? 'osm' : 'maptiler'); } catch (e) {} try { window.dispatchEvent(new Event('wf-maptiles')); } catch (e) {} },
-  host: function () { return this.get() === 'osm' ? 'https://tile.openstreetmap.org/' : 'https://api.maptiler.com/maps/openstreetmap/256/'; },
-  url: function (z, x, y) { return this.get() === 'osm' ? 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png' : 'https://api.maptiler.com/maps/openstreetmap/256/' + z + '/' + x + '/' + y + '.jpg?key=nXogmRs94P1OvRDMdUN6'; },
+  style: function () { var p = this.get(), v = ''; try { v = localStorage.getItem('wf-maprender') || ''; } catch (e) {} var L = this.styles[p]; for (var i = 0; i < L.length; i++) if (L[i][0] === v) return v; return L[0][0]; },
+  set: function (k, st) { try { localStorage.setItem('wf-maptiles', k === 'osm' ? 'osm' : 'maptiler'); if (st) localStorage.setItem('wf-maprender', st); } catch (e) {} try { window.dispatchEvent(new Event('wf-maptiles')); } catch (e) {} },
+  host: function () { return this.get() === 'osm' ? 'https://tile.openstreetmap.org/' : 'https://api.maptiler.com/maps/'; },
+  url: function (z, x, y) { if (this.get() === 'osm') return 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; var st = this.style(), L = this.styles.maptiler, ex = 'png'; for (var i = 0; i < L.length; i++) if (L[i][0] === st) ex = L[i][2]; return 'https://api.maptiler.com/maps/' + st + '/256/' + z + '/' + x + '/' + y + '.' + ex + '?key=nXogmRs94P1OvRDMdUN6'; },
   credit: function () { return this.get() === 'osm' ? 'Map © OpenStreetMap' : 'Map © MapTiler © OpenStreetMap'; } };
 window.__wfNight = function (L) { if (!L) return false; if (L.night != null) return !!L.night; return !!(window.__wfSunAlt && L.lat != null && L.t && window.__wfSunAlt(L.lat, L.lon, Date.parse(L.t)) < -0.833); };   /* a detection made with the sun below the horizon (see live.js) */
 /* The clock at the incident's own place, with AM / PM (e.g. "4:05 AM"); the zone is added when it differs from the phone's ("4:05 AM PDT") */
