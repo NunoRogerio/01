@@ -716,6 +716,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- The menu's icon column (Oct 3, 17:18), on the right edge: the menu button level with the top bar's, the sections
        (profile picture first), and Sign out at the bottom. 60px wide: 8px either side of the 44px icons (Oct 3, 17:56; was 84px). -->
+  <!-- (Oct 4, 09:01) lime stripe down the icon column's left edge, full height, like the stripes on the top-dropping panels -->
+  <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 4; top: 0; bottom: 0; right: 52px; width: 8px; pointer-events: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}"></span>
   <nav data-wf-rail="1" data-wf-nospace="1" aria-label="Preferences" style="z-index: 3; background: #FFFFFF; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: {{pm.bTop}}px 0 48px; overflow-y: auto; scrollbar-width: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
     <span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0"></span>
     <!-- the section icons sit centred in the visible screen's height (Oct 3, 18:10): halfway between the top of what shows

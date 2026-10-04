@@ -837,3 +837,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Data sources: what each source brings
 - Each source row ends with two groups. "Shows in the app" lists the markers, tags and shapes the source feeds, each with its real symbol (28px in a 32px box) and a 15px label. "Examples" shows real items from the loaded data: bold title, grey subtitle, and the same status or likelihood pill the app uses.
 - Group labels are 15px 600 #545458, with 16px above each group and 8px between rows. No invented figures: sources with no loaded item show no example.
+
+## Settings icon column stripe
+- The settings (menu) icon column carries the lime stripe down its left edge, full height, 8px wide at 80% opacity, the same shared `.wf-stripes` as the top-dropping panels. It sits in the column's 8px side padding, so the 44px icons do not move.
