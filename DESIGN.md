@@ -898,3 +898,9 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The Now / +1 h / +3 h / +6 h switcher sits inside the map band, on its foot: 16px from the left, right and bottom edges, in the dark map-control style (rgba(0,0,0,.5) with frosted blur), as in full screen.
 - The band is 310px tall (234 + 76 for the switcher); the fire (with its +6 h shape) is framed in the clear part above the switcher, and the round map buttons and the attribution sit above it.
 - The gap from the map to the next group is 56px. A held fire has no switcher but keeps the same band height.
+
+## Camera feeds: drone and helmet together
+- The drone feed and the helmet feed can be open at the same time (a second feed opens in a free place, below or above the first). They never overlap: 8px stays between them.
+- Dragging at normal speed: a feed meets the other like a wall and cannot pass through it; a throw bounces off the other feed the way it bounces off a screen edge (30% of the speed back).
+- A flick at the speed that ends the tour (2340 px/s) toward the other feed swaps their places: the thrown one takes the other's place, the other takes the thrown one's starting place, gliding together in 0.55 s, with a double haptic tap.
+- The same button again closes its own feed only; maximize applies to one feed.
