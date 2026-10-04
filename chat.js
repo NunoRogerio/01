@@ -101,7 +101,13 @@
     if (!team || !name || !window.__wfFacePick) return '';
     // each person in this chat gets a random photo of their gender from the team, never one already used in this chat
     var F = c.face || (c.face = {});
-    if (!F[name]) { var used = Object.keys(F).map(function (k) { return F[k]; }); F[name] = window.__wfFacePick(team, window.__wfGender(name) || (/a$/.test(name.split(' ')[0]) ? 'f' : 'm'), used); try { save(); } catch (e) {} }
+    // (Oct 4, 23:07) never the signed-in profile's own photo, never one another person here already has (older chats that
+    // repeated one pick again), and the air lead gets a pilot
+    var me = '', P0 = window.__wfPrefs && window.__wfPrefs.person; try { me = (P0 && window.__wfDemoFace && window.__wfDemoFace(P0.name)) || ''; } catch (e) {}
+    var dup = F[name] && (F[name] === me || Object.keys(F).some(function (k) { return k !== name && k < name && F[k] === F[name]; }));
+    var isAir = (c.people || []).some(function (p) { return p.name === name && p.kind === 'air'; }), wasAir = !!F['~air:' + name];
+    if (!F[name] || dup || (isAir && !wasAir)) { var used = Object.keys(F).filter(function (k) { return k !== name && k.charAt(0) !== '~'; }).map(function (k) { return F[k]; }); if (me) used.push(me);
+      F[name] = window.__wfFacePick(team, window.__wfGender(name) || (/a$/.test(name.split(' ')[0]) ? 'f' : 'm'), used, isAir); if (isAir) F['~air:' + name] = 1; try { save(); } catch (e) {} }
     return F[name] ? window.__wfFaceUrl(F[name]) : '';
   }
   // Team members carry names from the fire's country

@@ -148,11 +148,25 @@
   // California, four women and four men each. A chat takes them at random without repeating one; demo profiles keep one.
   var FACES = { pt: { m: ['pt-m1', 'pt-m2', 'pt-m3', 'pt-m4'], f: ['pt-f1', 'pt-f2', 'pt-f3', 'pt-f4'] }, us: { m: ['us-m1', 'us-m2', 'us-m3', 'us-m4'], f: ['us-f1', 'us-f2', 'us-f3', 'us-f4'] } };
   var FKIT = { pt: 'pt', anepc: 'pt', br: 'pt', us: 'us', calfire: 'us', nv: 'us' };
-  var furl = function (k) { return 'assets/faces/' + k + '.jpg'; };
+  // (Oct 4, 23:07) more faces so a team or a roster never shows the same photo twice: firefighter portraits on Unsplash
+  // (cropped to the face by Unsplash's image service; credits in assets/faces/CREDITS.txt), shared by every team after its own
+  var U = function (id) { return 'https://images.unsplash.com/' + id + '?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'; };
+  var MORE = { m: ['photo-1606613817012-6c4efabd5e2e', 'photo-1735107673023-edc0e0903672', 'photo-1735107673395-f5c24b0cb758', 'photo-1584033376655-760c4de3f483', 'photo-1614771327012-ae17e9502601', 'photo-1615801515516-b67e0b11faa3', 'photo-1615801515483-a38e438c6c74', 'photo-1614945201491-b867f6031bdd', 'photo-1614771327067-36c6bd9fb572', 'photo-1713689824343-77d2f99e19b8', 'photo-1690210795674-229f235d95e2', 'photo-1732053890701-45cb879eaf9c'].map(U),
+    f: ['photo-1593636596162-a243ec78e6b7'].map(U) };
+  // the air side (Air Tactical Group Supervisor, air operations coordinator): pilots in their cockpits and flight gear
+  var PILOTS = { m: ['photo-1769678750254-fc938ce9da7a', 'photo-1650627807081-aaedee179703', 'photo-1732394297113-ae76ca536559', 'photo-1730638431015-cd7dc1a6f4a8', 'photo-1642206551799-78f2c5211a5d', 'photo-1541413676231-76407cd194c1'].map(U),
+    f: ['photo-1547087258-5716f532be5f'].map(U) };
+  var furl = function (k) { return /^https?:/.test(k) ? k : 'assets/faces/' + k + '.jpg'; };
   window.__wfGender = function (name) { var q = PEOPLE[name]; return q ? q[0] : ''; };
   // A random photo of that team and gender that is not in taken (list of photo keys); null if the team has none
-  window.__wfFacePick = function (team, g, taken) { var T = FACES[team]; if (!T) return null; var pool = T[g === 'f' ? 'f' : 'm'], free = pool.filter(function (k) { return (taken || []).indexOf(k) < 0; });
-    var c = free.length ? free : pool; return c[Math.floor(Math.random() * c.length)]; };
+  // A random photo of that gender, never one in taken: the team's own first, then the other team's, then the shared extras;
+  // air: a pilot first. Only when every photo is taken does one repeat.
+  window.__wfFacePick = function (team, g, taken, air) { var T = FACES[team]; if (!T) return null; var k = g === 'f' ? 'f' : 'm', other = FACES[team === 'pt' ? 'us' : 'pt'];
+    var tiers = (air ? [PILOTS[k], PILOTS.m] : []).concat([T[k], other[k], MORE[k]]);
+    for (var i = 0; i < tiers.length; i++) { var free = tiers[i].filter(function (x) { return (taken || []).indexOf(x) < 0; }); if (free.length) return free[Math.floor(Math.random() * free.length)]; }
+    return T[k][Math.floor(Math.random() * T[k].length)]; };
+  // the face a demo profile shows for itself (so nobody else in its chats gets the same one)
+  window.__wfDemoFace = function (name) { return DEMO[name] || null; };
   window.__wfFaceUrl = furl;
   var STAFF = { 'James Whitmore': 1 };   // the app's own team: a photo from DEMO below, else the illustrated portrait
   var DEMO = { 'James Whitmore': 'us-m1', 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3' };   // the demo profiles' own photos

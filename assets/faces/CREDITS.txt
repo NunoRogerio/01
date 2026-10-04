@@ -17,3 +17,7 @@ us-f1.jpg  Bwalya Marcel Ngosa  https://images.pexels.com/photos/7179617/pexels-
 us-f2.jpg  Josias Salinas  https://images.pexels.com/photos/39123998/pexels-photo-39123998.jpeg
 us-f3.jpg  Dottie Di Liddo  https://images.unsplash.com/photo-1777059017606-5707f0fe7c2c
 us-f4.jpg  Mirada Robot  https://images.pexels.com/photos/19487942/pexels-photo-19487942.jpeg
+
+Added Oct 4, 2026: shown from Unsplash's image service (cropped to the face there, not stored in the repo), free to use under the Unsplash licence.
+Firefighters: photo-1606613817012-6c4efabd5e2e (Spencer Davis), photo-1735107673023-edc0e0903672 and photo-1735107673395-f5c24b0cb758 (Andy N), photo-1584033376655-760c4de3f483 (Richard Goff), photo-1614771327012-ae17e9502601, photo-1615801515516-b67e0b11faa3, photo-1615801515483-a38e438c6c74, photo-1614945201491-b867f6031bdd, photo-1614771327067-36c6bd9fb572 (Logan Weaver), photo-1713689824343-77d2f99e19b8 (Look Studio), photo-1690210795674-229f235d95e2 (Ahmad Shalbaf), photo-1732053890701-45cb879eaf9c (Alexander Mass), photo-1593636596162-a243ec78e6b7 (MohammadReza BaBaei)
+Pilots (air leads): photo-1769678750254-fc938ce9da7a (Kyle Hinkson), photo-1650627807081-aaedee179703 (Mohamadreza Azhdari), photo-1732394297113-ae76ca536559 (The Huron County Museum & Historic Gaol), photo-1730638431015-cd7dc1a6f4a8 (The Deseronto Archives), photo-1642206551799-78f2c5211a5d (Sheng L), photo-1541413676231-76407cd194c1 (Chase Fade), photo-1547087258-5716f532be5f (Kevin Wolf)
