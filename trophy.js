@@ -1,149 +1,68 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
-// The trophy card: one widget for every "fire resolved" card in the app (the card in the incident chat and the
-// resolution summary). Change it here and every trophy card changes.
-//   <wf-trophy kicker="Fire resolved · 07:06" headline="Resolved in 2 d 14 h" sub="~10 people · ~3 vehicles"
-//              action="See the summary" credit="1"></wf-trophy>
-// - nature photos (forests, leaves, flowers, forest lakes) in random order, cycling like the login screen (two zoom in,
-//   one zooms out), the credit following the photo
-// - the small Forest Fire Watch logo on top, as on the login screen (yellow on the photo, soft shadows, no blink)
-// - the trophy in its yellow circle, turning a full circle on its vertical axis every 8 s
-// - yellow fireworks: sparks leave the trophy's circle at full opacity and fade out at the photo's edges;
-//   one burst streaming for the whole of each turn of the trophy (every 8 s), no two bursts alike
+// The resolution card: one widget for every "fire resolved" card in the app (the card in the incident chat and the
+// resolution summary). Change it here and every card changes. (Oct 4, 17:50: the trophy, the fireworks and the moving nature
+// photos are gone; the card now shows the forces that did the job.)
+//   <wf-trophy kicker="Fire resolved" headline="Well done" fire="Bouquet Fire" meta="Closed 4 Oct. 2 d 14 h"
+//              size="Class D. 135 ac" crests='[{"u":"…","n":"Station 1"}]' air="1" n="3" action="See the summary" credit="1"></wf-trophy>
+// - a group photo of firefighters with their engines behind, as the background: a small crew for 1 or 2 stations, a medium one
+//   for 3 to 5, a large one for 6 or more (the photo follows the number of stations that took part)
+// - the badges of the stations that collaborated, and an air support badge when aircraft helped
+// - the message of well done, the fire's name, when it closed and how long it took, and its size class
+// - the hazard stripe along the bottom edge, as on the blades
 // - action: an optional full-width button label; a tap anywhere on the card reaches the page's own onClick
 (function () {
   if (window.customElements && customElements.get('wf-trophy')) return;
-  var LOGO = 'M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z';
-  var TROPHY = 'M8 3.5h8v5.5a4 4 0 0 1-8 0Z M8 5.5H4.5v1.2A3.3 3.3 0 0 0 8 10 M16 5.5h3.5v1.2A3.3 3.3 0 0 1 16 10 M12 13v3.5 M8 20.5h8 M9.5 16.5h5v4h-5Z';
-  // Nature photos (fit.js): each card starts with one random photo from each group (forest, macro, village), and each
-  // layer takes a new random photo of its group every time it comes round again (while hidden), so the groups take
-  // turns and the photos never repeat in a fixed order. Every other layer zooms out.
-  var POOL = function () { return window.__wfPhotoList || [{ f: 'forest-1.webp', by: 'Mari Potter', b: 1 }, { f: 'forest-2.webp', by: 'Ivan Dimitrov', b: 1 }, { f: 'forest-3.webp', by: 'Olena Bohovyk', b: 1 }]; };
-  var pick3 = function () { var a = window.__wfPhotoMix ? window.__wfPhotoMix() : POOL().slice(); while (a.length < 4) a = a.concat(a); return a.slice(0, 4); };   // four layers, the groups taking turns
-  var bgOf = function (p) { return 'background-image:url(assets/splash/' + p.f + ');filter:' + (p.b < 1 ? 'brightness(' + p.b + ')' : 'none'); };
+  var PHOTO = { s: ['assets/crews/crew-s.jpg?v=1', 'Photo: Everglades National Park / U.S. National Park Service'], m: ['assets/crews/crew-m.jpg?v=1', 'Photo: U.S. Army / Balmina Sehra'], l: ['assets/crews/crew-l.jpg?v=1', 'Photo: U.S. Navy / Brianna Bonilla'] };
+  var HELI = 'M3 7h18M12 7v3 M6 14a6 4 0 0 1 6-4h3.5a3.5 3.5 0 0 1 3.5 3.5V15H6Z M19 13.5l3-1.5 M9 18h8';
   var CSS =
     ':host{display:block}' +
-    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:center;font:inherit;cursor:inherit}' +
-    '.forest{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 1.2s cubic-bezier(.4,0,.2,1)}.forest.on{opacity:1}' +
-    '.forest i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:f 52s linear infinite,zi 52s linear infinite}' +
-    '.forest i.out{animation-name:f,zo}' +
-    '.forest b{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,0.28) 0%,rgba(0,0,0,0.42) 45%,rgba(0,0,0,0.66) 100%)}' +
-    '@keyframes f{0%{opacity:1;z-index:1}25%{opacity:1;z-index:2;animation-timing-function:cubic-bezier(.45,0,.55,1)}34.62%{opacity:0;z-index:2}34.7%{opacity:0;z-index:0}100%{opacity:0;z-index:0}}' +
-    '@keyframes o{0%{opacity:0}4.33%{opacity:0}5.77%{opacity:1}28.27%{opacity:1}29.33%{opacity:0}100%{opacity:0}}' +
-    '@keyframes zi{0%{transform:scale(1)}34.7%{transform:scale(1.3)}100%{transform:scale(1.3)}}' +
-    '@keyframes zo{0%{transform:scale(1.3)}34.7%{transform:scale(1)}100%{transform:scale(1)}}' +
-    'canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}' +
-    '.logo{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#FFFFFF;font-size:15px;font-weight:600;letter-spacing:.02em;line-height:20px;text-shadow:0 0 10px rgba(0,0,0,.45)}' +
-    '.logo svg{flex-shrink:0;display:block;overflow:visible;filter:drop-shadow(0 0 8px rgba(0,0,0,.35))}' +
-    '.cup{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 24px rgba(0,0,0,.35);perspective:200px;animation:in .9s cubic-bezier(.2,.8,.2,1) both}' +
-    '.cup svg{animation:spin 8s cubic-bezier(.45,0,.25,1) 1.2s infinite}' +
-    '@keyframes spin{0%{transform:rotateY(0)}14%{transform:rotateY(360deg)}100%{transform:rotateY(360deg)}}' +
-    '@keyframes in{0%{transform:scale(.6) rotate(-8deg);opacity:0}60%{transform:scale(1.08) rotate(3deg);opacity:1}100%{transform:none;opacity:1}}' +
-    '.kicker{margin-top:8px;font-size:15px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
-    '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:var(--wf-y);text-wrap:balance;text-shadow:0 0 12px rgba(0,0,0,.45)}' +
-    '.sub{font-size:15px;line-height:20px;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}' +
+    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:8px;min-height:432px;padding:16px 16px 32px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
+    '.ph{position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center 22%;opacity:0;transition:opacity .9s ease}.ph.on{opacity:1}' +
+    '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.40) 0%,rgba(0,0,0,.06) 28%,rgba(0,0,0,.30) 46%,rgba(0,0,0,.74) 66%,rgba(0,0,0,.88) 100%)}' +
+    '.bd{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:auto}' +
+    '.bd img,.bd b{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:40px;height:40px;border-radius:50%;background:#FFFFFF;padding:4px;object-fit:contain;box-shadow:0 0 12px rgba(0,0,0,.35)}' +
+    '.bd b{padding:0;font-size:15px;font-weight:600;color:#1C1C1E}' +
+    '.bd .air{background:var(--wf-y);color:#1C1C1E}' +
+    '.kicker{font-size:15px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
+    '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:var(--wf-y);text-shadow:0 0 12px rgba(0,0,0,.45)}' +
+    '.fire{font-size:20px;font-weight:700;line-height:24px;color:#FFFFFF;text-wrap:balance;text-shadow:0 0 10px rgba(0,0,0,.5)}' +
+    '.meta{font-size:15px;line-height:20px;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}' +
+    '.size{align-self:flex-start;padding:4px 16px;border-radius:999px;background:rgba(242,242,247,.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#1C1C1E;font-size:15px;line-height:20px;font-weight:600}' +
     '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:48px;margin-top:8px;border-radius:999px;background:var(--wf-y);color:#1C1C1E;font-size:17px;font-weight:600}' +
-    '.credit{position:relative;display:grid;margin-top:8px;font-size:12px;line-height:14px;color:rgba(255,255,255,.72)}' +
-    '.credit span{grid-area:1/1;opacity:0;animation:o 52s linear infinite}' +
+    '.credit{margin-top:4px;font-size:12px;line-height:14px;color:rgba(255,255,255,.78)}' +
+    '.st{position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.9}' +
     '[hidden]{display:none!important}' +
-    '@media (prefers-reduced-motion:reduce){.forest{transition:none}.forest i,.cup svg,.credit span{animation:none}.forest i:first-child,.credit span:first-child{opacity:1}}';
+    '@media (prefers-reduced-motion:reduce){.ph{transition:none}}';
 
   function Trophy() { return Reflect.construct(HTMLElement, [], Trophy); }
   Trophy.prototype = Object.create(HTMLElement.prototype);
   Trophy.prototype.constructor = Trophy;
-  Object.defineProperty(Trophy, 'observedAttributes', { get: function () { return ['kicker', 'headline', 'sub', 'action', 'credit']; } });
+  Object.defineProperty(Trophy, 'observedAttributes', { get: function () { return ['kicker', 'headline', 'fire', 'meta', 'size', 'crests', 'air', 'n', 'action', 'credit']; } });
 
   Trophy.prototype.connectedCallback = function () {
     if (!this._root) {
-      var r = this._root = this.attachShadow({ mode: 'open' }), PH;
-      r.innerHTML = '<style>' + CSS + '</style><div class="card">' +
-        '<span class="forest" aria-hidden="true">' + (PH = pick3()).map(function (p, i) { return '<i class="' + (i % 2 ? 'out' : '') + '" style="' + bgOf(p) + ';animation-delay:' + (i * 13) + 's"></i>'; }).join('') + '<b></b></span>' +
-        '<canvas aria-hidden="true"></canvas>' +
-        '<span class="logo" aria-hidden="true"><svg width="15" height="18" viewBox="3.4 5 17.2 20.9"><path fill="currentColor" fill-rule="evenodd" d="' + LOGO + '"/><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Forest Fire Watch</span>' +
-        '<span class="cup" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="' + TROPHY + '"/></svg></span>' +
-        '<span class="kicker"></span><span class="headline"></span><span class="sub"></span><span class="act"></span>' +
-        '<span class="credit">' + PH.map(function (p, i) { return '<span style="animation-delay:' + (i * 13) + 's">Photo: ' + p.by + ' / Unsplash</span>'; }).join('') + '</span></div>';
-      this._cv = r.querySelector('canvas'); this._cup = r.querySelector('.cup'); this._card = r.querySelector('.card');
-      // A layer that has just faded out comes round again with a new photo, not one on screen or about to show
-      var layers = [].slice.call(r.querySelectorAll('.forest i')), credits = [].slice.call(r.querySelectorAll('.credit span')), shown = PH.map(function (p) { return p.f; }), groups = PH.map(function (p) { return p.g; });
-      // The photos show only once the first is decoded, fading in whole over the card's dark green (no flash)
-      var fr = r.querySelector('.forest'), im0 = new Image(), on0 = function () { fr.classList.add('on'); }; im0.src = 'assets/splash/' + PH[0].f;
-      PH.slice(1).forEach(function (p) { (new Image()).src = 'assets/splash/' + p.f; });
-      (im0.decode ? im0.decode() : Promise.reject()).then(on0, function () { if (im0.complete) on0(); else im0.onload = im0.onerror = on0; });
-      var ahead = function (i) { var p = window.__wfPhotoOther ? window.__wfPhotoOther(shown, groups[i]) : null; if (p) (new Image()).src = 'assets/splash/' + p.f; return p; }, nextP = layers.map(function (el, i) { return ahead(i); });
-      layers.forEach(function (el, i) { el.addEventListener('animationiteration', function (e) {
-        if (e.animationName !== 'f' || !nextP[i]) return;
-        var p = nextP[i]; shown[i] = p.f; el.style.backgroundImage = 'url(assets/splash/' + p.f + ')'; el.style.filter = p.b < 1 ? 'brightness(' + p.b + ')' : 'none';
-        if (credits[i]) credits[i].textContent = 'Photo: ' + p.by + ' / Unsplash'; nextP[i] = ahead(i); }); });
+      this._root = this.attachShadow({ mode: 'open' });
+      this._root.innerHTML = '<style>' + CSS + '</style><div class="card"><span class="ph" aria-hidden="true"></span><span class="sh" aria-hidden="true"></span>' +
+        '<span class="bd"></span><span class="kicker"></span><span class="headline"></span><span class="fire"></span><span class="meta"></span><span class="size"></span><span class="act"></span><span class="credit"></span><span class="st" aria-hidden="true"></span></div>';
     }
-    this.fill(); this.startSparks();
+    this.fill();
   };
-  Trophy.prototype.disconnectedCallback = function () { this._run = false; };
   Trophy.prototype.attributeChangedCallback = function () { if (this._root) this.fill(); };
   Trophy.prototype.fill = function () {
-    var r = this._root, self = this;
-    [['kicker', '.kicker'], ['headline', '.headline'], ['sub', '.sub'], ['action', '.act']].forEach(function (a) {
+    var r = this._root, self = this, esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+    [['kicker', '.kicker'], ['headline', '.headline'], ['fire', '.fire'], ['meta', '.meta'], ['size', '.size'], ['action', '.act']].forEach(function (a) {
       var el = r.querySelector(a[1]), v = self.getAttribute(a[0]) || ''; if (el.textContent !== v) el.textContent = v; el.hidden = !v; });
-    r.querySelector('.credit').hidden = this.getAttribute('credit') !== '1';
-  };
-  Trophy.prototype.startSparks = function () {
-    if (this._run) return; this._run = true;
-    var self = this, parts = [];
-    // One burst per turn of the trophy: sparks are released from the moment it starts turning until it stops (the turn is
-    // 14% of the 8 s spin), and each one flies on, slowly, right to the photo's edge, fading out as it gets there,
-    // whether or not the trophy is still turning. Every burst is different: its own shape, spark count, speed, sweep, curl and rhythm,
-    // and each spark its own size (radius 1.2 px up to 2.25 px), so no two bursts look the same.
-    var rnd = function (a, b) { return a + Math.random() * (b - a); }, last = '', TURN = 8000 * 0.14;
-    var show = function () {
-      var R = self._card.getBoundingClientRect(), T = self._cup.getBoundingClientRect(); if (!R.width) return;
-      var cx = T.left + T.width / 2 - R.left, cy = T.top + T.height / 2 - R.top, r0 = T.width / 2, t0 = performance.now();
-      var shapes = ['scatter', 'ring', 'rings', 'spiral', 'fan'].filter(function (k) { return k !== last; }), shape = shapes[Math.floor(Math.random() * shapes.length)]; last = shape;
-      var n = Math.round(rnd(220, 265)), rot = rnd(0, Math.PI * 2), life = rnd(3800, 4600), curl = shape === 'spiral' ? rnd(18, 36) * (Math.random() < 0.5 ? -1 : 1) : rnd(-8, 8);
-      var sweep = (Math.random() < 0.5 ? -1 : 1) * rnd(0.5, 2) * Math.PI * 2, fanDir = rnd(0, Math.PI * 2), fanW = rnd(Math.PI * 0.9, Math.PI * 1.5);
-      var pulses = Math.floor(rnd(0, 4)), depth = rnd(0.3, 0.8), ph = rnd(0, Math.PI * 2);   // the stream's rhythm: steady, or in 1 to 3 swells
-      var ring = Math.round(rnd(14, 26));   // sparks per ring for the ring shapes
-      for (var i = 0; i < n; i++) {
-        var u = i / n;
-        if (pulses) u = u - depth * Math.sin(u * pulses * Math.PI * 2 + ph) / (pulses * Math.PI * 2) * 0.5;   // bunch sparks into swells
-        u = Math.min(1, Math.max(0, u));
-        var turn = rot + sweep * u, j = i % ring;
-        var a = shape === 'ring' ? turn + j / ring * Math.PI * 2 + rnd(-0.05, 0.05)
-          : shape === 'spiral' ? turn + (i % 3) * Math.PI * 2 / 3 + rnd(-0.08, 0.08)
-          : shape === 'rings' ? turn + j / ring * Math.PI * 2 + (Math.floor(i / ring) % 2) * Math.PI / ring
-          : shape === 'fan' ? fanDir + sweep * 0.25 * u + rnd(-fanW / 2, fanW / 2) : Math.random() * Math.PI * 2;
-        var dx = Math.cos(a), dy = Math.sin(a);
-        var tx = dx > 0 ? (R.width - cx) / dx : dx < 0 ? -cx / dx : 1e9, ty = dy > 0 ? (R.height - cy) / dy : dy < 0 ? -cy / dy : 1e9;   // to the photo's edge
-        var edge = Math.max(10, Math.min(tx, ty) - r0), k = shape === 'rings' ? (Math.floor(i / ring) % 2 ? rnd(0.72, 0.8) : 1) : shape === 'scatter' || shape === 'fan' ? rnd(0.75, 1) : rnd(0.92, 1);   // speed: some sparks trail behind
-        parts.push({ x0: cx + dx * r0, y0: cy + dy * r0, dx: dx, dy: dy, d: edge, fade: Math.max(4, edge - 2), mode: 0, bb: 0, curl: curl * rnd(0.7, 1.3), born: t0 + u * TURN, life: life / k * rnd(0.85, 1.15), r: rnd(1.2, 2.25) });   // every spark travels right to the photo's edge; k only changes its speed
-        (function (q) { var m = Math.random();   // chaos: every spark picks its own way to go
-          if (m < 0.25) { q.fade = q.d * rnd(0.35, 0.65); q.d = q.d * rnd(0.6, 1); }   // a quarter fade out early, about half way
-          else if (m < 0.35) { q.mode = 1; q.bb = [3, 4, 6][Math.floor(Math.random() * 3)]; q.life *= rnd(1.05, 1.25); }   // a tenth hit the edge, bounce back and fade within 3, 4 or 6 px
-          else { q.fade = Math.max(4, q.d - rnd(1, 3)); }   // the rest fade out evenly, gone about 2 px from the edge
-        })(parts[parts.length - 1]);
-      }
-    };
-    if (!this._lis && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
-      this._lis = true; var sv = this._cup.querySelector('svg'), onTurn = function (e) { if (e.animationName === 'spin' && self._run) show(); };
-      sv.addEventListener('animationstart', onTurn); sv.addEventListener('animationiteration', onTurn);
-    }
-    var draw = function () {
-      if (!self._run) return;
-      var cv = self._cv, R = self._card.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, W = Math.round(R.width * dpr), H = Math.round(R.height * dpr);
-      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-      var g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, R.width, R.height);
-      var now = performance.now();
-      parts = parts.filter(function (q) { return now - q.born < q.life; });
-      var live = parts.filter(function (q) { return now >= q.born; });
-
-      g.fillStyle = '#FFFFFF';   // white sparks (Oct 2); crisp vector dots: no glow, no blur
-      live.forEach(function (q) { var t = (now - q.born) / q.life, e = 1 - Math.pow(1 - t, 3), w = q.curl * e * e;   // curl: a sideways drift
-        var sd = q.d * e, al;
-        if (q.mode === 1) { var L = (q.d + q.bb) * e; sd = L <= q.d ? L : q.d - (L - q.d); al = L <= q.d ? 1 : Math.max(0, 1 - (L - q.d) / q.bb); }   // bounce off the edge
-        else al = Math.max(0, 1 - sd / q.fade);
-        g.globalAlpha = al; g.beginPath(); g.arc(q.x0 + q.dx * sd - q.dy * w, q.y0 + q.dy * sd + q.dx * w, q.r, 0, Math.PI * 2); g.fill(); });
-      g.globalAlpha = 1;
-      requestAnimationFrame(draw);
-    };
-    requestAnimationFrame(draw);
+    // the photo follows the number of stations: 1 or 2 a small crew, 3 to 5 a medium one, 6 or more a large one
+    var n = parseInt(self.getAttribute('n') || '0', 10) || 0, k = n >= 6 ? 'l' : n >= 3 ? 'm' : 's', ph = r.querySelector('.ph'), cr = r.querySelector('.credit');
+    if (ph.getAttribute('data-k') !== k) { ph.setAttribute('data-k', k); ph.classList.remove('on'); var im = new Image(), on = function () { if (ph.getAttribute('data-k') === k) { ph.style.backgroundImage = 'url(' + PHOTO[k][0] + ')'; ph.classList.add('on'); } }; im.onload = on; im.src = PHOTO[k][0]; }
+    cr.textContent = PHOTO[k][1]; cr.hidden = self.getAttribute('credit') !== '1';
+    // badges: the crests of the stations that took part (up to six, then a count), then the air support badge
+    var C = []; try { C = JSON.parse(self.getAttribute('crests') || '[]') || []; } catch (e) {}
+    var bd = r.querySelector('.bd'), key = self.getAttribute('crests') + '|' + self.getAttribute('air'); if (bd.getAttribute('data-k') === key) return; bd.setAttribute('data-k', key);
+    bd.innerHTML = C.slice(0, 6).map(function (c) { return '<img src="' + esc(c.u) + '" alt="' + esc(c.n) + '" title="' + esc(c.n) + '">'; }).join('') +
+      (C.length > 6 ? '<b aria-label="' + (C.length - 6) + ' more stations">+' + (C.length - 6) + '</b>' : '') +
+      (self.getAttribute('air') === '1' ? '<b class="air" role="img" aria-label="Air support" title="Air support"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + HELI + '"/></svg></b>' : '');
+    bd.hidden = !bd.innerHTML;
   };
   customElements.define('wf-trophy', Trophy);
 })();

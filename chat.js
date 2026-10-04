@@ -1023,6 +1023,14 @@
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
       people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.length; }, 0), air: c.air ? 1 : 0, stations: F.length, est: !!c.estF };
   }
+  // Fire size class (Oct 4): the US scale of NWCG, which CAL FIRE uses (A to G by acres, from the final perimeter); everywhere else the
+  // names of the Portuguese ICNF (fogacho under 1 ha, incêndio, grande incêndio from 100 ha), with the size in hectares
+  function sizeClass(ha, st) { ha = Number(ha) || 0; var us = ccOf(st) === 'us', fm = function (n) { return Math.round(n).toLocaleString('en-US'); };
+    if (us) { var ac = ha / 0.4047, i = [0.25, 10, 100, 300, 1000, 5000].filter(function (x) { return ac >= x; }).length, L = 'ABCDEFG'[i];
+      return { code: L, i: i, en: 'Class ' + L + '. ' + fm(ac) + ' ac', pt: 'Classe ' + L + '. ' + fm(ac) + ' ac', tagEn: ['up to 0.25 ac', '0.26 to 9.9 ac', '10 to 99 ac', '100 to 299 ac', '300 to 999 ac', '1,000 to 4,999 ac', '5,000 ac or more'][i], tagPt: ['até 0,25 ac', '0,26 a 9,9 ac', '10 a 99 ac', '100 a 299 ac', '300 a 999 ac', '1 000 a 4 999 ac', '5 000 ac ou mais'][i] }; }
+    var j = ha < 1 ? 0 : ha < 100 ? 1 : 2, N = [['Spot fire', 'Fogacho'], ['Fire', 'Incêndio'], ['Large fire', 'Grande incêndio']][j];
+    return { code: N[0], i: j, en: N[0] + '. ' + (ha < 10 ? Math.round(ha * 10) / 10 : fm(ha)) + ' ha', pt: N[1] + '. ' + (ha < 10 ? String(Math.round(ha * 10) / 10).replace('.', ',') : fm(ha)) + ' ha', tagEn: ['under 1 ha', '1 to 99 ha', '100 ha or more'][j], tagPt: ['menos de 1 ha', '1 a 99 ha', '100 ha ou mais'][j] }; }
+  function fmtDur(ms) { var m = Math.max(1, Math.round(ms / 60000)), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60; return d ? d + ' d ' + h + ' h' : h ? h + ' h ' + mm + ' min' : mm + ' min'; }
   function loadAch() { try { return JSON.parse(localStorage.getItem(ACH) || '{}') || {}; } catch (e) { return {}; } }
   function award(c) {
     if (c.drill) return;   // training drills do not go into firefighters' profiles
@@ -1174,7 +1182,7 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
+    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return load().chats[keyOf(inc)] || null; },

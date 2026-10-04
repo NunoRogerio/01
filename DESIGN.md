@@ -975,3 +975,9 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## "Night ignition reported" only while the report is alive (Oct 4, 17:45)
 - The information that replaces the Report night ignition button shows only while the report chat exists and has not been put away (dismissed). Otherwise the button is back.
+
+## The resolution card shows the forces, not a trophy (Oct 4, 18:00)
+- One widget (`trophy.js`, used by the chat's resolved card and the summary's header). No trophy, fireworks or moving nature photos. Background: a group photo of firefighters with their engines behind, by the number of stations that took part: 1 or 2 a small crew, 3 to 5 a medium one, 6 or more a large one (`assets/crews/crew-s|m|l.jpg`, public domain, credits in `assets/crews/CREDITS-crews.txt`, the credit line shown on the card).
+- Top: the crests of the stations that collaborated (up to six, then a "+N"), and an air support badge when aircraft helped. Bottom: "Well done" in the accent colour, the fire's name, when it closed and how long it took, and the size class chip. The hazard stripe runs along the bottom edge as on the blades.
+- Size classes, one rule for the app (`__wfChat.sizeClass`): in the US the NWCG scale CAL FIRE uses, A up to 0.25 ac, B 0.26 to 9.9, C 10 to 99, D 100 to 299, E 300 to 999, F 1,000 to 4,999, G 5,000 ac or more (from the final perimeter); elsewhere the Portuguese ICNF names: fogacho (spot fire) under 1 ha, incêndio (fire) 1 to 99 ha, grande incêndio (large fire) 100 ha or more. The card shows "Class D. 135 ac" in the US and "Large fire. 135 ha" elsewhere.
+- The fire page's Size class card keeps the A to G letter and now carries a tag under it: the class's range in the US, the ICNF name for Portugal and the rest.
