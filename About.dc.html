@@ -135,9 +135,9 @@ class Component extends DCLogic {
       deploy: 'M3 16.5V8h10.5v8.5M13.5 11h4l3 3.5v2M3 16.5h1.7M9.3 16.5h4.9M18.8 16.5h1.7M9.3 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0ZM18.8 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0Z'
     };
     const steps = [
-      [IC.detect, L('Detect', 'Detetar', '検知'), L('Many sources together catch it fast.', 'Várias fontes em conjunto captam-na depressa.', '複数の情報源が連携し、素早くとらえます。')],
-      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Checked by drone or on the ground.', 'Verificada por drone ou no terreno.', 'ドローンや現場で確認します。')],
-      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('The nearest stations send crews.', 'Os quartéis mais próximos enviam equipas.', '最寄りの消防署が出動します。')]
+      [IC.detect, L('Detect', 'Detetar', '検知'), L('Exploring which sources can trigger a faster, more accurate detection.', 'Explorar que fontes permitem uma deteção mais rápida e precisa.', 'より速く正確な検知につながる情報源を探ります。')],
+      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Checked by drone or on the ground, and by easing communication between team coordinators.', 'Verificada por drone ou no terreno, e facilitando a comunicação entre os coordenadores das equipas.', 'ドローンや現場で確認し、チームの調整担当どうしの連絡を円滑にします。')],
+      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('Centralised team dispatch plans, carried out by the coordination teams.', 'Planos de despacho de equipas centralizados, executados pelas equipas de coordenação.', '調整チームが一元的に出動計画を立て、実行します。')]
     ].map(([ic, t, dd], i, a) => ({ ic, t, d: dd, n: i + 1, lineD: i < a.length - 1 ? 'block' : 'none', pb: i < a.length - 1 ? 16 : 0 }));
     const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M13.3 12a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0Z';
     const stages = [
