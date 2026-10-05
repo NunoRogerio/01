@@ -5,7 +5,7 @@
 // the screen; X folds it back into its button. One shared widget for the fire screen and the chats.
 (function () {
   if (window.__wfCamFeed) return;
-  var SRC = 'assets/helmetcam.mp4?v=1', THERMAL = { 'assets/helmetcam.mp4': 'assets/helmetcam-thermal.mp4?v=1', 'assets/dronefire.mp4': 'assets/dronefire-thermal.mp4?v=1', 'assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4': 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4' }, EASE = 'cubic-bezier(.2,.8,.2,1)';
+  var SRC = 'assets/helmetcam.mp4?v=1', THERMAL = { 'assets/helmetcalm.mp4': 'assets/helmetcalm-thermal.mp4?v=1', 'assets/dronecalm.mp4': 'assets/dronecalm-thermal.mp4?v=1', 'assets/helmetcam.mp4': 'assets/helmetcam-thermal.mp4?v=1', 'assets/dronefire.mp4': 'assets/dronefire-thermal.mp4?v=1', 'assets/5e964d02f1b03f33559b28d2b0ae2dbc.mp4': 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4' }, EASE = 'cubic-bezier(.2,.8,.2,1)';
   var css = document.createElement('style');
   css.textContent =
     '.wf-cf{position:fixed;left:0;top:0;z-index:120;margin:0;overflow:hidden;border-radius:16px;background:#1C1C1E;color:#FFFFFF;box-shadow:0 0 28px rgba(0,0,0,.28);touch-action:none;cursor:grab;transform-origin:0 0;opacity:0;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif}' +
@@ -117,7 +117,10 @@
       requestAnimationFrame(stepX); };
     requestAnimationFrame(stepX); }
   function open(o) {
-    o = o || {}; var CALL = o.call || null, key = CALL ? 'call:' + (CALL.id || 'police') : o.image ? 'img:' + o.image.src : (o.src || SRC), old = feeds.filter(function (g) { return g.st.src === key; })[0];
+    o = o || {};
+    // (Oct 5, 07:26) a fire under control (Concluding, Surveillance, closed or held) shows the calm daytime clips, never the burning night
+    if (o.calm && !o.call && !o.image) { if (!o.src || /helmetcam/.test(o.src)) o.src = 'assets/helmetcalm.mp4?v=1'; else if (/dronefire/.test(o.src)) o.src = 'assets/dronecalm.mp4?v=1'; }
+    var CALL = o.call || null, key = CALL ? 'call:' + (CALL.id || 'police') : o.image ? 'img:' + o.image.src : (o.src || SRC), old = feeds.filter(function (g) { return g.st.src === key; })[0];
     if (old) { close(old); if (old.st.who === o.who) return; }   // the same button again closes it
     var s = size(), a = o.anchor && o.anchor.getBoundingClientRect ? o.anchor : null, r = a ? a.getBoundingClientRect() : null;
     var el = document.createElement('figure'), st = { anchor: a, x: 0, y: 0, sc: 1, src: key, who: o.who }, f = { el: el, st: st };

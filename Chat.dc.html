@@ -21,7 +21,7 @@
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=70"></script>
 <script src="tour.js?v=97"></script>
-<script src="feedcam.js?v=20"></script>
+<script src="feedcam.js?v=21"></script>
 <script src="trophy.js?v=24"></script>
 
 <title>Chats</title>
@@ -567,9 +567,9 @@ class Component extends DCLogic {
       hzLabel: L('Projection horizon', 'Horizonte da projeção'), segX: (HZ.indexOf(hz) * 100) + '%',
       tabs: HZ.map((h) => ({ label: h ? '+' + h + ' h' : L('Now', 'Agora'), sel: String(h === hz), w: h === hz ? 600 : 400, fgD: h === hz ? '#1C1C1E' : '#FFFFFF', pick: () => { if (hz === h) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ pjHz: h }); } })),
       toggleFull: () => this.setState({ pjFull: !(this.state || {}).pjFull }),
-      drone: (e) => { if (F) F.open({ anchor: e && e.currentTarget, src: 'assets/dronefire.mp4?v=1', cross: true, title: 'Drone feed', label: PT ? 'Em direto. 120 m' : 'Live. 400 ft' }); },
+      drone: (e) => { if (F) F.open({ calm: c.stage >= 5 || !!c.closed, anchor: e && e.currentTarget, src: 'assets/dronefire.mp4?v=1', cross: true, title: 'Drone feed', label: PT ? 'Em direto. 120 m' : 'Live. 400 ft' }); },
       cam: (e) => { let who = ''; try { const P0 = C && C.active ? C.active(c) : [], p = P0[0], R = C && C.leadRole ? C.leadRole(c) : null; if (p) who = p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org; } catch (x2) {}
-        if (F) F.open({ anchor: e && e.currentTarget, who, label: PT ? 'Em direto. Câmara de capacete' : 'Live. Helmet camera' }); } };
+        if (F) F.open({ calm: c.stage >= 5 || !!c.closed, anchor: e && e.currentTarget, who, label: PT ? 'Em direto. Câmara de capacete' : 'Live. Helmet camera' }); } };
   }
   wfCall(c, anchor) { const C = window.__wfChat, F = window.__wfCamFeed; if (!C || !F || !c) return;
     // (Oct 4) a team call: the same floating panel, divided into one rectangle per coordinator of the stations sent (and the air lead)
@@ -934,7 +934,7 @@ class Component extends DCLogic {
       callAria: c.police ? t.call : c.kind === 'dm' ? L('Group call', 'Chamada de grupo') : L('Video call with the team', 'Videochamada com a equipa'),
       callGo: (e) => this.wfCall(c, e && e.currentTarget),
       camGo: (e) => { const P = C.active ? C.active(c) : (c.people || []), p = P[1] || P[0], R = C.leadRole ? C.leadRole(c) : null;
-        if (window.__wfCamFeed && p) window.__wfCamFeed.open({ anchor: e && e.currentTarget, who: p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org, label: L('Live. Helmet camera', 'Em direto. Câmara de capacete') }); },
+        if (window.__wfCamFeed && p) window.__wfCamFeed.open({ calm: c.stage >= 5 || !!c.closed, anchor: e && e.currentTarget, who: p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org, label: L('Live. Helmet camera', 'Em direto. Câmara de capacete') }); },
       setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, onScroll: (e) => { const el = e.currentTarget; if ((this.state || {}).avTip) this.setState({ avTip: null }); if (this._restoring) return; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; const k = (this.state || {}).key; if (k && (this.state || {}).view === 'chat') this.savePos(el, k); },
       back: (e) => { if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false, sheet: false, tab: c.closed ? 'resolved' : (this.state || {}).tab }); } }
     };

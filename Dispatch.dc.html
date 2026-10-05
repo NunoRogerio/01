@@ -21,7 +21,7 @@
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=70"></script>
 <script src="tour.js?v=97"></script>
-<script src="feedcam.js?v=20"></script>
+<script src="feedcam.js?v=21"></script>
 <script src="menu.js?v=16"></script>
 
 <title>Dispatch sizing</title>
@@ -465,7 +465,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #3C3C43"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z M12 7.5V12l3 2"></path></svg></span>
         </div>
         <!-- Every declared fire: report the ignition to the local police, a subtle button (full width) under the start time; once reported it opens the same chat -->
-        <button type="button" class="btn wf-ter" onClick="{{reportIgn}}" aria-label="{{reportIgnAria}}" style="display: {{reportIgnD}}; align-items: center; justify-content: center; height: 48px; margin: 16px 0 0; font-size: 17px; font-weight: 600">{{reportIgnLbl}}</button>
+        <!-- (Oct 5, 07:29) secondary, with a report icon (a document with lines) left of the label -->
+        <button type="button" class="btn wf-sec" onClick="{{reportIgn}}" aria-label="{{reportIgnAria}}" style="display: {{reportIgnD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; margin: 16px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"></path><path d="M14 3v5h5M9 13h6M9 17h6"></path></svg>{{reportIgnLbl}}</button>
       </div>
       <!-- A fire confirmed from a candidate: the entry to assign its crews (opens the dispatch configuration; Done comes back here) -->
       <div style="display: {{rs.d}}; align-self: stretch; margin: 0 0 56px; text-align: left">
@@ -2008,10 +2009,10 @@ class Component extends DCLogic {
       _hsSrc: { frow, INFO, HELD, RO, crew: !!s.crew },
       // (Oct 3, 22:50) a firefighter's live helmet camera, opened like the drone feed; worn by the lead of the first station sent
       // (Oct 3, 23:03) the drone over this fire: top view from above the helicopter, engines with their lights, a water drop
-      goDroneFeed: (e) => { if (window.__wfCamFeed) window.__wfCamFeed.open({ anchor: e && e.currentTarget, src: 'assets/dronefire.mp4?v=1', cross: true, title: 'Drone feed', label: window.__wfLang === 'pt' ? 'Em direto. 120 m' : 'Live. 400 ft' }); },
+      goDroneFeed: (e) => { if (window.__wfCamFeed) window.__wfCamFeed.open({ calm: MAPH < 310, anchor: e && e.currentTarget, src: 'assets/dronefire.mp4?v=1', cross: true, title: 'Drone feed', label: window.__wfLang === 'pt' ? 'Em direto. 120 m' : 'Live. 400 ft' }); },
       goCam: (e) => { let who = ''; try { const C = window.__wfChat, ch = C && frow ? C.find(C.incFire(frow)) : null, P = ch && C.active ? C.active(ch) : [], p = P[0], R = ch && C.leadRole ? C.leadRole(ch) : null;
           if (p) who = p.name + '. ' + (R ? (window.__wfLang === 'pt' ? R.pt : R.en) + '. ' : '') + p.org; } catch (x) {}
-        if (window.__wfCamFeed) window.__wfCamFeed.open({ anchor: e && e.currentTarget, who, label: window.__wfLang === 'pt' ? 'Em direto. Câmara de capacete' : 'Live. Helmet camera' }); },
+        if (window.__wfCamFeed) window.__wfCamFeed.open({ calm: MAPH < 310, anchor: e && e.currentTarget, who, label: window.__wfLang === 'pt' ? 'Em direto. Câmara de capacete' : 'Live. Helmet camera' }); },
       cc: (() => { if (!RO) return { d: 'none', big: '', fs: 64, bigD: 'none', tagD: 'none', tag: '', tagBg: '', tagFg: '', medMt: '0', med: [], medD: 'none', aria: '' };
         const I = INFO || {}, now = Date.now(), us = frow && frow.st !== 'PT' && frow.st !== 'BRA';
         // Containment: the % contained where the source publishes it (NIFC), else the official stage (ANEPC publishes stages only)
