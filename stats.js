@@ -473,6 +473,8 @@
     var sc2 = el.querySelector('.sc'); if (sc2 && !sc2.__wfKeep) { sc2.__wfKeep = 1; var kt = 0; sc2.addEventListener('scroll', function () { clearTimeout(kt); kt = setTimeout(keep, 200); }, { passive: true }); }
     keep(); return true;
   }
+  // back on the page restored from memory (no reload): the charts start again, as on any return to the statistics
+  try { window.addEventListener('pageshow', function (e) { if (e.persisted && S.open && S.el) { S.anim = true; S.t0 = Date.now(); render(true); } }); } catch (e) {}
   try { window.addEventListener('pagehide', keep); document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') keep(); }); } catch (e) {}
   (function comeBack() { var st = SS(); if (!st) return; var n = 0; (function wait() { if (open(st)) return; if (++n < 50) setTimeout(wait, 100); else SS(null); })(); })();
   function close() {
