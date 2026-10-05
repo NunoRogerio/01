@@ -21,6 +21,15 @@ window.__wfFrameFire=function(pts,g6,W,H){if(!pts||!pts.length)return null;var x
   var z=Math.min(W*0.6/bw,H*0.9/bh);
   if(g6&&g6.length){var hx=2,hy=2;g6.forEach(function(q){hx=Math.max(hx,Math.abs(q[0]-cx));hy=Math.max(hy,Math.abs(q[1]-cy));});z=Math.min(z,Math.min(W/2/(0.7*hx),H/2/(0.7*hy)));}
   return {z:Math.max(0.0015,Math.min(40,z)),cx:cx,cy:cy};};
+// (Oct 5, 07:58) the page itself never scrolls: the screens scroll inside their own containers. iOS (and scrollIntoView, focus)
+// could still shift the document or the screen's frame when content changes height (e.g. a Crews tab), which slid the bottom
+// sheets kept just below the frame (Key figures picker) into view. Any such shift is put straight back.
+(function(){
+  var fix=function(el){try{if(el&&(el.scrollTop||el.scrollLeft)){el.scrollTop=0;el.scrollLeft=0;}}catch(x){}};
+  var pin=function(e){var t=e&&e.target;if(t===document||t===document.documentElement||t===document.body){fix(document.scrollingElement||document.documentElement);fix(document.body);if(window.scrollY||window.scrollX)window.scrollTo(0,0);return;}
+    if(t&&t.nodeType===1&&(t.id==='dc-root'||t.hasAttribute('data-wfroot')||t.classList.contains('sc-host')||(t.parentElement&&t.parentElement.classList.contains('sc-host')&&t.parentElement.parentElement&&t.parentElement.parentElement.id==='dc-root')))fix(t);};   /* the screen's frame (overflow hidden on every screen) */
+  try{if(window.self===window.top||!(window.frameElement&&window.frameElement.closest&&window.frameElement.closest('[data-wf-pushup]')))document.addEventListener('scroll',pin,{capture:true,passive:true});}catch(x){document.addEventListener('scroll',pin,{capture:true,passive:true});}
+})();
 // (Oct 5) every scrolling screen, panel and list ends with at least 56px of room under its last item (larger paddings are
 // kept, e.g. a list that clears a keyboard or a foot button). Re-applied whenever a screen redraws its styles.
 (function(){

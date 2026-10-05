@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=158"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=194"></script>
 <script src="menu.js?v=16"></script>
@@ -481,7 +481,7 @@ class Component extends DCLogic {
       toggleArea: () => this.wfToggleUnit('area'), toggleTemp: () => this.wfToggleUnit('temp'),
       openFa: () => this.setState({ fa: true }), closeFa: () => this.setState({ fa: false }),
       confirmFa: () => { if (this._faDone) return; this._leaving = true; this._faDone = true; this.setState({ ret: true }); const d = this.wfDismissed(); if (!d[vId]) { d[vId] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._faDone = false; this.setState({ fa: false }); }, 800); },
-      faY: fa ? 'calc(0% + ' + this.wfDrag('fa').y + 'px)' : '105%', faT: this.wfDrag('fa').t === '0s' ? '0s' : '.5s', hFa: this.wfHandle('fa', 'down', () => this.setState({ fa: false })), faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
+      faY: fa ? 'calc(0% + ' + this.wfDrag('fa').y + 'px)' : 'calc(100% + 120px)', faT: this.wfDrag('fa').t === '0s' ? '0s' : '.5s', hFa: this.wfHandle('fa', 'down', () => this.setState({ fa: false })), faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
       vId, vPlace, confirmHere: () => { this._leaving = true; this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
       setVid: this.setVid, 
       thermalOp: isThermal ? 1 : 0,

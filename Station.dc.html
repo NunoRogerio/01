@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=158"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="feedcam.js?v=21"></script>
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=194"></script>
@@ -252,6 +252,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   componentDidMount() {
+    // (Oct 5, 07:58) coming back to this screen from the phone's page cache: its sheets (Key figures, a crew) start closed
+    try { window.addEventListener('pageshow', (ev) => { if (ev.persisted && ((this.state || {}).pick || (this.state || {}).sq)) this.setState({ pick: false, sq: null }); }); } catch (e) {}
     try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {}   // chat counts follow new messages
     // Stations from the country snapshot carry only name and operator: read the rest (address, phone, website…) live.
     const S = this.station();
@@ -278,7 +280,7 @@ class Component extends DCLogic {
   wfPicker() {
     const g = 'stk', open = !!(this.state || {}).pick, all = this._kAll || [], H = this.wfHidden();
     const tog = (k) => () => { const h = this.wfHidden(), i = h.indexOf(k); if (i < 0 && all.filter((m) => h.indexOf(m.key) < 0).length <= 1) return; if (i >= 0) h.splice(i, 1); else h.push(k); try { localStorage.setItem('wf-hide-' + g, JSON.stringify(h)); localStorage.setItem('wf-seen-' + g, JSON.stringify(all.map((m) => m.key))); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); };
-    return { y: open ? '0%' : '105%', op: open ? 1 : 0, pe: open ? 'auto' : 'none', hidden: open ? 'false' : 'true',
+    return { y: open ? '0%' : 'calc(100% + 120px)', op: open ? 1 : 0, pe: open ? 'auto' : 'none', hidden: open ? 'false' : 'true',
       rows: (() => { const S0 = window.__wfPickSort ? window.__wfPickSort(g, all, (k) => H.indexOf(k) < 0) : all, OK = S0.filter((m) => H.indexOf(m.key) < 0).map((m) => m.key);   /* on cards first, in screen order (long press to reorder); off cards A to Z */
         return S0.map((m, i) => { const on = H.indexOf(m.key) < 0, last = on && all.filter((q) => H.indexOf(q.key) < 0).length <= 1; return { name: m.l, onStr: on ? 'true' : 'false', swOp: last ? 0.4 : 1, dis: last ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', key: m.key, ...(window.__wfPickDrag && g ? window.__wfPickDrag(this, g, m.key, OK) : {}), toggle: tog(m.key), sep: i ? '0' : '0' }; }); })(),
       resetDis: (() => { const opt = all.filter((m) => m.opt).map((m) => m.key); return H.length === opt.length && opt.every((k) => H.indexOf(k) >= 0) ? 'true' : 'false'; })(),
@@ -291,7 +293,7 @@ class Component extends DCLogic {
     const back = () => {};   // the app-wide back (fit.js): the screen visited just before, the map only when opened straight here
     const tx = { cmd: L('Command', 'Comando'), cmdTeam: L('Command team', 'Equipa de coordenação'), groupChat: L('Group chat', 'Conversa de grupo'), res: L('Resources', 'Recursos'),
       note: L('Resources, crews, people and the extra figures are simulated for this demonstration. Station details from OpenStreetMap contributors.', 'Recursos, equipas, pessoas e os indicadores extra são simulados para esta demonstração. Dados do quartel dos contribuidores do OpenStreetMap.') };
-    const closed = { y: '105%', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: L('Open chat', 'Abrir conversa'), close: () => {}, chat: () => {}, reset: () => {} };
+    const closed = { y: 'calc(100% + 120px)', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: L('Open chat', 'Abrir conversa'), close: () => {}, chat: () => {}, reset: () => {} };
     if (!S) return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Incident chats', open: null } }, none: true, some: false, hasMap: false, fullLayer: false, back, tx, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], rowsD: 'none', loc: { gps: '', rows: '0fr', op: 0, copyIc: '', copyC: '', copyAria: '', dir: '', copy: null }, fires: [], noFires: false, firesD: 'none', kpis: [], kp: closed, sq: closed, cmd: { faces: [] }, rs: { tabs: [], rows: [] } };
     const name = S.name || T.official_name || 'Fire station';
     const op = T.operator || '';
@@ -432,7 +434,7 @@ class Component extends DCLogic {
     const cmd = { faces: cmdP.map((p) => ({ code: ini(p.name), photo: photo(p.name) })), sub: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + cmdP[0].name + '. ' + cmdP.length + ' ' + L('people', 'pessoas') + '.',
       aria: tx.cmdTeam + ', ' + cmdP.map((p) => p.name).join(', '), open: () => this.setState({ sq: 'cmd' }), chat: cmdChat, ...bdg(unr('cmd-' + S.id)), chatAria: tx.groupChat + (unr('cmd-' + S.id) ? ', ' + unr('cmd-' + S.id) + L(' unread', ' por ler') : '') };
     const sqK = s0.sq || '', sqC = /^c\d+$/.test(sqK) ? crews[Number(sqK.slice(1))] : null, sqOn = sqK === 'cmd' || !!sqC;
-    const sq = { y: sqOn ? '0%' : '105%', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
+    const sq = { y: sqOn ? '0%' : 'calc(100% + 120px)', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
       title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.veh + '.' : org,
       people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700 })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700 }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 ? 'flex' : 'none' })), hdChatD: sqC ? 'none' : 'flex',
       chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat, ...bdg(unr(sqC ? 'crew-' + S.id + '-' + sqC.name : 'cmd-' + S.id)),
