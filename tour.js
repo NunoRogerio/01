@@ -207,19 +207,15 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     // (Oct 5) the chats step (it opened the chats panel) was removed
     // (Oct 5) the notifications step (it opened the notifications panel) was removed
     // (Oct 5) the preferences step (it opened the settings menu) was removed
-    { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
-      t: ['Let’s start by selecting a candidate on the map', 'Comecemos por selecionar um candidato no mapa'],
-      b: ['We marked the most likely one. Tap it.', 'Marcámos o mais provável. Toque nele.'] },
-    { page: 'Main.dc.html', mode: 'tap', find: function () { return q('[data-wf-pop] a[href="Alert.dc.html"]'); }, also: '[data-wf-pop] a[href="Alert.dc.html"]',
-      t: ['Open the demo ignition', 'Abra a ignição de demonstração'],
-      b: ['Its summary. Tap View for the whole picture.', 'O resumo. Toque em Ver para ver tudo.'] },
+    // (Oct 5, 09:31) one step to open the candidate (it was two: tap the marker, then View): the cursor moves from the marker to
+    // View on its summary; the tour carries on on the next screen
+    { page: 'Main.dc.html', mode: 'until', until: function () { return false; }, find: function () { return q('[data-wf-pop] a[href="Alert.dc.html"]') || topMarker(); }, also: '[data-wf-pop] a[href="Alert.dc.html"]',
+      t: ['Open the most likely candidate', 'Abra o candidato mais provável'],
+      b: ['We marked it on the map. Tap it, then View.', 'Marcámo-lo no mapa. Toque nele e depois em Ver.'] },
 
-    { page: 'Alert.dc.html', mode: 'next', interact: true, find: function () { return q('[role=list]:has(> [data-wf-kpi][data-g="ign"])') || q('[data-wf-ighdr]'); },
-      ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Now let\'s take a closer look.', 'Agora vamos ver de perto.'],
-      t: ['Key figures', 'Números principais'], hold: true, tourScroll: true, low: true,
-      b: ['Press and hold a card to reorder; tap + to choose which to show.',
-          'Prima e mantenha um cartão para reordenar; toque em + para escolher quais mostrar.'] },
     { page: 'Alert.dc.html', mode: 'tap', before: freshDemo, find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
+      // (Oct 5, 09:31) the Key figures step was folded in here: the achievement lands on this screen, then straight to the chat
+      ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Its key figures are below.', 'Os números principais estão abaixo.'],
       t: ['Confirm the ignition in the team chat', 'Confirme a ignição na conversa da equipa'],
       b: ['Declaring a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Declarar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
 
@@ -248,9 +244,14 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Dispatch.dc.html', mode: 'until', interact: true, until: function () { var d = q('section[aria-labelledby="sendTitle"]'); return !!d && d.getAttribute('aria-hidden') === 'false'; }, find: function () {
         // Never a dead end: if the plan is still empty (Send order disabled), the tour fills it with the AI suggested pack itself
         // the Send order button that is on screen (the Crews foot sits inside its own sheet), never the sending dialog's
-        var b = q('button.btn.primary', function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); }, true) || q('button.btn.primary', function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); });
+        // (Oct 5, 09:31) the one in view: the fixed foot one, not a copy further down the list (on a phone the tour pointed at
+        // a copy out of view, and blocked the foot button the person actually tapped: a dead end)
+        var isSend = function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); };
+        var inV = [].slice.call(document.querySelectorAll('button.btn.primary')).filter(function (x) { if (!isSend(x)) return false; var r = x.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= VH(); }).sort(function (a, c) { return c.getBoundingClientRect().top - a.getBoundingClientRect().top; });
+        var b = inV[0] || q('button.btn.primary', isSend, true) || q('button.btn.primary', isSend);
         if (b && b.getAttribute('aria-disabled') === 'true') { var ai = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); if (ai && !ai.__wfAuto) { ai.__wfAuto = 1; ai.click(); } }
         return b; },
+      also: 'button.btn.primary',   /* any Send order on screen moves the dispatch on (never blocked) */
       t: ['Send the orders', 'Envie as ordens'],
       b: ['Tap Send order: each station and the air team get their order.', 'Toque em Enviar ordem: cada quartel e os meios aéreos recebem a sua ordem.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
@@ -531,6 +532,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   function aimNext() { if (WF_TOUR_HELI || !bub) return; var g = bub.querySelector('.tg'); if (!g || !g.offsetWidth || g.disabled) { if (dot) dot.classList.remove('on'); return; }
     var r = g.getBoundingClientRect(); dotAim((r.left + r.right) / 2, (r.top + r.bottom) / 2); }
+  var dock = 'b';   /* where the tour card sits: 'b' bottom, 't' top */
+  function safeTop() { try { var d = document.createElement('div'); d.style.cssText = 'position:fixed;top:0;height:env(safe-area-inset-top,0px);visibility:hidden'; document.body.appendChild(d); var h = d.offsetHeight; d.remove(); return h; } catch (e) { return 0; } }
   function draw(i, st, el, late, low) {
     build();
     var pt = PT(), L = function (a) { return a ? (pt ? a[1] : a[0]) : ''; }, s0back = !!(get() || {}).b;   // achievements show when reached going forward, not when stepping back
@@ -572,22 +575,28 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var vw = VW(), vh = VH(), bw = Math.min(320, vw - 32), bh;
     bub.style.width = bw + 'px'; bh = bub.offsetHeight;
     if (low && el && !st.find) el = null;
-    if (!el) { ring.style.display = 'none'; setTimeout(aimNext, 0); svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = low === 'top' ? Math.max(180, vh * 0.4 - bh / 2) : low ? vh - bh - 40 : Math.max(16, (vh - bh) / 2); place(+bub.dataset.l, +bub.dataset.t); return; }
+    // (Oct 5, 09:31) the card keeps one place: docked at the bottom of the screen (or the top), never floating next to each
+    // target; it changes dock only when it would cover what the step points at, and then stays there for the next steps
+    var BOT = vh - 32 - bh, TOP = safeTop() + 16, dockY = function (d) { return d === 't' ? TOP : BOT; };
+    if (!el) { ring.style.display = 'none'; setTimeout(aimNext, 0); svg.innerHTML = ''; svg.__k = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = dockY(dock); place(+bub.dataset.l, +bub.dataset.t); return; }
     var r = el.getBoundingClientRect(), big = r.height > vh * 0.45 || r.width > vw * 0.96 && r.height > 160;
     var pad = 6, T = { l: r.left - pad, t: r.top - pad, r: r.right + pad, b: r.bottom + pad };
-    if (big) { ring.style.display = 'none'; setTimeout(aimNext, 0); svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = vh - bh - 40; place(+bub.dataset.l, +bub.dataset.t); return; }
+    if (big) { ring.style.display = 'none'; setTimeout(aimNext, 0); svg.innerHTML = ''; setTimeout(function () { if (bub) heliPark(bub.getBoundingClientRect()); }, 0); bub.dataset.l = (vw - bw) / 2; bub.dataset.t = dockY(dock); place(+bub.dataset.l, +bub.dataset.t); return; }
     var rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
     // blue circle guide: centred on the control, the yellow frame off (the helicopter profile keeps the frame)
     if (!WF_TOUR_HELI) { if (st.mode === 'next' && !st.point) setTimeout(aimNext, 0); else dotAim((r.left + r.right) / 2, (r.top + r.bottom) / 2); }
     ring.style.display = WF_TOUR_HELI ? 'block' : 'none'; var RL = Math.max(3, T.l), RR = Math.min(vw - 3, T.r); ring.style.left = RL + 'px'; ring.style.top = T.t + 'px'; ring.style.width = (RR - RL) + 'px'; ring.style.height = (T.b - T.t) + 'px'; ring.style.borderRadius = Math.min(999, rad + pad) + 'px';
     var gap = 76, below = vh - T.b - 32, above = T.t - 16, up;
     if (below >= bh + gap) up = false; else if (above >= bh + gap) up = true; else up = above > below;
-    var cx = (T.l + T.r) / 2, left = Math.min(vw - 16 - bw, Math.max(16, cx - bw / 2));
+    var cx = (T.l + T.r) / 2, left = (vw - bw) / 2;
     var top = up ? Math.max(16, T.t - gap - bh) : Math.min(vh - 32 - bh, T.b + gap);
     // never cover the target or an open map tooltip: try the other side, then the top or bottom of the screen
     var OB = [T].concat([].slice.call(document.querySelectorAll('[data-wf-pop]')).map(function (p) { var q0 = p.getBoundingClientRect(); return q0.width ? { l: q0.left - 8, t: q0.top - 8, r: q0.right + 8, b: q0.bottom + 8 } : null; }).filter(Boolean));
     var hits = function (y) { return OB.some(function (o) { return left < o.r && left + bw > o.l && y < o.b && y + bh > o.t; }); };
-    if (hits(top)) { var alts = [up ? Math.min(vh - 32 - bh, T.b + gap) : Math.max(16, T.t - gap - bh), vh - 32 - bh, 16], f = alts.find(function (y) { return !hits(y); }); if (f != null) { up = f + bh / 2 < (T.t + T.b) / 2; top = f; } }
+    var other = dock === 't' ? 'b' : 't';
+    if (!hits(dockY(dock))) top = dockY(dock); else if (!hits(dockY(other))) { dock = other; top = dockY(dock); }
+    else if (hits(top)) { var alts = [up ? Math.min(vh - 32 - bh, T.b + gap) : Math.max(16, T.t - gap - bh), vh - 32 - bh, 16], f = alts.find(function (y) { return !hits(y); }); if (f != null) top = f; }   /* no dock is free: next to the target, as before */
+    up = top + bh / 2 < (T.t + T.b) / 2;
     bub.dataset.l = left; bub.dataset.t = top; place(left, top); top = parseFloat(bub.style.top); left = parseFloat(bub.style.left);
     // the guide helicopter hovers over the control, its bucket pointing at it (no arrow)
     svg.innerHTML = ''; svg.__k = '';

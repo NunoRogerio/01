@@ -1142,3 +1142,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - **Share panel (Oct 5, 09:28):** "Share with other people" is the panel's main action, so it is the primary button (full width, 24px under the link), not a chevron row.
 - **Maps open drawn (Oct 5, 09:26):** a fire's model (perimeter, weather, terrain, projection) is kept for the session once worked out (15 min), so the next screen's map draws at once. The "Loading map" cover has no minimum time any more: it covers the map only while the fire's perimeter, which frames the view, is missing; tiles still arriving simply appear. The small maps stay the same map as full screen (one widget), locked until maximised.
+
+- **Tour card place (Oct 5, 09:31):** the tour card docks at the bottom of the screen and stays there step after step; it moves to the top only when it would cover what the step points at, and then stays at the top until that would cover the next target. It never floats beside each target.
+- **Shorter tour (Oct 5, 09:31):** opening the candidate is one step (tap the marked candidate, then View), and the Key figures step folded into "Confirm the ignition in the team chat" (its achievement lands there). 15 steps.
+- **Send the orders (Oct 5, 09:31):** the step points at the Send order button in view and never blocks any Send order button, so the sending screen always opens; the next step sends you back to the team chat.
