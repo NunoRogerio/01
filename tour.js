@@ -362,24 +362,15 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   var actx = null, ACH_LEAD = 450;   // the sound leads the achievement card by this much (ms)
   function actxGet() { try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {} return actx; }
   ['pointerdown', 'touchend'].forEach(function (ev) { window.addEventListener(ev, function () { actxGet(); }, { capture: true, passive: true }); });
-  // (Oct 5, 01:54) a relaxing "piioiiiiioimmm - poomm": a soft high tone that swells in, wavers gently and glides, then a low,
-  // round "poomm" with a warm bass, a soft low-pass and a light echo
+  // (Oct 5, 02:03) the achievement sound: only the "poomm", a low, round note with a warm bass, a soft low-pass and a light echo
   function prlim() {
     var c = actxGet(); if (!c) return;
     try { var t0 = c.currentTime + 0.01, out = c.createGain(), lp = c.createBiquadFilter(), dl = c.createDelay(), fb = c.createGain(), wet = c.createGain();
       out.gain.value = 0.32; lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = 0.3;
       dl.delayTime.value = 0.23; fb.gain.value = 0.2; wet.gain.value = 0.22;
       lp.connect(out); out.connect(c.destination); out.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(c.destination);
-      // "piioiiiiioimmm": swells in over 0.25 s, a slow waver (5 Hz) and a small glide up, fading over 1.3 s
-      var o = c.createOscillator(), g = c.createGain(), lfo = c.createOscillator(), ld = c.createGain(), o2 = c.createOscillator(), g2 = c.createGain();
-      o.type = 'sine'; o.frequency.setValueAtTime(784, t0); o.frequency.linearRampToValueAtTime(880, t0 + 0.5); o.frequency.linearRampToValueAtTime(831, t0 + 1.2);
-      lfo.type = 'sine'; lfo.frequency.value = 5; ld.gain.setValueAtTime(0, t0); ld.gain.linearRampToValueAtTime(14, t0 + 0.4); lfo.connect(ld); ld.connect(o.frequency);
-      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.42, t0 + 0.25); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.35);
-      o2.type = 'triangle'; o2.frequency.setValueAtTime(392, t0); o2.frequency.linearRampToValueAtTime(440, t0 + 0.5);
-      g2.gain.setValueAtTime(0.0001, t0); g2.gain.exponentialRampToValueAtTime(0.14, t0 + 0.3); g2.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.2);
-      o.connect(g); g.connect(lp); o2.connect(g2); g2.connect(lp); [o, lfo, o2].forEach(function (x) { x.start(t0); x.stop(t0 + 1.45); });
       // "poomm": a low, round note with a soft bass under it
-      var t1 = t0 + 1.05, voice = function (type, f, d, peak, att) { var v = c.createOscillator(), vg = c.createGain(); v.type = type; v.frequency.setValueAtTime(f, t1); v.frequency.exponentialRampToValueAtTime(f * 0.97, t1 + d);
+      var t1 = t0, voice = function (type, f, d, peak, att) { var v = c.createOscillator(), vg = c.createGain(); v.type = type; v.frequency.setValueAtTime(f, t1); v.frequency.exponentialRampToValueAtTime(f * 0.97, t1 + d);
         vg.gain.setValueAtTime(0.0001, t1); vg.gain.exponentialRampToValueAtTime(peak, t1 + att); vg.gain.exponentialRampToValueAtTime(0.0001, t1 + d); v.connect(vg); vg.connect(lp); v.start(t1); v.stop(t1 + d + 0.05); };
       voice('sine', 196, 1.4, 0.55, 0.04); voice('sine', 98, 1.2, 0.45, 0.05); voice('triangle', 392, 0.6, 0.08, 0.03);
     } catch (e) {}
@@ -387,7 +378,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // (Oct 5) a step that opens another screen with an achievement waiting on it: the sound plays on the tap itself (the one
   // moment iOS allows sound), and the screen change waits until it has finished, so it plays as the new screen rises
   document.addEventListener('click', function (e) { try { var a = e.target && e.target.closest && e.target.closest('a[data-wf-split]'); if (!a) return; var s0 = get(); if (!s0) return; var nx = S[s0.i + 1];
-    if (!nx || !nx.ach) return; prlim(); try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (x) {} window.__wfNavHold = Date.now() + 2300; } catch (x) {} }, true);
+    if (!nx || !nx.ach) return; prlim(); try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (x) {} window.__wfNavHold = Date.now() + 1400; } catch (x) {} }, true);
   function dragOn(b) {
     var st = null, fling = 0;
     b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fling); fling = 0; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false, trail: [] }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
