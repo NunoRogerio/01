@@ -44,11 +44,14 @@
   var CSS = SLCSS +
     ':host{display:block}' +
     '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:4px;min-height:320px;touch-action:pan-y;padding:16px 16px 24px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
-    '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.32) 0%,rgba(0,0,0,.05) 28%,rgba(0,0,0,.24) 46%,rgba(0,0,0,.59) 66%,rgba(0,0,0,.70) 100%)}' +
+    /* (Oct 5, 16:51) the bottom half darker so the text reads on any photo; the top as before */
+    '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.32) 0%,rgba(0,0,0,.05) 28%,rgba(0,0,0,.34) 44%,rgba(0,0,0,.72) 60%,rgba(0,0,0,.84) 80%,rgba(0,0,0,.88) 100%)}' +
     /* (Oct 5, 03:34) the pagination as Apple draws it now: plain white shapes, no shadow; the pages not shown are 8px circles, the one
        shown a 20px line with fully rounded ends; it stretches and shrinks as the pictures change */
     '.bd{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin-bottom:auto}' +
-    '.bd img{display:block;box-sizing:border-box;width:min(60px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:60px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
+    /* (Oct 5, 16:51) the crests sit 16px under the pagination dots (12px + 8px dots + 16px = 36px from the top) and are 48px (was 60px) */
+    '.dots:not([hidden])~.bd{margin-top:20px}' +
+    '.bd img{display:block;box-sizing:border-box;width:min(48px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:48px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
     '.kicker{font-size:16px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
     '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:var(--wf-y);text-shadow:0 0 12px rgba(0,0,0,.45)}' +
     '.fire{font-size:20px;font-weight:700;line-height:24px;color:#FFFFFF;text-wrap:balance;text-shadow:0 0 10px rgba(0,0,0,.5)}' +
