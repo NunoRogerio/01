@@ -30,6 +30,8 @@ if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
 // circle (80px) over the control to tap. The circle lets every touch through, so the control under it works as it is.
 var WF_TOUR_HELI = (function () { try { return localStorage.getItem('wf-custom') === 'heli'; } catch (e) { return false; } })();
 if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the menu frame (menu.js)
+  /* (Oct 5) the next screen preloading in the push-up frame never draws the tour (it showed a tiny bubble on a grey panel) */
+  var INFRAME = false; try { INFRAME = window.self !== window.top && !!(window.frameElement && window.frameElement.closest && window.frameElement.closest('[data-wf-pushup]')); } catch (e) { INFRAME = false; }
   var KEY = 'wf-tour', PAGE = (location.pathname.split('/').pop() || 'index.html');
   var get = function () { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) { return null; } };
   var put = function (s) { try { if (s) sessionStorage.setItem(KEY, JSON.stringify(s)); else sessionStorage.removeItem(KEY); } catch (e) {} };
@@ -240,23 +242,15 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Open the fire', 'Abra o incêndio'],
       b: ['Tap the fire\'s name for its page.', 'Toque no nome do incêndio para abrir a sua página.'] },
 
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return fsBtn(true); },
-      t: ['See the map full screen', 'Veja o mapa em ecrã inteiro'],
-      b: ['Tap to open the fire\'s map full screen.', 'Toque para abrir o mapa do incêndio em ecrã inteiro.'] },
-    { page: 'Dispatch.dc.html', mode: 'next', free: true, low: true, find: function () { return fsBtn(false); },
-      skip: leftFull,   // the map was left on its own: carry on (Back to the page skips too), never a screen without the guide
-      t: ['Try the map', 'Experimente o mapa'],
-      b: ['Pan and zoom, switch layers in the legend, see the spread with +1 h, +3 h or +6 h, or send a drone. Tap › when you\'re done.', 'Mova e aproxime, troque camadas na legenda, veja a propagação com +1 h, +3 h ou +6 h, ou envie um drone. Toque em › quando terminar.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', before: closeDrone, find: function () { return fsBtn(false); }, skip: function () { return leftFull(300); },
-      t: ['Back to the page', 'Voltar à página'],
-      b: ['Tap here to leave full screen.', 'Toque aqui para sair do ecrã inteiro.'] },
+    // (Oct 5) the full-screen map steps were dropped: from the fire page straight back to the team, where Move to Ongoing
+    // opens the Crews tab with the dispatch configuration
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
       t: ['Back to the team', 'De volta à equipa'],
       b: ['Tap to return to the chat.', 'Toque para voltar à conversa.'] },
 
     { page: 'Chat.dc.html', mode: 'tap', before: stExpand, find: function () { return stMove() || chip(['Configure dispatch', 'Configurar despacho', '出動']); },
       t: ['Move the fire on', 'Faça o incêndio avançar'],
-      b: ['The state card moves the fire on. Tap Move to Ongoing to send crews.', 'O cartão de estado faz o incêndio avançar. Toque em Passar a Em curso para enviar equipas.'] },
+      b: ['The state card moves the fire on. Tap Move to Ongoing to configure the dispatch.', 'O cartão de estado faz o incêndio avançar. Toque em Passar a Em curso para configurar o despacho.'] },
     // (Oct 3, 20:06) a plan left from an earlier tour is emptied first, so the AI suggested pack always shows; the circle
     // goes to it and, if it isn't tapped, taps it itself after a moment
     { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () { if (window.__wfDispPlanReset && !q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; })) window.__wfDispPlanReset(); if (++t < 10) setTimeout(f, 300); }; f(); },
@@ -275,7 +269,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
       ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Now back to the team.', 'Agora de volta à equipa.'],
       t: ['Back to the chat', 'Volte à conversa'],
-      b: ['Tap Return once every order is through.', 'Toque em Voltar quando todas as ordens tiverem passado.'] },
+      b: ['Tap Return to chat to go back to the team: the leads are confirming their orders there.', 'Toque em Voltar à conversa para regressar à equipa: os chefes estão a confirmar as ordens.'] },
 
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!chip(['Close fire', 'Encerrar incêndio']); }, auto: true, noClose: true,
       find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
@@ -308,7 +302,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function css() {
     if (document.getElementById('wf-tour-css')) return;
     var st = document.createElement('style'); st.id = 'wf-tour-css';
-    st.textContent = '#wf-tour{position:fixed;inset:0;z-index:99990;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased}' +
+    st.textContent = 'html.wf-pushing #wf-tour{opacity:0!important;transition:opacity .2s ease}' + '#wf-tour{position:fixed;inset:0;z-index:99990;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased}' +
       '#wf-tour .tb{position:absolute;box-sizing:border-box;padding:16px;border-radius:20px;background:rgba(28,28,30,0.72);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;pointer-events:auto;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}' +
       '#wf-tour .tb.on{opacity:1;transform:none}' +
       '#wf-tour .tb{touch-action:none;cursor:grab}#wf-tour .tb.drag{cursor:grabbing;transition:none!important}#wf-tour .tb::before{content:"";position:absolute;left:50%;top:6px;width:44px;height:3px;margin-left:-22px;border-radius:2px;background:rgba(255,255,255,0.3)}' +
@@ -694,6 +688,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   // ---- the loop ---------------------------------------------------------------------------------------------
   function tick() {
+    if (INFRAME) return;
     var s = get(); if (!s) { if (root) end(); return; }
     var i = s.i, st = S[i]; if (!st) { end(); return; }
     if (st.page !== PAGE) {

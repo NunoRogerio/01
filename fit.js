@@ -793,10 +793,10 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   // loaded in a frame first (the card's label says Loading while it does); if it needs more time it starts from grey and its content fades
   // in as it rises. When it has covered the screen the real page opens in its place: no grey screen in between.
   var PU_E='cubic-bezier(.37,0,.63,1)',PU_D=530;
-  function puGrey(){return document.documentElement.classList.contains('wf-dark')?'#000000':'#C7C7CC';}
+  function puGrey(){return document.documentElement.classList.contains('wf-dark')?'#262629':'#F2F2F7';}   /* (Oct 5) the rising panel is the app surface, not a grey slab, until the next screen fades in */
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-wf-split]');if(!a||a.__wfPu)return;
     if(e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;var dc=document.getElementById('dc-root');if(!dc||!window.Element||!dc.animate)return;
-    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;
+    a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;try{document.documentElement.classList.add('wf-pushing');}catch(x){}   /* (Oct 5) the tour's bubble and glow leave as the next screen rises (they drew over the rising panel) */
     var navigate=function(){if(gone)return;gone=true;   /* the frame took the one-shot state (the tapped item) while it loaded: the real page gets it back */
       try{if(snap)sessionStorage.setItem('wf-pu-state',JSON.stringify(snap));}catch(x){}   /* read once by the real page (fit.js top), where the frame cannot reach it */
       try{sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}   /* the real page holds this last picture until it has drawn itself */
@@ -814,7 +814,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
         var poll=function(){try{var d=f.contentDocument;if(!loaded&&d&&d.readyState==='complete'){var r=d.getElementById('dc-root');if(r&&r.firstElementChild){loaded=true;fade();}}}catch(x){}
           if(!rose&&(loaded?Date.now()-T0>350:Date.now()-T0>700))rise();if(Date.now()-T0>2500&&!loaded){rise();return;}if(!gone)setTimeout(poll,70);};
         f.src=href;setTimeout(poll,100);}catch(x){navigate();}},0);},true);
-  addEventListener('pageshow',function(){try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});document.querySelectorAll('[data-wf-pushup]').forEach(function(n){n.remove();});document.documentElement.style.background='';document.body.style.background='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
+  addEventListener('pageshow',function(){try{document.documentElement.classList.remove('wf-pushing');}catch(x){}try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});document.querySelectorAll('[data-wf-pushup]').forEach(function(n){n.remove();});document.documentElement.style.background='';document.body.style.background='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
   // (Oct 4, 21:50) The push-up arrival: the last picture of the risen screen stays over the real page until it has drawn itself
   // (the live page, held invisible above it, waits for its plain loading surface to go), then appears in a short 0.2s dissolve between two identical pictures, so no blank flash.
   // (Oct 4, 22:52) the transition's own backdrop takes the app's surface colour, so the area under the clock never shows black while one screen hands over to the next
