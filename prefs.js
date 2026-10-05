@@ -208,7 +208,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
     // Big KPI numbers across the app (forces, resolution summary, profiles): dark grey, one size
     // Rows of 2 or 3 KPIs go as big as their numbers allow: each row sets --k from window.__wfKpiPx (below)
-    '[data-wf-kpicard]{padding:8px!important}' + '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
+    '[data-wf-kpicard]{padding:8px!important}' + '.wf-note.wf-simhid{display:none!important}.wf-simstar{position:absolute;top:4px;right:8px;z-index:2;font-size:17px;line-height:22px;font-weight:600;color:#6E6E73;pointer-events:none}.wf-note.wf-simfoot{display:block!important;align-self:flex-start;flex-shrink:0;margin-left:16px;margin-right:16px;font-size:13px;line-height:18px;color:#6E6E73;text-align:left;writing-mode:horizontal-tb;transform:none}' + '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
     // Qualifier band (what an item is: ignition detection, active fire, fire station): not a button. Full width, square
     // corners, the map marker's colour, the marker itself before the label. One definition for the whole app.
     /* Status tags in lists: one width for every tag, set by the longest expected label (e.g. Building line), text centred; a longer translation still grows it */
@@ -536,6 +536,34 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     sh.textContent = out.join('');
   }
   var kidN = 0;
+  /* (Oct 5, 03:07) Simulated values, one word and one sign app-wide: no "Estimate" or "Simulation" label next to a value (and
+     never written vertically). A widget holding simulated values gets a * in its top right corner; a screen with any of them
+     ends with "* Simulation" on the left, 56px under the last content and 8px from the bottom. Groups marked as a whole
+     (a heading's note) mark each of their cards. Done here, on every screen, from the notes the screens already write. */
+  var SIMW = /^(estimate|estimated|estimates|simulation|simulated|estimativa|estimado|simulação|simulado|推定|シミュレーション)\.?$/i;
+  function simCard(el) { var e = el, n = 0; while (e && e !== document.body && n < 8) { if (e.hasAttribute && (e.hasAttribute('data-wf-kpicard') || e.hasAttribute('data-wf-card'))) return e; var cs = getComputedStyle(e); if ((parseFloat(cs.borderTopLeftRadius) || 0) >= 12 && cs.backgroundColor && !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) && e.offsetWidth < window.innerWidth) return e; e = e.parentElement; n++; } return null; }
+  function star(card) { if (!card || card.querySelector(':scope > .wf-simstar')) return; if (getComputedStyle(card).position === 'static') card.style.position = 'relative'; var t = document.createElement('span'); t.className = 'wf-simstar'; t.setAttribute('aria-label', document.documentElement.lang === 'pt' || window.__wfLang === 'pt' ? 'Simulação' : 'Simulation'); t.textContent = '*'; card.appendChild(t); }
+  function scroller(el) { var e = el && el.parentElement; while (e && e !== document.body) { var cs = getComputedStyle(e); if (/auto|scroll/.test(cs.overflowY) && !e.closest('[data-wf-maproot]')) return e; e = e.parentElement; } return null; }
+  function simMark() {
+    var N = document.querySelectorAll('.wf-note'), first = null;
+    for (var i = 0; i < N.length; i++) { var nt = N[i]; if (nt.classList.contains('wf-simfoot')) continue; var tx = (nt.textContent || '').trim(); if (!SIMW.test(tx)) continue;
+      if (!nt.classList.contains('wf-simhid')) nt.classList.add('wf-simhid');
+      var vis = nt.offsetParent !== null || getComputedStyle(nt).display !== 'none';
+      var card = nt.closest('[data-wf-kpicard]') || simCard(nt.parentElement);
+      if (card && !card.contains(nt.closest('section') || document.body)) { star(card); first = first || card; continue; }
+      // a heading's note: every card of its group
+      var grp = nt.closest('section') || nt.parentElement && nt.parentElement.parentElement; if (!grp) continue;
+      var cs2 = grp.querySelectorAll('[data-wf-kpicard]'); for (var j = 0; j < cs2.length; j++) { star(cs2[j]); first = first || cs2[j]; } }
+    // the screen's footnote, once per scroller that holds a starred widget
+    var S = document.querySelectorAll('.wf-simstar'), seen = [];
+    for (var k = 0; k < S.length; k++) { if (!S[k].offsetParent) continue; var sc = scroller(S[k]); if (!sc || seen.indexOf(sc) >= 0) continue; seen.push(sc);
+      var f = sc.querySelector(':scope > .wf-simfoot'); if (!f) { f = document.createElement('span'); f.className = 'wf-note wf-simfoot'; f.textContent = window.__wfLang === 'pt' ? '* Simulação' : '* Simulation'; sc.appendChild(f); }
+      else if (f !== sc.lastElementChild) sc.appendChild(f);
+      sc.setAttribute('data-wf-nopb', '1'); sc.style.setProperty('padding-bottom', '8px', 'important');
+      // 56px between the last content and the footnote, whatever gap the screen's own layout adds
+      var prev = f.previousElementSibling; while (prev && (!prev.offsetHeight || getComputedStyle(prev).position === 'absolute')) prev = prev.previousElementSibling;
+      if (prev) { f.style.marginTop = '0px'; var gap = f.getBoundingClientRect().top - prev.getBoundingClientRect().bottom, z = sc.getBoundingClientRect().width / (sc.offsetWidth || 1); f.style.marginTop = Math.round(56 - gap / (z || 1)) + 'px'; } }
+  }
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
   var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;
   function noStickyHover() {
@@ -548,7 +576,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
   /* Light on purpose: maps change the page on every frame while panning, so only changes to cards or new style sheets
      are acted on, at most every 150 ms (the map itself is never measured) */
-  var kT = 0, kMo = null, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); fitKpi(); if (kMo) kMo.takeRecords(); }, 150); };   /* our own changes are not news */
+  var kT = 0, kMo = null, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); try { simMark(); } catch (e) {} fitKpi(); if (kMo) kMo.takeRecords(); }, 150); };   /* our own changes are not news */
   var kHit = function (ms) { for (var i = 0; i < ms.length; i++) { var m = ms[i], t = m.target && m.target.nodeType === 1 ? m.target : m.target && m.target.parentElement;
       if (!t) continue; if (t.closest && t.closest('[data-wf-kpicard]')) return true;
       for (var j = 0; j < m.addedNodes.length; j++) { var n = m.addedNodes[j]; if (n.nodeType !== 1) continue; if (n.tagName === 'STYLE' || n.tagName === 'LINK' || (n.querySelector && n.querySelector('[data-wf-kpicard]')) || (n.hasAttribute && n.hasAttribute('data-wf-kpicard'))) return true; } }
