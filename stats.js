@@ -46,9 +46,11 @@
   }
   // a tooltip target: data-tip "bold line|second line"; data-cx/data-cy anchor it (chart units) and data-dot marks a point on a line
   function tipA(t1, t2, cx, cy, dot) { return ' data-tip="' + esc(t1 + '|' + (t2 || '')) + '"' + (cx != null ? ' data-cx="' + cx.toFixed(1) + '" data-cy="' + cy.toFixed(1) + '"' : '') + (dot ? ' data-dot="1"' : ''); }
+  // a line's points sit half a line width in from both sides, so its round ends show whole (not cut by the chart's edge)
+  function lx(i, n) { return n > 1 ? LW / 2 + i * (W - LW) / (n - 1) : LW / 2; }
   function slots(n, h, f) {   // one invisible full-height slot per point, easy to tap; shaded while its tooltip shows
-    var bot = h - 20, st = n > 1 ? W / (n - 1) : W, o = '';
-    for (var i = 0; i < n; i++) { var x = n > 1 ? i * st : 0, a = Math.max(0, x - st / 2), b = Math.min(W, x + st / 2), q = f(i, x); o += '<rect class="tslot" x="' + a.toFixed(1) + '" y="0" width="' + (b - a).toFixed(1) + '" height="' + bot + '"' + q + '/>'; }
+    var bot = h - 20, st = n > 1 ? (W - LW) / (n - 1) : W, o = '';
+    for (var i = 0; i < n; i++) { var x = lx(i, n), a = Math.max(0, x - st / 2), b = Math.min(W, x + st / 2), q = f(i, x); o += '<rect class="tslot" x="' + a.toFixed(1) + '" y="0" width="' + (b - a).toFixed(1) + '" height="' + bot + '"' + q + '/>'; }
     return o;
   }
   function series(R, n, base, amp, trend) { var o = [], v; for (var i = 0; i < n; i++) { v = base * (1 + trend * (i / n - 0.5)) + (R() - 0.5) * amp * base; if (R() > 0.9) v *= 1.8; o.push(Math.max(0, v)); } return o; }
@@ -64,8 +66,8 @@
     return o + (maxLbl ? '<text x="0" y="11" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + esc(maxLbl) + '</text>' : '');
   }
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
-  function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = vals.length > 1 ? i * W / (vals.length - 1) : 0, y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
-  var LW = 8;   // line charts' stroke (Oct 5, 19:49, trying 8px like the bars; was 2px, vehicles 3px)
+  function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = lx(i, vals.length), y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
+  var LW = 4;   // line charts' stroke (Oct 5, 19:51: 4px; 8px was tried; first 2px, vehicles 3px)
   var AG = 0;   // line charts: no fill under the line; each line casts a soft shadow in its own colour (the single line: the primary), centred on it (0 offset), 9px blur
   function lineShadow(p, h, id, col, blur) {   // only under its line (clipped to the area below it), at most 80% strong, 7.2px blur (20% less, 5.76px, when a chart has several lines)
     var bot = h - 20;
