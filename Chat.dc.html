@@ -570,7 +570,7 @@ class Component extends DCLogic {
   }
   wfCall(c, anchor) { const C = window.__wfChat, F = window.__wfCamFeed; if (!C || !F || !c) return;
     // (Oct 4) a team call: the same floating panel, divided into one rectangle per coordinator of the stations sent (and the air lead)
-    if (!c.police) { const L = (en, pt) => C.L(en, pt), P = C.active ? C.active(c) : (c.people || []); if (P.length < 2) return;
+    if (!c.police) { const L = (en, pt) => C.L(en, pt), P = c.kind === 'dm' ? (c.people || []) : (C.active ? C.active(c) : (c.people || [])); if (P.length < 2) return;
       F.open({ anchor, title: 'Video call', label: L('Video call', 'Videochamada'), who: L(P.length + ' members', P.length + ' membros'),
         call: { id: c.key, grid: P.map((p) => ({ name: p.name, code: p.code, photo: p.photo || (C.photo ? C.photo(c, p.name) : '') })), calling: L('Calling the team…', 'A chamar a equipa…'), hangup: L('End call', 'Terminar chamada'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Video call', 'Em direto. Videochamada') } }); return; }
     const L = (en, pt) => C.L(en, pt), p = (c.people || [])[0] || {}, face = C.callFace ? C.callFace(c.key) : 'police-a';
@@ -920,10 +920,11 @@ class Component extends DCLogic {
       // (Oct 3, 22:51) pull a coordinator's live helmet camera from the chat, like the fire screen's camera button: from another
       // station lead than the first (the second in the chat when there is one); only for fires with crews out
       camD: (() => { const P = C.active ? C.active(c) : (c.people || []); return c.kind !== 'dm' && c.stage >= 2 && c.stage < 7 && !c.dismissed && P.length ? 'flex' : 'none'; })(),
-      callD: (() => { if (!c.police) { const P = C.active ? C.active(c) : (c.people || []); return c.kind !== 'dm' && c.stage >= 2 && c.stage < 7 && !c.dismissed && !c.closed && P.length > 1 ? 'flex' : 'none'; }
+      callD: (() => { if (c.kind === 'dm') return (c.people || []).length > 1 ? 'flex' : 'none';   /* (Oct 5, 07:07) a group chat (e.g. a station's command team): the same green call, a group call */
+        if (!c.police) { const P = C.active ? C.active(c) : (c.people || []); return c.kind !== 'dm' && c.stage >= 2 && c.stage < 7 && !c.dismissed && !c.closed && P.length > 1 ? 'flex' : 'none'; }
         try { if (sessionStorage.getItem('wf-call-auto') === c.key && !this._autoCall) { this._autoCall = 1; sessionStorage.removeItem('wf-call-auto'); this.wfAutoCall(c.key); } } catch (e) {}
         return 'flex'; })(),
-      callAria: c.police ? t.call : L('Video call with the team', 'Videochamada com a equipa'),
+      callAria: c.police ? t.call : c.kind === 'dm' ? L('Group call', 'Chamada de grupo') : L('Video call with the team', 'Videochamada com a equipa'),
       callGo: (e) => this.wfCall(c, e && e.currentTarget),
       camGo: (e) => { const P = C.active ? C.active(c) : (c.people || []), p = P[1] || P[0], R = C.leadRole ? C.leadRole(c) : null;
         if (window.__wfCamFeed && p) window.__wfCamFeed.open({ anchor: e && e.currentTarget, who: p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org, label: L('Live. Helmet camera', 'Em direto. Câmara de capacete') }); },
