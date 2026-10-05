@@ -213,7 +213,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Your preferences', 'As suas preferências'],
       b: ['Your profile, theme, text size and language.', 'O seu perfil, tema, tamanho do texto e língua.'] },
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
-      t: ['Pick a candidate on the map', 'Escolha um candidato no mapa'],
+      t: ['Let’s start by selecting a candidate on the map', 'Comecemos por selecionar um candidato no mapa'],
       b: ['We marked the most likely one. Tap it.', 'Marcámos o mais provável. Toque nele.'] },
     { page: 'Main.dc.html', mode: 'tap', find: function () { return q('[data-wf-pop] a[href="Alert.dc.html"]'); }, also: '[data-wf-pop] a[href="Alert.dc.html"]',
       t: ['Open the demo ignition', 'Abra a ignição de demonstração'],
