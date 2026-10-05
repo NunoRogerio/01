@@ -1204,3 +1204,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Text sizes (Oct 5):** 16px replaces 15px everywhere (Title XS, annotation, label, tags, tooltips, tour card, statistics); the allowed sizes are now 26, 17, 16 and 13. The Assignments wording replaces "chats" in the list, its subtitle and the labels; Portuguese is Atribuições.
 
 - Region card outlines: the map's built-in outlines only cover the western US. Where the map draws none, the card uses our own simplified outline (mainland Portugal for now); other countries fall back to an ellipse until an outline is added.
+- **Statistics, Portugal (Oct 5):** with Portugal selected the statistics use Portuguese fire and fire station names and hectares (ha) instead of acres (ac); still simulated, marked with the asterisk.
