@@ -181,7 +181,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <span style="display: {{rowsD}}; margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Details</span>
         <ul style="display: {{rowsD}}; flex-direction: column; margin: 0 16px; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <sc-for list="{{rows}}" as="r" hint-placeholder-count="2">
-            <li style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 16px; box-sizing: border-box">
+            <!-- (Oct 5, 07:00) 32px between the details, a full-width line halfway (16px either side) -->
+            <li data-wf-keepsp="1" style="display: flex; align-items: center; gap: 8px; padding: 16px; box-sizing: border-box; border-top: {{r.bd}}">
               <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
                 <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{r.k}}</span>
                 <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
@@ -451,7 +452,7 @@ class Component extends DCLogic {
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
         ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
-      rows, rowsD: rows.length ? 'flex' : 'none', loc: lc, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
+      rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length ? 'flex' : 'none', loc: lc, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'
     };
   }
