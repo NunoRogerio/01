@@ -50,8 +50,10 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
   <div data-wf-page="1" style="display: flex; flex-direction: column; gap: 56px; flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 32px 16px 48px">
 
     <!-- Title M -->
-    <div data-wf-about-ttl="1" style="display: flex; flex-direction: column; gap: 32px; flex-shrink: 0">
+    <!-- (Oct 5) title + description, as on the menu's About panel; 40px from the description to the first group -->
+    <div data-wf-about-ttl="1" style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-bottom: -16px">
       <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; text-align: left">{{tx.title}}</h1>
+      <p style="margin: 0; font-size: 17px; line-height: 22px; color: #6E6E73; text-align: left">{{tx.desc}}</p>
     </div>
 
     <!-- Part 2, The goal: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
@@ -160,6 +162,7 @@ class Component extends DCLogic {
           '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命や家、森を奪っています。ただ座って見ているだけでいいのか。答えは「いいえ」でした。1年にわたる対話、シナリオ、既存ツールの調査を経て、UXの専門家として、見つけたコンセプトから2人でインターフェースを形にしました。'),
         by: L('Project by', 'Projeto de', 'プロジェクト'),
         usa: L('USA', 'EUA', '米国'), pt: L('Portugal', 'Portugal', 'ポルトガル'),
+        desc: L('How the app works, where it stands and how it started.', 'Como a app funciona, em que fase está e como começou.', 'アプリの仕組み、現在の段階、そして始まり。'),
         idea: L('Goal', 'Objetivo', '目標'),
         goal: L('In a wildfire, every first second counts. Our question is:',
           'Num incêndio rural, cada primeiro segundo conta. A nossa pergunta é:',
