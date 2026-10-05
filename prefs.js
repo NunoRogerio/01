@@ -221,6 +221,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-qual svg{flex-shrink:0;scale:1.2}' +
     '.wf-qual.hd{overflow:visible!important;position:relative;z-index:8;min-height:56px;padding:0 8px 0 16px!important;border-radius:26px!important;transition:padding-left .35s cubic-bezier(.2,.8,.2,1)}.wf-qual.hd.open{padding-left:8px!important}.wf-qual.hd [role=status]:not(.wf-hst),.wf-qual.hd .qtag,.wf-hst-fs .qtag{min-height:40px!important;padding:8px 16px!important;border-radius:20px!important;box-sizing:border-box}:root{--wf-band-solid:#E3E3E8}' +   /* detail headers: the kind band as tall as the segmented control (52px), its tag as tall as the control's thumb */
     // On a card the band is the top row, edge to edge, with the round X at its end
+    /* (Oct 5, 10:08) a header with only its stage tag (the fire page, the candidate page): no band, no dot, no kind */
+    '.wf-qual.hd.solo,html .wf-qual.hd.solo{background:transparent!important;padding:0!important;min-height:0!important;border-radius:0!important}.wf-qual.solo>svg:first-child,.wf-qual.solo>span:first-of-type{display:none!important}.wf-qual.solo .wf-hst{margin-left:0!important}' +
     '.wf-qual.top{min-height:56px;padding:8px 8px 8px 16px;border-radius:14px 14px 0 0}.wf-qual.top>span{flex-grow:1;min-width:0;overflow:hidden;text-overflow:ellipsis}' +
     '.wf-like{color:#3A3A3C!important;font-size:150px!important;line-height:.9!important;font-weight:700!important;letter-spacing:-.03em}' +
     // The XS version of the likelihood KPI (map tooltip panels): same look, sized to lead the card without growing it

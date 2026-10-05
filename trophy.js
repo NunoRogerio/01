@@ -36,15 +36,17 @@
     '<circle cx="60" cy="60" r="56" fill="#1C1C1E"/><circle cx="60" cy="60" r="48" fill="none" stroke="#E5FF00" stroke-width="4"/><path d="m60 26 9.9 20.1 22.2 3.2-16 15.7 3.8 22L60 76.4 40.1 87l3.8-22-16-15.7 22.2-3.2Z" fill="#E5FF00"/><path d="M14 64c12-4 20-2 26 6M106 64c-12-4-20-2-26 6" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>'
   ].map(function (g) { return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">' + g + '</svg>'); });
   var HELI = 'M3 7h18M12 7v3 M6 14a6 4 0 0 1 6-4h3.5a3.5 3.5 0 0 1 3.5 3.5V15H6Z M19 13.5l3-1.5 M9 18h8';
-  var CSS =
-    ':host{display:block}' +
-    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:4px;min-height:320px;touch-action:pan-y;padding:24px 16px 24px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
+  // (Oct 5, 10:03) the photo carousel's own look, shared by the resolution card and the evidence photos (wf-slides)
+  var SLCSS =
     '.sl{position:absolute;inset:0;z-index:-2;overflow:hidden}.tk{display:flex;height:100%;will-change:transform}.tk.go{transition:transform .9s cubic-bezier(.4,0,.2,1)}' +
     '.ph{flex:0 0 auto;height:100%;background-color:#1E2B22;background-size:cover;background-position:center 22%}' +
+    '.dots{position:absolute;left:0;right:0;top:12px;display:flex;justify-content:center;align-items:center;gap:8px;pointer-events:none}.dots i{display:block;width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.5);transition:width .4s cubic-bezier(.2,.8,.2,1),background-color .4s ease}.dots i.on{width:20px;background:#FFFFFF}';
+  var CSS = SLCSS +
+    ':host{display:block}' +
+    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:4px;min-height:320px;touch-action:pan-y;padding:24px 16px 24px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
     '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.40) 0%,rgba(0,0,0,.06) 28%,rgba(0,0,0,.30) 46%,rgba(0,0,0,.74) 66%,rgba(0,0,0,.88) 100%)}' +
     /* (Oct 5, 03:34) the pagination as Apple draws it now: plain white shapes, no shadow; the pages not shown are 8px circles, the one
        shown a 20px line with fully rounded ends; it stretches and shrinks as the pictures change */
-    '.dots{position:absolute;left:0;right:0;top:12px;display:flex;justify-content:center;align-items:center;gap:8px;pointer-events:none}.dots i{display:block;width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.5);transition:width .4s cubic-bezier(.2,.8,.2,1),background-color .4s ease}.dots i.on{width:20px;background:#FFFFFF}' +
     '.bd{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin-bottom:auto}' +
     '.bd img{display:block;box-sizing:border-box;width:min(60px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:60px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
     '.kicker{font-size:15px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
@@ -96,9 +98,10 @@
     bd.hidden = !bd.innerHTML;
   };
   // the photos slide to the left on their own, 4 s each, in a loop (the first is repeated after the last, then the track jumps back unseen)
-  Trophy.prototype.slides = function (S) {
-    var r = this._root, tk = r.querySelector('.tk'), dots = r.querySelector('.dots'), self = this, N = S.length, T = N > 1 ? S.concat([S[0]]) : S;
-    clearInterval(this._iv); this._i = 0;
+  // the carousel's behaviour, one definition for every carousel: self keeps its state, r is its shadow root, sw the element swiped
+  function slideshow(self, r, S, sw) {
+    var tk = r.querySelector('.tk'), dots = r.querySelector('.dots'), N = S.length, T = N > 1 ? S.concat([S[0]]) : S;
+    clearInterval(self._iv); self._i = 0;
     tk.className = 'tk'; tk.style.width = (T.length * 100) + '%'; tk.style.transform = 'none';
     tk.innerHTML = T.map(function (x) { return '<span class="ph" style="width:' + (100 / T.length) + '%;background-image:url(' + x[0] + ')"></span>'; }).join('');
     dots.innerHTML = N > 1 ? S.map(function (x, i) { return '<i' + (i ? '' : ' class="on"') + '></i>'; }).join('') : ''; dots.hidden = N < 2;
@@ -113,14 +116,30 @@
     var auto = function () { clearInterval(self._iv); self._iv = setInterval(function () { if (!self.isConnected) { clearInterval(self._iv); return; } next(); }, 4000); };
     auto();
     // (Oct 5, 03:34) a swipe left or right cycles the pictures (the card's tap still opens the summary; a swipe never does)
-    var card = r.querySelector('.card');
+    var card = sw;
     if (card && !card.__wfSw) { card.__wfSw = 1; var x0 = null, y0 = 0, sw = 0;
       card.addEventListener('pointerdown', function (e) { x0 = e.clientX; y0 = e.clientY; }, { passive: true });
       card.addEventListener('pointerup', function (e) { if (x0 == null) return; var dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
         if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) { sw = Date.now(); try { if (navigator.vibrate) navigator.vibrate(6); } catch (x) {} if (dx < 0) self._next(); else self._prev(); } }, { passive: true });
       card.addEventListener('pointercancel', function () { x0 = null; }, { passive: true });
       card.addEventListener('click', function (e) { if (Date.now() - sw < 400) { e.stopPropagation(); e.preventDefault(); } }, true); }
-    this._next = function () { next(); auto(); }; this._prev = function () { prev(); auto(); };
-  };
+    self._next = function () { next(); auto(); }; self._prev = function () { prev(); auto(); };
+  }
+  Trophy.prototype.slides = function (S) { slideshow(this, this._root, S, this._root.querySelector('.card')); };
+  // <wf-slides photos='[["src","credit"],…]'>: the same carousel on its own (Oct 5, 10:03: the evidence photos from cars and
+  // phones), up to 5 pictures, sliding by themselves every 4 s, the dots on top, a swipe cycles them
+  function Slides() { return Reflect.construct(HTMLElement, [], Slides); }
+  Slides.prototype = Object.create(HTMLElement.prototype); Slides.prototype.constructor = Slides;
+  Object.defineProperty(Slides, 'observedAttributes', { get: function () { return ['photos']; } });
+  Slides.prototype.connectedCallback = function () {
+    if (!this._root) { this._root = this.attachShadow({ mode: 'open' });
+      this._root.innerHTML = '<style>' + SLCSS + ':host{display:block;position:relative}.box{position:absolute;inset:0;isolation:isolate;overflow:hidden;border-radius:inherit;touch-action:pan-y;background:#1E2B22}.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%)}</style><div class="box"><div class="sl"><div class="tk"></div></div><span class="sh" aria-hidden="true"></span><div class="dots" aria-hidden="true"></div></div>'; }
+    this._k = ''; this.fill(); };
+  Slides.prototype.disconnectedCallback = function () { clearInterval(this._iv); this._iv = 0; this._k = ''; };
+  Slides.prototype.attributeChangedCallback = function () { if (this._root) this.fill(); };
+  Slides.prototype.fill = function () { var P = []; try { P = JSON.parse(this.getAttribute('photos') || '[]') || []; } catch (e) {}
+    P = P.slice(0, 5).map(function (x) { return typeof x === 'string' ? [x, ''] : x; }); var k = JSON.stringify(P); if (k === this._k) return; this._k = k;
+    slideshow(this, this._root, P, this._root.querySelector('.box')); };
+  if (!customElements.get('wf-slides')) customElements.define('wf-slides', Slides);
   customElements.define('wf-trophy', Trophy);
 })();

@@ -16,10 +16,11 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=195"></script>
+<script src="prefs.js?v=196"></script>
 <script src="i18n.js?v=166"></script>
 <script src="live.js?v=43"></script>
 <script src="chat.js?v=71"></script>
+<script src="trophy.js?v=25"></script>
 <script src="tour.js?v=100"></script>
 <script src="feedcam.js?v=21"></script>
 <script src="menu.js?v=16"></script>
@@ -262,7 +263,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Header actions, as on the main screen: this incident's chat, notifications, your profile (always at the top; the chat is an option, not a foot button) -->
       <div data-wf-keepsp="1" style="grid-column: 3; grid-row: 1; display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; margin-top: 8px"><a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -4px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a><button type="button" class="opt" onClick="{{hx.openNt}}" aria-haspopup="dialog" aria-label="{{hx.ntAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{hx.ntD}}; position: absolute; top: -4px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 15px; font-weight: 600; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ntN}}</span></button><button type="button" class="opt" data-wf-burger="1" onClick="{{hx.openPf}}" aria-haspopup="true" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button></div>
       </div>
-      <span class="wf-qual hd" style="margin-top: 16px; overflow: visible"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="overflow: visible"><path d="M7 2.6a4.4 4.4 0 1 1 0 8.8a4.4 4.4 0 1 1 0-8.8Z" style="display: {{mo.triD}}; fill: var(--wf-y, #E5FF00); fill-opacity: 0.8" fill="#E5FF00" stroke="#3A3A3C" stroke-width="1.8"></path><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" style="display: {{mo.dotD}}" fill="#E8590C"></path><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="translate(3.9 3.6) scale(0.27) rotate(-25 12 12)" style="display: {{mo.nightD}}" fill="#1C1C1E"></path></svg><span style="min-width: 0; overflow: hidden; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2">{{mo.kind}}</span><button type="button" class="qtag mbtn" onClick="{{mo.open}}" aria-haspopup="dialog" aria-label="{{mo.aria}}" style="position: relative; box-shadow: {{mo.ring}}; --wf-pr: 999px; display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; text-align: center; gap: 4px; margin-left: auto; box-sizing: border-box; border: 0; background: {{mo.bg}}; color: {{mo.fg}}; font: inherit; font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: background-color .4s ease, color .4s ease"><span class="wf-pulse" aria-hidden="true" style="display: {{mo.pulseD}}"></span>{{mo.tag}}</button></span>
+      <!-- (Oct 5, 10:08) as on the fire page: only the stage tag, Ignition candidate and how long since detection (no Unconfirmed button; declaring is the team's call in the chat) -->
+      <span class="wf-qual hd solo" style="margin-top: 16px; overflow: visible"><span aria-hidden="true"></span><span class="wf-hst" role="status" aria-label="{{mo.stAria}}" style="position: relative; display: flex; flex: 0 0 auto; align-items: center"><span class="qtag wf-stg" style="position: relative; z-index: 20; display: inline-flex; flex-shrink: 0; align-items: center; gap: 8px; min-height: 28px; padding: 4px 8px 4px 32px; box-sizing: border-box; border-radius: 14px; background: {{mo.stBg}}; color: {{mo.stC}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{mo.stIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{mo.kind}}</span><span style="display: {{mo.stTD}}; flex-shrink: 0; margin-left: auto; font-weight: 400; font-variant-numeric: tabular-nums">{{mo.stT}}</span></span></span></span>
     </div>
 
     <div class="wf-page {{mo.pageCls}}" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 48px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
@@ -397,7 +399,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </sc-for>
         </div>
       </figure>
-        <!-- One container per source: the satellite pass, then any drone confirmation, citizen report or 911 call -->
+        <!-- One container per source: the satellite pass, the drone scan, then any forest camera, car cameras, phone cameras or 911 call -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin: {{ig.evMt}} 16px 0">
           <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
             <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); cursor: {{ev.cur}}">
@@ -411,6 +413,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2">
                 <li style="padding: 16px 16px; border-top: 0; font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</li>
               </sc-for>
+              <sc-if value="{{ev.hasSl}}" hint-placeholder-val="{{ false }}"><li style="padding: 0 16px 16px"><wf-slides photos="{{ev.slides}}" aria-label="{{ev.title}}" style="height: 202px; border-radius: 16px; overflow: hidden"></wf-slides></li></sc-if>
               <li class="wf-note" style="display: {{ev.noteD}}; padding: 0 16px 16px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ev.note}}</li>
             </ul>
           </sc-for>
@@ -1084,7 +1087,7 @@ class Component extends DCLogic {
           const u = (d) => 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_CorrectedReflectance_TrueColor/default/' + d + '/GoogleMapsCompatible_Level9/' + z + '/' + Math.floor(yf) + '/' + Math.floor(xf) + '.jpg';
           return { src: pickSrc(u(dt), u(new Date(Date.parse(dt) - 86400000).toISOString().slice(0, 10))), src2: u(new Date(Date.parse(dt) - 86400000).toISOString().slice(0, 10)), rx: +((xf % 1) * 100).toFixed(1), ry: +((yf % 1) * 100).toFixed(1) }; })();
         const ERR = () => null;
-        const TH = { err: null, imgSt: 'inset: 0; width: 100%; height: 100%; object-fit: cover', padR: '16px', minH: 'auto', thD: 'none', thImg: false, thVid: false, thSmoke: false, ringD: 'none', src: '', thAria: '', cur: 'default', open: null };
+        const TH = { err: null, imgSt: 'inset: 0; width: 100%; height: 100%; object-fit: cover', padR: '16px', minH: 'auto', thD: 'none', thImg: false, thVid: false, thSmoke: false, ringD: 'none', src: '', thAria: '', cur: 'default', open: null, slides: '' };
         const th = (o) => Object.assign({}, TH, { padR: '80px', minH: '72px', thD: 'block', cur: 'pointer' }, o);
         const sat = { ...(isLive && gibs ? th({ thImg: true, src: gibs.src, err: ERR(gibs.src2), ringD: 'block', imgSt: 'left: ' + (28 - gibs.rx * 2.24).toFixed(1) + 'px; top: ' + (28 - gibs.ry * 2.24).toFixed(1) + 'px; width: 224px; height: 224px; max-width: none',   /* zoomed to the detection, centred */ thAria: 'Satellite image of the area. Open', open: (e) => this.wfEv({ image: { src: gibs.src, src2: gibs.src2, rx: gibs.rx, ry: gibs.ry, ring: true, alt: 'Satellite image of the area' }, label: 'Satellite image', who: 'True colour, ' + dt + '. NASA GIBS.', anchor: e && e.currentTarget }) }) : TH),
           title: isLive ? 'Satellite: ' + String(cur.verdict || 'heat anomaly').toLowerCase() : cur.verdict,
@@ -1094,12 +1097,27 @@ class Component extends DCLogic {
           { const vid = droneStrong ? 'assets/dronefire.mp4?v=1' : 'assets/dronecalm.mp4?v=1', lab = 'Live. Drone ' + (cur.drone || 'D-5');
             out.push({ ...th({ thVid: true, src: vid, thAria: 'Drone feed. Open', open: (e) => this.wfEv({ src: vid, cross: true, label: lab, who: 'Sent automatically from the nearest station. Simulation.', anchor: e && e.currentTarget }) }), title: 'Drone scan',
               rows: [row('Sent automatically from the nearest station'), droneStrong ? row('Smoke and a hot spot on the thermal feed') : row('A warm patch on the thermal feed. No smoke', false)], noteD: 'block', note: sim }); }
-          if (h % 5 < 2) out.push({ ...th({ thImg: true, thSmoke: true, src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', thAria: 'Shared photo. Open', open: (e) => this.wfEv({ image: { src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', smoke: true, alt: 'Photo shared by a citizen' }, label: 'Citizen photo', who: 'Shared by a citizen. Simulation.', anchor: e && e.currentTarget }) }), title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
+          // (Oct 5, 10:03) the monitoring dome: anything that takes a picture near the point reports back, when its owner has turned
+          // it on. A forest lookout camera; cars passing on nearby roads (their cameras flag images that look like a smoke plume);
+          // phones (a picture or video taken with the camera is checked on the phone for smoke or fire, and sent only when plausible).
+          // Anonymized: no sender details, faces and plates blurred. All simulated (marked so).
+          const UX = (id) => 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop';
+          const anon = 'Anonymized. Only from owners who turned it on. Simulation.';
+          if ((h >>> 5) % 3 < 2) { const cam = UX('photo-1602980085421-578025fd903d');
+            out.push({ ...th({ thImg: true, src: cam, thAria: 'Forest camera image. Open', open: (e) => this.wfEv({ image: { src: cam, alt: 'Forest camera image' }, label: 'Forest camera', who: 'Lookout camera. Simulation.', anchor: e && e.currentTarget }) }), title: 'Forest camera',
+              rows: [row('Lookout camera ' + (4 + h % 9) + ' km away, turned to the point'), droneStrong ? row('Smoke rising above the trees') : row('No smoke seen', false)], noteD: 'block', note: sim }); }
+          if (droneStrong && (h >>> 7) % 5 < 3) { const n = 3 + h % 12, k = Math.max(2, Math.ceil(n * 0.6));
+            const P = ['photo-1507680465142-ef2223e23308', 'photo-1632301104173-faab428f1a95', 'photo-1602980068989-cb21869ab2c7', 'photo-1602980085374-7e743fff3cc6', 'photo-1602980069131-51eca8b9557d', 'photo-1602980045636-77b52b335ff0'];
+            out.push({ ...TH, title: 'Car cameras', rows: [row(n + ' pictures from ' + k + ' cars passing nearby'), row('A smoke plume seen from the road')], slides: JSON.stringify(P.slice(h % 2, h % 2 + Math.min(5, n)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
+          if (droneStrong && (h >>> 9) % 5 < 3) { const n = 2 + h % 9, v = (h >>> 2) % 3;
+            const P = ['photo-1634224548788-58de1fb48e2b', 'photo-1503653525408-82f00ad1a5d4', 'photo-1572635148958-4cc9a48e5fcd', 'photo-1602980045360-d94be60e4775', 'photo-1603661885651-c909f20987a5'];
+            out.push({ ...TH, title: 'Phone cameras', rows: [row(n + ' photos' + (v ? ' and ' + v + (v === 1 ? ' video' : ' videos') : '') + ' with smoke, taken nearby')], slides: JSON.stringify(P.slice(0, Math.min(5, n + v)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
           if ((h >>> 3) % 5 < 2) out.push({ ...TH, title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
         }
         const X = s.exv || null;
         const ex = { hidden: X ? 'false' : 'true', op: X ? 1 : 0, pe: X ? 'auto' : 'none', sc: X ? 1 : 0.94, h: X && X.kind === 'sat' ? 358 : 240, img: !!X && X.kind !== 'vid', vid: !!X && X.kind === 'vid', smoke: !!X && X.kind === 'photo',
           src: X ? X.src : '', alt: X ? X.cap : '', cap: X ? X.cap : '', err: X && X.src2 ? ERR(X.src2) : null, ringD: X && X.kind === 'sat' ? 'block' : 'none', rx: X ? X.rx : 50, ry: X ? X.ry : 50, close: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ exv: null }); } };
+        out.forEach((x) => { x.hasSl = !!x.slides; });
         return { ex, evid: out, evCount: out.length === 1 ? '1 source' : out.length + ' sources' };
       })(),
       ringOffset: (213.6 * (1 - cur.conf / 100)).toFixed(1), ringC: (window.__wfConfTxt ? window.__wfConfTxt(cur.conf) : '#0A66CC'), ringLabel: cur.conf + ' percent likelihood',
@@ -1127,7 +1145,12 @@ class Component extends DCLogic {
       trackBg: droneOn ? '#186B2D' : 'rgba(120,120,128,0.16)', knobX: droneOn ? '20px' : '0px',
       openDz: () => this.setState({ dz: true, dd: false }), closeDz: () => this.setState({ dz: false }),
       mo: (() => { const M = !!s.morph, O = !!s.so && !M;
-        return { nightD: !M && window.__wfNight && window.__wfNight(cur && (cur.L || cur.live)) ? 'inline' : 'none', kind: M ? 'Active fire' : 'Ignition candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : 'var(--wf-y)', fg: M ? '#963B00' : '#1C1C1E', chevD: 'none', ring: 'none', pulseD: M ? 'none' : 'block',   /* Unconfirmed asks to be tapped: steady dark outline + the shared pulse */ triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
+        // the stage tag, as on the fire page and in the chat: the stage's own colours and icon, "for 12 h" since detection
+        const C0 = window.__wfChat, S0 = C0 && C0.STAGES ? C0.STAGES[M ? 1 : 0] : { c: '#3A3A3C', bg: '#F7FCDC', icon: 'cand' }, PTl = window.__wfLang === 'pt';
+        const since = cur && cur.tMs ? Date.now() - cur.tMs : 0, mm = Math.floor(since / 60000), dS = !(since > 0) ? '' : mm >= 1440 ? Math.floor(mm / 1440) + ' d' : mm >= 60 ? Math.floor(mm / 60) + ' h' : Math.max(1, mm) + ' min';
+        const stT = dS ? (PTl ? 'há ' : 'for ') + dS : '';
+        const stX = { stBg: S0.bg, stC: S0.c, stIc: C0 && C0.ICON ? C0.ICON[S0.icon] || '' : '', stT, stTD: stT ? 'inline' : 'none' };
+        return { ...stX, stAria: 'Stage: ' + (M ? 'Active fire' : 'Ignition candidate') + (stT ? ', ' + stT : ''), nightD: !M && window.__wfNight && window.__wfNight(cur && (cur.L || cur.live)) ? 'inline' : 'none', kind: M ? 'Active fire' : 'Ignition candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : 'var(--wf-y)', fg: M ? '#963B00' : '#1C1C1E', chevD: 'none', ring: 'none', pulseD: M ? 'none' : 'block',   /* Unconfirmed asks to be tapped: steady dark outline + the shared pulse */ triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
           aria: M ? 'Active fire. Not contained' : 'Unconfirmed. Declare or dismiss', pageCls: M ? 'morph' : '',
           op: O ? 1 : 0, pe: O ? 'auto' : 'none', hidden: O ? 'false' : 'true', y: O ? '0%' : 'calc(100% + 120px)',
           open: () => { if (!M) this.setState({ so: true, dd: false }); }, close: () => this.setState({ so: false }),
