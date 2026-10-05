@@ -886,7 +886,8 @@ class Component extends DCLogic {
     const ty = C.typing(c);
     // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)
     const nxS = C.STAGES[Math.min(c.stage + 1, C.STAGES.length - 1)], nxT = nxS ? tone(nxS) : null;
-    const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), go: () => run(a.key) }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
+    const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-y, #E5FF00)', chFg: '#1C1C1E' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
+    go: () => run(a.key) }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
     // Opened from the fire screen's People at risk card (Not evacuated): Evacuation plan leads the suggestions until it is used
     (() => { let sg = null; try { sg = JSON.parse(sessionStorage.getItem('wf-chat-sugg') || 'null'); } catch (e) {}
       if (sg && sg.s === 'evac' && sg.fire && (sg.fire === c.incId || ('F-' + c.incId) === sg.fire) && !c.flags.evac && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 5)

@@ -1169,3 +1169,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Team chat on the candidate page (Oct 5):** the full-width subtle button has the chat icon left of its label. The chat's unread count stays on (header, lists, badges) until the decision is made, Declare fire or Dismiss; opening the chat does not clear it.
 
 - **Video calls (Oct 5):** every call card (group grid and single) sits in an 8px dark grey frame (#2C2C2E), so it stands out from the page.
+
+- **Close fire chip (Oct 5):** the last move-on chip is a •→ chip like the other stage moves, in the full lime (100% opaque, dark text): it is the end goal.
