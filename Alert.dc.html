@@ -19,8 +19,8 @@
 <script src="prefs.js?v=195"></script>
 <script src="i18n.js?v=166"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=70"></script>
-<script src="tour.js?v=99"></script>
+<script src="chat.js?v=71"></script>
+<script src="tour.js?v=100"></script>
 <script src="feedcam.js?v=21"></script>
 <script src="menu.js?v=16"></script>
 
@@ -1071,7 +1071,9 @@ class Component extends DCLogic {
       reasons: cur.reasons.map(([t, ok], i) => ({ t, icon: ok ? I.ok : I.warn, stroke: ok ? '#0079A6' : '#745200', color: ok ? '#3C3C43' : '#545458', sep: i ? '0' : '0' })),
       ...(() => {   // Evidence: one container per source. The satellite pass is real; drone, citizen and 911 sources are simulated (marked so)
         const isLive = !!(cur.live || cur.L), row = (t, ok = true) => ({ t, color: ok ? '#3C3C43' : '#545458' });
-        const droneSeen = !!cur.id && (this.wfVerifyId() === cur.id || (window.__wfDroneSeen || {})[cur.id]);
+        // (Oct 5, 09:51) every candidate gets an automatic drone scan: the nearest station sends its surveillance drone when the
+        // candidate is detected, so the drone feed is always evidence (simulated). Smoke and a hot spot from 50% likelihood up.
+        const droneStrong = !(cur.conf != null && cur.conf < 50), droneSeen = !!isLive && droneStrong;
         const sim = 'Simulation.';
         const h = String(cur.id || '').split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
         const t0 = cur.tMs || Date.now(), at = (min) => new Date(t0 + min * 60000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -1089,7 +1091,9 @@ class Component extends DCLogic {
           rows: cur.reasons.filter(([t]) => !(droneSeen && /^Not confirmed on the ground/.test(t))).map(([t, ok]) => row(t, ok)), noteD: 'none', note: '' };
         const out = [sat];
         if (isLive) {
-          if (droneSeen) out.push({ ...th({ thVid: true, src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', thAria: 'Drone thermal feed. Open', open: (e) => this.wfEv({ src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', label: 'Drone ' + (cur.drone || 'D-5') + '. Thermal', who: 'Over the ignition. Simulation.', anchor: e && e.currentTarget }) }), title: 'Drone confirmation', rows: [row('Drone ' + (cur.drone || 'D-5') + ' over the ignition'), row('Smoke and a hot spot on the thermal feed')], noteD: 'block', note: sim });
+          { const vid = droneStrong ? 'assets/dronefire.mp4?v=1' : 'assets/dronecalm.mp4?v=1', lab = 'Live. Drone ' + (cur.drone || 'D-5');
+            out.push({ ...th({ thVid: true, src: vid, thAria: 'Drone feed. Open', open: (e) => this.wfEv({ src: vid, cross: true, label: lab, who: 'Sent automatically from the nearest station. Simulation.', anchor: e && e.currentTarget }) }), title: 'Drone scan',
+              rows: [row('Sent automatically from the nearest station'), droneStrong ? row('Smoke and a hot spot on the thermal feed') : row('A warm patch on the thermal feed. No smoke', false)], noteD: 'block', note: sim }); }
           if (h % 5 < 2) out.push({ ...th({ thImg: true, thSmoke: true, src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', thAria: 'Shared photo. Open', open: (e) => this.wfEv({ image: { src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', smoke: true, alt: 'Photo shared by a citizen' }, label: 'Citizen photo', who: 'Shared by a citizen. Simulation.', anchor: e && e.currentTarget }) }), title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
           if ((h >>> 3) % 5 < 2) out.push({ ...TH, title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
         }

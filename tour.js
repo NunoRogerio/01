@@ -370,12 +370,16 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // Achievement sound (Oct 3, 17:20): a short bright "prlim", a quick rising trill landing on a soft bell note.
   // Web Audio, no file to load; the context is unlocked by the first touch (browsers block sound before one).
   var actx = null, ACH_LEAD = 450;   // the sound leads the achievement card by this much (ms)
-  function actxGet() { try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {} return actx; }
-  ['pointerdown', 'touchend'].forEach(function (ev) { window.addEventListener(ev, function () { actxGet(); }, { capture: true, passive: true }); });
+  function actxGet() { try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state !== 'running' && actx.state !== 'closed') actx.resume(); } catch (e) {} return actx; }
+  // (Oct 5, 09:53) unlocked inside the touch itself, with a silent sample (what iPhones need), on every kind of touch
+  var unlocked = false;
+  ['pointerdown', 'touchstart', 'touchend', 'click'].forEach(function (ev) { window.addEventListener(ev, function () { var c = actxGet(); if (!c || unlocked && c.state === 'running') return;
+    try { var b = c.createBuffer(1, 1, 22050), src = c.createBufferSource(); src.buffer = b; src.connect(c.destination); src.start(0); unlocked = true; } catch (e) {} }, { capture: true, passive: true }); });
   // (Oct 5, 02:03) the achievement sound: only the "poomm", a low, round note with a warm bass, a soft low-pass and a light echo
   function prlim() {
     if (INFRAME) { try { if (window.parent && window.parent.__wfTourPrlim) { window.parent.__wfTourPrlim(); return; } } catch (e) {} }
     var c = actxGet(); if (!c) return;
+    if (c.state !== 'running') return;   // (Oct 5, 09:53) never queued for later: a locked sound used to play on the next touch, out of time
     try { var t0 = c.currentTime + 0.01, out = c.createGain(), lp = c.createBiquadFilter(), dl = c.createDelay(), fb = c.createGain(), wet = c.createGain();
       out.gain.value = 0.32; lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = 0.3;
       dl.delayTime.value = 0.23; fb.gain.value = 0.2; wet.gain.value = 0.22;
@@ -391,8 +395,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   document.addEventListener('click', function (e) { try { var a = e.target && e.target.closest && e.target.closest('a[data-wf-split]'); if (!a) return; var s0 = get(); if (!s0) return; var nx = S[s0.i + 1];
     if (!nx || !nx.ach) return;
     // (Oct 5, 03:12) the achievement waits for the next screen: its tag animates on the rising panel with the sound; the screen
-    // change waits for it (the panel tells this screen when the tag has played; 2.6s at most)
-    window.__wfNavHold = Date.now() + 2600; } catch (x) {} }, true);
+    // change waits for it (the panel tells this screen when the tag has played; 5 s at most)
+    // (Oct 5, 09:53) up to 5 s: on a phone the frame can take longer than 2.6 s to draw the tag, and the screen used to change
+    // first, so the tag animated on the real page with no sound (it came out on the next touch); the frame shortens the hold once it has played
+    window.__wfNavHold = Date.now() + 5000; } catch (x) {} }, true);
   window.__wfTourPrlim = function () { prlim(); };   /* the rising panel's frame asks this screen (which had the tap) to play the sound */
   function dragOn(b) {
     var st = null, fling = 0;

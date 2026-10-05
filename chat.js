@@ -403,15 +403,57 @@
     return c.key;
   }
 
+  // (Oct 5, 09:51) Every ignition candidate gets an automatic drone scan: the nearest station sends its surveillance drone
+  // as soon as the candidate is detected, and the drone feed counts as evidence beside the satellite pass (simulated).
+  // strong: the drone sees smoke and a hot spot (likelihood 50% or more); otherwise only a warm patch, no smoke
+  function evidOf(c) {
+    var strong = !(c.conf != null && c.conf < 50), st0 = (c.stations || [])[0], from = st0 ? st0.short : null;
+    var src = c.src || 'Satellite';
+    return { strong: strong, drone: 'D-5', from: from, video: strong ? 'assets/dronefire.mp4?v=1' : 'assets/dronecalm.mp4?v=1',
+      rows: [
+        { a: { en: 'Satellite', pt: 'Satélite' }, b: { en: 'Heat anomaly. ' + src + (c.det ? ' at ' + hhmm(c.det) : '') + '.', pt: 'Anomalia térmica. ' + src.replace('Satellite', 'Satélite') + (c.det ? ' às ' + hhmm(c.det) : '') + '.' } },
+        { a: { en: 'Drone D-5' + (from ? ' from ' + from : ''), pt: 'Drone D-5' + (from ? ' de ' + from : '') }, sim: true,
+          b: strong ? { en: 'Smoke and a hot spot on the thermal feed.', pt: 'Fumo e um ponto quente na imagem térmica.' } : { en: 'A warm patch on the thermal feed. No smoke.', pt: 'Uma zona quente na imagem térmica. Sem fumo.' } }
+      ] };
+  }
+  function evidCard(c) {
+    return Object.assign(stageCard(c, 0), { ev: true, title: { en: 'Evidence', pt: 'Evidências' }, body: null });
+  }
+  // a request card from a coordinator, sent once the team has given its reading of the evidence
+  function evidRequest(c) {
+    var E = evidOf(c), P = c.people || [], by = 0, who = P[by] ? P[by].name : 'Crew coordinator';
+    return { req: 'decl', reqDecl: true, by: by, tag: { en: 'Request · ' + who, pt: 'Pedido · ' + who }, tagC: '#B8360A',
+      title: E.strong ? { en: 'Declare fire', pt: 'Declarar incêndio' } : { en: 'Dismiss fire', pt: 'Descartar incêndio' },
+      body: E.strong ? { en: 'The drone feed and the satellite pass agree: smoke and a hot spot.', pt: 'A imagem do drone e a passagem do satélite coincidem: fumo e um ponto quente.' }
+        : { en: 'No smoke or flame on the drone feed.', pt: 'Sem fumo nem chama na imagem do drone.' },
+      actions: [{ key: 'reqNo', en: 'Not now', pt: 'Agora não' }, { key: E.strong ? 'reqConfirm' : 'reqDismiss', en: 'Approve', pt: 'Aprovar', primary: true }] };
+  }
+  // a decision taken another way (a chip, the state card) answers the open request too
+  function settleReq(c, declared) {
+    (c.msgs || []).concat((c.queue || []).map(function (q) { return q.m; })).forEach(function (m) {
+      if (m.reqDecl && !m.done) m.done = (declared && m.actions[1].key === 'reqConfirm') || (!declared && m.actions[1].key === 'reqDismiss') ? m.actions[1].key : 'reqNo'; });
+  }
   function start(c) {
     var P = c.people, n = P.length;
     var names = P.map(function (p) { return p.org; }).join(', ');
     if (c.kind === 'cand') {
-      card(c, stageCard(c, 0), 300, 0);
-      sys(c, 'Called you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 900, 1);
-      if (n > 0) say(c, 0, 'Seen. We have a crew of 5 and ' + (isUS(c) ? 'an engine' : 'one fire engine') + ' ready at ' + P[0].org + '.', 'Visto. Temos uma equipa de 5 e um veículo prontos em ' + P[0].org + '.', 4500, 2);
-      if (n > 1) say(c, 1, 'Available in about 10 min, finishing another call.', 'Disponíveis dentro de 10 min, a terminar outra ocorrência.', 9000, 3);
-      if (n > 2) say(c, 2, 'We can see smoke from the station, towards the north-east.', 'Vemos fumo do quartel, para nordeste.', 15000, 4);
+      // (Oct 5, 09:51) the first card is the evidence, with the drone feed playing; then each coordinator gives a reading
+      // of the evidence, the drone feed included; then one of them sends a request card (or you decide first)
+      c.flags.drone = true;
+      var E = evidOf(c), from = E.from || (P[0] ? P[0].org : 'the nearest station');
+      card(c, evidCard(c), 300, 0);
+      sys(c, 'Drone D-5 sent automatically from ' + from + ' · over the point', 'Drone D-5 enviado automaticamente de ' + from + ' · sobre o ponto', 700, 0);
+      sys(c, 'Called you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 1100, 1);
+      if (E.strong) {
+        if (n > 0) say(c, 0, 'Our drone is over it. Thermal shows a hot spot about 30 m across and a thin column of smoke. With the satellite pass, I read it as a real ignition.', 'O nosso drone está sobre o ponto. A térmica mostra um ponto quente com cerca de 30 m e uma coluna de fumo fina. Com a passagem do satélite, leio-o como uma ignição real.', 4500, 2);
+        if (n > 1) say(c, 1, 'Agree. The smoke drifts with the wind from the satellite point. No sign of a planned burn.', 'Concordo. O fumo desloca-se com o vento a partir do ponto do satélite. Sem sinal de uma queima autorizada.', 9000, 2);
+        if (n > 2) say(c, 2, 'Same reading. We can see smoke from the station too.', 'Mesma leitura. Também vemos fumo do quartel.', 13500, 2);
+      } else {
+        if (n > 0) say(c, 0, 'Our drone is over the point. A warm patch on the thermal, but no smoke and no flame. Could be sun-heated rock or a vehicle.', 'O nosso drone está sobre o ponto. Uma zona quente na térmica, mas sem fumo nem chama. Pode ser rocha aquecida pelo sol ou um veículo.', 4500, 2);
+        if (n > 1) say(c, 1, 'Agree. Nothing on the feed matches a fire.', 'Concordo. Nada na imagem corresponde a um incêndio.', 9000, 2);
+        if (n > 2) say(c, 2, 'No smoke seen from our station.', 'Sem fumo visível do nosso quartel.', 13500, 2);
+      }
+      card(c, evidRequest(c), 17000, 1);
     } else {
       var s = c.stage;
       sys(c, 'Chat opened for this fire · you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Conversa aberta para este incêndio · você (responsável) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 300, 0);
@@ -484,6 +526,10 @@
     var P = c.people, us = isUS(c);
     if (msgId) { var m = c.msgs.find(function (x) { return x.id === msgId; }); if (m) m.done = a; }
     var me = function (en, pt) { mine(c, en, pt); };
+    if (a === 'reqNo') { me('Not yet. Keep the drone on it.', 'Ainda não. Mantenham o drone no local.'); save(); emit(); return; }
+    if (a === 'reqConfirm') a = 'confirm';
+    if (a === 'reqDismiss') a = 'dismiss';
+    if (a === 'confirm' || a === 'dismiss') settleReq(c, a === 'confirm');
     if (a === 'confirm') {
       me('Declaring the fire.', 'Declaro o incêndio.');
       markConfirmed(c);
@@ -955,7 +1001,12 @@
     if (m.req === 'air' && (c.flags.air || c.flags.airNo)) return false;   // answered from a suggestion instead
     var n = m.nag || 0; if (n >= 2 || now - (m.nagAt || m.t || now) < (n ? 90000 : 45000)) return false;
     m.nag = n + 1; m.nagAt = now;
-    var who = m.by != null ? m.by : lead(c, 1), yes = m.actions[0], no = m.actions[1], T = m.title || { en: 'this request', pt: 'este pedido' };
+    // (Oct 5, 09:53) the button to tap is the request's primary one (Approve), whatever its place on the card
+    var who = m.by != null ? m.by : lead(c, 1), yes = m.actions.filter(function (a) { return a.primary; })[0] || m.actions[0], no = m.actions.filter(function (a) { return a !== yes; })[0], T = m.title || { en: 'this request', pt: 'este pedido' };
+    if (m.reqDecl) { var dz = yes.key === 'reqDismiss';
+      if (!n) say(c, who, 'We still need your call. Tap Approve on my request above to ' + (dz ? 'dismiss it' : 'declare the fire') + ', or Not now to keep watching.', 'Ainda precisamos da sua decisão. Toque em Aprovar no meu pedido acima para ' + (dz ? 'o descartar' : 'declarar o incêndio') + ', ou em Agora não para continuar a vigiar.', 800, 2);
+      else say(c, who, 'The drone is still over the point. Your decision, please: Approve or Not now, on the request card above.', 'O drone continua sobre o ponto. A sua decisão, por favor: Aprovar ou Agora não, no cartão do pedido acima.', 800, 3);
+      return true; }
     var te = String(T.en).toLowerCase(), tp = String(T.pt).toLowerCase();
     if (!n) say(c, who, 'I still need your approval for ' + te + '. Tap ' + yes.en + ' on my request above' + (no ? ', or ' + no.en + ' if we hold without it.' : '.'),
       'Continuo a precisar da sua aprovação para o ' + tp + '. Toque em ' + yes.pt + ' no meu pedido acima' + (no ? ', ou em ' + no.pt + ' se seguramos sem ele.' : '.'), 800, 2);
@@ -1206,7 +1257,7 @@
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,
-    vnow: vnow, since: since, photo: photoOf,
+    vnow: vnow, since: since, photo: photoOf, evid: evidOf,
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
