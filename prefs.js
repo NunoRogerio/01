@@ -199,7 +199,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
     // Big KPI numbers across the app (forces, resolution summary, profiles): dark grey, one size
     // Rows of 2 or 3 KPIs go as big as their numbers allow: each row sets --k from window.__wfKpiPx (below)
-    '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
+    '[data-wf-kpicard]{padding:8px!important}' + '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
     // Qualifier band (what an item is: ignition detection, active fire, fire station): not a button. Full width, square
     // corners, the map marker's colour, the marker itself before the label. One definition for the whole app.
     /* Status tags in lists: one width for every tag, set by the longest expected label (e.g. Building line), text centred; a longer translation still grows it */
@@ -488,21 +488,26 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   /* Round controls: their press (swell + haptic) lives in fit.js, loaded on every screen */
   /* Mini card numbers: shrink the value until value + unit fit inside the card's 8px side padding */
   function fitKpi() {
-    /* Three value sizes on the 8px scale (Oct 3): each card's value takes the largest of 40, 32 or 24px that fits with 8px clear
-       on every side of the card, and clear of a vertical note (Estimate) by 4px. Set inline with !important so the text-size
-       setting can't override it; each pass starts afresh, all in one frame (no flicker). If even 24px is too wide, the value
-       wraps onto two lines at 24px. */
-    // (Oct 3, 19:15) 32px is the default for every card; a value only steps down to 24px when it does not fit
-    var SZ = [32, 24], ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), rg = document.createRange();
+    /* (Oct 5, 02:20) One simple rule for every mini card's value: it starts at the Likelihood card's size (32px value, 15px
+       unit) and, when value + unit don't fit inside the card's 8px padding (clear of a vertical note such as Estimate by 4px),
+       it shrinks 1px at a time until it does. Below 24px it wraps onto two or more lines instead; only a single word still too
+       wide keeps shrinking (to 13px at the least).
+       Set inline with !important so the text-size setting can't override it; each pass starts afresh, in one frame (no flicker). */
+    var BASE = 32, WRAP = 24, MIN = 13, ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), rg = document.createRange();
     for (var i = 0; i < ns.length; i++) {
       var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]');
-      if (!row || !card || !card.clientWidth) continue;
-      row.style.removeProperty('max-width'); row.style.setProperty('white-space', 'nowrap'); row.style.setProperty('flex-wrap', 'nowrap'); n.style.setProperty('white-space', 'nowrap');   // measured on one line
+      if (!row || !card || !card.clientWidth || !(n.textContent || '').trim()) continue;
+      ['max-width', 'justify-content'].forEach(function (p) { row.style.removeProperty(p); }); row.style.setProperty('white-space', 'nowrap'); row.style.setProperty('flex-wrap', 'nowrap'); n.style.setProperty('white-space', 'nowrap'); n.style.removeProperty('text-align');   // measured on one line
       var cr = card.getBoundingClientRect(), L = cr.left + 8, R = cr.right - 8, note = card.querySelector('.wf-note');
       if (note && note.offsetWidth && getComputedStyle(note).display !== 'none' && (note.textContent || '').trim()) { var nr = note.getBoundingClientRect(); R = Math.min(R, nr.left - 4); }
-      var fits = function () { rg.selectNodeContents(row); var r = rg.getBoundingClientRect(); return r.left >= L - 0.5 && r.right <= R + 0.5 && row.scrollWidth <= row.clientWidth + 0.5; }, k = 0;
-      for (; k < SZ.length; k++) { n.style.setProperty('font-size', SZ[k] + 'px', 'important'); if (fits()) break; }
-      if (k === SZ.length) { n.style.setProperty('font-size', '24px', 'important'); n.style.setProperty('white-space', 'normal'); row.style.setProperty('white-space', 'normal'); row.style.setProperty('flex-wrap', 'wrap'); row.style.setProperty('justify-content', 'center'); var cx = (cr.left + cr.right) / 2; row.style.setProperty('max-width', Math.floor(2 * Math.min(R - cx, cx - L)) + 'px'); }
+      var fits = function () { rg.selectNodeContents(row); var r = rg.getBoundingClientRect(); return r.left >= L - 0.5 && r.right <= R + 0.5 && row.scrollWidth <= row.clientWidth + 0.5 && n.scrollWidth <= n.clientWidth + 0.5; }, k = BASE;
+      for (; k >= WRAP; k--) { n.style.setProperty('font-size', k + 'px', 'important'); if (fits()) break; }
+      if (k >= WRAP) continue;
+      // still too wide at 24px: the value wraps onto two or more lines (centred, inside the padding), and only a word too long
+      // for a line on its own keeps shrinking
+      var cx = (cr.left + cr.right) / 2; n.style.setProperty('white-space', 'normal'); n.style.setProperty('text-align', 'center'); row.style.setProperty('white-space', 'normal'); row.style.setProperty('flex-wrap', 'wrap'); row.style.setProperty('justify-content', 'center'); row.style.setProperty('max-width', Math.floor(2 * Math.min(R - cx, cx - L)) + 'px');
+      var wfits = function () { var ok = true; [n, n.nextElementSibling].forEach(function (e) { if (!e || !e.offsetWidth) return; var r = e.getBoundingClientRect(); if (r.left < L - 0.5 || r.right > R + 0.5 || e.scrollWidth > e.clientWidth + 0.5) ok = false; }); return ok; };
+      for (k = WRAP; k >= MIN; k--) { n.style.setProperty('font-size', k + 'px', 'important'); if (wfits()) break; }
     }
   }
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
