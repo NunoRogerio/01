@@ -1677,7 +1677,8 @@ class Component extends DCLogic {
       deployed.push({ src: true, item: false, text: [fireId, (fres && fres.src) || (frow && frow.info && frow.info.src) || ''].filter(Boolean).join('. ') + '.' }); }
     else deployed.push(...ordRows);
     const BRF = !!(frow && frow.st === 'BRA'), BI = BRF ? (frow.info || {}) : null;
-    const MAPH = 310;   // the detail page's map band: 234 + 76 for the projection switcher laid over its foot (16px margin, 60px tall); framed on the fire; full screen from its button
+    // (Oct 5, 07:24) a fire past Resolving (Concluding, Surveillance, Closed) or held shows no projection: the band goes back to 234px
+    const MAPH = (() => { const I = INFO || {}, sc = /^F-/.test((frow && frow.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5); return RO && (HELD || sc >= 8) ? 234 : 310; })();   // the detail page's map band: 234 + 76 for the projection switcher laid over its foot (16px margin, 60px tall); framed on the fire; full screen from its button
     const tlTop = RO ? deployed.filter((d) => d.tl) : []; if (RO) for (let i = deployed.length - 1; i >= 0; i--) if (deployed[i].tl) deployed.splice(i, 1);   // the stages bar sits right under the map
     // Status colours, as in the fire's timeline: fighting / active deep orange, held green, out grey, forces on the way blue.
     const sentTitleC = TL && TL.curC ? TL.curC : HELD ? '#186B2D' : (RO || BRF) ? '#963B00' : '#0062CC';
@@ -2169,9 +2170,9 @@ class Component extends DCLogic {
       sugAria: isRecCfg ? 'Suggested forces already selected' : 'Reset to the suggested forces',
       cfgY: cfg ? '0%' : '105%', cfgHidden: cfg ? 'false' : 'true', cfgOpenStr: cfg ? 'true' : 'false', cfgChevRot: cfg ? '180deg' : '0deg',
       cfgAria: 'Configure dispatch: ' + fmt(counts),
-      ...(() => { const V = window.__wfVP || {}, LND = !!V.land && !!s.full; return { mapW: LND || V.rail ? V.w : 390, mapH: LND ? V.h : 844, mapCL: LND ? (V.sl || 0) : 0, mapCR: LND ? Math.min(V.sr || 0, 16) : 0 }; })(),   /* landscape full screen: the map fills the turned phone; the camera side keeps its safe area, the other side 32px */ no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : RO ? 82 : 38,
+      ...(() => { const V = window.__wfVP || {}, LND = !!V.land && !!s.full; return { mapW: LND || V.rail ? V.w : 390, mapH: LND ? V.h : 844, mapCL: LND ? (V.sl || 0) : 0, mapCR: LND ? Math.min(V.sr || 0, 16) : 0 }; })(),   /* landscape full screen: the map fills the turned phone; the camera side keeps its safe area, the other side 32px */ no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : RO ? (MAPH < 310 ? 16 : 82) : 38,   /* (07:24) no projection switcher: the credit sits 16px from the band's foot */
       full: !!s.full, toggleFull: () => { const st = this.state || {}; this.setState({ full: !st.full, open: false, cfg: false }); },
-      tipSafe: s.full ? 70 : (sent ? 186 : 192) + HD, clipT: s.full ? 0 : (RO && sent ? (this._hdrB || 170) : 128 + HD), clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? (RO ? 844 - (this._hdrB || 170) - MAPH : Math.max(160, (this._sbMin || 250) - 28)) : 458), ctrlTop: (sent ? 266 - 38 : 243) + HD, hzTop: s.full ? -68 : (sent ? 12 : 16),
+      tipSafe: s.full ? 70 : (sent ? 186 : 192) + HD, clipT: s.full ? 0 : (RO && sent ? (this._hdrB || 170) : 128 + HD), clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? (RO ? 844 - (this._hdrB || 170) - MAPH : Math.max(160, (this._sbMin || 250) - 28)) : 458), ctrlTop: RO && sent && !s.full && MAPH < 310 ? (this._hdrB || 170) + 16 : (sent ? 266 - 38 : 243) + HD,   /* (07:24) a shorter band: its round buttons start 16px under its top */ hzTop: s.full ? -68 : (sent ? 12 : 16),
       downPE: (s.full || sent) ? 'none' : 'auto',
       topY: s.full ? 'calc(-100% - 24px)' : '0px', topOp: 1,   /* (Oct 3, 23:13) like the main screen: the top blade slides away whole (no fade), the map opening under it */ topPE: s.full ? 'none' : 'auto', downY: (s.full || sent) ? '560px' : '0px', navY: (s.full || sent) ? '140px' : '0px', downOp: (s.full || sent) ? 0 : 1,
       chevRot: open ? '180deg' : '0deg', sheetOpenStr: open ? 'true' : 'false', stationAria: sel.title + ', first on the fire line in ' + sum + ' minutes. Choose stations', crewsSel: freeSel + ' free crew' + (freeSel === 1 ? '' : 's'),
