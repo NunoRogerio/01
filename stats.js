@@ -171,10 +171,10 @@
     var hid = hidden(), ks = order();
     return '<div style="flex-shrink:0;position:relative;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4"></div>' +
       '<div role="button" tabindex="0" aria-label="Close" data-act="shut" style="flex-shrink:0;display:flex;justify-content:center;padding:8px 0 16px;cursor:pointer"><span style="width:86px;height:3px;border-radius:999px;background:rgba(60,60,67,.2)"></span></div>' +
-      '<div style="flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:0 16px 24px"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:32px;color:#000">Charts</h2><span style="font-size:17px;line-height:22px;color:#000">Show or hide charts.</span><span style="font-size:17px;line-height:22px;color:#000">Hold a card to reorder.</span></div>' +
+      '<div style="flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:0 16px 24px"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:32px;color:#000">Charts</h2><span style="font-size:17px;line-height:22px;color:#000">Show or hide charts.</span><span style="font-size:17px;line-height:22px;color:#000">Drag to reorder.</span></div>' +
       '<span style="display:flex;align-items:center;gap:8px;flex-shrink:0"><button type="button" data-act="reset" style="height:32px;padding:0 16px;border:0;border-radius:999px;background:rgba(118,118,128,.12);color:#3A3A3C;font:inherit;font-size:15px;font-weight:600;cursor:pointer">Reset</button><button type="button" class="xb" data-act="shut" aria-label="Done" style="margin-top:-6px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:none"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></span></div>' +
       '<div style="flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none;padding:0 16px 56px"><div style="background:#FFFFFF;border-radius:16px;padding:8px 16px;box-shadow:0 0 10px rgba(0,0,0,.08)">' +
-      ks.map(function (k) { var on = hid.indexOf(k) < 0; return '<div role="switch" tabindex="0" aria-checked="' + on + '" data-tg="' + k + '" style="display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;cursor:pointer"><span style="font-size:17px;line-height:22px;color:#000">' + esc(BYK[k].t) + '</span><span class="sw' + (on ? ' on' : '') + '"><i></i></span></div>'; }).join('') + '</div></div>';
+      ks.map(function (k) { var on = hid.indexOf(k) < 0; return '<div role="switch" tabindex="0" aria-checked="' + on + '" data-tg="' + k + '" style="position:relative;display:flex;align-items:center;gap:8px;height:60px;box-sizing:border-box;cursor:pointer"><span class="gp" data-gp="' + k + '" aria-label="Drag to reorder" style="display:flex;align-items:center;justify-content:center;width:32px;height:44px;margin-left:-8px;flex-shrink:0;color:#8E8E93;touch-action:none;cursor:grab"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><span style="flex:1 1 auto;min-width:0;font-size:17px;line-height:22px;color:#000">' + esc(BYK[k].t) + '</span><span class="sw' + (on ? ' on' : '') + '"><i></i></span></div>'; }).join('') + '</div></div>';
   }
   function showSheet(on) {
     S.sheet = on; var sh = S.el.querySelector('.sh'), sc = S.el.querySelector('.scr'); if (!sh) return;
@@ -186,11 +186,29 @@
     var sh = S.el.querySelector('.sh');
     Array.prototype.forEach.call(sh.querySelectorAll('[data-act=shut]'), function (b) { b.onclick = function () { buzz(8); showSheet(false); render(true); }; });
     sh.querySelector('[data-act=reset]').onclick = function () { LS(K_ORDER, null); LS(K_HIDE, null); try { localStorage.removeItem(K_ORDER); localStorage.removeItem(K_HIDE); } catch (e) {} buzz(8); sh.innerHTML = sheetHtml(); wireSheet(); };
+    gripWire(sh);
     Array.prototype.forEach.call(sh.querySelectorAll('[data-tg]'), function (r) {
       var go = function () { var k = r.getAttribute('data-tg'), h = hidden().slice(), i = h.indexOf(k), shown = order().filter(function (x) { return h.indexOf(x) < 0; });
         if (i < 0 && shown.length <= 1) return;   // the last chart stays
         if (i >= 0) h.splice(i, 1); else h.push(k); LS(K_HIDE, h); buzz(8); var y = sh.querySelector('div[style*="overflow-y"]').scrollTop; sh.innerHTML = sheetHtml(); wireSheet(); sh.querySelector('div[style*="overflow-y"]').scrollTop = y; };
       r.onclick = go; r.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } };
+    });
+  }
+  // the Charts list: drag a row by its handle (no hold needed) to put it in a new place
+  function gripWire(sh) {
+    var box = sh.querySelector('div[style*="overflow-y"]'), rows = function () { return Array.prototype.slice.call(sh.querySelectorAll('[data-tg]')); };
+    Array.prototype.forEach.call(sh.querySelectorAll('[data-gp]'), function (g) {
+      var d = null;
+      g.onclick = function (e) { e.stopPropagation(); };
+      g.onpointerdown = function (e) { e.preventDefault(); e.stopPropagation(); var R = rows(), r = g.parentNode; d = { r: r, i: R.indexOf(r), to: R.indexOf(r), y0: e.clientY, h: r.offsetHeight, n: R.length, s0: box.scrollTop };
+        try { g.setPointerCapture(e.pointerId); } catch (x) {} r.style.zIndex = 3; r.style.background = '#FFFFFF'; r.style.boxShadow = '0 4px 20px rgba(0,0,0,.18)'; r.style.transition = 'box-shadow .2s ease'; buzz(12); };
+      g.onpointermove = function (e) { if (!d) return; var dy = e.clientY - d.y0 + (box.scrollTop - d.s0), to = Math.max(0, Math.min(d.n - 1, Math.round(d.i + dy / d.h))); d.to = to;
+        d.r.style.transform = 'translateY(' + dy.toFixed(1) + 'px)';
+        rows().forEach(function (x, j) { if (x === d.r) return; var sft = 0; if (d.i < to && j > d.i && j <= to) sft = -d.h; else if (d.i > to && j < d.i && j >= to) sft = d.h; x.style.transition = 'transform .2s ease'; x.style.transform = sft ? 'translateY(' + sft + 'px)' : ''; });
+        var br = box.getBoundingClientRect(); if (e.clientY > br.bottom - 40) box.scrollTop += 8; else if (e.clientY < br.top + 40) box.scrollTop -= 8; };
+      var end = function () { if (!d) return; var dd = d; d = null; var ks = rows().map(function (x) { return x.getAttribute('data-tg'); }), k = ks.splice(dd.i, 1)[0]; ks.splice(dd.to, 0, k); LS(K_ORDER, ks); buzz(10);
+        var y = box.scrollTop; sh.innerHTML = sheetHtml(); wireSheet(); sh.querySelector('div[style*="overflow-y"]').scrollTop = y; };
+      g.onpointerup = end; g.onpointercancel = end;
     });
   }
   function buzz(n) { try { if (navigator.vibrate) navigator.vibrate(n); } catch (e) {} }
