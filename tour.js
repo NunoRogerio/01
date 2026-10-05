@@ -255,7 +255,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
       ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Here are the orders going out.', 'Aqui estão as ordens a sair.'],
       t: ['Back to the team chat', 'De volta à conversa da equipa'],
-      b: ['Tap Return to chat. The leads are confirming their orders there. Move the fire forward while you talk with them.', 'Toque em Voltar à conversa. Os chefes estão a confirmar as ordens. Faça o incêndio avançar enquanto fala com eles.'] },
+      b: ['Tap Team chat. The leads are confirming their orders there.', 'Toque em Chat da equipa. Os chefes estão a confirmar as ordens.'] },
 
     // (Oct 5, 03:21) the fire moves forward by itself, stage after stage (the cursor stays on its state), until it can be closed
     { page: 'Chat.dc.html', mode: 'until', auto: true, stages: true, noClose: true,
