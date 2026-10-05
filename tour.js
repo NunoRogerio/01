@@ -156,6 +156,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   // the state card's Move to <next stage> button, when the card is open
   function stMove() { return q('[data-wf-stmove]'); }
+  // the control that moves the fire to its next stage (never the closing one) and the stage the open fire is at
+  function moveOn() { var c = chip(['Move to', 'Passar a']); if (c && /Closed|Encerrad/.test(txt(c))) c = null; if (c) return c; var m = stMove(); return m && !/Closed|Encerrad/.test(m.textContent || '') ? m : null; }
+  function fireStage() { try { var C = window.__wfChat, L = C ? C.list().filter(function (c) { return c.kind !== 'dm' && !c.closed && !c.dismissed; }).sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); }) : []; return L[0] ? L[0].stage : -1; } catch (e) { return -1; } }
   // the Approve button of an open request to declare the fire (a coordinator's card in a candidate's chat)
   // raw: any in the chat, even scrolled out of view (to bring it in)
   function reqApproveRaw() { return [].slice.call(document.querySelectorAll('article.chmsg [data-fitrow] > button.chbtn')).filter(function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }).pop() || null; }
@@ -277,11 +280,26 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       b: ['Tap Team chat. The leads are confirming their orders there.', 'Toque em Chat da equipa. Os chefes estão a confirmar as ordens.'] },
 
     // (Oct 5, 03:21) the fire moves forward by itself, stage after stage (the cursor stays on its state), until it can be closed
-    { page: 'Chat.dc.html', mode: 'until', auto: true, stages: true, noClose: true,
+    // (Oct 5, 12:40) three moves are yours, the rest runs by itself and quickly: the team's cards wait (holdAll) until the move is tapped
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveOn,
+      t: ['Move the fire on', 'Faça o incêndio avançar'],
+      b: ['Tap the Move to button to take the fire to its next stage. You move it three times; the stages between run by themselves.', 'Toque no botão Passar a para levar o incêndio à fase seguinte. Faz três passagens; as fases entre elas correm sozinhas.'] },
+    { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 3 && !!moveOn(); },
+      find: function () { return q('header + button.chrow[aria-expanded]'); },
+      t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveOn,
+      t: ['Move the fire on', 'Faça o incêndio avançar'],
+      b: ['Tap Move to again: the crews are on scene and the fire is being brought under control.', 'Toque outra vez em Passar a: as equipas estão no local e o fogo está a ser dominado.'] },
+    { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 5 && !!moveOn(); },
+      find: function () { return q('header + button.chrow[aria-expanded]'); },
+      t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveOn,
+      t: ['Move the fire on', 'Faça o incêndio avançar'],
+      b: ['One more move: the fire is nearly out, so take it to surveillance.', 'Mais uma passagem: o fogo está quase extinto, leve-o para vigilância.'] },
+    { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true,
       until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
       find: function () { return q('header + button.chrow[aria-expanded]'); },
-      t: ['The fire moves forward', 'O incêndio avança'],
-      b: ['Watch it go from stage to stage as the crews work it. You will close it at the end.', 'Veja-o passar de fase em fase enquanto as equipas o combatem. No fim, é você que o encerra.'] },
+      t: ['The fire holds', 'O incêndio está dominado'], b: ['Surveillance. You will close it next.', 'Vigilância. A seguir, encerra-o.'] },
     { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || stMove() || q('header + button.chrow[aria-expanded]'); },
       t: ['Close the fire', 'Encerre o incêndio'],
       b: ['It is under surveillance and holding. Tap Close fire.', 'Está em vigilância e dominado. Toque em Encerrar incêndio.'] },
@@ -521,7 +539,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
   /* (Oct 5, 10:50) the team's chatter in the chat during the tour: held while the evidence and the decision are pointed at, then left out (less talk; the cards and stages still come) */
-  window.__wfTour_mute = function () { var s = get(); return s && PAGE === 'Chat.dc.html' ? (s.i <= 8 ? 'hold' : 'drop') : ''; };
+  window.__wfTour_mute = function () { var s = get(); if (s && PAGE === 'Chat.dc.html' && S[s.i] && S[s.i].holdAll) return 'holdall'; return s && PAGE === 'Chat.dc.html' ? (s.i <= 8 ? 'hold' : 'drop') : ''; };
   window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; tiltNG = null; tiltLock = -1; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); tourScope(true); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
@@ -746,7 +764,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     if (st.skip && st.skip()) { go(i + 1); return; }
     if (st.closeAfter && armed === i && !areaOpen()) { go(i + 1); return; }   // the area list was opened and is closed again
     if (st.mode === 'until' && st.until && st.until()) { go(i + 1); return; }
-    if (st.auto && Date.now() - (window.__wfTourAuto || 0) > 2600 && Date.now() - seen > 2200) { window.__wfTourAuto = Date.now(); drive(); }
+    if (st.auto && Date.now() - (window.__wfTourAuto || 0) > (st.quick ? 800 : 2600) && Date.now() - seen > (st.quick ? 500 : 2200)) { window.__wfTourAuto = Date.now(); drive(); }
     if (st.show && armed === i) { curEl = null; draw(i, st, null, false, true); return; }
     if (st.hold && holdTick(i, st)) return;
     var el = st.lock && lockEl && lockEl.isConnected && lockI === i ? lockEl : (st.find ? st.find() : null); if (st.lock && el) { lockEl = el; lockI = i; }
