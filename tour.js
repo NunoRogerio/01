@@ -202,10 +202,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
       t: ['Or pick from the list', 'Ou escolha da lista'], point: true, demo: Object.assign(demoOf('section[data-swipe-key="li"] > div:last-child > button.opt', 'section[data-swipe-key="li"] button[data-swipe-go]'), { tapClose: true, closeAt: 'section[data-swipe-key="li"] > span[aria-hidden="true"]' }),   // (Oct 3, 20:01) closes on its grabber
       b: ['Every candidate and fire in this region, the most likely first. Open it any time to pick one.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro. Abra-a a qualquer momento para escolher um.'] },
-    { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('header a[href="Chat.dc.html"].opt') || q('a[href="Chat.dc.html"].opt'); },
-      demo: Object.assign(demoOf('a[href="Chat.dc.html"].opt', 'section[data-swipe-key="cb"] button[data-swipe-go]'), { tapClose: true }),   // (Oct 3, 20:01) the circle taps the X
-      t: ['Your chats', 'As suas conversas'],
-      b: ['Every incident has its team chat. They are all here, any time.', 'Cada incidente tem a conversa da sua equipa. Estão todas aqui, a qualquer momento.'] },
+    // (Oct 5) the chats step (it opened the chats panel) was removed
     // (Oct 5) the notifications step (it opened the notifications panel) was removed
     // (Oct 5) the preferences step (it opened the settings menu) was removed
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
