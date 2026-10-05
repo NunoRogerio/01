@@ -61,8 +61,8 @@
     '.credit{margin-top:4px;font-size:12px;line-height:14px;color:rgba(255,255,255,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
     '.st{position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.6}' +
     /* (Oct 5, 16:58, Susana's idea) the crest of the station whose photo comes in swells once and settles, so each photo names its station */
-    /* (Oct 5, 17:06, Susana) the crests rest at 80%; the one of the photo on screen at 100%, the change done as the pulse peaks (0.28 s) */
-    '.bd img{opacity:.8;transition:opacity .2s ease .08s}.bd img.on{opacity:1}' +
+    /* (Oct 5, 17:06 and 17:12, Susana) the crests rest at 60% and 5% darker; the one of the photo on screen at 100%, the change done as the pulse peaks (0.28 s) */
+    '.bd img{opacity:.6;filter:brightness(.95) drop-shadow(0 0 8px rgba(0,0,0,.45));transition:opacity .2s ease .08s,filter .2s ease .08s}.bd img.on{opacity:1;filter:brightness(1) drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
     '.bd img.pop{animation:pop .7s cubic-bezier(.3,0,.3,1)}@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}' +
     '[hidden]{display:none!important}' +
     '@media (prefers-reduced-motion:reduce){.tk.go{transition:none}.bd img.pop{animation:none}}';
