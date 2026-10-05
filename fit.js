@@ -8,7 +8,11 @@
   window.__wfTogY=function(){var h=(window.__wfY||'#E5FF00').replace('#','');var c=function(i){var v=Math.round(parseInt(h.substr(i,2),16)*0.96);return ('0'+v.toString(16)).slice(-2);};return '#'+c(0)+c(2)+c(4);};
   // (Oct 4, 22:58) a primary colour chosen in Appearance (kept on this phone, localStorage wf-primary) replaces the profile's
   window.__wfYDefault=function(role){return US[role||'']?'#CCFF00':'#E5FF00';};
-  window.__wfSetY=function(role){var c=window.__wfYDefault(role),own='';try{own=localStorage.getItem('wf-primary')||'';}catch(e){}if(/^#[0-9A-Fa-f]{6}$/.test(own))c=own.toUpperCase();window.__wfY=c;
+  // (Oct 5) Every primary colour keeps its dark labels (#1C1C1E) at 4.5:1 or more (WCAG AA text). __wfSafeY lifts a colour that
+  // falls short towards white, keeping its hue, until it passes (also catches colours picked before the safe picker existed).
+  window.__wfContrastY=function(h){var L=function(x){var c=[1,3,5].map(function(i){var v=parseInt(x.substr(i,2),16)/255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];};return (L(h)+0.05)/(L('#1C1C1E')+0.05);};
+  window.__wfSafeY=function(h){h=String(h||'').toUpperCase();if(!/^#[0-9A-F]{6}$/.test(h))return h;var c=[1,3,5].map(function(i){return parseInt(h.substr(i,2),16);}),x=function(){return ('#'+c.map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('')).toUpperCase();};for(var k=0;k<60&&window.__wfContrastY(x())<4.5;k++)c=c.map(function(v){return Math.min(255,Math.round(v+(255-v)*0.08)+1);});return x();};
+  window.__wfSetY=function(role){var c=window.__wfYDefault(role),own='';try{own=localStorage.getItem('wf-primary')||'';}catch(e){}if(/^#[0-9A-Fa-f]{6}$/.test(own))c=window.__wfSafeY(own);window.__wfY=c;
     var h=c.replace('#',''),rgb=[0,2,4].map(function(i){return parseInt(h.substr(i,2),16);}).join(',');
     var d=document.documentElement.style;d.setProperty('--wf-y',c);d.setProperty('--wf-y-rgb',rgb);};
   var r='';try{r=localStorage.getItem('wf-role')||'';}catch(e){}

@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=160"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=161"></script>
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=197"></script>
 <script src="i18n.js?v=167"></script>
@@ -589,8 +589,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <!-- (Oct 5, 08:57) a colour is a round button: the round buttons' 44px and their press; the selected one carries the language picker's check -->
               <button type="button" role="radio" class="mbtn" data-round="1" aria-checked="{{c.on}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: {{c.bg}}; box-shadow: {{c.ring}}; cursor: pointer; transition: box-shadow .25s ease"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{c.tick}}; transition: opacity .25s ease"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
             </sc-for>
-            <!-- Any colour: the phone's own colour picker, opened by the rainbow swatch -->
-            <label class="mbtn" data-round="1" aria-label="{{ap.pickL}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: conic-gradient(#FF6B6B, #FFD93D, #E5FF00, #6FF0CF, #6FB7FF, #C7B3FF, #FFA3D2, #FF6B6B); box-shadow: {{ap.ownRing}}; cursor: pointer; overflow: hidden"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; background: {{ap.ownDot}}; box-shadow: 0 0 0 2px #FFFFFF"></span><input type="color" value="{{ap.own}}" onInput="{{ap.onPick}}" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; padding: 0; cursor: pointer"></label>
+            <!-- More colours (Oct 5): the rainbow swatch opens the app's own picker, which only offers colours safe for the dark labels -->
+            <button type="button" class="mbtn" data-round="1" aria-label="{{ap.pickL}}" aria-haspopup="dialog" onClick="{{ap.openPick}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: conic-gradient(#FF6B6B, #FFD93D, #E5FF00, #6FF0CF, #6FB7FF, #C7B3FF, #FFA3D2, #FF6B6B); box-shadow: {{ap.ownRing}}; cursor: pointer; overflow: hidden"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; background: {{ap.ownDot}}; box-shadow: 0 0 0 2px #FFFFFF"></span></button>
           </div>
           <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{ap.colName}}</span>
         </div>
@@ -814,6 +814,21 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <!-- The menu button (Oct 3, 18:02): one button that stays put, above everything, at the top right (8px from the edge, in line
        with the menu's icon column); the screen slides out from under it and back under it. Opens and closes the menu. -->
   <button type="button" class="opt" data-wf-burger="1" data-pf-av="1" onClick="{{pm.burger}}" aria-haspopup="true" aria-expanded="{{pfStr}}" aria-label="Preferences" style="position: absolute; z-index: {{pm.bZ}}; top: {{pm.bTop}}px; right: {{pm.bRight}}px; transition: right {{pm.bDur}} cubic-bezier(.37,0,.63,1) {{pm.bDelay}}, opacity .3s ease; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer; opacity: {{pm.bOp}}; pointer-events: {{pm.bPE}}"><svg class="wf-bi" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path class="b1" d="M5 12h14"></path><path class="b2" d="M5 12h14"></path><path class="b3" d="M5 12h14"></path></svg></button>
+  <!-- More colours (Oct 5): a bottom dialog like the KPI picker. Colours are round colour buttons (44px, the round buttons' press);
+       the chosen one carries the check. Only colours keeping the dark labels at 4.5:1 or more are offered. -->
+  <div class="wf-glass scrim" onClick="{{ap.gClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{ap.gOp}}; pointer-events: {{ap.gPe}}; transition: opacity .35s ease"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="gpTitle" aria-hidden="{{ap.gHidden}}" data-swipe="down" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 30px 0 0; border-radius: 28px 28px 0 0; background: #FFFFFF; box-shadow: 0 0 60px rgba(0,0,0,0.132); pointer-events: {{ap.gPe}}; transform: translateY({{ap.gY}}); transition: transform {{ap.gDur}} {{ap.gEase}}">
+    <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{ap.gClose}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 40px; padding: 0 32px">
+      <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="gpTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{ap.gTitle}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{ap.gSub}}</span></span>
+      <button type="button" class="mbtn" onClick="{{ap.gClose}}" aria-label="{{ap.gDone}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -6px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+    </div>
+    <div role="radiogroup" aria-label="{{ap.gTitle}}" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); justify-items: center; row-gap: 8px; min-height: 0; overflow-y: auto; padding: 8px 16px calc(56px + var(--wf-safe-b, 0px))">
+      <sc-for list="{{ap.grid}}" as="c" hint-placeholder-count="12">
+        <button type="button" role="radio" class="mbtn" data-round="1" aria-checked="{{c.on}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: {{c.bg}}; box-shadow: {{c.ring}}; cursor: pointer; transition: box-shadow .25s ease"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{c.tick}}; transition: opacity .25s ease"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+      </sc-for>
+    </div>
+  </section>
   <!-- Confirm role-play changes and key removal (no grabber: it is not expandable; Cancel or a tap outside closes it) -->
   <div class="wf-hap-scrim wf-glass" onClick="{{aic.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{aic.op}}; pointer-events: {{aic.pe}}; transition: opacity .35s ease"></div>
   <section class="wf-dlg" role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 0 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
@@ -1433,20 +1448,27 @@ class Component extends DCLogic {
       ap: (() => {
         const T = (en, ptt) => (lang === 'pt' ? ptt : en), role = this.wfRole() || '', def = window.__wfYDefault ? window.__wfYDefault(role) : '#E5FF00';
         let own = ''; try { own = localStorage.getItem('wf-primary') || ''; } catch (e) {}
-        const cur = /^#[0-9A-F]{6}$/i.test(own) ? own.toUpperCase() : def;
-        // labels on the primary stay dark (#1C1C1E): a picked colour too dark for them is lightened, keeping its hue, until it reads at 4.5:1 or more
-        const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4))); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
-        const ok = (h) => (lum(h) + 0.05) / (lum('#1C1C1E') + 0.05) >= 4.5;
-        const lift = (h) => { let c = [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16)); for (let k = 0; k < 40 && !ok('#' + c.map((v) => ('0' + v.toString(16)).slice(-2)).join('')); k++) c = c.map((v) => Math.round(v + (255 - v) * 0.08)); return ('#' + c.map((v) => ('0' + v.toString(16)).slice(-2)).join('')).toUpperCase(); };
+        const cur = /^#[0-9A-F]{6}$/i.test(own) ? (window.__wfSafeY ? window.__wfSafeY(own) : own.toUpperCase()) : def;   // (Oct 5) a stored colour under 4.5:1 shows as its lifted, safe version
         const setC = (h) => { try { if (!h || h === def) localStorage.removeItem('wf-primary'); else localStorage.setItem('wf-primary', h); } catch (e) {} if (window.__wfSetY) window.__wfSetY(role); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} this.forceUpdate(); };
         const SUG = [[def, def === '#CCFF00' ? T('Fire lime', 'Lima dos bombeiros') : T('Reflective yellow', 'Amarelo refletor')], ['#FFA3D2', T('Heather', 'Urze')], ['#C7B3FF', T('Lupine', 'Tremoceiro')], ['#6FF0CF', T('Surf', 'Rebentação')], ['#FFE14D', T('Pollen', 'Pólen')]];
         const known = SUG.find((x) => x[0] === cur);
         const ring = (on) => (on ? '0 0 0 3px #FFFFFF, 0 0 0 5px #3A3A3C' : 'inset 0 0 0 1px rgba(60,60,67,0.2)');
         const pal = window.__wfPalette ? window.__wfPalette.get() : 'snow', PS = window.__wfPalettes || {};
-        return { d: pmSec === 'look' ? 'flex' : 'none', colL: T('Primary colour', 'Cor principal'), palL: T('Palette', 'Paleta'), pickL: T('Choose any colour', 'Escolher qualquer cor'),
+        // (Oct 5) More colours: the app's own picker, offering only colours that keep the dark labels at 4.5:1 or more (WCAG AA text),
+        // so every choice is safe. One row per hue, from its deepest safe shade to a pale one, then a grey row.
+        const hsl = (h, sa, l) => { sa /= 100; l /= 100; const k = (n) => (n + h / 30) % 12, a = sa * Math.min(l, 1 - l), f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)); return '#' + [0, 8, 4].map((n) => ('0' + Math.round(f(n) * 255).toString(16)).slice(-2)).join('').toUpperCase(); };
+        const cr = window.__wfContrastY || (() => 99);
+        const GRID = [0, 20, 38, 52, 64, 85, 130, 165, 195, 215, 250, 290, 330].map((h) => { let l = 20; while (l < 95 && cr(hsl(h, 100, l)) < 4.6) l += 0.5; return [0, 1, 2, 3, 4, 5].map((i) => hsl(h, 100, l + (93 - l) * i / 6)); })
+          .concat([(() => { let l = 20; while (cr(hsl(0, 0, l)) < 4.6) l += 0.5; return [0, 1, 2, 3, 4, 5].map((i) => hsl(0, 0, l + (93 - l) * i / 6)); })()]);
+        const gOpen = !!s.colPick, gClose = () => this.setState({ colPick: false });
+        return { d: pmSec === 'look' ? 'flex' : 'none', colL: T('Primary colour', 'Cor principal'), palL: T('Palette', 'Paleta'), pickL: T('More colours', 'Mais cores'),
           cols: SUG.map(([h, name]) => ({ name, bg: h, on: h === cur ? 'true' : 'false', tick: h === cur ? 1 : 0, ring: ring(h === cur), pick: () => { if (h === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} setC(h); } })),
           own: cur, ownDot: known ? '#FFFFFF' : cur, ownRing: ring(!known),
-          onPick: (e) => { const v = String((e && e.target && e.target.value) || '').toUpperCase(); if (!/^#[0-9A-F]{6}$/.test(v)) return; setC(lift(v)); },
+          openPick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ colPick: true }); },
+          // the sheet: choosing a colour applies it at once and the sheet stays open (closed by its X, the grabber, a swipe down or a tap outside)
+          gTitle: T('More colours', 'Mais cores'), gSub: T('All keep labels readable.', 'Todas mantêm o texto legível.'), gDone: T('Done', 'Concluído'),
+          gHidden: gOpen ? 'false' : 'true', gPe: gOpen ? 'auto' : 'none', gOp: gOpen ? 1 : 0, gY: gOpen ? '0%' : 'calc(100% + 120px)', gDur: gOpen ? '.5s' : '.4s', gEase: gOpen ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', gClose,
+          grid: [].concat(...GRID).map((h) => ({ bg: h, name: h, on: h === cur ? 'true' : 'false', tick: h === cur ? 1 : 0, ring: ring(h === cur), pick: () => { if (h === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} setC(h); } })),
           colName: known ? known[1] : T('Your colour', 'A sua cor') + ' ' + cur,
           pals: Object.keys(PS).map((k) => { const P = PS[k], sel = k === pal; return { name: lang === 'pt' ? P.name[1] : P.name[0], sel: sel ? 'true' : 'false', ring: sel ? '#1C1C1E' : '#8E8E93', dot: sel ? 1 : 0, c1: P.page, c2: P.surface, c3: P.fill, c4: P.ink,
             pick: () => { if (sel) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfPalette.set(k); this.forceUpdate(); } }; }) };
