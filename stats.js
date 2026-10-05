@@ -365,8 +365,8 @@
     var order = B.map(function (_, i) { return i; }); for (var k = order.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)), tmp = order[k]; order[k] = order[j]; order[j] = tmp; }
     var bDelay = []; order.forEach(function (bi, k) { bDelay[bi] = k * (650 / Math.max(1, B.length)); });
     // the region map's blurred points fade in one by one, in a random order, until all are there
-    var pDelay = P.map(function () { return Math.random() * 1100; });
-    var dc = D.length ? +D[0].getAttribute('data-c') : 0, t0 = 0, END = 1400;
+    var pDelay = P.map(function () { return Math.random() * 1540; });   // (Oct 5, 22:08) 40% slower than first (1100 ms spread, 260 ms fade)
+    var dc = D.length ? +D[0].getAttribute('data-c') : 0, t0 = 0, END = P.length ? 1960 : 1400;
     function frame(ts) {
       if (!t0) t0 = ts; var t = ts - t0, done = t >= END;
       C.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - i * (320 / C.length)) / 600)), hh = +el.getAttribute('data-h') * eo(u); el.setAttribute('height', hh.toFixed(1)); el.setAttribute('y', (+el.getAttribute('data-b') - hh).toFixed(1)); });
@@ -374,7 +374,7 @@
       if (D.length) { var sw = dc * (done ? 1 : eio(Math.min(1, t / 900))) + 8; D.forEach(function (el) { var vis = Math.max(0, Math.min(+el.getAttribute('data-ln'), sw - +el.getAttribute('data-st'))); if (done) { el.setAttribute('stroke-dasharray', el.getAttribute('data-da')); el.style.strokeOpacity = ''; return; } el.style.strokeOpacity = vis > 0.5 ? '1' : '0'; el.setAttribute('stroke-dasharray', vis.toFixed(2) + ' ' + (dc - vis).toFixed(2)); }); }
       B.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - bDelay[i]) / 380)), sc = u < 0.65 ? 1.15 * eo(u / 0.65) : 1.15 - 0.15 * eio((u - 0.65) / 0.35), z = +el.getAttribute('data-z') * sc, cx = +el.getAttribute('data-bx'), cy = +el.getAttribute('data-by');
         el.setAttribute('width', z.toFixed(1)); el.setAttribute('height', z.toFixed(1)); el.setAttribute('x', (cx - z / 2).toFixed(1)); el.setAttribute('y', (cy - z / 2).toFixed(1)); el.setAttribute('rx', Math.min(4, z / 2).toFixed(1)); });
-      P.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - pDelay[i]) / 260)); el.setAttribute('fill-opacity', (+el.getAttribute('data-o') * eo(u)).toFixed(3)); });
+      P.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - pDelay[i]) / 364)); el.setAttribute('fill-opacity', (+el.getAttribute('data-o') * eo(u)).toFixed(3)); });
       if (!done) requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
