@@ -540,7 +540,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
      never written vertically). A widget holding simulated values gets a * in its top right corner; a screen with any of them
      ends with "* Simulation" on the left, 56px under the last content and 8px from the bottom. Groups marked as a whole
      (a heading's note) mark each of their cards. Done here, on every screen, from the notes the screens already write. */
-  var SIMW = /^(estimate|estimated|estimates|simulation|simulated|estimativa|estimado|simulação|simulado|推定|シミュレーション)\.?$/i;
+  var SIMW = /^(estimate|estimated|estimates|simulation|simulated|estimativa|estimado|estimada|estimación|estimacion|simulação|simulado|simulada|simulación|simulacion|estimation|estimé|estimée|simulé|simulée|stima|stimato|simulazione|simulato|schätzung|geschätzt|simuliert|推定|推定値|シミュレーション|估计|模拟)\.?$/i;   /* every language the app shows (Oct 5, 06:51: Spanish was missing) */
   function simCard(el) { var e = el, n = 0; while (e && e !== document.body && n < 8) { if (e.hasAttribute && (e.hasAttribute('data-wf-kpicard') || e.hasAttribute('data-wf-card'))) return e; var cs = getComputedStyle(e); if ((parseFloat(cs.borderTopLeftRadius) || 0) >= 12 && cs.backgroundColor && !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) && e.offsetWidth < window.innerWidth) return e; e = e.parentElement; n++; } return null; }
   function star(card) { if (!card || card.querySelector(':scope > .wf-simstar')) return; if (getComputedStyle(card).position === 'static') card.style.position = 'relative'; var t = document.createElement('span'); t.className = 'wf-simstar'; t.setAttribute('aria-label', document.documentElement.lang === 'pt' || window.__wfLang === 'pt' ? 'Simulação' : 'Simulation'); t.textContent = '*'; card.appendChild(t); }
   function scroller(el) { var e = el && el.parentElement; while (e && e !== document.body) { var cs = getComputedStyle(e); if (/auto|scroll/.test(cs.overflowY) && !e.closest('[data-wf-maproot]')) return e; e = e.parentElement; } return null; }
@@ -557,7 +557,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // the screen's footnote, once per scroller that holds a starred widget
     var S = document.querySelectorAll('.wf-simstar'), seen = [];
     for (var k = 0; k < S.length; k++) { if (!S[k].offsetParent) continue; var sc = scroller(S[k]); if (!sc || seen.indexOf(sc) >= 0) continue; seen.push(sc);
-      var f = sc.querySelector(':scope > .wf-simfoot'); if (!f) { f = document.createElement('span'); f.className = 'wf-note wf-simfoot'; f.textContent = window.__wfLang === 'pt' ? '* Simulação' : '* Simulation'; sc.appendChild(f); }
+      var f = sc.querySelector(':scope > .wf-simfoot'); if (!f) { f = document.createElement('span'); f.className = 'wf-note wf-simfoot'; f.textContent = ({ pt: '* Simulação', es: '* Simulación', fr: '* Simulation', it: '* Simulazione', de: '* Simulation', ja: '* シミュレーション' })[window.__wfLang] || '* Simulation'; sc.appendChild(f); }
       else if (f !== sc.lastElementChild) sc.appendChild(f);
       sc.setAttribute('data-wf-nopb', '1'); sc.style.setProperty('padding-bottom', '8px', 'important');
       // 56px between the last content and the footnote, whatever gap the screen's own layout adds
