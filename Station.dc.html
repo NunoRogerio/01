@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="feedcam.js?v=21"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=194"></script>
+<script src="prefs.js?v=195"></script>
 <script src="menu.js?v=16"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
@@ -59,7 +59,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- (Oct 5, 07:03) in the title column, the row after the description: (06:57) only the station's status tag and, on the right, the green call button: a call with this
          station's fire coordinator alone (rings, connects, then shows them in the floating panel, as the police call does) -->
 <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 4px">
-      <span role="status" class="wf-stg" style="display: inline-flex; align-items: center; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: {{st.tagBg}}; color: {{st.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{st.tag}}</span>
+      <span role="status" class="wf-ctag" style="color: {{st.tagFg}}; background: {{st.tagBg}}">{{st.tag}}</span>
       <button type="button" class="chbtn" data-round="1" onClick="{{stCall}}" data-call="1" aria-label="{{stCallAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #34C759; color: #fff; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
     </span>
 </span></span>
@@ -369,7 +369,7 @@ class Component extends DCLogic {
     const holder = { st: cc, face: F };
     const photo = (nm) => { const u = C && C.photo ? C.photo(holder, nm) : ''; try { sessionStorage.setItem(FK, JSON.stringify(F)); } catch (e) {} return u ? 'url("' + u + '")' : 'none'; };
     const ini = (nm) => nm.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
-    const TAG = { ok: ['Available', 'Disponível', 'rgba(52,199,89,0.14)', '#186B2D'], out: ['On a mission', 'Em missão', 'rgba(184,74,0,0.14)', '#963B00'], off: ['Off duty', 'De folga', 'rgba(118,118,128,0.14)', '#636366'], fix: ['In the workshop', 'Em manutenção', 'rgba(118,118,128,0.14)', '#636366'] };
+    const TAG = { ok: ['Available', 'Disponível', window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], out: ['On a mission', 'Em missão', 'rgba(184,74,0,0.14)', '#963B00'], off: ['Off duty', 'De folga', 'rgba(118,118,128,0.14)', '#636366'], fix: ['In the workshop', 'Em manutenção', 'rgba(118,118,128,0.14)', '#636366'] };
     const org = (name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'BV ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim()) || name;
 
     // Command team
@@ -452,7 +452,7 @@ class Component extends DCLogic {
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestD: K.url ? 'block' : 'none', crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
         title: name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
-        ...(n25 ? { tag: n25 + (n25 === 1 ? ' fire' : ' fires'), tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: 'rgba(52,199,89,0.14)', tagFg: '#186B2D' }),
+        ...(n25 ? { tag: n25 + (n25 === 1 ? ' fire' : ' fires'), tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
         ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },

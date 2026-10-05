@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=194"></script>
+<script src="prefs.js?v=195"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
 
@@ -1835,7 +1835,7 @@ class Component extends DCLogic {
         const CH = window.__wfChat, nm = String(m.tt || '').replace(/^Fire station /, ''), keys = [nm, m._st && m._st.name, m._st && m._st.short].filter(Boolean).map((v) => String(v).toLowerCase());
         const nF = CH && CH.list ? CH.list().filter((c) => c && !c.closed && !c.dismissed && (c.forces || []).some((f) => f.st !== 'standby' && f.st !== 'released' && [f.station, f.full].filter(Boolean).some((v) => keys.some((k) => String(v).toLowerCase() === k || (k.length > 3 && nm.toLowerCase().indexOf(String(v).toLowerCase()) >= 0 && String(v).length > 3))))).length : 0;
         const nB = Math.max(nF, m.stat === 'busy' ? 1 : 0);
-        const A = nB > 0 ? [nB + (nB === 1 ? ' fire' : ' fires'), 'rgba(232,106,0,0.14)', '#A34800'] : ['Available', 'rgba(52,199,89,0.14)', '#186B2D'];
+        const A = nB > 0 ? [nB + (nB === 1 ? ' fire' : ' fires'), 'rgba(232,106,0,0.14)', '#A34800'] : ['Available', window.__wfStTag.ok.bg, window.__wfStTag.ok.fg];
         return { tagD: 'none', tagTxt: A[0], tagBg: A[1], tagFg: A[2], dockD: 'flex', dockMt: '0', stPadB: noView || !m._st ? '16px' : '0', stPadT: m._st ? '6px' : '12px', stLbl: 'Status', stLblD: 'inline-flex', stTtMt: '16px' }; })(), left: pLeft, top: pTop, dy: (y < pTop ? -10 : 10) + 'px',
       from: y < pTop ? 'inset(0 0 calc(100% - 60px) 0 round 28px)' : 'inset(calc(100% - 60px) 0 0 0 round 28px)',   // starts as the 60px band nearest the marker, then unfolds
       ...chatFor(chatInc), chatD: 'none', cutY: Math.round(y + (P.kind === 'st' ? -13 : P.kind === 'ign' ? 0 : 14)), isIgn: P.kind === 'ign', isFire: !!FD, notIgn: P.kind !== 'ign' && !FD, w: PW, pad: '0', btnPad: '0 8px 8px', btnMt: '16px', btnCls: 'wf-b wf-pri wf-cond', chatS: '32px', chatI: '17px', regD: (P.kind === 'st' ? stReg : m.reg) ? 'block' : 'none', stKD: P.kind === 'st' && m.aT ? 'block' : 'none', stDistLbl: 'Distance', ...(() => { if (P.kind !== 'st' || !m._st || !window.__wfCrest) return { stCrest: '', stCrN: '', stCrestD: 'none' }; const K = window.__wfCrest((m._st.type === 'way' ? 'w' : 'n') + m._st.id, m._st.name); return { stCrest: K.url || '', stCrN: m._st.name || '', stCrestD: K.url ? 'block' : 'none' }; })(), stKm: m.aT || '', stFs: (this._kpiFs || {})[m.aT || ''] || 45, ttMt: P.kind === 'st' && m.aT ? '8px' : '0', pctAria: (m.conf != null ? m.conf : '') + ' percent likelihood', pctLike: (m.conf != null ? m.conf : '') + '% likelihood', tagFg: window.__wfConfTag ? window.__wfConfTag(m.conf).fg : '#1F64A6', tagBg: window.__wfConfTag ? window.__wfConfTag(m.conf).bg : '#E3EEFB', igNightD: P.kind === 'ign' && m.moonD === 'block' ? 'flex' : 'none', place: m.place || '', reg: P.kind === 'st' ? stReg : (m.reg || ''), igC: m.c || 'var(--wf-y)', pct: (m.conf != null ? m.conf : '') + '%', pctFs: (this._kpiFs || {})[(m.conf != null ? m.conf : '') + '%'] || 45, pctC: m.c || '#000000', src: m.srcTxt || '', sub: m._id || '',
