@@ -110,15 +110,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{noFiresTxt}}</p></sc-if>
         <ul style="display: {{firesD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{fires}}" as="f" hint-placeholder-count="2">
-            <li style="border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); overflow: hidden">
-              <a href="Dispatch.dc.html" class="stfire" data-wf-keepsp="1" onClick="{{f.go}}" style="display: grid; grid-template-columns: 24px minmax(0, 1fr) auto 20px; column-gap: 16px; row-gap: 8px; align-items: center; padding: 16px; box-sizing: border-box; color: #000000; text-decoration: none">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="grid-row: 1; align-self: center"><circle cx="12" cy="12" r="8.8" fill="{{f.mk}}"></circle></svg>
-                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
-                <span style="justify-self: end; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{f.km}}</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 4; align-self: center"><path d="m9 6 6 6-6 6"></path></svg>
-                <span class="wf-stg" style="grid-column: 2; justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
-                <span style="grid-column: 3; justify-self: end; font-size: 15px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{f.eta}}</span>
-              </a>
+            <!-- (Oct 5, 07:46) the incident card of the incidents list (Main): place and stage tag, then distance and drive time -->
+            <li style="border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+              <a href="Dispatch.dc.html" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
+              <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
+              <span class="wf-stg" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: {{f.tagBg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
+              <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span>
+            </a>
             </li>
           </sc-for>
         </ul>
@@ -331,7 +329,7 @@ class Component extends DCLogic {
       const r = q.r, info = r[9] || {}, active = !info.resolved;
       const min = Math.round(q.km * 1.3 / 50 * 60);
       const T = window.__wfStageTag ? window.__wfStageTag({ info, note: r[4] }) : null;   /* the shared stage tag: the stage's name, colours and icon */
-      return { mk: active ? '#E8590C' : '#6F2B06', tagTxt: T ? T.label : (active ? 'Active' : 'Resolved'), tagFg: T ? T.fg : '#3A3A3C', tagBg: T ? T.bg : 'rgba(118,118,128,0.12)', tagIc: T ? T.ic : '', sep: '0', place: r[3] || r[2], state: (info.stEn || info.st || (active ? 'Active' : 'Resolved')) + (r[8] ? ' · ' + Math.round(r[8]).toLocaleString('en-US') + ' ha' : ''),
+      return { aria: (r[3] || r[2]) + ', ' + (q.km < 10 ? q.km.toFixed(1) : Math.round(q.km)) + ' km', tagIcD: T ? 'block' : 'none', sub: (q.km < 10 ? q.km.toFixed(1) + ' km' : Math.round(q.km) + ' km') + '. ~' + (min < 60 ? min + ' min' : Math.floor(min / 60) + ' h ' + String(min % 60).padStart(2, '0')) + (window.__wfLang === 'pt' ? ' de carro' : ' drive') + (r[8] ? '. ' + Math.round(r[8]).toLocaleString('en-US') + ' ha' : ''), mk: active ? '#E8590C' : '#6F2B06', tagTxt: T ? T.label : (active ? 'Active' : 'Resolved'), tagFg: T ? T.fg : '#3A3A3C', tagBg: T ? T.bg : 'rgba(118,118,128,0.12)', tagIc: T ? T.ic : '', sep: '0', place: r[3] || r[2], state: (info.stEn || info.st || (active ? 'Active' : 'Resolved')) + (r[8] ? ' · ' + Math.round(r[8]).toLocaleString('en-US') + ' ha' : ''),
         km: q.km < 10 ? q.km.toFixed(1) + ' km' : Math.round(q.km) + ' km', eta: '~' + (min < 60 ? min + ' min' : Math.floor(min / 60) + ' h ' + String(min % 60).padStart(2, '0')),
         go: () => { const v = { id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     });
