@@ -660,16 +660,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Maps (Oct 4): the tile providers under test; one on at a time (turning one on turns the other off) -->
       <div style="display: {{pm.dMaps}}; flex-direction: column; gap: 56px; flex-shrink: 0">
         <!-- (Oct 4, 22:32) the "one map at a time" note is now the section's description, under the title -->
-        <ul aria-label="Maps" style="display: flex; flex-direction: column; gap: 32px; margin: 0; padding: 0; list-style: none"><!-- (Oct 5) a full-width line between the map engines, 32px either side -->
+        <ul role="radiogroup" aria-label="Maps" style="display: flex; flex-direction: column; gap: 32px; margin: 0; padding: 0; list-style: none"><!-- (Oct 5) a full-width line between the map engines, 32px either side -->
           <sc-for list="{{mp.items}}" as="m" hint-placeholder-count="2">
-            <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: {{m.liPad}}; border-top: {{m.liBd}}">
-              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-                <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{m.name}}</span>
-                <span style="font-size: 17px; line-height: 22px; color: #000000">{{m.sub}}</span>
-              </span>
-              <button type="button" role="switch" class="wf-tog" aria-checked="{{m.onStr}}" aria-label="{{m.name}}" onClick="{{m.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{m.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{m.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
-              <span style="grid-column: 1 / -1; margin-top: 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.why}}</span>
-              <div role="radiogroup" aria-label="{{m.name}}" style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; margin-top: 24px">
+            <li style="display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 16px; align-items: start; padding: {{m.liPad}}; border-top: {{m.liBd}}">
+              <!-- (Oct 5, 09:06) one engine at a time is a single choice: a radio with the engine's name (as the palettes), not a toggle; its details sit under the name -->
+              <button type="button" role="radio" aria-checked="{{m.onStr}}" onClick="{{m.toggle}}" style="grid-column: 1 / -1; display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 16px; row-gap: 4px; align-items: center; padding: 0; border: 0; background: none; font: inherit; color: #000000; text-align: left; cursor: pointer">
+                <span aria-hidden="true" style="position: relative; flex: none; width: 24px; height: 24px; border-radius: 50%; box-sizing: border-box; border: 2px solid {{m.ring}}"><span style="position: absolute; left: 4px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #1C1C1E; opacity: {{m.dot}}; transition: opacity .25s ease"></span></span>
+                <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{m.name}}</span>
+                <span style="grid-column: 2; font-size: 17px; line-height: 22px">{{m.sub}}</span>
+              </button>
+              <span style="grid-column: 2; margin-top: 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{m.why}}</span>
+              <div role="radiogroup" aria-label="{{m.name}}" style="grid-column: 2; display: flex; flex-direction: column; gap: 8px; margin-top: 24px">
                 <span style="font-size: 15px; line-height: 20px; font-weight: 600; color: #6E6E73">{{m.rsT}}</span>
                 <sc-for list="{{m.rs}}" as="r" hint-placeholder-count="3">
                   <button type="button" role="radio" aria-checked="{{r.sel}}" onClick="{{r.pick}}" style="display: flex; align-items: center; gap: 16px; min-height: 44px; padding: 0; border: 0; background: none; font: inherit; text-align: left; cursor: pointer">
@@ -679,7 +680,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 </sc-for>
               </div>
               <!-- (Oct 5, 02:48) MapTiler's key, like the role-play key: the app's shared key by default, or your own kept on this phone -->
-              <div style="display: {{m.kD}}; grid-column: 1 / -1; flex-direction: column; gap: 24px; margin-top: 32px">
+              <div style="display: {{m.kD}}; grid-column: 2; flex-direction: column; gap: 24px; margin-top: 32px">
                 <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; line-height: 20px; font-weight: 600; color: #6E6E73">{{m.kT}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{m.kSub}}</span></span>
                 <label style="display: flex; align-items: center; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{m.kPh}}</span><input id="wf-mt-key-in" type="password" autocomplete="off" spellcheck="false" value="{{m.kDraft}}" onInput="{{m.kInput}}" placeholder="{{m.kPh}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"><span aria-hidden="true" style="display: {{m.kOkD}}; align-items: center; color: var(--wf-y-ink, #1C1C1E)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></label>
                 <div style="display: flex; gap: 24px">
@@ -689,7 +690,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 </div>
                 <span style="font-size: 15px; line-height: 20px; color: {{m.kNoteC}}">{{m.kNote}}</span>
               </div>
-              <a href="{{m.url}}" target="_blank" rel="noopener" class="opt" style="grid-column: 1 / -1; justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 16px; font-size: 15px; line-height: 20px; color: #6E6E73; text-decoration: none">{{m.visit}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+              <a href="{{m.url}}" target="_blank" rel="noopener" class="opt" style="grid-column: 2; justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 16px; font-size: 15px; line-height: 20px; color: #6E6E73; text-decoration: none">{{m.visit}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
             </li>
           </sc-for>
         </ul>
@@ -1282,7 +1283,7 @@ class Component extends DCLogic {
           return { shows: XX.shows.map(([k, en, ptt]) => ({ ...flags(k), text: T(en, ptt) })), showsD: XX.shows.length ? 'block' : 'none', exs: EX.map((e) => ({ ...flags(e.k), fc: e.fc, title: e.title, sub: e.sub, tag: e.tag, tagD: e.tag ? 'inline-flex' : 'none', tagFg: e.tagFg, tagBg: e.tagBg })), exsD: EX.length ? 'block' : 'none', noExD: XX.shows.length && !EX.length && X[name] && X[name].ex.length ? 'block' : 'none', showsT: T('Shows in the app', 'Mostra na app'), exsT: T('Examples', 'Exemplos'),
             url: URLS[name] || '#', visit: T('Visit page', 'Visitar página'),
             name, sub: what, why: why || '', whyD: why ? 'block' : 'none', loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
-          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
+          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', ring: on ? '#1C1C1E' : '#8E8E93', dot: on ? 1 : 0, swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
@@ -1348,7 +1349,7 @@ class Component extends DCLogic {
           sub: T('Crew coordinators in the incident chats answer in character, written by Claude from the state of the fire.', 'Os coordenadores de equipa nas conversas respondem em personagem, escritos pelo Claude a partir do estado do incêndio.'),
           pill: busy ? T('Checking', 'A verificar') : bad ? T('Error', 'Erro') : has ? T('On', 'Ligado') : T('Off', 'Desligado'),
           pillBg: busy ? 'rgba(118,118,128,0.14)' : bad ? 'rgba(215,0,21,0.10)' : has ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)', pillFg: busy ? '#48484A' : bad ? '#B3001B' : has ? '#186B2D' : '#48484A',
-          onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: has ? 1 : 0.4,
+          onStr: on ? 'true' : 'false', ring: on ? '#1C1C1E' : '#8E8E93', dot: on ? 1 : 0, swOp: has ? 1 : 0.4,
           toggle: () => { if (!A || !has) return; this.setState({ aiAsk: on ? 'off' : 'on' }); },   // opens the confirmation (the tap vibrates as usual)   // asks first (avoids mis-taps)
           ph: rep ? T('Paste the new key (sk-ant-…)', 'Cole a nova chave (sk-ant-…)') : has ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('Anthropic API key (sk-ant-…)', 'Chave da API Anthropic (sk-ant-…)'), draft: s.aiDraft || '', okD: has && !rep && !(s.aiDraft || '') ? 'flex' : 'none',
           onInput: (e) => this.setState({ aiDraft: e.target.value }),
@@ -1405,12 +1406,12 @@ class Component extends DCLogic {
             kRemove: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (rep) { this.setState({ mtRep: false, mtDraft: '' }); return; } this.setState({ aiAsk: 'mtrm' }); },
             kNote: busy ? T('Checking the key…', 'A verificar a chave…') : bad ? T('The key failed to load: ', 'A chave falhou: ') + kst.err + '.' : kst && kst.ok ? T('Working. Checked at ', 'A funcionar. Verificada às ') + new Date(kst.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + T('. Get a key at maptiler.com; it stays on this phone only.', '. Obtenha uma chave em maptiler.com; fica apenas neste telemóvel.') : T('Get a key at maptiler.com (free plan). It stays on this phone only.', 'Obtenha uma chave em maptiler.com (plano gratuito). Fica apenas neste telemóvel.'),
             kNoteC: bad ? '#B3001B' : '#6E6E73' };
-          return { ...KB, url: k === 'osm' ? 'https://www.openstreetmap.org/' : 'https://www.maptiler.com/', visit: T('Visit page', 'Visitar página'), liPad: ix ? '32px 0 0' : '0', liBd: ix ? '1px solid rgba(60,60,67,0.22)' : '0', name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px',
+          return { ...KB, url: k === 'osm' ? 'https://www.openstreetmap.org/' : 'https://www.maptiler.com/', visit: T('Visit page', 'Visitar página'), liPad: ix ? '32px 0 0' : '0', liBd: ix ? '1px solid rgba(60,60,67,0.22)' : '0', name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', ring: on ? '#1C1C1E' : '#8E8E93', dot: on ? 1 : 0,
             toggle: () => { if (on) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k); this.forceUpdate(); },
             /* the renders this provider offers: a radio list; choosing one turns its provider on */
             rs: window.__wfTiles.styles[k].map(([id]) => { const sel = on && id === curSt; return { label: T(RN[id][0], RN[id][1]), sel: sel ? 'true' : 'false', ring: sel ? '#1C1C1E' : '#8E8E93', dot: sel ? 1 : 0,
               pick: () => { if (sel) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k, id); this.forceUpdate(); } }; }), rsT: T('Look', 'Aspeto') }; }),
-          note: T('One map at a time. Turning one on turns the other off.', 'Um mapa de cada vez. Ativar um desativa o outro.') }; })(),
+          note: '' }; })(),
       ap: (() => {
         const T = (en, ptt) => (lang === 'pt' ? ptt : en), role = this.wfRole() || '', def = window.__wfYDefault ? window.__wfYDefault(role) : '#E5FF00';
         let own = ''; try { own = localStorage.getItem('wf-primary') || ''; } catch (e) {}
