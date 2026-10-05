@@ -292,7 +292,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Fire closed', 'Incêndio encerrado'],
       b: ['Tap to see the summary.', 'Toque para ver o resumo.'] },
     { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header.chview'); }, next: ['Finish', 'Terminar'],
-      ach: ['Tour complete. You\'re ready!', 'Visita concluída. Está pronto!'], then: ['Now explore on your own.', 'Agora explore por si.'],
+      ach: ['Well done. You resolved your first fire.', 'Muito bem. Resolveu o seu primeiro incêndio.'], then: ['Now let\'s do it for real.', 'Agora vamos fazê-lo a sério.'],
       t: ['The fire summary', 'O resumo do incêndio'],
       b: ['Time in each stage, the forces used and the result. Scroll down to see it all. Thank you for exploring.', 'Tempo em cada fase, meios usados e resultado. Deslize para baixo para ver tudo. Obrigado por explorar.'] }
   ];
@@ -379,16 +379,25 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   var actx = null, ACH_LEAD = 450;   // the sound leads the achievement card by this much (ms)
   function actxGet() { try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {} return actx; }
   ['pointerdown', 'touchend'].forEach(function (ev) { window.addEventListener(ev, function () { actxGet(); }, { capture: true, passive: true }); });
+  // (Oct 5) "plim plom plim": three soft, round notes (high, lower, higher) with a warm bass under each, a gentle low-pass
+  // and a short echo, so it sounds modern and full rather than a thin arcade beep
   function prlim() {
     var c = actxGet(); if (!c) return;
-    try { var t0 = c.currentTime + 0.005, out = c.createGain(); out.gain.value = 0.22; out.connect(c.destination);
-      var note = function (f, t, d, peak) { var o = c.createOscillator(), g = c.createGain(), o2 = c.createOscillator(), g2 = c.createGain();
-        o.type = 'sine'; o.frequency.setValueAtTime(f, t); o2.type = 'sine'; o2.frequency.setValueAtTime(f * 2.01, t);   // a faint octave shimmer
-        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-        g2.gain.setValueAtTime(0.0001, t); g2.gain.exponentialRampToValueAtTime(peak * 0.25, t + 0.008); g2.gain.exponentialRampToValueAtTime(0.0001, t + d * 0.6);
-        o.connect(g); g.connect(out); o2.connect(g2); g2.connect(out); o.start(t); o2.start(t); o.stop(t + d + 0.05); o2.stop(t + d + 0.05); };
-      // "pr": three quick rising grace notes; "lim": the bell, ringing out
-      note(1319, t0, 0.07, 0.35); note(1568, t0 + 0.045, 0.07, 0.4); note(1760, t0 + 0.09, 0.08, 0.45); note(2093, t0 + 0.14, 0.9, 0.8);
+    try { var t0 = c.currentTime + 0.01, out = c.createGain(), lp = c.createBiquadFilter(), dl = c.createDelay(), fb = c.createGain(), wet = c.createGain();
+      out.gain.value = 0.3; lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = 0.4;
+      dl.delayTime.value = 0.19; fb.gain.value = 0.22; wet.gain.value = 0.28;
+      lp.connect(out); out.connect(c.destination); out.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(c.destination);
+      var voice = function (type, f, t, d, peak, att) { var o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.setValueAtTime(f, t);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + att); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+        o.connect(g); g.connect(lp); o.start(t); o.stop(t + d + 0.05); };
+      var note = function (f, t, d, peak) {
+        voice('sine', f, t, d, peak, 0.012);              // the bell
+        voice('triangle', f * 0.5, t, d * 0.9, peak * 0.55, 0.02);   // body, an octave down
+        voice('sine', f * 0.25, t, d * 0.7, peak * 0.6, 0.03);       // the bass
+        voice('sine', f * 2.005, t, d * 0.35, peak * 0.12, 0.01); };  // a little air on top
+      note(784, t0, 0.42, 0.5);          // plim (G5)
+      note(523.25, t0 + 0.16, 0.48, 0.55);  // plom (C5)
+      note(1046.5, t0 + 0.34, 1.1, 0.6);  // plim (C6), ringing out
     } catch (e) {}
   }
   function dragOn(b) {
