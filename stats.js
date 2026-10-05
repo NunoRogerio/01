@@ -81,7 +81,7 @@
   function hbars(items, max, best) {
     return '<div style="display:flex;flex-direction:column;gap:16px">' + items.map(function (it, i) {
       return '<div><div style="display:flex;justify-content:space-between;gap:16px;font-size:16px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums">' + esc(it.t) + '</span></div>' +
-        '<div aria-hidden="true" style="height:4px;margin-top:8px;border-radius:2px;background:' + TRACK + ';overflow:hidden"><div style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:2px;background:' + INK + '"></div></div></div>';
+        '<div aria-hidden="true" style="height:8px;margin-top:8px;border-radius:4px;background:' + TRACK + ';overflow:hidden"><div style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:4px;background:' + INK + '"></div></div></div>';
     }).join('') + '</div>';
   }
   function donut(parts, abs) {
@@ -99,7 +99,7 @@
   function stack(a, b) {
     var tot = a.v + b.v, pa = Math.round(100 * a.v / tot), pb = 100 - pa;
     var row = function (x, p, col, ring) { return '<div style="display:flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;background:' + col + '"></span><span style="flex:1;min-width:0">' + esc(x.n) + '</span><span style="font-variant-numeric:tabular-nums">' + p + '%</span><span style="min-width:56px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(x.v) + '</span></div>'; };
-    return '<div aria-hidden="true" style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden"><div style="width:' + pa + '%;border-radius:2px;background:' + LIME + '"></div><div style="flex:1;border-radius:2px;background:' + INK + '"></div></div>' +   // 4px like every horizontal bar; the shares are in the rows below
+    return '<div aria-hidden="true" style="display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden"><div style="width:' + pa + '%;border-radius:4px;background:' + LIME + '"></div><div style="flex:1;border-radius:4px;background:' + INK + '"></div></div>' +   // 8px like every bar chart; the shares are in the rows below
       '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">' + row(a, pa, LIME) + row(b, pb, INK) + '</div>';
   }
 
