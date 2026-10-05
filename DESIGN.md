@@ -1065,3 +1065,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **About, one source (Oct 5):** the About in settings and the About opened from the login screen are the same page (About.dc.html); any text change bumps its ?v= in both links (settings embed in Main.dc.html, login link in Login.dc.html).
 - **Profile panel (Oct 5):** a full-width horizontal line separates the access line ("All features. All regions.") from the profile's description, 24px above and below it.
 - **Maps settings (Oct 5):** a full-width line separates the map engines (MapTiler, OpenStreetMap), 32px above and below it.
+- **About sections (Oct 5):** a full-width line separates Goal, Where we are and the thanks, 32px above and below each line (both About screens).
