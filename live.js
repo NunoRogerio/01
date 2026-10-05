@@ -453,11 +453,14 @@ window.__wfRegionUp = function (st, co) {
   window.__wfModels=window.__wfModels||{};
   window.__wfFireModel=function(f){        // f: {id, st, lat, lon, ha, res, note}
     var M=window.__wfModels;if(M[f.id])return M[f.id].done?M[f.id]:null;
+    // (Oct 5, 09:26) a model worked out in the last 15 min (e.g. by the next screen preloading behind View) is reused at once:
+    // the fire's map opens drawn, with no wait for the perimeter, weather and terrain again
+    var SK='wf-model-'+f.id;try{var sv=JSON.parse(sessionStorage.getItem(SK)||'null');if(sv&&sv.m&&Date.now()-sv.at<9e5){if(sv.m.etrAt)sv.m.etrAt=new Date(sv.m.etrAt);M[f.id]=sv.m;return sv.m;}}catch(e){}
     M[f.id]={done:false};
     var o=[f.lat,f.lon];
     Promise.all([officialPerimeter(f),weatherAt(f),terrainAt(f),fuelAt(f)]).then(function(r){
       var ring=r[0]||satellitePerimeter(f,o)||{xy:blob(Math.sqrt((f.ha||5)*1e4/Math.PI),64,f.id),assumed:true,src:f.ha?'No mapped perimeter · '+f.ha+' ha reported':'No mapped perimeter · size not published'};
-      var out=simulate(f,ring,ring.src,r[1],r[2],r[3]);out.done=true;out.assumed=!!ring.assumed;M[f.id]=out;
+      var out=simulate(f,ring,ring.src,r[1],r[2],r[3]);out.done=true;out.assumed=!!ring.assumed;M[f.id]=out;try{sessionStorage.setItem(SK,JSON.stringify({at:Date.now(),m:out}));}catch(e){}
       try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}
     }).catch(function(e){console.warn('[fire model] failed',e);M[f.id]={done:true,failed:true};try{window.dispatchEvent(new Event('wf-sync'));}catch(x){}});
     return null;

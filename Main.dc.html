@@ -20,7 +20,7 @@
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=195"></script>
 <script src="i18n.js?v=166"></script>
-<script src="live.js?v=42"></script>
+<script src="live.js?v=43"></script>
 <script src="chat.js?v=70"></script>
 <script src="tour.js?v=97"></script>
 <script src="mapsearch.js?v=4"></script>
@@ -626,7 +626,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </span>
           </div>
         </div>
-        <button type="button" class="opt" onClick="{{shr.go}}" aria-label="{{shr.title}}" style="display: flex; align-items: center; gap: 16px; height: 52px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #000000; font: inherit; font-size: 17px; text-align: left; cursor: pointer"><span role="status" aria-live="polite" style="flex-grow: 1; font-weight: 600">{{shr.title}}</span><svg width="22.5" height="22.5" viewBox="0 0 24 24" fill="none" stroke="#545458" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 6 6 6-6 6"></path></svg></button>
+        <!-- (Oct 5, 09:28) sharing is this panel's main action: the primary button (full width, no chevron) -->
+        <button type="button" class="opt wf-b wf-pri" onClick="{{shr.go}}" aria-label="{{shr.title}}" style="margin-top: 24px; border: 0; font: inherit; cursor: pointer"><span role="status" aria-live="polite">{{shr.title}}</span></button>
       </div>
       </div>
       <!-- Group label for the drawers below, in the annotation style like Language / Theme / Text size (8px from its group) -->
@@ -1283,7 +1284,7 @@ class Component extends DCLogic {
           return { shows: XX.shows.map(([k, en, ptt]) => ({ ...flags(k), text: T(en, ptt) })), showsD: XX.shows.length ? 'block' : 'none', exs: EX.map((e) => ({ ...flags(e.k), fc: e.fc, title: e.title, sub: e.sub, tag: e.tag, tagD: e.tag ? 'inline-flex' : 'none', tagFg: e.tagFg, tagBg: e.tagBg })), exsD: EX.length ? 'block' : 'none', noExD: XX.shows.length && !EX.length && X[name] && X[name].ex.length ? 'block' : 'none', showsT: T('Shows in the app', 'Mostra na app'), exsT: T('Examples', 'Exemplos'),
             url: URLS[name] || '#', visit: T('Visit page', 'Visitar página'),
             name, sub: what, why: why || '', whyD: why ? 'block' : 'none', loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
-          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', ring: on ? '#1C1C1E' : '#8E8E93', dot: on ? 1 : 0, swOp: 1, togD: lock ? 'none' : 'block',
+          onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
@@ -1349,7 +1350,7 @@ class Component extends DCLogic {
           sub: T('Crew coordinators in the incident chats answer in character, written by Claude from the state of the fire.', 'Os coordenadores de equipa nas conversas respondem em personagem, escritos pelo Claude a partir do estado do incêndio.'),
           pill: busy ? T('Checking', 'A verificar') : bad ? T('Error', 'Erro') : has ? T('On', 'Ligado') : T('Off', 'Desligado'),
           pillBg: busy ? 'rgba(118,118,128,0.14)' : bad ? 'rgba(215,0,21,0.10)' : has ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)', pillFg: busy ? '#48484A' : bad ? '#B3001B' : has ? '#186B2D' : '#48484A',
-          onStr: on ? 'true' : 'false', ring: on ? '#1C1C1E' : '#8E8E93', dot: on ? 1 : 0, swOp: has ? 1 : 0.4,
+          onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: has ? 1 : 0.4,
           toggle: () => { if (!A || !has) return; this.setState({ aiAsk: on ? 'off' : 'on' }); },   // opens the confirmation (the tap vibrates as usual)   // asks first (avoids mis-taps)
           ph: rep ? T('Paste the new key (sk-ant-…)', 'Cole a nova chave (sk-ant-…)') : has ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('Anthropic API key (sk-ant-…)', 'Chave da API Anthropic (sk-ant-…)'), draft: s.aiDraft || '', okD: has && !rep && !(s.aiDraft || '') ? 'flex' : 'none',
           onInput: (e) => this.setState({ aiDraft: e.target.value }),
