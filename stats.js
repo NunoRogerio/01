@@ -171,6 +171,27 @@
       '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#1C1C1E;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:15px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
       '<div style="font-size:15px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' + o.h + '</article>';
   }
+
+  // the header: the selected region's shape in light grey with two blurred heat layers on it (simulated):
+  // lime where ignition candidates appear, dark grey where the burned area is
+  function regionHeat(rg, X) {
+    var G = window.__wfGeo, sc = null, role = ''; try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); role = localStorage.getItem('wf-role') || ''; } catch (e) {}
+    sc = sc || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; if (lk && (!sc || sc.st !== lk)) sc = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; sc = sc && sc.st ? sc : { st: 'CA', co: 'Los Angeles' };
+    var g = G && sc && (sc.co && G.counties && G.counties[sc.st + '|' + sc.co] || (G.states && G.states[sc.st])); if (!g || !g.box) return '';
+    var b = g.box, bw = Math.max(1, b[2] - b[0]), bh = Math.max(1, b[3] - b[1]), pad = Math.max(bw, bh) * 0.06, vw = bw + 2 * pad, vh = bh + 2 * pad, vx = b[0] - pad, vy = b[1] - pad;
+    var pts = g.pts, ins = function (x, y) { if (!pts) { var u = (x - (b[0] + bw / 2)) / (bw / 2), v = (y - (b[1] + bh / 2)) / (bh / 2); return u * u + v * v <= 1; } var c = false; for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) { if ((pts[i][1] > y) !== (pts[j][1] > y) && x < (pts[j][0] - pts[i][0]) * (y - pts[i][1]) / (pts[j][1] - pts[i][1]) + pts[i][0]) c = !c; } return c; };
+    var R = rng(S.region + '|' + rg.id + '|heat'), spots = function (n, r0, r1, wt) { var o = [], t = 0; while (o.length < n && t++ < 4000) { var x = b[0] + R() * bw, y = b[1] + R() * bh; if (ins(x, y)) o.push([x, y, Math.max(bw, bh) * (r0 + R() * (r1 - r0)), wt * (0.5 + R() * 0.5)]); } return o; };
+    var hotC = spots(5, 0.03, 0.08, 0.9), hotB = spots(3, 0.04, 0.09, 0.8), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = Math.max(bw, bh) * 0.035, hh = Math.min(300, Math.round(326 * vh / vw));
+    var blobs = function (a, col) { return a.map(function (q) { return '<circle cx="' + q[0].toFixed(0) + '" cy="' + q[1].toFixed(0) + '" r="' + q[2].toFixed(0) + '" fill="' + col + '" fill-opacity="' + q[3].toFixed(2) + '"/>'; }).join(''); };
+    var shape = g.d ? '<path d="' + g.d + '"/>' : '<ellipse cx="' + (b[0] + bw / 2) + '" cy="' + (b[1] + bh / 2) + '" rx="' + bw / 2 + '" ry="' + bh / 2 + '"/>';
+    var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ignition candidates and burned area across ' + esc(S.region) + '" style="display:block">' +
+      '<defs><clipPath id="' + cl + '">' + shape + '</clipPath><filter id="' + cl + 'b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="' + blur.toFixed(0) + '"/></filter></defs>' +
+      '<g fill="#DADADF" stroke="#C7C7CC" stroke-width="' + (Math.max(bw, bh) / 400).toFixed(1) + '" stroke-linejoin="round">' + shape + '</g>' +
+      '<g clip-path="url(#' + cl + ')"><g filter="url(#' + cl + 'b)">' + blobs(hotB, '#1C1C1E') + blobs(hotC, LIME) + '</g></g></svg>';
+    var key = function (c, t) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:15px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;background:' + c + '"></span>' + t + '</span>'; };
+    return '<div style="position:relative;margin:8px 0 24px"><span aria-hidden="true" style="position:absolute;right:0;top:0;font-size:15px;line-height:20px;color:#6E6E73">*</span>' + svg +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:16px">' + key(LIME, 'Ignition candidates') + key('#1C1C1E', 'Burned area') + '</div></div>';
+  }
   function render(keepScroll) {
     if (!S.el) return;
     S.region = regionName();
@@ -184,7 +205,7 @@
         '<button type="button" class="xb" data-act="close" aria-label="Close">' + chev() + '</button></div>' +
         '<div class="seg" role="tablist" aria-label="Period"><span class="th" aria-hidden="true" style="transform:translateX(' + (ri * 100) + '%)"></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '">' + r.label + '</button>'; }).join('') + '</div>' +
       '</div>' +
-      '<div class="sc"><div data-list="1">' + keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join('') + '</div>' +
+      '<div class="sc">' + regionHeat(rg, X) + '<div data-list="1">' + keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join('') + '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin:8px 0 0"><button type="button" class="add" data-act="add" aria-label="Add or remove charts"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span style="font-size:15px;line-height:20px;color:#6E6E73;text-align:right">* Simulation</span></div>' +
         '<div aria-hidden="true" style="height:104px"></div></div>' +
       '<div class="scr" data-act="shut"></div><div class="sh" role="dialog" aria-label="Charts" aria-hidden="true"></div>';
