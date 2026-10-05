@@ -46,7 +46,7 @@
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" fill="#6E6E73" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" fill="#6E6E73" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = vals.length > 1 ? i * W / (vals.length - 1) : 0, y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
   function area(vals, lbls, unit) {
-    var h = 105, max = Math.max.apply(null, vals) * 1.05, p = pathOf(vals, max, h, 0), bot = h - 20;
+    var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
       '<path d="' + p + ' L' + W + ' ' + bot + ' L0 ' + bot + 'Z" fill="' + LIME + '" fill-opacity=".45"/><path d="' + p + '" fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' + xAxis(h, lbls) + '</svg>';
   }
@@ -79,9 +79,32 @@
     return '<div style="display:flex;align-items:center;gap:24px">' + svg + leg + '</div>';
   }
 
+
+  // a heat map of the selected region: a grid of cells, darker where there is more (simulated, steady per area and period)
+  var HEAT = ['rgba(118,118,128,0.12)', '#F3FF9A', LIME, '#9DB000', INK];
+  function heat(R, total, unit) {
+    var cols = 13, rows = 9, gap = 3, cw = (W - gap * (cols - 1)) / cols, ch = cw, H = rows * (ch + gap) - gap, c = [], i, j, k, n = 3 + Math.floor(R() * 2);
+    for (k = 0; k < n; k++) c.push({ x: R() * cols, y: R() * rows, s: 1.4 + R() * 1.8, w: 0.5 + R() * 0.5 });
+    var v = [], mx = 0; for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var t = 0; c.forEach(function (q) { t += q.w * Math.exp(-(Math.pow(i - q.x, 2) + Math.pow(j - q.y, 2)) / (2 * q.s * q.s)); }); t += R() * 0.12; v.push(t); mx = Math.max(mx, t); }
+    var o = ''; v.forEach(function (t, q) { var l = t / mx, b = l < 0.12 ? 0 : l < 0.3 ? 1 : l < 0.55 ? 2 : l < 0.8 ? 3 : 4, x = (q % cols) * (cw + gap), y = Math.floor(q / cols) * (ch + gap);
+      o += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + ch.toFixed(1) + '" rx="4" fill="' + HEAT[b] + '"/>'; });
+    var leg = '<div style="display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;line-height:16px;color:#6E6E73"><span>Fewer</span>' + HEAT.map(function (f) { return '<span aria-hidden="true" style="width:24px;height:12px;border-radius:4px;background:' + f + '"></span>'; }).join('') + '<span>More</span></div>';
+    return '<svg viewBox="0 0 ' + W + ' ' + H.toFixed(0) + '" width="100%" role="img" aria-label="Heat map of ' + esc(unit) + '" style="display:block">' + o + '</svg>' + leg;
+  }
+  // one horizontal stacked bar of two parts, each with its share and its number
+  function stack(a, b) {
+    var tot = a.v + b.v, pa = Math.round(100 * a.v / tot), pb = 100 - pa;
+    var row = function (x, p, col, ring) { return '<div style="display:flex;align-items:center;gap:8px;font-size:15px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;background:' + col + '"></span><span style="flex:1;min-width:0">' + esc(x.n) + '</span><span style="font-weight:600;font-variant-numeric:tabular-nums">' + p + '%</span><span style="min-width:56px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(x.v) + '</span></div>'; };
+    return '<div aria-hidden="true" style="display:flex;gap:2px;height:32px;border-radius:16px;overflow:hidden"><div style="width:' + pa + '%;background:' + LIME + ';display:flex;align-items:center;padding-left:16px;font-size:15px;font-weight:600;color:#1C1C1E;box-sizing:border-box">' + pa + '%</div><div style="flex:1;background:' + INK + ';display:flex;align-items:center;justify-content:flex-end;padding-right:16px;font-size:15px;font-weight:600;color:#FFFFFF">' + pb + '%</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">' + row(a, pa, LIME) + row(b, pb, INK) + '</div>';
+  }
+
   // ---- the charts on offer -----------------------------------------------------------------------------------------------
   // each returns { v: big value, u: its unit, n: note under it, h: the chart's html }
   var DEFS = [
+    { k: 'heatc', t: 'Ignition candidates heat map', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2); return { v: fmt(tot), u: 'candidates', n: 'Where they appeared in ' + S.region, h: heat(R, tot, 'ignition candidates') }; } },
+    { k: 'heatb', t: 'Burned area heat map', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round((R() * 0.2 + 0.9) * 1600 * X.sc * rg.mult); return { v: fmt(tot), u: 'ac', n: 'Where it burned in ' + S.region, h: heat(R, tot, 'burned area') }; } },
+    { k: 'split', t: 'Candidates confirmed and dismissed', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(140 * X.sc * rg.mult * (0.9 + R() * 0.2)), cf = Math.round(tot * (0.5 + R() * 0.2)); return { v: fmt(tot), u: 'candidates decided', n: 'Confirmed as fires, or dismissed', h: stack({ n: 'Confirmed as fires', v: cf }, { n: 'Dismissed', v: tot - cf }) }; } },
     { k: 'burned', t: 'Burned area', on: 1, f: function (R, rg, X) { var s = series(R, rg.n, 260 * X.sc * rg.mult / (rg.n / 12), 1.4, 0.3), c = cum(s); return { v: fmt(c[c.length - 1]), u: 'ac', n: delta(R), h: area(c, X.x, 'ac') }; } },
     { k: 'top5', t: 'Top 5 fires by area burned', on: 1, f: function (R, rg, X) { var names = pick(R, FIRES, 5), top = 900 * X.sc * rg.mult, a = names.map(function (n, i) { return { l: n, a: top * Math.pow(0.66, i) * (0.9 + R() * 0.2) }; }); return { v: fmt(a.reduce(function (t, x) { return t + x.a; }, 0)), u: 'ac', n: a[0].l + ' was the largest', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt(x.a) + ' ac' }; }), a[0].a, 0) }; } },
     { k: 'mitig', t: 'Fastest time to mitigation', on: 1, f: function (R, rg, X) { var names = pick(R, FIRES, 5), a = names.map(function (n, i) { return { l: n, a: 2 + i * 1.3 + R() * 1.2 }; }); return { v: fmt1(a[0].a), u: 'h', n: a[0].l + ' was the fastest', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' h' }; }), a[4].a * 1.1, 0) }; } },
@@ -92,7 +115,7 @@
     { k: 'res', t: 'Resources in use', on: 1, f: function (R, rg, X) { var cr = series(R, rg.n, 36 * X.sc, 0.7, 0.2).map(Math.round), ve = series(R, rg.n, 18 * X.sc, 0.7, 0.2).map(Math.round), ai = series(R, rg.n, 3 * X.sc, 1, 0).map(Math.round); return { v: fmt(Math.max.apply(null, cr)), u: 'crews at peak', n: delta(R), h: lines([{ n: 'Crews', v: cr }, { n: 'Vehicles', v: ve }, { n: 'Aircraft', v: ai }], X.x, '') }; } },
     { k: 'resp', t: 'Station speed of response', on: 1, f: function (R, rg, X) { var names = pick(R, STATIONS, 5), a = names.map(function (n, i) { return { l: n, a: 5.5 + i * 1.7 + R() * 1.4 }; }); return { v: fmt1(a[2].a), u: 'min median', n: a[0].l + ' was the fastest', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' min' }; }), a[4].a * 1.1, 0) }; } },
     { k: 'src', t: 'Detection sources', on: 0, f: function (R) { var p = [['Satellite', 38], ['Cameras on the ground', 24], ['Drones', 14], ['Calls to 911', 14], ['Cars and phones', 10]].map(function (x) { return { n: x[0], v: x[1] * (0.8 + R() * 0.4) }; }); return { v: p.length, u: 'sources', n: 'Share of ignition candidates first seen by each', h: donut(p) }; } },
-    { k: 'conf', t: 'Candidates confirmed as fires', on: 0, f: function (R, rg, X) { var s = series(R, rg.n, 58, 0.18, 0.2).map(function (v) { return Math.min(96, v); }), avg = s.reduce(function (a, b) { return a + b; }, 0) / s.length; return { v: Math.round(avg), u: '%', n: delta(R), h: area(s, X.x, '%') }; } },
+    { k: 'conf', t: 'Candidate conversion rate', on: 1, top: 1, f: function (R, rg, X) { var s = series(R, rg.n, 58, 0.18, 0.2).map(function (v) { return Math.min(96, v); }), avg = s.reduce(function (a, b) { return a + b; }, 0) / s.length; return { v: Math.round(avg), u: '%', n: 'Candidates that became fires. ' + delta(R), h: area(s, X.x, '%') }; } },
     { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R) { var s = [], i, v; for (i = 0; i < 24; i++) { v = 6 + 12 * Math.exp(-Math.pow((i - 15) / 4.5, 2)) + R() * 3; if (i >= 21 || i < 6) v *= 0.7; s.push(v); } return { v: '15:00', u: 'busiest hour', n: 'Local time. Night detections in grey', h: (function () { var h = columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']]); return h; })() }; } },
     { k: 'decl', t: 'Time to declare a fire', on: 0, f: function (R) { var c = [18, 34, 26, 14, 8].map(function (v) { return Math.round(v * (0.8 + R() * 0.4)); }), tot = c.reduce(function (a, b) { return a + b; }, 0); return { v: Math.round(100 * (c[0] + c[1]) / tot), u: '% within 30 min', n: 'From the candidate to the decision', h: columns(c, ['< 10 min', '10 to 30', '30 to 60', '1 to 2 h', '> 2 h'], 1, 'fires') }; } }
   ];
@@ -100,7 +123,7 @@
 
   // ---- state -----------------------------------------------------------------------------------------------------------
   var S = { open: false, el: null, range: LS(K_RANGE) || 'm', order: null, hide: null, sheet: false, region: '' };
-  function order() { var o = (LS(K_ORDER) || []).filter(function (k) { return BYK[k]; }); DEFS.forEach(function (d) { if (o.indexOf(d.k) < 0) o.push(d.k); }); return o; }
+  function order() { var o = (LS(K_ORDER) || []).filter(function (k) { return BYK[k]; }); var tp = []; DEFS.forEach(function (d) { if (o.indexOf(d.k) < 0) { if (d.top) tp.push(d.k); else o.push(d.k); } }); return tp.concat(o); }
   function hidden() { var h = LS(K_HIDE); if (!h) { h = DEFS.filter(function (d) { return !d.on; }).map(function (d) { return d.k; }); } return h; }
   function regionName() { var h = document.querySelector('h1'); var t = h ? (h.textContent || '') : ''; t = t.replace(/^Incidents in\s*/i, '').trim(); return t || 'this area'; }
 
