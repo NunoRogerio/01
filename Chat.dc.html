@@ -22,7 +22,7 @@
 <script src="chat.js?v=71"></script>
 <script src="tour.js?v=100"></script>
 <script src="feedcam.js?v=21"></script>
-<script src="trophy.js?v=25"></script>
+<script src="trophy.js?v=26"></script>
 
 <title>Chats</title>
 <script src="./support.js"></script>
@@ -244,7 +244,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- Suggestions: side by side while they fit, so two short ones share one line; a second row only when needed; two rows at most (any more stay hidden for now) -->
       <div style="display: {{actD}}; flex-wrap: wrap; gap: 8px; max-height: 88px; overflow: hidden; padding: 0 16px">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
-          <button type="button" class="chbtn" onClick="{{a.go}}" style="display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.7); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true" style="display: {{a.stD}}; flex-shrink: 0"><circle cx="4" cy="7" r="3.5" fill="currentColor"></circle><path d="M9 7h11M15.5 2.5 20 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{a.label}}</button>
+          <button type="button" class="chbtn" onClick="{{a.go}}" style="display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.chBg}}; color: {{a.chFg}}; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true" style="display: {{a.stD}}; flex-shrink: 0"><circle cx="4" cy="7" r="3.5" fill="currentColor"></circle><path d="M9 7h11M15.5 2.5 20 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{a.label}}</button>
         </sc-for>
       </div>
     </div>
@@ -884,7 +884,9 @@ class Component extends DCLogic {
       .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left).map(([p, i]) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
-    const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' ? 'inline' : 'none', go: () => run(a.key) }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
+    // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)
+    const nxS = C.STAGES[Math.min(c.stage + 1, C.STAGES.length - 1)], nxT = nxS ? tone(nxS) : null;
+    const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), go: () => run(a.key) }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
     // Opened from the fire screen's People at risk card (Not evacuated): Evacuation plan leads the suggestions until it is used
     (() => { let sg = null; try { sg = JSON.parse(sessionStorage.getItem('wf-chat-sugg') || 'null'); } catch (e) {}
       if (sg && sg.s === 'evac' && sg.fire && (sg.fire === c.incId || ('F-' + c.incId) === sg.fire) && !c.flags.evac && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 5)
@@ -940,7 +942,7 @@ class Component extends DCLogic {
         ttlGo: (e) => { if (c.kind === 'dm') { if (e && e.preventDefault) e.preventDefault(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} try { sessionStorage.setItem('wf-fire-from-chat', c.key); } catch (x) {} if (inc.go) inc.go(); } },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
       avt: (() => { const P0 = s.avPos || { x: 16, y: 0, below: false }, on = !!s.avTip; return { x: P0.x, y: P0.y, dy: (P0.below ? '0%' : '-100%') + (on ? '' : ''), op: on ? 1 : 0, name: s.avName || '', role: s.avRole || '' }; })(),
-      acts: acts.map((a) => (a.stD ? a : { ...a, stD: 'none' })), actD: acts.length ? 'flex' : 'none', 
+      acts: acts.map((a) => ({ ...a, stD: a.stD || 'none', chBg: a.chBg || 'rgba(255,255,255,0.7)', chFg: a.chFg || '#1C1C1E' })), actD: acts.length ? 'flex' : 'none', 
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? (window.__wfY || '#E5FF00') : '#E5E5EA', sendOp: (s.draft || '').trim() ? 1 : 0.3, sendDis: (s.draft || '').trim() ? 'false' : 'true',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
       // (Oct 3, 22:51) pull a coordinator's live helmet camera from the chat, like the fire screen's camera button: from another

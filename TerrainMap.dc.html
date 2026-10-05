@@ -1413,7 +1413,7 @@ class Component extends DCLogic {
         if (on && !this._ldT0) { this._ldT0 = Date.now(); setTimeout(() => this.forceUpdate(), 650); setTimeout(() => { this._ldGave = true; this.forceUpdate(); }, 12000);
           const bl = setInterval(() => { try { const L = this.el && this.el.querySelector('[data-wf-maploader]'), e = L && L.querySelector('path.base'); if (!L || getComputedStyle(L).opacity === '0') { clearInterval(bl); return; } if (e && window.__wfBlink) window.__wfBlink(e); } catch (x) { clearInterval(bl); } }, 2000); }
         /* on a fire the map waits for its perimeter and the framing on it: a new view resets the tile count (1.5 s at most when tiles come from cache) */
-        const shapeOk = !(mode === 'spread' && p.fireId && window.__wfLiveMap) || !!(MD && (MD.done || MD.failed)), vk = [p.zoom, p.focusX, p.focusY].join('|');
+        const shapeOk = !(mode === 'spread' && p.fireId && window.__wfLiveMap) || !(window.__wfModels || {})[p.fireId] || !!(MD && (MD.done || MD.failed))   /* (Oct 5, 10:11) a fire with no model on its way (a declared candidate: no live perimeter) never waits for one: it used to hold the cover the full 12 s */, vk = [p.zoom, p.focusX, p.focusY].join('|');
         if (on && !this._ldDone && vk !== this._ldVk) { this._ldVk = vk; if (this._ldT0) { this._tl = 0; this._tilesOk = false; clearTimeout(this._ldVT); this._ldVT = setTimeout(() => { if (!this._tilesOk) { this._tilesOk = true; this.forceUpdate(); } }, 1500); } }
         const want = on && !this._ldDone && !this._ldGave && (!shapeOk || (!this._tilesOk && Date.now() - (this._ldT0 || 0) >= 600));
         if (on && !want && this._ldT0) this._ldDone = true;   /* once revealed the map never shows the loader again (full screen and back stay instant) */
