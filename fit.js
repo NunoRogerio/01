@@ -797,7 +797,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[data-wf-split]');if(!a||a.__wfPu)return;
     if(e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;var dc=document.getElementById('dc-root');if(!dc||!window.Element||!dc.animate)return;
     a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;try{document.documentElement.classList.add('wf-pushing');}catch(x){}   /* (Oct 5) the tour's bubble and glow leave as the next screen rises (they drew over the rising panel) */
-    var navigate=function(){if(gone)return;gone=true;   /* the frame took the one-shot state (the tapped item) while it loaded: the real page gets it back */
+    var navigate=function(){if(gone)return;var hold=(window.__wfNavHold||0)-Date.now();if(hold>0){setTimeout(navigate,hold);return;}gone=true;   /* the frame took the one-shot state (the tapped item) while it loaded: the real page gets it back */
       try{if(snap)sessionStorage.setItem('wf-pu-state',JSON.stringify(snap));}catch(x){}   /* read once by the real page (fit.js top), where the frame cannot reach it */
       try{sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}   /* the real page holds this last picture until it has drawn itself */
       window.location.href=href;};
