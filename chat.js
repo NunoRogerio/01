@@ -1061,10 +1061,17 @@
   }
 
   // ---- the clock: due messages arrive, on whichever screen is open --------------------------------------------------
+  function tourMute() { try { return window.__wfTour && window.__wfTour.active && window.__wfTour.active() && window.__wfTour_mute ? window.__wfTour_mute() : ''; } catch (e) { return ''; } }
   function tick() {
     var db = load(), now = Date.now(), changed = false;
     Object.keys(db.chats).forEach(function (k) {
       var c = db.chats[k];
+      /* (Oct 5, 10:50) in the tour the team's chatter waits while a step points at something (the evidence, Declare the fire), and is left out after: nothing moves under the cursor */
+      var mute = tourMute();
+      if (mute && c.queue.length) {
+        if (mute === 'drop') c.queue = c.queue.filter(function (x) { return x.m.kind !== 'msg'; });
+        else { c.queue.forEach(function (x) { if (x.m.kind === 'msg' && x.due <= now + 3000) x.due = now + 3000; }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
+      }
       while (c.queue.length && c.queue[0].due <= now) {
         var q = c.queue.shift(), m = q.m;
         if (c.closed && m.kind !== 'msg' && m.kind !== 'sys') { if (!(m.kind === 'card' && m.summary)) continue; }
@@ -1160,7 +1167,7 @@
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
   function unread(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
-  function typing(c) { if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
+  function typing(c) { if (tourMute()) return null; if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
 
   // ---- reporting a night ignition to the local police -------------------------------------------------------------------
   // A fire that started with the sun down is suspicious: one tap opens a chat with an officer of the local force (a county

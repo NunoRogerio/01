@@ -1158,3 +1158,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Tour opening order (Oct 5, 10:17):** the tour opens on "Let's start reacting to an ignition" (Start, the under-construction sign, how to follow the circle), then the blade steps continue the same story: open the region selector, choose Los Angeles, open the incidents list, close it, then open the most likely candidate. No second "let's start" card in the middle.
 
 - **Map tooltip cards (Oct 5):** the first text (Status, Likelihood or Stage label) sits 8px under the card's top edge; the 8px taken from the top is added under the content, so the card height does not change.
+
+- **Candidate page header (Oct 5):** the stage tag is full width, as the fire page's. A subtle Team chat button sits 16px under it.
+- **Tour in the chat (Oct 5):** the team's chatter is held while a step points at something (the evidence, Declare the fire) and left out after it, so nothing moves under the cursor; the cards and stages still come. Entering the chat jumps to the evidence card instead of sliding the whole chat past. The tour's auto scroll is twice as fast (292 px/s).

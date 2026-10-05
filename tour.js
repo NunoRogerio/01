@@ -82,8 +82,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   // One auto-scroll speed for the whole tour (Oct 3, 20:57): 104 px/s (49% faster than the 70 px/s used before), with a
   // gentle start and finish; any touch, wheel or scroll by the person stops it
-  var TOUR_SPEED = 146;   // (Oct 5, 03:37) 40% faster (was 104)
-  function glide(n, axis, delta) { if (!n || !delta) return; var p0 = axis === 'x' ? n.scrollLeft : n.scrollTop, dur = Math.max(250, Math.abs(delta) / TOUR_SPEED * 1000), t0 = 0, stop = false;
+  var TOUR_SPEED = 292;   // (Oct 5, 10:45) twice as fast (was 146; 03:37: 40% faster than 104)
+  function glide(n, axis, delta) { if (!n || !delta) return; if (PAGE === 'Chat.dc.html' && Math.abs(delta) > 400) { if (axis === 'x') n.scrollLeft += delta; else n.scrollTop += delta; return; }   /* (Oct 5, 10:45) entering the chat: a long way to the evidence card is a jump, not a slow slide of the whole chat past the eye */
+    var p0 = axis === 'x' ? n.scrollLeft : n.scrollTop, dur = Math.max(250, Math.abs(delta) / TOUR_SPEED * 1000), t0 = 0, stop = false;
     var halt = function () { stop = true; ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.removeEventListener(t, halt, true); }); };
     ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.addEventListener(t, halt, { capture: true, passive: true }); });
     var ease = function (k) { return k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; };
@@ -517,6 +518,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var off = function (e) { if (!w.isConnected) { document.removeEventListener('pointerdown', off, true); return; } if (!w.contains(e.target) && !(anchor && anchor.contains(e.target))) { w.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
+  /* (Oct 5, 10:50) the team's chatter in the chat during the tour: held while the evidence and the decision are pointed at, then left out (less talk; the cards and stages still come) */
+  window.__wfTour_mute = function () { var s = get(); return s && PAGE === 'Chat.dc.html' ? (s.i <= 8 ? 'hold' : 'drop') : ''; };
   window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; tiltNG = null; tiltLock = -1; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); tourScope(true); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
