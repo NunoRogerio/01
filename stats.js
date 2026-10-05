@@ -246,7 +246,7 @@
     var R = rng(S.region + '|' + rg.id + '|heat'), mxd = Math.max(bw, bh), spots = function (nc, per, r0, r1, wt, spread) { var o = [], t = 0, c = 0; while (c < nc && t++ < 4000) { var x = b[0] + R() * bw, y = b[1] + R() * bh; if (!ins(x, y)) continue; c++;
         for (var k = 0; k < per; k++) { var a = R() * 6.283, d = R() * R() * mxd * spread, px = x + Math.cos(a) * d, py = y + Math.sin(a) * d; if (ins(px, py)) o.push([px, py, mxd * (r0 + R() * (r1 - r0)), wt * (0.4 + R() * 0.6)]); } } return o; };
     var hotC = spots(10, 26, 0.005, 0.016, 0.7, 0.1), hotB = spots(6, 20, 0.0065, 0.018, 0.65, 0.08), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = mxd * 0.0065, hh = Math.min(300, Math.round(326 * vh / vw));
-    var blobs = function (a, col) { return a.map(function (q) { return '<circle cx="' + q[0].toFixed(0) + '" cy="' + q[1].toFixed(0) + '" r="' + q[2].toFixed(0) + '" style="fill:' + col + '" fill-opacity="' + q[3].toFixed(2) + '"/>'; }).join(''); };
+    var blobs = function (a, col) { return a.map(function (q) { return '<circle class="an-p" data-o="' + q[3].toFixed(2) + '" cx="' + q[0].toFixed(0) + '" cy="' + q[1].toFixed(0) + '" r="' + q[2].toFixed(0) + '" style="fill:' + col + '" fill-opacity="' + q[3].toFixed(2) + '"/>'; }).join(''); };
     var shape = g.d ? '<path d="' + g.d + '"/>' : '<rect x="' + b[0] + '" y="' + b[1] + '" width="' + bw + '" height="' + bh + '"/>';
     var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ignition candidates and burned area across ' + esc(regionLabel()) + '" style="display:block">' +
       '<defs><clipPath id="' + cl + '">' + shape + '</clipPath><filter id="' + cl + 'b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="' + blur.toFixed(0) + '"/></filter></defs>' +
@@ -353,6 +353,7 @@
     q(card, '.an-c').forEach(function (el) { el.setAttribute('data-y', el.getAttribute('y')); el.setAttribute('data-h', el.getAttribute('height')); el.setAttribute('height', '0'); el.setAttribute('y', el.getAttribute('data-b')); });
     q(card, '.an-r').forEach(function (el) { el.setAttribute('data-w', el.getAttribute('width')); el.setAttribute('width', '0'); });
     q(card, '.an-d').forEach(function (el) { el.setAttribute('data-da', el.getAttribute('stroke-dasharray')); el.setAttribute('stroke-dasharray', '0 ' + el.getAttribute('data-c')); el.style.strokeOpacity = '0'; });
+    q(card, '.an-p').forEach(function (el) { el.setAttribute('fill-opacity', '0'); });
     q(card, '.an-b').forEach(function (el) { el.setAttribute('width', '0'); el.setAttribute('height', '0'); el.setAttribute('x', el.getAttribute('data-bx')); el.setAttribute('y', el.getAttribute('data-by')); });
     card.setAttribute('data-an', 'p');
   }
@@ -361,10 +362,12 @@
     void card.offsetWidth;
     q(card, '.an-w').forEach(function (el, i) { el.style.transition = 'width .7s cubic-bezier(.2,.8,.2,1) ' + (i * 0.06) + 's'; el.style.width = el.getAttribute('data-w'); });
     q(card, '.an-x').forEach(function (el) { el.style.transition = 'clip-path .8s cubic-bezier(.4,0,.2,1),-webkit-clip-path .8s cubic-bezier(.4,0,.2,1)'; el.style.webkitClipPath = el.style.clipPath = 'inset(0 0 0 0)'; });
-    var C = q(card, '.an-c'), Rr = q(card, '.an-r'), D = q(card, '.an-d'), B = q(card, '.an-b');
-    if (!C.length && !Rr.length && !D.length && !B.length) return;
+    var C = q(card, '.an-c'), Rr = q(card, '.an-r'), D = q(card, '.an-d'), B = q(card, '.an-b'), P = q(card, '.an-p');
+    if (!C.length && !Rr.length && !D.length && !B.length && !P.length) return;
     var order = B.map(function (_, i) { return i; }); for (var k = order.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)), tmp = order[k]; order[k] = order[j]; order[j] = tmp; }
     var bDelay = []; order.forEach(function (bi, k) { bDelay[bi] = k * (650 / Math.max(1, B.length)); });
+    // the region map's blurred points fade in one by one, in a random order, until all are there
+    var pDelay = P.map(function () { return Math.random() * 1100; });
     var dc = D.length ? +D[0].getAttribute('data-c') : 0, t0 = 0, END = 1400;
     function frame(ts) {
       if (!t0) t0 = ts; var t = ts - t0, done = t >= END;
@@ -373,6 +376,7 @@
       if (D.length) { var sw = dc * (done ? 1 : eio(Math.min(1, t / 900))) + 8; D.forEach(function (el) { var vis = Math.max(0, Math.min(+el.getAttribute('data-ln'), sw - +el.getAttribute('data-st'))); if (done) { el.setAttribute('stroke-dasharray', el.getAttribute('data-da')); el.style.strokeOpacity = ''; return; } el.style.strokeOpacity = vis > 0.5 ? '1' : '0'; el.setAttribute('stroke-dasharray', vis.toFixed(2) + ' ' + (dc - vis).toFixed(2)); }); }
       B.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - bDelay[i]) / 380)), sc = u < 0.65 ? 1.15 * eo(u / 0.65) : 1.15 - 0.15 * eio((u - 0.65) / 0.35), z = +el.getAttribute('data-z') * sc, cx = +el.getAttribute('data-bx'), cy = +el.getAttribute('data-by');
         el.setAttribute('width', z.toFixed(1)); el.setAttribute('height', z.toFixed(1)); el.setAttribute('x', (cx - z / 2).toFixed(1)); el.setAttribute('y', (cy - z / 2).toFixed(1)); el.setAttribute('rx', Math.min(4, z / 2).toFixed(1)); });
+      P.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - pDelay[i]) / 260)); el.setAttribute('fill-opacity', (+el.getAttribute('data-o') * eo(u)).toFixed(3)); });
       if (!done) requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
