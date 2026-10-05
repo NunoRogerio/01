@@ -431,8 +431,9 @@
       if (P[2]) say(c, 2, 'We can send one crew, the second stays for cover.', 'Podemos enviar uma equipa, a segunda fica de prevenção.', d + 9500, 2);
     } else if (s === 2) {
       var eta = c.stations[0] ? c.stations[0].min : 15;
+      if (!c.acked) {   /* (Oct 5) the leads already confirmed the order on their way: no second "leaving now" */
       if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 3000, 1);
-      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000, 2);
+      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000, 2); }
       setStage(c, 3, d + 16000, Math.max(4, eta - 3));
     } else if (s === 3) {
       if (P[0]) say(c, 0, 'On scene. Fire in ' + (isUS(c) ? 'chaparral and dry grass' : 'pine and eucalyptus') + ', head running north-east with the wind.', 'No local. Fogo em ' + (isUS(c) ? 'chaparral e erva seca' : 'pinhal e eucaliptal') + ', cabeça a progredir para nordeste com o vento.', d + 3000, 3);
@@ -637,8 +638,15 @@
   // when it is first opened, so the team has already received them there. delay: ms before the beats start.
   function dispatched(key, orders, delay) {
     var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
+    var airOrd = (orders || []).some(function (o) { return o && o.id === 'air'; });   /* (Oct 5) air support sent too: its lead joins and confirms like the stations */
     orders = (orders || []).filter(function (o) { return o && o.name && o.id !== 'air'; });
-    if (!orders.length) return;
+    if (!orders.length && !airOrd) return;
+    // (Oct 5) what the coordinators were still about to say before the order (availability replies) lands now, as already read,
+    // so after the order the only new messages are their confirmations (one per station and air team)
+    var pre = c.queue.filter(function (q) { return q.m && q.m.kind !== 'stage' && q.m.kind !== 'air'; }), t0 = Date.now();
+    c.queue = c.queue.filter(function (q) { return !(q.m && q.m.kind !== 'stage' && q.m.kind !== 'air'); });
+    pre.forEach(function (q, i) { var m = q.m; delete m.adv; m.t = t0 - (pre.length - i) * 400; m.vt = vnow(c); c.msgs.push(m); });
+    if (pre.length) c.seenAt = t0;
     var d = delay || 0;
     var norm = function (t) { return String(t || '').toLowerCase().replace(/[^a-z0-9à-ÿ]+/g, ' ').trim(); };
     var sent = [];
@@ -669,9 +677,16 @@
     // The stage card lists the stations: those that got an order are marked dispatched, the others on standby
     c.msgs.concat(c.queue.map(function (q) { return q.m; })).forEach(function (m) { if (m.kind === 'card' && m.stage === 1 && m.rows) sentRows(c, m.rows); });
     // (Oct 4) every coordinator whose station got an order confirms it, one after the other, so the chat shows the team has received the orders
-    var OK = [['Order received. Rolling now.', 'Ordem recebida. A sair agora.'], ['Copy that. Crew on the way.', 'Recebido. Equipa a caminho.'], ['Received. We are moving.', 'Recebido. Estamos a mover-nos.'], ['Order confirmed. Leaving the station.', 'Ordem confirmada. A sair do quartel.']];
-    sent.forEach(function (x, n) { say(c, x.i < c.people.length ? x.i : 0, OK[n % OK.length][0], OK[n % OK.length][1], d + 1500 + n * 1700, 1); });
-    setStage(c, 2, d + 3000 + (sent.length - 1) * 1700, 2);
+    // (Oct 5) every lead that got an order confirms it (stations and the air team), in no particular order, each saying they are heading
+    // to the fire; they arrive unread, so the chat's badge counts one per station and air team
+    var OK = [['Order received. Rolling now, ETA {m} min.', 'Ordem recebida. A sair agora, chegada em {m} min.'], ['Copy that. Crew on the way to the fire, {m} min out.', 'Recebido. Equipa a caminho do incêndio, a {m} min.'], ['Received. We are moving, about {m} min to the fire line.', 'Recebido. Estamos a mover-nos, cerca de {m} min até à linha de fogo.'], ['Order confirmed. Leaving the station now, {m} min.', 'Ordem confirmada. A sair do quartel, {m} min.']];
+    var who = sent.map(function (x) { return { i: x.i < c.people.length ? x.i : 0, m: (c.stations[x.i] && c.stations[x.i].min) || 15 }; });
+    if (airOrd) { c.flags.air = true; ensureAir(c); var ai = c.people.findIndex(function (p) { return p.kind === 'air'; }); if (ai >= 0) who.push({ i: ai, m: 12, air: true }); }
+    for (var z = who.length - 1; z > 0; z--) { var r = Math.floor(Math.random() * (z + 1)), tmp = who[z]; who[z] = who[r]; who[r] = tmp; }
+    var at = d + 1200;
+    who.forEach(function (w, n) { var o = w.air ? ['Air support received the order. Wheels up, over the fire in {m} min.', 'Meios aéreos receberam a ordem. A descolar, sobre o incêndio em {m} min.'] : OK[n % OK.length];
+      say(c, w.i, o[0].replace('{m}', w.m), o[1].replace('{m}', w.m), at, 1); at += 900 + Math.round(Math.random() * 1400); });
+    c.acked = true; setStage(c, 2, at + 600, 2);
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
   }
   function sentRows(c, rows) { rows.forEach(function (r, i) { var on = (c.sentIdx || []).indexOf(i) >= 0; r.r = on ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = on ? '#186B2D' : '#875800'; }); }
@@ -1081,7 +1096,7 @@
   function dur(ms) { var m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + ' min'; if (m < 1440) return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; return Math.floor(m / 1440) + ' d ' + Math.floor((m % 1440) / 60) + ' h'; }
   function clock(ms) { var x = Math.max(0, Math.floor(ms / 1000)); var d = Math.floor(x / 86400); x %= 86400; var h = Math.floor(x / 3600); x %= 3600; var m = Math.floor(x / 60), s = x % 60, p = function (n) { return String(n).padStart(2, '0'); };
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
-  function unread(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }
+  function unread(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
   function typing(c) { if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
 
