@@ -19,8 +19,8 @@
 <script src="prefs.js?v=186"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=69"></script>
-<script src="tour.js?v=87"></script>
+<script src="chat.js?v=70"></script>
+<script src="tour.js?v=89"></script>
 <script src="feedcam.js?v=20"></script>
 <script src="menu.js?v=16"></script>
 
@@ -1090,7 +1090,7 @@ class Component extends DCLogic {
         if (isLive) {
           if (droneSeen) out.push({ ...th({ thVid: true, src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', thAria: 'Drone thermal feed. Open', open: (e) => this.wfEv({ src: 'assets/55e87eb26c8f2696b2ffa1e5aa129029.mp4', label: 'Drone ' + (cur.drone || 'D-5') + '. Thermal', who: 'Over the ignition. Simulation.', anchor: e && e.currentTarget }) }), title: 'Drone confirmation', rows: [row('Drone ' + (cur.drone || 'D-5') + ' over the ignition'), row('Smoke and a hot spot on the thermal feed')], noteD: 'block', note: sim });
           if (h % 5 < 2) out.push({ ...th({ thImg: true, thSmoke: true, src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', thAria: 'Shared photo. Open', open: (e) => this.wfEv({ image: { src: 'assets/splash/forest-' + (1 + h % 8) + '.webp', smoke: true, alt: 'Photo shared by a citizen' }, label: 'Citizen photo', who: 'Shared by a citizen. Simulation.', anchor: e && e.currentTarget }) }), title: 'Citizen report', rows: [row('Photo of smoke shared at ' + at(6 + h % 17)), row('Taken about ' + (1 + h % 4) + ' km away')], noteD: 'block', note: sim });
-          if ((h >> 3) % 5 < 2) out.push({ ...TH, title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
+          if ((h >>> 3) % 5 < 2) out.push({ ...TH, title: '911 call', rows: [row('Caller reports smoke near ' + (cur.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
         }
         const X = s.exv || null;
         const ex = { hidden: X ? 'false' : 'true', op: X ? 1 : 0, pe: X ? 'auto' : 'none', sc: X ? 1 : 0.94, h: X && X.kind === 'sat' ? 358 : 240, img: !!X && X.kind !== 'vid', vid: !!X && X.kind === 'vid', smoke: !!X && X.kind === 'photo',

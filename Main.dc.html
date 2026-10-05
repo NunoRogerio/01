@@ -21,8 +21,8 @@
 <script src="prefs.js?v=186"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=69"></script>
-<script src="tour.js?v=87"></script>
+<script src="chat.js?v=70"></script>
+<script src="tour.js?v=89"></script>
 <script src="mapsearch.js?v=4"></script>
 
 <title>Incidents</title>
@@ -1011,7 +1011,7 @@ class Component extends DCLogic {
       if (!th || !b || !box.offsetWidth || (th.__a && th.__a.playState === 'running')) return; const p = th.__p; if (th.style.opacity !== '1' || !p || p.l !== b.offsetLeft || p.t !== b.offsetTop || p.w !== b.offsetWidth) this.wfLangThumb(false); }, 250); } catch (e) {}
     try { const lt = () => setTimeout(() => this.wfLangThumb(false), 140); window.addEventListener('resize', lt); window.addEventListener('wf-prefs', lt); window.addEventListener('wf-lang', lt); } catch (e) {}
  window.__wfSwipeDrag = (k, dy) => this.setState({ hdK: dy ? k : null, hdY: dy });   // a whole-blade swipe (fit.js) shows as the blade's own drag
-    try { sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+    try { if (window === window.top) sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { try { window.removeEventListener('wf-ms', this._msSync); } catch (e) {} clearInterval(this._abtBlink); try { window.removeEventListener('wf-vp', this._wfVp); } catch (e) {} try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }

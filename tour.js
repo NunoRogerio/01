@@ -228,10 +228,11 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
       t: ['Declare the fire', 'Declare o incêndio'],
       b: ['Tap Move to First alert to declare it. The Declare fire suggestion does the same.', 'Toque em Passar a Despacho de 1.º alerta para o declarar. A sugestão Declarar incêndio faz o mesmo.'] },
-    { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('a[data-wf-firettl]'); },
-      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now open the fire detail to assign crews.', 'Agora abra o detalhe do incêndio para atribuir equipas.'],
-      t: ['Open the fire', 'Abra o incêndio'],
-      b: ['Tap the fire\'s name for its page.', 'Toque no nome do incêndio para abrir a sua página.'] },
+    // (Oct 5, 02:28) crews are dispatched from the chat: the cursor on the Configure dispatch button of the Ignition confirmed card
+    { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('article.chmsg button.chbtn', function (b) { return /^(Configure dispatch|Configurar despacho)/.test(txt(b)) && !b.disabled; }) || chip(['Configure dispatch', 'Configurar despacho']); },
+      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now send crews to it.', 'Agora envie equipas.'],
+      t: ['Configure the dispatch', 'Configure o despacho'],
+      b: ['Tap Configure dispatch on the card to choose the crews.', 'Toque em Configurar despacho no cartão para escolher as equipas.'] },
 
     // (Oct 5, 02:01) the fire page opens on its Crews tab with nothing assigned: the AI suggestion first (or a dispatch by hand)
     { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () {
@@ -244,26 +245,24 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       b: ['No crews are assigned yet. Tap AI suggested pack: the nearest stations and air support. You can also build the dispatch yourself with Add resources.', 'Ainda não há equipas atribuídas. Toque no pacote sugerido pela IA: os quartéis mais próximos e meios aéreos. Também pode montar o despacho com Adicionar meios.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () {
         // Never a dead end: if the plan is still empty (Send order disabled), the tour fills it with the AI suggested pack itself
-        var b = q('button.btn.primary', function (x) { return !x.closest('section[role=dialog]') && x.offsetParent !== null; });
+        // the Send order button that is on screen (the Crews foot sits inside its own sheet), never the sending dialog's
+        var b = q('button.btn.primary', function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); }, true) || q('button.btn.primary', function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); });
         if (b && b.getAttribute('aria-disabled') === 'true') { var ai = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); if (ai && !ai.__wfAuto) { ai.__wfAuto = 1; ai.click(); } }
         return b; },
       t: ['Send the orders', 'Envie as ordens'],
       b: ['Tap Send order: each station and the air team get their order.', 'Toque em Enviar ordem: cada quartel e os meios aéreos recebem a sua ordem.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
       ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Here are the orders going out.', 'Aqui estão as ordens a sair.'],
-      t: ['Back to the fire', 'Volte ao incêndio'],
-      b: ['Tap Return to fire for its situation.', 'Toque em Voltar ao incêndio para ver a situação.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
       t: ['Back to the team chat', 'De volta à conversa da equipa'],
-      b: ['The leads are confirming their orders there. Move the fire forward while you talk with them.', 'Os chefes estão a confirmar as ordens. Faça o incêndio avançar enquanto fala com eles.'] },
+      b: ['Tap Return to chat. The leads are confirming their orders there. Move the fire forward while you talk with them.', 'Toque em Voltar à conversa. Os chefes estão a confirmar as ordens. Faça o incêndio avançar enquanto fala com eles.'] },
 
     // (Oct 5, 02:01) the fire owner moves the fire on by hand, stage after stage, until it can be closed
     { page: 'Chat.dc.html', mode: 'until', interact: true, noClose: true,
-      until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
-      find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
+      until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
+      find: function () { return chip(['Move to', 'Passar a']) || stMove() || q('header + button.chrow[aria-expanded]'); },   // the Move to suggestion chip above the message box
       t: ['Move the fire forward', 'Faça o incêndio avançar'],
-      b: ['Tap the state, then Move to the next stage. Jump the stages until the fire can be closed.', 'Toque no estado e depois em Passar à fase seguinte. Avance as fases até o incêndio poder ser encerrado.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return stMove() || chip(['Close fire', 'Encerrar incêndio']) || q('header + button.chrow[aria-expanded]'); },
+      b: ['Tap the Move to suggestion. Jump the stages until the fire can be closed.', 'Toque na sugestão Passar a. Avance as fases até o incêndio poder ser encerrado.'] },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Move to', 'Passar a', 'Close fire', 'Encerrar incêndio']) || stMove() || q('header + button.chrow[aria-expanded]'); },
       t: ['Close the fire', 'Encerre o incêndio'],
       b: ['The fire is held. Close it: Move to Closed.', 'O incêndio está dominado. Encerre-o: Passar a Encerrada.'] },
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,

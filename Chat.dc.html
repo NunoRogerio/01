@@ -19,8 +19,8 @@
 <script src="prefs.js?v=186"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=69"></script>
-<script src="tour.js?v=87"></script>
+<script src="chat.js?v=70"></script>
+<script src="tour.js?v=89"></script>
 <script src="feedcam.js?v=20"></script>
 <script src="trophy.js?v=21"></script>
 
@@ -511,7 +511,7 @@ class Component extends DCLogic {
     try { window.addEventListener('wf-chat', this._sync); window.addEventListener('wf-sync', this._sync); } catch (e) {}
     this._t = setInterval(() => this.forceUpdate(), 1000);
     this._stick = true; this._fit = () => this.fitRows(); try { window.addEventListener('resize', this._fit); } catch (e) {}
-    try { sessionStorage.removeItem('wf-chat-return'); } catch (e) {}
+    try { if (window === window.top) sessionStorage.removeItem('wf-chat-return'); } catch (e) {}   /* not while preloaded in a frame for the push-up: the dispatch screen below still needs it */
     const k = window.__wfChat ? window.__wfChat.current() : '';
     this.setState({ view: k ? 'chat' : 'list', key: k, fromList: false, fromRes: false, draft: '', stack: [], sheet: false });
   }
@@ -829,7 +829,7 @@ class Component extends DCLogic {
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
-        const PAST = { approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'] };
+        const PAST = { approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'] };
         const acts = (m.actions || []).filter((a) => !m.done || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
@@ -911,7 +911,7 @@ class Component extends DCLogic {
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,
         pinAria: L('Current state: ', 'Estado atual: ') + T(S) + '. ' + summary,
         ttlHref: c.kind === 'dm' ? '#' : inc.href, ttlCur: c.kind === 'dm' ? 'default' : 'pointer', ttlAria: c.kind === 'dm' ? c.place : L('Open ', 'Abrir ') + c.place,
-        ttlGo: (e) => { if (c.kind === 'dm') { if (e && e.preventDefault) e.preventDefault(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (inc.go) inc.go(); } },
+        ttlGo: (e) => { if (c.kind === 'dm') { if (e && e.preventDefault) e.preventDefault(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} try { sessionStorage.setItem('wf-fire-from-chat', c.key); } catch (x) {} if (inc.go) inc.go(); } },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
       avt: (() => { const P0 = s.avPos || { x: 16, y: 0, below: false }, on = !!s.avTip; return { x: P0.x, y: P0.y, dy: (P0.below ? '0%' : '-100%') + (on ? '' : ''), op: on ? 1 : 0, name: s.avName || '', role: s.avRole || '' }; })(),
       acts: acts.map((a) => (a.stD ? a : { ...a, stD: 'none' })), actD: acts.length ? 'flex' : 'none', 

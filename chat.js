@@ -459,11 +459,11 @@
     if (s === 0) { if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Enviar drone' }); A.push({ key: 'dismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }); }   // Dismiss then Confirm, as everywhere
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
-    if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air) A.push({ key: 'next', en: 'Move to Being resolved', pt: 'Passar a Em resolução', primary: true }); }
+    if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
     if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Deploy another station', pt: 'Empenhar outro quartel' });
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     if (s === 4) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
-    if (s === 5) A.push({ key: 'next', en: 'Move to surveillance', pt: 'Passar a Vigilância', primary: true });
+    if (s === 5) A.push({ key: 'next', en: 'Move to Surveillance', pt: 'Passar a Vigilância', primary: true });
     if (s === 6) A.push({ key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true });
     return A;
   }
@@ -638,6 +638,7 @@
   // when it is first opened, so the team has already received them there. delay: ms before the beats start.
   function dispatched(key, orders, delay) {
     var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
+    c.msgs.forEach(function (m) { if (m.dispCard && !m.done) m.done = 'dispatch'; });   /* the card's Configure dispatch becomes ✓ Crews dispatched */
     var airOrd = (orders || []).some(function (o) { return o && o.id === 'air'; });   /* (Oct 5) air support sent too: its lead joins and confirms like the stations */
     orders = (orders || []).filter(function (o) { return o && o.name && o.id !== 'air'; });
     if (!orders.length && !airOrd) return;
@@ -1015,7 +1016,9 @@
           c.stage = m.stage; c.hist.push({ s: m.stage, vt: m.vt });
           onStage(c, c.stage);
           if (c.stage === 7) c.closed = true;
-          var sc = stageCard(c, c.stage); sc.id = newId(); sc.kind = 'card'; sc.t = q.due; sc.vt = m.vt; c.msgs.push(sc);
+          var sc = stageCard(c, c.stage); sc.id = newId(); sc.kind = 'card'; sc.t = q.due; sc.vt = m.vt;
+          if (c.stage === 1 && !c.flags.dispatched) { sc.actions = [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho' }]; sc.dispCard = true; }   /* (Oct 5) the dispatch is configured from the Ignition confirmed card */
+          c.msgs.push(sc);
           if (c.stage < 7) entry(c, c.stage, 0);
           else {
             if (c.people[0]) say(c, 0, 'Thanks everyone. Good work.', 'Obrigado a todos. Bom trabalho.', 2500, 1);

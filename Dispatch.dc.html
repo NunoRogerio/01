@@ -19,8 +19,8 @@
 <script src="prefs.js?v=186"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
-<script src="chat.js?v=69"></script>
-<script src="tour.js?v=87"></script>
+<script src="chat.js?v=70"></script>
+<script src="tour.js?v=89"></script>
 <script src="feedcam.js?v=20"></script>
 <script src="menu.js?v=16"></script>
 
@@ -490,7 +490,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </sc-for>
             <div style="display: {{pl.inlActD}}; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 4px">
               <button type="button" class="btn wf-sec" onClick="{{inl.cancel}}" style="height: 48px; font-size: 17px; font-weight: 600">Cancel</button>
-              <button type="button" class="btn primary" onClick="{{pl.send}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{pl.sendOp}}">Send order</button>
+              <button type="button" class="btn primary" onClick="{{pl.send}}" style="height: 48px; font-size: 17px; font-weight: 600; opacity: {{pl.sendOp}}">{{sendLbl}}</button>
             </div>
           </div>
           <button type="button" class="mbtn" onClick="{{rs.go}}" aria-label="{{rs.aria}}" style="position: {{inl.cardPos}}; inset: 0; z-index: 3; transform: {{inl.cardT}}; opacity: {{inl.cardOp}}; visibility: {{inl.cardVis}}; transition: transform .38s cubic-bezier(.3,.7,.3,1), opacity .3s ease .12s; display: grid; grid-template-columns: minmax(0, 1fr) auto 20px; gap: 4px 8px; align-items: center; width: 100%; min-height: 64px; padding: 8px 16px 8px 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: {{rs.bg}}; box-shadow: {{rs.ring}}0 0 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer">
@@ -914,6 +914,8 @@ class Component extends DCLogic {
     const tick = () => { try { document.querySelectorAll('[data-tl-since]').forEach((el) => { const t = +el.getAttribute('data-tl-since'); if (!t) { el.textContent = ''; return; } let x = Math.max(0, Math.floor((Date.now() - t) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60; const txt = d ? d + ' d ' + h + ' h' : h ? h + ' h ' + m + ' min' : m + ' min'; if (el.textContent !== txt) el.textContent = txt; }); } catch (e) {} };
     // Opened from the incident chat to configure dispatch orders: straight to the configuration, even if orders were sent before
     try { if (sessionStorage.getItem('wf-chat-return')) this.setState({ reinforce: true }); } catch (e) {}
+    // Opened from its team chat (the chat title): once the orders are out, Return to chat goes straight back to the conversation
+    try { this._fromChat = sessionStorage.getItem('wf-fire-from-chat') || ''; if (window === window.top) sessionStorage.removeItem('wf-fire-from-chat'); } catch (e) {}
     this._tlT = setInterval(tick, 1000); setTimeout(tick, 50); if (!this.wfTakeFireView()) this.wfRestoreFire(); this._wfSync = () => { if (!this.wfTakeFireView()) this.forceUpdate(); }; this._wfShow = (ev) => { if (ev && ev.persisted && (this.state || {}).gpO) this.setState({ gpO: {} });   /* back on the page: the Crews stations are folded again */ if (ev && ev.persisted) { if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0, reinforce: false, open: false, cfg: false, stPick: false, cfPick: false, stations: null, counts: null, per: null, exp: null }); } }; try { window.addEventListener('pageshow', this._wfShow); ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { if (this._sndT) clearTimeout(this._sndT); try { window.removeEventListener('pageshow', this._wfShow); } catch (e) {} if (this._actT) clearInterval(this._actT); if (this._tlT) clearInterval(this._tlT); try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
@@ -1096,7 +1098,7 @@ class Component extends DCLogic {
   // Extra unit types a station keeps (index 6 to 9), seeded by the station so they stay put: a hand crew and an ambulance
   // at most one each; dozers and patrol engines (VLCI / evacuation vans in Portugal) one or two
   wfSeed(id, k) { let h = 7; for (const ch of String(id) + ':' + k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }
-  wfExtraCap(id, st) { const K = this.wfKinds(st); return [6, 7, 8, 9].map((k) => { const h = this.wfSeed(id, k); if ((h % 100) >= (K[k].p || 0) * 100) return 0; return k === 7 || k === 9 ? 1 + ((h >> 8) % 2) : 1; }); }
+  wfExtraCap(id, st) { const K = this.wfKinds(st); return [6, 7, 8, 9].map((k) => { const h = this.wfSeed(id, k); if ((h % 100) >= (K[k].p || 0) * 100) return 0; return k === 7 || k === 9 ? 1 + ((h >>> 8) % 2) : 1; }); }
   wfSplit(list, counts, per) {
     const out = [], get = (d) => { let o = out.find((q) => q.id === d.id); if (!o) { o = { id: d.id, ck: d.ck || '', code: d.code || '', name: d.name, km: d.km, n: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }; out.push(o); } return o; };
     const st = list.filter((d) => d.id !== 'none');
@@ -1168,7 +1170,7 @@ class Component extends DCLogic {
     const P = (la, lo) => [Math.round((lo + 118.13) * 2345 + 518), Math.round((34.19 - la) * 2829 + 662)];
     return { du, live: true, rows: L.map((q, i) => {
       const xy = P(q.la, q.lo), drive = Math.max(1, Math.round(q.km * 1.35 / 50 * 60));   // road ≈ 1.35 × straight line, 50 km/h average
-      let h = 0; for (const ch of String(q.osm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const tot = 2 + (h % 4), fr = wide ? (q.chat ? 1 + (h >> 3) % tot : (h >> 3) % (tot + 1)) : null;   /* crews free: example figures (no public feed), seeded so they stay put */
+      let h = 0; for (const ch of String(q.osm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const tot = 2 + (h % 4), fr = wide ? (q.chat ? 1 + (h >>> 3) % tot : (h >>> 3) % (tot + 1)) : null;   /* crews free: example figures (no public feed), seeded so they stay put */
       return { id: 'osm' + q.osm, ck: q.ck || (q.t || 'n') + q.osm, code: 'S' + (i + 1), name: q.name, x: xy[0], y: xy[1], km: +(US ? q.km * 0.621 : q.km).toFixed(1), free: fr, total: wide ? tot : null, t: fr === 0 ? null : [2, drive, 5], busy: fr === 0 ? 'All crews out' : undefined, real: true };
     }) };
   }
@@ -1416,7 +1418,7 @@ class Component extends DCLogic {
     const avail3 = realSt ? [99, 99, 99, 99, 99, 99] : [freeSel, chosenList.reduce((a, d) => a + (tenders[d.id] || 0), 0) + 3, 2, 3, 1, 2];
     // Forces are set station by station: crews and tenders per chosen station, aircraft as one air support group.
     const stL = chosenList.filter((d) => d.id !== 'none');
-    const capOf = (d) => realSt ? [99, 99] : [d.free != null ? d.free : 99, (tenders[d.id] || 0) + 2];
+    const capOf = (d) => realSt ? [99, 99] : [d.free != null ? Math.max(0, d.free) : 99, Math.max(0, (tenders[d.id] || 0) + 2)];
     const defSplit = this.wfSplit(stL, REC.map((n, i) => (i < 2 ? n : 0)));
     const PER = {};
     stL.forEach((d) => { const o = defSplit.find((q) => q.id === d.id), cap = capOf(d), v = (s.per && s.per[d.id]) || (o ? [o.n[0], o.n[1]] : [0, 0]); PER[d.id] = [Math.min(v[0], cap[0]), Math.min(v[1], cap[1]), 0, 0, 0, 0, v[6] || 0, v[7] || 0, v[8] || 0, v[9] || 0]; });
@@ -1515,7 +1517,7 @@ class Component extends DCLogic {
       const rv = (k) => { const r = (RU || []).find((q) => q[0] === k); return r && Number(r[1]) > 0 ? Number(r[1]) : 0; }, veh = rv('Ground vehicles') || Math.ceil(rv('Personnel') / 5);
       const nSt = Math.max(1, Math.min(4, veh ? Math.ceil(veh / 2) : 1));
       const cards = (NW.rows || []).slice(0, nSt).map((r) => { let h = 0; for (const ch of String(r.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-        const tot = 2 + (h % 4), free = (h >> 3) % (tot + 1), drive = r.t ? r.t[1] : null;
+        const tot = 2 + (h % 4), free = (h >>> 3) % (tot + 1), drive = r.t ? r.t[1] : null;
         const K = window.__wfCrest ? window.__wfCrest(r.ck, r.name) : { url: '' };
         return { crest: K.url || '', crestD: K.url ? 'block' : 'none', shD: K.url ? 'none' : 'block', name: r.name, sub: r.km + du + (drive ? '. ~' + drive + ' min.' : '.'), tag: free ? free + ' of ' + tot + ' free' : 'All out', tagFg: free ? '#186B2D' : '#636366', tagBg: free ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)',
           aria: r.name + ', ' + r.km + du + (drive ? ', about ' + drive + ' minutes drive' : '') + '. ' + (free ? free + ' of ' + tot + ' crews free' : 'All crews out') + ' (simulated)' }; });
@@ -1785,14 +1787,14 @@ class Component extends DCLogic {
         // Confirmed here and already ordered: the plan starts from what was ordered, so adding or changing one station keeps the rest
         const KST = [0, 1, 6, 7, 8, 9], fromN = (n) => KST.map((k) => (n || [])[k] || 0), toN = (d) => { const a = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; KST.forEach((k, j) => { a[k] = d[j] || 0; }); return a; };   /* station drafts: one slot per kind it can send */
         const plan = Array.isArray(s.plan) ? s.plan : (confP && ORD.length ? ORD.map((o) => ({ id: o.id, n: o.id === 'air' ? (o.n || []).slice(2, 6) : fromN(o.n) })) : []), F = s.flow || null, byId = (id) => data.find((d) => d.id === id);
-        const capSt = (d) => (d.real ? [99, 99] : [d.free != null ? Math.max(0, d.free) : 99, (tenders[d.id] || 0) + 2]).concat(this.wfExtraCap(d.id || '', stC));
+        const capSt = (d) => (d.real ? [99, 99] : [d.free != null ? Math.max(0, d.free) : 99, Math.max(0, (tenders[d.id] || 0) + 2)]).concat(this.wfExtraCap(d.id || '', stC));
         // Suggested order, as an initial attack on a wildland fire is made up in practice (CAL FIRE / ANEPC): engines and a
         // water tender from each station, plus what the station keeps: its hand crew, a dozer, a patrol engine, and an
         // ambulance from the first station only. Numbers differ by station (seeded, so a station always suggests the same).
         // Air support suggests a helicopter, air tankers and a drone swarm.
         const recFor = (id, f1) => { if (id === 'air') return REC.slice(2).map((n, i) => Math.min(Math.max(n, [1, 2, 0, 1][i]), airCap[i])); const d = byId(id), c = d ? capSt(d) : [0, 0, 0, 0, 0, 0], first = f1 != null ? f1 : !plan.some((p) => p.id !== 'air' && p.id !== id), h = this.wfSeed(id, 'rec');
-          const eng = first ? Math.max(REC[0], 2 + (h % 2)) : 1 + (h % 3), ten = first ? Math.max(1, REC[1] - 1) : (h >> 4) % 2;
-          return [Math.min(eng, c[0]), Math.min(ten, c[1]), Math.min(1, c[2] || 0), Math.min(1, c[3] || 0), first ? Math.min(1, c[4] || 0) : 0, stC === 'PT' ? 0 : Math.min(1 + ((h >> 6) % 2), c[5] || 0)]; };   /* Portugal's evacuation vans only when asked */
+          const eng = first ? Math.max(REC[0], 2 + (h % 2)) : 1 + (h % 3), ten = first ? Math.max(1, REC[1] - 1) : (h >>> 4) % 2;
+          return [Math.max(0, Math.min(eng, c[0])), Math.max(0, Math.min(ten, c[1])), Math.min(1, c[2] || 0), Math.min(1, c[3] || 0), first ? Math.min(1, c[4] || 0) : 0, stC === 'PT' ? 0 : Math.min(1 + ((h >>> 6) % 2), c[5] || 0)]; };   /* Portugal's evacuation vans only when asked */
         const W = (i, n) => n + ' ' + words[i][n === 1 ? 0 : 1];
         const sumOf = (id, n) => (id === 'air' ? n.map((v, i) => v ? W(i + 2, v) : '').filter(Boolean) : n.map((v, i) => v ? W(KST[i], v) : '').filter(Boolean)).join('. ') || 'Select resources';
         const nm = (d) => (d.code && d.code !== '—' ? d.code + '. ' : '') + d.name;
@@ -1898,7 +1900,7 @@ class Component extends DCLogic {
             state: sentO ? 'Coordinator received the order' : now ? 'Sending order…' : 'Waiting', stC: '#000000', spinOp: now ? 1 : 0, tickOp: sentO ? 1 : 0, tickS: sentO ? 1 : 0.6 }; }),
           redo: () => { this._replace = null; if (this._sndT) { clearTimeout(this._sndT); this._sndT = null; } this.setState({ sending: 0, sndN: 0 }); },
           notDone: !all, btnOp: all ? 1 : 0.4,
-          doneLbl: (() => { let bk = ''; try { bk = sessionStorage.getItem('wf-chat-return') || ''; } catch (e) {} return bk ? 'Return to chat' : (s.crew || (frow && /^Confirmed from/.test(frow.note || ''))) ? 'Return to fire' : 'Return'; })(),
+          doneLbl: (() => { let bk = ''; try { bk = sessionStorage.getItem('wf-chat-return') || ''; } catch (e) {} return (bk || this._fromChat) ? 'Return to chat' : (s.crew || (frow && /^Confirmed from/.test(frow.note || ''))) ? 'Return to fire' : 'Return'; })(),
           // Done: the orders are with the coordinators, so there is no forces-on-the-way view; back to the incidents.
           done: (e, force) => { if (!all && force !== true) return; if (this._replace) { const A = this.wfOrders(); A[fireId] = (A[fireId] || []).filter((o) => o.id !== this._replace); try { window.localStorage.setItem('wf-orders', JSON.stringify(A)); } catch (x) {} this._replace = null; }
             this.wfSaveOrder(fireId, sendList, counts, DU, PER);
@@ -1912,6 +1914,7 @@ class Component extends DCLogic {
               window.__wfChat.dispatched(back, ORDS);
               try { sessionStorage.removeItem('wf-chat-return'); sessionStorage.setItem('wf-chat-open', back); } catch (e) {}
               try { window.location.href = 'Chat.dc.html'; } catch (e) {} return; }
+            if (this._fromChat && window.__wfChat && window.__wfChat.get(this._fromChat)) { this.setState({ sending: 0, sndN: 0, crew: false, reinforce: false, stPick: false, cfPick: false, open: false, cfg: false, ftab: 'fire' }); try { sessionStorage.setItem('wf-chat-open', this._fromChat); } catch (e) {} try { window.location.href = 'Chat.dc.html'; } catch (e) {} return; }
             if (s.crew || (frow && /^Confirmed from/.test(frow.note || ''))) { this.setState({ sending: 0, sndN: 0, crew: false, reinforce: false, stPick: false, cfPick: false, open: false, cfg: false, ftab: 'fire' }); try { sessionStorage.setItem('wf-nudge-chat', '1'); } catch (e) {} this.wfNudge(); return; }   /* crews configured from the fire page: Done goes back to it */
             this._goHome(); try { window.location.href = 'Main.dc.html'; } catch (e) {} } };
         SN.back = () => SN.done(null, true);   /* the round back by the title: Return, also before every order is through */
