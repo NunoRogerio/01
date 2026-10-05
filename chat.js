@@ -1165,6 +1165,18 @@
   function dur(ms) { var m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + ' min'; if (m < 1440) return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; return Math.floor(m / 1440) + ' d ' + Math.floor((m % 1440) / 60) + ' h'; }
   function clock(ms) { var x = Math.max(0, Math.floor(ms / 1000)); var d = Math.floor(x / 86400); x %= 86400; var h = Math.floor(x / 3600); x %= 3600; var m = Math.floor(x / 60), s = x % 60, p = function (n) { return String(n).padStart(2, '0'); };
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
+  /* (Oct 5, 11:40) a fire owner works on at most 3 incidents at a time: the others are assigned to other fire owners. The three are kept
+     (the chat you open or act on joins them, the longest idle one leaves); a closed one is replaced by the next most active. */
+  var MAXOWN = 3, AKEY = 'wf-assigned-' + (role || 'anon');
+  function mineKeys() { try { return (JSON.parse(localStorage.getItem(AKEY) || '[]') || []).slice(0, MAXOWN); } catch (e) { return []; } }
+  function mine(open) {   /* open: the open chats of the area, most active first; returns up to three, the assigned ones first */
+    var A = mineKeys(), by = {}; open.forEach(function (c) { by[c.key] = c; });
+    A = A.filter(function (k) { return by[k]; });
+    open.forEach(function (c) { if (A.length < MAXOWN && A.indexOf(c.key) < 0) A.push(c.key); });
+    try { localStorage.setItem(AKEY, JSON.stringify(A)); } catch (e) {}
+    return A.map(function (k) { return by[k]; });
+  }
+  function assign(k) { var A = mineKeys().filter(function (x) { return x !== k; }); A.unshift(k); try { localStorage.setItem(AKEY, JSON.stringify(A.slice(0, MAXOWN))); } catch (e) {} }
   function fresh(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }   /* newer than the last look (the badge itself stays on while a candidate is undecided) */
   function unread(c) { var open0 = c.stage === 0 && !c.dismissed && !c.closed;   /* (Oct 5) an undecided candidate keeps its count however often the chat is opened: only declaring or dismissing clears it */
     return c.msgs.filter(function (m) { return m.t > (open0 ? 0 : (c.seenAt || 0)) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
@@ -1289,7 +1301,9 @@
     totalUnread: function () { var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var r0 = null; try { r0 = localStorage.getItem('wf-role'); } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r0 || ''] || null;
       if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };   /* as the chats list reads it */
       var inSc = function (c) { return inScope(c, SC); };
-      return Object.keys(db.chats).reduce(function (a, k) { var c = db.chats[k]; return a + (!c.closed && inSc(c) ? unread(c) : 0); }, 0); },
+      var op = Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return !c.closed && inSc(c); }).sort(function (a, b) { return (unread(b) ? 1 : 0) - (unread(a) ? 1 : 0) || (b.updated || 0) - (a.updated || 0); });
+      return mine(op).reduce(function (a, c) { return a + unread(c); }, 0); },   /* only the incidents assigned to this fire owner count */
+    mine: mine, assign: assign,
     nearby: function (key) { var c = load().chats[key]; return c ? nearby(c, 50) : []; }, setTopic: setTopic,
     police: function (inc) { var c = police(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     callFace: function (key) { var c = load().chats[key]; return c ? faceOfPolice(c) : 'police-a'; },   /* the police leader's face for this report: one of three, chosen at random once, then the same in every call */
@@ -1300,7 +1314,7 @@
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
-    seen: function (k) { var c = load().chats[k]; if (c) { if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
+    seen: function (k) { var c = load().chats[k]; if (c) { if (!c.closed) assign(k); if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
     forget: function (k) { var db = load(); if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
     send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
