@@ -519,7 +519,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   // (Oct 4) evidence (satellite image, drone feed, photo) opens in the floating card, like the camera and call feeds
-  wfEv(o) { const F = window.__wfCamFeed; if (F && F.open) F.open(Object.assign({ title: o.label }, o)); }
+  wfEv(o) { const t = Date.now(); if (this._evT && t - this._evT < 400) return; this._evT = t;   /* (Oct 5) the thumbnail's tap also reaches its card: one tap opens the feed once (a second call used to close it straight away) */
+    const F = window.__wfCamFeed; if (F && F.open) F.open(Object.assign({ title: o.label }, o)); }
   wfHandle(key, dir, close) {
     const self = this;
     return {
