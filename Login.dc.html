@@ -95,11 +95,11 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span><br><span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>
     <p style="margin: 0; font-size: 15px; line-height: 18px; color: #FFFFFF">Limited audience. Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
     <!-- About: text only, in the hi-vis colour (no container), with a 48px touch area -->
-    <a href="About.dc.html?v=14" style="align-self: center; display: flex; align-items: center; justify-content: center; height: 48px; margin: 16px 0; padding: 0 16px; color: var(--wf-y); font-size: 17px; font-weight: 600; text-decoration: none; text-shadow: 0 0 8px rgba(0,0,0,0.6)">About</a>
+    <a href="About.dc.html?v=14" onClick="{{goAbout}}" style="align-self: center; display: flex; align-items: center; justify-content: center; height: 48px; margin: 16px 0; padding: 0 16px; color: var(--wf-y); font-size: 17px; font-weight: 600; text-decoration: none; text-shadow: 0 0 8px rgba(0,0,0,0.6)">About</a>
     <p style="margin: 0; font-size: 15px; line-height: 20px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     </div>
   </div>
-  <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; opacity: {{dOp}}; transition: clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), opacity {{dOpT}}">
+  <div role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="display: {{listD}}; position: absolute; inset: 0; z-index: 20; flex-direction: column; background: #F2F2F7; padding: 64px 0 0; clip-path: {{pClip}}; -webkit-clip-path: {{pClip}}; opacity: {{dOp}}; transition: clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), -webkit-clip-path {{clipDur}} cubic-bezier(.3,.9,.25,1), opacity {{dOpT}}">
     <!-- Title and description share one text column that stops 24px before the close button and wraps when needed -->
     <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 16px 32px; opacity: {{pOp}}; transform: translateY({{pY}}); transition: opacity .35s ease {{pDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{pDelay}}">
       <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
@@ -273,16 +273,43 @@ class Component extends DCLogic {
       const H = r.offsetHeight, W = r.offsetWidth, t = f.offsetTop, fb = f.firstElementChild ? f.firstElementChild.offsetHeight : 120;
       return 'inset(' + t + 'px ' + 16 + 'px ' + Math.max(0, H - t - fb) + 'px ' + 16 + 'px round 14px)'; } catch (e) { return null; }
   }
+  // (Oct 5, 02:36) Slide reveal, as everywhere a screen opens the next one: the login screen (photo included) slides away to
+  // the left at full opacity, uncovering the profile picker already in place underneath; closing slides it back over it.
+  wfSlide(out, done) {
+    const E = 'cubic-bezier(.65,0,.35,1)', D = 500, pk = document.querySelector('#dc-root [role=dialog][aria-labelledby="pickTitle"]'), root = pk && pk.parentElement;
+    const L = root ? [].slice.call(root.children).filter((c) => c.getAttribute('role') !== 'dialog') : [], bg = document.getElementById('wf-login-bg');
+    // every layer moves by the full screen width (in its own coordinates), so the login travels as one piece
+    const W = root ? root.offsetWidth : 390, A = (w) => (out ? [{ translate: '0 0' }, { translate: -w + 'px 0' }] : [{ translate: -w + 'px 0' }, { translate: '0 0' }]);
+    (this._slA || []).forEach((a) => { try { a.cancel(); } catch (x) {} }); this._slA = [];
+    // the surface uncovered under the login (the app's grey), so nothing black shows around the screen underneath
+    let un = document.getElementById('wf-login-under'); if (!un) { un = document.createElement('div'); un.id = 'wf-login-under'; un.setAttribute('aria-hidden', 'true'); un.style.cssText = 'position:fixed;inset:0;z-index:0;background:#F2F2F7;pointer-events:none'; document.body.insertBefore(un, document.body.firstChild); }
+    L.forEach((el) => { try { this._slA.push(el.animate(A(W), { duration: D, easing: E, fill: 'forwards' })); } catch (x) {} });
+    if (bg) { try { this._slA.push(bg.animate(A(window.innerWidth), { duration: D, easing: E, fill: 'forwards' })); } catch (x) {} }
+    if (pk) { try { const c = out ? ['inset(0 0 0 100%)', 'inset(0 0 0 0%)'] : ['inset(0 0 0 0%)', 'inset(0 0 0 100%)']; pk.animate([{ clipPath: c[0] }, { clipPath: c[1] }], { duration: D, easing: E, fill: out ? 'none' : 'forwards' }); } catch (x) {} }
+    clearTimeout(this._slT); this._slT = setTimeout(() => { if (!out) { (this._slA || []).forEach((a) => { try { a.cancel(); } catch (x) {} }); this._slA = []; const u = document.getElementById('wf-login-under'); if (u) u.remove(); } if (done) done(); }, D + 20);
+  }
   openPanel() {
-    clearTimeout(this._pt); const fc = this.fieldClip();
-    this.setState({ open: true, phase: 'from', fromClip: fc });
-    requestAnimationFrame(() => requestAnimationFrame(() => { const L = document.querySelector('#dc-root [role=listbox]'); this.setState({ phase: 'in', padB: 32 }); }));
+    clearTimeout(this._pt); try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+    this.setState({ open: true, phase: 'in', fromClip: null, padB: 32 });
+    requestAnimationFrame(() => this.wfSlide(true));
+  }
+  // About: the same slide, uncovering the About screen (loaded underneath first), then the real About page takes over
+  goAbout(e) {
+    try { e.preventDefault(); } catch (x) {} if (this._abGo) return; this._abGo = 1; const href = (e && e.currentTarget && e.currentTarget.getAttribute('href')) || 'About.dc.html';
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
+    const w = document.createElement('div'), f = document.createElement('iframe'); let gone = false;
+    w.setAttribute('aria-hidden', 'true'); w.setAttribute('data-wf-pushup', '1'); w.style.cssText = 'position:fixed;inset:0;z-index:0;background:#F2F2F7;pointer-events:none';
+    f.setAttribute('tabindex', '-1'); f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent'; w.appendChild(f); document.body.insertBefore(w, document.body.firstChild);
+    const go = () => { if (gone) return; gone = true; try { sessionStorage.setItem('wf-pu-arrive', String(Date.now())); } catch (x) {} window.location.href = href; };
+    let slid = false; const slide = () => { if (slid) return; slid = true; this.wfSlide(true, go); };
+    const T0 = Date.now(), poll = () => { if (slid) return; try { const d = f.contentDocument, r = d && d.getElementById('dc-root'); if (d && d.readyState === 'complete' && r && r.firstElementChild) { setTimeout(slide, 120); return; } } catch (x) {} if (Date.now() - T0 > 2500) { slide(); return; } setTimeout(poll, 60); };
+    f.src = href; setTimeout(poll, 80);
   }
   // Close: the button turns a full circle first, then the panel folds into the sign-in field while it
   // dissolves, so the frosted field underneath appears softly instead of snapping in.
   closePanel(fromX) {
     clearTimeout(this._pt); clearTimeout(this._pt2);
-    const fold = () => { this.setState({ phase: 'out', fromClip: this.fieldClip() }); this._pt = setTimeout(() => this.setState({ open: false, phase: null, spin: false }), 1150); };
+    const fold = () => this.wfSlide(false, () => this.setState({ open: false, phase: null, spin: false }));   /* the login slides back over the picker */
     if (fromX) { this.setState({ spin: true }); this._pt2 = setTimeout(fold, 320); } else fold();
   }
   componentWillUnmount() { clearTimeout(this._eyeT0); clearInterval(this._eyeT); clearTimeout(this._pt); clearInterval(this._bgT); const h = document.getElementById('wf-login-bg'); if (h) h.remove(); }
@@ -296,6 +323,8 @@ class Component extends DCLogic {
       h.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;background:#000000;overflow:hidden';
       B.forEach(() => { const d = document.createElement('div'); d.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);transition:opacity 1.6s ease'; h.appendChild(d); });
       const sh = document.createElement('div'); sh.style.cssText = 'position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)'; h.appendChild(sh);
+      // (Oct 5, 02:36) the firefighter stripes along the very bottom edge of the screen, as on the other screens (the shared .wf-stripes)
+      const sp = document.createElement('div'); sp.style.cssText = 'position:absolute;left:0;right:0;bottom:0;height:8px;z-index:4;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4'; h.appendChild(sp);
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
@@ -444,13 +473,14 @@ class Component extends DCLogic {
       credit: 'Photo: ' + PH[cur][1] + ' / Unsplash',
       noSubmit: (e) => { try { e.preventDefault(); } catch (x) {} },
       toggle: () => (open ? this.closePanel(true) : this.openPanel()),
+      goAbout: (e) => this.goAbout(e),
       openStr: open ? 'true' : 'false', rot: open ? '180deg' : '0deg', listD: open ? 'flex' : 'none',
       // The panel grows out of the username field and folds back into it; the close button turns a full circle.
-      pClip: s.phase === 'in' ? 'inset(0px 0px 0px 0px round 0px)' : (s.fromClip || 'inset(40% 16px 45% 16px round 14px)'),
+      pClip: 'none',
       pOp: s.phase === 'in' ? 1 : 0, pY: s.phase === 'in' ? '0px' : '-8px', pY2: s.phase === 'in' ? '0px' : '24px',
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
       xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
-      dOp: s.phase === 'out' ? 0 : 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
+      dOp: 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
       userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#3A3A3C', userFs: '17px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
       pwBlur: (e) => { if (!sel) { try { e.target.blur(); } catch (x) {} } },
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
