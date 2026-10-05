@@ -69,11 +69,8 @@
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = lx(i, vals.length), y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
   var LW = 3;   // line charts' stroke (Oct 5, 19:54: 3px; 4px and 8px were tried; first 2px, vehicles 3px)
   var AG = 0;   // line charts: no fill under the line; each line casts a soft shadow in its own colour (the single line: the primary), centred on it (0 offset), 9px blur
-  function lineShadow(p, h, id, col, blur) {   // only under its line (clipped to the area below it), at most 80% strong, 7.2px blur (20% less, 5.76px, when a chart has several lines)
-    var bot = h - 20;
-    return '<defs><filter id="' + id + '" filterUnits="userSpaceOnUse" x="-24" y="-24" width="' + (W + 48) + '" height="' + (h + 48) + '"><feGaussianBlur stdDeviation="' + (blur || 7.2) + '"/></filter><clipPath id="' + id + 'c"><path d="' + p + ' L' + W + ' ' + bot + ' L0 ' + bot + 'Z"/></clipPath></defs>' +
-      '<g clip-path="url(#' + id + 'c)" pointer-events="none" opacity="0.8"><path d="' + p + '" fill="none" style="stroke:' + (col || LIME) + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round" filter="url(#' + id + ')"/></g>';
-  }
+  function lineShadow() { return ''; }   // (Oct 5, 20:00) no shadow under the lines; the line alone carries the chart
+
 
   // entry animation: a line chart's lines (and their shadows) are drawn left to right through a clip that widens
   function reveal(h) { var id = 'wfrv' + (++AG); return '<defs><clipPath id="' + id + '"><rect class="an-r" x="-4" y="-12" width="' + (W + 8) + '" height="' + (h + 24) + '"/></clipPath></defs><g clip-path="url(#' + id + ')">'; }
