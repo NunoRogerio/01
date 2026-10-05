@@ -66,10 +66,12 @@
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" fill="#6E6E73" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" fill="#6E6E73" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = vals.length > 1 ? i * W / (vals.length - 1) : 0, y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
   var AG = 0;   // line charts: no fill under the line; each line casts a soft shadow in its own colour (the single line: the primary), centred on it (0 offset), 9px blur
-  function lineShadow(p, h, id, col) {
-    return '<defs><filter id="' + id + '" filterUnits="userSpaceOnUse" x="-24" y="-24" width="' + (W + 48) + '" height="' + (h + 48) + '"><feGaussianBlur stdDeviation="9"/></filter><clipPath id="' + id + 'c"><rect x="0" y="0" width="' + W + '" height="' + (h - 20) + '"/></clipPath></defs>' +
-      '<g clip-path="url(#' + id + 'c)" pointer-events="none"><path d="' + p + '" fill="none" style="stroke:' + (col || LIME) + '" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" filter="url(#' + id + ')"/></g>';
+  function lineShadow(p, h, id, col) {   // only under its line (clipped to the area below it), at most 80% strong, 7.2px blur
+    var bot = h - 20;
+    return '<defs><filter id="' + id + '" filterUnits="userSpaceOnUse" x="-24" y="-24" width="' + (W + 48) + '" height="' + (h + 48) + '"><feGaussianBlur stdDeviation="7.2"/></filter><clipPath id="' + id + 'c"><path d="' + p + ' L' + W + ' ' + bot + ' L0 ' + bot + 'Z"/></clipPath></defs>' +
+      '<g clip-path="url(#' + id + 'c)" pointer-events="none" opacity="0.8"><path d="' + p + '" fill="none" style="stroke:' + (col || LIME) + '" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" filter="url(#' + id + ')"/></g>';
   }
+
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
