@@ -119,6 +119,7 @@
   // ---- the charts on offer -----------------------------------------------------------------------------------------------
   // each returns { v: big value, u: its unit, n: note under it, h: the chart's html }
   var DEFS = [
+    { k: 'region', t: 'Ignition candidates and burned area', on: 1, top: 1, f: function (R, rg, X) { var c = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2), a = Math.round((R() * 0.2 + 0.9) * 1600 * X.sc * rg.mult), h = regionHeat(rg, X); return { v: fmt(c), u: 'candidates', n: fmt(a) + ' ac burned in ' + S.region, h: h || '<div style="font-size:15px;line-height:20px;color:#6E6E73">No outline for this area yet.</div>' }; } },
     { k: 'heatc', t: 'Ignition candidates heat map', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2); return { v: fmt(tot), u: 'candidates', n: 'Where they appeared in ' + S.region, h: heat(R, tot, 'ignition candidates') }; } },
     { k: 'heatb', t: 'Burned area heat map', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round((R() * 0.2 + 0.9) * 1600 * X.sc * rg.mult); return { v: fmt(tot), u: 'ac', n: 'Where it burned in ' + S.region, h: heat(R, tot, 'burned area') }; } },
     { k: 'split', t: 'Candidates confirmed and dismissed', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(140 * X.sc * rg.mult * (0.9 + R() * 0.2)), cf = Math.round(tot * (0.5 + R() * 0.2)); return { v: fmt(tot), u: 'candidates decided', n: 'Confirmed as fires, or dismissed', h: stack({ n: 'Confirmed as fires', v: cf }, { n: 'Dismissed', v: tot - cf }) }; } },
@@ -141,7 +142,7 @@
   var BYK = {}; DEFS.forEach(function (d) { BYK[d.k] = d; });
 
   // ---- state -----------------------------------------------------------------------------------------------------------
-  var S = { open: false, el: null, range: LS(K_RANGE) || 'm', order: null, hide: null, sheet: false, region: '' };
+  var S = { lay: LS('wf-stats-lay') || { c: 1, b: 1 }, open: false, el: null, range: LS(K_RANGE) || 'm', order: null, hide: null, sheet: false, region: '' };
   function order() { var o = (LS(K_ORDER) || []).filter(function (k) { return BYK[k]; }); var tp = []; DEFS.forEach(function (d) { if (o.indexOf(d.k) < 0) { if (d.top) tp.push(d.k); else o.push(d.k); } }); return tp.concat(o); }
   function hidden() { var h = LS(K_HIDE); if (!h) { h = DEFS.filter(function (d) { return !d.on; }).map(function (d) { return d.k; }); } return h; }
   function regionName() { var h = document.querySelector('h1'); var t = h ? (h.textContent || '') : ''; t = t.replace(/^Incidents in\s*/i, '').trim(); return t || 'this area'; }
@@ -198,17 +199,17 @@
     var g = G && sc && (sc.co && G.counties && G.counties[sc.st + '|' + sc.co] || (G.states && G.states[sc.st])); if (!g || !g.box) return '';
     var b = g.box, bw = Math.max(1, b[2] - b[0]), bh = Math.max(1, b[3] - b[1]), pad = Math.max(bw, bh) * 0.06, vw = bw + 2 * pad, vh = bh + 2 * pad, vx = b[0] - pad, vy = b[1] - pad;
     var pts = g.pts, ins = function (x, y) { if (!pts) { var u = (x - (b[0] + bw / 2)) / (bw / 2), v = (y - (b[1] + bh / 2)) / (bh / 2); return u * u + v * v <= 1; } var c = false; for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) { if ((pts[i][1] > y) !== (pts[j][1] > y) && x < (pts[j][0] - pts[i][0]) * (y - pts[i][1]) / (pts[j][1] - pts[i][1]) + pts[i][0]) c = !c; } return c; };
-    var R = rng(S.region + '|' + rg.id + '|heat'), spots = function (n, r0, r1, wt) { var o = [], t = 0; while (o.length < n && t++ < 4000) { var x = b[0] + R() * bw, y = b[1] + R() * bh; if (ins(x, y)) o.push([x, y, Math.max(bw, bh) * (r0 + R() * (r1 - r0)), wt * (0.5 + R() * 0.5)]); } return o; };
-    var hotC = spots(5, 0.03, 0.08, 0.9), hotB = spots(3, 0.04, 0.09, 0.8), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = Math.max(bw, bh) * 0.035, hh = Math.min(300, Math.round(326 * vh / vw));
+    var R = rng(S.region + '|' + rg.id + '|heat'), mxd = Math.max(bw, bh), spots = function (nc, per, r0, r1, wt, spread) { var o = [], t = 0, c = 0; while (c < nc && t++ < 4000) { var x = b[0] + R() * bw, y = b[1] + R() * bh; if (!ins(x, y)) continue; c++;
+        for (var k = 0; k < per; k++) { var a = R() * 6.283, d = R() * R() * mxd * spread, px = x + Math.cos(a) * d, py = y + Math.sin(a) * d; if (ins(px, py)) o.push([px, py, mxd * (r0 + R() * (r1 - r0)), wt * (0.4 + R() * 0.6)]); } } return o; };
+    var hotC = spots(9, 8, 0.012, 0.04, 0.75, 0.09), hotB = spots(5, 6, 0.016, 0.045, 0.7, 0.07), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = mxd * 0.016, hh = Math.min(300, Math.round(326 * vh / vw));
     var blobs = function (a, col) { return a.map(function (q) { return '<circle cx="' + q[0].toFixed(0) + '" cy="' + q[1].toFixed(0) + '" r="' + q[2].toFixed(0) + '" fill="' + col + '" fill-opacity="' + q[3].toFixed(2) + '"/>'; }).join(''); };
     var shape = g.d ? '<path d="' + g.d + '"/>' : '<ellipse cx="' + (b[0] + bw / 2) + '" cy="' + (b[1] + bh / 2) + '" rx="' + bw / 2 + '" ry="' + bh / 2 + '"/>';
     var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ignition candidates and burned area across ' + esc(S.region) + '" style="display:block">' +
       '<defs><clipPath id="' + cl + '">' + shape + '</clipPath><filter id="' + cl + 'b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="' + blur.toFixed(0) + '"/></filter></defs>' +
       '<g fill="#DADADF" stroke="#C7C7CC" stroke-width="' + (Math.max(bw, bh) / 400).toFixed(1) + '" stroke-linejoin="round">' + shape + '</g>' +
-      '<g clip-path="url(#' + cl + ')"><g filter="url(#' + cl + 'b)">' + blobs(hotB, '#1C1C1E') + blobs(hotC, LIME) + '</g></g></svg>';
-    var key = function (c, t) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:15px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;background:' + c + '"></span>' + t + '</span>'; };
-    return '<div style="position:relative;margin:8px 0 24px"><span aria-hidden="true" style="position:absolute;right:0;top:0;font-size:15px;line-height:20px;color:#6E6E73">*</span>' + svg +
-      '<div style="display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:16px">' + key(LIME, 'Ignition candidates') + key('#1C1C1E', 'Burned area') + '</div></div>';
+      '<g clip-path="url(#' + cl + ')"><g filter="url(#' + cl + 'b)">' + (S.lay.b ? blobs(hotB, '#1C1C1E') : '') + (S.lay.c ? blobs(hotC, LIME) : '') + '</g></g></svg>';
+    var key = function (k, c, t) { var on = S.lay[k]; return '<button type="button" data-lg="' + k + '" aria-pressed="' + (!!on) + '" style="display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 16px 0 12px;border:0;border-radius:999px;background:rgba(118,118,128,.12);font:inherit;font-size:15px;line-height:20px;color:' + (on ? '#3A3A3C' : '#8E8E93') + ';cursor:pointer"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;box-sizing:border-box;background:' + (on ? c : 'transparent') + ';border:' + (on ? '0' : '1.5px solid #8E8E93') + '"></span>' + t + '</button>'; };
+    return svg + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + key('c', LIME, 'Ignition candidates') + key('b', '#1C1C1E', 'Burned area') + '</div>';
   }
   function render(keepScroll) {
     if (!S.el) return;
@@ -223,7 +224,7 @@
         '<button type="button" class="xb" data-act="close" aria-label="Close">' + chev() + '</button></div>' +
         '<div class="seg" role="tablist" aria-label="Period"><span class="th" aria-hidden="true" style="transform:translateX(' + (ri * 100) + '%)"></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '">' + r.label + '</button>'; }).join('') + '</div>' +
       '</div>' +
-      '<div class="sc">' + regionHeat(rg, X) + '<div data-list="1">' + keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join('') + '</div>' +
+      '<div class="sc"><div data-list="1">' + keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join('') + '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin:8px 0 0"><button type="button" class="add" data-act="add" aria-label="Add or remove charts"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span style="font-size:15px;line-height:20px;color:#6E6E73;text-align:right">* Simulation</span></div>' +
         '<div aria-hidden="true" style="height:104px"></div></div>' +
       '<div class="scr" data-act="shut"></div><div class="sh" role="dialog" aria-label="Charts" aria-hidden="true"></div>';
@@ -281,6 +282,7 @@
     el.querySelector('[data-act=add]').onclick = function () { buzz(8); showSheet(true); };
     el.querySelector('[data-act=shut]').onclick = function () { showSheet(false); render(true); };
     Array.prototype.forEach.call(el.querySelectorAll('[data-r]'), function (b) { b.onclick = function () { S.range = b.getAttribute('data-r'); LS(K_RANGE, S.range); buzz(8); render(true); }; });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-lg]'), function (b) { b.onclick = function (e) { e.stopPropagation(); var k = b.getAttribute('data-lg'); S.lay[k] = S.lay[k] ? 0 : 1; LS('wf-stats-lay', S.lay); buzz(8); render(true); }; });
     dragWire();
   }
   // press and hold (250 ms) lifts a card; moving it up or down makes room; letting go keeps the new order
