@@ -34,6 +34,23 @@
     else { d0.setMonth(d0.getMonth() - (rg.n - 1)); first = MON[d0.getMonth()] + ' ' + String(d0.getFullYear()).slice(2); last = MON[now.getMonth()] + ' ' + String(now.getFullYear()).slice(2); }
     return [first, last];
   }
+  // a label for each point of the period (tooltips): days, weeks or months, the last one now
+  var PTS = [];
+  function ptLabels(rg) {
+    var now = new Date(), o = [];
+    for (var i = 0; i < rg.n; i++) { var d = new Date(now), back = rg.n - 1 - i;
+      if (rg.step === 'day') { d.setDate(d.getDate() - back); o.push(back ? d.getDate() + ' ' + MON[d.getMonth()] : 'Today'); }
+      else if (rg.step === 'week') { d.setDate(d.getDate() - back * 7); o.push(back ? 'Week of ' + d.getDate() + ' ' + MON[d.getMonth()] : 'This week'); }
+      else { d.setMonth(d.getMonth() - back); o.push(MON[d.getMonth()] + ' ' + String(d.getFullYear()).slice(2)); } }
+    return o;
+  }
+  // a tooltip target: data-tip "bold line|second line"; data-cx/data-cy anchor it (chart units) and data-dot marks a point on a line
+  function tipA(t1, t2, cx, cy, dot) { return ' data-tip="' + esc(t1 + '|' + (t2 || '')) + '"' + (cx != null ? ' data-cx="' + cx.toFixed(1) + '" data-cy="' + cy.toFixed(1) + '"' : '') + (dot ? ' data-dot="1"' : ''); }
+  function slots(n, h, f) {   // one invisible full-height slot per point, easy to tap; shaded while its tooltip shows
+    var bot = h - 20, st = n > 1 ? W / (n - 1) : W, o = '';
+    for (var i = 0; i < n; i++) { var x = n > 1 ? i * st : 0, a = Math.max(0, x - st / 2), b = Math.min(W, x + st / 2), q = f(i, x); o += '<rect class="tslot" x="' + a.toFixed(1) + '" y="0" width="' + (b - a).toFixed(1) + '" height="' + bot + '"' + q + '/>'; }
+    return o;
+  }
   function series(R, n, base, amp, trend) { var o = [], v; for (var i = 0; i < n; i++) { v = base * (1 + trend * (i / n - 0.5)) + (R() - 0.5) * amp * base; if (R() > 0.9) v *= 1.8; o.push(Math.max(0, v)); } return o; }
   function cum(a) { var s = 0; return a.map(function (v) { return (s += v); }); }
   function delta(R) { var d = Math.round((R() * 40 - 12)); return (d >= 0 ? 'Up ' : 'Down ') + Math.abs(d) + '% on the period before.'; }
@@ -56,18 +73,18 @@
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      lineShadow(p, h, 'wfag' + (++AG)) + '<path d="' + p + '" fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' + xAxis(h, lbls) + '</svg>';
+      lineShadow(p, h, 'wfag' + (++AG)) + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y, true); }) + '<path d="' + p + '" fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
     var h = 105, max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
     var cols = [INK, LIME_D, G1];
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      sets.map(function (s, i) { return '<path d="' + pathOf(s.v, max, h, 0) + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + (i === 1 ? 3 : 2) + '" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="1 5"' : '') + '/>'; }).join('') + xAxis(h, lbls) + '</svg>' +
+      slots(sets[0].v.length, h, function (i, x) { return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14); }) + sets.map(function (s, i) { return '<path pointer-events="none" d="' + pathOf(s.v, max, h, 0) + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + (i === 1 ? 3 : 2) + '" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="1 5"' : '') + '/>'; }).join('') + xAxis(h, lbls) + '</svg>' +
       '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">' + sets.map(function (s, i) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:16px;height:3px;border-radius:2px;background:' + cols[i] + '"></span>' + esc(s.n) + '</span>'; }).join('') + '</div>';
   }
-  function columns(vals, labels, hl, unit, tickLbls) {
+  function columns(vals, labels, hl, unit, tickLbls, tipLbls) {
     var h = 105, max = Math.max.apply(null, vals) * 1.05, bot = h - 20, n = vals.length, gap = n > 14 ? 3 : 8, bw = (W - gap * (n - 1)) / n, o = '';
-    vals.forEach(function (v, i) { var bh = Math.max(2, (bot - 16) * v / max), x = i * (bw + gap); o += '<rect x="' + x.toFixed(1) + '" y="' + (bot - bh).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="' + Math.min(4, bw / 2).toFixed(1) + '" style="fill:' + (i === hl ? INK : LIME) + '"/>'; });
+    vals.forEach(function (v, i) { var bh = Math.max(2, (bot - 16) * v / max), x = i * (bw + gap); var tl = (tipLbls && tipLbls[i]) || labels[i] || (vals.length === PTS.length ? PTS[i] : ''); o += '<rect class="tslot" x="' + (x - gap / 2).toFixed(1) + '" y="0" width="' + (bw + gap).toFixed(1) + '" height="' + bot + '"' + tipA(fmt(v) + ' ' + unit, tl, x + bw / 2, bot - bh) + '/>'; o += '<rect pointer-events="none" x="' + x.toFixed(1) + '" y="' + (bot - bh).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="' + Math.min(4, bw / 2).toFixed(1) + '" style="fill:' + (i === hl ? INK : LIME) + '"/>'; });
     var lb = '';
     if (tickLbls) tickLbls.forEach(function (t) { var x = t[0] * (bw + gap) + bw / 2; lb += '<text x="' + x.toFixed(1) + '" y="' + (h - 2) + '" fill="#6E6E73" font-size="13" text-anchor="' + (t[0] === 0 ? 'start' : t[0] === n - 1 ? 'end' : 'middle') + '">' + esc(t[1]) + '</text>'; });
     else labels.forEach(function (t, i) { var x = i * (bw + gap) + bw / 2; lb += '<text x="' + x.toFixed(1) + '" y="' + (h - 2) + '" fill="#6E6E73" font-size="13" text-anchor="middle">' + esc(t) + '</text>'; });
@@ -82,7 +99,7 @@
   function donut(parts, abs) {
     var tot = parts.reduce(function (a, p) { return a + p.v; }, 0), r = 50, c = 2 * Math.PI * r, off = 0, cols = parts.some(function (p) { return p.c; }) ? parts.map(function (p) { return p.c; }) : [LIME, INK, G1, G2, '#E5E5EA'];
     var svg = '<svg viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Detection sources" style="display:block;flex-shrink:0;transform:rotate(-90deg)"><circle cx="60" cy="60" r="' + r + '" fill="none" stroke="' + TRACK + '" stroke-width="8"/>' +
-      parts.map(function (p, i) { var len = c * p.v / tot, o = '<circle cx="60" cy="60" r="' + r + '" fill="none" style="stroke:' + cols[i % cols.length] + '" stroke-width="8" stroke-dasharray="' + Math.max(0, len - 2).toFixed(1) + ' ' + (c - Math.max(0, len - 2)).toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '"/>'; off += len; return o; }).join('') + '</svg>';
+      parts.map(function (p, i) { var len = c * p.v / tot, o = '<circle class="tseg"' + tipA(p.n, Math.round(100 * p.v / tot) + '%' + (abs ? '. ' + fmt(p.v) : '') + '.') + ' cx="60" cy="60" r="' + r + '" fill="none" style="stroke:' + cols[i % cols.length] + '" stroke-width="8" stroke-dasharray="' + Math.max(0, len - 2).toFixed(1) + ' ' + (c - Math.max(0, len - 2)).toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '"/>'; off += len; return o; }).join('') + '</svg>';
     var leg = '<div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">' + parts.map(function (p, i) { return '<span style="display:flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;background:' + cols[i % cols.length] + ';' + (i === 4 ? 'box-shadow:inset 0 0 0 1px rgba(60,60,67,.2)' : '') + '"></span><span style="flex:1;min-width:0">' + esc(p.n) + '</span><span style="font-variant-numeric:tabular-nums">' + Math.round(100 * p.v / tot) + '%</span>' + (abs ? '<span style="min-width:40px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(p.v) + '</span>' : '') + '</span>'; }).join('') + '</div>';
     return '<div style="display:flex;align-items:center;gap:24px">' + svg + leg + '</div>';
   }
@@ -107,7 +124,8 @@
     for (j = rows - 1; j >= 0; j--) { o += '<line x1="' + pl + '" x2="' + W + '" y1="' + ((rows - 1 - j) * rh + rh / 2) + '" y2="' + ((rows - 1 - j) * rh + rh / 2) + '" stroke="rgba(60,60,67,0.10)" stroke-dasharray="3 4"/>'; }
     for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var f = v[q++] / mx; colSum[i] += f;
       var b = f < 0.15 ? 0 : f < 0.35 ? 1 : f < 0.6 ? 2 : f < 0.82 ? 3 : 4, sz = Math.max(8, 26 * Math.sqrt(f)), cx = pl + i * cw + cw / 2, cy = (rows - 1 - j) * rh + rh / 2;
-      o += '<rect x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>'; }
+      o += '<rect class="tsq"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + ['Very few', 'Few', 'Some', 'Many', 'Most'][b] + ' candidates.', cx, cy - sz / 2) + ' x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>';
+      o += '<rect class="tslot"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + ['Very few', 'Few', 'Some', 'Many', 'Most'][b] + ' candidates.', cx, cy - sz / 2) + ' x="' + (cx - cw / 2).toFixed(1) + '" y="' + (cy - rh / 2).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + rh + '" fill="#000" fill-opacity="0" data-sq="1"/>'; }
     colSum.forEach(function (c, k) { if (c > best) { best = c; bi = k; } });
     var ty = function (y, t) { return '<text x="0" y="' + (y + 4) + '" fill="#6E6E73" font-size="13">' + t + '</text>'; };
     var lbl = [[0, '0 h'], [3, '6 h'], [6, '12 h'], [9, '18 h'], [12, '24 h']].map(function (a) { return '<text x="' + (pl + a[0] * cw).toFixed(1) + '" y="' + (H - 2) + '" fill="#6E6E73" font-size="13" text-anchor="' + (a[0] === 0 ? 'start' : a[0] === 12 ? 'end' : 'middle') + '">' + a[1] + '</text>'; }).join('');
@@ -125,7 +143,7 @@
     { k: 'mitig', t: 'Fastest time to mitigation', on: 1, f: function (R, rg, X) { var names = pick(R, X.fires, 5), a = names.map(function (n, i) { return { l: n, a: 2 + i * 1.3 + R() * 1.2 }; }); return { v: fmt1(a[0].a), u: 'h', n: a[0].l + ' was the fastest.', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' h' }; }), a[4].a * 1.1, 0) }; } },
     { k: 'evac', t: 'People evacuated', on: 1, f: function (R, rg, X) { var s = series(R, rg.n, 140 * X.sc * rg.mult / (rg.n / 12), 1.6, 0.2), tot = s.reduce(function (a, b) { return a + b; }, 0), hi = s.indexOf(Math.max.apply(null, s)); return { v: fmt(tot), u: 'people', n: delta(R), h: columns(s, [], hi, 'people', [[0, X.x[0]], [rg.n - 1, X.x[1]]]) }; } },
     { k: 'proj', t: 'Projection accuracy', on: 1, f: function (R, rg, X) { var names = pick(R, X.fires, 5), a = names.map(function (n) { return { l: n, a: 62 + R() * 34 }; }).sort(function (x, y) { return y.a - x.a; }), avg = a.reduce(function (s, x) { return s + x.a; }, 0) / a.length; return { v: Math.round(avg), u: '%', n: 'Against the real perimeter. 5 fires.', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: Math.round(x.a) + '%' }; }), 100, 0) }; } },
-    { k: 'size', t: 'Fires by size class', on: 1, f: function (R, rg, X) { var base = 40 * X.sc * rg.mult / 3, c = [base * 1.9, base * 2.6, base * 1.5, base * 0.7, base * 0.32, base * 0.13, base * 0.05].map(function (v) { return Math.max(1, Math.round(v * (0.85 + R() * 0.3))); }), tot = c.reduce(function (a, b) { return a + b; }, 0); return { v: fmt(tot), u: 'fires', n: (X.au === 'ha' ? 'A is under 0.1 ha. G is over 2,000 ha.' : 'A is under 0.25 ac. G is over 5,000 ac.'), h: columns(c, ['A', 'B', 'C', 'D', 'E', 'F', 'G'], c.indexOf(Math.max.apply(null, c)), 'fires') }; } },
+    { k: 'size', t: 'Fires by size class', on: 1, f: function (R, rg, X) { var base = 40 * X.sc * rg.mult / 3, c = [base * 1.9, base * 2.6, base * 1.5, base * 0.7, base * 0.32, base * 0.13, base * 0.05].map(function (v) { return Math.max(1, Math.round(v * (0.85 + R() * 0.3))); }), tot = c.reduce(function (a, b) { return a + b; }, 0); return { v: fmt(tot), u: 'fires', n: (X.au === 'ha' ? 'A is under 0.1 ha. G is over 2,000 ha.' : 'A is under 0.25 ac. G is over 5,000 ac.'), h: columns(c, ['A', 'B', 'C', 'D', 'E', 'F', 'G'], c.indexOf(Math.max.apply(null, c)), 'fires', null, ['Class A', 'Class B', 'Class C', 'Class D', 'Class E', 'Class F', 'Class G']) }; } },
     { k: 'stage', t: 'Time spent in each stage', on: 1, f: function (R, rg, X) { var a = [1.5, 5.5, 9, 6, 7, 18].map(function (v) { return v * (0.8 + R() * 0.4); }), tot = a.reduce(function (s, v) { return s + v; }, 0); return { v: fmt(tot), u: 'h per fire', n: 'First alert to closed.', h: hbars(a.map(function (v, i) { return { l: STAGES[i], v: v, t: fmt1(v) + ' h' }; }), Math.max.apply(null, a), a.indexOf(Math.max.apply(null, a))) }; } },
     { k: 'res', t: 'Resources in use', on: 1, f: function (R, rg, X) { var cr = series(R, rg.n, 36 * X.sc, 0.7, 0.2).map(Math.round), ve = series(R, rg.n, 18 * X.sc, 0.7, 0.2).map(Math.round), ai = series(R, rg.n, 3 * X.sc, 1, 0).map(Math.round); return { v: fmt(Math.max.apply(null, cr)), u: 'crews at peak', n: delta(R), h: lines([{ n: 'Crews', v: cr }, { n: 'Vehicles', v: ve }, { n: 'Aircraft', v: ai }], X.x, '') }; } },
     { k: 'resp', t: 'Station speed of response', on: 1, f: function (R, rg, X) { var names = pick(R, X.sta, 5), a = names.map(function (n, i) { return { l: n, a: 5.5 + i * 1.7 + R() * 1.4 }; }); return { v: fmt1(a[2].a), u: 'min median', n: a[0].l + ' was the fastest.', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' min' }; }), a[4].a * 1.1, 0) }; } },
@@ -133,7 +151,7 @@
     { k: 'night', t: 'Night and day ignitions', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(150 * X.sc * rg.mult * (0.9 + R() * 0.2)), ni = Math.round(tot * (0.24 + R() * 0.12)); return { v: fmt(tot), u: 'ignitions', n: '', h: donut([{ n: 'Night', v: ni, c: '#1C1C1E' }, { n: 'Day', v: tot - ni, c: LIME }], true) }; } },
     { k: 'tod', t: 'Time of day and likelihood', on: 1, top: 1, f: function (R, rg, X) { var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: '', h: b.h }; } },
     { k: 'conf', t: 'Candidate conversion rate', on: 1, top: 1, f: function (R, rg, X) { var s = series(R, rg.n, 58, 0.18, 0.2).map(function (v) { return Math.min(96, v); }), avg = s.reduce(function (a, b) { return a + b; }, 0) / s.length; return { v: Math.round(avg), u: '%', n: delta(R), h: area(s, X.x, '%') }; } },
-    { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R) { var s = [], i, v; for (i = 0; i < 24; i++) { v = 6 + 12 * Math.exp(-Math.pow((i - 15) / 4.5, 2)) + R() * 3; if (i >= 21 || i < 6) v *= 0.7; s.push(v); } return { v: '15:00', u: 'busiest hour', n: 'Local time. Night in grey.', h: (function () { var h = columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']]); return h; })() }; } },
+    { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R) { var s = [], i, v; for (i = 0; i < 24; i++) { v = 6 + 12 * Math.exp(-Math.pow((i - 15) / 4.5, 2)) + R() * 3; if (i >= 21 || i < 6) v *= 0.7; s.push(v); } return { v: '15:00', u: 'busiest hour', n: 'Local time. Night in grey.', h: (function () { var h = columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']], s.map(function (v, i) { return i + ':00 to ' + (i + 1) + ':00'; })); return h; })() }; } },
     { k: 'decl', t: 'Time to declare a fire', on: 0, f: function (R) { var c = [18, 34, 26, 14, 8].map(function (v) { return Math.round(v * (0.8 + R() * 0.4)); }), tot = c.reduce(function (a, b) { return a + b; }, 0); return { v: Math.round(100 * (c[0] + c[1]) / tot), u: '% within 30 min', n: '', h: columns(c, ['< 10 min', '10 to 30', '30 to 60', '1 to 2 h', '> 2 h'], 1, 'fires') }; } }
   ];
   var BYK = {}; DEFS.forEach(function (d) { BYK[d.k] = d; });
@@ -160,7 +178,9 @@
     '.wfs .sh{position:absolute;left:0;right:0;bottom:0;z-index:6;max-height:78%;display:flex;flex-direction:column;box-sizing:border-box;border-radius:28px 28px 0 0;background:#F2F2F7;box-shadow:0 0 24px rgba(0,0,0,.16);transform:translateY(105%);transition:transform .45s ' + EASE + ';overflow:hidden}.wfs .sh.on{transform:none}' +
     '.wfs .scr{position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .35s ease}.wfs .scr.on{opacity:1;pointer-events:auto}' +
     '.wfs .sw{position:relative;width:51px;height:31px;flex-shrink:0;border-radius:999px;border:1px solid rgba(60,60,67,.35);box-sizing:border-box;background:rgba(120,120,128,.24);transition:background .2s ease}.wfs .sw i{position:absolute;top:1px;left:1px;width:34px;height:27px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s ease}.wfs .sw.on{background:' + LIME + '}.wfs .sw.on i{transform:translateX(13px)}' +
-        '.wfs .cd svg text{font-family:inherit}';
+        '.wfs .cd svg text{font-family:inherit}' +
+    '.wfs .tslot{fill:#000;fill-opacity:0;cursor:pointer;transition:fill-opacity .2s ease}.wfs .tslot.on{fill:#767680;fill-opacity:.12}.wfs .tsq,.wfs .tseg{cursor:pointer}.wfs .tseg{transition:stroke-width .2s ease}.wfs .tseg.on{stroke-width:12}' +
+    '.wfs .ctip{position:absolute;z-index:7;display:flex;flex-direction:column;width:max-content;max-width:260px;padding:8px 16px;border-radius:12px;background:#3A3A3C;color:#FFFFFF;font-size:16px;line-height:20px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .2s ease,transform .2s ease}.wfs .ctip.on{opacity:1;transform:none}.wfs .ctip b{font-weight:600}';
   document.head.appendChild(css);
 
   function host() { var tb = document.querySelector('[data-wf-topbg]'); if (!tb) return null; var blade = tb.parentElement, col = blade && blade.parentElement; return col && col.parentElement ? { tb: tb, col: col, par: col.parentElement } : null; }
@@ -221,7 +241,7 @@
     var key = function (k, c, t) { var on = S.lay[k]; return '<button type="button" data-lg="' + k + '" aria-pressed="' + (!!on) + '" style="display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 16px 0 12px;border:0;border-radius:999px;background:rgba(118,118,128,.12);font:inherit;font-size:16px;line-height:20px;color:' + (on ? '#3A3A3C' : '#8E8E93') + ';cursor:pointer"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;box-sizing:border-box;background:' + (on ? c : 'transparent') + ';border:' + (on ? '0' : '1.5px solid #8E8E93') + '"></span>' + t + '</button>'; };
     return svg + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + key('c', LIME, 'Ignition candidates') + key('b', '#1C1C1E', 'Burned area') + '</div>';
   }
-  function ctxX(rg) { var ptq = /portugal/i.test(regionLabel()); return { x: xLabels(rg), sc: 0.55 + (seedOf(S.region) % 100) / 100, ak: ptq ? 0.4047 : 1, au: ptq ? 'ha' : 'ac', fires: ptq ? FIRES_PT : FIRES, sta: ptq ? STATIONS_PT : STATIONS }; }
+  function ctxX(rg) { PTS = ptLabels(rg); var ptq = /portugal/i.test(regionLabel()); return { x: xLabels(rg), sc: 0.55 + (seedOf(S.region) % 100) / 100, ak: ptq ? 0.4047 : 1, au: ptq ? 'ha' : 'ac', fires: ptq ? FIRES_PT : FIRES, sta: ptq ? STATIONS_PT : STATIONS }; }
   function render(keepScroll) {
     if (!S.el) return;
     S.region = regionName();
@@ -305,7 +325,40 @@
     nw.setAttribute('data-list', '1'); nw.innerHTML = keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join(''); old.parentNode.replaceChild(nw, old);
     cardsWire();
   }
+  // chart tooltips (the chat photo tooltip's look): a tap on a mark shows its value, above it; a tap elsewhere, a scroll or a new period hides it
+  var TIP = { el: null, on: null, dot: null };
+  function tipHide() {
+    if (TIP.on) TIP.on.forEach(function (x) { x.classList.remove('on'); }); TIP.on = null;
+    if (TIP.dot) { TIP.dot.remove(); TIP.dot = null; }
+    if (TIP.el) TIP.el.classList.remove('on');
+  }
+  function tipShow(t, e) {
+    var host = S.el, svg = t.ownerSVGElement, hb = host.getBoundingClientRect(), ax, ay;
+    if (TIP.on && TIP.on.indexOf(t) >= 0) { tipHide(); return; }
+    tipHide();
+    if (!TIP.el || !TIP.el.isConnected) { TIP.el = document.createElement('div'); TIP.el.className = 'ctip'; TIP.el.setAttribute('role', 'tooltip'); TIP.el.setAttribute('aria-live', 'polite'); host.appendChild(TIP.el); }
+    var parts = t.getAttribute('data-tip').split('|');
+    TIP.el.innerHTML = '<b>' + esc(parts[0]) + '</b>' + (parts[1] ? '<span>' + esc(parts[1]) + '</span>' : '');
+    if (svg && t.hasAttribute('data-cx')) { var pt = svg.createSVGPoint(), m = svg.getScreenCTM(); pt.x = +t.getAttribute('data-cx'); pt.y = +t.getAttribute('data-cy'); pt = pt.matrixTransform(m); ax = pt.x; ay = pt.y;
+      if (t.hasAttribute('data-dot')) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', t.getAttribute('data-cy')); c.setAttribute('r', '5'); c.setAttribute('fill', '#FFFFFF'); c.setAttribute('stroke', INK); c.setAttribute('stroke-width', '2'); c.setAttribute('pointer-events', 'none'); svg.appendChild(c); TIP.dot = c; } }
+    else { var rb = t.getBoundingClientRect(); ax = e && e.clientX ? e.clientX : rb.left + rb.width / 2; ay = e && e.clientY ? e.clientY : rb.top; }
+    var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
+    if (t.classList.contains('tseg') || t.classList.contains('tslot')) t.classList.add('on'); TIP.on = on;
+    var tw = TIP.el.offsetWidth, th = TIP.el.offsetHeight, sc = host.querySelector('.sc'), sb = sc ? sc.getBoundingClientRect() : hb;
+    var x = Math.max(16, Math.min(hb.width - 16 - tw, ax - hb.left - tw / 2)), y = ay - hb.top - th - 12;
+    if (y < sb.top - hb.top + 8) y = ay - hb.top + 16;   // no room above: under the point
+    TIP.el.style.left = x + 'px'; TIP.el.style.top = y + 'px';
+    void TIP.el.offsetWidth; TIP.el.classList.add('on');
+    try { if (window.__wfHaptic) window.__wfHaptic(); else buzz(8); } catch (x2) {}
+  }
+  function tipWire() {
+    var sc = S.el.querySelector('.sc'); if (!sc || sc.__wfTip) return; sc.__wfTip = 1;
+    sc.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) { e.stopPropagation(); tipShow(t, e); } else tipHide(); });
+    sc.addEventListener('scroll', tipHide, { passive: true });
+    if (!S.el.__wfTip) { S.el.__wfTip = 1; S.el.addEventListener('click', function (e) { if (!(e.target.closest && e.target.closest('[data-tip]'))) tipHide(); }); }
+  }
   function cardsWire() {
+    tipHide(); tipWire();
     Array.prototype.forEach.call(S.el.querySelectorAll('[data-lg]'), function (b) { b.onclick = function (e) { e.stopPropagation(); var k = b.getAttribute('data-lg'); S.lay[k] = S.lay[k] ? 0 : 1; LS('wf-stats-lay', S.lay); buzz(8); render(true); }; });
     dragWire();
   }
@@ -338,12 +391,25 @@
     list.addEventListener('pointerup', end); list.addEventListener('pointercancel', end);
   }
 
-  function open() {
-    if (!build()) return; place(); S.open = true; S.region = ''; render(false);
+  // Coming back to the app (Oct 5): iOS may reload a page it put to sleep; the panel remembers, for this session only, that it was open
+  // and where it was scrolled, and comes back in place with no motion. Closing the app ends the session (fresh start on the main
+  // screen); the reset link and the update check don't depend on it.
+  var K_OPEN = 'wf-stats-open';
+  function SS(v) { try { if (v === undefined) return JSON.parse(sessionStorage.getItem(K_OPEN) || 'null'); if (v === null) sessionStorage.removeItem(K_OPEN); else sessionStorage.setItem(K_OPEN, JSON.stringify(v)); } catch (e) {} return null; }
+  function keep() { if (!S.open || !S.el) return; var sc = S.el.querySelector('.sc'); SS({ y: sc ? sc.scrollTop : 0 }); }
+  function open(back) {
+    if (!build()) return false; place(); S.open = true; S.region = ''; render(false);
     document.documentElement.classList.add('wf-stats');
-    var el = S.el; el.classList.remove('hide'); el.classList.remove('out'); void el.offsetWidth; el.classList.add('on');
+    var el = S.el; el.classList.remove('hide'); el.classList.remove('out');
+    if (back) { el.style.transition = 'none'; el.classList.add('on'); void el.offsetWidth; el.style.transition = ''; var sc = el.querySelector('.sc'); if (sc && back.y) sc.scrollTop = back.y; }
+    else { void el.offsetWidth; el.classList.add('on'); }
+    var sc2 = el.querySelector('.sc'); if (sc2 && !sc2.__wfKeep) { sc2.__wfKeep = 1; var kt = 0; sc2.addEventListener('scroll', function () { clearTimeout(kt); kt = setTimeout(keep, 200); }, { passive: true }); }
+    keep(); return true;
   }
+  try { window.addEventListener('pagehide', keep); document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') keep(); }); } catch (e) {}
+  (function comeBack() { var st = SS(); if (!st) return; var n = 0; (function wait() { if (open(st)) return; if (++n < 50) setTimeout(wait, 100); else SS(null); })(); })();
   function close() {
+    tipHide(); SS(null);
     if (!S.el) return; S.open = false; var x = S.el.querySelector('[data-act=close]'); if (x) x.classList.add('rot'); buzz(8);
     S.el.classList.add('out'); S.el.classList.remove('on'); var el = S.el;
     setTimeout(function () { if (!S.open) { document.documentElement.classList.remove('wf-stats'); el.classList.remove('out'); el.classList.add('hide'); } }, 520);
