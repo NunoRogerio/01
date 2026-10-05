@@ -1163,3 +1163,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Tour in the chat (Oct 5):** the team's chatter is held while a step points at something (the evidence, Declare the fire) and left out after it, so nothing moves under the cursor; the cards and stages still come. Entering the chat jumps to the evidence card instead of sliding the whole chat past. The tour's auto scroll is twice as fast (292 px/s).
 
 - **KPI selection blades (Oct 5):** a light grey round 44px button with a check sits at the top right of every Show or hide KPIs blade (Reset to its left). It closes the blade, like the grabber.
+
+- **Aspect card (Oct 5):** the direction in initials ("NE facing", fewer letters) and the compass arrow points that way. The Team chat button on the candidate page spans the full width.
