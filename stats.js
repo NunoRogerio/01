@@ -80,18 +80,18 @@
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y, true); }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + INK + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
+      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y, true); }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + G1 + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
     var h = 105, max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
-    var cols = [INK, LIME, G1];   // crews dark grey, vehicles the primary, aircraft middle grey
+    var cols = [G1, LIME, G2];   // line charts never use dark grey (too heavy): crews middle grey, vehicles the primary, aircraft light grey
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
       slots(sets[0].v.length, h, function (i, x) { return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14); }) +
       // drawn darkest first, so the brighter series sit above the darker ones (crews, then aircraft, then vehicles), each line with its own shadow;
       // the dark grey line's shadow is the middle grey (a dark shadow reads as dirt)
       reveal(h) + [0, 2, 1].filter(function (i) { return sets[i]; }).map(function (i) { var s = sets[i], d = pathOf(s.v, max, h, 0);
-        return lineShadow(d, h, 'wfls' + (++AG), cols[i] === INK ? G1 : cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="0 ' + (LW + 6) + '"' : '') + '/>'; }).join('') + '</g>' + xAxis(h, lbls) + '</svg>' +
-      '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">' + sets.map(function (s, i) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C">' + (i === 2 ? '<span aria-hidden="true" style="display:inline-flex;gap:6px">' + '<span style="width:' + LW + 'px;height:' + LW + 'px;border-radius:50%;background:' + cols[i] + '"></span>'.repeat(2) + '</span>' : '<span aria-hidden="true" style="width:24px;height:' + LW + 'px;border-radius:' + (LW / 2) + 'px;background:' + cols[i] + '"></span>') + '' + esc(s.n) + '</span>'; }).join('') + '</div>';
+        return lineShadow(d, h, 'wfls' + (++AG), cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round"' + '/>'; }).join('') + '</g>' + xAxis(h, lbls) + '</svg>' +
+      '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">' + sets.map(function (s, i) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:24px;height:' + LW + 'px;border-radius:' + (LW / 2) + 'px;background:' + cols[i] + '"></span>' + esc(s.n) + '</span>'; }).join('') + '</div>';
   }
   function columns(vals, labels, hl, unit, tickLbls, tipLbls) {
     hl = vals.indexOf(Math.max.apply(null, vals));   // the biggest value is always the dark grey one, in every column chart
@@ -407,7 +407,7 @@
     var parts = t.getAttribute('data-tip').split('|');
     TIP.el.innerHTML = '<b style="font-size:16px;line-height:20px">' + esc(parts[0]) + '</b>' + (parts[1] ? '<span style="font-size:16px;line-height:20px">' + esc(parts[1]) + '</span>' : ''); norm(TIP.el);
     if (svg && t.hasAttribute('data-cx')) { var sp = svg.createSVGPoint(), m = svg.getScreenCTM(); sp.x = +t.getAttribute('data-cx'); sp.y = +t.getAttribute('data-cy'); sp = sp.matrixTransform(m); var q = pt(sp.x, sp.y); ax = q[0]; ay = q[1];
-      if (t.hasAttribute('data-dot')) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', t.getAttribute('data-cy')); c.setAttribute('r', String(Math.max(5, LW / 2 + 3))); c.setAttribute('fill', '#FFFFFF'); c.setAttribute('stroke', INK); c.setAttribute('stroke-width', '2'); c.setAttribute('pointer-events', 'none'); svg.appendChild(c); TIP.dot = c; } }
+      if (t.hasAttribute('data-dot')) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', t.getAttribute('data-cy')); c.setAttribute('r', String(Math.max(5, LW / 2 + 3))); c.setAttribute('fill', '#FFFFFF'); c.setAttribute('stroke', G1); c.setAttribute('stroke-width', '2'); c.setAttribute('pointer-events', 'none'); svg.appendChild(c); TIP.dot = c; } }
     else { var rb = lrect(t), ep = e && e.clientX ? pt(e.clientX, e.clientY) : null; ax = ep ? ep[0] : rb.left + rb.width / 2; ay = ep ? ep[1] : rb.top; }
     var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
     if (t.classList.contains('tseg') || t.classList.contains('tslot')) t.classList.add('on'); TIP.on = on;
