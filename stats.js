@@ -68,7 +68,7 @@
   function hbars(items, max, best) {
     return '<div style="display:flex;flex-direction:column;gap:16px">' + items.map(function (it, i) {
       return '<div><div style="display:flex;justify-content:space-between;gap:16px;font-size:15px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.t) + '</span></div>' +
-        '<div aria-hidden="true" style="height:11px;margin-top:4px;border-radius:6px;background:' + TRACK + ';overflow:hidden"><div style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:6px;background:' + (i === best ? LIME : LIME) + '"></div></div></div>';
+        '<div aria-hidden="true" style="height:11px;margin-top:4px;border-radius:6px;background:' + TRACK + ';overflow:hidden"><div style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:6px;background:' + INK + '"></div></div></div>';
     }).join('') + '</div>';
   }
   function donut(parts, abs) {
