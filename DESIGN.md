@@ -1165,3 +1165,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **KPI selection blades (Oct 5):** a light grey round 44px button with a check sits at the top right of every Show or hide KPIs blade (Reset to its left). It closes the blade, like the grabber.
 
 - **Aspect card (Oct 5):** the direction in initials ("NE facing", fewer letters) and the compass arrow points that way. The Team chat button on the candidate page spans the full width.
+
+- **Team chat on the candidate page (Oct 5):** the full-width subtle button has the chat icon left of its label. The chat's unread count stays on (header, lists, badges) until the decision is made, Declare fire or Dismiss; opening the chat does not clear it.

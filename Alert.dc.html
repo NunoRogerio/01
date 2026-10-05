@@ -19,7 +19,7 @@
 <script src="prefs.js?v=196"></script>
 <script src="i18n.js?v=166"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=74"></script>
+<script src="chat.js?v=76"></script>
 <script src="trophy.js?v=26"></script>
 <script src="tour.js?v=104"></script>
 <script src="feedcam.js?v=21"></script>
@@ -265,7 +265,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
       <!-- (Oct 5, 10:08) as on the fire page: only the stage tag, Ignition candidate and how long since detection (no Unconfirmed button; declaring is the team's call in the chat) -->
       <span class="wf-qual hd solo" style="display: flex; margin-top: 16px; overflow: visible"><span aria-hidden="true"></span><span class="wf-hst" role="status" aria-label="{{mo.stAria}}" style="position: relative; display: flex; flex: 1 1 auto; min-width: 0; align-items: center"><span class="qtag wf-stg" style="position: relative; z-index: 20; display: inline-flex; flex: 1 1 auto; width: 100%; align-items: center; gap: 8px; min-height: 28px; padding: 4px 8px 4px 32px; box-sizing: border-box; border-radius: 14px; background: {{mo.stBg}}; color: {{mo.stC}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{mo.stIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; overflow: hidden; text-overflow: ellipsis">{{mo.kind}}</span><span style="display: {{mo.stTD}}; flex-shrink: 0; margin-left: auto; font-weight: 400; font-variant-numeric: tabular-nums">{{mo.stT}}</span></span></span></span>
-      <button type="button" class="btn wf-sec" onClick="{{chat.go}}" style="display: {{chat.btnD}}; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; height: 48px; margin: 16px 0 0; font-size: 17px; font-weight: 600">Team chat</button>
+      <button type="button" class="btn wf-sec" onClick="{{chat.go}}" style="display: {{chat.btnD}}; align-items: center; justify-content: center; gap: 8px; width: 100%; box-sizing: border-box; height: 48px; margin: 16px 0 0; font-size: 17px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg>Team chat</button>
     </div>
 
     <div class="wf-page {{mo.pageCls}}" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 48px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">

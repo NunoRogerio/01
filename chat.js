@@ -1165,7 +1165,9 @@
   function dur(ms) { var m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + ' min'; if (m < 1440) return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; return Math.floor(m / 1440) + ' d ' + Math.floor((m % 1440) / 60) + ' h'; }
   function clock(ms) { var x = Math.max(0, Math.floor(ms / 1000)); var d = Math.floor(x / 86400); x %= 86400; var h = Math.floor(x / 3600); x %= 3600; var m = Math.floor(x / 60), s = x % 60, p = function (n) { return String(n).padStart(2, '0'); };
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
-  function unread(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
+  function fresh(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }   /* newer than the last look (the badge itself stays on while a candidate is undecided) */
+  function unread(c) { var open0 = c.stage === 0 && !c.dismissed && !c.closed;   /* (Oct 5) an undecided candidate keeps its count however often the chat is opened: only declaring or dismissing clears it */
+    return c.msgs.filter(function (m) { return m.t > (open0 ? 0 : (c.seenAt || 0)) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
   function typing(c) { if (tourMute()) return null; if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
 
@@ -1271,7 +1273,7 @@
     return !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co); }
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
-    STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing,
+    STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing, fresh: fresh,
     vnow: vnow, since: since, photo: photoOf, evid: evidOf,
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
