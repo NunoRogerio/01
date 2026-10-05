@@ -82,15 +82,6 @@
 
   // a heat map of the selected region: a grid of cells, darker where there is more (simulated, steady per area and period)
   var HEAT = ['rgba(118,118,128,0.12)', '#F3FF9A', LIME, '#9DB000', INK];
-  function heat(R, total, unit) {
-    var cols = 13, rows = 9, gap = 3, cw = (W - gap * (cols - 1)) / cols, ch = cw, H = rows * (ch + gap) - gap, c = [], i, j, k, n = 3 + Math.floor(R() * 2);
-    for (k = 0; k < n; k++) c.push({ x: R() * cols, y: R() * rows, s: 1.4 + R() * 1.8, w: 0.5 + R() * 0.5 });
-    var v = [], mx = 0; for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var t = 0; c.forEach(function (q) { t += q.w * Math.exp(-(Math.pow(i - q.x, 2) + Math.pow(j - q.y, 2)) / (2 * q.s * q.s)); }); t += R() * 0.12; v.push(t); mx = Math.max(mx, t); }
-    var o = ''; v.forEach(function (t, q) { var l = t / mx, b = l < 0.12 ? 0 : l < 0.3 ? 1 : l < 0.55 ? 2 : l < 0.8 ? 3 : 4, x = (q % cols) * (cw + gap), y = Math.floor(q / cols) * (ch + gap);
-      o += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + ch.toFixed(1) + '" rx="4" fill="' + HEAT[b] + '"/>'; });
-    var leg = '<div style="display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;line-height:16px;color:#6E6E73"><span>Fewer</span>' + HEAT.map(function (f) { return '<span aria-hidden="true" style="width:24px;height:12px;border-radius:4px;background:' + f + '"></span>'; }).join('') + '<span>More</span></div>';
-    return '<svg viewBox="0 0 ' + W + ' ' + H.toFixed(0) + '" width="100%" role="img" aria-label="Heat map of ' + esc(unit) + '" style="display:block">' + o + '</svg>' + leg;
-  }
   // one horizontal stacked bar of two parts, each with its share and its number
   function stack(a, b) {
     var tot = a.v + b.v, pa = Math.round(100 * a.v / tot), pb = 100 - pa;
@@ -120,8 +111,6 @@
   // each returns { v: big value, u: its unit, n: note under it, h: the chart's html }
   var DEFS = [
     { k: 'region', t: 'Ignition candidates and burned area', on: 1, top: 1, f: function (R, rg, X) { var c = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2), a = Math.round((R() * 0.2 + 0.9) * 1600 * X.sc * rg.mult), h = regionHeat(rg, X); return { v: fmt(c), u: 'candidates', n: fmt(a) + ' ac burned in ' + S.region, h: h || '<div style="font-size:15px;line-height:20px;color:#6E6E73">No outline for this area yet.</div>' }; } },
-    { k: 'heatc', t: 'Ignition candidates heat map', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2); return { v: fmt(tot), u: 'candidates', n: 'Where they appeared in ' + S.region, h: heat(R, tot, 'ignition candidates') }; } },
-    { k: 'heatb', t: 'Burned area heat map', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round((R() * 0.2 + 0.9) * 1600 * X.sc * rg.mult); return { v: fmt(tot), u: 'ac', n: 'Where it burned in ' + S.region, h: heat(R, tot, 'burned area') }; } },
     { k: 'split', t: 'Candidates confirmed and dismissed', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(140 * X.sc * rg.mult * (0.9 + R() * 0.2)), cf = Math.round(tot * (0.5 + R() * 0.2)); return { v: fmt(tot), u: 'candidates decided', n: 'Confirmed as fires, or dismissed', h: stack({ n: 'Confirmed as fires', v: cf }, { n: 'Dismissed', v: tot - cf }) }; } },
     { k: 'burned', t: 'Burned area', on: 1, f: function (R, rg, X) { var s = series(R, rg.n, 260 * X.sc * rg.mult / (rg.n / 12), 1.4, 0.3), c = cum(s); return { v: fmt(c[c.length - 1]), u: 'ac', n: delta(R), h: area(c, X.x, 'ac') }; } },
     { k: 'top5', t: 'Top 5 fires by area burned', on: 1, f: function (R, rg, X) { var names = pick(R, FIRES, 5), top = 900 * X.sc * rg.mult, a = names.map(function (n, i) { return { l: n, a: top * Math.pow(0.66, i) * (0.9 + R() * 0.2) }; }); return { v: fmt(a.reduce(function (t, x) { return t + x.a; }, 0)), u: 'ac', n: a[0].l + ' was the largest', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt(x.a) + ' ac' }; }), a[0].a, 0) }; } },
