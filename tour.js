@@ -288,11 +288,11 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       '#wf-tour .tb{position:absolute;box-sizing:border-box;padding:16px;border-radius:20px;background:rgba(28,28,30,0.72);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;pointer-events:auto;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}' +
       '#wf-tour .tb.on{opacity:1;transform:none}' +
       '#wf-tour .tb{touch-action:none;cursor:grab}#wf-tour .tb.drag{cursor:grabbing;transition:none!important}#wf-tour .tb::before{content:"";position:absolute;left:50%;top:6px;width:44px;height:3px;margin-left:-22px;border-radius:2px;background:rgba(255,255,255,0.3)}' +
-      '#wf-tour .ta{display:inline-flex;align-items:center;gap:8px;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;position:relative;isolation:isolate;opacity:0}' +
+      '#wf-tour .ta{display:flex;align-items:center;gap:8px;width:100%;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;position:relative;isolation:isolate;opacity:0}' +
       // the achievement shows last (Oct 3, 18:40): once the card has settled it pops in, its background swells 10% and back,
       // with the prlim sound and a haptic at that same moment
       '#wf-tour .ta.go{animation:wfach .3s cubic-bezier(.3,1.5,.5,1) both}#wf-tour .ta::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:inherit;pointer-events:none}#wf-tour .ta.go::before{animation:wfachBg .5s cubic-bezier(.3,0,.3,1) .05s both}@keyframes wfachBg{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}' +
-      '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
+      '#wf-tour .ta.still{opacity:1}' + '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
       '#wf-tour .tth{margin:0 0 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)}' +
       '#wf-tour .tt{margin:0;font-size:17px;font-weight:600;line-height:22px}' +
       '#wf-tour .twip{margin:4px 0 0;font-size:15px;font-weight:600;line-height:20px;color:var(--wf-y,#E5FF00)}' +
@@ -377,7 +377,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // (Oct 5) a step that opens another screen with an achievement waiting on it: the sound plays on the tap itself (the one
   // moment iOS allows sound), and the screen change waits until it has finished, so it plays as the new screen rises
   document.addEventListener('click', function (e) { try { var a = e.target && e.target.closest && e.target.closest('a[data-wf-split]'); if (!a) return; var s0 = get(); if (!s0) return; var nx = S[s0.i + 1];
-    if (!nx || !nx.ach) return; prlim(); try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (x) {} window.__wfNavHold = Date.now() + 1400; } catch (x) {} }, true);
+    if (!nx || !nx.ach) return;
+    // (Oct 5, 02:26) the sound plays as the achievement tag appears: it pops in on this card at the tap, and the new screen keeps it in place
+    if (bub && bub.isConnected && !bub.querySelector('.ta')) { var tg = document.createElement('div'); tg.className = 'ta'; tg.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span></span>'; tg.querySelector('span').textContent = PT() ? nx.ach[1] : nx.ach[0]; bub.insertBefore(tg, bub.firstChild); requestAnimationFrame(function () { tg.classList.add('go'); }); }
+    prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (x) {} try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (x) {} window.__wfNavHold = Date.now() + 1400; } catch (x) {} }, true);
   function dragOn(b) {
     var st = null, fling = 0;
     b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fling); fling = 0; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false, trail: [] }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
@@ -538,8 +541,11 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       var bb = bub.querySelector('.tb0'); bb.setAttribute('aria-label', pt ? 'Passo anterior' : 'Previous step'); bb.onclick = function (ev) { ev.stopPropagation(); back(i); };
       if (AC) { bub.querySelector('.ta span').textContent = L(st.ach); bub.querySelector('.tth').textContent = L(st.then); // (Oct 3, 21:16) an achievement is announced by its sound first: the "prlim" plays before anything changes on screen,
         // then the card appears (ACH_LEAD later), and the chip pops last with its swell
-        var snd0 = 0; try { snd0 = +sessionStorage.getItem('wf-ach-snd') || 0; sessionStorage.removeItem('wf-ach-snd'); } catch (e) {} if (Date.now() - snd0 > 8000) prlim();   /* already played on the tap that brought this screen */ try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {}
-        var taEl = bub.querySelector('.ta'); setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); }, ACH_LEAD + 520); }
+        var snd0 = 0; try { snd0 = +sessionStorage.getItem('wf-ach-snd') || 0; sessionStorage.removeItem('wf-ach-snd'); } catch (e) {}
+        var taEl = bub.querySelector('.ta');
+        // (Oct 5, 02:26) the sound plays the moment the tag appears; one that already appeared (and sounded) on the tap that brought this screen stays still
+        if (Date.now() - snd0 <= 8000) taEl.classList.add('still');
+        else setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }, ACH_LEAD + 520); }
       bub.querySelector('.tt').textContent = L(st.t);
       // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }
