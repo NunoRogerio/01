@@ -99,6 +99,23 @@
       '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">' + row(a, pa, LIME) + row(b, pb, INK) + '</div>';
   }
 
+
+  // time of day against likelihood: the heat map's rounded squares and colours, sized and shaded by how many candidates fall in each slot
+  function bubbles(R, X) {
+    var cols = 12, rows = 5, pl = 36, pw = W - pl, cw = pw / cols, rh = 30, H = rows * rh + 24, v = [], mx = 0, i, j;
+    for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var hr = i * 2 + 1, t = (0.25 + 1.0 * Math.exp(-Math.pow((hr - 15) / 4.5, 2))) * (0.35 + 0.65 * Math.exp(-Math.pow((j - 2.2) / 1.6, 2))) * (0.7 + R() * 0.6); v.push(t); mx = Math.max(mx, t); }
+    var o = '', q = 0, best = 0, bi = 0, colSum = []; for (i = 0; i < cols; i++) colSum.push(0);
+    for (j = rows - 1; j >= 0; j--) { o += '<line x1="' + pl + '" x2="' + W + '" y1="' + ((rows - 1 - j) * rh + rh / 2) + '" y2="' + ((rows - 1 - j) * rh + rh / 2) + '" stroke="rgba(60,60,67,0.10)" stroke-dasharray="3 4"/>'; }
+    for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var f = v[q++] / mx; colSum[i] += f;
+      var b = f < 0.15 ? 0 : f < 0.35 ? 1 : f < 0.6 ? 2 : f < 0.82 ? 3 : 4, sz = Math.max(8, 26 * Math.sqrt(f)), cx = pl + i * cw + cw / 2, cy = (rows - 1 - j) * rh + rh / 2;
+      o += '<rect x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" fill="' + HEAT[b] + '"/>'; }
+    colSum.forEach(function (c, k) { if (c > best) { best = c; bi = k; } });
+    var ty = function (y, t) { return '<text x="0" y="' + (y + 4) + '" fill="#6E6E73" font-size="13">' + t + '</text>'; };
+    var lbl = [[0, '0 h'], [3, '6 h'], [6, '12 h'], [9, '18 h'], [12, '24 h']].map(function (a) { return '<text x="' + (pl + a[0] * cw).toFixed(1) + '" y="' + (H - 2) + '" fill="#6E6E73" font-size="13" text-anchor="' + (a[0] === 0 ? 'start' : a[0] === 12 ? 'end' : 'middle') + '">' + a[1] + '</text>'; }).join('');
+    var leg = '<div style="display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;line-height:16px;color:#6E6E73"><span>Fewer</span>' + HEAT.map(function (f) { return '<span aria-hidden="true" style="width:24px;height:12px;border-radius:4px;background:' + f + '"></span>'; }).join('') + '<span>More</span></div>';
+    return { peak: (bi * 2) + ':00 to ' + (bi * 2 + 2) + ':00', h: '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Candidates by time of day and likelihood" style="display:block">' + o + ty(rh / 2, '100%') + ty(rows * rh - rh / 2, '0%') + lbl + '</svg>' + leg };
+  }
+
   // ---- the charts on offer -----------------------------------------------------------------------------------------------
   // each returns { v: big value, u: its unit, n: note under it, h: the chart's html }
   var DEFS = [
@@ -116,6 +133,7 @@
     { k: 'resp', t: 'Station speed of response', on: 1, f: function (R, rg, X) { var names = pick(R, STATIONS, 5), a = names.map(function (n, i) { return { l: n, a: 5.5 + i * 1.7 + R() * 1.4 }; }); return { v: fmt1(a[2].a), u: 'min median', n: a[0].l + ' was the fastest', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' min' }; }), a[4].a * 1.1, 0) }; } },
     { k: 'src', t: 'Detection sources', on: 0, f: function (R) { var p = [['Satellite', 38], ['Cameras on the ground', 24], ['Drones', 14], ['Calls to 911', 14], ['Cars and phones', 10]].map(function (x) { return { n: x[0], v: x[1] * (0.8 + R() * 0.4) }; }); return { v: p.length, u: 'sources', n: 'Share of ignition candidates first seen by each', h: donut(p) }; } },
     { k: 'night', t: 'Night and day ignitions', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(150 * X.sc * rg.mult * (0.9 + R() * 0.2)), ni = Math.round(tot * (0.24 + R() * 0.12)); return { v: fmt(tot), u: 'ignitions', n: 'Started at night or by day', h: donut([{ n: 'Night', v: ni, c: '#1C1C1E' }, { n: 'Day', v: tot - ni, c: LIME }], true) }; } },
+    { k: 'tod', t: 'Time of day and likelihood', on: 1, top: 1, f: function (R, rg, X) { var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: 'Candidates by time of day and likelihood. Bigger and darker is more', h: b.h }; } },
     { k: 'conf', t: 'Candidate conversion rate', on: 1, top: 1, f: function (R, rg, X) { var s = series(R, rg.n, 58, 0.18, 0.2).map(function (v) { return Math.min(96, v); }), avg = s.reduce(function (a, b) { return a + b; }, 0) / s.length; return { v: Math.round(avg), u: '%', n: 'Candidates that became fires. ' + delta(R), h: area(s, X.x, '%') }; } },
     { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R) { var s = [], i, v; for (i = 0; i < 24; i++) { v = 6 + 12 * Math.exp(-Math.pow((i - 15) / 4.5, 2)) + R() * 3; if (i >= 21 || i < 6) v *= 0.7; s.push(v); } return { v: '15:00', u: 'busiest hour', n: 'Local time. Night detections in grey', h: (function () { var h = columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']]); return h; })() }; } },
     { k: 'decl', t: 'Time to declare a fire', on: 0, f: function (R) { var c = [18, 34, 26, 14, 8].map(function (v) { return Math.round(v * (0.8 + R() * 0.4)); }), tot = c.reduce(function (a, b) { return a + b; }, 0); return { v: Math.round(100 * (c[0] + c[1]) / tot), u: '% within 30 min', n: 'From the candidate to the decision', h: columns(c, ['< 10 min', '10 to 30', '30 to 60', '1 to 2 h', '> 2 h'], 1, 'fires') }; } }
