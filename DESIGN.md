@@ -1228,3 +1228,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Charts with several lines (Oct 5, 19:36):** the brighter series sit above the darker ones (drawn darkest first: crews, aircraft, vehicles); their shadows blur 20% less (5.76px); the dark grey line's shadow is the middle grey (#8E8E93), not dark grey.
 - **Donut, no track (Oct 5, 19:37):** no grey ring under a donut's parts; parts keep round ends with 8px between them (was 4px).
 - **Column charts, 8px columns (Oct 5, 19:38):** vertical bars are 8px wide like every bar chart, fully rounded, centred in their slot (the whole slot stays tappable for the tooltip).
+- **Resources in use colours (Oct 5, 19:39):** vehicles in the primary colour (was a darker step of it), aircraft middle grey (#8E8E93), crews dark grey (#3A3A3C); legend the same.
