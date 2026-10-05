@@ -110,7 +110,7 @@
   // ---- the charts on offer -----------------------------------------------------------------------------------------------
   // each returns { v: big value, u: its unit, n: note under it, h: the chart's html }
   var DEFS = [
-    { k: 'region', t: 'Ignition candidates and burned area', on: 1, top: 1, f: function (R, rg, X) { var c = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2), a = Math.round((R() * 0.2 + 0.9) * 1600 * X.sc * rg.mult), h = regionHeat(rg, X); return { v: fmt(c), u: 'candidates', n: fmt(a) + ' ac burned in ' + S.region, h: h || '<div style="font-size:15px;line-height:20px;color:#6E6E73">No outline for this area yet.</div>' }; } },
+    { k: 'region', t: 'Ignition candidates and burned area', on: 1, f: function (R, rg, X) { var c = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2), a = Math.round((R() * 0.2 + 0.9) * 1600 * X.sc * rg.mult), h = regionHeat(rg, X); return { v: fmt(c), u: 'candidates', n: fmt(a) + ' ac burned in ' + regionLabel(), h: h || '<div style="font-size:15px;line-height:20px;color:#6E6E73">No outline for this area yet.</div>' }; } },
     { k: 'split', t: 'Candidates confirmed and dismissed', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(140 * X.sc * rg.mult * (0.9 + R() * 0.2)), cf = Math.round(tot * (0.5 + R() * 0.2)); return { v: fmt(tot), u: 'candidates decided', n: 'Confirmed as fires, or dismissed', h: stack({ n: 'Confirmed as fires', v: cf }, { n: 'Dismissed', v: tot - cf }) }; } },
     { k: 'burned', t: 'Burned area', on: 1, f: function (R, rg, X) { var s = series(R, rg.n, 260 * X.sc * rg.mult / (rg.n / 12), 1.4, 0.3), c = cum(s); return { v: fmt(c[c.length - 1]), u: 'ac', n: delta(R), h: area(c, X.x, 'ac') }; } },
     { k: 'top5', t: 'Top 5 fires by area burned', on: 1, f: function (R, rg, X) { var names = pick(R, FIRES, 5), top = 900 * X.sc * rg.mult, a = names.map(function (n, i) { return { l: n, a: top * Math.pow(0.66, i) * (0.9 + R() * 0.2) }; }); return { v: fmt(a.reduce(function (t, x) { return t + x.a; }, 0)), u: 'ac', n: a[0].l + ' was the largest', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt(x.a) + ' ac' }; }), a[0].a, 0) }; } },
@@ -132,7 +132,9 @@
 
   // ---- state -----------------------------------------------------------------------------------------------------------
   var S = { lay: LS('wf-stats-lay') || { c: 1, b: 1 }, open: false, el: null, range: LS(K_RANGE) || 'm', order: null, hide: null, sheet: false, region: '' };
-  function order() { var o = (LS(K_ORDER) || []).filter(function (k) { return BYK[k]; }); var tp = []; DEFS.forEach(function (d) { if (o.indexOf(d.k) < 0) { if (d.top) tp.push(d.k); else o.push(d.k); } }); return tp.concat(o); }
+  function order() { var o = (LS(K_ORDER) || []).filter(function (k) { return BYK[k]; }); var tp = [], had = o.length > 0; DEFS.forEach(function (d) { if (o.indexOf(d.k) < 0) { if (d.top) tp.push(d.k); else o.push(d.k); } }); var L = tp.concat(o);
+    if (!LS('wf-stats-v2')) { LS('wf-stats-v2', 1); var r = L.indexOf('region'); if (r >= 0) { L.splice(r, 1); L.splice(4, 0, 'region'); } if (had) LS(K_ORDER, L); }   /* (Oct 5) the region map goes to 5th place, once */
+    return L; }
   function hidden() { var h = LS(K_HIDE); if (!h) { h = DEFS.filter(function (d) { return !d.on; }).map(function (d) { return d.k; }); } return h; }
   function regionName() { var h = document.querySelector('h1'); var t = h ? (h.textContent || '') : ''; t = t.replace(/^Incidents in\s*/i, '').trim(); return t || 'this area'; }
 
@@ -182,15 +184,16 @@
 
   // the header: the selected region's shape in light grey with two blurred heat layers on it (simulated):
   // lime where ignition candidates appear, dark grey where the burned area is
+  function regionLabel() { var G = window.__wfGeo, sc = null; try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} sc = (sc && sc.st) ? sc : (window.__wfMem || {}).scope || null; var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; var st = lk || (sc && sc.st) || 'CA'; return (G && G.states && G.states[st] && G.states[st].label) || S.region; }
   function regionHeat(rg, X) {
     var G = window.__wfGeo, sc = null, role = ''; try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); role = localStorage.getItem('wf-role') || ''; } catch (e) {}
     sc = sc || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; if (lk && (!sc || sc.st !== lk)) sc = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; sc = sc && sc.st ? sc : { st: 'CA', co: 'Los Angeles' };
-    var g = G && sc && (sc.co && G.counties && G.counties[sc.st + '|' + sc.co] || (G.states && G.states[sc.st])); if (!g || !g.box) return '';
+    var g = G && sc && G.states && G.states[sc.st];   /* the whole state or country, whichever county or district is picked */ if (!g || !g.box) return '';
     var b = g.box, bw = Math.max(1, b[2] - b[0]), bh = Math.max(1, b[3] - b[1]), pad = Math.max(bw, bh) * 0.06, vw = bw + 2 * pad, vh = bh + 2 * pad, vx = b[0] - pad, vy = b[1] - pad;
     var pts = g.pts, ins = function (x, y) { if (!pts) { var u = (x - (b[0] + bw / 2)) / (bw / 2), v = (y - (b[1] + bh / 2)) / (bh / 2); return u * u + v * v <= 1; } var c = false; for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) { if ((pts[i][1] > y) !== (pts[j][1] > y) && x < (pts[j][0] - pts[i][0]) * (y - pts[i][1]) / (pts[j][1] - pts[i][1]) + pts[i][0]) c = !c; } return c; };
     var R = rng(S.region + '|' + rg.id + '|heat'), mxd = Math.max(bw, bh), spots = function (nc, per, r0, r1, wt, spread) { var o = [], t = 0, c = 0; while (c < nc && t++ < 4000) { var x = b[0] + R() * bw, y = b[1] + R() * bh; if (!ins(x, y)) continue; c++;
         for (var k = 0; k < per; k++) { var a = R() * 6.283, d = R() * R() * mxd * spread, px = x + Math.cos(a) * d, py = y + Math.sin(a) * d; if (ins(px, py)) o.push([px, py, mxd * (r0 + R() * (r1 - r0)), wt * (0.4 + R() * 0.6)]); } } return o; };
-    var hotC = spots(9, 8, 0.012, 0.04, 0.75, 0.09), hotB = spots(5, 6, 0.016, 0.045, 0.7, 0.07), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = mxd * 0.016, hh = Math.min(300, Math.round(326 * vh / vw));
+    var hotC = spots(10, 26, 0.005, 0.016, 0.7, 0.1), hotB = spots(6, 20, 0.0065, 0.018, 0.65, 0.08), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = mxd * 0.0065, hh = Math.min(300, Math.round(326 * vh / vw));
     var blobs = function (a, col) { return a.map(function (q) { return '<circle cx="' + q[0].toFixed(0) + '" cy="' + q[1].toFixed(0) + '" r="' + q[2].toFixed(0) + '" fill="' + col + '" fill-opacity="' + q[3].toFixed(2) + '"/>'; }).join(''); };
     var shape = g.d ? '<path d="' + g.d + '"/>' : '<ellipse cx="' + (b[0] + bw / 2) + '" cy="' + (b[1] + bh / 2) + '" rx="' + bw / 2 + '" ry="' + bh / 2 + '"/>';
     var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ignition candidates and burned area across ' + esc(S.region) + '" style="display:block">' +

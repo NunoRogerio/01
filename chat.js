@@ -1069,7 +1069,8 @@
       /* (Oct 5, 10:50) in the tour the team's chatter waits while a step points at something (the evidence, Declare the fire), and is left out after: nothing moves under the cursor */
       var mute = tourMute();
       if (mute && c.queue.length) {
-        if (mute === 'drop') c.queue = c.queue.filter(function (x) { return x.m.kind !== 'msg'; });
+        if (mute === 'holdall') { c.queue.forEach(function (x) { if (x.due <= now + 3000) x.due = now + 3000; }); c.queue.sort(function (a, b) { return a.due - b.due; }); }   /* a step waits for a tap: cards, stages and messages all wait */
+        else if (mute === 'drop') c.queue = c.queue.filter(function (x) { return x.m.kind !== 'msg'; });
         else { c.queue.forEach(function (x) { if (x.m.kind === 'msg' && x.due <= now + 3000) x.due = now + 3000; }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
       }
       while (c.queue.length && c.queue[0].due <= now) {
