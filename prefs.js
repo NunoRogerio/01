@@ -184,7 +184,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   '.wf-dot::after{content:"."}html[lang=ja] .wf-dot::after{content:"\u3002"}' +   // full stop at the end of a normal-text or annotation block (outside the translated text)
     /* "Tap me" pulse, shared (to-do cards, the Unconfirmed tag): a steady dark 1.4px outline on the element, and a dark line that grows from it (about 9px) and fades to 0, then rests invisible for a moment before the next one (fading the line's own colour, not the element, so Safari never flashes it black), like the candidate markers on the map. Put <span class="wf-pulse"> inside a position:relative element; --wf-pr sets its corner radius, --wf-pc its colour (dark by default). */
     /* Reset in the card pickers: disabled (faded, not tappable) while the cards are already the defaults */
-    '.wf-reset{transition:opacity .25s ease}.wf-reset[aria-disabled="true"]{opacity:.4;pointer-events:none}.wf-rpill[aria-disabled="false"]{background:var(--wf-y)!important;color:#000000!important}' +
+    '.wf-reset{transition:opacity .25s ease}.wf-reset[aria-disabled="true"]{opacity:.4;pointer-events:none}.wf-rpill[aria-disabled="false"]{box-shadow:inset 0 0 0 2px var(--wf-y)}' +
     '.wf-pulse{position:absolute;inset:-1.4px;border-radius:var(--wf-pr,17.4px);outline:1.4px solid transparent;outline-offset:-1.4px;pointer-events:none;animation:wfPulse 1.6s linear infinite}@keyframes wfPulse{0%{outline-offset:-1.4px;outline-color:var(--wf-pc,#3A3A3C)}88%{outline-offset:9.3px;outline-color:color-mix(in srgb,var(--wf-pc,#3A3A3C) 0%,transparent)}100%{outline-offset:9.3px;outline-color:transparent}}@media (prefers-reduced-motion: reduce){.wf-pulse{animation:none}}' +
     'html{--wf-panel-r:28px;--wf-panel-sh:0 0 40px rgba(0,0,0,.14);--wf-safe-b:48px}' +   // shared panel: radius, shadow, 48px clear of the home indicator
     'html .wf-panel{bottom:var(--wf-safe-b)!important;border-radius:0 0 var(--wf-panel-r) var(--wf-panel-r)!important;box-shadow:var(--wf-panel-sh)!important}' +
@@ -609,11 +609,13 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     var rows = function (el) { var box = el.parentElement; return Array.prototype.slice.call(box.querySelectorAll('[data-pk-on="true"]')); };
     var clear = function (el) { rows(el).forEach(function (r) { r.style.transform = ''; r.style.transition = ''; r.style.zIndex = ''; r.style.boxShadow = ''; }); };
     return {
+      gripV: onKeys.indexOf(key) < 0 ? 'hidden' : 'visible',
       down: function (e) { if (onKeys.indexOf(key) < 0) return; var el = e.currentTarget, k = (el.getBoundingClientRect().height / (el.offsetHeight || 1)) || 1;
         D = { el: el, y0: e.clientY, x0: e.clientX, k: k, lifted: false, pid: e.pointerId };
+        var gr = !!(e.target && e.target.closest && e.target.closest('[data-pk-grip]'));   /* the handle lifts the row at once, no hold */
         clearTimeout(comp.__pkT); comp.__pkT = setTimeout(function () { if (!D) return; D.lifted = true; window.__wfPkLift = true; var L = rows(el); D.idx = L.indexOf(el); D.to = D.idx; D.h = el.offsetHeight;
           try { el.setPointerCapture(D.pid); } catch (x) {} try { (window.__wfHaptic || function () { if (navigator.vibrate) navigator.vibrate(12); })(); } catch (x) {}
-          el.style.zIndex = '3'; el.style.boxShadow = '0 0 24px rgba(0,0,0,0.16)'; el.style.transition = 'box-shadow .2s ease'; }, 250); },
+          el.style.zIndex = '3'; el.style.boxShadow = '0 0 24px rgba(0,0,0,0.16)'; el.style.transition = 'box-shadow .2s ease'; }, gr ? 0 : 250); },
       move: function (e) { if (!D) return; var dy = (e.clientY - D.y0) / D.k;
         if (!D.lifted) { if (Math.abs(dy) > 8 || Math.abs(e.clientX - D.x0) > 8) { clearTimeout(comp.__pkT); D = null; } return; }
         var L = rows(D.el), n = L.length, to = Math.max(0, Math.min(n - 1, D.idx + Math.round(dy / D.h)));

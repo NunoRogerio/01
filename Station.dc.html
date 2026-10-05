@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="feedcam.js?v=23"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=196"></script>
+<script src="prefs.js?v=197"></script>
 <script src="menu.js?v=16"></script>
 <script src="i18n.js?v=166"></script>
 <script src="live.js?v=43"></script>
@@ -241,7 +241,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">
       <sc-for list="{{kp.rows}}" as="r" hint-placeholder-count="6">
         <div data-pk-row="{{r.key}}" data-pk-on="{{r.onStr}}" onPointerDown="{{r.down}}" onPointerMove="{{r.move}}" onPointerUp="{{r.up}}" onPointerCancel="{{r.up}}" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 52px; padding: 0 16px; border-top: {{r.sep}}; background: #FFFFFF; touch-action: pan-y; -webkit-user-select: none; user-select: none">
-          <span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{r.name}}</span>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span data-pk-grip="1" aria-hidden="true" style="visibility: {{r.gripV}}; display: flex; align-items: center; justify-content: center; width: 32px; height: 44px; margin-left: -8px; flex-shrink: 0; color: #8E8E93; touch-action: none; cursor: grab"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{r.name}}</span></span>
           <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
         </div>
       </sc-for>
