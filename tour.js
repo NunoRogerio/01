@@ -408,7 +408,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     // change waits for it (the panel tells this screen when the tag has played; 5 s at most)
     // (Oct 5, 09:53) up to 5 s: on a phone the frame can take longer than 2.6 s to draw the tag, and the screen used to change
     // first, so the tag animated on the real page with no sound (it came out on the next touch); the frame shortens the hold once it has played
-    window.__wfNavHold = Date.now() + 5000; } catch (x) {} }, true);
+    window.__wfNavHold = Date.now() + 3500;
+    /* (Oct 5, 11:35) the tour moves on at the tap itself: the rising panel's frame reads the step from here, sees its achievement and plays the tag and the sound at once (it used to wait for the real page, 5 s later) */
+    if (!s0.moved) { try { go(s0.i + 1); } catch (e) {} } } catch (x) {} }, true);
   window.__wfTourPrlim = function () { prlim(); };   /* the rising panel's frame asks this screen (which had the tap) to play the sound */
   function dragOn(b) {
     var st = null, fling = 0;
@@ -579,7 +581,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
         // (Oct 5, 02:26) the sound plays the moment the tag appears; one that already appeared (and sounded) on the tap that brought this screen stays still
         if (!INFRAME && Date.now() - snd0 <= 8000) taEl.classList.add('still');
         else setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {}
-          if (INFRAME) { try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (e) {} try { window.parent.__wfNavHold = Date.now() + 700; } catch (e) {} } }, ACH_LEAD + 520); }
+          if (INFRAME) { try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (e) {} try { window.parent.__wfNavHold = Date.now() + 700; } catch (e) {} } }, ACH_LEAD + 150); }
       bub.querySelector('.tt').textContent = L(st.t);
       // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }

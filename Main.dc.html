@@ -22,8 +22,9 @@
 <script src="i18n.js?v=166"></script>
 <script src="live.js?v=43"></script>
 <script src="chat.js?v=77"></script>
-<script src="tour.js?v=104"></script>
+<script src="tour.js?v=106"></script>
 <script src="mapsearch.js?v=4"></script>
+<script src="stats.js?v=1"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -211,7 +212,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <div data-wf-slide="1" style="visibility: {{pm.slVis}}; position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 2; pointer-events: auto; background: #F2F2F7; transform: translateX({{pm.x}}px); box-shadow: {{pm.sh}}; transition: transform {{pm.dur}} cubic-bezier(.37,0,.63,1), width {{pm.dur}} cubic-bezier(.37,0,.63,1), box-shadow .53s ease">
 
   <div style="position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 1">
-  <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{psFloat}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
+  <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{psFloat}}" on-stats="{{openStats}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
   </div>
 
   <!-- Panels column: the full width in portrait; a side column over the map in landscape and on big screens. -->
@@ -1821,6 +1822,7 @@ class Component extends DCLogic {
       backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : brObj && brObj.id === 'AMZ' ? 'Back to Brazil' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
       scOp: scOpen ? 1 : 0, scPE: scOpen ? 'auto' : 'none', scHidden: scOpen ? 'false' : 'true', scClip: scOpen ? (this.wfDrag('sc').y ? (-this.wfDrag('sc').y) + 'px' : '0px') : Math.max(0, L.vh - 48 - (this._tbh || 163)) + 'px', scClipT: this.wfDrag('sc').y ? '0s' : '.55s', scVis: scOpen ? 'visible' : 'hidden', scVisDelay: scOpen ? '0s' : '.55s', scInOp: scOpen ? 1 : 0, scInY: scOpen ? '0px' : '-16px', scInDelay: scOpen ? '.18s' : '0s',
       ps: (() => { const P = this.wfPlaceSearch(); this._psOpen = (b) => this.wfPsFloat(b); return P; })(),   // (Oct 4) the tap opens the floating search box (no full panel)
+      openStats: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (window.__wfStats) window.__wfStats.open(); },   /* (Oct 5) the statistics dashboard for the area */
       psFloat: (e) => { if (this._psEat && Date.now() - this._psEat < 700) return; this.wfPsFloat(e && e.currentTarget); },   // (Oct 3, 23:26) the floating search box hPs: this.wfHandle('ps', 'up', () => this.wfPlaceSearch().close()),   // the grabber: a tap or a swipe up folds Find a place
       scopeStr: scOpen ? 'true' : 'false', scopeRot: scOpen ? '180deg' : '0deg',
       scopeAria: 'Area: ' + scope.title + ', ' + scope.parent + '. Change area',
