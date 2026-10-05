@@ -229,19 +229,15 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Declare the fire', 'Declare o incêndio'],
       b: ['Tap Move to First alert to declare it. The Declare fire suggestion does the same.', 'Toque em Passar a Despacho de 1.º alerta para o declarar. A sugestão Declarar incêndio faz o mesmo.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('a[data-wf-firettl]'); },
-      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now open the fire.', 'Agora abra o incêndio.'],
+      ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now open the fire detail to assign crews.', 'Agora abra o detalhe do incêndio para atribuir equipas.'],
       t: ['Open the fire', 'Abra o incêndio'],
       b: ['Tap the fire\'s name for its page.', 'Toque no nome do incêndio para abrir a sua página.'] },
 
-    // (Oct 5) the full-screen map steps were dropped: from the fire page straight back to the team, where Move to Ongoing
-    // opens the Crews tab with the dispatch configuration
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
-      t: ['Back to the team', 'De volta à equipa'],
-      b: ['Tap to return to the chat.', 'Toque para voltar à conversa.'] },
-
-    { page: 'Chat.dc.html', mode: 'tap', before: stExpand, find: function () { return stMove() || chip(['Configure dispatch', 'Configurar despacho', '出動']); },
-      t: ['Move the fire on', 'Faça o incêndio avançar'],
-      b: ['The state card moves the fire on. Tap Move to Ongoing to configure the dispatch.', 'O cartão de estado faz o incêndio avançar. Toque em Passar a Em curso para configurar o despacho.'] },
+    // (Oct 5) on the fire page the tour goes straight to its Crews tab to assign crews (no full-screen map steps, no detour
+    // through the chat's Move the fire on)
+    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button[role=tab].segopt', function (x) { return /^(Crews|Equipas)/.test((x.textContent || '').trim()) && x.offsetParent !== null; }); },
+      t: ['Assign crews', 'Atribua equipas'],
+      b: ['Open Crews to choose the stations and air support for this fire.', 'Abra Equipas para escolher os quartéis e os meios aéreos para este incêndio.'] },
     // (Oct 3, 20:06) a plan left from an earlier tour is emptied first, so the AI suggested pack always shows; the circle
     // goes to it and, if it isn't tapped, taps it itself after a moment
     { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () { if (window.__wfDispPlanReset && !q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; })) window.__wfDispPlanReset(); if (++t < 10) setTimeout(f, 300); }; f(); },
@@ -258,9 +254,12 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Send the orders', 'Envie as ordens'],
       b: ['Each station gets its order.', 'Cada quartel recebe a sua ordem.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
-      ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Now back to the team.', 'Agora de volta à equipa.'],
-      t: ['Back to the chat', 'Volte à conversa'],
-      b: ['Tap Return to chat to go back to the team: the leads are confirming their orders there.', 'Toque em Voltar à conversa para regressar à equipa: os chefes estão a confirmar as ordens.'] },
+      ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Now back to the fire.', 'Agora de volta ao incêndio.'],
+      t: ['Back to the fire', 'Volte ao incêndio'],
+      b: ['Tap Return to fire once every order is through.', 'Toque em Voltar ao incêndio quando todas as ordens tiverem passado.'] },
+    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
+      t: ['Back to the team chat', 'De volta à conversa da equipa'],
+      b: ['The station and air leads are confirming their orders there. Tap to read them.', 'Os chefes dos quartéis e dos meios aéreos estão a confirmar as ordens. Toque para as ler.'] },
 
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!chip(['Close fire', 'Encerrar incêndio']); }, auto: true, noClose: true,
       find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
