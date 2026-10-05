@@ -233,58 +233,51 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Open the fire', 'Abra o incêndio'],
       b: ['Tap the fire\'s name for its page.', 'Toque no nome do incêndio para abrir a sua página.'] },
 
-    // (Oct 5) on the fire page the tour goes straight to its Crews tab to assign crews (no full-screen map steps, no detour
-    // through the chat's Move the fire on)
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('button[role=tab].segopt', function (x) { return /^(Crews|Equipas)/.test((x.textContent || '').trim()) && x.offsetParent !== null; }); },
-      t: ['Assign crews', 'Atribua equipas'],
-      b: ['Open Crews to choose the stations and air support for this fire.', 'Abra Equipas para escolher os quartéis e os meios aéreos para este incêndio.'] },
-    // (Oct 3, 20:06) a plan left from an earlier tour is emptied first, so the AI suggested pack always shows; the circle
-    // goes to it and, if it isn't tapped, taps it itself after a moment
-    { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () { if (window.__wfDispPlanReset && !q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; })) window.__wfDispPlanReset(); if (++t < 10) setTimeout(f, 300); }; f(); },
-      find: function () { var b = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; });
-        if (b && seen && Date.now() - seen > 3200 && !b.__wfAutoTap) { b.__wfAutoTap = 1; try { if (dot) dot.animate([{ scale: '1' }, { scale: '1.25', offset: 0.4, easing: 'cubic-bezier(.2,.8,.3,1)' }, { scale: '1' }], { duration: 260 }); } catch (x) {} setTimeout(function () { if (b.isConnected) b.click(); }, 260); }
-        return b; },
-      t: ['Use the suggested resources', 'Use os meios sugeridos'],
-      b: ['One tap fills the plan. Add resources lets you choose stations yourself.', 'Um toque preenche o plano. Adicionar meios deixa escolher os quartéis.'] },
+    // (Oct 5, 02:01) the fire page opens on its Crews tab with nothing assigned: the AI suggestion first (or a dispatch by hand)
+    { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () {
+          var tab = q('button[role=tab].segopt', function (x) { return /^(Crews|Equipas)/.test((x.textContent || '').trim()) && x.offsetParent !== null; });
+          if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
+          if (window.__wfDispPlanReset && !q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; })) window.__wfDispPlanReset();
+          if (++t < 12) setTimeout(f, 300); }; f(); },
+      find: function () { return q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); },
+      t: ['Use the AI suggestion', 'Use a sugestão da IA'],
+      b: ['No crews are assigned yet. Tap AI suggested pack: the nearest stations and air support. You can also build the dispatch yourself with Add resources.', 'Ainda não há equipas atribuídas. Toque no pacote sugerido pela IA: os quartéis mais próximos e meios aéreos. Também pode montar o despacho com Adicionar meios.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () {
         // Never a dead end: if the plan is still empty (Send order disabled), the tour fills it with the AI suggested pack itself
         var b = q('button.btn.primary', function (x) { return !x.closest('section[role=dialog]') && x.offsetParent !== null; });
         if (b && b.getAttribute('aria-disabled') === 'true') { var ai = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); if (ai && !ai.__wfAuto) { ai.__wfAuto = 1; ai.click(); } }
         return b; },
       t: ['Send the orders', 'Envie as ordens'],
-      b: ['Each station gets its order.', 'Cada quartel recebe a sua ordem.'] },
+      b: ['Tap Send order: each station and the air team get their order.', 'Toque em Enviar ordem: cada quartel e os meios aéreos recebem a sua ordem.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
-      ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Now back to the fire.', 'Agora de volta ao incêndio.'],
+      ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Here are the orders going out.', 'Aqui estão as ordens a sair.'],
       t: ['Back to the fire', 'Volte ao incêndio'],
-      b: ['Tap Return to fire once every order is through.', 'Toque em Voltar ao incêndio quando todas as ordens tiverem passado.'] },
+      b: ['Tap Return to fire for its situation.', 'Toque em Voltar ao incêndio para ver a situação.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('[data-wf-hdr] a[href="Chat.dc.html"]'); },
       t: ['Back to the team chat', 'De volta à conversa da equipa'],
-      b: ['The station and air leads are confirming their orders there. Tap to read them.', 'Os chefes dos quartéis e dos meios aéreos estão a confirmar as ordens. Toque para as ler.'] },
+      b: ['The leads are confirming their orders there. Move the fire forward while you talk with them.', 'Os chefes estão a confirmar as ordens. Faça o incêndio avançar enquanto fala com eles.'] },
 
-    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!chip(['Close fire', 'Encerrar incêndio']); }, auto: true, noClose: true,
-      find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
-      t: ['Watch the fire move forward', 'Veja o incêndio avançar'],
-      b: ['The tour plays the fire owner for you: it approves air support and moves each stage on. Status cards show every change.',
-          'A visita faz de responsável pelo incêndio: aprova o meio aéreo e avança cada fase. Os cartões de estado mostram cada mudança.'] },
-    { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('header + button.chrow[aria-expanded]'); },
-      ach: ['Every stage done. Nice work!', 'Todas as fases concluídas. Bom trabalho!'], then: ['Now the stage history.', 'Agora a história das fases.'],
-      t: ['See every stage', 'Veja todas as fases'],
-      b: ['Tap the state to open the stack: each stage and how long it took.', 'Toque no estado para abrir a pilha: cada fase e quanto tempo durou.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return stMove() || chip(['Close fire', 'Encerrar incêndio']); },
+    // (Oct 5, 02:01) the fire owner moves the fire on by hand, stage after stage, until it can be closed
+    { page: 'Chat.dc.html', mode: 'until', interact: true, noClose: true,
+      until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
+      find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
+      t: ['Move the fire forward', 'Faça o incêndio avançar'],
+      b: ['Tap the state, then Move to the next stage. Jump the stages until the fire can be closed.', 'Toque no estado e depois em Passar à fase seguinte. Avance as fases até o incêndio poder ser encerrado.'] },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return stMove() || chip(['Close fire', 'Encerrar incêndio']) || q('header + button.chrow[aria-expanded]'); },
       t: ['Close the fire', 'Encerre o incêndio'],
-      b: ['When the watch is over, close it: Move to Closed.', 'Quando a vigilância terminar, encerre-o: Passar a Encerrada.'] },
+      b: ['The fire is held. Close it: Move to Closed.', 'O incêndio está dominado. Encerre-o: Passar a Encerrada.'] },
     { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,
       find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
       t: ['Closing the fire', 'A encerrar o incêndio'],
       b: ['The team confirms the closing checks.', 'A equipa confirma as verificações de encerramento.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('wf-trophy'); },
       ach: ['Fire out. Outstanding work!', 'Incêndio extinto. Trabalho notável!'], then: ['Now let\'s see what it took.', 'Agora vamos ver o que foi preciso.'],
-      t: ['Fire closed', 'Incêndio encerrado'],
-      b: ['Tap to see the summary.', 'Toque para ver o resumo.'] },
+      t: ['The fire summary', 'O resumo do incêndio'],
+      b: ['Tap the card to open the fire summary.', 'Toque no cartão para abrir o resumo do incêndio.'] },
     { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header.chview'); }, next: ['Finish', 'Terminar'],
       ach: ['Well done. You resolved your first fire.', 'Muito bem. Resolveu o seu primeiro incêndio.'], then: ['Now let\'s do it for real.', 'Agora vamos fazê-lo a sério.'],
-      t: ['The fire summary', 'O resumo do incêndio'],
-      b: ['Time in each stage, the forces used and the result. Scroll down to see it all. Thank you for exploring.', 'Tempo em cada fase, meios usados e resultado. Deslize para baixo para ver tudo. Obrigado por explorar.'] }
+      t: ['Explore the summary', 'Explore o resumo'],
+      b: ['Time in each stage, the forces used and the result. Scroll down to see it all, then tap Finish.', 'Tempo em cada fase, meios usados e resultado. Deslize para ver tudo e toque em Terminar.'] }
   ];
 
   // ---- drawing ----------------------------------------------------------------------------------------------
