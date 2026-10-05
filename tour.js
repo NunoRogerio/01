@@ -210,10 +210,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       demo: Object.assign(demoOf('button[aria-haspopup="dialog"][aria-label^="Notifications"], button[aria-haspopup="dialog"][aria-label^="Notificações"]', 'section[data-swipe-key="nt"] button[data-swipe-go]'), { tapClose: true }),   // (Oct 3, 20:01) the circle taps the X
       t: ['Notifications', 'Notificações'],
       b: ['New ignitions and changes to your incidents.', 'Novas ignições e mudanças nos seus incidentes.'] },
-    { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('button[aria-label="Preferences"]') || q('button[aria-label="Preferências"]'); },
-      demo: Object.assign(demoOf('button[aria-label="Preferences"], button[aria-label="Preferências"]', 'button[data-pf-av]'), { pick: function () { return document.querySelector('nav[data-wf-rail] div button[aria-label="About"], nav[data-wf-rail] div button[aria-label="Sobre"]') || [].slice.call(document.querySelectorAll('nav[data-wf-rail] div button')).pop() || null; }, hold: 2500, tapClose: true }),   // (Oct 3, 19:45) the circle opens About, holds it, then closes the menu with the menu button
-      t: ['Your preferences', 'As suas preferências'],
-      b: ['Your profile, theme, text size and language.', 'O seu perfil, tema, tamanho do texto e língua.'] },
+    // (Oct 5) the preferences step (it opened the settings menu) was removed
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
       t: ['Let’s start by selecting a candidate on the map', 'Comecemos por selecionar um candidato no mapa'],
       b: ['We marked the most likely one. Tap it.', 'Marcámos o mais provável. Toque nele.'] },
