@@ -1064,3 +1064,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Landscape full-screen maps (Oct 5):** the location / title card sits 16px from the screen's left edge and 16px from the top (it used to add the camera-side inset twice); the camera sits mid-height on the side, clear of the card, and iOS hides the clock, battery and Wi-Fi in landscape.
 - **About, one source (Oct 5):** the About in settings and the About opened from the login screen are the same page (About.dc.html); any text change bumps its ?v= in both links (settings embed in Main.dc.html, login link in Login.dc.html).
 - **Profile panel (Oct 5):** a full-width horizontal line separates the access line ("All features. All regions.") from the profile's description, 24px above and below it.
+- **Maps settings (Oct 5):** a full-width line separates the map engines (MapTiler, OpenStreetMap), 32px above and below it.

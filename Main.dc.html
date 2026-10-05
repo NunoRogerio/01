@@ -660,9 +660,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- Maps (Oct 4): the tile providers under test; one on at a time (turning one on turns the other off) -->
       <div style="display: {{pm.dMaps}}; flex-direction: column; gap: 56px; flex-shrink: 0">
         <!-- (Oct 4, 22:32) the "one map at a time" note is now the section's description, under the title -->
-        <ul aria-label="Maps" style="display: flex; flex-direction: column; gap: 56px; margin: 0; padding: 0; list-style: none">
+        <ul aria-label="Maps" style="display: flex; flex-direction: column; gap: 32px; margin: 0; padding: 0; list-style: none"><!-- (Oct 5) a full-width line between the map engines, 32px either side -->
           <sc-for list="{{mp.items}}" as="m" hint-placeholder-count="2">
-            <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: 0">
+            <li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; padding: {{m.liPad}}; border-top: {{m.liBd}}">
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
                 <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{m.name}}</span>
                 <span style="font-size: 17px; line-height: 22px; color: #000000">{{m.sub}}</span>
@@ -1363,8 +1363,8 @@ class Component extends DCLogic {
         const INFO = { maptiler: [T('Map tiles served by MapTiler: streets from OpenStreetMap data, and satellite.', 'Mosaicos do mapa fornecidos pela MapTiler: ruas com dados do OpenStreetMap, e satélite.'), T('Faster. Free plan with a monthly limit.', 'Mais rápido. Plano gratuito com limite mensal.')],
           osm: [T('The OpenStreetMap community\'s own public tiles.', 'Os mosaicos públicos da própria comunidade OpenStreetMap.'), T('Shared by everyone, so slower at busy times. For light use.', 'Partilhados por todos, por isso mais lentos nas horas de maior uso. Para uso leve.')] };
         const RN = { openstreetmap: ['Standard', 'Padrão'], standard: ['Standard', 'Padrão'], 'streets-v2': ['Streets', 'Ruas'], 'outdoor-v2': ['Outdoor', 'Ar livre'], 'topo-v2': ['Topographic', 'Topográfico'], satellite: ['Satellite', 'Satélite'], hybrid: ['Satellite with labels', 'Satélite com nomes'] };
-        return { items: (window.__wfTiles ? window.__wfTiles.list : []).map(([k, name]) => { const on = k === cur;
-          return { name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px',
+        return { items: (window.__wfTiles ? window.__wfTiles.list : []).map(([k, name], ix) => { const on = k === cur;
+          return { liPad: ix ? '32px 0 0' : '0', liBd: ix ? '1px solid rgba(60,60,67,0.12)' : '0', name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px',
             toggle: () => { if (on) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k); this.forceUpdate(); },
             /* the renders this provider offers: a radio list; choosing one turns its provider on */
             rs: window.__wfTiles.styles[k].map(([id]) => { const sel = on && id === curSt; return { label: T(RN[id][0], RN[id][1]), sel: sel ? 'true' : 'false', ring: sel ? '#1C1C1E' : '#8E8E93', dot: sel ? 1 : 0,
