@@ -312,6 +312,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   };
   function rgbOf(h) { h = h.replace('#', ''); return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)].join(','); }
   function palId() { var v = ''; try { v = localStorage.getItem('wf-palette') || ''; } catch (e) {} return PALS[v] ? v : 'snow'; }
+  // Palette variables (Oct 5, 19:32), set for every palette (Snow included): screens that draw their own styles use these, so every
+  // screen, new or old, follows the palette chosen in the preferences
+  function palVars(P) { return ':root{--wf-page:' + P.page + ';--wf-surface:' + P.surface + ';--wf-fill:' + P.fill + ';--wf-ink:' + P.ink + ';--wf-ink2:' + P.ink2 + ';--wf-sec:' + P.sec + ';--wf-track:' + (P === PALS.snow ? 'rgba(118,118,128,0.12)' : 'rgba(' + rgbOf(P.sec) + ',0.14)') + '}'; }
   function palCss(P) {
     var o = [], pg = rgbOf(P.page), sf = rgbOf(P.surface), fl = rgbOf(P.fill), sc = rgbOf(P.sec);
     [['rgb(242, 242, 247)', P.page], ['rgb(255, 255, 255)', P.surface], ['rgb(238, 238, 240)', P.surface], ['rgb(229, 229, 234)', P.fill], ['rgb(227, 227, 232)', P.fill], ['rgb(230, 230, 235)', P.fill], ['rgb(232, 232, 237)', P.fill],
@@ -342,7 +345,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     var el = document.getElementById('wf-prefs');
     if (!el) { el = document.createElement('style'); el.id = 'wf-prefs'; (document.head || document.documentElement).appendChild(el); }
     var pal = theme === 'dark' ? 'snow' : palId();
-    el.textContent = (theme === 'dark' ? darkCss() : '') + '\nsvg [fill="#E5FF00"],svg [fill="#CCFF00"]{fill:var(--wf-y)}svg [stroke="#E5FF00"],svg [stroke="#CCFF00"]{stroke:var(--wf-y)}\n' + BTN + '\n' + fontCss(size) + (pal !== 'snow' ? '\n' + palCss(PALS[pal]) : '');
+    el.textContent = (theme === 'dark' ? darkCss() : '') + '\nsvg [fill="#E5FF00"],svg [fill="#CCFF00"]{fill:var(--wf-y)}svg [stroke="#E5FF00"],svg [stroke="#CCFF00"]{stroke:var(--wf-y)}\n' + BTN + '\n' + fontCss(size) + '\n' + palVars(PALS[pal]) + (pal !== 'snow' ? '\n' + palCss(PALS[pal]) : '');
     var root = document.documentElement;
     root.classList.toggle('wf-dark', theme === 'dark');
     root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
