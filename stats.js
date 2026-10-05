@@ -156,7 +156,7 @@
     var prev = S.el.querySelector('.sc'), st = prev && keepScroll ? prev.scrollTop : 0;
     S.el.innerHTML =
       '<div style="flex-shrink:0;padding:44px 16px 16px;display:flex;flex-direction:column;gap:16px">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:32px;color:#000">Statistics</h2><span style="font-size:17px;line-height:22px;color:#000">' + esc(S.region) + '. ' + esc(rg.word) + '.</span></div>' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:17px;font-weight:700;line-height:22px;color:#000">Statistics</h2><span style="font-size:17px;line-height:22px;color:#000">' + esc(S.region) + '. ' + esc(rg.word) + '.</span></div>' +
         '<button type="button" class="xb" data-act="close" aria-label="Close">' + chev() + '</button></div>' +
         '<div class="seg" role="tablist" aria-label="Period"><span class="th" aria-hidden="true" style="transform:translateX(' + (ri * 100) + '%)"></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '">' + r.label + '</button>'; }).join('') + '</div>' +
       '</div>' +
