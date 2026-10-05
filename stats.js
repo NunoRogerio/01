@@ -72,10 +72,12 @@
       '<g clip-path="url(#' + id + 'c)" pointer-events="none" opacity="0.8"><path d="' + p + '" fill="none" style="stroke:' + (col || LIME) + '" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" filter="url(#' + id + ')"/></g>';
   }
 
+  // entry animation: a line chart's lines (and their shadows) are drawn left to right through a clip that widens
+  function reveal(h) { var id = 'wfrv' + (++AG); return '<defs><clipPath id="' + id + '"><rect class="an-r" x="-4" y="-12" width="' + (W + 8) + '" height="' + (h + 24) + '"/></clipPath></defs><g clip-path="url(#' + id + ')">'; }
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      lineShadow(p, h, 'wfag' + (++AG)) + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y, true); }) + '<path d="' + p + '" fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/>' + xAxis(h, lbls) + '</svg>';
+      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y, true); }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + INK + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
     var h = 105, max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
@@ -84,14 +86,14 @@
       slots(sets[0].v.length, h, function (i, x) { return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14); }) +
       // drawn darkest first, so the brighter series sit above the darker ones (crews, then aircraft, then vehicles), each line with its own shadow;
       // the dark grey line's shadow is the middle grey (a dark shadow reads as dirt)
-      [0, 2, 1].filter(function (i) { return sets[i]; }).map(function (i) { var s = sets[i], d = pathOf(s.v, max, h, 0);
-        return lineShadow(d, h, 'wfls' + (++AG), cols[i] === INK ? G1 : cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + (i === 1 ? 3 : 2) + '" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="1 5"' : '') + '/>'; }).join('') + xAxis(h, lbls) + '</svg>' +
+      reveal(h) + [0, 2, 1].filter(function (i) { return sets[i]; }).map(function (i) { var s = sets[i], d = pathOf(s.v, max, h, 0);
+        return lineShadow(d, h, 'wfls' + (++AG), cols[i] === INK ? G1 : cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + (i === 1 ? 3 : 2) + '" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="1 5"' : '') + '/>'; }).join('') + '</g>' + xAxis(h, lbls) + '</svg>' +
       '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">' + sets.map(function (s, i) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:16px;height:3px;border-radius:2px;background:' + cols[i] + '"></span>' + esc(s.n) + '</span>'; }).join('') + '</div>';
   }
   function columns(vals, labels, hl, unit, tickLbls, tipLbls) {
     hl = vals.indexOf(Math.max.apply(null, vals));   // the biggest value is always the dark grey one, in every column chart
     var h = 105, max = Math.max.apply(null, vals) * 1.05, bot = h - 20, n = vals.length, gap = n > 14 ? 3 : 8, bw = (W - gap * (n - 1)) / n, o = '';
-    vals.forEach(function (v, i) { var bh = Math.max(2, (bot - 16) * v / max), x = i * (bw + gap); var tl = (tipLbls && tipLbls[i]) || labels[i] || (vals.length === PTS.length ? PTS[i] : ''); o += '<rect class="tslot" x="' + (x - gap / 2).toFixed(1) + '" y="0" width="' + (bw + gap).toFixed(1) + '" height="' + bot + '"' + tipA(fmt(v) + ' ' + unit, tl, x + bw / 2, bot - bh) + '/>'; var cw = Math.min(8, bw); o += '<rect pointer-events="none" x="' + (x + (bw - cw) / 2).toFixed(1) + '" y="' + (bot - Math.max(bh, cw)).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + Math.max(bh, cw).toFixed(1) + '" rx="' + (cw / 2).toFixed(1) + '" style="fill:' + (i === hl ? INK : LIME) + '"/>'; });
+    vals.forEach(function (v, i) { var bh = Math.max(2, (bot - 16) * v / max), x = i * (bw + gap); var tl = (tipLbls && tipLbls[i]) || labels[i] || (vals.length === PTS.length ? PTS[i] : ''); o += '<rect class="tslot" x="' + (x - gap / 2).toFixed(1) + '" y="0" width="' + (bw + gap).toFixed(1) + '" height="' + bot + '"' + tipA(fmt(v) + ' ' + unit, tl, x + bw / 2, bot - bh) + '/>'; var cw = Math.min(8, bw); o += '<rect class="an-c" data-b="' + bot + '" pointer-events="none" x="' + (x + (bw - cw) / 2).toFixed(1) + '" y="' + (bot - Math.max(bh, cw)).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + Math.max(bh, cw).toFixed(1) + '" rx="' + (cw / 2).toFixed(1) + '" style="fill:' + (i === hl ? INK : LIME) + '"/>'; });
     var lb = '';
     if (tickLbls) tickLbls.forEach(function (t) { var x = t[0] * (bw + gap) + bw / 2; lb += '<text x="' + x.toFixed(1) + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="' + (t[0] === 0 ? 'start' : t[0] === n - 1 ? 'end' : 'middle') + '">' + esc(t[1]) + '</text>'; });
     else labels.forEach(function (t, i) { var x = i * (bw + gap) + bw / 2; lb += '<text x="' + x.toFixed(1) + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="middle">' + esc(t) + '</text>'; });
@@ -100,13 +102,13 @@
   function hbars(items, max, best) {
     return '<div style="display:flex;flex-direction:column;gap:16px">' + items.map(function (it, i) {
       return '<div><div style="display:flex;justify-content:space-between;gap:16px;font-size:16px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums">' + esc(it.t) + '</span></div>' +
-        '<div aria-hidden="true" style="height:8px;margin-top:8px;border-radius:4px;background:' + TRACK + ';overflow:hidden"><div style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:4px;background:' + INK + '"></div></div></div>';
+        '<div aria-hidden="true" style="height:8px;margin-top:8px;border-radius:4px;background:' + TRACK + ';overflow:hidden"><div class="an-w" style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:4px;background:' + INK + '"></div></div></div>';
     }).join('') + '</div>';
   }
   function donut(parts, abs) {
     var tot = parts.reduce(function (a, p) { return a + p.v; }, 0), r = 50, c = 2 * Math.PI * r, off = 0, cols = parts.some(function (p) { return p.c; }) ? parts.map(function (p) { return p.c; }) : [LIME, INK, G1, G2, '#E5E5EA'];
     var svg = '<svg viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Detection sources" style="display:block;flex-shrink:0;transform:rotate(-90deg)">' +
-      parts.map(function (p, i) { var len = c * p.v / tot, o = '<circle class="tseg"' + tipA(p.n, Math.round(100 * p.v / tot) + '%' + (abs ? '. ' + fmt(p.v) : '') + '.') + ' cx="60" cy="60" r="' + r + '" fill="none" style="stroke:' + cols[i % cols.length] + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + Math.max(0.01, len - 16).toFixed(2) + ' ' + (c - Math.max(0.01, len - 16)).toFixed(2) + '" stroke-dashoffset="' + (-(off + 8)).toFixed(2) + '"/>'; off += len; return o; }).join('') + '</svg>';
+      parts.map(function (p, i) { var len = c * p.v / tot, o = '<circle class="tseg an-d" data-st="' + (off + 8).toFixed(2) + '" data-ln="' + Math.max(0.01, len - 16).toFixed(2) + '" data-c="' + c.toFixed(2) + '"' + tipA(p.n, Math.round(100 * p.v / tot) + '%' + (abs ? '. ' + fmt(p.v) : '') + '.') + ' cx="60" cy="60" r="' + r + '" fill="none" style="stroke:' + cols[i % cols.length] + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + Math.max(0.01, len - 16).toFixed(2) + ' ' + (c - Math.max(0.01, len - 16)).toFixed(2) + '" stroke-dashoffset="' + (-(off + 8)).toFixed(2) + '"/>'; off += len; return o; }).join('') + '</svg>';
     var leg = '<div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">' + parts.map(function (p, i) { return '<span style="display:flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;background:' + cols[i % cols.length] + ';' + (i === 4 ? 'box-shadow:inset 0 0 0 1px rgba(60,60,67,.2)' : '') + '"></span><span style="flex:1;min-width:0">' + esc(p.n) + '</span><span style="font-variant-numeric:tabular-nums">' + Math.round(100 * p.v / tot) + '%</span>' + (abs ? '<span style="min-width:40px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(p.v) + '</span>' : '') + '</span>'; }).join('') + '</div>';
     return '<div style="display:flex;align-items:center;gap:24px">' + svg + leg + '</div>';
   }
@@ -118,7 +120,7 @@
   function stack(a, b) {
     var tot = a.v + b.v, pa = Math.round(100 * a.v / tot), pb = 100 - pa;
     var row = function (x, p, col, ring) { return '<div style="display:flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;background:' + col + '"></span><span style="flex:1;min-width:0">' + esc(x.n) + '</span><span style="font-variant-numeric:tabular-nums">' + p + '%</span><span style="min-width:56px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(x.v) + '</span></div>'; };
-    return '<div aria-hidden="true" style="display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden"><div style="width:' + pa + '%;border-radius:4px;background:' + LIME + '"></div><div style="flex:1;border-radius:4px;background:' + INK + '"></div></div>' +   // 8px like every bar chart; the shares are in the rows below
+    return '<div class="an-x" aria-hidden="true" style="display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden"><div style="width:' + pa + '%;border-radius:4px;background:' + LIME + '"></div><div style="flex:1;border-radius:4px;background:' + INK + '"></div></div>' +   // 8px like every bar chart; the shares are in the rows below
       '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">' + row(a, pa, LIME) + row(b, pb, INK) + '</div>';
   }
 
@@ -130,13 +132,13 @@
     var o = '', q = 0, best = 0, bi = 0, colSum = []; for (i = 0; i < cols; i++) colSum.push(0);
     for (j = rows - 1; j >= 0; j--) { o += '<line x1="' + pl + '" x2="' + W + '" y1="' + ((rows - 1 - j) * rh + rh / 2) + '" y2="' + ((rows - 1 - j) * rh + rh / 2) + '" stroke="rgba(60,60,67,0.10)" stroke-dasharray="3 4"/>'; }
     for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var f = v[q++] / mx; colSum[i] += f;
-      var b = f < 0.15 ? 0 : f < 0.35 ? 1 : f < 0.6 ? 2 : f < 0.82 ? 3 : 4, sz = Math.max(8, 26 * Math.sqrt(f)), cx = pl + i * cw + cw / 2, cy = (rows - 1 - j) * rh + rh / 2;
-      o += '<rect class="tsq"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + ['Very few', 'Few', 'Some', 'Many', 'Most'][b] + ' candidates.', cx, cy - sz / 2) + ' x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>';
+      var b = f < 0.15 ? 0 : f < 0.35 ? 1 : f < 0.6 ? 2 : f < 0.82 ? 3 : 4, sz = Math.max(8, 22.1 * Math.sqrt(f)), cx = pl + i * cw + cw / 2, cy = (rows - 1 - j) * rh + rh / 2;
+      o += '<rect class="tsq an-b" data-bx="' + cx.toFixed(1) + '" data-by="' + cy.toFixed(1) + '" data-z="' + sz.toFixed(1) + '"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + ['Very few', 'Few', 'Some', 'Many', 'Most'][b] + ' candidates.', cx, cy - sz / 2) + ' x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>';
       o += '<rect class="tslot"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + ['Very few', 'Few', 'Some', 'Many', 'Most'][b] + ' candidates.', cx, cy - sz / 2) + ' x="' + (cx - cw / 2).toFixed(1) + '" y="' + (cy - rh / 2).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + rh + '" fill="#000" fill-opacity="0" data-sq="1"/>'; }
     colSum.forEach(function (c, k) { if (c > best) { best = c; bi = k; } });
     var ty = function (y, t) { return '<text x="0" y="' + (y + 4) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + t + '</text>'; };
     var lbl = [[0, '0 h'], [3, '6 h'], [6, '12 h'], [9, '18 h'], [12, '24 h']].map(function (a) { return '<text x="' + (pl + a[0] * cw).toFixed(1) + '" y="' + (H - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="' + (a[0] === 0 ? 'start' : a[0] === 12 ? 'end' : 'middle') + '">' + a[1] + '</text>'; }).join('');
-    var leg = '<div style="display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;line-height:16px;color:#6E6E73"><span>Fewer</span>' + HEAT.map(function (f, k) { var z = [8, 13, 18, 22, 26][k]; return '<span aria-hidden="true" style="width:' + z + 'px;height:' + z + 'px;flex-shrink:0;border-radius:4px;background:' + f + '"></span>'; }).join('') + '<span>More</span></div>';
+    var leg = '<div style="display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;line-height:16px;color:#6E6E73"><span>Fewer</span>' + HEAT.map(function (f, k) { var z = [8, 11, 15, 19, 22][k]; return '<span aria-hidden="true" style="width:' + z + 'px;height:' + z + 'px;flex-shrink:0;border-radius:4px;background:' + f + '"></span>'; }).join('') + '<span>More</span></div>';
     return { peak: (bi * 2) + ':00 to ' + (bi * 2 + 2) + ':00', h: '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Candidates by time of day and likelihood" style="display:block">' + o + ty(rh / 2, '100%') + ty(rows * rh - rh / 2, '0%') + lbl + '</svg>' + leg };
   }
 
@@ -328,6 +330,7 @@
   }
   // a new period: the shared switcher glides in place (the prefs motion) and only the cards redraw, keeping the scroll
   function period() {
+    S.anim = true;
     var rg = RANGES.filter(function (r) { return r.id === S.range; })[0] || RANGES[0], ri = RANGES.indexOf(rg), X = ctxX(rg);
     var th = S.el.querySelector('.wf-seg .segthumb'); if (th) th.style.transform = 'translateX(' + (ri * 100) + '%)';
     Array.prototype.forEach.call(S.el.querySelectorAll('[data-r]'), function (x) { x.setAttribute('aria-selected', String(x.getAttribute('data-r') === S.range)); });
@@ -335,6 +338,53 @@
     var old = S.el.querySelector('[data-list]'), hid = hidden(), keys = order().filter(function (k) { return hid.indexOf(k) < 0; }), nw = document.createElement('div');
     nw.setAttribute('data-list', '1'); nw.innerHTML = keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join(''); old.parentNode.replaceChild(nw, old);
     cardsWire();
+  }
+  // ---- entry animations (Oct 5): charts draw themselves when their card comes into view, after opening or a new period ----
+  // bars fill to their value, columns grow up, lines draw left to right, donut parts sweep clockwise, the time-of-day squares
+  // pop in (in a random order) a little past their size and settle. Reduced motion: no animation.
+  var RM = false; try { RM = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  function eo(t) { return 1 - Math.pow(1 - t, 3); }
+  function eio(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function q(card, sel) { return Array.prototype.slice.call(card.querySelectorAll(sel)); }
+  function prep(card) {
+    q(card, '.an-w').forEach(function (el) { el.setAttribute('data-w', el.style.width); el.style.transition = 'none'; el.style.width = '0px'; });
+    q(card, '.an-x').forEach(function (el) { el.style.transition = 'none'; el.style.webkitClipPath = el.style.clipPath = 'inset(0 100% 0 0)'; });
+    q(card, '.an-c').forEach(function (el) { el.setAttribute('data-y', el.getAttribute('y')); el.setAttribute('data-h', el.getAttribute('height')); el.setAttribute('height', '0'); el.setAttribute('y', el.getAttribute('data-b')); });
+    q(card, '.an-r').forEach(function (el) { el.setAttribute('data-w', el.getAttribute('width')); el.setAttribute('width', '0'); });
+    q(card, '.an-d').forEach(function (el) { el.setAttribute('data-da', el.getAttribute('stroke-dasharray')); el.setAttribute('stroke-dasharray', '0 ' + el.getAttribute('data-c')); el.style.strokeOpacity = '0'; });
+    q(card, '.an-b').forEach(function (el) { el.setAttribute('width', '0'); el.setAttribute('height', '0'); el.setAttribute('x', el.getAttribute('data-bx')); el.setAttribute('y', el.getAttribute('data-by')); });
+    card.setAttribute('data-an', 'p');
+  }
+  function play(card) {
+    if (card.getAttribute('data-an') !== 'p') return; card.setAttribute('data-an', 'd');
+    void card.offsetWidth;
+    q(card, '.an-w').forEach(function (el, i) { el.style.transition = 'width .7s cubic-bezier(.2,.8,.2,1) ' + (i * 0.06) + 's'; el.style.width = el.getAttribute('data-w'); });
+    q(card, '.an-x').forEach(function (el) { el.style.transition = 'clip-path .8s cubic-bezier(.4,0,.2,1),-webkit-clip-path .8s cubic-bezier(.4,0,.2,1)'; el.style.webkitClipPath = el.style.clipPath = 'inset(0 0 0 0)'; });
+    var C = q(card, '.an-c'), Rr = q(card, '.an-r'), D = q(card, '.an-d'), B = q(card, '.an-b');
+    if (!C.length && !Rr.length && !D.length && !B.length) return;
+    var order = B.map(function (_, i) { return i; }); for (var k = order.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)), tmp = order[k]; order[k] = order[j]; order[j] = tmp; }
+    var bDelay = []; order.forEach(function (bi, k) { bDelay[bi] = k * (650 / Math.max(1, B.length)); });
+    var dc = D.length ? +D[0].getAttribute('data-c') : 0, t0 = 0, END = 1400;
+    function frame(ts) {
+      if (!t0) t0 = ts; var t = ts - t0, done = t >= END;
+      C.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - i * (320 / C.length)) / 600)), hh = +el.getAttribute('data-h') * eo(u); el.setAttribute('height', hh.toFixed(1)); el.setAttribute('y', (+el.getAttribute('data-b') - hh).toFixed(1)); });
+      Rr.forEach(function (el) { el.setAttribute('width', (+el.getAttribute('data-w') * (done ? 1 : eio(Math.min(1, t / 1000)))).toFixed(1)); });
+      if (D.length) { var sw = dc * (done ? 1 : eio(Math.min(1, t / 900))) + 8; D.forEach(function (el) { var vis = Math.max(0, Math.min(+el.getAttribute('data-ln'), sw - +el.getAttribute('data-st'))); if (done) { el.setAttribute('stroke-dasharray', el.getAttribute('data-da')); el.style.strokeOpacity = ''; return; } el.style.strokeOpacity = vis > 0.5 ? '1' : '0'; el.setAttribute('stroke-dasharray', vis.toFixed(2) + ' ' + (dc - vis).toFixed(2)); }); }
+      B.forEach(function (el, i) { var u = done ? 1 : Math.max(0, Math.min(1, (t - bDelay[i]) / 380)), sc = u < 0.65 ? 1.15 * eo(u / 0.65) : 1.15 - 0.15 * eio((u - 0.65) / 0.35), z = +el.getAttribute('data-z') * sc, cx = +el.getAttribute('data-bx'), cy = +el.getAttribute('data-by');
+        el.setAttribute('width', z.toFixed(1)); el.setAttribute('height', z.toFixed(1)); el.setAttribute('x', (cx - z / 2).toFixed(1)); el.setAttribute('y', (cy - z / 2).toFixed(1)); el.setAttribute('rx', Math.min(4, z / 2).toFixed(1)); });
+      if (!done) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  var IO = null;
+  function animWire() {
+    var list = S.el.querySelector('[data-list]'), sc = S.el.querySelector('.sc'); if (!list || !sc || RM) return;
+    var cards = q(list, '.cd'); cards.forEach(prep);
+    var go = function (c) { var wait = Math.max(0, 450 - (Date.now() - (S.t0 || 0))); setTimeout(function () { play(c); }, wait); };
+    if (!window.IntersectionObserver) { cards.forEach(go); return; }
+    if (IO) IO.disconnect();
+    IO = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { IO.unobserve(e.target); go(e.target); } }); }, { root: sc, threshold: 0.25 });
+    cards.forEach(function (c) { IO.observe(c); });
   }
   // chart tooltips (the chat photo tooltip's look): a tap on a mark shows its value, above it; a tap elsewhere, a scroll or a new period hides it
   var TIP = { el: null, on: null, dot: null };
@@ -372,7 +422,7 @@
   // preferences match, so the chosen palette, text size and spacing reach the statistics like every other screen
   function norm(root) { if (!root) return; var L = root.querySelectorAll ? root.querySelectorAll('[style]') : []; Array.prototype.forEach.call(L, function (el) { var t = el.style && el.style.cssText; if (t && t !== el.getAttribute('style')) el.setAttribute('style', t); }); if (root.getAttribute && root.getAttribute('style') && root.style.cssText) root.setAttribute('style', root.style.cssText); }
   function cardsWire() {
-    norm(S.el); tipHide(); tipWire();
+    norm(S.el); tipHide(); tipWire(); if (S.anim) { S.anim = false; animWire(); }
     Array.prototype.forEach.call(S.el.querySelectorAll('[data-lg]'), function (b) { b.onclick = function (e) { e.stopPropagation(); var k = b.getAttribute('data-lg'); S.lay[k] = S.lay[k] ? 0 : 1; LS('wf-stats-lay', S.lay); buzz(8); render(true); }; });
     dragWire();
   }
@@ -415,7 +465,7 @@
   // page back); closing them gives the main screen its landscape map again
   function hold(on) { window.__wfHoldUp = !!on; try { window.dispatchEvent(new Event('resize')); } catch (e) {} setTimeout(place, 400); }
   function open(back) {
-    if (!build()) return false; hold(true); place(); S.open = true; S.region = ''; render(false);
+    if (!build()) return false; hold(true); S.anim = true; S.t0 = Date.now(); place(); S.open = true; S.region = ''; render(false);
     document.documentElement.classList.add('wf-stats');
     var el = S.el; el.classList.remove('hide'); el.classList.remove('out');
     if (back) { el.style.transition = 'none'; el.classList.add('on'); void el.offsetWidth; el.style.transition = ''; var sc = el.querySelector('.sc'); if (sc && back.y) sc.scrollTop = back.y; }
