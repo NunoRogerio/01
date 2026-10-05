@@ -162,6 +162,13 @@ window.__wfBlink=function(path,dur){
 (function(){
   // (Oct 4) What the page was opened with (area, tapped item, screen): kept, so a version update that reloads the page does not lose it
   try{var fr0=false;try{fr0=window.self!==window.top;}catch(e){fr0=true;}var pu=sessionStorage.getItem('wf-pu-state');if(pu&&!fr0){sessionStorage.removeItem('wf-pu-state');var P=JSON.parse(pu);['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus','wf-verify'].forEach(function(k){if(P[k]!=null&&sessionStorage.getItem(k)==null)sessionStorage.setItem(k,P[k]);});}}catch(e){}   // (Oct 4) arriving by the View push-up: the tapped item the loading frame already used
+  /* (Oct 5, 02:52) Push-up arrival: the still copy of the risen screen covers this page from its first frame (a script-free frame
+     drawn from the copy), and dissolves in 0.2s once the live page has drawn itself, so the screen never goes blank or flickers */
+  try{(function(){var fr=false;try{fr=window.self!==window.top;}catch(e){fr=true;}if(fr)return;var sn=sessionStorage.getItem('wf-pu-snap'),t=+sessionStorage.getItem('wf-pu-arrive')||0;sessionStorage.removeItem('wf-pu-snap');if(!sn||Date.now()-t>10000)return;
+    var ov=document.createElement('iframe');ov.setAttribute('aria-hidden','true');ov.setAttribute('tabindex','-1');ov.setAttribute('sandbox','allow-same-origin');ov.setAttribute('data-wf-pusnap','1');
+    ov.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;border:0;margin:0;z-index:2147483000;pointer-events:none;background:'+(/wf-dark/.test(sn.slice(0,400))?'#262629':'#F2F2F7')+';transition:opacity .2s ease';ov.srcdoc=sn;(document.body||document.documentElement).appendChild(ov);
+    var T0=Date.now(),ok=function(){var r=document.getElementById('dc-root');return !document.getElementById('wf-load')&&r&&r.firstElementChild&&r.textContent.trim().length>20;};
+    (function wait(){if(ok()||Date.now()-T0>4000){setTimeout(function(){requestAnimationFrame(function(){requestAnimationFrame(function(){ov.style.opacity='0';setTimeout(function(){ov.remove();},260);});});},Date.now()-T0>4000?0:180);return;}setTimeout(wait,40);})();})();}catch(e){}
   try{var S={};['wf-scope','wf-nav','wf-list','wf-fireview','wf-focus','wf-verify'].forEach(function(k){var v=sessionStorage.getItem(k);if(v!=null)S[k]=v;});window.__wfSnap=S;}catch(e){}
   var K='wf-alive';
   try{
@@ -801,6 +808,11 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
     a.__wfPu=1;e.preventDefault();var href=a.href,gone=false,snap=null;try{document.documentElement.classList.add('wf-pushing');}catch(x){}   /* (Oct 5) the tour's bubble and glow leave as the next screen rises (they drew over the rising panel) */
     var navigate=function(){if(gone)return;var hold=(window.__wfNavHold||0)-Date.now();if(hold>0){setTimeout(navigate,hold);return;}gone=true;   /* the frame took the one-shot state (the tapped item) while it loaded: the real page gets it back */
       try{if(snap)sessionStorage.setItem('wf-pu-state',JSON.stringify(snap));}catch(x){}   /* read once by the real page (fit.js top), where the frame cannot reach it */
+      /* (Oct 5, 02:52) a still copy of the risen screen (its drawn markup and styles, no scripts), shown by the real page from its
+         very first frame until it has drawn itself: no blank screen, no flicker, on phones without view transitions too */
+      try{var fd=window.__wfPuFrame&&window.__wfPuFrame.contentDocument;if(fd&&fd.body){var css=[].map.call(fd.querySelectorAll('style'),function(x){return x.textContent;}).join('\n'),lk=[].map.call(fd.querySelectorAll('link[rel=stylesheet]'),function(l){return '<link rel="stylesheet" href="'+l.href+'">';}).join(''),bd=fd.body.innerHTML.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/<iframe[\s\S]*?<\/iframe>/gi,'');
+        var hs=fd.documentElement,html='<!doctype html><html class="'+(hs.className||'')+'" style="'+(hs.getAttribute('style')||'').replace(/"/g,'&quot;')+'"><head><meta charset="utf-8"><base href="'+location.href+'">'+lk+'<style>'+css+'</style></head><body style="'+(fd.body.getAttribute('style')||'').replace(/"/g,'&quot;')+'">'+bd+'</body></html>';
+        if(html.length<3000000)sessionStorage.setItem('wf-pu-snap',html);}}catch(x){}
       try{sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}   /* the real page holds this last picture until it has drawn itself */
       window.location.href=href;};
     setTimeout(function(){   /* after the card's own handlers have set the destination up */
@@ -808,13 +820,13 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
       try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.textContent=L[lb]||'…';a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads */
         var w=document.createElement('div'),f=document.createElement('iframe'),dim=document.createElement('div'),T0=Date.now(),loaded=false,rose=false,lift=false;
         w.setAttribute('aria-hidden','true');w.setAttribute('data-wf-pushup','1');w.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;z-index:300;overflow:hidden;pointer-events:none;background:'+puGrey()+';transform:translateY(100%);box-shadow:0 0 28px rgba(0,0,0,.25)';
-        f.setAttribute('tabindex','-1');f.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;border:0;opacity:0;background:transparent';w.appendChild(f);
+        f.setAttribute('tabindex','-1');f.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;border:0;opacity:0;background:transparent';w.appendChild(f);window.__wfPuFrame=f;
         dim.setAttribute('data-wf-pushup','1');dim.style.cssText='position:fixed;inset:0;background:#000;opacity:0;z-index:299;pointer-events:none';document.body.appendChild(dim);document.body.appendChild(w);
         var fade=function(){if(loaded&&!f.__in){f.__in=1;f.animate([{opacity:0},{opacity:1}],{duration:rose?320:120,easing:'ease-out',fill:'forwards'});}};
         var rise=function(){if(rose)return;rose=true;fade();var an=w.animate([{transform:'translateY(100%)'},{transform:'translateY(0)'}],{duration:PU_D,easing:PU_E,fill:'forwards'});dim.animate([{opacity:0},{opacity:.2}],{duration:PU_D,easing:PU_E,fill:'forwards'});
           an.onfinish=function(){var wait=function(){if(loaded||Date.now()-T0>2500)navigate();else setTimeout(wait,60);};wait();};};
         var poll=function(){try{var d=f.contentDocument;if(!loaded&&d&&d.readyState==='complete'){var r=d.getElementById('dc-root');if(r&&r.firstElementChild){loaded=true;fade();}}}catch(x){}
-          if(!rose&&(loaded?Date.now()-T0>350:Date.now()-T0>700))rise();if(Date.now()-T0>2500&&!loaded){rise();return;}if(!gone)setTimeout(poll,70);};
+          if(!rose&&loaded&&Date.now()-T0>250)rise();   /* (Oct 5, 02:52) the panel rises only with the next screen drawn on it: never a blank panel */if(Date.now()-T0>2500&&!loaded){rise();return;}if(!gone)setTimeout(poll,70);};
         f.src=href;setTimeout(poll,100);}catch(x){navigate();}},0);},true);
   addEventListener('pageshow',function(){try{document.documentElement.classList.remove('wf-pushing');}catch(x){}try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;});document.querySelectorAll('[data-wf-pushup]').forEach(function(n){n.remove();});document.documentElement.style.background='';document.body.style.background='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
   // (Oct 4, 21:50) The push-up arrival: the last picture of the risen screen stays over the real page until it has drawn itself
