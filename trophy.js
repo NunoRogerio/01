@@ -109,7 +109,11 @@
     var go = function (i) { self._i = ((i % N) + N) % N; var cr = r.querySelector('.credit'); if (cr) cr.textContent = (self._cr || [])[self._i] || '';
       Array.prototype.forEach.call(dots.children, function (d, q) { d.classList.toggle('on', q === self._i); }); };
     // move the track to picture p (0..N, N being the copy of the first, which then jumps home unseen)
-    var to = function (p) { tk._p = p; tk.classList.add('go'); tk.style.transform = 'translateX(-' + (p * 100 / T.length) + '%)'; go(p);
+    // (Oct 5) never past the end: a step that lands while the copy of the first is still waiting to jump home (a swipe, or timers
+    // catching up after the phone wakes) first jumps home unseen, then moves on; before, the track slid into empty space for good
+    var to = function (p) { clearTimeout(self._jt);
+      if (p > N) { tk.classList.remove('go'); tk.style.transform = 'none'; void tk.offsetWidth; p = 1; }
+      p = Math.max(0, Math.min(N, p)); tk._p = p; tk.classList.add('go'); tk.style.transform = 'translateX(-' + (p * 100 / T.length) + '%)'; go(p);
       clearTimeout(self._jt); if (p === N) self._jt = setTimeout(function () { tk.classList.remove('go'); tk._p = 0; tk.style.transform = 'none'; }, 950); };
     var next = function () { to((tk._p || 0) + 1); };
     var prev = function () { var p = tk._p || 0; if (p === 0) { tk.classList.remove('go'); tk.style.transform = 'translateX(-' + (N * 100 / T.length) + '%)'; void tk.offsetWidth; p = N; } to(p - 1); };
