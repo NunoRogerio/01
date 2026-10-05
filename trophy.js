@@ -38,11 +38,13 @@
   var HELI = 'M3 7h18M12 7v3 M6 14a6 4 0 0 1 6-4h3.5a3.5 3.5 0 0 1 3.5 3.5V15H6Z M19 13.5l3-1.5 M9 18h8';
   var CSS =
     ':host{display:block}' +
-    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:8px;min-height:432px;padding:32px 16px 32px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
+    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:4px;min-height:320px;touch-action:pan-y;padding:24px 16px 24px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
     '.sl{position:absolute;inset:0;z-index:-2;overflow:hidden}.tk{display:flex;height:100%;will-change:transform}.tk.go{transition:transform .9s cubic-bezier(.4,0,.2,1)}' +
     '.ph{flex:0 0 auto;height:100%;background-color:#1E2B22;background-size:cover;background-position:center 22%}' +
     '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.40) 0%,rgba(0,0,0,.06) 28%,rgba(0,0,0,.30) 46%,rgba(0,0,0,.74) 66%,rgba(0,0,0,.88) 100%)}' +
-    '.dots{position:absolute;left:0;right:0;top:12px;display:flex;justify-content:center;gap:8px;pointer-events:none}.dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);box-shadow:0 0 6px rgba(0,0,0,.35);transition:background .3s ease,transform .3s ease}.dots i.on{background:#FFFFFF;transform:scale(1.25)}' +
+    /* (Oct 5, 03:34) the pagination as Apple draws it now: plain white shapes, no shadow; the pages not shown are 8px circles, the one
+       shown a 20px line with fully rounded ends; it stretches and shrinks as the pictures change */
+    '.dots{position:absolute;left:0;right:0;top:12px;display:flex;justify-content:center;align-items:center;gap:8px;pointer-events:none}.dots i{display:block;width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.5);transition:width .4s cubic-bezier(.2,.8,.2,1),background-color .4s ease}.dots i.on{width:20px;background:#FFFFFF}' +
     '.bd{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin-bottom:auto}' +
     '.bd img{display:block;box-sizing:border-box;width:min(60px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:60px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
     '.kicker{font-size:15px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
@@ -50,8 +52,8 @@
     '.fire{font-size:20px;font-weight:700;line-height:24px;color:#FFFFFF;text-wrap:balance;text-shadow:0 0 10px rgba(0,0,0,.5)}' +
     '.meta{font-size:15px;line-height:20px;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}' +
     '.size{align-self:flex-start;padding:4px 16px;border-radius:999px;background:rgba(242,242,247,.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#1C1C1E;font-size:15px;line-height:20px;font-weight:600}' +
-    '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:48px;margin-top:8px;border-radius:999px;background:var(--wf-y);color:#1C1C1E;font-size:17px;font-weight:600}' +
-    '.credit{margin-top:4px;font-size:12px;line-height:14px;color:rgba(255,255,255,.78)}' +
+    '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:48px;margin-top:12px;border-radius:999px;background:var(--wf-y);color:#1C1C1E;font-size:17px;font-weight:600}' +
+    '.credit{margin-top:4px;font-size:12px;line-height:14px;color:rgba(255,255,255,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
     '.st{position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.9}' +
     '[hidden]{display:none!important}' +
     '@media (prefers-reduced-motion:reduce){.tk.go{transition:none}}';
@@ -101,13 +103,24 @@
     tk.innerHTML = T.map(function (x) { return '<span class="ph" style="width:' + (100 / T.length) + '%;background-image:url(' + x[0] + ')"></span>'; }).join('');
     dots.innerHTML = N > 1 ? S.map(function (x, i) { return '<i' + (i ? '' : ' class="on"') + '></i>'; }).join('') : ''; dots.hidden = N < 2;
     if (N < 2) return;
-    var go = function (i) { self._i = i % N; var cr = r.querySelector('.credit'); if (cr) cr.textContent = (self._cr || [])[self._i] || '';
+    var go = function (i) { self._i = ((i % N) + N) % N; var cr = r.querySelector('.credit'); if (cr) cr.textContent = (self._cr || [])[self._i] || '';
       Array.prototype.forEach.call(dots.children, function (d, q) { d.classList.toggle('on', q === self._i); }); };
-    this._iv = setInterval(function () {
-      if (!self.isConnected) { clearInterval(self._iv); return; }
-      var next = (tk._p || 0) + 1; tk._p = next; tk.classList.add('go'); tk.style.transform = 'translateX(-' + (next * 100 / T.length) + '%)'; go(next);
-      if (next === N) setTimeout(function () { tk.classList.remove('go'); tk._p = 0; tk.style.transform = 'none'; }, 950);
-    }, 4000);
+    // move the track to picture p (0..N, N being the copy of the first, which then jumps home unseen)
+    var to = function (p) { tk._p = p; tk.classList.add('go'); tk.style.transform = 'translateX(-' + (p * 100 / T.length) + '%)'; go(p);
+      clearTimeout(self._jt); if (p === N) self._jt = setTimeout(function () { tk.classList.remove('go'); tk._p = 0; tk.style.transform = 'none'; }, 950); };
+    var next = function () { to((tk._p || 0) + 1); };
+    var prev = function () { var p = tk._p || 0; if (p === 0) { tk.classList.remove('go'); tk.style.transform = 'translateX(-' + (N * 100 / T.length) + '%)'; void tk.offsetWidth; p = N; } to(p - 1); };
+    var auto = function () { clearInterval(self._iv); self._iv = setInterval(function () { if (!self.isConnected) { clearInterval(self._iv); return; } next(); }, 4000); };
+    auto();
+    // (Oct 5, 03:34) a swipe left or right cycles the pictures (the card's tap still opens the summary; a swipe never does)
+    var card = r.querySelector('.card');
+    if (card && !card.__wfSw) { card.__wfSw = 1; var x0 = null, y0 = 0, sw = 0;
+      card.addEventListener('pointerdown', function (e) { x0 = e.clientX; y0 = e.clientY; }, { passive: true });
+      card.addEventListener('pointerup', function (e) { if (x0 == null) return; var dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) { sw = Date.now(); try { if (navigator.vibrate) navigator.vibrate(6); } catch (x) {} if (dx < 0) self._next(); else self._prev(); } }, { passive: true });
+      card.addEventListener('pointercancel', function () { x0 = null; }, { passive: true });
+      card.addEventListener('click', function (e) { if (Date.now() - sw < 400) { e.stopPropagation(); e.preventDefault(); } }, true); }
+    this._next = function () { next(); auto(); }; this._prev = function () { prev(); auto(); };
   };
   customElements.define('wf-trophy', Trophy);
 })();

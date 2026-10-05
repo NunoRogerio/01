@@ -20,9 +20,9 @@
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=70"></script>
-<script src="tour.js?v=95"></script>
+<script src="tour.js?v=97"></script>
 <script src="feedcam.js?v=20"></script>
-<script src="trophy.js?v=21"></script>
+<script src="trophy.js?v=24"></script>
 
 <title>Chats</title>
 <script src="./support.js"></script>
@@ -404,7 +404,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <!-- Home: back to the home screen, fixed at the foot (Oct 4) -->
     <div class="chview" style="flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; padding: 16px 16px 32px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08)">
-      <span style="font-size: 15px; line-height: 20px; color: #545458; text-wrap: balance">{{t.homeNote}}</span>
+      <span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center; text-wrap: balance">{{t.homeNote}}</span>
       <a href="Main.dc.html" class="btn primary" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; box-sizing: border-box; border-radius: 999px; font-size: 17px; font-weight: 600; text-decoration: none">{{t.home}}</a>
     </div>
     <!-- Cards picker for the key figures: back arrow, Reset, toggles (changes apply at once) -->
@@ -609,7 +609,7 @@ class Component extends DCLogic {
       reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
       proj: L('Spread projection', 'Projeção da propagação'), projSub: L('Where the fire can be in 1, 3 and 6 hours, on its map.', 'Onde o fogo pode estar dentro de 1, 3 e 6 horas, no mapa.'), openFire: L('View projection', 'Ver projeção'),
       forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
-      won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), home: L('Main screen', 'Ecrã principal'), homeNote: L('Do not rest on your laurels. There are more fires where you are needed.', 'Não fiques à sombra dos louros, há mais incêndios onde és preciso.'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), histDrill: L('Drill finished · your movements and decisions', 'Simulação terminada · os seus movimentos e decisões'), wonBy: L('The forces that won', 'Os meios que venceram'), owner: L('Fire owner', 'Responsável pelo incêndio'),
+      won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), home: L('Go to main screen', 'Ir para o ecrã principal'), homeNote: L('Do not rest on your laurels. There are more fires where you are needed.', 'Não fiques à sombra dos louros, há mais incêndios onde és preciso.'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), histDrill: L('Drill finished · your movements and decisions', 'Simulação terminada · os seus movimentos e decisões'), wonBy: L('The forces that won', 'Os meios que venceram'), owner: L('Fire owner', 'Responsável pelo incêndio'),
       ach: L('Achievements', 'Conquistas'), noAch: L('No resolved fires yet. Achievements appear here when a fire this person worked on is closed.', 'Ainda sem incêndios resolvidos. As conquistas aparecem aqui quando um incêndio em que esta pessoa trabalhou é encerrado.'),
       demo: L('Simulation: crew coordinators, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: os coordenadores de equipa, as respostas, os veículos e os tempos são encenados. Os quartéis e os incidentes são reais.'),
       simNote: L('Simulation: people, times, area and population figures come from the role-played scenario, not from live data.', 'Simulação: pessoas, tempos, área e população vêm do cenário encenado, não de dados em direto.') };

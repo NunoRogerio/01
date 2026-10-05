@@ -269,7 +269,11 @@ class Component extends DCLogic {
       check(); if (mode === 'magnet') rest();
     }, { passive: true });
   }
-  componentDidMount() { const eye = () => { try { window.__wfBlink(document.querySelector('[data-wf-eye]')); } catch (e) {} };   // the logo's eye blinks every 8 s
+  componentDidMount() { /* (Oct 5, 03:41) back from About (the browser's back, the page kept in memory): the login slides back in from the left,
+     over the About screen it uncovered, as the mirror of opening About */
+    try { window.addEventListener('pageshow', (ev) => { if (!this._abGo) return; if (!ev.persisted) { this._abGo = 0; return; }
+      this.wfSlide(false, () => { this._abGo = 0; document.querySelectorAll('[data-wf-lpeek]').forEach((n) => n.remove()); }); }); } catch (e) {}
+    const eye = () => { try { window.__wfBlink(document.querySelector('[data-wf-eye]')); } catch (e) {} };   // the logo's eye blinks every 8 s
     this._eyeT0 = setTimeout(() => { eye(); this._eyeT = setInterval(eye, 8000); }, 1500);
     this.snapList(); this.paintBg(); const PHS = window.__wfPhotos || []; if (PHS[1]) (new Image()).src = 'assets/splash/' + PHS[1].f; this._bgT = setInterval(() => { const n = Math.max(1, PHS.length), st = this.state || {}, c = st.bg === undefined ? (this._bg0 || 0) : st.bg; const k = (c + 1) % n; this.setState({ bg: k, bgPrev: c }); if (PHS[(k + 1) % n]) (new Image()).src = 'assets/splash/' + PHS[(k + 1) % n].f; }, 13000); }   // 8 s on its own + 5 s fade
   fieldClip() {
@@ -302,7 +306,7 @@ class Component extends DCLogic {
     try { e.preventDefault(); } catch (x) {} if (this._abGo) return; this._abGo = 1; const href = (e && e.currentTarget && e.currentTarget.getAttribute('href')) || 'About.dc.html';
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     const w = document.createElement('div'), f = document.createElement('iframe'); let gone = false;
-    w.setAttribute('aria-hidden', 'true'); w.setAttribute('data-wf-pushup', '1'); w.style.cssText = 'position:fixed;inset:0;z-index:0;background:#F2F2F7;pointer-events:none';
+    w.setAttribute('aria-hidden', 'true'); w.setAttribute('data-wf-lpeek', '1'); w.style.cssText = 'position:fixed;inset:0;z-index:0;background:#F2F2F7;pointer-events:none';
     f.setAttribute('tabindex', '-1'); f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent'; w.appendChild(f); document.body.insertBefore(w, document.body.firstChild);
     const go = () => { if (gone) return; gone = true; try { sessionStorage.setItem('wf-pu-arrive', String(Date.now())); } catch (x) {} window.location.href = href; };
     let slid = false; const slide = () => { if (slid) return; slid = true; this.wfSlide(true, go); };

@@ -152,7 +152,9 @@ class Component extends DCLogic {
       verTxt, steps, stages,
       backHref: role ? 'Main.dc.html' : 'Login.dc.html',
       // Opened from the user preferences: back finds them still open
-      back: () => { try { if (window.sessionStorage.getItem('wf-about-from') === 'prefs') window.sessionStorage.setItem('wf-prefs-open', '1'); window.sessionStorage.removeItem('wf-about-from'); } catch (e) {} },
+      back: (e) => { /* (Oct 5, 03:41) from the login: a real back, so the login (kept in memory) slides back in from the left over this screen */
+        try { const ref = document.referrer || ''; if (!role && /Login\.dc\.html/.test(ref) && window.history.length > 1) { if (e && e.preventDefault) e.preventDefault(); window.history.back(); return; } } catch (x) {}
+        try { if (window.sessionStorage.getItem('wf-about-from') === 'prefs') window.sessionStorage.setItem('wf-prefs-open', '1'); window.sessionStorage.removeItem('wf-about-from'); } catch (e) {} },
       tx: {
         back: L('Back', 'Voltar', '戻る'),
         title: L('About', 'Sobre', 'このアプリについて'),

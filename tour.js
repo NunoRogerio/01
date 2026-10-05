@@ -82,7 +82,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   // One auto-scroll speed for the whole tour (Oct 3, 20:57): 104 px/s (49% faster than the 70 px/s used before), with a
   // gentle start and finish; any touch, wheel or scroll by the person stops it
-  var TOUR_SPEED = 104;
+  var TOUR_SPEED = 146;   // (Oct 5, 03:37) 40% faster (was 104)
   function glide(n, axis, delta) { if (!n || !delta) return; var p0 = axis === 'x' ? n.scrollLeft : n.scrollTop, dur = Math.max(250, Math.abs(delta) / TOUR_SPEED * 1000), t0 = 0, stop = false;
     var halt = function () { stop = true; ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.removeEventListener(t, halt, true); }); };
     ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) { document.addEventListener(t, halt, { capture: true, passive: true }); });
@@ -244,7 +244,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       find: function () { return q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); },
       t: ['Use the AI suggestion', 'Use a sugestão da IA'],
       b: ['No crews are assigned yet. Tap AI suggested pack: the nearest stations and air support. You can also build the dispatch yourself with Add resources.', 'Ainda não há equipas atribuídas. Toque no pacote sugerido pela IA: os quartéis mais próximos e meios aéreos. Também pode montar o despacho com Adicionar meios.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () {
+    // (Oct 5, 03:39) moves on as soon as the orders start going out (the sending screen shows), however the tap reached the button
+    { page: 'Dispatch.dc.html', mode: 'until', interact: true, until: function () { var d = q('section[aria-labelledby="sendTitle"]'); return !!d && d.getAttribute('aria-hidden') === 'false'; }, find: function () {
         // Never a dead end: if the plan is still empty (Send order disabled), the tour fills it with the AI suggested pack itself
         // the Send order button that is on screen (the Crews foot sits inside its own sheet), never the sending dialog's
         var b = q('button.btn.primary', function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); }, true) || q('button.btn.primary', function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); });
