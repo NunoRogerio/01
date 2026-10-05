@@ -257,17 +257,18 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Back to the team chat', 'De volta à conversa da equipa'],
       b: ['Tap Return to chat. The leads are confirming their orders there. Move the fire forward while you talk with them.', 'Toque em Voltar à conversa. Os chefes estão a confirmar as ordens. Faça o incêndio avançar enquanto fala com eles.'] },
 
-    // (Oct 5, 02:01) the fire owner moves the fire on by hand, stage after stage, until it can be closed
-    { page: 'Chat.dc.html', mode: 'until', interact: true, noClose: true,
+    // (Oct 5, 03:21) the fire moves forward by itself, stage after stage (the cursor stays on its state), until it can be closed
+    { page: 'Chat.dc.html', mode: 'until', auto: true, stages: true, noClose: true,
       until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
-      find: function () { return chip(['Move to', 'Passar a']) || stMove() || q('header + button.chrow[aria-expanded]'); },   // the Move to suggestion chip above the message box
-      t: ['Move the fire forward', 'Faça o incêndio avançar'],
-      b: ['Tap the Move to suggestion. Jump the stages until the fire can be closed.', 'Toque na sugestão Passar a. Avance as fases até o incêndio poder ser encerrado.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Move to', 'Passar a', 'Close fire', 'Encerrar incêndio']) || stMove() || q('header + button.chrow[aria-expanded]'); },
+      find: function () { return q('header + button.chrow[aria-expanded]'); },
+      t: ['The fire moves forward', 'O incêndio avança'],
+      b: ['Watch it go from stage to stage as the crews work it. You will close it at the end.', 'Veja-o passar de fase em fase enquanto as equipas o combatem. No fim, é você que o encerra.'] },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || stMove() || q('header + button.chrow[aria-expanded]'); },
       t: ['Close the fire', 'Encerre o incêndio'],
-      b: ['The fire is held. Close it: Move to Closed.', 'O incêndio está dominado. Encerre-o: Passar a Encerrada.'] },
-    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true,
-      find: function () { return autoNext() || q('header + button.chrow[aria-expanded]'); },   // only what the tour is about to press
+      b: ['It is under surveillance and holding. Tap Close fire.', 'Está em vigilância e dominado. Toque em Encerrar incêndio.'] },
+    // the closing checks run by themselves: no cursor here (it comes back on the summary card)
+    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('wf-trophy'); }, auto: true, quiet: true,
+      find: function () { return null; },
       t: ['Closing the fire', 'A encerrar o incêndio'],
       b: ['The team confirms the closing checks.', 'A equipa confirma as verificações de encerramento.'] },
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('wf-trophy'); },
@@ -555,7 +556,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }
       if (st.show && armed === i) bub.querySelector('.tt').textContent = L(st.show.t);
       if (st.legend && armed === i) { bub.querySelector('.tt').textContent = pt ? 'Camada visível' : 'Layer shown'; }
-      bub.querySelector('.tx').textContent = late && !el ? (pt ? 'Este passo não está disponível agora. Toque em › para continuar.' : 'This step isn\'t available right now. Tap › to carry on.') : L(st.b);
+      bub.querySelector('.tx').textContent = late && !el && !st.quiet ? (pt ? 'Este passo não está disponível agora. Toque em › para continuar.' : 'This step isn\'t available right now. Tap › to carry on.') : L(st.b);
       if (st.show && armed === i) bub.querySelector('.tx').textContent = L(st.show.b);
       if (st.legend && armed === i) bub.querySelector('.tx').textContent = pt ? 'Agora voltamos a escondê-la e seguimos, só com as ignições no mapa.' : 'Now we hide it again and move on, with only ignitions on the map.';
       bub.querySelector('.tn').textContent = (i + 1) + (pt ? ' de ' : ' of ') + S.length;
@@ -759,7 +760,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var W = ['Declare fire', 'Declarar incêndio', 'Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(noClose ? [] : ['Close fire', 'Encerrar incêndio']);
     return q('button.chbtn', function (x) { if (!x.parentElement || x.parentElement.style.maxHeight !== '88px') return false; var t = txt(x); return W.some(function (w) { return t.indexOf(w) === 0; }); });
   }
-  function drive() { var b = autoNext(); if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } }
+  function drive() { var b = autoNext();
+    // (Oct 5, 03:21) moving the fire on by itself: when no suggestion moves it, the state card's own Move to button does (never to Closed)
+    if (!b) { var g = get(), st = g && S[g.i]; if (st && st.stages) { var m = stMove(); if (m && !/Closed|Encerrad/.test(m.textContent || '')) b = m; } }
+    if (b) { selfTap = true; try { b.click(); } catch (e) {} selfTap = false; } }
   // Tour mode is modal: only the bubble and the control it points at take touches (scrolling still works).
   var curEl = null;
   function allowed(e) {
