@@ -44,7 +44,7 @@
   var CSS = SLCSS +
     ':host{display:block}' +
     '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:4px;min-height:320px;touch-action:pan-y;padding:16px 16px 24px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
-    '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.40) 0%,rgba(0,0,0,.06) 28%,rgba(0,0,0,.30) 46%,rgba(0,0,0,.74) 66%,rgba(0,0,0,.88) 100%)}' +
+    '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.32) 0%,rgba(0,0,0,.05) 28%,rgba(0,0,0,.24) 46%,rgba(0,0,0,.59) 66%,rgba(0,0,0,.70) 100%)}' +
     /* (Oct 5, 03:34) the pagination as Apple draws it now: plain white shapes, no shadow; the pages not shown are 8px circles, the one
        shown a 20px line with fully rounded ends; it stretches and shrinks as the pictures change */
     '.bd{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin-bottom:auto}' +
@@ -56,7 +56,7 @@
     '.size{align-self:flex-start;padding:4px 16px;border-radius:999px;background:rgba(242,242,247,.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#1C1C1E;font-size:15px;line-height:20px;font-weight:600}' +
     '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:48px;margin-top:12px;border-radius:999px;background:var(--wf-y);color:#1C1C1E;font-size:17px;font-weight:600}' +
     '.credit{margin-top:4px;font-size:12px;line-height:14px;color:rgba(255,255,255,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
-    '.st{position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.9}' +
+    '.st{position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.6}' +
     '[hidden]{display:none!important}' +
     '@media (prefers-reduced-motion:reduce){.tk.go{transition:none}}';
 
