@@ -1173,3 +1173,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Close fire chip (Oct 5):** the last move-on chip is a •→ chip like the other stage moves, in the full lime (100% opaque, dark text): it is the end goal.
 
 - **Trophy and summary cards (Oct 5):** the hi-vis stripe at the foot is at 60% opacity (was 90%); the dark gradient over the photo is 20% lighter, so the card does not read so dark.
+
+- **Floating feeds and calls, shrinking (Oct 5):** the expand button stays visible while the card gets smaller, and hides only when it would come within 2px of the X or hang-up button above it (card height under 122px).
