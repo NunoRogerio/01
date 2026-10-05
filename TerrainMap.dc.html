@@ -223,8 +223,11 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     <!-- The pin's label is the map's title, above the legend, so nothing on the map sits under it (not on a small detail map) -->
     <!-- full screen: the place card at the top right (the area card's look, as on the main map), the legend free on the left -->
     <div style="position: absolute; z-index: 50; left: {{pinTtlLeft}}; right: {{pinTtlRight}}; top: {{ttlTop}}px; display: {{pinTtlD}}; flex-direction: column; gap: 4px; box-sizing: border-box; height: {{pinTtlH}}; max-width: {{pinTtlMax}}; padding: {{pinTtlPad}}; border-radius: 20px; background: {{pinTtlBg}}; box-shadow: {{pinTtlSh}}; -webkit-backdrop-filter: {{pinTtlBf}}; backdrop-filter: {{pinTtlBf}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
+      <!-- (Oct 5, 03:24) a station's card leads with its crest, 32px, on the left -->
+      <span style="display: flex; align-items: center; gap: 16px; min-width: 0"><img src="{{pinCrest}}" alt="" aria-hidden="true" style="display: {{pinCrestD}}; width: 32px; height: 32px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
       <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinLabel}}</span>
       <span style="font-size: 15px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinCoords}}</span>
+      </span></span>
     </div>
   </sc-if>
   <sc-if value="{{hasMapHdr}}" hint-placeholder-val="{{ false }}">
@@ -1426,7 +1429,7 @@ class Component extends DCLogic {
       ...(() => { const cand = Array.isArray(p.ignitions) && p.ignitions.some((q) => q.id === p.pinId);
         return cand ? { pinTriR: 8.6 } : { pinTriR: 11.2 }; })(),   /* ignitions are dark outline circles, no fill */
       pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g ? (window.__wfY || '#E5FF00') : '#E86A00'; })(),
-      pin: { x: PX, y: PY }, pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinTriD: p.mode === 'spread' ? 'none' : 'inline', pinCirD: p.mode === 'spread' && !(modelVals.hasModel && modelVals.mNow) ? 'inline' : 'none'   /* a drawn perimeter replaces the dot */, pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
+      pin: { x: PX, y: PY }, pinCrest: p.pinCrest || '', pinCrestD: p.pinCrest ? 'block' : 'none', pinLabel: p.pinLabel || 'Estimated ignition point', pinCoords: p.pinCoords || '', pinSt: p.pinKind === 'station', pinFire: p.pinKind !== 'station', pinTriD: p.mode === 'spread' ? 'none' : 'inline', pinCirD: p.mode === 'spread' && !(modelVals.hasModel && modelVals.mNow) ? 'inline' : 'none'   /* a drawn perimeter replaces the dot */, pinBd: p.pinKind === 'station' ? 'rgba(36,138,61,0.5)' : 'rgba(232,106,0,0.45)',
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w25: +(2.5 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w50: +(5 * k).toFixed(5), w70: +(7 * k).toFixed(5), o12: +(12 * k).toFixed(5) + ';0',
         d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
       routeLines: this.recMode() && !(p.fireOnly === true || p.fireOnly === 'true') && !(p.noRoutes === true || p.noRoutes === 'true') ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
@@ -1615,7 +1618,7 @@ class Component extends DCLogic {
       ...modelVals,
       ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow ? gFake : '' }, gNowD: LY.burn ? 'inline' : 'none', ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
-        const has = { burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || isPin) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
+        const has = { burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */
         let NC = isRisk ? (() => { const F = Array.isArray(p.fires) ? p.fires : [], nRes = F.filter((g) => g.info && g.info.resolved).length;
           const sk = (p.scopeSt || '') + '|' + (p.scopeCo || ''), SFc = this.stationFile(); let nSt = this._stCnt && this._stCnt.k === sk ? this._stCnt.n : null;
