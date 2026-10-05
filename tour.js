@@ -13,7 +13,7 @@ if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
     var pt = window.__wfLang === 'pt', w = document.createElement('div'); w.id = 'wf-toursoon'; w.setAttribute('role', 'dialog'); w.setAttribute('translate', 'no');
     var r = anchor ? anchor.getBoundingClientRect() : { top: innerHeight - 140, left: innerWidth - 80, width: 60 };
     w.style.cssText = 'position:fixed;left:16px;right:16px;bottom:' + Math.max(16, innerHeight - r.top + 12) + 'px;z-index:99995;display:flex;align-items:flex-start;gap:16px;padding:16px;border-radius:20px;background:rgba(28,28,30,0.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased;opacity:0;transform:translateY(8px);transition:opacity .28s ease,transform .28s cubic-bezier(.2,.8,.2,1)';
-    w.innerHTML = '<p style="flex:1 1 auto;margin:0;font-size:15px;line-height:20px;text-wrap:pretty">' + (pt ? 'A visita está em desenvolvimento. Volta quando tivermos a certeza de que o helicóptero o leva em segurança.' : 'Tour is under development. It will return once we\'re sure the chopper gets you by safely.') + '</p>' +
+    w.innerHTML = '<p style="flex:1 1 auto;margin:0;font-size:16px;line-height:20px;text-wrap:pretty">' + (pt ? 'A visita está em desenvolvimento. Volta quando tivermos a certeza de que o helicóptero o leva em segurança.' : 'Tour is under development. It will return once we\'re sure the chopper gets you by safely.') + '</p>' +
       '<button type="button" class="opt" data-a="x" aria-label="' + (pt ? 'Fechar' : 'Close') + '" style="flex:0 0 44px;width:44px;height:44px;margin:-10px -10px -10px 0;border:0;border-radius:50%;background:rgba(255,255,255,0.14);color:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="transition:transform .5s cubic-bezier(.3,.7,.3,1)"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
       '<span aria-hidden="true" style="position:absolute;bottom:-7px;right:' + Math.max(24, innerWidth - (r.left + r.width / 2) - 8) + 'px;width:14px;height:14px;background:rgba(28,28,30,0.94);transform:rotate(45deg);border-radius:0 0 3px 0"></span>';
     var close = function () { document.removeEventListener('pointerdown', off, true); var ic = w.querySelector('svg'); if (ic) ic.style.transform = 'rotate(90deg)'; w.style.opacity = '0'; w.style.transform = 'translateY(8px)'; setTimeout(function () { w.remove(); }, 300); };
@@ -158,7 +158,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function stMove() { return q('[data-wf-stmove]'); }
   // the control that moves the fire to its next stage (never the closing one) and the stage the open fire is at
   function moveOn() { var c = chip(['Move to', 'Passar a']); if (c && /Closed|Encerrad/.test(txt(c))) c = null; if (c) return c; var m = stMove(); return m && !/Closed|Encerrad/.test(m.textContent || '') ? m : null; }
-  function fireStage() { try { var C = window.__wfChat, L = C ? C.list().filter(function (c) { return c.kind !== 'dm' && !c.closed && !c.dismissed; }).sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); }) : []; return L[0] ? L[0].stage : -1; } catch (e) { return -1; } }
+  // the team's chatter is held up to and including the step that asks for the decision, and left out after it
+  function holdTo() { for (var k = 0; k < S.length; k++) if (S[k].t && S[k].t[0] === 'Declare the fire') return k; return 8; }
+  function fireStage() { try { var C = window.__wfChat, ok = ''; try { ok = sessionStorage.getItem('wf-chat-open') || ''; } catch (e) {} var L = C ? C.list().filter(function (c) { return c.kind !== 'dm' && !c.closed && !c.dismissed && (!ok || c.key === ok || !C.list().some(function (d) { return d.key === ok; })); }).sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); }) : []; return L[0] ? L[0].stage : -1; } catch (e) { return -1; } }
   // the Approve button of an open request to declare the fire (a coordinator's card in a candidate's chat)
   // raw: any in the chat, even scrolled out of view (to bring it in)
   function reqApproveRaw() { return [].slice.call(document.querySelectorAll('article.chmsg [data-fitrow] > button.chbtn')).filter(function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }).pop() || null; }
@@ -276,7 +278,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       b: ['Tap Send order: each station and the air team get their order.', 'Toque em Enviar ordem: cada quartel e os meios aéreos recebem a sua ordem.'] },
     { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
       ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Here are the orders going out.', 'Aqui estão as ordens a sair.'],
-      t: ['Back to the team chat', 'De volta à conversa da equipa'],
+      t: ['Back to the team chat', 'De volta ao chat da equipa'],
       b: ['Tap Team chat. The leads are confirming their orders there.', 'Toque em Chat da equipa. Os chefes estão a confirmar as ordens.'] },
 
     // (Oct 5, 03:21) the fire moves forward by itself, stage after stage (the cursor stays on its state), until it can be closed
@@ -327,18 +329,18 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       '#wf-tour .tb{position:absolute;box-sizing:border-box;padding:16px;border-radius:20px;background:rgba(28,28,30,0.72);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;pointer-events:auto;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}' +
       '#wf-tour .tb.on{opacity:1;transform:none}' +
       '#wf-tour .tb{touch-action:none;cursor:grab}#wf-tour .tb.drag{cursor:grabbing;transition:none!important}#wf-tour .tb::before{content:"";position:absolute;left:50%;top:6px;width:44px;height:3px;margin-left:-22px;border-radius:2px;background:rgba(255,255,255,0.3)}' +
-      '#wf-tour .ta{display:flex;align-items:center;gap:8px;width:100%;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:15px;font-weight:600;line-height:20px;position:relative;isolation:isolate;opacity:0}' +
+      '#wf-tour .ta{display:flex;align-items:center;gap:8px;width:100%;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:16px;font-weight:600;line-height:20px;position:relative;isolation:isolate;opacity:0}' +
       // the achievement shows last (Oct 3, 18:40): once the card has settled it pops in, its background swells 10% and back,
       // with the prlim sound and a haptic at that same moment
       '#wf-tour .ta.go{animation:wfach .3s cubic-bezier(.3,1.5,.5,1) both}#wf-tour .ta::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:inherit;pointer-events:none}#wf-tour .ta.go::before{animation:wfachBg .5s cubic-bezier(.3,0,.3,1) .05s both}@keyframes wfachBg{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}' +
       '#wf-tour .ta.still{opacity:1}' + '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
-      '#wf-tour .tth{margin:0 0 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86)}' +
+      '#wf-tour .tth{margin:0 0 16px;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86)}' +
       '#wf-tour .tt{margin:0;font-size:17px;font-weight:600;line-height:22px}' +
-      '#wf-tour .twip{margin:4px 0 0;font-size:15px;font-weight:600;line-height:20px;color:var(--wf-y,#E5FF00)}' +
-      '#wf-tour .tx{margin:4px 0 0;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty}' +
+      '#wf-tour .twip{margin:4px 0 0;font-size:16px;font-weight:600;line-height:20px;color:var(--wf-y,#E5FF00)}' +
+      '#wf-tour .tx{margin:4px 0 0;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty}' +
       '#wf-tour .tf{display:flex;align-items:center;gap:8px;margin-top:16px}' +
       '#wf-tour .tn{flex-grow:1;font-size:13px;line-height:18px;color:rgba(255,255,255,0.6);font-variant-numeric:tabular-nums}' +
-      '#wf-tour button{height:40px;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
+      '#wf-tour button{height:40px;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
       '#wf-tour .te{background:rgba(255,255,255,0.14);color:#FFFFFF}' +
       '#wf-tour .tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}' +
       '#wf-tour .tr{position:absolute;box-sizing:border-box;border:2px solid var(--wf-y,#E5FF00);box-shadow:0 0 0 2px rgba(28,28,30,0.55);pointer-events:none;animation:wftp 1.6s ease-in-out infinite}' +
@@ -528,9 +530,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var r = anchor ? anchor.getBoundingClientRect() : { top: innerHeight - 140, left: innerWidth - 80, width: 60 };
     w.style.cssText = 'position:fixed;left:16px;right:16px;bottom:' + Math.max(16, innerHeight - r.top + 12) + 'px;z-index:99995;padding:16px;border-radius:20px;background:rgba(28,28,30,0.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased';
     w.innerHTML = '<p style="margin:0;font-size:17px;font-weight:600;line-height:22px">⚠️ ' + (pt ? 'Visita em construção' : 'Tour under construction') + '</p>' +
-      '<p style="margin:4px 0 0;font-size:15px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty">' + (pt ? 'Estamos a trabalhar nela e ainda tem muitas falhas. Terminar visita está sempre à mão para sair.' : 'We\'re still working on it and it has lots of bugs. End tour is always there to get you out.') + '</p>' +
-      '<div style="display:flex;gap:8px;margin-top:16px"><button type="button" data-a="no" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:rgba(255,255,255,0.14);color:#FFFFFF;font:inherit;font-size:15px;font-weight:600;cursor:pointer">' + (pt ? 'Agora não' : 'Not now') + '</button>' +
-      '<button type="button" data-a="go" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:var(--wf-y,#E5FF00);color:#1C1C1E;font:inherit;font-size:15px;font-weight:600;cursor:pointer">' + (pt ? 'Começar visita' : 'Start tour') + '</button></div>' +
+      '<p style="margin:4px 0 0;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty">' + (pt ? 'Estamos a trabalhar nela e ainda tem muitas falhas. Terminar visita está sempre à mão para sair.' : 'We\'re still working on it and it has lots of bugs. End tour is always there to get you out.') + '</p>' +
+      '<div style="display:flex;gap:8px;margin-top:16px"><button type="button" data-a="no" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:rgba(255,255,255,0.14);color:#FFFFFF;font:inherit;font-size:16px;font-weight:600;cursor:pointer">' + (pt ? 'Agora não' : 'Not now') + '</button>' +
+      '<button type="button" data-a="go" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:var(--wf-y,#E5FF00);color:#1C1C1E;font:inherit;font-size:16px;font-weight:600;cursor:pointer">' + (pt ? 'Começar visita' : 'Start tour') + '</button></div>' +
       '<span aria-hidden="true" style="position:absolute;bottom:-7px;right:' + Math.max(24, innerWidth - (r.left + r.width / 2) - 8) + 'px;width:14px;height:14px;background:rgba(28,28,30,0.94);transform:rotate(45deg);border-radius:0 0 3px 0"></span>';
     w.querySelector('[data-a=no]').onclick = function () { w.remove(); };
     w.querySelector('[data-a=go]').onclick = function () { w.remove(); window.__wfTour.start(); };
@@ -539,7 +541,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
   /* (Oct 5, 10:50) the team's chatter in the chat during the tour: held while the evidence and the decision are pointed at, then left out (less talk; the cards and stages still come) */
-  window.__wfTour_mute = function () { var s = get(); if (s && PAGE === 'Chat.dc.html' && S[s.i] && S[s.i].holdAll) return 'holdall'; return s && PAGE === 'Chat.dc.html' ? (s.i <= 8 ? 'hold' : 'drop') : ''; };
+  window.__wfTour_mute = function () { var s = get(); if (s && PAGE === 'Chat.dc.html' && S[s.i] && S[s.i].holdAll) return 'holdall'; return s && PAGE === 'Chat.dc.html' ? (s.i <= holdTo() ? 'hold' : 'drop') : ''; };
   window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; tiltNG = null; tiltLock = -1; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); tourScope(true); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo

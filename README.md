@@ -8,7 +8,8 @@ Open the site on a phone and use **Add to Home Screen** for a full-screen app.
 
 - Sign in (`Login.dc.html`): pick a demo profile. Each role only sees its own area.
 - Coordinator flow: Incidents → Ignition candidate → Drone verification → Dispatch
-- Incident chats (`Chat.dc.html`, `chat.js`): one chat per candidate or fire with the coordinator and the nearest stations' team leads; a scripted demonstration follows the incident from ignition candidate to closed
+- Statistics (`stats.js`): a simulated dashboard of cards over the main map (region heat map, conversion, night and day, rankings), reorderable, with a 1 month, 6 months or 1 year period.
+- Assignments (`Chat.dc.html`, `chat.js`): one conversation per candidate or fire (a fire owner holds at most 3; the administrator sees all) with the coordinator and the nearest stations' team leads; a scripted demonstration follows the incident from ignition candidate to closed
 
 Prototype only: not for real emergency decisions.
 

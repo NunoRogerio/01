@@ -239,7 +239,7 @@ window.__wfBlink=function(path,dur){
     '#wf-load .name{font:600 20px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:.02em;'+
       'background:linear-gradient(90deg,#8E8E93 0%,#8E8E93 40%,#E8590C 50%,#8E8E93 60%,#8E8E93 100%);background-size:250% 100%;'+
       '-webkit-background-clip:text;background-clip:text;color:transparent;animation:wfsweep 1.8s linear infinite}'+
-    '#wf-load .sub{font:400 15px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#8E8E93}'+
+    '#wf-load .sub{font:400 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#8E8E93}'+
     /* cold start: an aerial forest behind the logo */
     '#wf-load .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1.06);transition:opacity .7s ease,transform 6s ease-out}'+
     '#wf-load .bg.on{opacity:1;transform:scale(1)}'+
@@ -422,44 +422,6 @@ window.__wfBlink=function(path,dur){
 })();
 
 // No snapping anywhere (Oct 2): every scrolling list coasts freely with the phone's own momentum and stays where it stops.
-// (The old settle-to-a-whole-item behaviour below is kept but switched off.)
-(function(){
-  return;
-  function stops(L){
-    var max=L.scrollHeight-L.clientHeight,out=[],k=L.children,off=L.hasAttribute('data-snap-off')?(parseFloat(L.getAttribute('data-snap-off'))||0):32;   // items come to rest 32px under the list's top, clear of the top fade
-    for(var i=0;i<k.length;i++){var c=k[i];if(!c.offsetHeight)continue;out.push(Math.max(0,Math.min(max,(c.offsetParent===L?c.offsetTop:c.offsetTop-L.offsetTop)-off)));}
-    out.push(max);return out;
-  }
-  function state(L){if(!L.__sn){L.__sn={raf:0,touch:false,quiet:0,own:false};if(getComputedStyle(L).position==='static')L.style.position='relative';}return L.__sn;}
-  function stop(S){if(S.raf)cancelAnimationFrame(S.raf);S.raf=0;S.own=false;}
-  function settle(L){
-    var S=state(L);if(S.raf||S.touch)return;
-    var y=L.scrollTop,T=stops(L);if(!T.length)return;
-    // 80% rule: if less than 80% of the top item has scrolled away, bring that item back fully;
-    // if more has gone (only its last 20% still shows), move on to the next item. The very end stays reachable.
-    T=T.slice().sort(function(a,b){return a-b;});
-    var i=0;while(i<T.length-1&&T[i+1]<=y+0.5)i++;
-    var a=T[i],b=i<T.length-1?T[i+1]:a,to=(b>a&&(y-a)/(b-a)>0.8)?b:a;
-    if(Math.abs(to-y)<1)return;
-    var from=y,d=to-from,dur=Math.max(200,Math.min(340,160+2*Math.abs(d))),t0=null;S.own=true;
-    function step(now){
-      if(S.touch){stop(S);return;}
-      if(t0===null)t0=now;var t=Math.min(1,(now-t0)/dur),e=t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;   // gentle ease in and out
-      L.scrollTop=from+d*e;
-      if(t<1){S.raf=requestAnimationFrame(step);return;}
-      L.scrollTop=to;S.raf=0;setTimeout(function(){S.own=false;},60);
-    }
-    S.raf=requestAnimationFrame(step);
-  }
-  function rest(L,ms){var S=state(L);clearTimeout(S.quiet);S.quiet=setTimeout(function(){settle(L);},ms);}
-  document.addEventListener('touchstart',function(e){var L=e.target&&e.target.closest&&e.target.closest('.wf-snap');if(!L)return;var S=state(L);stop(S);S.touch=true;clearTimeout(S.quiet);},{passive:true,capture:true});
-  document.addEventListener('touchend',function(e){var L=e.target&&e.target.closest&&e.target.closest('.wf-snap');if(!L)return;var S=state(L);S.touch=false;rest(L,160);},{passive:true,capture:true});
-  document.addEventListener('scroll',function(e){
-    var L=e.target;if(!L||!L.classList||!L.classList.contains('wf-snap'))return;var S=state(L);
-    if(S.own||S.touch)return;                                   // our own glide, or the finger is still down
-    rest(L,140);                                                // wait until the coasting has fully died out
-  },{passive:true,capture:true});
-})();
 // Touch feedback for everything tappable: a soft highlight grows from the finger across the control and fades,
 // plus a light tap on the phone (vibration where the browser allows it; on iPhone, the system haptic that
 // Safari gives a switch control, which is the only haptic web pages can reach).

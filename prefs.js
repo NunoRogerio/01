@@ -164,7 +164,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
   var BTN = '.sqrow::after{display:none!important}' +
     // The likelihood tag, one component (Oct 3, 20:26): the stage tags' pill; colours from live.js __wfConfTag. Incident list, candidate picker, map
-    '.wf-ctag{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 16px;box-sizing:border-box;border-radius:14px;font-size:15px;line-height:20px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}' +
+    '.wf-ctag{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 16px;box-sizing:border-box;border-radius:14px;font-size:16px;line-height:20px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}' +
     // Stage tags (Oct 3, 18:50; 21:09): the icon sits at the left, 8px in; the label is centred in the space between the icon and the tag's right edge
     '.wf-qual>svg:first-child{width:24px!important;height:24px!important}.wf-qual>svg:first-child path[stroke]{vector-effect:non-scaling-stroke;stroke-width:2px}html.wf-black,html.wf-black body{background:#000000!important}html.wf-black .wf-mb{opacity:0!important;pointer-events:none!important}.wf-dlg,section[role=dialog][data-swipe="down"],section[role=alertdialog][data-swipe="down"]{overflow:hidden}.wf-dlg::before,section[role=dialog][data-swipe="down"]::before,section[role=alertdialog][data-swipe="down"]::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;z-index:3;pointer-events:none;opacity:.4;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px)}.wf-dlg [data-grab-close],section[role=dialog][data-swipe="down"] [data-grab-close],section[role=alertdialog][data-swipe="down"] [data-grab-close]{padding-top:16px!important}.wf-bi path{transform-box:view-box;transform-origin:12px 12px;transition:transform .2s cubic-bezier(.3,0,.2,1),opacity .12s ease}.wf-bi .b1{transform:translateY(-5px)}.wf-bi .b3{transform:translateY(5px)}[data-wf-x] .wf-bi .b1{transform:rotate(45deg)}[data-wf-x] .wf-bi .b2{opacity:0}[data-wf-x] .wf-bi .b3{transform:rotate(-45deg)}.qtag.wf-stg,.wf-hst-fs .qtag.wf-stg,.wf-qual.hd .qtag.wf-stg,.wf-qual .qtag.wf-stg{padding-left:32px!important;padding-right:16px!important}.wf-stg{position:relative;justify-content:center!important;padding-left:32px!important;padding-right:16px!important}.wf-stg>svg{position:absolute;left:8px;top:50%;margin:0!important;transform:translateY(-50%)}' +   /* lists: no divider between items, only the line under the list's header */
     '.wf-note{font-size:13px!important;line-height:18px!important;font-weight:400!important;color:#6E6E73!important}' +   // estimate / simulation notes: 2px under the annotation
@@ -202,10 +202,10 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ':root .btn:not(.round):not(.wf-cmp),:root .wf-b{height:48px!important;min-height:48px;box-sizing:border-box;border-radius:999px!important;font-size:17px!important;font-weight:600!important;line-height:22px!important;padding-top:0!important;padding-bottom:0!important;text-decoration:none}' +
     // Tooltip panels: a text button next to the round chat button takes the chat button's height (44px)
     ':root .wf-b.wf-h44{height:44px!important;min-height:44px!important}' +
-    // Title XS (compact surfaces such as map tooltips): the condensed button's font, 15px semibold
-    '.wf-title-xs{font-size:15px!important;font-weight:600!important;line-height:20px!important;color:#000000}' +
-    // Condensed buttons (compact surfaces such as map tooltips): 32px tall, 15px semibold, same pill and roles
-    ':root .wf-b.wf-cond{height:32px!important;min-height:32px!important;font-size:15px!important;line-height:20px!important;padding:0 16px!important}' +
+    // Title XS (compact surfaces such as map tooltips): the condensed button's font, 16px semibold
+    '.wf-title-xs{font-size:16px!important;font-weight:600!important;line-height:20px!important;color:#000000}' +
+    // Condensed buttons (compact surfaces such as map tooltips): 32px tall, 16px semibold, same pill and roles
+    ':root .wf-b.wf-cond{height:32px!important;min-height:32px!important;font-size:16px!important;line-height:20px!important;padding:0 16px!important}' +
     ':root .wf-pri,:root .btn.primary{background:var(--wf-y)!important;color:#1C1C1E!important;-webkit-text-fill-color:#1C1C1E;border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
     ':root .wf-danger{background:rgba(255,59,48,0.09)!important;color:#B0001A!important;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
@@ -385,7 +385,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       ntAria: n ? 'Notifications, ' + n + ' unread' : 'Notifications', openNt: go('wf-nt-open'), openPf: go('wf-prefs-open'),
       // screens that are not an incident (a station, the drone): the chat opens the list of incident chats, as on the main screen
       ch: (function () { var C = window.__wfChat, u = 0; try { u = C && C.totalUnread ? C.totalUnread() : 0; } catch (e) {}
-        return { badgeD: u ? 'block' : 'none', n: C && C.badge ? C.badge(u) : String(u), aria: u ? 'Incident chats, ' + u + ' unread' : 'Incident chats', open: function (e) { if (e && e.preventDefault) e.preventDefault(); go('wf-ch-open')(); } }; })() };   /* the chats blade on the main screen, as the notifications and the profile */
+        return { badgeD: u ? 'block' : 'none', n: C && C.badge ? C.badge(u) : String(u), aria: u ? 'Assignments, ' + u + ' unread' : 'Assignments', open: function (e) { if (e && e.preventDefault) e.preventDefault(); go('wf-ch-open')(); } }; })() };   /* the chats blade on the main screen, as the notifications and the profile */
   };
   function segGrow(th) {
     var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 60 / SEG.total;

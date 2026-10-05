@@ -18,8 +18,8 @@
     '.wf-ms .ls{position:absolute;left:0;right:0;margin:0;padding:8px 0;list-style:none;border-radius:20px;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:0 0 16px rgba(0,0,0,.16);max-height:288px;overflow-y:auto;touch-action:pan-y;opacity:0;transform:translateY(-4px);transition:opacity .2s ease,transform .25s ' + EASE + ';pointer-events:none}' +
     '.wf-ms .ls.on{opacity:1;transform:none;pointer-events:auto}' +
     '.wf-ms .ls button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;padding:8px 16px;border:0;background:transparent;color:#FFFFFF;font:inherit;text-align:left;cursor:pointer}' +
-    '.wf-ms .ls b{font-size:17px;line-height:22px;font-weight:600}.wf-ms .ls span{font-size:15px;line-height:20px;color:rgba(255,255,255,.78)}' +
-    '.wf-ms .ls p{margin:0;padding:8px 16px;font-size:15px;line-height:20px;color:rgba(255,255,255,.78)}';
+    '.wf-ms .ls b{font-size:17px;line-height:22px;font-weight:600}.wf-ms .ls span{font-size:16px;line-height:20px;color:rgba(255,255,255,.78)}' +
+    '.wf-ms .ls p{margin:0;padding:8px 16px;font-size:16px;line-height:20px;color:rgba(255,255,255,.78)}';
   (document.head || document.documentElement).appendChild(css);
   var el = null, st = null;
   var MAG = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>';
