@@ -1167,3 +1167,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Aspect card (Oct 5):** the direction in initials ("NE facing", fewer letters) and the compass arrow points that way. The Team chat button on the candidate page spans the full width.
 
 - **Team chat on the candidate page (Oct 5):** the full-width subtle button has the chat icon left of its label. The chat's unread count stays on (header, lists, badges) until the decision is made, Declare fire or Dismiss; opening the chat does not clear it.
+
+- **Video calls (Oct 5):** every call card (group grid and single) sits in an 8px dark grey frame (#2C2C2E), so it stands out from the page.
