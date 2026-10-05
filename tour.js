@@ -221,15 +221,14 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Confirm the ignition in the team chat', 'Confirme a ignição na conversa da equipa'],
       b: ['Declaring a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Declarar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
 
-    // Oct 3: the state card is where the status changes: tap it, then its Move to <next stage> button
-    { page: 'Chat.dc.html', mode: 'until', until: function () { return !!q('header + button.chrow[aria-expanded="true"]'); }, find: function () { return q('header + button.chrow[aria-expanded]'); },
-      t: ["The incident's state", 'O estado do incidente'],
-      b: ['Always pinned at the top. Tap it to see the stage and move the incident on.', 'Sempre no topo. Toque nele para ver a fase e fazer o incidente avançar.'] },
-    { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
+    // (Oct 5, 03:15) one step: the state card opens by itself and the cursor goes straight to its Move to First alert button
+    { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, before: function () { var t = 0, f = function () { if (!q('header + button.chrow[aria-expanded="true"]')) stExpand(); if (++t < 6 && !stMove()) setTimeout(f, 300); }; setTimeout(f, 400); },
+      find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
       t: ['Declare the fire', 'Declare o incêndio'],
-      b: ['Tap Move to First alert to declare it. The Declare fire suggestion does the same.', 'Toque em Passar a Despacho de 1.º alerta para o declarar. A sugestão Declarar incêndio faz o mesmo.'] },
+      b: ['Tap Move to First alert to declare it.', 'Toque em Passar a Despacho de 1.º alerta para o declarar.'] },
     // (Oct 5, 02:28) crews are dispatched from the chat: the cursor on the Configure dispatch button of the Ignition confirmed card
-    { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('article.chmsg button.chbtn', function (b) { return /^(Configure dispatch|Configurar despacho)/.test(txt(b)) && !b.disabled; }) || chip(['Configure dispatch', 'Configurar despacho']); },
+    { page: 'Chat.dc.html', mode: 'tap', before: function () { var c = q('header + button.chrow[aria-expanded="true"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } },   /* the state card closes: straight to the chat with the card */
+      find: function () { return q('article.chmsg button.chbtn', function (b) { return /^(Configure dispatch|Configurar despacho)/.test(txt(b)) && !b.disabled; }) || chip(['Configure dispatch', 'Configurar despacho']); },
       ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now send crews to it.', 'Agora envie equipas.'],
       t: ['Configure the dispatch', 'Configure o despacho'],
       b: ['Tap Configure dispatch on the card to choose the crews.', 'Toque em Configurar despacho no cartão para escolher as equipas.'] },
@@ -363,6 +362,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   ['pointerdown', 'touchend'].forEach(function (ev) { window.addEventListener(ev, function () { actxGet(); }, { capture: true, passive: true }); });
   // (Oct 5, 02:03) the achievement sound: only the "poomm", a low, round note with a warm bass, a soft low-pass and a light echo
   function prlim() {
+    if (INFRAME) { try { if (window.parent && window.parent.__wfTourPrlim) { window.parent.__wfTourPrlim(); return; } } catch (e) {} }
     var c = actxGet(); if (!c) return;
     try { var t0 = c.currentTime + 0.01, out = c.createGain(), lp = c.createBiquadFilter(), dl = c.createDelay(), fb = c.createGain(), wet = c.createGain();
       out.gain.value = 0.32; lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = 0.3;
@@ -378,9 +378,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // moment iOS allows sound), and the screen change waits until it has finished, so it plays as the new screen rises
   document.addEventListener('click', function (e) { try { var a = e.target && e.target.closest && e.target.closest('a[data-wf-split]'); if (!a) return; var s0 = get(); if (!s0) return; var nx = S[s0.i + 1];
     if (!nx || !nx.ach) return;
-    // (Oct 5, 02:26) the sound plays as the achievement tag appears: it pops in on this card at the tap, and the new screen keeps it in place
-    if (bub && bub.isConnected && !bub.querySelector('.ta')) { var tg = document.createElement('div'); tg.className = 'ta'; tg.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span></span>'; tg.querySelector('span').textContent = PT() ? nx.ach[1] : nx.ach[0]; bub.insertBefore(tg, bub.firstChild); requestAnimationFrame(function () { tg.classList.add('go'); }); }
-    prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (x) {} try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (x) {} window.__wfNavHold = Date.now() + 1400; } catch (x) {} }, true);
+    // (Oct 5, 03:12) the achievement waits for the next screen: its tag animates on the rising panel with the sound; the screen
+    // change waits for it (the panel tells this screen when the tag has played; 2.6s at most)
+    window.__wfNavHold = Date.now() + 2600; } catch (x) {} }, true);
+  window.__wfTourPrlim = function () { prlim(); };   /* the rising panel's frame asks this screen (which had the tap) to play the sound */
   function dragOn(b) {
     var st = null, fling = 0;
     b.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fling); fling = 0; var s0 = get(); st = { x: e.clientX, y: e.clientY, dx: drag.i === (s0 && s0.i) ? drag.dx : 0, dy: drag.i === (s0 && s0.i) ? drag.dy : 0, i: s0 ? s0.i : -1, moved: false, trail: [] }; try { b.setPointerCapture(e.pointerId); } catch (x) {} });
@@ -544,8 +545,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
         var snd0 = 0; try { snd0 = +sessionStorage.getItem('wf-ach-snd') || 0; sessionStorage.removeItem('wf-ach-snd'); } catch (e) {}
         var taEl = bub.querySelector('.ta');
         // (Oct 5, 02:26) the sound plays the moment the tag appears; one that already appeared (and sounded) on the tap that brought this screen stays still
-        if (Date.now() - snd0 <= 8000) taEl.classList.add('still');
-        else setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {} }, ACH_LEAD + 520); }
+        if (!INFRAME && Date.now() - snd0 <= 8000) taEl.classList.add('still');
+        else setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {}
+          if (INFRAME) { try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (e) {} try { window.parent.__wfNavHold = Date.now() + 700; } catch (e) {} } }, ACH_LEAD + 520); }
       bub.querySelector('.tt').textContent = L(st.t);
       // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }
@@ -557,7 +559,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       bub.querySelector('.tn').textContent = (i + 1) + (pt ? ' de ' : ' of ') + S.length;
       var e = bub.querySelector('.te'); e.textContent = pt ? 'Terminar visita' : 'End tour'; e.onclick = function (ev) { ev.stopPropagation(); end(); };
       var g = bub.querySelector('.tg'); if (g) { if (nl) g.textContent = nl; else g.setAttribute('aria-label', pt ? 'Seguinte' : 'Next'); g.onclick = function (ev) { ev.stopPropagation(); var s0 = S[i], nxS = S[i + 1]; go(i + 1); if (s0.go && !(done0 && s0.mode !== 'next')) s0.go(); else if (nxS && nxS.page !== PAGE) { var at = location.href; try { history.forward(); } catch (x) {} setTimeout(function () { if (location.href === at) location.href = nxS.page; }, 500); } else tick(); }; }
-      var showB = function () { requestAnimationFrame(function () { if (bub) bub.classList.add('on'); }); }; if (AC) setTimeout(function () { if (lastKey === key) showB(); }, ACH_LEAD); else showB();
+      var showB = function () { requestAnimationFrame(function () { if (bub) bub.classList.add('on'); }); };
+      var arrived = AC && !INFRAME && bub.querySelector('.ta.still');   /* (Oct 5) arrived with the card already shown on the rising panel: it is simply there, no second entrance */
+      if (arrived) { bub.style.transition = 'none'; bub.classList.add('on'); requestAnimationFrame(function () { requestAnimationFrame(function () { if (bub) bub.style.transition = ''; }); }); } else if (AC) setTimeout(function () { if (lastKey === key) showB(); }, ACH_LEAD); else showB();
       svg.innerHTML = '';
       svg.__k = '';
     }
@@ -681,7 +685,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   // ---- the loop ---------------------------------------------------------------------------------------------
   function tick() {
-    if (INFRAME) return;
+    // (Oct 5, 03:12) on the rising panel (the next screen preloaded in a frame) only an achievement card is drawn, so its tag
+    // animates there with the sound (played by the screen underneath, the one that had the tap); nothing else runs in the frame
+    if (INFRAME) { var s9 = get(), st9 = s9 && S[s9.i]; if (!st9 || !st9.ach || st9.page !== PAGE) return; }
     var s = get(); if (!s) { if (root) end(); return; }
     var i = s.i, st = S[i]; if (!st) { end(); return; }
     if (st.page !== PAGE) {
@@ -691,10 +697,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       if (root) { root.remove(); root = null; lastKey = ''; } return;
     }
     jumped = true;
-    if (i !== cur && S[i]) runDemo(i, S[i]);
+    if (i !== cur && S[i] && !INFRAME) runDemo(i, S[i]);
     if (i !== cur) { holdI = -1; tiltN = null; tiltNG = null; tiltV = 0; tiltVX = 0; cur = i; seen = Date.now(); scrolled = false; ran = false; lastKey = ''; }
     unshift();
-    if (!ran && st.before) { ran = true; try { st.before(); } catch (e) {} }
+    if (!ran && st.before && !INFRAME) { ran = true; try { st.before(); } catch (e) {} }
     // the area picker belongs to the region step only: anywhere else it is closed, so the step's control is in view
     if (PAGE === 'Main.dc.html' && !st.area && areaOpen()) { areaClose(); return; }
     if (st.skip && st.skip()) { go(i + 1); return; }
