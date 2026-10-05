@@ -18,7 +18,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=158"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=193"></script>
+<script src="prefs.js?v=194"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=70"></script>
@@ -1208,14 +1208,14 @@ class Component extends DCLogic {
       // Tour entry: a warning tooltip first (tour.js, built on top of everything); the tour starts from its Start tour button
       tourGo: (e) => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (window.__wfTour) window.__wfTour.warn(e && e.currentTarget ? e.currentTarget : document.querySelector('[data-wf-tourbtn]')); },
       abt: { go: () => { try { window.sessionStorage.setItem('wf-about-from', 'prefs'); } catch (e) {} } },
-      shr: (() => { const pt = lang === 'pt', oldD = this.wfRole() === 'admin' ? 'none' : 'flex', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), link = new URL('./', location.href).href + '#install';
+      shr: (() => { const pt = lang === 'pt', oldD = this.wfRole() === 'admin' ? 'none' : 'flex', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), link = new URL('./', location.href).href + '#install' + (window.__wfTiles && window.__wfTiles.share ? '&' + window.__wfTiles.share() : '');
         // the link itself shows too (Oct 3, 19:04): the grey box copies it, as the invite link
         const copyL = () => { const done = () => { this.setState({ shrLCopied: true }); clearTimeout(this._shrLT); this._shrLT = setTimeout(() => this.setState({ shrLCopied: false }), 1800); };
           const old = () => { try { const t = document.createElement('textarea'); t.value = link; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0;left:0;top:0'; document.body.appendChild(t); t.select(); const ok = document.execCommand('copy'); t.remove(); if (ok) done(); } catch (e) {} };
           try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} try { navigator.clipboard.writeText(link).then(done, old); } catch (e) { old(); } };
         return { oldD, link, copy: copyL, copyAria: T('Copy link', 'Copiar ligação'), tipTxt: T('Copied to clipboard', 'Copiado para a área de transferência'), tipOp: s.shrLCopied ? 1 : 0, tipY: s.shrLCopied ? '0px' : '4px', copyIc: s.shrLCopied ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v11H9Z M5 15V4h10', title: s.shrCopied ? T('Link copied', 'Ligação copiada') : T('Share with other people', 'Partilhar com outras pessoas'),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-            const url = new URL('./', location.href).href + '#install', copy = () => { try { navigator.clipboard.writeText(url); } catch (e) {} this.setState({ shrCopied: true }); clearTimeout(this._shrT); this._shrT = setTimeout(() => this.setState({ shrCopied: false }), 1800); };
+            const url = new URL('./', location.href).href + '#install' + (window.__wfTiles && window.__wfTiles.share ? '&' + window.__wfTiles.share() : ''), copy = () => { try { navigator.clipboard.writeText(url); } catch (e) {} this.setState({ shrCopied: true }); clearTimeout(this._shrT); this._shrT = setTimeout(() => this.setState({ shrCopied: false }), 1800); };
             try { if (navigator.share) { navigator.share({ title: 'Forest Fire Watch', text: T('Forest Fire Watch: wildfire ignition detection.', 'Forest Fire Watch: deteção de ignições de incêndios florestais.'), url }).catch(() => {}); return; } } catch (e) {}
             copy(); } }; })(),
       // The data sources the app reads, with when this phone last loaded each (from the live-data cache)
@@ -1365,7 +1365,7 @@ class Component extends DCLogic {
       inv: (() => { const A = window.__wfChat && window.__wfChat.ai, key = A ? A.key() : '', pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en)), admin = this.wfRole() === 'admin';
         if (!admin) return { d: 'none', hasLink: false };
         const mk = () => { const payload = btoa(unescape(encodeURIComponent(JSON.stringify({ k: key, by: me.name, t: Date.now() })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-          return new URL('./', location.href).href + '#invite=' + payload; };
+          return new URL('./', location.href).href + '#invite=' + payload + (window.__wfTiles && window.__wfTiles.share ? '&' + window.__wfTiles.share() : ''); };
         const link = s.invLink || '';
         const copy = () => { const done = () => { this.setState({ invCopied: true }); setTimeout(() => this.setState({ invCopied: false }), 1800); };
           const old = () => { try { const t = document.createElement('textarea'); t.value = link; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0;left:0;top:0'; document.body.appendChild(t); t.select(); const ok = document.execCommand('copy'); t.remove(); if (ok) done(); } catch (e) {} };   /* older phones: the classic copy */
