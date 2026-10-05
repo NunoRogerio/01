@@ -1067,4 +1067,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Maps settings (Oct 5):** a full-width line separates the map engines (MapTiler, OpenStreetMap), 32px above and below it.
 - **About sections (Oct 5):** a full-width line separates Goal, Where we are and the thanks, 32px above and below each line (both About screens).
 - **Data sources (Oct 5):** a full-width line between the sources, 32px above and below it.
-- **Separators 40% stronger (Oct 5):** every horizontal separator line is 40% more opaque: section and card lines rgba(60,60,67,0.17) (was 0.12), list row dividers rgba(60,60,67,0.20) (was 0.14).
+- **Separators 40% stronger (Oct 5):** every horizontal separator line is 40% more opaque: section and card lines rgba(60,60,67,0.22) (was 0.12, then 0.17), list row dividers rgba(60,60,67,0.26) (was 0.14, then 0.20); Oct 5, 01:34: a further 30%.

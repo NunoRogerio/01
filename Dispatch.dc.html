@@ -166,9 +166,9 @@ a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:r
 nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 0 30px rgba(0,0,0,.10)!important}
 .fsin{color:#FFFFFF}
 /* consistency pass: tokens from Main.dc.html */
-.sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.2);pointer-events:none}.sqrow.nosep::after{display:none}.sqrow.sqcard{border-radius:16px!important;background-color:#FFFFFF!important}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(255,255,255,.7)!important}}
+.sqrow{position:relative;border-radius:0!important;transition:background-color .15s ease}.sqrow::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1px;background:rgba(60,60,67,0.26);pointer-events:none}.sqrow.nosep::after{display:none}.sqrow.sqcard{border-radius:16px!important;background-color:#FFFFFF!important}@media (hover:hover){.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(255,255,255,.7)!important}}
 .sqrow:not([disabled]):not(div):not(li):active{opacity:.68}.sqback{border-radius:50%!important;transition:background-color .15s ease}@media (hover:hover){.sqback:hover{background-color:rgba(120,120,128,0.16)!important}}.sqrow[disabled]{cursor:default}
-.sqtop::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:rgba(60,60,67,0.2);pointer-events:none}
+.sqtop::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:rgba(60,60,67,0.26);pointer-events:none}
 @media (hover:hover){.sqrow.sqrow[aria-disabled=true][data-sel]:hover{background-color:transparent!important}}
 .sqrow[aria-disabled=true]:active{opacity:1}
 .stepb{display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;flex-shrink:0;border:0;border-radius:50%;background:rgba(120,120,128,0.12);color:#000000;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,opacity .15s ease}
@@ -388,7 +388,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           </span>
           </div>
           <!-- Separator between the header and what the station sends, card edge to card edge -->
-          <div aria-hidden="true" style="height: 1px; flex-shrink: 0; background: rgba(60,60,67,0.2)"></div>
+          <div aria-hidden="true" style="height: 1px; flex-shrink: 0; background: rgba(60,60,67,0.26)"></div>
           <!-- What this station sends: each unit icon fills the crest's 40px column -->
           <ul style="display: flex; flex-direction: column; margin: 0; padding: 8px 0; list-style: none">
             <sc-for list="{{o.units}}" as="u" hint-placeholder-count="2">
@@ -599,7 +599,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{gp.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
               </button></li>
-              <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.17)">   <!-- a full-width line between the station and its units (Oct 5, same team card as the resolution summary) -->
+              <li style="display: grid; grid-template-rows: {{gp.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.22)">   <!-- a full-width line between the station and its units (Oct 5, same team card as the resolution summary) -->
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">
               <!-- Unit row: the icon in the crest's column; the name on the first row with the status tag (one width for all) anchored at the row's right; the description under them -->
               <li class="wf-unit" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; padding: 16px 16px">
