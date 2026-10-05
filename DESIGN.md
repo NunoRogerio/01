@@ -1191,3 +1191,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Statistics, reordering in the Charts blade (Oct 5):** each row has a six-dot handle on the left; drag it straight away (no hold) to move the chart, the others make room, and the cards on the page follow that order. The text says "Drag to reorder."; holding a card on the page still works too.
 - **Statistics donut (Oct 5):** the ring is twice as wide (32 instead of 16 units), same outer size.
 - **Statistics, period switch (Oct 5):** choosing another period keeps the scroll position (the cards below redraw in place); the panel still opens at the top.
+- **View closes the tooltip (Oct 5):** tapping View on a map card closes it first (about 0.14 s), then opens the next page, so coming back never shows the card open.

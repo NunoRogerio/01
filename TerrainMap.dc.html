@@ -1763,7 +1763,7 @@ class Component extends DCLogic {
       freshC, freshTxt: upd ? 'Updated ' + clockT(upd) + '. ' + agoTxt + '.' : 'Checked ' + clockT(window.__wfLiveAt || now) + '. No update time given.',
       goLabel: 'View',
       w: Math.min(216, this.W() - 32), left: Math.round((this.W() - Math.min(216, this.W() - 32)) / 2), top: Math.round((top0 + bot0) / 2), maxH: Math.round(bot0 - top0),
-      go: (e) => { if (m.pick) m.pick(e); this.setState({ pop: null }); }
+      go: (e) => { if (m.pick) m.pick(e); const a = e && e.currentTarget, h = a && a.getAttribute && a.getAttribute('href'); this.setState({ pop: null, popSpin: false }); if (h && e.preventDefault && !e.metaKey && !e.ctrlKey) { e.preventDefault(); setTimeout(() => { window.location.href = h; }, 140); } }   /* (Oct 5) the card does its job and closes before the next page loads, so coming back never shows it open */
     };
   }
   // Tap a marker to open its card; the card's View button opens the fire or candidate screen.
