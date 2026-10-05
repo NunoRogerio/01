@@ -60,8 +60,10 @@
     '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:48px;margin-top:12px;border-radius:999px;background:var(--wf-y);color:#1C1C1E;font-size:17px;font-weight:600}' +
     '.credit{margin-top:4px;font-size:12px;line-height:14px;color:rgba(255,255,255,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
     '.st{position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.6}' +
+    /* (Oct 5, 16:58, Susana's idea) the crest of the station whose photo comes in swells once and settles, so each photo names its station */
+    '.bd img.pop{animation:pop .7s cubic-bezier(.3,0,.3,1)}@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}' +
     '[hidden]{display:none!important}' +
-    '@media (prefers-reduced-motion:reduce){.tk.go{transition:none}}';
+    '@media (prefers-reduced-motion:reduce){.tk.go{transition:none}.bd img.pop{animation:none}}';
 
   function Trophy() { return Reflect.construct(HTMLElement, [], Trophy); }
   Trophy.prototype = Object.create(HTMLElement.prototype);
@@ -91,7 +93,9 @@
     for (var i = 0; i < ns; i++) S.push(pool[(seed + i) % pool.length]);
     if (air) S.push(AIRPEOPLE[(seed >>> 3) % AIRPEOPLE.length]);   /* the air team: its people by their aircraft */
     var sk = S.map(function (x) { return x[0]; }).join('|');
-    if (sk !== this._sk) { this._sk = sk; this.slides(S); }
+    // photo i belongs to crest i (one photo per station); the air team's photo to the air badge (last); extra photos to none
+    this._map = S.map(function (x, i) { return air && i === S.length - 1 ? C.length : i < C.length ? i : -1; });
+    var fresh = false; if (sk !== this._sk) { this._sk = sk; this.slides(S); fresh = true; }
     var cr = r.querySelector('.credit'); cr.hidden = self.getAttribute('credit') !== '1'; this._cr = S.map(function (x) { return x[1]; }); cr.textContent = this._cr[this._i || 0] || '';
     // the crests of every station, then the air team's badge (original, from the fire's name), all shown
     var A = C.slice(); if (air) A.push({ n: 'Air support', air: 1, u: window.__wfAirBadge ? window.__wfAirBadge() : BADGES[seed % BADGES.length] });   /* (Oct 5) the same air badge as the crews and dispatch screens */
@@ -99,7 +103,10 @@
       bd.style.setProperty('--pr', A.length <= 2 ? Math.max(1, A.length) : A.length <= 6 ? 3 : 4);
       bd.innerHTML = A.map(function (c) { return '<img src="' + esc(c.u) + '" alt="' + esc(c.n) + '" title="' + esc(c.n) + '">'; }).join(''); }
     bd.hidden = !bd.innerHTML;
+    if (fresh) this._pop(this._i || 0);
   };
+  Trophy.prototype._pop = function (i) { var q = (this._map || [])[i], all = this._root.querySelectorAll('.bd img'), im = q >= 0 ? all[q] : null;
+    Array.prototype.forEach.call(all, function (x) { x.classList.remove('pop'); }); if (!im) return; void im.offsetWidth; im.classList.add('pop'); };
   // the photos slide to the left on their own, 4 s each, in a loop (the first is repeated after the last, then the track jumps back unseen)
   // the carousel's behaviour, one definition for every carousel: self keeps its state, r is its shadow root, sw the element swiped
   function slideshow(self, r, S, sw) {
@@ -110,7 +117,7 @@
     dots.innerHTML = N > 1 ? S.map(function (x, i) { return '<i' + (i ? '' : ' class="on"') + '></i>'; }).join('') : ''; dots.hidden = N < 2;
     if (N < 2) return;
     var go = function (i) { self._i = ((i % N) + N) % N; var cr = r.querySelector('.credit'); if (cr) cr.textContent = (self._cr || [])[self._i] || '';
-      Array.prototype.forEach.call(dots.children, function (d, q) { d.classList.toggle('on', q === self._i); }); };
+      Array.prototype.forEach.call(dots.children, function (d, q) { d.classList.toggle('on', q === self._i); }); if (self._pop) self._pop(self._i); };
     // move the track to picture p (0..N, N being the copy of the first, which then jumps home unseen)
     // (Oct 5) never past the end: a step that lands while the copy of the first is still waiting to jump home (a swipe, or timers
     // catching up after the phone wakes) first jumps home unseen, then moves on; before, the track slid into empty space for good
