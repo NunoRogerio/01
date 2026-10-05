@@ -67,7 +67,7 @@
   }
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = lx(i, vals.length), y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
-  var LW = 4;   // line charts' stroke (Oct 5, 19:51: 4px; 8px was tried; first 2px, vehicles 3px)
+  var LW = 3;   // line charts' stroke (Oct 5, 19:54: 3px; 4px and 8px were tried; first 2px, vehicles 3px)
   var AG = 0;   // line charts: no fill under the line; each line casts a soft shadow in its own colour (the single line: the primary), centred on it (0 offset), 9px blur
   function lineShadow(p, h, id, col, blur) {   // only under its line (clipped to the area below it), at most 80% strong, 7.2px blur (20% less, 5.76px, when a chart has several lines)
     var bot = h - 20;
@@ -209,7 +209,7 @@
   function build() {
     var H = host(); if (!H) return false;
     if (S.el && S.el.isConnected) return true;
-    var el = document.createElement('section'); el.className = 'wfs'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Statistics'); el.setAttribute('data-wf-keepsp', '1');
+    var el = document.createElement('section'); el.className = 'wfs'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Metrics'); el.setAttribute('data-wf-keepsp', '1');
     H.par.appendChild(el); S.el = el; place();
     if (window.ResizeObserver) { try { new ResizeObserver(place).observe(H.tb); } catch (e) {} }
     window.addEventListener('resize', place);
@@ -267,7 +267,7 @@
     var prev = S.el.querySelector('.sc'), st = prev && keepScroll ? prev.scrollTop : 0;
     S.el.innerHTML =
       '<div style="flex-shrink:0;padding:44px 16px 16px;display:flex;flex-direction:column;gap:16px">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:17px;font-weight:700;line-height:22px;color:#000">Statistics</h2><span data-sub="1" style="font-size:17px;line-height:22px;color:#000">' + esc(S.region) + '. ' + esc(rg.word) + '.</span></div>' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:17px;font-weight:700;line-height:22px;color:#000">Metrics</h2><span data-sub="1" style="font-size:17px;line-height:22px;color:#000">Drag to reorder. + to add or remove charts.</span></div>' +
         '<button type="button" class="xb" data-act="close" aria-label="Close">' + chev() + '</button></div>' +
         '<div class="wf-seg" role="tablist" aria-label="Period"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 3);transform:translateX(' + (ri * 100) + '%)"><span class="segblob"></span></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" class="segopt" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '" style="font-size:17px"><span style="display:inline-grid"><span style="grid-area:1/1">' + r.label + '</span><span aria-hidden="true" style="grid-area:1/1;visibility:hidden;font-weight:600">' + r.label + '</span></span></button>'; }).join('') + '</div>' +
       '</div>' +
@@ -337,7 +337,6 @@
     var rg = RANGES.filter(function (r) { return r.id === S.range; })[0] || RANGES[0], ri = RANGES.indexOf(rg), X = ctxX(rg);
     var th = S.el.querySelector('.wf-seg .segthumb'); if (th) th.style.transform = 'translateX(' + (ri * 100) + '%)';
     Array.prototype.forEach.call(S.el.querySelectorAll('[data-r]'), function (x) { x.setAttribute('aria-selected', String(x.getAttribute('data-r') === S.range)); });
-    var sub = S.el.querySelector('[data-sub]'); if (sub) sub.textContent = S.region + '. ' + rg.word + '.';
     var old = S.el.querySelector('[data-list]'), hid = hidden(), keys = order().filter(function (k) { return hid.indexOf(k) < 0; }), nw = document.createElement('div');
     nw.setAttribute('data-list', '1'); nw.innerHTML = keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join(''); old.parentNode.replaceChild(nw, old);
     cardsWire();
