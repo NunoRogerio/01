@@ -206,10 +206,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       demo: Object.assign(demoOf('a[href="Chat.dc.html"].opt', 'section[data-swipe-key="cb"] button[data-swipe-go]'), { tapClose: true }),   // (Oct 3, 20:01) the circle taps the X
       t: ['Your chats', 'As suas conversas'],
       b: ['Every incident has its team chat. They are all here, any time.', 'Cada incidente tem a conversa da sua equipa. Estão todas aqui, a qualquer momento.'] },
-    { page: 'Main.dc.html', mode: 'next', point: true, find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Notifications"]') || q('button[aria-haspopup="dialog"][aria-label^="Notificações"]'); },
-      demo: Object.assign(demoOf('button[aria-haspopup="dialog"][aria-label^="Notifications"], button[aria-haspopup="dialog"][aria-label^="Notificações"]', 'section[data-swipe-key="nt"] button[data-swipe-go]'), { tapClose: true }),   // (Oct 3, 20:01) the circle taps the X
-      t: ['Notifications', 'Notificações'],
-      b: ['New ignitions and changes to your incidents.', 'Novas ignições e mudanças nos seus incidentes.'] },
+    // (Oct 5) the notifications step (it opened the notifications panel) was removed
     // (Oct 5) the preferences step (it opened the settings menu) was removed
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!q('[data-wf-pop] a[href="Alert.dc.html"]'); }, find: topMarker,
       t: ['Let’s start by selecting a candidate on the map', 'Comecemos por selecionar um candidato no mapa'],
