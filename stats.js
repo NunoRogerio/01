@@ -108,7 +108,7 @@
   var css = document.createElement('style');
   css.textContent = 'html.wf-stats div:has(> section[data-swipe-key="li"]){visibility:hidden!important;pointer-events:none!important}' +
     '.wfs{position:absolute;z-index:1;display:flex;flex-direction:column;box-sizing:border-box;background:#F2F2F7;transform:translateY(105%);transition:transform .5s ' + EASE + ';visibility:hidden;touch-action:pan-y}' +
-    '.wfs.on{transform:none;visibility:visible}.wfs.hide{visibility:hidden}' +
+    '.wfs.on{transform:none;visibility:visible}.wfs.out{visibility:visible}.wfs.hide{visibility:hidden}' +
     '.wfs .sc{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;padding:8px 16px 0;-webkit-overflow-scrolling:touch}.wfs .sc::-webkit-scrollbar{display:none}' +
     '.wfs .cd{position:relative;background:#FFFFFF;border-radius:16px;box-shadow:0 0 10px rgba(0,0,0,.08);padding:16px 16px 24px;margin-bottom:16px;transition:transform .25s ' + EASE + ',box-shadow .2s ease;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
     '.wfs .cd.lift{z-index:3;box-shadow:0 0 24px rgba(0,0,0,.16);transition:box-shadow .2s ease}' +
@@ -234,12 +234,12 @@
   function open() {
     if (!build()) return; place(); S.open = true; S.region = ''; render(false);
     document.documentElement.classList.add('wf-stats');
-    var el = S.el; el.classList.remove('hide'); void el.offsetWidth; el.classList.add('on');
+    var el = S.el; el.classList.remove('hide'); el.classList.remove('out'); void el.offsetWidth; el.classList.add('on');
   }
   function close() {
     if (!S.el) return; S.open = false; var x = S.el.querySelector('[data-act=close]'); if (x) x.classList.add('rot'); buzz(8);
-    S.el.classList.remove('on'); var el = S.el;
-    setTimeout(function () { if (!S.open) { document.documentElement.classList.remove('wf-stats'); el.classList.add('hide'); } }, 520);
+    S.el.classList.add('out'); S.el.classList.remove('on'); var el = S.el;
+    setTimeout(function () { if (!S.open) { document.documentElement.classList.remove('wf-stats'); el.classList.remove('out'); el.classList.add('hide'); } }, 520);
   }
   window.__wfStats = { open: open, close: close, active: function () { return S.open; } };
 })();

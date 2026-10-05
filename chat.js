@@ -1169,14 +1169,17 @@
      (the chat you open or act on joins them, the longest idle one leaves); a closed one is replaced by the next most active. */
   var MAXOWN = 3, AKEY = 'wf-assigned-' + (role || 'anon');
   function mineKeys() { try { return (JSON.parse(localStorage.getItem(AKEY) || '[]') || []).slice(0, MAXOWN); } catch (e) { return []; } }
-  function mine(open) {   /* open: the open chats of the area, most active first; returns up to three, the assigned ones first */
+  function mine(open) {   /* the administrator sees every incident, with no limit */
+    if (role === 'admin') return open;
+    return mine3(open); }
+  function mine3(open) {   /* open: the open chats of the area, most active first; returns up to three, the assigned ones first */
     var A = mineKeys(), by = {}; open.forEach(function (c) { by[c.key] = c; });
     A = A.filter(function (k) { return by[k]; });
     open.forEach(function (c) { if (A.length < MAXOWN && A.indexOf(c.key) < 0) A.push(c.key); });
     try { localStorage.setItem(AKEY, JSON.stringify(A)); } catch (e) {}
     return A.map(function (k) { return by[k]; });
   }
-  function assign(k) { var A = mineKeys().filter(function (x) { return x !== k; }); A.unshift(k); try { localStorage.setItem(AKEY, JSON.stringify(A.slice(0, MAXOWN))); } catch (e) {} }
+  function assign(k) { if (role === 'admin') return; var A = mineKeys().filter(function (x) { return x !== k; }); A.unshift(k); try { localStorage.setItem(AKEY, JSON.stringify(A.slice(0, MAXOWN))); } catch (e) {} }
   function fresh(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }   /* newer than the last look (the badge itself stays on while a candidate is undecided) */
   function unread(c) { var open0 = c.stage === 0 && !c.dismissed && !c.closed;   /* (Oct 5) an undecided candidate keeps its count however often the chat is opened: only declaring or dismissing clears it */
     return c.msgs.filter(function (m) { return m.t > (open0 ? 0 : (c.seenAt || 0)) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
@@ -1298,6 +1301,13 @@
     badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
     // The chat badge counts what the chats list shows: open chats in the selected area (and direct messages), never chats
     // from another area the list cannot reach
+    /* (Oct 5) after a fire is finished and the person is back home: the incident newly assigned to them, if any */
+    newAssignedPeek: function (snap) { if (snap === null || role === 'admin') return null; snap = JSON.parse(snap || '[]');
+      var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role || ''] || null;
+      if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };
+      var op = Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return !c.closed && inScope(c, SC); }).sort(function (a, b) { return (unread(b) ? 1 : 0) - (unread(a) ? 1 : 0) || (b.updated || 0) - (a.updated || 0); });
+      var n = mine(op).filter(function (c) { return snap.indexOf(c.key) < 0; }); return n.length ? n[0].key : null; },
+    snapAssigned: function () { try { sessionStorage.setItem('wf-assign-snap', JSON.stringify(mineKeys())); } catch (e) {} },
     totalUnread: function () { var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var r0 = null; try { r0 = localStorage.getItem('wf-role'); } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r0 || ''] || null;
       if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };   /* as the chats list reads it */
       var inSc = function (c) { return inScope(c, SC); };

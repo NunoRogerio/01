@@ -1183,3 +1183,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - **Incidents assigned to me (Oct 5):** a fire owner handles at most 3 chats. The chats blade and the chat list show the title "Incidents assigned to me" above the open chats, never more than 3. Opening or acting on another chat brings it in and the idlest one leaves. Unread badges count only the assigned chats.
 - **Counter badges (Oct 5):** the header count badges (chat, alerts) sit 8px higher (top -12px) so they overlap the icon less.
+
+- **Assignments (Oct 5):** the word "chat" is gone from the list and the panel: Assignments (Atribuições). Only the administrator sees every incident (titled "All incidents") with no limit; every other profile has at most 3 assigned. After a fire is resolved and the person goes home, a floating dark pill "Check your new incident assignment →" shows for 10 s under the header and opens the newly assigned incident's conversation. It shows only if a new incident was actually assigned.
+- **Statistics, closing (Oct 5):** the panel stays visible while it slides down, uncovering the map (it used to vanish at once while the map and blade popped in).
