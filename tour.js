@@ -193,12 +193,16 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // ---- the steps --------------------------------------------------------------------------------------------
   // t: the action (title); b: one or two short sentences; mode: 'tap' | 'next' | 'until'
   var S = [
+    // (Oct 5, 10:17) the tour opens on this card; the blade steps follow as part of the same story
+    { page: 'Main.dc.html', mode: 'next', next: ['Start', 'Começar'],
+      t: ['Let\'s start reacting to an ignition', 'Vamos começar a reagir a uma ignição'], wip: true,
+      b: WF_TOUR_HELI ? ['Follow one ignition from detection to a closed fire. Tap what the helicopter points to, or use ‹ › to move between steps.', 'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
+        ['Follow one ignition from detection to a closed fire. Tap what the circle marks, or use ‹ › to move between steps.', 'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo marca, ou use ‹ › para mudar de passo.'] },
     // (Oct 5, 09:44) the region and incident blades are opened and closed by the person, never by the tour: the circle
     // invites each tap (open the region selector, pick the region; open the incidents list, close it)
-    { page: 'Main.dc.html', mode: 'until', area: true, wip: true, until: function () { return areaOpen(); }, find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Area:"]') || q('button[aria-label^="Área:"]'); },
+    { page: 'Main.dc.html', mode: 'until', area: true, until: function () { return areaOpen(); }, find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Area:"]') || q('button[aria-label^="Área:"]'); },
       t: ['Open the region selector', 'Abra o seletor de região'],
-      b: WF_TOUR_HELI ? ['Tap the region to change it. Tap what the helicopter points to, or use ‹ › to move between steps.', 'Toque na região para a mudar. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
-        ['Tap the region to change it. Tap what the circle marks, or use ‹ › to move between steps.', 'Toque na região para a mudar. Toque no que o círculo marca, ou use ‹ › para mudar de passo.'] },
+      b: ['Tap the region. You can change it here any time.', 'Toque na região. Pode mudá-la aqui a qualquer momento.'] },
     { page: 'Main.dc.html', mode: 'until', area: true, until: function () { return !!seen && Date.now() - seen > 600 && !areaOpen(); }, find: function () { var sec = document.querySelector('section[data-swipe-key="sc"]'); if (!sec || !areaOpen()) return null; var B = [].slice.call(sec.querySelectorAll('button,[role=button]')); for (var k = 0; k < B.length; k++) { var t = (B[k].getAttribute('aria-label') || B[k].textContent || ''); if (/^\s*Los Angeles/.test(t) && B[k].offsetHeight) return B[k]; } return null; },
       t: ['Choose Los Angeles', 'Escolha Los Angeles'],
       b: ['Tap Los Angeles. We stay here for the tour.', 'Toque em Los Angeles. Ficamos aqui durante a visita.'] },
@@ -208,9 +212,6 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!seen && Date.now() - seen > 600 && !listOpen(); }, find: function () { return listOpen() ? q('section[data-swipe-key="li"] .wf-grab.gt') : null; },
       t: ['Close the list', 'Feche a lista'],
       b: ['Tap its top edge, or swipe it down, to close it. Open it any time to pick an incident.', 'Toque no rebordo de cima, ou deslize-o para baixo, para a fechar. Abra-a a qualquer momento para escolher um incidente.'] },
-    { page: 'Main.dc.html', mode: 'next', next: ['Start', 'Começar'],
-      t: ['Let\'s start reacting to an ignition', 'Vamos começar a reagir a uma ignição'],
-      b: ['Follow one ignition from detection to a closed fire.', 'Acompanhe uma ignição desde a deteção até ao incêndio encerrado.'] },
     // (Oct 5) the chats step (it opened the chats panel) was removed
     // (Oct 5) the notifications step (it opened the notifications panel) was removed
     // (Oct 5) the preferences step (it opened the settings menu) was removed
