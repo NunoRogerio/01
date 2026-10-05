@@ -103,6 +103,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // the top and bottom bands, closest to the upper middle of the map (the bubble then sits clear of the panel)
   // the most likely candidate on the map (highest percent in its label), on screen
   // Show a blade by opening it and folding it back (Oct 3): opens once the circle has arrived, closes 0.5 s after it has opened
+  // the incidents list blade is open
+  function listOpen() { var b = document.querySelector('section[data-swipe-key="li"] > div:last-child > button.opt[aria-expanded]'); return !!b && b.getAttribute('aria-expanded') === 'true'; }
   function demoOf(openSel, closeSel) { return { open: openSel, close: closeSel }; }
   var demoRan = -1;
   function runDemo(i, st) {
@@ -191,19 +193,24 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // ---- the steps --------------------------------------------------------------------------------------------
   // t: the action (title); b: one or two short sentences; mode: 'tap' | 'next' | 'until'
   var S = [
+    // (Oct 5, 09:44) the region and incident blades are opened and closed by the person, never by the tour: the circle
+    // invites each tap (open the region selector, pick the region; open the incidents list, close it)
+    { page: 'Main.dc.html', mode: 'until', area: true, wip: true, until: function () { return areaOpen(); }, find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Area:"]') || q('button[aria-label^="Área:"]'); },
+      t: ['Open the region selector', 'Abra o seletor de região'],
+      b: WF_TOUR_HELI ? ['Tap the region to change it. Tap what the helicopter points to, or use ‹ › to move between steps.', 'Toque na região para a mudar. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
+        ['Tap the region to change it. Tap what the circle marks, or use ‹ › to move between steps.', 'Toque na região para a mudar. Toque no que o círculo marca, ou use ‹ › para mudar de passo.'] },
+    { page: 'Main.dc.html', mode: 'until', area: true, until: function () { return !!seen && Date.now() - seen > 600 && !areaOpen(); }, find: function () { var sec = document.querySelector('section[data-swipe-key="sc"]'); if (!sec || !areaOpen()) return null; var B = [].slice.call(sec.querySelectorAll('button,[role=button]')); for (var k = 0; k < B.length; k++) { var t = (B[k].getAttribute('aria-label') || B[k].textContent || ''); if (/^\s*Los Angeles/.test(t) && B[k].offsetHeight) return B[k]; } return null; },
+      t: ['Choose Los Angeles', 'Escolha Los Angeles'],
+      b: ['Tap Los Angeles. We stay here for the tour.', 'Toque em Los Angeles. Ficamos aqui durante a visita.'] },
+    { page: 'Main.dc.html', mode: 'until', until: listOpen, find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
+      t: ['Open the incidents list', 'Abra a lista de incidentes'],
+      b: ['Every candidate and fire in this region, the most likely first. Tap to open it.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro. Toque para a abrir.'] },
+    { page: 'Main.dc.html', mode: 'until', until: function () { return !!seen && Date.now() - seen > 600 && !listOpen(); }, find: function () { return listOpen() ? q('section[data-swipe-key="li"] .wf-grab.gt') : null; },
+      t: ['Close the list', 'Feche a lista'],
+      b: ['Tap its top edge, or swipe it down, to close it. Open it any time to pick an incident.', 'Toque no rebordo de cima, ou deslize-o para baixo, para a fechar. Abra-a a qualquer momento para escolher um incidente.'] },
     { page: 'Main.dc.html', mode: 'next', next: ['Start', 'Começar'],
-      t: ['Let\'s deal with a fire ignition now', 'Vamos tratar de uma ignição agora'], wip: true,
-      b: WF_TOUR_HELI ? ['Follow one ignition from detection to a closed fire. Tap what the helicopter points to, or use ‹ › to move between steps.',
-          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o helicóptero indica, ou use ‹ › para mudar de passo.'] :
-          ['Follow one ignition from detection to a closed fire. Tap what the yellow circle marks, or use ‹ › to move between steps.',
-          'Acompanhe uma ignição desde a deteção até ao incêndio encerrado. Toque no que o círculo amarelo marca, ou use ‹ › para mudar de passo.'] },
-    // Oct 3: the two blade selectors are shown (not opened), then the ignition is opened from the map
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('button[aria-haspopup="dialog"][aria-label^="Area:"]') || q('button[aria-label^="Área:"]'); },
-      t: ['Choose a region', 'Escolha uma região'], point: true, area: true, demo: Object.assign(demoOf('button[aria-haspopup="dialog"][aria-label^="Area:"]', 'section[data-swipe-key="sc"] button[data-swipe-go]'), { pick: function () { var sec = document.querySelector('section[data-swipe-key="sc"]'); if (!sec) return null; var B = [].slice.call(sec.querySelectorAll('button,[role=button]')); for (var k = 0; k < B.length; k++) { var t = (B[k].getAttribute('aria-label') || B[k].textContent || ''); if (/^\s*Los Angeles/.test(t) && B[k].offsetHeight) return B[k]; } return null; } }),
-      b: ['Tap here any time to change the region. For now we stay here.', 'Toque aqui a qualquer momento para mudar de região. Por agora ficamos aqui.'] },
-    { page: 'Main.dc.html', mode: 'next', find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
-      t: ['Or pick from the list', 'Ou escolha da lista'], point: true, demo: Object.assign(demoOf('section[data-swipe-key="li"] > div:last-child > button.opt', 'section[data-swipe-key="li"] button[data-swipe-go]'), { tapClose: true, closeAt: 'section[data-swipe-key="li"] > span[aria-hidden="true"]' }),   // (Oct 3, 20:01) closes on its grabber
-      b: ['Every candidate and fire in this region, the most likely first. Open it any time to pick one.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro. Abra-a a qualquer momento para escolher um.'] },
+      t: ['Let\'s start reacting to an ignition', 'Vamos começar a reagir a uma ignição'],
+      b: ['Follow one ignition from detection to a closed fire.', 'Acompanhe uma ignição desde a deteção até ao incêndio encerrado.'] },
     // (Oct 5) the chats step (it opened the chats panel) was removed
     // (Oct 5) the notifications step (it opened the notifications panel) was removed
     // (Oct 5) the preferences step (it opened the settings menu) was removed
