@@ -139,14 +139,14 @@ window.__wfBlink=function(path,dur){
   var rotSty=null;
   function unrotate(iw,ih){var a=typeof window.orientation==='number'?window.orientation:(screen.orientation?(screen.orientation.angle>180?screen.orientation.angle-360:screen.orientation.angle):0);
     if(!rotSty){rotSty=document.createElement('style');rotSty.id='wf-rot';document.head.appendChild(rotSty);}
-    if(!(iw>ih)||DESK||!a){rotSty.textContent='';document.documentElement.classList.remove('wf-rot');return null;}
+    if(!(iw>ih)||DESK||!a){rotSty.textContent='';document.documentElement.classList.remove('wf-rot');window.__wfRotA=0;return null;}
     var tf=a>0?'translateX('+iw+'px) rotate(90deg)':'translateY('+ih+'px) rotate(-90deg)';
     rotSty.textContent='html.wf-rot,html.wf-rot body{overflow:hidden}html.wf-rot body{position:fixed;left:0;top:0;width:'+ih+'px;height:'+iw+'px;transform-origin:0 0;transform:'+tf+'}';
-    document.documentElement.classList.add('wf-rot');return [ih,iw];}
+    document.documentElement.classList.add('wf-rot');window.__wfRotA=a>0?1:-1;window.__wfRotWH=[iw,ih];return [ih,iw];}
   function fit(){
     var iw=window.innerWidth,ih=window.innerHeight,r=document.documentElement.style,s,vp;
     var flu=fluid||(!DESK&&!!window.__wfFluidLand&&iw>ih);
-    var R=flu?unrotate(0,1):unrotate(iw,ih);if(R){iw=R[0];ih=R[1];}   // a fixed screen can ask to fill the screen in landscape (the candidate's full-screen map)
+    var R=(flu&&!window.__wfHoldUp)?unrotate(0,1):unrotate(iw,ih);   // (Oct 5) a panel over a map screen (statistics) can hold it upright: window.__wfHoldUp, then a 'resize' eventif(R){iw=R[0];ih=R[1];}   // a fixed screen can ask to fill the screen in landscape (the candidate's full-screen map)
     if(flu){
       s=Math.min(Math.min(iw,ih)/W,MAXS);
       var ins=insets();

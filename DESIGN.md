@@ -1229,3 +1229,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Donut, no track (Oct 5, 19:37):** no grey ring under a donut's parts; parts keep round ends with 8px between them (was 4px).
 - **Column charts, 8px columns (Oct 5, 19:38):** vertical bars are 8px wide like every bar chart, fully rounded, centred in their slot (the whole slot stays tappable for the tooltip).
 - **Resources in use colours (Oct 5, 19:39):** vehicles in the primary colour (was a darker step of it), aircraft middle grey (#8E8E93), crews dark grey (#3A3A3C); legend the same.
+- **Statistics stay upright (Oct 5, 19:41):** with the statistics panel open, turning the phone doesn't turn the screen: the page is turned back and laid out as in portrait, as if rotation were locked (the same turn-back fit.js gives non-map screens). Closing the panel gives the main screen its landscape full-screen map again. A screen can ask for this with `window.__wfHoldUp` (fit.js).
