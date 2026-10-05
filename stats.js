@@ -7,7 +7,7 @@
   var LS = function (k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} return null; };
   var K_ORDER = 'wf-stats-order', K_HIDE = 'wf-stats-hide', K_RANGE = 'wf-stats-range';
   var LIME = 'var(--wf-y,#E5FF00)', LIME_D = 'color-mix(in srgb,var(--wf-y,#E5FF00) 78%,#1C1C1E)', LIME_L = 'color-mix(in srgb,var(--wf-y,#E5FF00) 45%,#FFFFFF)',   // the primary colour chosen in preferences (and its darker and lighter steps)
-      INK = '#3A3A3C', G1 = '#8E8E93', G2 = '#C7C7CC', TRACK = 'var(--wf-track,rgba(118,118,128,0.12))';
+      INK = '#3A3A3C', G1 = '#8E8E93', G2 = '#C7C7CC';
   var EASE = 'cubic-bezier(.2,.8,.2,1)';
 
   // ---- numbers (simulated, steady per area and period) ---------------------------------------------------------------
@@ -102,7 +102,7 @@
   function hbars(items, max, best) {
     return '<div style="display:flex;flex-direction:column;gap:16px">' + items.map(function (it, i) {
       return '<div><div style="display:flex;justify-content:space-between;gap:16px;font-size:16px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums">' + esc(it.t) + '</span></div>' +
-        '<div aria-hidden="true" style="height:8px;margin-top:8px;border-radius:4px;background:' + TRACK + ';overflow:hidden"><div class="an-w" style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:4px;background:' + INK + '"></div></div></div>';
+        '<div aria-hidden="true" style="height:8px;margin-top:8px;border-radius:4px;overflow:hidden"><div class="an-w" style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:4px;background:' + INK + '"></div></div></div>';
     }).join('') + '</div>';
   }
   function donut(parts, abs) {
