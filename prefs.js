@@ -7,7 +7,16 @@ window.__wfTiles = { list: [['maptiler', 'MapTiler'], ['osm', 'OpenStreetMap']],
   style: function () { var p = this.get(), v = ''; try { v = localStorage.getItem('wf-maprender') || ''; } catch (e) {} var L = this.styles[p]; for (var i = 0; i < L.length; i++) if (L[i][0] === v) return v; return L[0][0]; },
   set: function (k, st) { try { localStorage.setItem('wf-maptiles', k === 'osm' ? 'osm' : 'maptiler'); if (st) localStorage.setItem('wf-maprender', st); } catch (e) {} try { window.dispatchEvent(new Event('wf-maptiles')); } catch (e) {} },
   host: function () { return this.get() === 'osm' ? 'https://tile.openstreetmap.org/' : 'https://api.maptiler.com/maps/'; },
-  url: function (z, x, y) { if (this.get() === 'osm') return 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; var st = this.style(), L = this.styles.maptiler, ex = 'png'; for (var i = 0; i < L.length; i++) if (L[i][0] === st) ex = L[i][2]; return 'https://api.maptiler.com/maps/' + st + '/256/' + z + '/' + x + '/' + y + '.' + ex + '?key=nXogmRs94P1OvRDMdUN6'; },
+  url: function (z, x, y) { if (this.get() === 'osm') return 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; var st = this.style(), L = this.styles.maptiler, ex = 'png'; for (var i = 0; i < L.length; i++) if (L[i][0] === st) ex = L[i][2]; return 'https://api.maptiler.com/maps/' + st + '/256/' + z + '/' + x + '/' + y + '.' + ex + '?key=' + this.key(); },
+  /* (Oct 5, 02:48) the MapTiler key: the app's shared one, or the person's own saved on this phone (Maps menu) */
+  KEY0: 'nXogmRs94P1OvRDMdUN6',
+  own: function () { try { return localStorage.getItem('wf-mt-key') || ''; } catch (e) { return ''; } },
+  key: function () { return this.own() || this.KEY0; },
+  /* a key that fails to load (checked once per session, and on every save): its menu icon shows a red dot */
+  status: function () { try { return JSON.parse(sessionStorage.getItem('wf-mt-st') || 'null'); } catch (e) { return null; } },
+  test: function (k, cb) { var self = this, done = function (ok, err) { var st = { ok: ok, err: err || '', at: Date.now(), key: (k || '').slice(-4) }; try { sessionStorage.setItem('wf-mt-st', JSON.stringify(st)); } catch (e) {} try { window.dispatchEvent(new Event('wf-keys')); } catch (e) {} if (cb) cb(st); };
+    try { fetch('https://api.maptiler.com/maps/streets-v2/256/0/0/0.png?key=' + encodeURIComponent(k || self.key()), { cache: 'no-store' }).then(function (r) { done(r.ok, r.ok ? '' : (r.status === 401 || r.status === 403 ? 'key not accepted' : 'HTTP ' + r.status)); }, function () { done(false, 'no connection to MapTiler'); }); } catch (e) { done(false, 'no connection to MapTiler'); } },
+  setOwn: function (k, cb) { var self = this; k = (k || '').trim(); try { if (k) localStorage.setItem('wf-mt-key', k); else localStorage.removeItem('wf-mt-key'); } catch (e) {} try { window.dispatchEvent(new Event('wf-maptiles')); } catch (e) {} self.test(self.key(), cb); },
   credit: function () { return this.get() === 'osm' ? 'Map © OpenStreetMap' : 'Map © MapTiler © OpenStreetMap'; } };
 window.__wfNight = function (L) { if (!L) return false; if (L.night != null) return !!L.night; return !!(window.__wfSunAlt && L.lat != null && L.t && window.__wfSunAlt(L.lat, L.lon, Date.parse(L.t)) < -0.833); };   /* a detection made with the sun below the horizon (see live.js) */
 /* The clock at the incident's own place, with AM / PM (e.g. "4:05 AM"); the zone is added when it differs from the phone's ("4:05 AM PDT") */

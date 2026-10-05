@@ -1089,3 +1089,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Ignition candidate KPIs:** Nearest fire removed from the cards and from the + picker (it belongs on the station screen, not on a candidate).
 - **Profile picker (Oct 5, 02:40):** Create profile stays fixed at the top of the picker; only the profiles scroll under it.
 - **Loading screen stripes:** the photo loading screen also carries the firefighter stripes along its bottom edge, like the login.
+- **Settings menu order (Oct 5, 02:50):** Profile, Share, Language, Appearance, Maps, Chat settings, Data sources, About. Share uses the chain link icon.
+- **Visit page links (Oct 5, 02:45):** every map engine and every data source ends with "Visit page →" (15px, grey, arrow on the right), opening that source's own site in a new tab.
+- **Key failure dot:** when a key fails to load (MapTiler's, checked once per session and on every save; the Anthropic key's last call), its menu icon (Maps, Chat settings) shows an 8px red dot at its top right, the same attention dot as the tabs; the icon's label says "Key failed".
+- **MapTiler key (Oct 5, 02:48):** the MapTiler engine has a Key block like the role-play key: the app's shared key by default, or your own pasted and tested (kept on this phone only). Save and test, then Remove | Replace key (both ask first); the note says whether it works or why it failed.

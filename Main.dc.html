@@ -18,7 +18,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=155"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=190"></script>
+<script src="prefs.js?v=191"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=70"></script>
@@ -678,6 +678,18 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   </button>
                 </sc-for>
               </div>
+              <!-- (Oct 5, 02:48) MapTiler's key, like the role-play key: the app's shared key by default, or your own kept on this phone -->
+              <div style="display: {{m.kD}}; grid-column: 1 / -1; flex-direction: column; gap: 24px; margin-top: 32px">
+                <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; line-height: 20px; font-weight: 600; color: #6E6E73">{{m.kT}}</span><span style="font-size: 17px; line-height: 22px; color: #000000">{{m.kSub}}</span></span>
+                <label style="display: flex; align-items: center; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 10px; background: rgba(118,118,128,0.12)"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{m.kPh}}</span><input id="wf-mt-key-in" type="password" autocomplete="off" spellcheck="false" value="{{m.kDraft}}" onInput="{{m.kInput}}" placeholder="{{m.kPh}}" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"><span aria-hidden="true" style="display: {{m.kOkD}}; align-items: center; color: var(--wf-y-ink, #1C1C1E)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></label>
+                <div style="display: flex; gap: 24px">
+                  <button type="button" class="wf-rm" onClick="{{m.kRemove}}" style="display: {{m.kRmD}}; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: rgba(215,0,21,0.10); color: #99000E; -webkit-text-fill-color: #99000E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{m.kRmTxt}}</button>
+                  <button type="button" class="btn wf-sec" onClick="{{m.kRemove}}" style="display: {{m.kCxD}}; flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{m.kCxTxt}}</button>
+                  <button type="button" class="btn primary" onClick="{{m.kSave}}" style="flex: 1 1 0; height: 48px; font-size: 17px; font-weight: 600">{{m.kSaveTxt}}</button>
+                </div>
+                <span style="font-size: 15px; line-height: 20px; color: {{m.kNoteC}}">{{m.kNote}}</span>
+              </div>
+              <a href="{{m.url}}" target="_blank" rel="noopener" class="opt" style="grid-column: 1 / -1; justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 16px; font-size: 15px; line-height: 20px; color: #6E6E73; text-decoration: none">{{m.visit}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
             </li>
           </sc-for>
         </ul>
@@ -755,6 +767,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                       </span>
                     </sc-for>
                   </span>
+                <a href="{{d.url}}" target="_blank" rel="noopener" class="opt" style="grid-column: 1 / -1; justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 16px; font-size: 15px; line-height: 20px; color: #6E6E73; text-decoration: none">{{d.visit}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
                 </li>
               </sc-for>
             </ul>
@@ -780,7 +793,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
          (--wf-top: the part of the frame under the browser's bar) and the bottom -->
     <div style="position: absolute; left: 0; right: 0; top: calc(50% + var(--wf-top, 0px) / 2); transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 16px">
     <sc-for list="{{pm.items}}" as="it" hint-placeholder-count="8">
-        <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
+        <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.dotD}}; position: absolute; top: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; background: #E6352B; pointer-events: none"></span><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
       </sc-for>
     </div>
     <span aria-hidden="true" style="flex: 1 0 16px"></span>
@@ -1001,6 +1014,8 @@ class Component extends DCLogic {
   componentDidUpdate() { this.wfLiSeg(); }
   wfMenuPost(m) { if (!window.__wfMenuOnly) return; try { window.parent.postMessage({ wfMenu: m }, location.origin); } catch (e) {} }
   componentDidMount() {
+    // (Oct 5) keys: a failing key shows a red dot on its menu icon; MapTiler's is checked once per session
+    try { this._wfKeys = () => this.forceUpdate(); window.addEventListener('wf-keys', this._wfKeys); window.addEventListener('wf-chat', this._wfKeys); if (window.__wfTiles && !window.__wfTiles.status() && window === window.top) setTimeout(() => window.__wfTiles.test(), 1500); } catch (e) {}
     try { this._msSync = (e) => this.setState({ msOpen: !!(e.detail && e.detail.open) }); window.addEventListener('wf-ms', this._msSync); } catch (e) {}   // (Oct 4) the map search box is up: the bottom blade clears away
     if (window.__wfMenuOnly) { window.addEventListener('message', (e) => { if (e.origin !== location.origin || !e.data || !e.data.wfMenu) return;
       if (e.data.wfMenu === 'open') { try { const sc = document.querySelector('[data-wf-fadetop]'); if (sc) sc.scrollTop = 0; } catch (x) {} this.setState({ pf: true, pm: 'open', pmSec: 'profile', pmCover: false }); } else if (e.data.wfMenu === 'close') this.setState({ pmCover: true }); }); } /* the About row's symbol blinks every 4 s (only while the preferences show it) */ this._abtBlink = setInterval(() => { try { const e = document.querySelector('[data-wf-about-eye]'); if (e && e.getBoundingClientRect().height && window.__wfBlink) window.__wfBlink(e); } catch (x) {} }, 4000); this.wfTopWatch(); setTimeout(() => this.wfLiSeg(), 300); setTimeout(() => this.wfLiSeg(), 1500); try { const u = () => this.wfPsKb(), vv = window.visualViewport; if (vv) { vv.addEventListener('resize', u); vv.addEventListener('scroll', u); } document.addEventListener('focusin', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); /* Find a place on the map: the field takes focus inside the tap itself, so iOS opens the keyboard at once */ document.addEventListener('touchstart', (e) => { try { const t = e.touches && e.touches[0]; this._psT0 = t ? [t.clientX, t.clientY] : null; } catch (x) {} }, { capture: true, passive: true }); document.addEventListener('touchend', (e) => { try { const b = e.target && e.target.closest && e.target.closest('button[aria-label="Find a place"],button[aria-label="Procurar um local"]'); if (!b || !this._psOpen) return; const t = e.changedTouches && e.changedTouches[0], o = this._psT0; if (t && o && Math.hypot(t.clientX - o[0], t.clientY - o[1]) > 10) return; /* a drag over the button is not a tap */ this._psOpen(b); this._psEat = Date.now(); } catch (x) {} }, true); /* the tap's own click lands on the panel that just opened over the button: it is swallowed so it cannot close it again */ document.addEventListener('click', (e) => { if (this._psEat && Date.now() - this._psEat < 600) { this._psEat = 0; e.preventDefault(); e.stopPropagation(); } }, true); document.addEventListener('focusout', () => [50, 350, 700].forEach((t) => setTimeout(u, t))); setInterval(u, 1000); } catch (x) {}
@@ -1130,7 +1145,7 @@ class Component extends DCLogic {
         const IC = { profile: 'M12 4a4 4 0 1 0 0 8a4 4 0 1 0 0-8ZM4.5 20c.8-3.6 3.8-6 7.5-6s6.7 2.4 7.5 6', lang: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17ZM3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5s1.2-6.1 3.5-8.5Z',
           look: 'M3.5 18.5 8.5 5.5l5 13M5.4 13.8h6.2M15 18.5l3-8 3 8M16 16h4',   // Appearance: theme, text size and spacing (Oct 3, 18:10)
           maps: 'M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20ZM9 4v13.5M15 6.5V20',   // Maps: the map tiles (Oct 4)
-          share: 'M12 4v11M8 7.5 12 3.5l4 4M8 11H5.5v9h13v-9H16', chat: 'M4 5.5h16v10H9l-5 4ZM8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01',
+          share: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71',   /* (Oct 5) a chain link */ chat: 'M4 5.5h16v10H9l-5 4ZM8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01',
           ds: 'M12 4c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3ZM4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3', about: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17ZM12 11v5.5M12 7.8h.01' };
         const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', look: 'Appearance', maps: 'Maps', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
         const pick = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
@@ -1156,15 +1171,16 @@ class Component extends DCLogic {
               const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .53s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
               // (Oct 4, 00:01) a push along the icon column: an icon below the open one pushes the new section up from below, one above
               // pushes it down from above; the old section moves out the other way, darkening as it goes
-              const ORD = ['profile', 'lang', 'look', 'maps', 'share', 'chat', 'ds', 'about'], dir = ORD.indexOf(k) > ORD.indexOf(pmSec) ? 1 : -1, hh = sec.offsetHeight;
+              const ORD = ['profile', 'share', 'lang', 'look', 'maps', 'chat', 'ds', 'about'], dir = ORD.indexOf(k) > ORD.indexOf(pmSec) ? 1 : -1, hh = sec.offsetHeight;
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateY(' + (dir * hh) + 'px)';
               // (Oct 3, 21:27) no jump: the slide (and the darkening) start only once the new section has rendered, off to the
               // right, so it never changes or settles while it is moving in
               go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; Promise.all(waits).then(() => { /* (Oct 4, 00:08) no darkening of the previous section */ sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateY(0)'; cl.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; cl.style.transform = 'translateY(' + (-dir * hh) + 'px)';
                 setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 590); }); }; } } catch (e) {} }
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {}), () => { if (go) go(); }); };
-        const items = ['profile', 'lang', 'look', 'maps', 'share', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
-          return { label: TT[k], cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
+        const items = ['profile', 'share', 'lang', 'look', 'maps', 'chat', 'ds', 'about'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
+          const kf = (() => { try { if (k === 'maps') { const q = window.__wfTiles && window.__wfTiles.status(); return !!(q && !q.ok); } if (k === 'chat') { const A = window.__wfChat && window.__wfChat.ai, q = A && A.key() ? A.status() : null; return !!(q && !q.ok); } } catch (e) {} return false; })();   /* (Oct 5) a key that failed to load */
+          return { dotD: kf ? 'block' : 'none', label: TT[k] + (kf ? (lang === 'pt' ? '. A chave falhou' : '. Key failed') : ''), cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
         return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.53s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? vw - 60 : rail && this.wfLayout().side ? -60 : 0, cr: open ? 60 : 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
@@ -1260,8 +1276,10 @@ class Component extends DCLogic {
               : [['MapTiler', T('Map tiles. Streets and satellite', 'Mosaicos do mapa. Ruas e satélite'), null, true, 4, null, 10, T('The map itself, in the look chosen in Maps.', 'O próprio mapa, no aspeto escolhido em Mapas.')],
                 ['OpenStreetMap', T('Fire stations, place search and routes', 'Quartéis de bombeiros, pesquisa de locais e percursos'), null, true, 26, null, 9, T('The fire stations on the map, the place search and the road routes to a fire.', 'Os quartéis de bombeiros no mapa, a pesquisa de locais e os percursos de estrada até um incêndio.')]]; })(),
           ['Open-Meteo', T('Weather, forecast and air quality for the map; terrain (Copernicus elevation) for the projections', 'Meteorologia, previsão e qualidade do ar para o mapa; relevo (elevação Copernicus) para as projeções'), null, true, 1, null, 10, T('Wind and temperature drive the projections; air quality and terrain add context.', 'O vento e a temperatura conduzem as projeções; a qualidade do ar e o relevo dão contexto.')]
-        ].map(([name, what, t, still, day, key, mon, why]) => { const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key, XX = X[name] || { shows: [], ex: [] }, EX = (XX.ex || []).filter(Boolean);
+        ].map(([name, what, t, still, day, key, mon, why]) => { const URLS = { 'NASA FIRMS': 'https://firms.modaps.eosdis.nasa.gov/', 'NOAA GOES-18 and GOES-19': 'https://www.ospo.noaa.gov/products/land/fire.html', 'NIFC · WFIGS': 'https://data-nifc.opendata.arcgis.com/', 'CAL FIRE': 'https://www.fire.ca.gov/incidents', 'EFFIS · Copernicus': 'https://forest-fire.emergency.copernicus.eu/', 'IPMA': 'https://www.ipma.pt/pt/riscoincendio/rcm.pt/', 'Fogos.pt · ANEPC': 'https://fogos.pt/', 'INPE · Programa Queimadas': 'https://terrabrasilis.dpi.inpe.br/queimadas/portal/', 'BC Wildfire Service': 'https://wildfiresituation.nrs.gov.bc.ca/', 'GeoNames': 'https://www.geonames.org/', 'OpenStreetMap': 'https://www.openstreetmap.org/', 'MapTiler': 'https://www.maptiler.com/', 'Open-Meteo': 'https://open-meteo.com/' };   /* (Oct 5, 02:45) each source's own page */
+          const D = window.__wfDS, on = !key || !D || D.on(key), lock = !key, XX = X[name] || { shows: [], ex: [] }, EX = (XX.ex || []).filter(Boolean);
           return { shows: XX.shows.map(([k, en, ptt]) => ({ ...flags(k), text: T(en, ptt) })), showsD: XX.shows.length ? 'block' : 'none', exs: EX.map((e) => ({ ...flags(e.k), fc: e.fc, title: e.title, sub: e.sub, tag: e.tag, tagD: e.tag ? 'inline-flex' : 'none', tagFg: e.tagFg, tagBg: e.tagBg })), exsD: EX.length ? 'block' : 'none', noExD: XX.shows.length && !EX.length && X[name] && X[name].ex.length ? 'block' : 'none', showsT: T('Shows in the app', 'Mostra na app'), exsT: T('Examples', 'Exemplos'),
+            url: URLS[name] || '#', visit: T('Visit page', 'Visitar página'),
             name, sub: what, why: why || '', whyD: why ? 'block' : 'none', loaded: still ? '' : ago(t), loadedD: still ? 'none' : 'inline',
           onStr: on ? 'true' : 'false', lockStr: lock ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: 1, togD: lock ? 'none' : 'block',
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
@@ -1301,6 +1319,13 @@ class Component extends DCLogic {
             L('The key is deleted from this phone and role-play stops.', 'A chave é apagada deste telemóvel e a encenação para.', 'キーはこの端末から削除され、ロールプレイは停止します。'),
             L('To use it again you will need to paste the key again.', 'Para voltar a usá-la terá de colar a chave de novo.', '再び使うにはキーをもう一度貼り付ける必要があります。'),
             L('Remove', 'Remover', '削除')],
+          mtrep: [L('Replace the MapTiler key?', 'Substituir a chave MapTiler?', 'MapTilerキーを置き換えますか?'),
+            L('Paste a new key to use instead of the one saved on this phone.', 'Cole uma nova chave para usar em vez da que está guardada neste telemóvel.', 'この端末に保存されているキーの代わりに使う新しいキーを貼り付けてください。'),
+            L('The current key keeps working until the new one is saved and tested.', 'A chave atual continua a funcionar até a nova ser guardada e testada.', '新しいキーが保存・テストされるまで、現在のキーが使われます。'),
+            L('Replace', 'Substituir', '置き換える')],
+          mtrm: [L('Remove your MapTiler key?', 'Remover a sua chave MapTiler?', 'MapTilerキーを削除しますか?'),
+            L('The key is deleted from this phone and the maps go back to the app\'s shared key.', 'A chave é apagada deste telemóvel e os mapas voltam à chave partilhada da app.', 'キーはこの端末から削除され、地図はアプリの共有キーに戻ります。'),
+            '', L('Remove', 'Remover', '削除')],
           // (Oct 3, 22:07) signing out asks first
           out: [L('Sign out?', 'Terminar sessão?', 'サインアウトしますか?'),
             L('You will need to sign in again to use the app.', 'Terá de voltar a entrar para usar a aplicação.', 'アプリを使うには再度サインインが必要です。'),
@@ -1312,6 +1337,8 @@ class Component extends DCLogic {
           confirm: () => { const kk = s.aiAsk; if (kk === 'out') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} close(); this.wfSignOutNow(); return; }
             if (kk !== 'on' && kk !== 'off' && !/^ds/.test(kk || '')) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} } close();
             if (/^ds(on|off):/.test(kk || '')) { if (window.__wfDS) window.__wfDS.set(kk.replace(/^ds(on|off):/, ''), /^dson/.test(kk)); this.forceUpdate(); return; }
+            if (kk === 'mtrep' || kk === 'mtrm') { const TL = window.__wfTiles; if (!TL) return; if (kk === 'mtrm') { this.setState({ mtBusy: true, mtDraft: '', mtRep: false }); TL.setOwn('', () => this.setState({ mtBusy: false })); return; }
+              const d = (s.mtDraft || '').trim(); if (d) { this.setState({ mtBusy: true, mtDraft: '', mtRep: false }); TL.setOwn(d, () => this.setState({ mtBusy: false })); } else { this.setState({ mtRep: true }); setTimeout(() => { try { document.getElementById('wf-mt-key-in').focus(); } catch (e) {} }, 450); } return; }
             if (!A) return; if (kk === 'rep') { const d = (s.aiDraft || '').trim(); if (d) { this.setState({ aiBusy: true, aiDraft: '', aiRep: false }); A.set(d, () => this.setState({ aiBusy: false })); } else { this.setState({ aiRep: true }); setTimeout(() => { try { document.getElementById('wf-ai-key-in').focus(); } catch (e) {} }, 450); } return; }
             if (kk === 'rm') { A.set(''); this.setState({ aiDraft: '', aiRep: false }); } else { A.setOn(kk === 'on'); this.forceUpdate(); } } }; })(),
       ai: (() => { const A = window.__wfChat && window.__wfChat.ai, has = !!(A && A.key()), st = A ? A.status() : null, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
@@ -1365,7 +1392,19 @@ class Component extends DCLogic {
           osm: [T('The OpenStreetMap community\'s own public tiles.', 'Os mosaicos públicos da própria comunidade OpenStreetMap.'), T('Shared by everyone, so slower at busy times. For light use.', 'Partilhados por todos, por isso mais lentos nas horas de maior uso. Para uso leve.')] };
         const RN = { openstreetmap: ['Standard', 'Padrão'], standard: ['Standard', 'Padrão'], 'streets-v2': ['Streets', 'Ruas'], 'outdoor-v2': ['Outdoor', 'Ar livre'], 'topo-v2': ['Topographic', 'Topográfico'], satellite: ['Satellite', 'Satélite'], hybrid: ['Satellite with labels', 'Satélite com nomes'] };
         return { items: (window.__wfTiles ? window.__wfTiles.list : []).map(([k, name], ix) => { const on = k === cur;
-          return { liPad: ix ? '32px 0 0' : '0', liBd: ix ? '1px solid rgba(60,60,67,0.22)' : '0', name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px',
+          const TL = window.__wfTiles, own = k === 'maptiler' && TL && TL.own ? TL.own() : '', kst = k === 'maptiler' && TL && TL.status ? TL.status() : null, rep = !!own && !!s.mtRep, busy = !!s.mtBusy, bad = !!(kst && !kst.ok);
+          const KB = k !== 'maptiler' ? { kD: 'none' } : { kD: 'flex', kT: T('Key', 'Chave'),
+            kSub: own ? T('Your own MapTiler key, kept on this phone.', 'A sua própria chave MapTiler, guardada neste telemóvel.') : T('The app\'s shared key is in use. Add your own to have the whole free monthly limit for yourself.', 'Está a ser usada a chave partilhada da app. Adicione a sua para ter todo o limite mensal gratuito só para si.'),
+            kPh: rep ? T('Paste the new key', 'Cole a nova chave') : own ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('MapTiler API key', 'Chave da API MapTiler'), kDraft: s.mtDraft || '', kOkD: own && !rep && !(s.mtDraft || '') && !bad ? 'flex' : 'none',
+            kInput: (e) => this.setState({ mtDraft: e.target.value }),
+            kSaveTxt: own && !rep ? T('Replace key', 'Substituir chave') : T('Save and test', 'Guardar e testar'), kRmTxt: T('Remove', 'Remover'), kCxTxt: T('Cancel', 'Cancelar'), kRmD: own && !rep ? 'flex' : 'none', kCxD: rep ? 'flex' : 'none',
+            kSave: () => { const v = (s.mtDraft || '').trim(); if (own && !rep) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ aiAsk: 'mtrep' }); return; }
+              if (!v) { try { document.getElementById('wf-mt-key-in').focus(); } catch (x) {} return; }
+              try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ mtBusy: true, mtDraft: '', mtRep: false }); TL.setOwn(v, () => this.setState({ mtBusy: false })); },
+            kRemove: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (rep) { this.setState({ mtRep: false, mtDraft: '' }); return; } this.setState({ aiAsk: 'mtrm' }); },
+            kNote: busy ? T('Checking the key…', 'A verificar a chave…') : bad ? T('The key failed to load: ', 'A chave falhou: ') + kst.err + '.' : kst && kst.ok ? T('Working. Checked at ', 'A funcionar. Verificada às ') + new Date(kst.at).toLocaleTimeString(pt ? 'pt-PT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }) + T('. Get a key at maptiler.com; it stays on this phone only.', '. Obtenha uma chave em maptiler.com; fica apenas neste telemóvel.') : T('Get a key at maptiler.com (free plan). It stays on this phone only.', 'Obtenha uma chave em maptiler.com (plano gratuito). Fica apenas neste telemóvel.'),
+            kNoteC: bad ? '#B3001B' : '#6E6E73' };
+          return { ...KB, url: k === 'osm' ? 'https://www.openstreetmap.org/' : 'https://www.maptiler.com/', visit: T('Visit page', 'Visitar página'), liPad: ix ? '32px 0 0' : '0', liBd: ix ? '1px solid rgba(60,60,67,0.22)' : '0', name, sub: INFO[k][0], why: INFO[k][1], onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px',
             toggle: () => { if (on) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfTiles.set(k); this.forceUpdate(); },
             /* the renders this provider offers: a radio list; choosing one turns its provider on */
             rs: window.__wfTiles.styles[k].map(([id]) => { const sel = on && id === curSt; return { label: T(RN[id][0], RN[id][1]), sel: sel ? 'true' : 'false', ring: sel ? '#1C1C1E' : '#8E8E93', dot: sel ? 1 : 0,
