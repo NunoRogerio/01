@@ -1202,3 +1202,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Statistics, ranking bars (Oct 5):** the horizontal bars are dark grey (#3A3A3C) on the light track, not lime.
 - **Statistics, region card (Oct 5, 12:40):** it always shows the whole state or country of the selection (Los Angeles shows California, Porto shows Portugal), sits 5th in the order, and paints with spots 60% smaller (many more of them, finer blur).
 - **Text sizes (Oct 5):** 16px replaces 15px everywhere (Title XS, annotation, label, tags, tooltips, tour card, statistics); the allowed sizes are now 26, 17, 16 and 13. The Assignments wording replaces "chats" in the list, its subtitle and the labels; Portuguese is Atribuições.
+
+- Region card outlines: the map's built-in outlines only cover the western US. Where the map draws none, the card uses our own simplified outline (mainland Portugal for now); other countries fall back to an ellipse until an outline is added.

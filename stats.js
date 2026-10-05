@@ -184,11 +184,20 @@
 
   // the header: the selected region's shape in light grey with two blurred heat layers on it (simulated):
   // lime where ignition candidates appear, dark grey where the burned area is
+  // Outlines the map does not draw: the map's own shapes cover the western United States only, other countries have just a box.
+  // Mainland Portugal, simplified (lat, lon), drawn clockwise from the Minho mouth.
+  var OUT = { PT: [[41.87, -8.87], [42.03, -8.64], [42.15, -8.2], [41.95, -7.45], [41.85, -6.75], [41.98, -6.2], [41.5, -6.27], [41.15, -6.9], [40.85, -6.85], [40.5, -6.95], [40.25, -7.0], [39.9, -7.05], [39.6, -7.35], [39.4, -7.35], [38.88, -7.17], [38.5, -7.1], [38.2, -7.3], [37.95, -7.45], [37.5, -7.5], [37.17, -7.4], [37.02, -7.8], [37.05, -8.6], [37.02, -8.99], [37.5, -8.8], [37.95, -8.87], [38.2, -8.8], [38.52, -8.9], [38.45, -9.2], [38.7, -9.5], [38.78, -9.5], [39.35, -9.4], [39.6, -9.08], [40.15, -8.87], [40.64, -8.75], [41.15, -8.68], [41.7, -8.85]] };
+  function outline(st) {
+    var L = OUT[st]; if (!L) return null; var k = Math.cos(39.5 * Math.PI / 180), pts = L.map(function (q) { return [q[1] * k * 100, -q[0] * 100]; }), a = 1e9, b = 1e9, c = -1e9, d = -1e9;
+    pts.forEach(function (q) { a = Math.min(a, q[0]); b = Math.min(b, q[1]); c = Math.max(c, q[0]); d = Math.max(d, q[1]); });
+    return { pts: pts, box: [a, b, c, d], d: 'M' + pts.map(function (q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join('L') + 'Z' };
+  }
   function regionLabel() { var G = window.__wfGeo, sc = null; try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} sc = (sc && sc.st) ? sc : (window.__wfMem || {}).scope || null; var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; var st = lk || (sc && sc.st) || 'CA'; return (G && G.states && G.states[st] && G.states[st].label) || S.region; }
   function regionHeat(rg, X) {
     var G = window.__wfGeo, sc = null, role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {} try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {}
     sc = sc || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; if (lk && (!sc || sc.st !== lk)) sc = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; sc = sc && sc.st ? sc : { st: 'CA', co: 'Los Angeles' };
-    var g = G && sc && G.states && G.states[sc.st];   /* the whole state or country, whichever county or district is picked */ if (!g || !g.box) return '';
+    var g = G && sc && G.states && G.states[sc.st];   /* the whole state or country, whichever county or district is picked */
+    if (sc && !(g && g.d)) { var og = outline(sc.st); if (og) g = og; }   /* no outline drawn by the map: use ours */ if (!g || !g.box) return '';
     var b = g.box, bw = Math.max(1, b[2] - b[0]), bh = Math.max(1, b[3] - b[1]), pad = Math.max(bw, bh) * 0.06, vw = bw + 2 * pad, vh = bh + 2 * pad, vx = b[0] - pad, vy = b[1] - pad;
     var pts = g.pts, ins = function (x, y) { if (!pts) { var u = (x - (b[0] + bw / 2)) / (bw / 2), v = (y - (b[1] + bh / 2)) / (bh / 2); return u * u + v * v <= 1; } var c = false; for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) { if ((pts[i][1] > y) !== (pts[j][1] > y) && x < (pts[j][0] - pts[i][0]) * (y - pts[i][1]) / (pts[j][1] - pts[i][1]) + pts[i][0]) c = !c; } return c; };
     var R = rng(S.region + '|' + rg.id + '|heat'), mxd = Math.max(bw, bh), spots = function (nc, per, r0, r1, wt, spread) { var o = [], t = 0, c = 0; while (c < nc && t++ < 4000) { var x = b[0] + R() * bw, y = b[1] + R() * bh; if (!ins(x, y)) continue; c++;
