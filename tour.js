@@ -218,7 +218,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       b: ['Press and hold a card to reorder; tap + to choose which to show.',
           'Prima e mantenha um cartão para reordenar; toque em + para escolher quais mostrar.'] },
     { page: 'Alert.dc.html', mode: 'tap', before: freshDemo, find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
-      t: ['Declare it with the team', 'Declare com a equipa'],
+      t: ['Confirm the ignition in the team chat', 'Confirme a ignição na conversa da equipa'],
       b: ['Declaring a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Declarar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
 
     // Oct 3: the state card is where the status changes: tap it, then its Move to <next stage> button
