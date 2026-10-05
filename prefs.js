@@ -553,6 +553,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   function simCard(el) { var e = el, n = 0; while (e && e !== document.body && n < 8) { if (e.hasAttribute && (e.hasAttribute('data-wf-kpicard') || e.hasAttribute('data-wf-card'))) return e; var cs = getComputedStyle(e); if ((parseFloat(cs.borderTopLeftRadius) || 0) >= 12 && cs.backgroundColor && !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) && e.offsetWidth < window.innerWidth) return e; e = e.parentElement; n++; } return null; }
   function star(card) { if (!card || card.querySelector(':scope > .wf-simstar')) return; if (getComputedStyle(card).position === 'static') card.style.position = 'relative'; var t = document.createElement('span'); t.className = 'wf-simstar'; t.setAttribute('aria-label', document.documentElement.lang === 'pt' || window.__wfLang === 'pt' ? 'Simulação' : 'Simulation'); t.textContent = '*'; card.appendChild(t); }
   function scroller(el) { var e = el && el.parentElement; while (e && e !== document.body) { var cs = getComputedStyle(e); if (/auto|scroll/.test(cs.overflowY) && !e.closest('[data-wf-maproot]')) return e; e = e.parentElement; } return null; }
+  window.__wfSimMark = function () { try { simMark(); } catch (e) {} };   // screens that build their own markup ask for the footnote (statistics)
   function simMark() {
     var N = document.querySelectorAll('.wf-note'), first = null;
     for (var i = 0; i < N.length; i++) { var nt = N[i]; if (nt.classList.contains('wf-simfoot')) continue; var tx = (nt.textContent || '').trim(); if (!SIMW.test(tx)) continue;
@@ -571,7 +572,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       sc.setAttribute('data-wf-nopb', '1'); sc.style.setProperty('padding-bottom', '8px', 'important');
       // 56px between the last content and the footnote, whatever gap the screen's own layout adds
       var prev = f.previousElementSibling; while (prev && (!prev.offsetHeight || getComputedStyle(prev).position === 'absolute')) prev = prev.previousElementSibling;
-      if (prev) { f.style.marginTop = '0px'; var gap = f.getBoundingClientRect().top - prev.getBoundingClientRect().bottom, z = sc.getBoundingClientRect().width / (sc.offsetWidth || 1); f.style.marginTop = Math.round(56 - gap / (z || 1)) + 'px'; } }
+      if (prev) { f.style.marginTop = '0px'; var gap = f.getBoundingClientRect().top - prev.getBoundingClientRect().bottom, z = sc.getBoundingClientRect().width / (sc.offsetWidth || 1); f.style.marginTop = Math.round(56 - gap / (z || 1)) + 'px'; }
+      // (Oct 5, 20:04) short content: the footnote still sits at the bottom of the screen, 8px from the edge
+      var room = sc.clientHeight - sc.scrollHeight; if (room > 0) f.style.marginTop = ((parseFloat(f.style.marginTop) || 0) + room) + 'px'; }
   }
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
   var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;
