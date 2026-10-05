@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="avatar.js?v=10"></script>
-<script src="i18n.js?v=165"></script>
+<script src="i18n.js?v=166"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -112,12 +112,12 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
     </div>
     <!-- (Oct 5, 02:40) Create profile stays fixed at the top; only the profiles scroll under it -->
     <div style="display: flex; flex-direction: column; flex-shrink: 0; padding: 8px 16px 0">
-      <!-- First, above the list: create a profile of your own (kept on this phone); styled like the grey Add resources button (its grey, solid so the photo behind does not tint it, and its bare plus) -->
-      <button type="button" class="opt" onClick="{{cp.open}}" aria-label="Create profile" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; padding: 16px; border: 0; border-radius: 16px; background: #E3E3E8; font: inherit; color: #000000; text-align: left; cursor: pointer">
-        <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #6E6E73"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>
+      <!-- First, above the list: create a profile of your own (kept on this phone). (Oct 5, 09:02) the app's one "add" word: a white card row with the grey 56px + tile, label and description, as Add resources and Add data source -->
+      <button type="button" class="opt" onClick="{{cp.open}}" aria-label="Create profile" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 80px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font: inherit; color: #000000; text-align: left; cursor: pointer">
+        <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>
         <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-          <span style="font-size: 17px; font-weight: 600; line-height: 24px">Create profile</span>
-          <span style="font-size: 15px; line-height: 19px; color: #545458">Name, role, area and photo.</span>
+          <span style="font-size: 17px; font-weight: 600; line-height: 22px">Create profile</span>
+          <span style="font-size: 15px; line-height: 20px; color: #6E6E73">Name, role, area and photo.</span>
         </span>
       </button>
     </div>

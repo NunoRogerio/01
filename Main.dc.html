@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=159"></script>
 <script src="avatar.js?v=10"></script>
 <script src="prefs.js?v=195"></script>
-<script src="i18n.js?v=165"></script>
+<script src="i18n.js?v=166"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=70"></script>
 <script src="tour.js?v=97"></script>
@@ -699,7 +699,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div style="display: grid; grid-template-rows: {{ds.rows}}; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1)">
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
             <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px 0; border-top: 0">
-              <button type="button" class="opt wf-b wf-pri" onClick="{{ds.add}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{ds.addTxt}}</button>
+              <!-- (Oct 5, 09:02) "add" has one word app-wide: a white card row with the grey 56px + tile, label and description, first in its list (as Add resources) -->
+              <button type="button" class="opt" onClick="{{ds.add}}" style="display: flex; align-items: center; gap: 16px; min-height: 80px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ds.addTxt}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.addSub}}</span></span></button>
               <span style="display: {{ds.noteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.note}}</span>
             </div>
             <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; gap: 32px; margin: 40px 0 0; padding: 0; list-style: none"><!-- (Oct 5) a full-width line between the sources, 32px either side -->
@@ -1290,7 +1291,7 @@ class Component extends DCLogic {
         return { title: T('Manage data sources', 'Gerir fontes de dados'), count: String(items.length), subW: T('data sources connected', 'fontes de dados ligadas'), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
           vis: o ? 'visible' : 'hidden', visDelay: o ? '0s' : '.5s', op: o ? 1 : 0, delay: o ? '.12s' : '0s',
-          addTxt: T('Add data source', 'Adicionar fonte de dados'), noteD: s.dsAddTried ? 'block' : 'none',
+          addTxt: T('Add data source', 'Adicionar fonte de dados'), addSub: T('Coming soon.', 'Em breve.'), noteD: s.dsAddTried ? 'block' : 'none',
           note: T('Adding your own sources is not available in this prototype yet.', 'Adicionar as suas próprias fontes ainda não está disponível neste protótipo.'),
           add: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsAddTried: true }); },
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsOpen: !o, chatSet: false }); } }; })(),   // one drawer open at a time
