@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=154"></script>
 <script src="avatar.js?v=10"></script>
-<script src="prefs.js?v=188"></script>
+<script src="prefs.js?v=190"></script>
 <script src="i18n.js?v=165"></script>
 <script src="live.js?v=42"></script>
 <script src="chat.js?v=70"></script>
@@ -595,8 +595,8 @@ class Component extends DCLogic {
     // closest road (simulated)
     { const F = (window.__wfLiveFires || []).filter((r) => !(r[9] && r[9].resolved) && isFinite(r[5]) && isFinite(r[6])).map((r) => [r, { lat: 34.19 - (r[6] - 662) / 2829, lon: (r[5] - 518) / 2345 - 118.13 }]), km = (a, b, c, d) => Math.hypot((a - c) * 111, (b - d) * 111 * Math.cos(a * Math.PI / 180));
       const nf = L && L.lat != null && F.length ? Math.min(...F.map((q) => km(L.lat, L.lon, q[1].lat, q[1].lon))) : null;
-      K.push({ key: 'nfire', l: 'Nearest fire', v: nf != null ? (nf < 10 ? nf.toFixed(1) : Math.round(nf)) + ' km' : '—', ch: none, opt: true, note: nf != null ? '' : 'No data' },
-        { key: 'sat', l: 'Satellite', v: String((L && L.sat) || 'VIIRS').replace(/^VIIRS\s*/, '') || 'VIIRS', ch: none, opt: true },
+      // (Oct 5, 02:59) no Nearest fire here: it belongs on the station screen, not on an ignition candidate
+      void nf; K.push({ key: 'sat', l: 'Satellite', v: String((L && L.sat) || 'VIIRS').replace(/^VIIRS\s*/, '') || 'VIIRS', ch: none, opt: true },
         { key: 'road', l: 'Nearest road', v: (Math.round((0.1 + R(21) * 3) * 10) / 10) + ' km', ch: none, opt: true, note: 'Estimate' },
         { key: 'conf', l: 'Confidence', v: Math.round(40 + R(22) * 58) + ' %', ch: none, opt: true, note: 'Estimate' },
         { key: 'hits', l: 'Detections', v: String(1 + Math.floor(R(23) * 6)), ch: none, opt: true, note: 'Estimate' },

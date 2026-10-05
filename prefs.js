@@ -488,28 +488,45 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   /* Round controls: their press (swell + haptic) lives in fit.js, loaded on every screen */
   /* Mini card numbers: shrink the value until value + unit fit inside the card's 8px side padding */
   function fitKpi() {
-    /* (Oct 5, 02:20) One simple rule for every mini card's value: it starts at the Likelihood card's size (32px value, 15px
-       unit) and, when value + unit don't fit inside the card's 8px padding (clear of a vertical note such as Estimate by 4px),
-       it shrinks 1px at a time until it does. Below 24px it wraps onto two or more lines instead; only a single word still too
-       wide keeps shrinking (to 13px at the least).
-       Set inline with !important so the text-size setting can't override it; each pass starts afresh, in one frame (no flicker). */
-    var BASE = 32, WRAP = 24, MIN = 13, ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), rg = document.createRange();
+    /* (Oct 5, 02:20; 03:00) One simple rule for every mini card's value: it starts at the Likelihood card's size (32px value,
+       15px unit) and, when value + unit don't fit inside the card's 8px padding (clear of a vertical note such as Estimate by
+       4px), it shrinks 1px at a time until it does. Below 24px it wraps onto two or more lines instead; only a single word
+       still too wide keeps shrinking (to 13px at the least).
+       The result lives in one style sheet keyed by a data attribute on each value, not in its inline style: a screen that
+       redraws a card (live data) rewrites the inline style, which used to drop the value back to a stray old size. */
+    var BASE = 32, WRAP = 24, MIN = 13, ns = document.querySelectorAll('[data-wf-kpicard] .wf-big'), out = [];
+    var sh = document.getElementById('wf-kfit'); if (!sh) { sh = document.createElement('style'); sh.id = 'wf-kfit'; (document.head || document.documentElement).appendChild(sh); }
+    sh.textContent = '';   // measured afresh, all in this one frame (nothing is painted in between)
     for (var i = 0; i < ns.length; i++) {
       var n = ns[i], row = n.parentElement, card = n.closest('[data-wf-kpicard]');
       if (!row || !card || !card.clientWidth || !(n.textContent || '').trim()) continue;
-      ['max-width', 'justify-content'].forEach(function (p) { row.style.removeProperty(p); }); row.style.setProperty('white-space', 'nowrap'); row.style.setProperty('flex-wrap', 'nowrap'); n.style.setProperty('white-space', 'nowrap'); n.style.removeProperty('text-align');   // measured on one line
-      var cr = card.getBoundingClientRect(), L = cr.left + 8, R = cr.right - 8, note = card.querySelector('.wf-note');
-      if (note && note.offsetWidth && getComputedStyle(note).display !== 'none' && (note.textContent || '').trim()) { var nr = note.getBoundingClientRect(); R = Math.min(R, nr.left - 4); }
-      var fits = function () { rg.selectNodeContents(row); var r = rg.getBoundingClientRect(); return r.left >= L - 0.5 && r.right <= R + 0.5 && row.scrollWidth <= row.clientWidth + 0.5 && n.scrollWidth <= n.clientWidth + 0.5; }, k = BASE;
+      if (!n.getAttribute('data-wf-kid')) { n.setAttribute('data-wf-kid', String(++kidN)); row.setAttribute('data-wf-krow', String(kidN)); }
+      var id = n.getAttribute('data-wf-kid'); if (row.getAttribute('data-wf-krow') !== id) row.setAttribute('data-wf-krow', id);
+      ['font-size', 'white-space', 'text-align'].forEach(function (p) { n.style.removeProperty(p); }); ['max-width', 'justify-content', 'white-space', 'flex-wrap'].forEach(function (p) { row.style.removeProperty(p); });
+      row.style.setProperty('white-space', 'nowrap'); row.style.setProperty('flex-wrap', 'nowrap'); n.style.setProperty('white-space', 'nowrap');   // measured on one line
+      // everything in screen pixels: z is the page zoom (the card's drawn width over its layout width)
+      var cr = card.getBoundingClientRect(), z = cr.width / (card.offsetWidth || cr.width || 1), L = cr.left + 8 * z, R = cr.right - 8 * z, note = card.querySelector('.wf-note');
+      if (note && note.offsetWidth && getComputedStyle(note).display !== 'none' && (note.textContent || '').trim()) { var nc = getComputedStyle(note), nw = note.offsetWidth, nh = note.offsetHeight, vert = /vertical/.test(nc.writingMode || nc.webkitWritingMode || ''); var wide = vert ? Math.min(nw, nh) : nw; R = Math.min(R, cr.right - ((parseFloat(nc.right) || 0) + wide + 4) * z); }
+      // measured with the elements' own boxes (a text range is placed differently by Safari under the page zoom)
+      var parts = function () { return [].slice.call(row.children).filter(function (e) { return e.offsetWidth && getComputedStyle(e).display !== 'none'; }); };
+      var fits = function () { var P = parts(), l = Infinity, r = -Infinity; P.forEach(function (e) { var b = e.getBoundingClientRect(); l = Math.min(l, b.left); r = Math.max(r, b.right); }); if (!P.length) return true; return l >= L - 0.5 && r <= R + 0.5; }, k = BASE, wrap = false, mw = 0;
       for (; k >= WRAP; k--) { n.style.setProperty('font-size', k + 'px', 'important'); if (fits()) break; }
-      if (k >= WRAP) continue;
-      // still too wide at 24px: the value wraps onto two or more lines (centred, inside the padding), and only a word too long
-      // for a line on its own keeps shrinking
-      var cx = (cr.left + cr.right) / 2; n.style.setProperty('white-space', 'normal'); n.style.setProperty('text-align', 'center'); row.style.setProperty('white-space', 'normal'); row.style.setProperty('flex-wrap', 'wrap'); row.style.setProperty('justify-content', 'center'); row.style.setProperty('max-width', Math.floor(2 * Math.min(R - cx, cx - L)) + 'px');
-      var wfits = function () { var ok = true; [n, n.nextElementSibling].forEach(function (e) { if (!e || !e.offsetWidth) return; var r = e.getBoundingClientRect(); if (r.left < L - 0.5 || r.right > R + 0.5 || e.scrollWidth > e.clientWidth + 0.5) ok = false; }); return ok; };
-      for (k = WRAP; k >= MIN; k--) { n.style.setProperty('font-size', k + 'px', 'important'); if (wfits()) break; }
+      if (k < WRAP) {
+        // still too wide at 24px: the value wraps onto two or more lines (centred, inside the padding), and only a word too
+        // long for a line on its own keeps shrinking
+        wrap = true; var cx = (cr.left + cr.right) / 2; mw = Math.floor(2 * Math.min(R - cx, cx - L) / z);
+        n.style.setProperty('white-space', 'normal'); row.style.setProperty('white-space', 'normal'); row.style.setProperty('flex-wrap', 'wrap'); row.style.setProperty('max-width', mw + 'px');
+        var wfits = function () { var ok = true; [n, n.nextElementSibling].forEach(function (e) { if (!e || !e.offsetWidth) return; var r = e.getBoundingClientRect(); if (r.left < L - 0.5 || r.right > R + 0.5 || e.scrollWidth > e.clientWidth + 0.5) ok = false; }); return ok; };
+        for (k = WRAP; k >= MIN; k--) { n.style.setProperty('font-size', k + 'px', 'important'); if (wfits()) break; }
+        k = Math.max(k, MIN);
+      }
+      ['font-size', 'white-space'].forEach(function (p) { n.style.removeProperty(p); }); ['max-width', 'white-space', 'flex-wrap'].forEach(function (p) { row.style.removeProperty(p); });
+      out.push('[data-wf-kpicard] [data-wf-kid="' + id + '"]{font-size:' + k + 'px!important;white-space:' + (wrap ? 'normal;text-align:center' : 'nowrap') + '!important}' +
+        '[data-wf-kpicard] [data-wf-krow="' + id + '"]{white-space:' + (wrap ? 'normal' : 'nowrap') + '!important;flex-wrap:' + (wrap ? 'wrap;justify-content:center;max-width:' + mw + 'px' : 'nowrap') + '!important}');
     }
+    sh.textContent = out.join('');
   }
+  var kidN = 0;
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
   var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;
   function noStickyHover() {
@@ -522,12 +539,12 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
   /* Light on purpose: maps change the page on every frame while panning, so only changes to cards or new style sheets
      are acted on, at most every 150 ms (the map itself is never measured) */
-  var kT = 0, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); fitKpi(); }, 150); };
+  var kT = 0, kMo = null, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); fitKpi(); if (kMo) kMo.takeRecords(); }, 150); };   /* our own changes are not news */
   var kHit = function (ms) { for (var i = 0; i < ms.length; i++) { var m = ms[i], t = m.target && m.target.nodeType === 1 ? m.target : m.target && m.target.parentElement;
       if (!t) continue; if (t.closest && t.closest('[data-wf-kpicard]')) return true;
       for (var j = 0; j < m.addedNodes.length; j++) { var n = m.addedNodes[j]; if (n.nodeType !== 1) continue; if (n.tagName === 'STYLE' || n.tagName === 'LINK' || (n.querySelector && n.querySelector('[data-wf-kpicard]')) || (n.hasAttribute && n.hasAttribute('data-wf-kpicard'))) return true; } }
     return false; };
-  if (window.MutationObserver) { var kMo = new MutationObserver(function (ms) { if (kHit(ms)) kGo(); }); var kStart = function () { kMo.observe(document.documentElement, { childList: true, subtree: true, characterData: true }); kGo(); }; if (document.body) kStart(); else document.addEventListener('DOMContentLoaded', kStart); }
+  if (window.MutationObserver) { kMo = new MutationObserver(function (ms) { if (kHit(ms)) kGo(); }); var kStart = function () { kMo.observe(document.documentElement, { childList: true, subtree: true, characterData: true }); kGo(); }; if (document.body) kStart(); else document.addEventListener('DOMContentLoaded', kStart); }
   window.addEventListener('resize', kGo); if (document.fonts && document.fonts.ready) document.fonts.ready.then(kGo); setInterval(kGo, 2000);
   apply();
 })();
