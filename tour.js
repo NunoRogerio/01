@@ -180,6 +180,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var conf = null; try { conf = JSON.parse(sessionStorage.getItem('wf-confirmed') || 'null'); } catch (e) {} conf = conf || (window.__wfMem || {}).confirmed || {};
     if (conf[id] || conf['F-' + id]) return;   // confirmed in this session: its chat is current
     var c = C.get(k); if (c && (c.stage > 0 || c.closed || c.dismissed)) C.forget(k);
+    // (Oct 5, 03:17) and its earlier orders (a tour taken before): the fire page opens with nothing dispatched, the AI suggestion offered
+    try { var A = JSON.parse(localStorage.getItem('wf-orders') || '{}') || {}; [id, 'F-' + id, k].forEach(function (x) { delete A[x]; }); localStorage.setItem('wf-orders', JSON.stringify(A)); } catch (e) {}
   }
   // the fire page map's full-screen control: open (maximize) or close (minimize)
   function fsBtn(open) { var d = open ? 'M14 4h6v6' : 'M4 14h6v6'; return q('button.mbtn', function (b) { var p = b.querySelector('path[d^="' + d + '"]'); return !!p && getComputedStyle(p).display !== 'none'; }); }
@@ -238,7 +240,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
           var tab = q('button[role=tab].segopt', function (x) { return /^(Crews|Equipas)/.test((x.textContent || '').trim()) && x.offsetParent !== null; });
           if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
           if (window.__wfDispPlanReset && !q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; })) window.__wfDispPlanReset();
-          if (++t < 12) setTimeout(f, 300); }; f(); },
+          var g = get(); if (++t < 40 && g && S[g.i] && S[g.i].t && S[g.i].t[0] === 'Use the AI suggestion') setTimeout(f, 300); }; f(); },   /* (Oct 5, 03:17) for as long as this step lasts: nothing chosen yet, the AI suggestion showing */
       find: function () { return q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); },
       t: ['Use the AI suggestion', 'Use a sugestão da IA'],
       b: ['No crews are assigned yet. Tap AI suggested pack: the nearest stations and air support. You can also build the dispatch yourself with Add resources.', 'Ainda não há equipas atribuídas. Toque no pacote sugerido pela IA: os quartéis mais próximos e meios aéreos. Também pode montar o despacho com Adicionar meios.'] },
