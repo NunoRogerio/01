@@ -217,7 +217,7 @@
     el.querySelector('[data-act=close]').onclick = close;
     el.querySelector('[data-act=add]').onclick = function () { buzz(8); showSheet(true); };
     el.querySelector('[data-act=shut]').onclick = function () { showSheet(false); render(true); };
-    Array.prototype.forEach.call(el.querySelectorAll('[data-r]'), function (b) { b.onclick = function () { S.range = b.getAttribute('data-r'); LS(K_RANGE, S.range); buzz(8); render(false); var sc = el.querySelector('.sc'); if (sc) sc.scrollTop = 0; }; });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-r]'), function (b) { b.onclick = function () { S.range = b.getAttribute('data-r'); LS(K_RANGE, S.range); buzz(8); render(true); }; });
     dragWire();
   }
   // press and hold (250 ms) lifts a card; moving it up or down makes room; letting go keeps the new order
