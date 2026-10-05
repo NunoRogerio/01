@@ -1087,3 +1087,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Login stripes:** the firefighter stripes (shared .wf-stripes: primary-colour diagonal bars at 40%) run along the very bottom edge of the login screen, on the photo layer.
 - **Mini KPI values, fix (Oct 5, 03:00):** the fitted size now lives in one style sheet keyed to each value (data-wf-kid), so a card redrawn by live data no longer drops back to a stray old size (Nearest crew, Temperature, Fuel moisture, Spread rate looked tiny). Measured with element boxes in screen pixels (page zoom and the vertical Estimate note's real width included), never a text range. Same rule as before: 32px, shrink to 24px, then wrap.
 - **Ignition candidate KPIs:** Nearest fire removed from the cards and from the + picker (it belongs on the station screen, not on a candidate).
+- **Profile picker (Oct 5, 02:40):** Create profile stays fixed at the top of the picker; only the profiles scroll under it.
+- **Loading screen stripes:** the photo loading screen also carries the firefighter stripes along its bottom edge, like the login.

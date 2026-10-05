@@ -234,6 +234,8 @@ window.__wfBlink=function(path,dur){
     '#wf-load.photo .base{fill:var(--wf-y)}#wf-load.photo .ground{stroke:var(--wf-y)}#wf-load.photo svg{filter:drop-shadow(0 0 10px rgba(0,0,0,.35))}'+
     '#wf-load .cap{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));text-align:center;font:400 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:rgba(255,255,255,.8);opacity:0;transition:opacity .7s ease .3s}'+
     '#wf-load.photo .cap{opacity:1}'+
+    /* (Oct 5, 02:40) the firefighter stripes along the bottom edge, as on the login */
+    '#wf-load .stp{display:none}#wf-load.photo .stp{display:block;position:absolute;left:0;right:0;bottom:0;height:8px;z-index:2;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4}'+
     /* the loading counter, 0% to 100% */
     '#wf-load .pct{margin-top:-6px;font:600 51px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#8E8E93}'+
     '#wf-load.photo .pct{color:var(--wf-y);text-shadow:0 0 8px rgba(0,0,0,.5)}'+
@@ -252,7 +254,7 @@ window.__wfBlink=function(path,dur){
   var el=document.createElement('div');el.id='wf-load';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
   // Screens with a forest photo behind them start on its dark green, never on the light surface (no flash before the photo)
   if(/Login\.dc\.html/.test(location.pathname)||/\/(01\/)?(index\.html)?$/.test(location.pathname)){el.style.background='#000000';try{document.documentElement.style.background='#000000';}catch(e){}}
-  var TPL='<div class="bg"></div><div class="shade"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
+  var TPL='<div class="bg"></div><div class="shade"></div><div class="stp" aria-hidden="true"></div><div class="in"><svg width="81" height="99" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow:visible">'+
     '<path class="base" style="fill: var(--wf-y)" fill-rule="evenodd" d="'+F+'">'+BLINK+'</path>'+
     '<path class="ground" d="'+G+'" fill="none" stroke="'+(window.__wfY||'#E5FF00')+'" stroke-width="1.1" stroke-linecap="round"/></svg>'+
     '<span class="name">Forest Fire Watch</span><span class="sub">Loading live data</span><span class="pct">0%</span></div><div class="cap"></div>';
