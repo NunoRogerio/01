@@ -66,9 +66,9 @@
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = vals.length > 1 ? i * W / (vals.length - 1) : 0, y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
   var AG = 0;   // line charts: no fill under the line; each line casts a soft shadow in its own colour (the single line: the primary), centred on it (0 offset), 9px blur
-  function lineShadow(p, h, id, col) {   // only under its line (clipped to the area below it), at most 80% strong, 7.2px blur
+  function lineShadow(p, h, id, col, blur) {   // only under its line (clipped to the area below it), at most 80% strong, 7.2px blur (20% less, 5.76px, when a chart has several lines)
     var bot = h - 20;
-    return '<defs><filter id="' + id + '" filterUnits="userSpaceOnUse" x="-24" y="-24" width="' + (W + 48) + '" height="' + (h + 48) + '"><feGaussianBlur stdDeviation="7.2"/></filter><clipPath id="' + id + 'c"><path d="' + p + ' L' + W + ' ' + bot + ' L0 ' + bot + 'Z"/></clipPath></defs>' +
+    return '<defs><filter id="' + id + '" filterUnits="userSpaceOnUse" x="-24" y="-24" width="' + (W + 48) + '" height="' + (h + 48) + '"><feGaussianBlur stdDeviation="' + (blur || 7.2) + '"/></filter><clipPath id="' + id + 'c"><path d="' + p + ' L' + W + ' ' + bot + ' L0 ' + bot + 'Z"/></clipPath></defs>' +
       '<g clip-path="url(#' + id + 'c)" pointer-events="none" opacity="0.8"><path d="' + p + '" fill="none" style="stroke:' + (col || LIME) + '" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" filter="url(#' + id + ')"/></g>';
   }
 
@@ -81,7 +81,11 @@
     var h = 105, max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
     var cols = [INK, LIME_D, G1];
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      sets.map(function (s, i) { return lineShadow(pathOf(s.v, max, h, 0), h, 'wfls' + (++AG), cols[i]); }).join('') + slots(sets[0].v.length, h, function (i, x) { return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14); }) + sets.map(function (s, i) { return '<path pointer-events="none" d="' + pathOf(s.v, max, h, 0) + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + (i === 1 ? 3 : 2) + '" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="1 5"' : '') + '/>'; }).join('') + xAxis(h, lbls) + '</svg>' +
+      slots(sets[0].v.length, h, function (i, x) { return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14); }) +
+      // drawn darkest first, so the brighter series sit above the darker ones (crews, then aircraft, then vehicles), each line with its own shadow;
+      // the dark grey line's shadow is the middle grey (a dark shadow reads as dirt)
+      [0, 2, 1].filter(function (i) { return sets[i]; }).map(function (i) { var s = sets[i], d = pathOf(s.v, max, h, 0);
+        return lineShadow(d, h, 'wfls' + (++AG), cols[i] === INK ? G1 : cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + (i === 1 ? 3 : 2) + '" stroke-linejoin="round" stroke-linecap="round"' + (i === 2 ? ' stroke-dasharray="1 5"' : '') + '/>'; }).join('') + xAxis(h, lbls) + '</svg>' +
       '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">' + sets.map(function (s, i) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:16px;height:3px;border-radius:2px;background:' + cols[i] + '"></span>' + esc(s.n) + '</span>'; }).join('') + '</div>';
   }
   function columns(vals, labels, hl, unit, tickLbls, tipLbls) {
