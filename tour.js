@@ -541,7 +541,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   }
   /* (Oct 5, 10:50) the team's chatter in the chat during the tour: held while the evidence and the decision are pointed at, then left out (less talk; the cards and stages still come) */
-  window.__wfTour_mute = function () { var s = get(); if (s && PAGE === 'Chat.dc.html' && S[s.i] && S[s.i].holdAll) return 'holdall'; return s && PAGE === 'Chat.dc.html' ? (s.i <= holdTo() ? 'hold' : 'drop') : ''; };
+  window.__wfTour_mute = function () { var s = get(); if (s && PAGE === 'Chat.dc.html' && S[s.i] && S[s.i].holdAll && moveOn()) return 'holdall';   /* (Oct 5, 20:07) only once the Move to control is there: before it, the queued stage change (e.g. after the dispatch) must run, or the step waits forever */ return s && PAGE === 'Chat.dc.html' ? (s.i <= holdTo() ? 'hold' : 'drop') : ''; };
   window.__wfTour = { warn: warn, start: function () { askTilt(); tiltN = null; tiltNG = null; tiltLock = -1; try { var tb = document.querySelector('[data-wf-tourbtn] span[aria-hidden]') || document.querySelector('[data-wf-tourbtn]'), q0 = tb && tb.getBoundingClientRect(); if (q0 && q0.width) sessionStorage.setItem(DK, JSON.stringify({ x: (q0.left + q0.right) / 2, y: (q0.top + q0.bottom) / 2, t: Date.now() })); } catch (e) {} heliTakeOff(); put({ i: 0 }); tourScope(true); seen = 0; scrolled = false; ran = false; tick(); }, end: end, active: function () { return !!get(); } };
 
   // a hand-drawn arrow: a gently bent stroke with a slight wobble, and an open head, on a white halo
