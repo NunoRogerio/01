@@ -1156,3 +1156,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Move-to-stage chips (Oct 5, 10:13):** the chat suggestion that moves the fire to a stage ("•→ Move to Surveillance") wears that stage's tag colours, the same background and ink as its stage tag (dark mode too); the other suggestions stay white at 70%.
 - **Resolution card crests (Oct 5, 10:15):** the card's top padding is 16px, the same as its left padding, so the crests sit 16px from the top and left edges.
 - **Tour opening order (Oct 5, 10:17):** the tour opens on "Let's start reacting to an ignition" (Start, the under-construction sign, how to follow the circle), then the blade steps continue the same story: open the region selector, choose Los Angeles, open the incidents list, close it, then open the most likely candidate. No second "let's start" card in the middle.
+
+- **Map tooltip cards (Oct 5):** the first text (Status, Likelihood or Stage label) sits 8px under the card's top edge; the 8px taken from the top is added under the content, so the card height does not change.

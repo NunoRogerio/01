@@ -155,6 +155,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   // the state card's Move to <next stage> button, when the card is open
   function stMove() { return q('[data-wf-stmove]'); }
+  // the Approve button of an open request to declare the fire (a coordinator's card in a candidate's chat)
+  // raw: any in the chat, even scrolled out of view (to bring it in)
+  function reqApproveRaw() { return [].slice.call(document.querySelectorAll('article.chmsg [data-fitrow] > button.chbtn')).filter(function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }).pop() || null; }
+  function reqApprove() { return q('article.chmsg [data-fitrow] > button.chbtn', function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }); }
   function stExpand() { var c = q('header + button.chrow[aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
   // the candidate was confirmed: its Confirm / Dismiss suggestions are gone (checked a moment after the step began)
   function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss fire', 'Descartar incêndio']) && !!q('header + button.chrow[aria-expanded]'); }
@@ -225,13 +229,17 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       // (Oct 5, 09:31) the Key figures step was folded in here: the achievement lands on this screen, then straight to the chat
       ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Its key figures are below.', 'Os números principais estão abaixo.'],
       t: ['Confirm the ignition in the team chat', 'Confirme a ignição na conversa da equipa'],
-      b: ['Declaring a fire is a team call. Tap the chat to talk with the coordinators and station chiefs.', 'Declarar um incêndio é uma decisão da equipa. Toque na conversa para falar com coordenadores e comandantes de quartel.'] },
+      b: ['The nearest station\'s drone is already over it, and the team is reacting to its feed. Tap the chat to join them.', 'O drone do quartel mais próximo já está sobre o ponto e a equipa está a reagir à imagem. Toque na conversa para se juntar.'] },
 
-    // (Oct 5, 03:15) one step: the state card opens by itself and the cursor goes straight to its Move to First alert button
-    { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, before: function () { var t = 0, f = function () { if (!q('header + button.chrow[aria-expanded="true"]')) stExpand(); if (++t < 6 && !stMove()) setTimeout(f, 300); }; setTimeout(f, 400); },
-      find: function () { return stMove() || q('header + button.chrow[aria-expanded]'); },
+    // (Oct 5, 10:19) the chat opens on what already happened: the evidence card with the drone feed, the team's readings
+    { page: 'Chat.dc.html', mode: 'next', point: true, find: function () { var f = q('article.chmsg .wf-evfeed'); return f ? f.closest('article.chmsg') : null; },
+      t: ['The evidence, live', 'As evidências, em direto'],
+      b: ['The nearest station sent its drone when the ignition was detected. Its feed is evidence beside the satellite, and every coordinator has given a reading below.', 'O quartel mais próximo enviou o drone quando a ignição foi detetada. A imagem é uma evidência ao lado do satélite, e cada coordenador deu a sua leitura abaixo.'] },
+    // the decision: Approve on the coordinator's request card (or, without one, the state card's Move to First alert)
+    { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, before: function () { var t = 0, f = function () { var ra = reqApproveRaw(); if (ra) { try { ra.scrollIntoView({ block: 'center' }); } catch (x) {} scrolled = false; return; } if (!q('header + button.chrow[aria-expanded="true"]')) stExpand(); if (++t < 6 && !stMove()) setTimeout(f, 300); }; setTimeout(f, 400); },
+      find: function () { return reqApprove() || stMove() || q('header + button.chrow[aria-expanded]'); },
       t: ['Declare the fire', 'Declare o incêndio'],
-      b: ['Tap Move to First alert to declare it.', 'Toque em Passar a Despacho de 1.º alerta para o declarar.'] },
+      b: ['A coordinator asks you to declare it. Tap Approve.', 'Um coordenador pede-lhe que o declare. Toque em Aprovar.'] },
     // (Oct 5, 02:28) crews are dispatched from the chat: the cursor on the Configure dispatch button of the Ignition confirmed card
     { page: 'Chat.dc.html', mode: 'tap', before: function () { var c = q('header + button.chrow[aria-expanded="true"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } },   /* the state card closes: straight to the chat with the card */
       find: function () { return q('article.chmsg button.chbtn', function (b) { return /^(Configure dispatch|Configurar despacho)/.test(txt(b)) && !b.disabled; }) || chip(['Configure dispatch', 'Configurar despacho']); },

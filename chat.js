@@ -454,6 +454,12 @@
         if (n > 2) say(c, 2, 'No smoke seen from our station.', 'Sem fumo visível do nosso quartel.', 13500, 2);
       }
       card(c, evidRequest(c), 17000, 1);
+      // (Oct 5, 10:19) all of this happened when the candidate was detected, before anyone opens the chat: the drone took off
+      // on its own and the team has already reacted to its feed. The messages are written as past, minutes after detection
+      // (fitted into the time since), and count as unread on the candidate's chat button.
+      var now0 = Date.now(), base = Math.min(now0 - 2 * MIN, (c.hist[0] && c.hist[0].vt) || now0 - 15 * MIN), span = Math.max(2 * MIN, Math.min(12 * MIN, now0 - MIN - base));
+      var Q = c.queue.splice(0, c.queue.length), last = Q.length ? Q[Q.length - 1].due : 1, first = Q.length ? Q[0].due : 0;
+      Q.forEach(function (q) { var m = q.m; delete m.adv; m.t = m.vt = Math.round(base + MIN / 2 + (q.due - first) / Math.max(1, last - first) * (span - MIN / 2)); if (m.req) m.nagAt = now0; c.msgs.push(m); });
     } else {
       var s = c.stage;
       sys(c, 'Chat opened for this fire · you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Conversa aberta para este incêndio · você (responsável) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 300, 0);
@@ -468,6 +474,7 @@
     var P = c.people; d = d || 0;
     if (s === 1) {
       if (c.flags.dispatched) return;   // orders already sent from the dispatch screen
+      if (window.__wfTour && window.__wfTour.active && window.__wfTour.active()) return;   // (Oct 5, 10:21) in the tour the team waits: nothing pushes the Ignition confirmed card (Configure dispatch) up
       if (P[0]) say(c, 0, 'Ready to go on your order.', 'Prontos para sair à sua ordem.', d + 3500, 1);
       if (P[1]) say(c, 1, 'Available now.', 'Disponíveis agora.', d + 6500, 1);
       if (P[2]) say(c, 2, 'We can send one crew, the second stays for cover.', 'Podemos enviar uma equipa, a segunda fica de prevenção.', d + 9500, 2);
@@ -999,6 +1006,7 @@
     var m = null; for (var i = c.msgs.length - 1; i >= 0; i--) { var x = c.msgs[i]; if (x.kind === 'card' && x.req && x.actions && x.actions.length && !x.done) { m = x; break; } }
     if (!m) return false;
     if (m.req === 'air' && (c.flags.air || c.flags.airNo)) return false;   // answered from a suggestion instead
+    if (m.reqDecl && !c.seenAt) return false;   // nobody has looked yet: no reminder
     var n = m.nag || 0; if (n >= 2 || now - (m.nagAt || m.t || now) < (n ? 90000 : 45000)) return false;
     m.nag = n + 1; m.nagAt = now;
     // (Oct 5, 09:53) the button to tap is the request's primary one (Approve), whatever its place on the card
@@ -1283,7 +1291,7 @@
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
-    seen: function (k) { var c = load().chats[k]; if (c) { c.seenAt = Date.now(); save(); emit(); } },
+    seen: function (k) { var c = load().chats[k]; if (c) { if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
     forget: function (k) { var db = load(); if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
     send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },

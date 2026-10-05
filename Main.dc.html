@@ -21,8 +21,8 @@
 <script src="prefs.js?v=196"></script>
 <script src="i18n.js?v=166"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=71"></script>
-<script src="tour.js?v=101"></script>
+<script src="chat.js?v=73"></script>
+<script src="tour.js?v=103"></script>
 <script src="mapsearch.js?v=4"></script>
 
 <title>Incidents</title>
@@ -526,13 +526,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- Menu (Oct 3, 17:18): the open section's title, level with the menu button; 40px to its first element -->
     <!-- (Oct 3, 22:20) the section darkens 20% while the screen slides back over it (folding to the icon column or closing), like a covered section -->
     <span aria-hidden="true" data-wf-secdim="1" style="position: absolute; inset: 0; z-index: 6; background: #000000; opacity: {{pm.dimOp}}; transition: opacity {{pm.dimT}}; pointer-events: none"></span>
-    <h2 id="pfTitle" class="wf-title-m" data-wf-keepsp="1" style="display: flex; align-items: center; min-height: {{pm.tMin}}px; margin: {{pm.tTop}}px 0 0; padding: 0 16px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
+    <h2 id="pfTitle" class="wf-title-m" data-wf-keepsp="1" style="display: flex; align-items: center; min-height: {{pm.tMin}}px; margin: {{pm.tTop}}px 0 0; padding: 0 16px 0 24px; flex-shrink: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; color: #000000">{{pm.title}}</h2>
     <!-- (Oct 4, 22:30) every settings section: a short description under its title (4px), what you see and can do there; data sources lead with their count -->
-    <span data-wf-keepsp="1" style="display: block; padding: 0 16px; margin: 4px 0 0; flex-shrink: 0; font-size: 17px; line-height: 22px; color: #6E6E73"><span>{{pm.desc}}</span><span style="display: {{pm.dsCntD}}"> <b style="font-weight: 700; color: #3A3A3C; margin-right: 0.25em">{{ds.count}}</b><span>{{ds.subW}}</span>.</span></span>
+    <span data-wf-keepsp="1" style="display: block; padding: 0 16px 0 24px; margin: 4px 0 0; flex-shrink: 0; font-size: 17px; line-height: 22px; color: #6E6E73"><span>{{pm.desc}}</span><span style="display: {{pm.dsCntD}}"> <b style="font-weight: 700; color: #3A3A3C; margin-right: 0.25em">{{ds.count}}</b><span>{{ds.subW}}</span>.</span></span>
     <!-- Preferences scroll freely, no snapping; content fades out as it slides under the top row and the profile picture -->
     <!-- (Oct 3, 21:27) 16px all round the section (top: the title level with the menu button, 16px down; left; bottom), whatever the spacing preference; items sit on the panel itself, no containers (to be designed later) -->
-    <div data-wf-fadetop="1" data-wf-keepsp="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 16px">
-      <div style="display: {{pm.dProf}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 0">
+    <div data-wf-fadetop="1" data-wf-keepsp="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 16px 24px">
+      <!-- (Oct 5, 10:23) the profile's three groups (who, what they do, Sign out) are centred together between the close button and the menu's Sign out icon (wfProfCenter) -->
+      <div data-wf-profgrp="1" style="display: {{pm.dProf}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 0">
         <div style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
         <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; align-items: center; text-align: center">
@@ -702,7 +703,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <div aria-hidden="{{ds.hid}}" style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; visibility: {{ds.vis}}; opacity: {{ds.op}}; transition: opacity .35s ease {{ds.delay}}, visibility 0s linear {{ds.visDelay}}">
             <div style="display: flex; flex-direction: column; gap: 24px; padding: 16px 0; border-top: 0">
               <!-- (Oct 5, 09:02) "add" has one word app-wide: a white card row with the grey 56px + tile, label and description, first in its list (as Add resources) -->
-              <button type="button" class="opt" onClick="{{ds.add}}" style="display: flex; align-items: center; gap: 16px; min-height: 80px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); color: #000000; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ds.addTxt}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.addSub}}</span></span></button>
+              <button type="button" class="opt" onClick="{{ds.add}}" style="display: flex; align-items: center; gap: 16px; min-height: 80px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: transparent; box-shadow: none; color: #000000; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px">{{ds.addTxt}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.addSub}}</span></span></button>
               <span style="display: {{ds.noteD}}; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.note}}</span>
             </div>
             <ul aria-label="{{ds.listLabel}}" style="display: flex; flex-direction: column; gap: 32px; margin: 40px 0 0; padding: 0; list-style: none"><!-- (Oct 5) a full-width line between the sources, 32px either side -->
@@ -1014,7 +1015,16 @@ class Component extends DCLogic {
   // Incidents switcher: the yellow takes the chosen option's measured box (options are sized by their labels)
   wfLiSeg() { try { const el = document.querySelector('[data-wf-liseg]'); if (!el || !el.offsetWidth) return; const b = el.querySelector('[aria-selected=true]'); if (!b) return; const K = (this.state || {}).liK || 'all', x = b.offsetLeft, w = b.offsetWidth, o = (this.state || {}).liSeg;
     if (!o || o.k !== K || Math.abs(o.x - x) > 0.5 || Math.abs(o.w - w) > 0.5) this.setState({ liSeg: { k: K, x, w } }); } catch (x) {} }
-  componentDidUpdate() { this.wfLiSeg(); }
+  componentDidUpdate() { this.wfLiSeg(); this.wfProfCenter(); }
+  // (Oct 5, 10:23) the profile groups as one block, centred between the close button (top) and the Sign out icon (bottom of the
+  // menu column); never higher than where they would sit anyway (under the section's title and description)
+  wfProfCenter() { try { const g = document.querySelector('[data-wf-profgrp]'); if (!g || !g.offsetHeight) return;
+      const x = document.querySelector('button[data-wf-burger]'), o = document.querySelector('nav a[href^="reset.html?out"]'); if (!x || !o) return;
+      const R0 = document.querySelector('[data-wfroot]') || document.body, k = R0.getBoundingClientRect().width / ((window.__wfVP || {}).w || 390) || 1;
+      const rx = x.getBoundingClientRect(), ro = o.getBoundingClientRect(), r = g.getBoundingClientRect(), cur = parseFloat(g.style.marginTop) || 0;
+      const mid = ((rx.top + rx.bottom) / 2 + (ro.top + ro.bottom) / 2) / 2, natTop = r.top - cur * k;
+      const off = Math.max(0, Math.round((mid - r.height / 2 - natTop) / k));
+      if (Math.abs(off - cur) > 1) g.style.marginTop = off + 'px'; } catch (e) {} }
   wfMenuPost(m) { if (!window.__wfMenuOnly) return; try { window.parent.postMessage({ wfMenu: m }, location.origin); } catch (e) {} }
   componentDidMount() {
     // (Oct 5) keys: a failing key shows a red dot on its menu icon; MapTiler's is checked once per session
