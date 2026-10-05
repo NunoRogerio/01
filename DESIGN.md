@@ -1175,3 +1175,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Trophy and summary cards (Oct 5):** the hi-vis stripe at the foot is at 60% opacity (was 90%); the dark gradient over the photo is 20% lighter, so the card does not read so dark.
 
 - **Floating feeds and calls, shrinking (Oct 5):** the expand button stays visible while the card gets smaller, and hides only when it would come within 2px of the X or hang-up button above it (card height under 122px).
+
+- **Home in the resolved chat (Oct 5):** once the fire is resolved (summary card in the chat), the chat's back icon becomes a home icon and goes to the main screen. Before that it is the usual back.
