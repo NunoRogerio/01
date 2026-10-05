@@ -845,3 +845,38 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   var hm;try{hm=new Intl.DateTimeFormat(lang==='pt'?'pt-PT':lang==='ja'?'ja-JP':undefined,{hour:'numeric',minute:'2-digit'}).format(d);}catch(e){hm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
   if(lang==='ja')return '最終更新: '+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+hm;
   return (lang==='pt'?'Última atualização: ':'Last update: ')+d.getDate()+' '+M[lang==='pt'?'pt':'en'][d.getMonth()]+' '+d.getFullYear()+(lang==='pt'?', às ':', at ')+hm;};
+// (Oct 5) Tap the status bar to scroll to the top, as in iOS apps: in the installed app (the page runs under the status bar),
+// a tap on the top edge, the status bar's own height, glides the panel or list being read back to its top, on every screen,
+// panel, sheet and list. Taps on a control there are left alone. Every frame (the menu, sheets in frames) hands its taps to
+// the top window, which finds the scrolled content under the middle of the screen, through frames, and glides it up.
+(function(){
+  var TOPW;try{TOPW=window.top;void TOPW.document;}catch(e){TOPW=window;}
+  var CTRL='button,a,input,textarea,select,label,[role=button],[role=radio],[role=switch],[role=tab],[contenteditable=true]';
+  // the point in the top window's viewport for a point in this document
+  function toTop(x,y){var w=window;try{while(w!==TOPW&&w.frameElement){var r=w.frameElement.getBoundingClientRect(),sx=r.width/(w.innerWidth||r.width||1),sy=r.height/(w.innerHeight||r.height||1);x=r.left+x*sx;y=r.top+y*sy;w=w.parent;}}catch(e){}return [x,y];}
+  if(window===TOPW){
+    var zoneH=-1;
+    function zone(){if(window.__wfTOP!==0)return 0;if(zoneH<0){try{var p=document.createElement('div');p.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';document.documentElement.appendChild(p);zoneH=parseFloat(getComputedStyle(p).paddingTop)||0;p.remove();}catch(e){zoneH=0;}if(zoneH<20)zoneH=20;}return zoneH;}
+    addEventListener('resize',function(){zoneH=-1;});addEventListener('orientationchange',function(){zoneH=-1;});
+    function scrollable(el){if(!el||el.nodeType!==1)return false;var cs;try{cs=el.ownerDocument.defaultView.getComputedStyle(el);}catch(e){return false;}return /(auto|scroll)/.test(cs.overflowY)&&el.scrollHeight>el.clientHeight+1;}
+    // the scrolled containers under a point, from the innermost out, looking into frames
+    function under(doc,x,y,out){var el;try{el=doc.elementFromPoint(x,y);}catch(e){return;}
+      if(el&&el.tagName==='IFRAME'){try{var r=el.getBoundingClientRect(),d=el.contentDocument;if(d){var w=el.contentWindow;under(d,(x-r.left)*(w.innerWidth/r.width),(y-r.top)*(w.innerHeight/r.height),out);}}catch(e){}}
+      for(var n=el;n&&n.nodeType===1;n=n.parentElement)if(scrollable(n)&&n.scrollTop>0&&out.indexOf(n)<0)out.push(n);
+      var se=doc.scrollingElement;if(se&&se.scrollTop>0&&out.indexOf(se)<0)out.push(se);}
+    // a quick, nimble glide (about 0.35 s, easing out); from far down it jumps to a screen and a half above the top, then glides
+    function glide(el){var from=el.scrollTop;if(from<=0)return;var cs=el.ownerDocument.defaultView.getComputedStyle(el),snap=el.style.scrollSnapType,ov=el.style.overflowY,sb=el.style.scrollBehavior;
+      el.style.scrollBehavior='auto';el.style.scrollSnapType='none';el.style.overflowY='hidden';   // stops a coasting scroll at once
+      var lim=el.clientHeight*1.5;if(from>lim){el.scrollTop=lim;from=lim;}
+      var t0=0,dur=350;function step(t){if(!t0){t0=t;el.style.overflowY=ov;}var k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,3);el.scrollTop=Math.round(from*(1-e));
+        if(k<1)requestAnimationFrame(step);else{el.scrollTop=0;el.style.scrollSnapType=snap;el.style.scrollBehavior=sb;}}
+      requestAnimationFrame(step);}
+    window.__wfTopTap=function(x,y){var z=zone();if(!z||y>z)return false;var W=innerWidth,H=innerHeight,out=[];
+      [[W/2,H/2],[W/2,H*0.3],[W/2,H*0.7],[W*0.3,H/2]].forEach(function(p){under(document,p[0],p[1],out);});
+      if(!out.length)return false;try{if(navigator.vibrate)navigator.vibrate(8);}catch(e){}out.forEach(glide);return true;};
+  }
+  // taps: a short touch that hardly moves, not on a control
+  var d0=null;
+  document.addEventListener('pointerdown',function(e){d0=null;if(e.pointerType==='mouse'&&e.button!==0)return;try{if(e.target&&e.target.closest&&e.target.closest(CTRL))return;}catch(x){}d0=[e.clientX,e.clientY,Date.now()];},{capture:true,passive:true});
+  document.addEventListener('pointerup',function(e){var o=d0;d0=null;if(!o||Date.now()-o[2]>500||Math.hypot(e.clientX-o[0],e.clientY-o[1])>10)return;var p=toTop(e.clientX,e.clientY);try{if(TOPW.__wfTopTap)TOPW.__wfTopTap(p[0],p[1]);}catch(x){}},{capture:true,passive:true});
+})();
