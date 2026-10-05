@@ -48,20 +48,15 @@
   }
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" fill="#6E6E73" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" fill="#6E6E73" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = vals.length > 1 ? i * W / (vals.length - 1) : 0, y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
-  var AG = 0;   // area fills follow the line: the primary at 100% on the line, fading to 0% a fixed depth under it (the depth that puts 0% at 70% of the chart's height, 20% below the middle, under the highest point), so the fade keeps the same look whatever the line's slope
-  function fade(vals, max, h, id) {
-    var bot = h - 20, top = 14, D = bot * 0.7 - top, N = 24, pts = vals.map(function (v, i) { return [vals.length > 1 ? i * W / (vals.length - 1) : 0, bot - (bot - top) * (v / (max || 1))]; }), o = '';
-    var line = pts.map(function (q, i) { return (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join(' ');
-    for (var k = N; k >= 1; k--) {   // nested bands from the line down to k steps; band k at 1/k opacity, so the stack reads k/N: a straight fade with no seams
-      var dk = D * k / N, back = pts.slice().reverse().map(function (q) { return 'L' + q[0].toFixed(1) + ' ' + Math.min(bot, q[1] + dk).toFixed(1); }).join(' ');
-      o += '<path d="' + line + ' ' + back + 'Z" style="fill:' + LIME + '" fill-opacity="' + (1 / k).toFixed(4) + '"/>';
-    }
-    return '<g clip-path="url(#' + id + ')">' + o + '</g><defs><clipPath id="' + id + '"><rect x="0" y="0" width="' + W + '" height="' + bot + '"/></clipPath></defs>';
+  var AG = 0;   // line charts: no fill under the line; a soft shadow of the line in the primary colour, 16px lower and blurred
+  function lineShadow(p, h, id) {
+    return '<defs><filter id="' + id + '" filterUnits="userSpaceOnUse" x="-24" y="-24" width="' + (W + 48) + '" height="' + (h + 48) + '"><feGaussianBlur stdDeviation="6"/></filter><clipPath id="' + id + 'c"><rect x="0" y="0" width="' + W + '" height="' + (h - 20) + '"/></clipPath></defs>' +
+      '<g clip-path="url(#' + id + 'c)"><path d="' + p + '" transform="translate(0 16)" fill="none" style="stroke:' + LIME + '" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" filter="url(#' + id + ')"/></g>';
   }
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      fade(vals, max, h, 'wfag' + (++AG)) + '<path d="' + p + '" fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' + xAxis(h, lbls) + '</svg>';
+      lineShadow(p, h, 'wfag' + (++AG)) + '<path d="' + p + '" fill="none" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
     var h = 105, max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
