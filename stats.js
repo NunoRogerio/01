@@ -93,7 +93,19 @@
         return lineShadow(d, h, 'wfls' + (++AG), cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round"' + '/>'; }).join('') + '</g>' + xAxis(h, lbls) + '</svg>' +
       '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">' + sets.map(function (s, i) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:24px;height:' + LW + 'px;border-radius:' + (LW / 2) + 'px;background:' + cols[i] + '"></span>' + esc(s.n) + '</span>'; }).join('') + '</div>';
   }
+  // (Oct 6) a column chart shows at most 16 columns: longer series are summed into even groups of consecutive slots (2 days, 2 hours…),
+  // their tooltip naming the whole interval and the axis ticks moved to the group they fall in
+  var MAXC = 16;
+  function span(a, z) { if (a === z) return a; var A = String(a).split(' to '), Z = String(z).split(' to ');
+    if (A.length === 2 && Z.length === 2) return A[0] + ' to ' + Z[1];
+    return a + ' to ' + (/^(Today|This week)$/.test(z) ? z.toLowerCase() : String(z).replace(/^Week of /, '')); }
   function columns(vals, labels, hl, unit, tickLbls, tipLbls) {
+    if (vals.length > MAXC) {
+      var g = Math.ceil(vals.length / MAXC), nv = [], nt = [], src = tipLbls || (vals.length === PTS.length ? PTS : null);
+      for (var j = 0; j < vals.length; j += g) { var e = Math.min(vals.length, j + g) - 1, sm = 0; for (var k = j; k <= e; k++) sm += vals[k]; nv.push(sm); if (src) nt.push(span(src[j], src[e])); }
+      if (tickLbls) tickLbls = tickLbls.map(function (t) { return [Math.floor(t[0] / g), t[1]]; });
+      vals = nv; tipLbls = src ? nt : null; labels = [];
+    }
     hl = vals.indexOf(Math.max.apply(null, vals));   // the biggest value is always the dark grey one, in every column chart
     var h = 105, max = Math.max.apply(null, vals) * 1.05, bot = h - 20, n = vals.length, gap = n > 14 ? 3 : 8, bw = (W - gap * (n - 1)) / n, o = '';
     vals.forEach(function (v, i) { var bh = Math.max(2, (bot - 16) * v / max), x = i * (bw + gap); var tl = (tipLbls && tipLbls[i]) || labels[i] || (vals.length === PTS.length ? PTS[i] : ''), cw = Math.min(8, bw); o += '<rect class="tslot" x="' + (x - gap / 2).toFixed(1) + '" y="0" width="' + (bw + gap).toFixed(1) + '" height="' + bot + '"' + tipA(fmt(v) + ' ' + unit, tl, x + bw / 2, bot - bh) + ' data-ys="' + (bot - Math.max(bh, cw) + cw / 2).toFixed(1) + '" data-cs="' + (i === hl ? INK : LIME) + '"/>'; o += '<rect class="an-c" data-b="' + bot + '" pointer-events="none" x="' + (x + (bw - cw) / 2).toFixed(1) + '" y="' + (bot - Math.max(bh, cw)).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + Math.max(bh, cw).toFixed(1) + '" rx="' + (cw / 2).toFixed(1) + '" style="fill:' + (i === hl ? INK : LIME) + '"/>'; });
