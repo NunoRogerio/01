@@ -880,3 +880,69 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   document.addEventListener('pointerdown',function(e){d0=null;if(e.pointerType==='mouse'&&e.button!==0)return;try{if(e.target&&e.target.closest&&e.target.closest(CTRL))return;}catch(x){}d0=[e.clientX,e.clientY,Date.now()];},{capture:true,passive:true});
   document.addEventListener('pointerup',function(e){var o=d0;d0=null;if(!o||Date.now()-o[2]>500||Math.hypot(e.clientX-o[0],e.clientY-o[1])>10)return;var p=toTop(e.clientX,e.clientY);try{if(TOPW.__wfTopTap)TOPW.__wfTopTap(p[0],p[1]);}catch(x){}},{capture:true,passive:true});
 })();
+
+// (Oct 6) Houses in reach of a fire's projection: each projected shape (+1 / +3 / +6 h, the same shapes the map draws) is
+// checked against OpenStreetMap (Overpass): buildings that are homes or could be (sheds, barns, industry left out) and named
+// places inside it, beyond those already inside the current outline. Real map data; the projected shapes themselves are
+// the app's projection. A horizon that reaches houses gets a red dot on the projection switcher; the fire's screen shows a
+// pulsing red warning that opens the earliest one. Results are kept for 6 hours per fire on this phone.
+(function () {
+  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes2-', MIN_B = 3;
+  var NOT = '^(garage|garages|shed|barn|farm_auxiliary|greenhouse|industrial|warehouse|roof|carport|hangar|silo|storage_tank|construction|ruins|service|transformer_tower|bunker|kiosk|toilets|cowshed|stable|sty|bridge)$';
+  function toLL(x, y) { return [34.19 - (y - 662) / 2829, (x - 518) / 2345 - 118.13]; }
+  function rings(id, ll, px) {
+    var out = {};
+    if (!window.__wfGrowXY) return out;
+    if (ll && ll.length > 2) { var c = Math.cos((ll[0][0] || 0) * Math.PI / 180) || 1, b = ll.map(function (q) { return [q[1] * c, q[0]]; }); out[0] = ll;
+      HZ.forEach(function (h) { var g = window.__wfGrowXY(b, G[h], id); if (g) out[h] = g.map(function (q) { return [q[1], q[0] / c]; }); }); }
+    else if (px && px.length > 2) { out[0] = px.map(function (q) { return toLL(q[0], q[1]); });
+      HZ.forEach(function (h) { var g = window.__wfGrowXY(px, G[h], id); if (g) out[h] = g.map(function (q) { return toLL(q[0], q[1]); }); }); }
+    return out; }
+  function thin(r, n) { if (r.length <= n) return r; var o = [], st = r.length / n; for (var i = 0; i < n; i++) o.push(r[Math.floor(i * st)]); return o; }
+  function poly(r) { return thin(r, 40).map(function (q) { return q[0].toFixed(5) + ' ' + q[1].toFixed(5); }).join(' '); }
+  function inside(p, r) { var a = false; for (var i = 0, j = r.length - 1; i < r.length; j = i++) { var yi = r[i][0], xi = r[i][1], yj = r[j][0], xj = r[j][1];
+    if (((yi > p[0]) !== (yj > p[0])) && (p[1] < (xj - xi) * (p[0] - yi) / ((yj - yi) || 1e-12) + xi)) a = !a; } return a; }
+  function emit() { try { window.dispatchEvent(new Event('wf-homes')); } catch (e) {} }
+  function load(id) { try { var v = JSON.parse(localStorage.getItem(LK + id) || 'null'); if (v && Date.now() - v.t < TTL) return v; } catch (e) {} return null; }
+  // id: the fire; ll: its current outline [[lat, lon]…] when mapped; px: else the map's illustrative outline in map pixels
+  window.__wfHomesCheck = function (id, ll, px) {
+    if (!id) return null; var sig = (ll && ll.length ? 'l' + ll.length + ':' + ll[0].join(',') : 'p' + (px && px.length ? px[0].join(',') : ''));
+    var m = MEM[id]; if (m && m.sig === sig) return m.st === 'done' ? m.res : null;
+    var c = load(id); if (c && c.sig === sig) { MEM[id] = { sig: sig, st: 'done', res: c }; return c; }
+    var R = rings(id, ll, px); if (!R[0] || !R[6]) return null;
+    MEM[id] = { sig: sig, st: 'loading' };
+    var q = '[out:json][timeout:25];' + [0].concat(HZ).map(function (h) { return 'way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[h]) + '");out count;'; }).join('') +
+      'node["place"~"^(city|town|village|hamlet|suburb|neighbourhood|quarter)$"](poly:"' + poly(R[6]) + '");out body 40;';
+    fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: 'data=' + encodeURIComponent(q), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (js) {
+        var E = js.elements || [], cnt = E.filter(function (e) { return e.type === 'count'; }).map(function (e) { return +((e.tags || {}).ways || (e.tags || {}).total || 0); });
+        var pl = E.filter(function (e) { return e.type === 'node' && e.tags && e.tags.name; });
+        var res = { sig: sig, t: Date.now(), n: {}, b: {}, place: {}, at: {}, first: null };
+        HZ.forEach(function (h, i) { var nb = Math.max(0, (cnt[i + 1] || 0) - (cnt[0] || 0)), p = pl.filter(function (e) { var P = [e.lat, e.lon]; return inside(P, R[h]) && !inside(P, R[0]); });
+          res.b[h] = nb; res.place[h] = p.length ? p[0].tags.name : ''; res.at[h] = nb >= MIN_B || p.length > 0; if (res.at[h] && res.first == null) res.first = h; });
+        MEM[id] = { sig: sig, st: 'done', res: res }; try { localStorage.setItem(LK + id, JSON.stringify(res)); } catch (e) {} emit();
+      }).catch(function () { MEM[id] = { sig: sig, st: 'fail' }; setTimeout(function () { if (MEM[id] && MEM[id].st === 'fail') delete MEM[id]; }, 60000); });   /* no answer, no warning: tried again a minute later */
+    return null; };
+  // The warning: a red pill floating over the screen (32px from the bottom, above the new assignment card when it shows),
+  // a soft red glow of its own colour pulsing round it. o: { h, title, sub, aria, go } or null to remove it.
+  function css() { if (document.getElementById('wf-homes-css')) return; var s = document.createElement('style'); s.id = 'wf-homes-css';
+    s.textContent = '@keyframes wfHomesPulse{0%,100%{box-shadow:0 0 8px 2px rgba(215,0,21,0.45)}50%{box-shadow:0 0 28px 10px rgba(215,0,21,0.55)}}' +
+      '#wf-homes{animation:wfHomesPulse 1.8s ease-in-out infinite}@media (prefers-reduced-motion: reduce){#wf-homes{animation:none;box-shadow:0 0 16px 4px rgba(215,0,21,0.5)}}';
+    document.head.appendChild(s); }
+  var el = null, tap = null, sig0 = '';
+  window.__wfHomesAlert = function (o) {
+    if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateX(-50%) translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
+    css(); tap = o.go;
+    var off = document.getElementById('wf-offer'), bot = 32 + (off && off.offsetHeight ? off.offsetHeight + 16 : 0);
+    if (!el) { el = document.createElement('button'); el.type = 'button'; el.id = 'wf-homes';
+      el.style.cssText = 'position: fixed; left: 50%; bottom: ' + bot + 'px; z-index: 410; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; box-sizing: border-box; max-width: calc(100% - 32px); min-height: 56px; padding: 8px 24px; border: 0; border-radius: 28px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); font: inherit; text-align: center; cursor: pointer; opacity: 0; transform: translateX(-50%) translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-tap-highlight-color: transparent';
+      el.addEventListener('click', function () { try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} if (tap) tap(); });
+      document.body.appendChild(el); requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0px)'; } }); }); }
+    el.style.bottom = bot + 'px';
+    var s = o.title + '|' + o.sub; if (s !== sig0) { sig0 = s; el.setAttribute('aria-label', o.aria || (o.title + '. ' + o.sub));
+      el.innerHTML = '<span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: rgba(255,255,255,0.92); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">' + o.sub + '</span>' : ''); } };
+  // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
+  window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, b = res.b[h] || 0, p = res.place[h] || '';
+    var bl = b ? (pt ? 'Cerca de ' + b + (b === 1 ? ' edifício' : ' edifícios') : 'About ' + b + (b === 1 ? ' building' : ' buildings')) : '';
+    return { h: h, title: pt ? 'Casas ao alcance em ' + h + ' h' : 'Houses in reach in ' + h + ' h', sub: [bl, p].filter(Boolean).join('. ') + '.' }; };
+})();
