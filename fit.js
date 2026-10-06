@@ -905,11 +905,12 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   function emit() { try { window.dispatchEvent(new Event('wf-homes')); } catch (e) {} }
   function load(id) { try { var v = JSON.parse(localStorage.getItem(LK + id) || 'null'); if (v && Date.now() - v.t < TTL) return v; } catch (e) {} return null; }
   // id: the fire; ll: its current outline [[lat, lon]…] when mapped; px: else the map's illustrative outline in map pixels
-  window.__wfHomesCheck = function (id, ll, px) {
-    if (!id) return null; var sig = (ll && ll.length ? 'l' + ll.length + ':' + ll[0].join(',') : 'p' + (px && px.length ? px[0].join(',') : ''));
+  // RR: the shapes themselves ({ 0, 1, 3, 6 } in [lat, lon]) when the caller draws its own (an ignition candidate's projection)
+  window.__wfHomesCheck = function (id, ll, px, RR) {
+    if (!id) return null; var sig = RR && RR[6] ? 'r' + RR[6].length + ':' + RR[6][0].map(function (v) { return v.toFixed(4); }).join(',') + ':' + RR[6][Math.floor(RR[6].length / 2)].map(function (v) { return v.toFixed(4); }).join(',') : (ll && ll.length ? 'l' + ll.length + ':' + ll[0].join(',') : 'p' + (px && px.length ? px[0].join(',') : ''));
     var m = MEM[id]; if (m && m.sig === sig) return m.st === 'done' ? m.res : null;
     var c = load(id); if (c && c.sig === sig) { MEM[id] = { sig: sig, st: 'done', res: c }; return c; }
-    var R = rings(id, ll, px); if (!R[0] || !R[6]) return null;
+    var R = RR || rings(id, ll, px); if (!R[0] || !R[6]) return null;
     MEM[id] = { sig: sig, st: 'loading' };
     var q = '[out:json][timeout:25];' + [0].concat(HZ).map(function (h) { return 'way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[h]) + '");out count;'; }).join('') +
       'node["place"~"^(city|town|village|hamlet|suburb|neighbourhood|quarter)$"](poly:"' + poly(R[6]) + '");out body 40;';
@@ -923,26 +924,35 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
         MEM[id] = { sig: sig, st: 'done', res: res }; try { localStorage.setItem(LK + id, JSON.stringify(res)); } catch (e) {} emit();
       }).catch(function () { MEM[id] = { sig: sig, st: 'fail' }; setTimeout(function () { if (MEM[id] && MEM[id].st === 'fail') delete MEM[id]; }, 60000); });   /* no answer, no warning: tried again a minute later */
     return null; };
+  window.__wfHomesGet = function (id) { var m = MEM[id]; if (m && m.st === 'done') return m.res; var c = load(id); return c || null; };
+  // Understood: the floating warning goes for this incident; the tag on its page stays. It comes back if houses come into reach sooner.
+  var AK = 'wf-homes-ack';
+  function acks() { try { return JSON.parse(localStorage.getItem(AK) || '{}') || {}; } catch (e) { return {}; } }
+  window.__wfHomesAck = function (id, h) { var A = acks(); A[id] = h; try { localStorage.setItem(AK, JSON.stringify(A)); } catch (e) {} emit(); };
+  window.__wfHomesAcked = function (id, res) { var a = acks()[id]; return a != null && res && res.first != null && res.first >= a; };
   // The warning: a red pill floating over the screen (32px from the bottom, above the new assignment card when it shows),
   // a soft red glow of its own colour pulsing round it. o: { h, title, sub, aria, go } or null to remove it.
   function css() { if (document.getElementById('wf-homes-css')) return; var s = document.createElement('style'); s.id = 'wf-homes-css';
     s.textContent = '@keyframes wfHomesPulse{0%,100%{box-shadow:0 0 8px 2px rgba(215,0,21,0.45)}50%{box-shadow:0 0 28px 10px rgba(215,0,21,0.55)}}' +
       '#wf-homes{animation:wfHomesPulse 1.8s ease-in-out infinite}@media (prefers-reduced-motion: reduce){#wf-homes{animation:none;box-shadow:0 0 16px 4px rgba(215,0,21,0.5)}}';
     document.head.appendChild(s); }
-  var el = null, tap = null, sig0 = '';
+  var el = null, tap = null, ack = null, sig0 = '';
   window.__wfHomesAlert = function (o) {
-    if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateX(-50%) translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
-    css(); tap = o.go;
+    if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
+    css(); tap = o.go; ack = o.ack; var PT = window.__wfLang === 'pt';
     var off = document.getElementById('wf-offer'), bot = 32 + (off && off.offsetHeight ? off.offsetHeight + 16 : 0);
-    if (!el) { el = document.createElement('button'); el.type = 'button'; el.id = 'wf-homes';
-      el.style.cssText = 'position: fixed; left: 50%; bottom: ' + bot + 'px; z-index: 410; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; box-sizing: border-box; max-width: calc(100% - 32px); min-height: 56px; padding: 8px 24px; border: 0; border-radius: 28px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); font: inherit; text-align: center; cursor: pointer; opacity: 0; transform: translateX(-50%) translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-tap-highlight-color: transparent';
-      el.addEventListener('click', function () { try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} if (tap) tap(); });
-      document.body.appendChild(el); requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0px)'; } }); }); }
+    if (!el) { el = document.createElement('div'); el.id = 'wf-homes'; el.setAttribute('role', 'alert');
+      el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 8px 8px 8px 16px; border-radius: 32px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
+      el.addEventListener('click', function (e) { try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
+        if (e.target.closest('[data-hm-ack]')) { var f = ack; if (f) f(); window.__wfHomesAlert(null); return; }
+        if (tap) tap(); });
+      document.body.appendChild(el); requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0px)'; } }); }); }
     el.style.bottom = bot + 'px';
-    var s = o.title + '|' + o.sub; if (s !== sig0) { sig0 = s; el.setAttribute('aria-label', o.aria || (o.title + '. ' + o.sub));
-      el.innerHTML = '<span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: rgba(255,255,255,0.92); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">' + o.sub + '</span>' : ''); } };
+    var s = o.title + '|' + o.sub; if (s !== sig0) { sig0 = s;
+      el.innerHTML = '<span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: rgba(255,255,255,0.92); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">' + o.sub + '</span>' : '') + '</span>' +
+        '<button type="button" class="btn" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; background: rgb(255, 255, 255); color: rgb(176, 0, 32); font: inherit; cursor: pointer">' + (PT ? 'Entendido' : 'Understood') + '</button>'; } };
   // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
   window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, b = res.b[h] || 0, p = res.place[h] || '';
     var bl = b ? (pt ? 'Cerca de ' + b + (b === 1 ? ' edifício' : ' edifícios') : 'About ' + b + (b === 1 ? ' building' : ' buildings')) : '';
-    return { h: h, title: pt ? 'Casas ao alcance em ' + h + ' h' : 'Houses in reach in ' + h + ' h', sub: [bl, p].filter(Boolean).join('. ') + '.' }; };
+    return { h: h, title: pt ? 'Casas ao alcance em ' + h + ' h' : 'Houses in reach in ' + h + ' h', tag: pt ? 'Casas em ' + h + ' h' : 'Houses in ' + h + ' h', sub: [bl, p].filter(Boolean).join('. ') + '.' }; };
 })();

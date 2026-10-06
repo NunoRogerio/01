@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=165"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=166"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=200"></script>
 <script src="i18n.js?v=168"></script>
@@ -1028,10 +1028,17 @@ class Component extends DCLogic {
   // (Open-Meteo: temperature, wind speed and direction) drives it hour by hour: the head runs downwind (faster with wind and
   // heat), the back creeps upwind and the flanks widen; a gentle wobble (seeded by the place) keeps it from looking drawn by hand.
   pinGrowVals(px, py, h, sc) {
+    this.pinHomes(px, py);
     const G = this.pinGrowShape(px, py, h); if (!G) return { pgOn: false, pgD: '', pgW: 1, pgDash: '6 5' };
     const k = sc > 0 ? sc : 1;   // the map layer is scaled with CSS, so the edge is sized here to stay 1.6px on screen
     return { pgOn: true, pgD: G.d, pgW: +(1.6 / k).toFixed(5), pgDash: +(6 / k).toFixed(5) + ' ' + +(5 / k).toFixed(5) };
   }
+  /* (Oct 6) houses in reach of the candidate's projected shapes (+1 / +3 / +6 h, as drawn), checked once the forecast and the terrain are in (fit.js) */
+  pinHomes(px, py) { const id = (this.props || {}).pinId; if (!id || !window.__wfHomesCheck) return;
+    const S = [1, 3, 6].map((h) => this.pinGrowShape(px, py, h)); if (S.some((g) => !g || !g.ready)) return;
+    const lat = 34.19 - (py - 662) / 2829, lon = (px - 518) / 2345 - 118.13, c0 = [];
+    for (let i = 0; i < 16; i++) { const t = i / 16 * 2 * Math.PI; c0.push([lat + 0.05 * Math.cos(t) / 111.32, lon + 0.05 * Math.sin(t) / (111.32 * Math.cos(lat * Math.PI / 180))]); }   /* now: the 50 m round the marker */
+    window.__wfHomesCheck(String(id), null, null, { 0: c0, 1: S[0].ll, 3: S[1].ll, 6: S[2].ll }); }
   pinGrowShape(px, py, h) {
     const off = null;
     if (!(h > 0) || !window.__wfLiveMap) return off;
@@ -1072,7 +1079,7 @@ class Component extends DCLogic {
     const kx = 2345 / (111.32 * Math.cos(lat * Math.PI / 180)), ky = 2829 / 111.32;   // km → map units
     let seed = 7; for (const ch of key) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
     const rr = (i) => { const x = Math.sin(seed * 0.001 + i * 12.9898) * 43758.5453; return x - Math.floor(x); };
-    const ph = [rr(1) * 6.28, rr(2) * 6.28, rr(3) * 6.28], pts = []; let ex = 0, ey = 0;
+    const ph = [rr(1) * 6.28, rr(2) * 6.28, rr(3) * 6.28], pts = [], ll = []; let ex = 0, ey = 0;
     for (let i = 0; i < 72; i++) {
       const t = i / 72 * 2 * Math.PI, w = 1 + 0.07 * Math.sin(3 * t + ph[0]) + 0.05 * Math.sin(5 * t + ph[1]) + 0.03 * Math.sin(7 * t + ph[2]);
       const head = Math.cos(t) > 0 ? 1 - 0.18 * Math.pow(Math.sin(t), 2) : 1;   // a rounder back, a fuller head
@@ -1080,9 +1087,9 @@ class Component extends DCLogic {
       let e = along * ux - across * uy, n = along * uy + across * ux;   // rotate into the downwind direction
       const sk = slopeK(Math.atan2(e, n)); e *= sk; n *= sk;   // uphill reaches further, downhill less
       ex = Math.max(ex, Math.abs(e * kx)); ey = Math.max(ey, Math.abs(n * ky));
-      pts.push((px + e * kx).toFixed(1) + ' ' + (py - n * ky).toFixed(1));
+      pts.push((px + e * kx).toFixed(1) + ' ' + (py - n * ky).toFixed(1)); ll.push([lat + n / 111.32, lon + e / (111.32 * Math.cos(lat * Math.PI / 180))]);
     }
-    return { d: 'M' + pts.join('L') + 'Z', ex: ex, ey: ey, terrain: !!EL };
+    return { d: 'M' + pts.join('L') + 'Z', ex: ex, ey: ey, terrain: !!EL, ll: ll, wx: !!H, ready: C[key] !== null && EC[EK] !== null };
   }
   wxFetch(key, lat, lon, C) { clearTimeout(this._wxT);
     this._wxT = setTimeout(() => { if (C[key] !== undefined) return; C[key] = null;

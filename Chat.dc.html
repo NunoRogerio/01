@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=165"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=166"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=200"></script>
 <script src="i18n.js?v=168"></script>
@@ -570,7 +570,8 @@ class Component extends DCLogic {
       const ox = (Number(x) || 610) - 610, oy = (Number(y) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, u = 26 * Math.cos(t), v = 14 * Math.sin(t); ring.push([598 + ox + u * Math.cos(a) - v * Math.sin(a), 298 + oy + u * Math.sin(a) + v * Math.cos(a)]); }
       return window.__wfHomesCheck(id, null, ring); })()) : null;
     const HT = HM && window.__wfHomesText ? window.__wfHomesText(HM, PT) : null;
-    setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && (this.state || {}).sheet ? Object.assign({}, HT, { go: () => this.setState({ pjHz: HT.h }) }) : null); }, 0);
+    const ackd = HT && window.__wfHomesAcked && window.__wfHomesAcked(id, HM);
+    setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && !ackd && (this.state || {}).sheet ? Object.assign({}, HT, { go: () => this.setState({ pjHz: HT.h }), ack: () => window.__wfHomesAck(id, HT.h) }) : null); }, 0);
     const snapAt = (h) => { if (!mdl) return null; for (let k = h; k > 0; k--) if (mdl.snaps[k]) return mdl.snaps[k]; return mdl.snaps[0]; };
     const S0 = snapAt(0), P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
     const ring0 = S0 && S0.ring && S0.ring.length ? S0.ring.map((p) => P(p[0], p[1])) : null, W = (window.__wfVP && window.__wfVP.w) || 390;
