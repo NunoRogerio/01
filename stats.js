@@ -198,7 +198,7 @@
     '.wfs.on{transform:none;visibility:visible}.wfs.out{visibility:visible}.wfs.hide{visibility:hidden}' +
     '.wfs .sc{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;padding:24px 16px 0;-webkit-overflow-scrolling:touch}.wfs .sc::-webkit-scrollbar{display:none}' +
     '.wfs .cd{position:relative;background:var(--wf-surface,#FFFFFF);border-radius:16px;box-shadow:0 0 10px rgba(0,0,0,.08);padding:16px 16px 24px;margin-bottom:24px;transition:transform .25s ' + EASE + ',box-shadow .2s ease;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
-    /* (Oct 6) both faces share one cell: a card is always as tall as its taller face, flipped, reordered or redrawn */ '.wfs .cd{display:grid}.wfs .cd>.fr,.wfs .cd>.bk{grid-area:1/1;min-width:0}.wfs .cd.fl>.fr,.wfs .cd:not(.fl)>.bk{visibility:hidden}.wfs .cd.lift{z-index:3;box-shadow:0 0 24px rgba(0,0,0,.16);transition:box-shadow .2s ease}' +
+    /* (Oct 6) More (or a long press) opens the card's paragraph in place, between its value and its chart; Less folds it back */ '.wfs .xp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s ' + EASE + '}.wfs .xp>div{min-height:0;overflow:hidden}.wfs .xp p{opacity:0;transition:opacity .3s ease}.wfs .cd.ex .xp{grid-template-rows:1fr}.wfs .cd.ex .xp p{opacity:1;transition:opacity .35s ease .12s}' +'.wfs .mo{display:inline-flex;align-items:center;gap:4px;flex-shrink:0;min-height:32px;align-self:center;margin:0 -8px 0 0;padding:0 8px;border:0;border-radius:999px;background:transparent;color:var(--wf-ink2,#3A3A3C);font:inherit;font-size:16px;line-height:20px;font-weight:600;cursor:pointer}.wfs .mo svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}.wfs .cd.ex .mo svg{transform:rotate(180deg)}' + '.wfs .cd.lift{z-index:3;box-shadow:0 0 24px rgba(0,0,0,.16);transition:box-shadow .2s ease}' +
     '.wfs .xb{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;padding:0;border:0;border-radius:50%;background:var(--wf-track,rgba(118,118,128,.12));color:var(--wf-ink2,#3C3C43);cursor:pointer}' +
     '.wfs .xb svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}.wfs .xb.rot svg{transform:rotate(90deg)}' +
     '.wfs .add{display:flex;align-items:center;justify-content:center;width:56px;height:56px;padding:0;border:0;border-radius:8px;background:var(--wf-track,rgba(118,118,128,.12));color:var(--wf-ink2,#3C3C43);cursor:pointer}' +
@@ -256,11 +256,15 @@
     return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, o.u).replace(/\{p\}/g, 'the ' + rg.word.charAt(0).toLowerCase() + rg.word.slice(1)).replace(/\{r\}/g, regionName()); }   /* (Oct 6) no 'Simulated data.': the * and the * Simulation footnote already say it */
   function cardHtml(d, rg, X) {
     var R = rng(S.region + '|' + rg.id + '|' + d.k), o = d.f(R, rg, X);
-    return '<article class="cd' + (S.fl && S.fl[d.k] ? ' fl' : '') + '" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
-      '<div class="bk"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div><p style="margin:8px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
-      '<div class="fr"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
-      '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
-      (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' : '<div style="height:16px"></div>') + o.h + '</div></article>';
+    var ex = !!(S.ex && S.ex[d.k]), para = explain(d, rg, o);
+    return '<article class="cd' + (ex ? ' ex' : '') + '" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
+      '<div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
+      // the value line, with More at its right end (no line of its own); the note, when there is one, under it
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73;flex:1 1 auto;min-width:0">' + esc(o.u) + '</span>' +
+        (para ? '<button type="button" class="mo" aria-expanded="' + ex + '"><span>' + (ex ? 'Less' : 'More') + '</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>' : '') + '</div>' +
+      (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.n) + '</div>' : '') +
+      (para ? '<div class="xp"><div><p style="margin:0;padding-top:8px;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(para) + '</p></div></div>' : '') +
+      '<div style="height:16px"></div>' + o.h + '</article>';
   }
 
   // the header: the selected region's shape in light grey with two blurred heat layers on it (simulated):
@@ -305,7 +309,7 @@
     var prev = S.el.querySelector('.sc'), st = prev && keepScroll ? prev.scrollTop : 0;
     S.el.innerHTML =
       '<div style="flex-shrink:0;padding:44px 16px 16px;display:flex;flex-direction:column;gap:16px">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:17px;font-weight:700;line-height:22px;color:#000">Metrics</h2><span data-sub="1" style="font-size:17px;line-height:22px;color:#000">Drag to reorder. Long press for more info. + to add or remove charts.</span></div>' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:17px;font-weight:700;line-height:22px;color:#000">Metrics</h2><span data-sub="1" style="font-size:17px;line-height:22px;color:#000">Drag to reorder. + to add or remove charts.</span></div>' +
         '<button type="button" class="xb" data-act="close" aria-label="Close">' + chev() + '</button></div>' +
         '<div class="wf-seg" role="tablist" aria-label="Period"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 3);transform:translateX(' + (ri * 100) + '%)"><span class="segblob"></span></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" class="segopt" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '" style="font-size:17px"><span style="display:inline-grid"><span style="grid-area:1/1">' + r.label + '</span><span aria-hidden="true" style="grid-area:1/1;visibility:hidden;font-weight:600">' + r.label + '</span></span></button>'; }).join('') + '</div>' +
       '</div>' +
@@ -538,33 +542,23 @@
     });
     var end = function (e) {
       clearTimeout(timer); if (!d) return; var dd = d; d = null;
-      // (Oct 6) a long press released without dragging flips the card: its back explains the chart's data
+      // (Oct 6) a long press released without dragging opens (or folds) the card's paragraph in place, like More
       if (e && e.type === 'pointerup' && (dd.long || (dd.lifted && !dd.moved))) {
         if (dd.lifted) { dd.c.classList.remove('lift'); dd.c.style.transition = ''; dd.c.style.transform = ''; cards().forEach(function (x) { x.style.transform = ''; }); }
-        TIP.slid = Date.now(); tipHide(); flip(dd.c); return; }
+        TIP.slid = Date.now(); tipHide(); more(dd.c); return; }
       if (!dd.lifted) return;
       var ks = cards().map(function (x) { return x.getAttribute('data-k'); }), k = ks.splice(dd.idx, 1)[0]; ks.splice(dd.to, 0, k);
       var all = order().filter(function (x) { return ks.indexOf(x) < 0; }); LS(K_ORDER, ks.concat(all)); buzz(10);
       var sc = S.el.querySelector('.sc'); render(true);
     };
     list.addEventListener('pointerup', end); list.addEventListener('pointercancel', end);
-    // a tap on a card's back turns it to the front again
-    list.addEventListener('click', function (e) { var c = e.target.closest && e.target.closest('.cd.fl'); if (c && !(TIP.slid && Date.now() - TIP.slid < 400)) flip(c); });
+    // More / Less
+    list.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.mo'); if (!b) return; var c = b.closest('.cd'); if (c && !(TIP.slid && Date.now() - TIP.slid < 400)) more(c); });
   }
-  // (Oct 6) the card turns over in two halves around its vertical axis (to edge-on, swap the face, back to flat), easing in and out;
-  // the back keeps the front's height so the list does not move
-  function flip(c) {
-    if (c.__fl) return; c.__fl = 1; S.fl = S.fl || {}; var k = c.getAttribute('data-k'), h = c.offsetHeight, P = 'perspective(1200px) ';
-    if (RM) { c.classList.toggle('fl'); if (c.classList.contains('fl')) { S.fl[k] = 1; } else { delete S.fl[k]; } c.__fl = 0; buzz(8); return; }
-    c.style.transition = 'transform .22s cubic-bezier(.55,0,1,.45)'; c.style.transform = P + 'rotateY(90deg)';
-    setTimeout(function () {
-      var on = !c.classList.contains('fl'); c.classList.toggle('fl', on); if (on) { S.fl[k] = 1; } else { delete S.fl[k]; }
-      c.style.transition = 'none'; c.style.transform = P + 'rotateY(-90deg)'; void c.offsetWidth;
-      c.style.transition = 'transform .22s cubic-bezier(0,.55,.45,1)'; c.style.transform = '';
-      setTimeout(function () { c.style.transition = ''; c.__fl = 0; }, 240);
-    }, 220);
-    buzz(8);
-  }
+  // (Oct 6) the paragraph grows open from under the value and folds back into it; the card grows with it (only when asked)
+  function more(c) { S.ex = S.ex || {}; var k = c.getAttribute('data-k'), on = !c.classList.contains('ex'); c.classList.toggle('ex', on); if (on) S.ex[k] = 1; else delete S.ex[k];
+    var b = c.querySelector('.mo'); if (b) { b.setAttribute('aria-expanded', String(on)); var t = b.querySelector('span'); if (t) t.textContent = on ? 'Less' : 'More';   /* i18n.js puts it in the screen's language */ }
+    buzz(8); }
 
   // Coming back to the app (Oct 5): iOS may reload a page it put to sleep; the panel remembers, for this session only, that it was open
   // and where it was scrolled, and comes back in place with no motion. Closing the app ends the session (fresh start on the main
