@@ -144,6 +144,37 @@
   };
   // A real crest that cannot load (offline, blocked) is replaced by the drawn one: every crest image carries data-crest="<station name>"
   try { window.addEventListener('error', function (e) { var t = e.target; if (t && t.tagName === 'IMG' && t.getAttribute && t.getAttribute('data-crest') && !/^data:/.test(t.src)) t.src = window.__wfCrest('', t.getAttribute('data-crest')).url; }, true); } catch (e) {}
+  // (Oct 6, standing) crests always on a transparent background: a crest image whose border is a light solid colour (the white
+  // square around many Commons arms and logos) has that background cleared once, in the browser, where it touches the edge
+  // (the inside of the arms is kept); the cleared copy replaces the image and is kept for the session. If the image cannot be
+  // read (no cross-origin access), the original stays.
+  var CLR = {}; try { CLR = JSON.parse(sessionStorage.getItem('wf-crclr') || '{}') || {}; } catch (e) { CLR = {}; }
+  function clearBg(src, done) {
+    if (CLR[src] !== undefined) { done(CLR[src]); return; }
+    var im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = function () { var out = '';
+      try { var k = Math.min(1, 192 / Math.max(im.naturalWidth, im.naturalHeight)), w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k)), cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        var g = cv.getContext('2d'); g.drawImage(im, 0, 0, w, h); var D = g.getImageData(0, 0, w, h), d = D.data, P = function (x, y) { return (y * w + x) * 4; };
+        var seeds = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]].map(function (c) { return P(c[0], c[1]); }).filter(function (i) { return d[i + 3] > 200 && (d[i] + d[i + 1] + d[i + 2]) / 3 > 190; });
+        if (seeds.length >= 2) { var bg = [0, 1, 2].map(function (c) { return seeds.reduce(function (t, i) { return t + d[i + c]; }, 0) / seeds.length; }), T = 46;
+          var dist = function (i) { return Math.max(Math.abs(d[i] - bg[0]), Math.abs(d[i + 1] - bg[1]), Math.abs(d[i + 2] - bg[2])); };
+          var seen = new Uint8Array(w * h), st = [], x, y, n = 0;
+          for (x = 0; x < w; x++) { st.push(x, 0, x, h - 1); } for (y = 0; y < h; y++) { st.push(0, y, w - 1, y); }
+          while (st.length) { y = st.pop(); x = st.pop(); var j = y * w + x; if (seen[j]) continue; seen[j] = 1; var i = j * 4; if (d[i + 3] < 8) { n++; } else { var q = dist(i); if (q > T * 1.6) continue;
+              d[i + 3] = q <= T ? 0 : Math.round(d[i + 3] * (q - T) / (T * 0.6)); n++; if (q > T) continue; }
+            if (x > 0) st.push(x - 1, y); if (x < w - 1) st.push(x + 1, y); if (y > 0) st.push(x, y - 1); if (y < h - 1) st.push(x, y + 1); }
+          if (n > w * h * 0.04 && n < w * h * 0.9) { g.putImageData(D, 0, 0); out = cv.toDataURL('image/png'); } }
+      } catch (e) { out = ''; }
+      CLR[src] = out; try { sessionStorage.setItem('wf-crclr', JSON.stringify(CLR)); } catch (e) {} done(out); };
+    im.onerror = function () { CLR[src] = ''; done(''); };
+    im.src = src;
+  }
+  function crestImg(t) { if (!t || t.tagName !== 'IMG' || !t.getAttribute('data-crest') || /^data:/.test(t.src) || t.__wfClr === t.src) return; var src = t.src; t.__wfClr = src;
+    clearBg(src, function (u) { if (u && t.src === src) { t.src = u; t.__wfClr = u; } }); }
+  window.__wfCrestImg = crestImg;   // for crests inside shadow roots (the trophy), whose load events do not reach the window
+  try { window.addEventListener('load', function (e) { crestImg(e.target); }, true);
+    var scan = function () { Array.prototype.forEach.call(document.querySelectorAll('img[data-crest]'), function (t) { if (t.complete && t.naturalWidth) crestImg(t); }); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan); else scan(); setTimeout(scan, 1500); } catch (e) {}
   // Firefighter photos (Pexels / Unsplash, see assets/faces/CREDITS.txt): one team of eight for Portugal and one for
   // California, four women and four men each. A chat takes them at random without repeating one; demo profiles keep one.
   var FACES = { pt: { m: ['pt-m1', 'pt-m2', 'pt-m3', 'pt-m4'], f: ['pt-f1', 'pt-f2', 'pt-f3', 'pt-f4'] }, us: { m: ['us-m1', 'us-m2', 'us-m3', 'us-m4'], f: ['us-f1', 'us-f2', 'us-f3', 'us-f4'] } };

@@ -103,7 +103,9 @@
     var A = C.slice(); if (air) A.push({ n: 'Air support', air: 1, u: window.__wfAirBadge ? window.__wfAirBadge() : BADGES[seed % BADGES.length] });   /* (Oct 5) the same air badge as the crews and dispatch screens */
     var bd = r.querySelector('.bd'), key = JSON.stringify(A); if (bd.getAttribute('data-k') !== key) { bd.setAttribute('data-k', key);
       bd.style.setProperty('--pr', A.length <= 2 ? Math.max(1, A.length) : A.length <= 6 ? 3 : 4);
-      bd.innerHTML = A.map(function (c) { return '<img src="' + esc(c.u) + '" alt="' + esc(c.n) + '" title="' + esc(c.n) + '">'; }).join(''); }
+      bd.innerHTML = A.map(function (c) { return '<img src="' + esc(c.u) + '" data-crest="' + esc(c.n) + '" alt="' + esc(c.n) + '" title="' + esc(c.n) + '">'; }).join('');
+      /* (Oct 6) crests on a transparent background (avatar.js clears a light square around them) */
+      Array.prototype.forEach.call(bd.querySelectorAll('img'), function (im) { var f = function () { if (window.__wfCrestImg) window.__wfCrestImg(im); }; im.addEventListener('load', f); if (im.complete && im.naturalWidth) f(); }); }
     bd.hidden = !bd.innerHTML;
     if (fresh) this._pop(this._i || 0);
   };
