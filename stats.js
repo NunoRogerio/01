@@ -257,7 +257,7 @@
   function cardHtml(d, rg, X) {
     var R = rng(S.region + '|' + rg.id + '|' + d.k), o = d.f(R, rg, X);
     return '<article class="cd' + (S.fl && S.fl[d.k] ? ' fl' : '') + '" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
-      '<div class="bk"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div><p style="margin:4px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
+      '<div class="bk"><div style="font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:32px;color:#3A3A3C;padding-right:24px">' + esc(d.t) + '</div><p style="margin:4px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
       '<div class="fr"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
       '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
       (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' : '<div style="height:16px"></div>') + o.h + '</div></article>';
@@ -444,14 +444,14 @@
     ys.forEach(function (y, i) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', y); c.setAttribute('r', (12 * k).toFixed(2)); c.setAttribute('style', 'fill:' + cs[i]); g.appendChild(c); });
     svg.appendChild(g); TIP.dot = g;
   }
-  // (Oct 6) 16px clear above the focus circle (or the mark), centred on it; kept 16px inside the screen's sides, under the mark when
+  // (Oct 6, 10:03) 8px clear above the focus circle (was 16px) (or the mark), centred on it; kept 16px inside the screen's sides, under the mark when
   // there is no room above in the scrolling area, and never past the bottom of the screen
   function tipPlace() {
     var host = S.el, hb = lrect(host), A = TIP.at; if (!A || !TIP.el) return;
     var tw = TIP.el.offsetWidth, th = TIP.el.offsetHeight, sc = host.querySelector('.sc'), sb = sc ? lrect(sc) : hb;
     var rot = document.documentElement.classList.contains('wf-rot'), vw = rot ? hb.width : Math.min(hb.width, window.innerWidth - hb.left), vh = rot ? hb.height : Math.min(hb.height, window.innerHeight - hb.top);
-    var x = Math.max(16, Math.min(vw - 16 - tw, A[0] - hb.left - tw / 2)), y = A[1] - hb.top - th - 16;
-    if (y < sb.top - hb.top + 8) { y = A[2] - hb.top + 16; if (y + th > vh - 8) y = Math.max(sb.top - hb.top + 8, vh - 8 - th); }
+    var x = Math.max(16, Math.min(vw - 16 - tw, A[0] - hb.left - tw / 2)), y = A[1] - hb.top - th - 8;
+    if (y < sb.top - hb.top + 8) { y = A[2] - hb.top + 8; if (y + th > vh - 8) y = Math.max(sb.top - hb.top + 8, vh - 8 - th); }
     TIP.el.style.left = x + 'px'; TIP.el.style.top = y + 'px';
   }
   function tipShow(t, e, keep) {
@@ -478,7 +478,7 @@
         if (m2) for (var j = 0; j <= 24; j++) { var f = 2 * Math.PI * (st2 + ll * j / 24) / cc, P2 = sv.createSVGPoint(); P2.x = cx0 + R2 * Math.cos(f); P2.y = cy0 + R2 * Math.sin(f); P2 = P2.matrixTransform(m2); var q2 = pt(P2.x, P2.y); bx[0] = Math.min(bx[0], q2[0]); bx[1] = Math.min(bx[1], q2[1]); bx[2] = Math.max(bx[2], q2[0]); bx[3] = Math.max(bx[3], q2[1]); }
         if (bx[2] > bx[0]) MB = bx; } }
     if (t.classList.contains('tseg') || (t.classList.contains('tslot') && !t.hasAttribute('data-ys'))) t.classList.add('on'); TIP.on = on;
-    // (Oct 6) 16px clear above the focus circle (or the mark), centred on it; kept 16px inside the screen's sides, under the mark when
+    // (Oct 6, 10:03) 8px clear above the focus circle (was 16px) (or the mark), centred on it; kept 16px inside the screen's sides, under the mark when
     // there is no room above in the scrolling area, and never past the bottom of the screen
     var mt = ay, mb = ay;
     if (MB) { ax = (MB[0] + MB[2]) / 2; mt = MB[1]; mb = MB[3]; }

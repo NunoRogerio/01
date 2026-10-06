@@ -46,6 +46,11 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     var r = el.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return false;
     var cs = getComputedStyle(el); if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity === 0) return false;
     for (var a = el.parentElement, n = 0; a && a !== document.body && n < 40; a = a.parentElement, n++) { var ac = getComputedStyle(a); if (+ac.opacity === 0 || ac.display === 'none') return false; }   // e.g. a full-screen map kept faded out until opened
+    // (Oct 6) clipped by a folded container (overflow hidden, e.g. the state card's Move to inside its closed times) it is not there at all;
+    // out of a scrolling container's view it is 'off', so the tour scrolls it in
+    var mx = r.left + r.width / 2, my = r.top + r.height / 2;
+    for (var b2 = el.parentElement, n2 = 0; b2 && b2 !== document.body && n2 < 40; b2 = b2.parentElement, n2++) { var bc = getComputedStyle(b2); if (bc.overflowY === 'visible' && bc.overflowX === 'visible') continue;
+      var br = b2.getBoundingClientRect(); if (my < br.top || my > br.bottom || mx < br.left || mx > br.right) return /(auto|scroll)/.test(bc.overflowY + bc.overflowX) ? 'off' : false; }
     if (r.bottom < 0 || r.top > VH()) return 'off';
     if (r.bottom > VH() - 24 || r.top < 24 || r.left < 0 || r.right > VW()) return 'part';   // partly cut off at an edge: scrolled fully into view   // there, but scrolled away: the tour scrolls it into view
     if (!strict) return true;
@@ -157,6 +162,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // the state card's Move to <next stage> button, when the card is open
   function stMove() { return q('[data-wf-stmove]'); }
   // the control that moves the fire to its next stage (never the closing one) and the stage the open fire is at
+  // (Oct 6) the Move to steps point at the state card's own Move to button, unfolding the card when it is closed, so the circle
+  // always sits on a button that is there (it once pointed at the folded, hidden one: a dead end); the suggestion chip is the fallback
+  function moveFind() { var m = stMove(), ok = m && m.style.display !== 'none' && !/Closed|Encerrad/.test(m.textContent || '');
+    if (ok && shown(m) === false) stExpand(); if (ok && shown(m)) return m; return moveOn(); }
   function moveOn() { var c = chip(['Move to', 'Passar a']); if (c && /Closed|Encerrad/.test(txt(c))) c = null; if (c) return c; var m = stMove(); return m && !/Closed|Encerrad/.test(m.textContent || '') ? m : null; }
   // the team's chatter is held up to and including the step that asks for the decision, and left out after it
   function holdTo() { for (var k = 0; k < S.length; k++) if (S[k].t && S[k].t[0] === 'Declare the fire') return k; return 8; }
@@ -283,19 +292,19 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
 
     // (Oct 5, 03:21) the fire moves forward by itself, stage after stage (the cursor stays on its state), until it can be closed
     // (Oct 5, 12:40) three moves are yours, the rest runs by itself and quickly: the team's cards wait (holdAll) until the move is tapped
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveOn,
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['Tap the Move to button to take the fire to its next stage. You move it three times; the stages between run by themselves.', 'Toque no botão Passar a para levar o incêndio à fase seguinte. Faz três passagens; as fases entre elas correm sozinhas.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 3 && !!moveOn(); },
       find: function () { return q('header + button.chrow[aria-expanded]'); },
       t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveOn,
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['Tap Move to again: the crews are on scene and the fire is being brought under control.', 'Toque outra vez em Passar a: as equipas estão no local e o fogo está a ser dominado.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 5 && !!moveOn(); },
       find: function () { return q('header + button.chrow[aria-expanded]'); },
       t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveOn,
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['One more move: the fire is nearly out, so take it to surveillance.', 'Mais uma passagem: o fogo está quase extinto, leve-o para vigilância.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true,
