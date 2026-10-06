@@ -67,7 +67,7 @@
   }
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = lx(i, vals.length), y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
-  var LW = 3;   // line charts' stroke (Oct 5, 19:54: 3px; 4px and 8px were tried; first 2px, vehicles 3px)
+  var LW = 4;   // line charts' stroke (Oct 6, 06:57: 4px; 3px, 8px tried; first 2px)
   var AG = 0;   // line charts: no fill under the line; each line casts a soft shadow in its own colour (the single line: the primary), centred on it (0 offset), 9px blur
   function lineShadow() { return ''; }   // (Oct 5, 20:00) no shadow under the lines; the line alone carries the chart
 

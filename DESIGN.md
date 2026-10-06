@@ -1250,3 +1250,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Tour never stops silently (Oct 6, 06:52, fix):** reaching a screen ahead of the tour (e.g. the fire declared straight from the candidate page, landing on the fire page) carries the tour on from that screen's first step, up to two screens ahead (it used to only follow to the very next screen, and otherwise disappeared). Anywhere else, the card stays and says "The tour is waiting. This step happens in <screen>." with Continue (back there) and End tour.
 - **Assigned to me, up to 5 (Oct 6, 06:53):** a fire owner holds up to five incidents at a time (was three).
 - **Tour button (Oct 6, 06:54):** "Tour" (was "Let's take a tour"): Visita, Visite, Tour, ツアー.
+- **Line charts at 4px (Oct 6, 06:57):** lines back to 4px (3px felt thin); same round ends and inset as before.
