@@ -192,7 +192,7 @@
     '.wfs .scr{position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .35s ease}.wfs .scr.on{opacity:1;pointer-events:auto}' +
     '.wfs .sw{position:relative;width:51px;height:31px;flex-shrink:0;border-radius:999px;border:1px solid rgba(60,60,67,.35);box-sizing:border-box;background:rgba(120,120,128,.24);transition:background .2s ease}.wfs .sw i{position:absolute;top:1px;left:1px;width:34px;height:27px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s ease}.wfs .sw.on{background:' + LIME + '}.wfs .sw.on i{transform:translateX(13px)}' +
         '.wfs .cd svg text{font-family:inherit}.wfs .sc>.wf-simfoot{margin-left:0!important;margin-right:0!important}' +
-    '.wfs svg:has(.tslot[data-ys]){touch-action:pan-y}.wfs .tslot{fill:#000;fill-opacity:0;cursor:pointer;transition:fill-opacity .2s ease}.wfs .tslot.on{fill:#767680;fill-opacity:.12}.wfs .tsq,.wfs .tseg{cursor:pointer}.wfs .tseg{transition:stroke-width .2s ease}.wfs .tseg.on{stroke-width:12}' +
+    '.wfs svg:has(.tslot[data-ys]){touch-action:pan-y}.wfs .tslot{fill:#000;fill-opacity:0;cursor:pointer;transition:fill-opacity .2s ease}.wfs .tslot.on{fill:#767680;fill-opacity:.12}.wfs .tsq,.wfs .tseg{cursor:pointer}.wfs .tseg{transition:r .25s ease,stroke-dasharray .25s ease,stroke-dashoffset .25s ease}' +
     '.wfs .wfs-tip{position:absolute;z-index:7;display:flex;flex-direction:column;width:max-content;max-width:260px;padding:8px 16px;border-radius:12px;background:#3A3A3C;color:#FFFFFF;font-size:16px;line-height:20px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .2s ease,transform .2s ease}.wfs .wfs-tip.on{opacity:1;transform:none}.wfs .wfs-tip b{font-weight:600}';
   document.head.appendChild(css);
 
@@ -396,7 +396,7 @@
   // chart tooltips (the chat photo tooltip's look): a tap on a mark shows its value, above it; a tap elsewhere, a scroll or a new period hides it
   var TIP = { el: null, on: null, dot: null };
   function tipHide() {
-    if (TIP.on) TIP.on.forEach(function (x) { x.classList.remove('on'); }); TIP.on = null;
+    if (TIP.on) TIP.on.forEach(function (x) { x.classList.remove('on'); if (x.hasAttribute('data-r0')) { x.setAttribute('r', x.getAttribute('data-r0')); x.removeAttribute('data-r0'); x.style.r = ''; x.style.strokeDasharray = ''; x.style.strokeDashoffset = ''; } }); TIP.on = null;
     if (TIP.dot) { TIP.dot.remove(); TIP.dot = null; }
     if (TIP.el) TIP.el.classList.remove('on');
   }
@@ -418,7 +418,7 @@
     TIP.el.style.left = x + 'px'; TIP.el.style.top = y + 'px';
   }
   function tipShow(t, e, keep) {
-    var host = S.el, svg = t.ownerSVGElement, hb = lrect(host), ax, ay;
+    var host = S.el, svg = t.ownerSVGElement, hb = lrect(host), ax, ay, MB = null;
     if (TIP.on && TIP.on.indexOf(t) >= 0) { if (!keep) tipHide(); return; }
     tipHide();
     if (!TIP.el || !TIP.el.isConnected) { TIP.el = document.createElement('div'); TIP.el.className = 'wfs-tip'; TIP.el.setAttribute('role', 'tooltip'); TIP.el.setAttribute('aria-live', 'polite'); host.appendChild(TIP.el); }
@@ -432,10 +432,19 @@
       t.appendChild(dt); TIP.dot = dt; ax = fb.right - 4; ay = fb.top; }
     else { var rb = lrect(t), ep = e && e.clientX ? pt(e.clientX, e.clientY) : null; ax = ep ? ep[0] : rb.left + rb.width / 2; ay = ep ? ep[1] : rb.top; }
     var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
+    if (t.classList.contains('tseg')) {   // (Oct 6) the tapped donut part moves out to a ring 16px wider in radius, same length and gaps in proportion
+      var r0 = +t.getAttribute('r'), k2 = (r0 + 16) / r0, cc = +t.getAttribute('data-c') * k2, ll = +t.getAttribute('data-ln') * k2;
+      t.setAttribute('data-r0', r0); t.setAttribute('r', r0 + 16); t.style.r = (r0 + 16) + 'px'; t.style.strokeDasharray = ll.toFixed(2) + ' ' + (cc - ll).toFixed(2); t.style.strokeDashoffset = (-(+t.getAttribute('data-st')) * k2).toFixed(2);
+      var sv = t.ownerSVGElement; if (sv) { sv.style.overflow = 'visible';
+        // the tooltip anchors on the part where it ends up (its outer edge), sampled along the moved arc
+        var m2 = sv.getScreenCTM(), R2 = r0 + 16 + 4, st2 = +t.getAttribute('data-st') * k2, cx0 = +t.getAttribute('cx'), cy0 = +t.getAttribute('cy'), bx = [1e9, 1e9, -1e9, -1e9];
+        if (m2) for (var j = 0; j <= 24; j++) { var f = 2 * Math.PI * (st2 + ll * j / 24) / cc, P2 = sv.createSVGPoint(); P2.x = cx0 + R2 * Math.cos(f); P2.y = cy0 + R2 * Math.sin(f); P2 = P2.matrixTransform(m2); var q2 = pt(P2.x, P2.y); bx[0] = Math.min(bx[0], q2[0]); bx[1] = Math.min(bx[1], q2[1]); bx[2] = Math.max(bx[2], q2[0]); bx[3] = Math.max(bx[3], q2[1]); }
+        if (bx[2] > bx[0]) MB = bx; } }
     if (t.classList.contains('tseg') || (t.classList.contains('tslot') && !t.hasAttribute('data-ys'))) t.classList.add('on'); TIP.on = on;
     // (Oct 6) 16px clear above the focus circle (or the mark), centred on it; kept 16px inside the screen's sides, under the mark when
     // there is no room above in the scrolling area, and never past the bottom of the screen
     var mt = ay, mb = ay;
+    if (MB) { ax = (MB[0] + MB[2]) / 2; mt = MB[1]; mb = MB[3]; }
     if (TIP.dot) { var db = lrect(TIP.dot); if (db.height) { mt = db.top; mb = db.bottom; ax = db.left + db.width / 2; } }
     TIP.at = [ax, mt, mb]; tipPlace();
     // the text can change size after it is written (the app's translation runs a moment later), so it is placed again whenever it does
