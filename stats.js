@@ -232,7 +232,7 @@
     return true;
   }
   function chev() { return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>'; }
-  // (Oct 6) the back of each card: a short paragraph explaining the chart's data ({v} {u} the headline, {p} the period, {r} the area)
+  // (Oct 6) the back of each card (long press): its title, then 8px, then a short paragraph (body text, not a description) explaining the chart's data ({v} {u} the headline, {p} the period, {r} the area)
   var EXPL = {
     region: 'Where ignition candidates were spotted in {r} over {p}. Darker squares had more of them, so they show where to watch and where to place crews ahead of time. {v} candidates in all.',
     split: 'Of the ignition candidates checked over {p}, how many were declared fires and how many were dismissed. A large dismissed share means many false alarms reach the team.',
@@ -253,11 +253,11 @@
     decl: 'How long it took to declare a fire after its first alert, over {p}. {v}% were declared within 30 minutes.'
   };
   function explain(d, rg, o) { var t = EXPL[d.k]; if (!t) return '';
-    return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, o.u).replace(/\{p\}/g, 'the ' + rg.word.charAt(0).toLowerCase() + rg.word.slice(1)).replace(/\{r\}/g, regionName()) + ' Simulated data.'; }
+    return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, o.u).replace(/\{p\}/g, 'the ' + rg.word.charAt(0).toLowerCase() + rg.word.slice(1)).replace(/\{r\}/g, regionName()); }   /* (Oct 6) no 'Simulated data.': the * and the * Simulation footnote already say it */
   function cardHtml(d, rg, X) {
     var R = rng(S.region + '|' + rg.id + '|' + d.k), o = d.f(R, rg, X);
     return '<article class="cd' + (S.fl && S.fl[d.k] ? ' fl' : '') + '" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
-      '<div class="bk"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div><p style="margin:4px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
+      '<div class="bk"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div><p style="margin:8px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
       '<div class="fr"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
       '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
       (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' : '<div style="height:16px"></div>') + o.h + '</div></article>';
