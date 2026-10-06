@@ -102,7 +102,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="order: 3; flex: 0 0 100%; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 16px">
           <!-- The incident's name opens its page: the fire page for a fire, the candidate page for an ignition candidate -->
           <a href="{{c.ttlHref}}" data-wf-firettl="1" onClick="{{c.ttlGo}}" aria-label="{{c.ttlAria}}" style="align-self: flex-start; max-width: 100%; color: inherit; text-decoration: none; cursor: {{c.ttlCur}}"><span style="display: flex; align-items: center; gap: 8px"><h1 style="margin: 0; min-width: 0; font-size: 26px; font-weight: 600; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{c.place}}</h1><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{c.ttlArrD}}; flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
-          <div style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</div>
+          <!-- (Oct 6) after Understood, houses in reach: the small red tag at the end of the place line, as on the fire and candidate pages -->
+          <div style="display: flex; align-items: baseline; gap: 8px; min-width: 0"><span style="flex: 1 1 auto; min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</span><span role="status" aria-label="{{hm.txt}}" style="display: {{hm.tagD}}; flex-shrink: 0; align-items: center; gap: 4px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 16px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap; align-self: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M3.5 11 12 4l8.5 7M6 9.5V20h12V9.5M10 20v-5h4v5"></path></svg>{{hm.tag}}</span></div>
         </div>
         <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
         <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
@@ -556,6 +557,21 @@ class Component extends DCLogic {
     localStorage.setItem('wf-chat-pos', JSON.stringify(m)); } catch (e) {} }, 150); }
   // (Oct 4, 16:30) a video call with the police captain: the floating feed rings, connects, then shows the captain (one of three faces, fixed per report)
   // (Oct 4) the fire card's map (the fire page's widget): the fire's model and framing, the projection horizon, the feeds
+  // (Oct 6) houses in reach of the chat's incident: the same check as the fire and candidate pages (fit.js), computed while the chat is open
+  wfHomes(c) {
+    if (!c || c.kind === 'dm' || c.police) return { HM: null, HT: null, ackd: false, id: '' };
+    if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} }
+    const PT = window.__wfLang === 'pt', id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, x = c.x, y = c.y;
+    const live = Array.isArray(window.__wfLiveFires) ? window.__wfLiveFires : [], r = live.find((q) => String(q[2]) === String(id)) || null;
+    const lat = 34.19 - (y - 662) / 2829, lon = (x - 518) / 2345 - 118.13;
+    const M = r && window.__wfLiveMap && window.__wfFireModel ? (window.__wfFireModel({ id: r[2], st: r[0], lat, lon, ha: r[8], res: r[7], note: r[4] }) || null) : null;
+    const mdl = M && !M.failed && M.snaps && M.snaps[0] ? M : null;
+    const HELD0 = c.closed || c.stage >= 7, HM = !HELD0 && window.__wfHomesCheck ? (mdl && mdl.snaps[0].ring && mdl.snaps[0].ring.length ? window.__wfHomesCheck(id, mdl.snaps[0].ring, null) : (() => {
+      const ox = (Number(x) || 610) - 610, oy = (Number(y) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, u = 26 * Math.cos(t), v = 14 * Math.sin(t); ring.push([598 + ox + u * Math.cos(a) - v * Math.sin(a), 298 + oy + u * Math.sin(a) + v * Math.cos(a)]); }
+      return window.__wfHomesCheck(id, null, ring); })()) : null;
+    const HT = HM && window.__wfHomesText ? window.__wfHomesText(HM, PT) : null;
+    return { HM, HT, ackd: !!(HT && window.__wfHomesAcked && window.__wfHomesAcked(id, HM)), id };
+  }
   wfPj(c) {
     const st = this.state || {}, PT = window.__wfLang === 'pt', L = (en, pt) => (PT ? pt : en), C = window.__wfChat;
     const id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, x = c.x, y = c.y;
@@ -564,14 +580,8 @@ class Component extends DCLogic {
     const M = r && window.__wfLiveMap && window.__wfFireModel ? (window.__wfFireModel({ id: r[2], st: r[0], lat, lon, ha: r[8], res: r[7], note: r[4] }) || null) : null;
     const mdl = M && !M.failed && M.snaps && M.snaps[0] ? M : null;
     const HZ = [0, 1, 3, 6], hz = st.pjHz != null ? st.pjHz : 0, GROW = { 0: 1, 1: 1.6, 3: 2, 6: 3.6 }, gk = GROW[hz] || 1;
-    /* (Oct 6) houses in reach of each projected shape (fit.js): a red dot on that horizon; the pulsing warning while the fire card is open */
-    if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} }
-    const HELD0 = c.closed || c.stage >= 7, HM = !HELD0 && window.__wfHomesCheck ? (mdl && mdl.snaps[0].ring && mdl.snaps[0].ring.length ? window.__wfHomesCheck(id, mdl.snaps[0].ring, null) : (() => {
-      const ox = (Number(x) || 610) - 610, oy = (Number(y) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, u = 26 * Math.cos(t), v = 14 * Math.sin(t); ring.push([598 + ox + u * Math.cos(a) - v * Math.sin(a), 298 + oy + u * Math.sin(a) + v * Math.cos(a)]); }
-      return window.__wfHomesCheck(id, null, ring); })()) : null;
-    const HT = HM && window.__wfHomesText ? window.__wfHomesText(HM, PT) : null;
-    const ackd = HT && window.__wfHomesAcked && window.__wfHomesAcked(id, HM);
-    setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && !ackd && (this.state || {}).sheet ? Object.assign({}, HT, { go: () => this.setState({ pjHz: HT.h }), ack: () => window.__wfHomesAck(id, HT.h) }) : null); }, 0);
+    /* (Oct 6) houses in reach of each projected shape (fit.js): a red dot on that horizon (the warning and the tag belong to the chat itself) */
+    const HM = this.wfHomes(c).HM;
     const snapAt = (h) => { if (!mdl) return null; for (let k = h; k > 0; k--) if (mdl.snaps[k]) return mdl.snaps[k]; return mdl.snaps[0]; };
     const S0 = snapAt(0), P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
     const ring0 = S0 && S0.ring && S0.ring.length ? S0.ring.map((p) => P(p[0], p[1])) : null, W = (window.__wfVP && window.__wfVP.w) || 390;
@@ -693,6 +703,7 @@ class Component extends DCLogic {
 
     // ----- list -----
     if (s.view !== 'chat' && s.view !== 'summary') {
+      setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); }, 0);   /* (Oct 6) the houses warning belongs to an open chat, not the list */
       /* the area chosen on the main screen: only its chats, and its name under the title */
       const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope || null;   /* as the main screen reads it */
         let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} const lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r || ''] || null;
@@ -720,6 +731,7 @@ class Component extends DCLogic {
     }
 
     const c = C.get(s.key);
+    if (!c) { setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); }, 0); }
     if (!c) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, groups: [], noChats: true, listSub: '', listTitle: t.chats };
     const S = C.stageOf(c), us = C.isUS(c), vn = C.vnow(c), t0 = C.since(c);
     // One outline colour per station (you keep the hi-vis yellow); message bubbles carry it at 10%
@@ -937,8 +949,11 @@ class Component extends DCLogic {
         open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), h: this.shHandle('team', 'tmDy'),
         mh: s.tmDy && this._tmH0 ? Math.max(120, this._tmH0 + s.tmDy) + 'px' : 'calc(100% - 48px)', mhT: s.tmDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none', xRot: on ? '0deg' : '90deg' }; })(),
       sh: { h: this.shHandle(), b: 48 - (s.shDy || 0), bT: s.shDy ? '0s' : '.35s', y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
-      openSheet, closeSheet: () => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); this.setState({ sheet: false, shDy: 0, pjFull: false, pjHz: 0 }); }, goFire: inc.go,
-      pj: sh ? this.wfPj(c) : (setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); }, 0), { full: false, view: {}, tabs: [], hz: 0, grow: 1, w: 390 }),
+      openSheet, closeSheet: () => { this.setState({ sheet: false, shDy: 0, pjFull: false, pjHz: 0 }); }, goFire: inc.go,
+      pj: sh ? this.wfPj(c) : { full: false, view: {}, tabs: [], hz: 0, grow: 1, w: 390 },
+      ...(() => { const H = this.wfHomes(c), HT = H.HT;
+        setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && !H.ackd && document.visibilityState !== 'hidden' ? Object.assign({}, HT, { go: () => { openSheet(); this.setState({ pjHz: HT.h }); }, ack: () => window.__wfHomesAck(H.id, HT.h) }) : null); }, 0);
+        return { hm: { tagD: HT && H.ackd ? 'inline-flex' : 'none', tag: HT ? HT.tag : '', txt: HT ? HT.title : '' } }; })(),
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
