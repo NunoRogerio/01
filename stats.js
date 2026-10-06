@@ -124,7 +124,9 @@
   function stack(a, b) {
     var tot = a.v + b.v, pa = Math.round(100 * a.v / tot), pb = 100 - pa;
     var row = function (x, p, col, ring) { return '<div style="display:flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;background:' + col + '"></span><span style="flex:1;min-width:0">' + esc(x.n) + '</span><span style="font-variant-numeric:tabular-nums">' + p + '%</span><span style="min-width:56px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(x.v) + '</span></div>'; };
-    return '<div class="an-x" aria-hidden="true" style="display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden"><div style="width:' + pa + '%;border-radius:4px;background:' + LIME + '"></div><div style="flex:1;border-radius:4px;background:' + INK + '"></div></div>' +   // 8px like every bar chart; the shares are in the rows below
+    // (Oct 6) each part has an invisible trigger over it, 32px tall, behind which the bar shows; a tap gives the part's circle and tooltip (as the donut's parts)
+    var trig = function (x, p, l, w, col) { return '<div class="thb"' + tipA(x.n, p + '%. ' + fmt(x.v) + '.') + ' data-dc="' + col + '" style="position:absolute;top:0;bottom:0;left:' + l + '%;width:' + w + '%;cursor:pointer"></div>'; };
+    return '<div style="position:relative;padding:12px 0;margin:-12px 0"><div class="an-x" aria-hidden="true" style="display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden"><div style="width:' + pa + '%;border-radius:4px;background:' + LIME + '"></div><div style="flex:1;border-radius:4px;background:' + INK + '"></div></div>' + trig(a, pa, 0, pa, LIME) + trig(b, pb, pa, pb, INK) + '</div>' +   // 8px like every bar chart; the shares are in the rows below
       '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">' + row(a, pa, LIME) + row(b, pb, INK) + '</div>';
   }
 
@@ -428,7 +430,7 @@
       if (t.hasAttribute('data-ys')) dots(t, svg); }
     else if (t.classList.contains('thb')) {   // (Oct 6) the focused bar gets the same 24px circle on its end, in the bar's colour
       var fl = t.querySelector('.an-w') || t, fb = lrect(fl), tb = lrect(t), dt = document.createElement('span');
-      dt.setAttribute('aria-hidden', 'true'); dt.style.cssText = 'position:absolute;width:24px;height:24px;border-radius:50%;pointer-events:none;background:' + INK + ';left:' + (fb.right - tb.left - 16).toFixed(1) + 'px;top:' + (fb.top - tb.top + fb.height / 2 - 12).toFixed(1) + 'px';
+      dt.setAttribute('aria-hidden', 'true'); dt.style.cssText = 'position:absolute;width:24px;height:24px;border-radius:50%;pointer-events:none;background:' + (t.getAttribute('data-dc') || INK) + ';left:' + (fb.right - tb.left - 16).toFixed(1) + 'px;top:' + (fb.top - tb.top + fb.height / 2 - 12).toFixed(1) + 'px';
       t.appendChild(dt); TIP.dot = dt; ax = fb.right - 4; ay = fb.top; }
     else { var rb = lrect(t), ep = e && e.clientX ? pt(e.clientX, e.clientY) : null; ax = ep ? ep[0] : rb.left + rb.width / 2; ay = ep ? ep[1] : rb.top; }
     var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
