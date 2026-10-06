@@ -77,14 +77,16 @@
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y, true); }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + G1 + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
+      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y) + ' data-ys="' + y.toFixed(1) + '" data-cs="' + G1 + '"'; }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + G1 + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
     // (Oct 6) each line beyond the first makes the chart 16% taller (of the single-line 105), so several lines keep room to read apart
     var h = Math.round(105 * (1 + 0.16 * (sets.length - 1))), max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
     var cols = [G1, LIME, G2];   // line charts never use dark grey (too heavy): crews middle grey, vehicles the primary, aircraft light grey
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      slots(sets[0].v.length, h, function (i, x) { return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14); }) +
+      slots(sets[0].v.length, h, function (i, x) { var bot = h - 20, ord = [0, 2, 1].filter(function (k) { return sets[k]; });
+        return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14) +
+          ' data-ys="' + ord.map(function (k) { return (bot - (bot - 14) * (sets[k].v[i] / (max || 1))).toFixed(1); }).join(',') + '" data-cs="' + ord.map(function (k) { return cols[k]; }).join(',') + '"'; }) +
       // drawn darkest first, so the brighter series sit above the darker ones (crews, then aircraft, then vehicles), each line with its own shadow;
       // the dark grey line's shadow is the middle grey (a dark shadow reads as dirt)
       reveal(h) + [0, 2, 1].filter(function (i) { return sets[i]; }).map(function (i) { var s = sets[i], d = pathOf(s.v, max, h, 0);
@@ -190,7 +192,7 @@
     '.wfs .scr{position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .35s ease}.wfs .scr.on{opacity:1;pointer-events:auto}' +
     '.wfs .sw{position:relative;width:51px;height:31px;flex-shrink:0;border-radius:999px;border:1px solid rgba(60,60,67,.35);box-sizing:border-box;background:rgba(120,120,128,.24);transition:background .2s ease}.wfs .sw i{position:absolute;top:1px;left:1px;width:34px;height:27px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s ease}.wfs .sw.on{background:' + LIME + '}.wfs .sw.on i{transform:translateX(13px)}' +
         '.wfs .cd svg text{font-family:inherit}.wfs .sc>.wf-simfoot{margin-left:0!important;margin-right:0!important}' +
-    '.wfs .tslot{fill:#000;fill-opacity:0;cursor:pointer;transition:fill-opacity .2s ease}.wfs .tslot.on{fill:#767680;fill-opacity:.12}.wfs .tsq,.wfs .tseg{cursor:pointer}.wfs .tseg{transition:stroke-width .2s ease}.wfs .tseg.on{stroke-width:12}' +
+    '.wfs svg:has(.tslot[data-ys]){touch-action:pan-y}.wfs .tslot{fill:#000;fill-opacity:0;cursor:pointer;transition:fill-opacity .2s ease}.wfs .tslot.on{fill:#767680;fill-opacity:.12}.wfs .tsq,.wfs .tseg{cursor:pointer}.wfs .tseg{transition:stroke-width .2s ease}.wfs .tseg.on{stroke-width:12}' +
     '.wfs .wfs-tip{position:absolute;z-index:7;display:flex;flex-direction:column;width:max-content;max-width:260px;padding:8px 16px;border-radius:12px;background:#3A3A3C;color:#FFFFFF;font-size:16px;line-height:20px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .2s ease,transform .2s ease}.wfs .wfs-tip.on{opacity:1;transform:none}.wfs .wfs-tip b{font-weight:600}';
   document.head.appendChild(css);
 
@@ -398,29 +400,45 @@
     if (TIP.dot) { TIP.dot.remove(); TIP.dot = null; }
     if (TIP.el) TIP.el.classList.remove('on');
   }
-  function tipShow(t, e) {
+  // (Oct 6) a line chart's touched point gets a 24px circle in its line's colour (one per line), in place of the white dot
+  function dots(t, svg) {
+    var k = W / (svg.getBoundingClientRect().width || W), g = document.createElementNS('http://www.w3.org/2000/svg', 'g'), ys = t.getAttribute('data-ys').split(','), cs = t.getAttribute('data-cs').split(',');
+    g.setAttribute('pointer-events', 'none');
+    ys.forEach(function (y, i) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', y); c.setAttribute('r', (12 * k).toFixed(2)); c.setAttribute('style', 'fill:' + cs[i]); g.appendChild(c); });
+    svg.appendChild(g); TIP.dot = g;
+  }
+  function tipShow(t, e, keep) {
     var host = S.el, svg = t.ownerSVGElement, hb = lrect(host), ax, ay;
-    if (TIP.on && TIP.on.indexOf(t) >= 0) { tipHide(); return; }
+    if (TIP.on && TIP.on.indexOf(t) >= 0) { if (!keep) tipHide(); return; }
     tipHide();
     if (!TIP.el || !TIP.el.isConnected) { TIP.el = document.createElement('div'); TIP.el.className = 'wfs-tip'; TIP.el.setAttribute('role', 'tooltip'); TIP.el.setAttribute('aria-live', 'polite'); host.appendChild(TIP.el); }
     var parts = t.getAttribute('data-tip').split('|');
     TIP.el.innerHTML = '<b style="font-size:16px;line-height:20px">' + esc(parts[0]) + '</b>' + (parts[1] ? '<span style="font-size:16px;line-height:20px">' + esc(parts[1]) + '</span>' : ''); norm(TIP.el);
     if (svg && t.hasAttribute('data-cx')) { var sp = svg.createSVGPoint(), m = svg.getScreenCTM(); sp.x = +t.getAttribute('data-cx'); sp.y = +t.getAttribute('data-cy'); sp = sp.matrixTransform(m); var q = pt(sp.x, sp.y); ax = q[0]; ay = q[1];
-      if (t.hasAttribute('data-dot')) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', t.getAttribute('data-cy')); c.setAttribute('r', String(Math.max(5, LW / 2 + 3))); c.setAttribute('fill', '#FFFFFF'); c.setAttribute('stroke', G1); c.setAttribute('stroke-width', '2'); c.setAttribute('pointer-events', 'none'); svg.appendChild(c); TIP.dot = c; } }
+      if (t.hasAttribute('data-ys')) dots(t, svg); }
     else if (t.classList.contains('thb')) { var fb = lrect(t.querySelector('.an-w') || t); ax = fb.left + fb.width; ay = fb.top; }
     else { var rb = lrect(t), ep = e && e.clientX ? pt(e.clientX, e.clientY) : null; ax = ep ? ep[0] : rb.left + rb.width / 2; ay = ep ? ep[1] : rb.top; }
     var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
-    if (t.classList.contains('tseg') || t.classList.contains('tslot')) t.classList.add('on'); TIP.on = on;
+    if (t.classList.contains('tseg') || (t.classList.contains('tslot') && !t.hasAttribute('data-ys'))) t.classList.add('on'); TIP.on = on;
     var tw = TIP.el.offsetWidth, th = TIP.el.offsetHeight, sc = host.querySelector('.sc'), sb = sc ? lrect(sc) : hb;
     var x = Math.max(16, Math.min(hb.width - 16 - tw, ax - hb.left - tw / 2)), y = ay - hb.top - th - 12;
     if (y < sb.top - hb.top + 8) y = ay - hb.top + 16;   // no room above: under the point
     TIP.el.style.left = x + 'px'; TIP.el.style.top = y + 'px';
     void TIP.el.offsetWidth; TIP.el.classList.add('on');
-    try { if (window.__wfHaptic) window.__wfHaptic(); else buzz(8); } catch (x2) {}
+    if (!keep) try { if (window.__wfHaptic) window.__wfHaptic(); else buzz(8); } catch (x2) {}
   }
   function tipWire() {
     var sc = S.el.querySelector('.sc'); if (!sc || sc.__wfTip) return; sc.__wfTip = 1;
-    sc.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) { e.stopPropagation(); tipShow(t, e); } else tipHide(); });
+    sc.addEventListener('click', function (e) { if (TIP.slid && Date.now() - TIP.slid < 400) { e.stopPropagation(); return; } var t = e.target.closest && e.target.closest('[data-tip]'); if (t && t.hasAttribute('data-ys')) { e.stopPropagation(); return; } if (t) { e.stopPropagation(); tipShow(t, e); } else tipHide(); });
+    // (Oct 6) line charts: slide a finger along the chart and the tooltip and circles follow the nearest point; a tap on the shown point hides it
+    var SL = null;
+    function slotAt(svg, cx) { var b = lrect(svg), x = (pt(cx, 0)[0] - b.left) * W / (b.width || W), L = svg.querySelectorAll('.tslot[data-ys]'), best = null, d = 1e9;
+      Array.prototype.forEach.call(L, function (s) { var q = Math.abs(+s.getAttribute('data-cx') - x); if (q < d) { d = q; best = s; } }); return best; }
+    sc.addEventListener('pointerdown', function (e) { var t = e.target.closest && e.target.closest('.tslot[data-ys]'); if (!t) return;
+      SL = { svg: t.ownerSVGElement, was: !!(TIP.on && TIP.on.indexOf(t) >= 0), moved: false, id: e.pointerId }; e.stopPropagation(); tipShow(t, e, true); });
+    sc.addEventListener('pointermove', function (e) { if (!SL || e.pointerId !== SL.id) return; var t = slotAt(SL.svg, e.clientX); if (t && !(TIP.on && TIP.on.indexOf(t) >= 0)) { SL.moved = true; tipShow(t, e, true); } });
+    var up = function (e) { if (!SL || e.pointerId !== SL.id) return; if (e.type === 'pointerup' && SL.was && !SL.moved) tipHide(); if (SL.moved) TIP.slid = Date.now(); SL = null; };
+    sc.addEventListener('pointerup', up); sc.addEventListener('pointercancel', up);
     sc.addEventListener('scroll', tipHide, { passive: true });
     if (!S.el.__wfTip) { S.el.__wfTip = 1; S.el.addEventListener('click', function (e) { if (!(e.target.closest && e.target.closest('[data-tip]'))) tipHide(); }); }
   }
@@ -441,6 +459,7 @@
     list.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     list.addEventListener('pointerdown', function (e) {
       var c = e.target.closest && e.target.closest('.cd'); if (!c || e.button > 0) return;
+      if (e.target.closest('.tslot[data-ys]')) return;   // (Oct 6) a finger on a line chart slides its tooltip; the card lifts from anywhere else
       d = { c: c, y0: cy(e), id: e.pointerId, lifted: false };
       timer = setTimeout(function () { if (!d) return; d.lifted = true; var L = cards(); d.idx = L.indexOf(c); d.to = d.idx; d.tops = L.map(function (x) { var r = lrect(x); return { t: r.top, h: r.height }; });
         c.classList.add('lift'); c.style.transition = 'box-shadow .2s ease'; c.style.transform = 'scale(1.02)'; try { c.setPointerCapture(d.id); } catch (x) {} buzz(12); }, 250);
