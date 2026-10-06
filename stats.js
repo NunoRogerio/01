@@ -6,7 +6,7 @@
   if (window.__wfStats) return;
   var LS = function (k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} return null; };
   var K_ORDER = 'wf-stats-order', K_HIDE = 'wf-stats-hide', K_RANGE = 'wf-stats-range';
-  var LIME = 'var(--wf-y,#E5FF00)', LIME_D = 'color-mix(in srgb,var(--wf-y,#E5FF00) 78%,#1C1C1E)', LIME_L = 'color-mix(in srgb,var(--wf-y,#E5FF00) 45%,#FFFFFF)',   // the primary colour chosen in preferences (and its darker and lighter steps)
+  var LIME = 'var(--wf-y,#E5FF00)', LIME_D = 'color-mix(in srgb,var(--wf-y,#E5FF00) 78%,#3A3A3C)', LIME_L = 'color-mix(in srgb,var(--wf-y,#E5FF00) 45%,#FFFFFF)',   // the primary colour chosen in preferences (and its darker and lighter steps)
       INK = '#3A3A3C', G1 = '#8E8E93', G2 = '#C7C7CC';
   var EASE = 'cubic-bezier(.2,.8,.2,1)';
 
@@ -157,7 +157,7 @@
     { k: 'res', t: 'Resources in use', on: 1, f: function (R, rg, X) { var cr = series(R, rg.n, 36 * X.sc, 0.7, 0.2).map(Math.round), ve = series(R, rg.n, 18 * X.sc, 0.7, 0.2).map(Math.round), ai = series(R, rg.n, 3 * X.sc, 1, 0).map(Math.round); return { v: fmt(Math.max.apply(null, cr)), u: 'crews at peak', n: delta(R), h: lines([{ n: 'Crews', v: cr }, { n: 'Vehicles', v: ve }, { n: 'Aircraft', v: ai }], X.x, '') }; } },
     { k: 'resp', t: 'Station speed of response', on: 1, f: function (R, rg, X) { var names = pick(R, X.sta, 5), a = names.map(function (n, i) { return { l: n, a: 5.5 + i * 1.7 + R() * 1.4 }; }); return { v: fmt1(a[2].a), u: 'min median', n: '', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' min' }; }), a[4].a * 1.1, 0) }; } },
     { k: 'src', t: 'Detection sources', on: 0, f: function (R) { var p = [['Satellite', 38], ['Cameras on the ground', 24], ['Drones', 14], ['Calls to 911', 14], ['Cars and phones', 10]].map(function (x) { return { n: x[0], v: x[1] * (0.8 + R() * 0.4) }; }); return { v: p.length, u: 'sources', n: 'Which saw each candidate first.', h: donut(p) }; } },
-    { k: 'night', t: 'Night vs day ignitions', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(150 * X.sc * rg.mult * (0.9 + R() * 0.2)), ni = Math.round(tot * (0.24 + R() * 0.12)); return { v: fmt(tot), u: 'ignitions', n: '', h: donut([{ n: 'Night', v: ni, c: '#1C1C1E' }, { n: 'Day', v: tot - ni, c: LIME }], true) }; } },
+    { k: 'night', t: 'Night vs day ignitions', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(150 * X.sc * rg.mult * (0.9 + R() * 0.2)), ni = Math.round(tot * (0.24 + R() * 0.12)); return { v: fmt(tot), u: 'ignitions', n: '', h: donut([{ n: 'Night', v: ni, c: INK }, { n: 'Day', v: tot - ni, c: LIME }], true) }; } },
     { k: 'tod', t: 'Time of day vs likelihood', on: 1, top: 1, f: function (R, rg, X) { var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: '', h: b.h }; } },
     { k: 'conf', t: 'Candidate conversion rate', on: 1, top: 1, f: function (R, rg, X) { var s = series(R, rg.n, 58, 0.18, 0.2).map(function (v) { return Math.min(96, v); }), avg = s.reduce(function (a, b) { return a + b; }, 0) / s.length; return { v: Math.round(avg), u: '%', n: delta(R), h: area(s, X.x, '%') }; } },
     { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R) { var s = [], i, v; for (i = 0; i < 24; i++) { v = 6 + 12 * Math.exp(-Math.pow((i - 15) / 4.5, 2)) + R() * 3; if (i >= 21 || i < 6) v *= 0.7; s.push(v); } var pk = s.indexOf(Math.max.apply(null, s)); return { v: pk + ':00', u: 'busiest hour', n: 'Local time.', h: (function () { var h = columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']], s.map(function (v, i) { return i + ':00 to ' + (i + 1) + ':00'; })); return h; })() }; } },
@@ -218,7 +218,7 @@
     var R = rng(S.region + '|' + rg.id + '|' + d.k), o = d.f(R, rg, X);
     return '<article class="cd" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
       '<div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
-      '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#1C1C1E;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
       (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' : '<div style="height:16px"></div>') + o.h + '</article>';
   }
 
@@ -250,9 +250,9 @@
     var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ignition candidates and burned area across ' + esc(regionLabel()) + '" style="display:block">' +
       '<defs><clipPath id="' + cl + '">' + shape + '</clipPath><filter id="' + cl + 'b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="' + blur.toFixed(0) + '"/></filter></defs>' +
       '<g fill="#DADADF" stroke="#C7C7CC" stroke-width="' + (Math.max(bw, bh) / 400).toFixed(1) + '" stroke-linejoin="round">' + shape + '</g>' +
-      '<g clip-path="url(#' + cl + ')"><g filter="url(#' + cl + 'b)">' + (S.lay.b ? blobs(hotB, '#1C1C1E') : '') + (S.lay.c ? blobs(hotC, LIME) : '') + '</g></g></svg>';
+      '<g clip-path="url(#' + cl + ')"><g filter="url(#' + cl + 'b)">' + (S.lay.b ? blobs(hotB, INK) : '') + (S.lay.c ? blobs(hotC, LIME) : '') + '</g></g></svg>';
     var key = function (k, c, t) { var on = S.lay[k]; return '<button type="button" data-lg="' + k + '" aria-pressed="' + (!!on) + '" style="display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 16px 0 12px;border:0;border-radius:999px;background:rgba(118,118,128,.12);font:inherit;font-size:16px;line-height:20px;color:' + (on ? '#3A3A3C' : '#8E8E93') + ';cursor:pointer"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;box-sizing:border-box;background:' + (on ? c : 'transparent') + ';border:' + (on ? '0' : '1.5px solid #8E8E93') + '"></span>' + t + '</button>'; };
-    return svg + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + key('c', LIME, 'Ignition candidates') + key('b', '#1C1C1E', 'Burned area') + '</div>';
+    return svg + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + key('c', LIME, 'Ignition candidates') + key('b', INK, 'Burned area') + '</div>';
   }
   function ctxX(rg) { PTS = ptLabels(rg); var ptq = /portugal/i.test(regionLabel()); return { x: xLabels(rg), sc: 0.55 + (seedOf(S.region) % 100) / 100, ak: ptq ? 0.4047 : 1, au: ptq ? 'ha' : 'ac', fires: ptq ? FIRES_PT : FIRES, sta: ptq ? STATIONS_PT : STATIONS }; }
   function render(keepScroll) {
