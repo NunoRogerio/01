@@ -809,7 +809,9 @@ class Component extends DCLogic {
       else { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: T0.id }); try { sessionStorage.setItem('wf-focus', T0.id); } catch (e) {} } };
     const openSummary = () => this.go('summary');
     // 'Send orders' is configured on the fire's dispatch screen; sending there brings you back here
-    const run = (key, id) => { if (key === 'topic') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ topicPick: true }); return; } if (key === 'dispatch') { try { sessionStorage.setItem('wf-chat-return', c.key); } catch (e) {} if (inc.go) inc.go(); window.location.href = 'Dispatch.dc.html'; return; } this._stick = true; C.act(c.key, key, id); };
+    // (Oct 6) moving a fire to its next stage plays the tour's achievement sound (the "poomm", tour.js), from the Move to chip or the state card's button
+    const moveSnd = () => { try { if (window.__wfTourPrlim) window.__wfTourPrlim(); } catch (e) {} };
+    const run = (key, id) => { if (key === 'next') moveSnd(); if (key === 'topic') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ topicPick: true }); return; } if (key === 'dispatch') { try { sessionStorage.setItem('wf-chat-return', c.key); } catch (e) {} if (inc.go) inc.go(); window.location.href = 'Dispatch.dc.html'; return; } this._stick = true; C.act(c.key, key, id); };
     const openSheet = () => { if (c.stage === 7 && !c.dismissed) { openSummary(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ sheet: true }); };
     const summary = c.dismissed ? L('No fire on the ground · crews released', 'Sem incêndio no terreno · equipas libertadas')
       : c.stage === 0 ? (c.conf ? c.conf + '% ' + L('likelihood', 'de probabilidade') + ' · ' : '') + (c.src || '')
@@ -937,7 +939,7 @@ class Component extends DCLogic {
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
           mv: (() => { const st = c.stage, nx = C.STAGES[st + 1]; if (c.kind === 'dm' || c.dismissed || c.closed || st >= 7 || !nx) return { d: 'none', label: '', go: null };
             const key = st === 0 ? 'confirm' : st === 1 && !c.flags.dispatched ? 'dispatch' : st === 6 ? 'closeCheck' : 'next'; if (!key) return { d: 'none', label: '', go: null };
-            return { d: 'flex', label: L('Move to ', 'Passar a ') + T(nx), go: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: false }); run(key); } }; })(),
+            return { d: 'flex', label: L('Move to ', 'Passar a ') + T(nx), go: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: false }); if (key !== 'next') moveSnd(); run(key); } }; })(),
           tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: !ex }); } }; })(),
         elapsed: c.closed ? C.dur(endT - t0) : C.clock(endT - t0), inStage: c.closed ? whenTxt(endT) : C.clock(cur ? cur.ms : 0),
         lblL: c.closed ? t.closedAt : t.inStage, lblR: c.closed ? t.resIn : t.sinceDet,
