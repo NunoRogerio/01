@@ -754,8 +754,15 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     if (st.page !== PAGE) {
       // Reached the next screen another way (e.g. View on the map instead of the list): carry on from that screen's
       // first step. Only once per page load, and only to the very next screen of the tour, never further ahead.
-      if (!jumped) { jumped = true; var k = i + 1; while (k < S.length && S[k].page === st.page) k++; if (S[k] && S[k].page === PAGE) { put({ i: k }); seen = 0; scrolled = false; ran = false; return tick(); } }
-      if (root) { root.remove(); root = null; lastKey = ''; } return;
+      if (!jumped) { jumped = true; var k = i + 1, grp = 0, pg = st.page; while (k < S.length && grp < 2) { if (S[k].page !== pg) { pg = S[k].page; grp++; if (pg === PAGE) break; } k++; } if (S[k] && S[k].page === PAGE && grp <= 2) { put({ i: k, max: Math.max(k, s.max || 0) }); seen = 0; scrolled = false; ran = false; return tick(); } }   /* (Oct 6) up to two screens ahead: e.g. the fire declared straight from the candidate page lands on the fire page, skipping the chat's steps */
+      // (Oct 6) never a silent dead end: the tour is waiting on another screen, so the card says where and takes you back there
+      if (INFRAME) { if (root) { root.remove(); root = null; lastKey = ''; } return; }
+      var NM = { 'Main.dc.html': ['the main screen', 'o ecrã principal'], 'Alert.dc.html': ['the ignition candidate', 'o candidato a ignição'], 'Chat.dc.html': ['the team chat', 'o chat da equipa'], 'Dispatch.dc.html': ['the fire page', 'a página do incêndio'] }[st.page] || ['the previous screen', 'o ecrã anterior'];
+      var LOST = { page: PAGE, mode: 'next', next: ['Continue', 'Continuar'], t: ['The tour is waiting', 'A visita está à espera'],
+        b: ['This step happens in ' + NM[0] + '. Tap Continue to go back there.', 'Este passo acontece n' + (NM[1].charAt(0) === 'a' ? 'a ' + NM[1].slice(2) : 'o ' + NM[1].slice(2)) + '. Toque em Continuar para voltar lá.'] };
+      curEl = null; draw(i, LOST, null, false, true);
+      var gL = bub && bub.querySelector('.tg'); if (gL) gL.onclick = function (ev) { ev.stopPropagation(); heliExit(st.page); var ref = ''; try { ref = document.referrer || ''; } catch (x) {} if (ref.indexOf(st.page) >= 0 && history.length > 1) history.back(); else location.href = st.page; };
+      return;
     }
     jumped = true;
     if (i !== cur && S[i] && !INFRAME) runDemo(i, S[i]);

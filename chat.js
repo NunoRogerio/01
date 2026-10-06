@@ -1168,7 +1168,7 @@
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
   /* (Oct 5, 11:40) a fire owner works on at most 3 incidents at a time: the others are assigned to other fire owners. The three are kept
      (the chat you open or act on joins them, the longest idle one leaves); a closed one is replaced by the next most active. */
-  var MAXOWN = 3, AKEY = 'wf-assigned-' + (role || 'anon'), HKEY = 'wf-assigned-hist-' + (role || 'anon');
+  var MAXOWN = 5, AKEY = 'wf-assigned-' + (role || 'anon'), HKEY = 'wf-assigned-hist-' + (role || 'anon');
   /* (Oct 5, 20:45) every incident ever assigned here, so the Resolved tab can show the ones that were mine */
   function hist() { try { return JSON.parse(localStorage.getItem(HKEY) || '[]') || []; } catch (e) { return []; } }
   function remember(A) { var H = hist(), ch = false; A.forEach(function (k) { if (H.indexOf(k) < 0) { H.unshift(k); ch = true; } }); if (ch) try { localStorage.setItem(HKEY, JSON.stringify(H.slice(0, 60))); } catch (e) {} }
