@@ -36,7 +36,11 @@ p{margin:0;font-size:16px;line-height:1.4;color:#6C6C70}
     try{var tc=document.querySelector('meta[name="theme-color"]')||document.head.appendChild(Object.assign(document.createElement('meta'),{name:'theme-color'}));tc.content='#000000';}catch(e){}}
   function wait(p,ms){return Promise.race([p,new Promise(function(r){setTimeout(r,ms);})]);}
   var jobs=[];
-  try{if(OUT){localStorage.removeItem('wf-role');localStorage.removeItem('wf-last-user');}else localStorage.clear();}catch(e){}
+  // (Oct 6) the keys the person typed in (their own MapTiler key, the Anthropic key and its on/off switch, who invited them)
+  // survive a reset, so updating the app never means entering them again
+  var KEEP=['wf-mt-key','wf-ai-key','wf-ai-off','wf-invited-by'],kept={};
+  try{KEEP.forEach(function(k){var v=localStorage.getItem(k);if(v!==null)kept[k]=v;});}catch(e){}
+  try{if(OUT){localStorage.removeItem('wf-role');localStorage.removeItem('wf-last-user');}else{localStorage.clear();Object.keys(kept).forEach(function(k){localStorage.setItem(k,kept[k]);});}}catch(e){}
   try{sessionStorage.clear();}catch(e){}
   try{if(window.indexedDB)jobs.push(new Promise(function(r){var q=indexedDB.deleteDatabase('wf-cache');q.onsuccess=q.onerror=q.onblocked=function(){r();};}));}catch(e){}
   try{if(window.caches)jobs.push(caches.keys().then(function(k){return Promise.all(k.map(function(n){return caches.delete(n);}));}));}catch(e){}
