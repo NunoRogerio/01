@@ -257,7 +257,7 @@
   function cardHtml(d, rg, X) {
     var R = rng(S.region + '|' + rg.id + '|' + d.k), o = d.f(R, rg, X);
     return '<article class="cd' + (S.fl && S.fl[d.k] ? ' fl' : '') + '" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
-      '<div class="bk"><div style="font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:32px;color:#3A3A3C;padding-right:24px">' + esc(d.t) + '</div><p style="margin:4px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
+      '<div class="bk"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div><p style="margin:4px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
       '<div class="fr"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
       '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
       (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' : '<div style="height:16px"></div>') + o.h + '</div></article>';
@@ -508,7 +508,8 @@
   // preferences match, so the chosen palette, text size and spacing reach the statistics like every other screen
   function norm(root) { if (!root) return; var L = root.querySelectorAll ? root.querySelectorAll('[style]') : []; Array.prototype.forEach.call(L, function (el) { var t = el.style && el.style.cssText; if (t && t !== el.getAttribute('style')) el.setAttribute('style', t); }); if (root.getAttribute && root.getAttribute('style') && root.style.cssText) root.setAttribute('style', root.style.cssText); }
   function cardsWire() {
-    norm(S.el); tipHide(); tipWire(); [0, 120, 700].forEach(function (t) { setTimeout(function () { if (window.__wfSimMark) window.__wfSimMark(); }, t); });   // the shared "* Simulation" footnote (prefs.js) if (S.anim) { S.anim = false; animWire(); }
+    norm(S.el); tipHide(); tipWire(); [0, 120, 700].forEach(function (t) { setTimeout(function () { if (window.__wfSimMark) window.__wfSimMark(); }, t); });   // the shared "* Simulation" footnote (prefs.js)
+    if (S.anim) { S.anim = false; animWire(); }   // (Oct 6, fix) this call had slipped behind the comment above, so no chart animated
     Array.prototype.forEach.call(S.el.querySelectorAll('[data-lg]'), function (b) { b.onclick = function (e) { e.stopPropagation(); var k = b.getAttribute('data-lg'); S.lay[k] = S.lay[k] ? 0 : 1; LS('wf-stats-lay', S.lay); buzz(8); render(true); }; });
     dragWire();
   }
