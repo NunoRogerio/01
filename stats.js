@@ -96,7 +96,7 @@
   function columns(vals, labels, hl, unit, tickLbls, tipLbls) {
     hl = vals.indexOf(Math.max.apply(null, vals));   // the biggest value is always the dark grey one, in every column chart
     var h = 105, max = Math.max.apply(null, vals) * 1.05, bot = h - 20, n = vals.length, gap = n > 14 ? 3 : 8, bw = (W - gap * (n - 1)) / n, o = '';
-    vals.forEach(function (v, i) { var bh = Math.max(2, (bot - 16) * v / max), x = i * (bw + gap); var tl = (tipLbls && tipLbls[i]) || labels[i] || (vals.length === PTS.length ? PTS[i] : ''); o += '<rect class="tslot" x="' + (x - gap / 2).toFixed(1) + '" y="0" width="' + (bw + gap).toFixed(1) + '" height="' + bot + '"' + tipA(fmt(v) + ' ' + unit, tl, x + bw / 2, bot - bh) + '/>'; var cw = Math.min(8, bw); o += '<rect class="an-c" data-b="' + bot + '" pointer-events="none" x="' + (x + (bw - cw) / 2).toFixed(1) + '" y="' + (bot - Math.max(bh, cw)).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + Math.max(bh, cw).toFixed(1) + '" rx="' + (cw / 2).toFixed(1) + '" style="fill:' + (i === hl ? INK : LIME) + '"/>'; });
+    vals.forEach(function (v, i) { var bh = Math.max(2, (bot - 16) * v / max), x = i * (bw + gap); var tl = (tipLbls && tipLbls[i]) || labels[i] || (vals.length === PTS.length ? PTS[i] : ''), cw = Math.min(8, bw); o += '<rect class="tslot" x="' + (x - gap / 2).toFixed(1) + '" y="0" width="' + (bw + gap).toFixed(1) + '" height="' + bot + '"' + tipA(fmt(v) + ' ' + unit, tl, x + bw / 2, bot - bh) + ' data-ys="' + (bot - Math.max(bh, cw) + cw / 2).toFixed(1) + '" data-cs="' + (i === hl ? INK : LIME) + '"/>'; o += '<rect class="an-c" data-b="' + bot + '" pointer-events="none" x="' + (x + (bw - cw) / 2).toFixed(1) + '" y="' + (bot - Math.max(bh, cw)).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + Math.max(bh, cw).toFixed(1) + '" rx="' + (cw / 2).toFixed(1) + '" style="fill:' + (i === hl ? INK : LIME) + '"/>'; });
     var lb = '';
     if (tickLbls) tickLbls.forEach(function (t) { var x = t[0] * (bw + gap) + bw / 2; lb += '<text x="' + x.toFixed(1) + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="' + (t[0] === 0 ? 'start' : t[0] === n - 1 ? 'end' : 'middle') + '">' + esc(t[1]) + '</text>'; });
     else labels.forEach(function (t, i) { var x = i * (bw + gap) + bw / 2; lb += '<text x="' + x.toFixed(1) + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="middle">' + esc(t) + '</text>'; });
@@ -105,7 +105,7 @@
   function hbars(items, max, best) {
     return '<div style="display:flex;flex-direction:column;gap:16px">' + items.map(function (it, i) {
       // the whole row is the tooltip's trigger, invisible behind the bar (no shading); the tooltip sits above the bar's end
-      return '<div class="thb"' + tipA(it.t, it.l) + ' style="cursor:pointer"><div style="display:flex;justify-content:space-between;gap:16px;font-size:16px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums">' + esc(it.t) + '</span></div>' +
+      return '<div class="thb"' + tipA(it.t, it.l) + ' style="position:relative;cursor:pointer"><div style="display:flex;justify-content:space-between;gap:16px;font-size:16px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums">' + esc(it.t) + '</span></div>' +
         '<div aria-hidden="true" style="height:8px;margin-top:8px;border-radius:4px;overflow:hidden"><div class="an-w" style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:4px;background:' + INK + '"></div></div></div>';
     }).join('') + '</div>';
   }
@@ -407,6 +407,16 @@
     ys.forEach(function (y, i) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', y); c.setAttribute('r', (12 * k).toFixed(2)); c.setAttribute('style', 'fill:' + cs[i]); g.appendChild(c); });
     svg.appendChild(g); TIP.dot = g;
   }
+  // (Oct 6) 16px clear above the focus circle (or the mark), centred on it; kept 16px inside the screen's sides, under the mark when
+  // there is no room above in the scrolling area, and never past the bottom of the screen
+  function tipPlace() {
+    var host = S.el, hb = lrect(host), A = TIP.at; if (!A || !TIP.el) return;
+    var tw = TIP.el.offsetWidth, th = TIP.el.offsetHeight, sc = host.querySelector('.sc'), sb = sc ? lrect(sc) : hb;
+    var rot = document.documentElement.classList.contains('wf-rot'), vw = rot ? hb.width : Math.min(hb.width, window.innerWidth - hb.left), vh = rot ? hb.height : Math.min(hb.height, window.innerHeight - hb.top);
+    var x = Math.max(16, Math.min(vw - 16 - tw, A[0] - hb.left - tw / 2)), y = A[1] - hb.top - th - 16;
+    if (y < sb.top - hb.top + 8) { y = A[2] - hb.top + 16; if (y + th > vh - 8) y = Math.max(sb.top - hb.top + 8, vh - 8 - th); }
+    TIP.el.style.left = x + 'px'; TIP.el.style.top = y + 'px';
+  }
   function tipShow(t, e, keep) {
     var host = S.el, svg = t.ownerSVGElement, hb = lrect(host), ax, ay;
     if (TIP.on && TIP.on.indexOf(t) >= 0) { if (!keep) tipHide(); return; }
@@ -416,14 +426,20 @@
     TIP.el.innerHTML = '<b style="font-size:16px;line-height:20px">' + esc(parts[0]) + '</b>' + (parts[1] ? '<span style="font-size:16px;line-height:20px">' + esc(parts[1]) + '</span>' : ''); norm(TIP.el);
     if (svg && t.hasAttribute('data-cx')) { var sp = svg.createSVGPoint(), m = svg.getScreenCTM(); sp.x = +t.getAttribute('data-cx'); sp.y = +t.getAttribute('data-cy'); sp = sp.matrixTransform(m); var q = pt(sp.x, sp.y); ax = q[0]; ay = q[1];
       if (t.hasAttribute('data-ys')) dots(t, svg); }
-    else if (t.classList.contains('thb')) { var fb = lrect(t.querySelector('.an-w') || t); ax = fb.left + fb.width; ay = fb.top; }
+    else if (t.classList.contains('thb')) {   // (Oct 6) the focused bar gets the same 24px circle on its end, in the bar's colour
+      var fl = t.querySelector('.an-w') || t, fb = lrect(fl), tb = lrect(t), dt = document.createElement('span');
+      dt.setAttribute('aria-hidden', 'true'); dt.style.cssText = 'position:absolute;width:24px;height:24px;border-radius:50%;pointer-events:none;background:' + INK + ';left:' + (fb.right - tb.left - 16).toFixed(1) + 'px;top:' + (fb.top - tb.top + fb.height / 2 - 12).toFixed(1) + 'px';
+      t.appendChild(dt); TIP.dot = dt; ax = fb.right - 4; ay = fb.top; }
     else { var rb = lrect(t), ep = e && e.clientX ? pt(e.clientX, e.clientY) : null; ax = ep ? ep[0] : rb.left + rb.width / 2; ay = ep ? ep[1] : rb.top; }
     var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
     if (t.classList.contains('tseg') || (t.classList.contains('tslot') && !t.hasAttribute('data-ys'))) t.classList.add('on'); TIP.on = on;
-    var tw = TIP.el.offsetWidth, th = TIP.el.offsetHeight, sc = host.querySelector('.sc'), sb = sc ? lrect(sc) : hb;
-    var x = Math.max(16, Math.min(hb.width - 16 - tw, ax - hb.left - tw / 2)), y = ay - hb.top - th - 12;
-    if (y < sb.top - hb.top + 8) y = ay - hb.top + 16;   // no room above: under the point
-    TIP.el.style.left = x + 'px'; TIP.el.style.top = y + 'px';
+    // (Oct 6) 16px clear above the focus circle (or the mark), centred on it; kept 16px inside the screen's sides, under the mark when
+    // there is no room above in the scrolling area, and never past the bottom of the screen
+    var mt = ay, mb = ay;
+    if (TIP.dot) { var db = lrect(TIP.dot); if (db.height) { mt = db.top; mb = db.bottom; ax = db.left + db.width / 2; } }
+    TIP.at = [ax, mt, mb]; tipPlace();
+    // the text can change size after it is written (the app's translation runs a moment later), so it is placed again whenever it does
+    if (window.ResizeObserver && !TIP.ro) { TIP.ro = new ResizeObserver(function () { if (TIP.on) tipPlace(); }); TIP.ro.observe(TIP.el); }
     void TIP.el.offsetWidth; TIP.el.classList.add('on');
     if (!keep) try { if (window.__wfHaptic) window.__wfHaptic(); else buzz(8); } catch (x2) {}
   }
