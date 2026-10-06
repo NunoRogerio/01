@@ -942,7 +942,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     css(); tap = o.go; ack = o.ack; var PT = window.__wfLang === 'pt';
     var off = document.getElementById('wf-offer'), bot = 32 + (off && off.offsetHeight ? off.offsetHeight + 16 : 0);
     if (!el) { el = document.createElement('div'); el.id = 'wf-homes'; el.setAttribute('role', 'alert');
-      el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 8px 8px 8px 16px; border-radius: 32px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
+      el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 8px 8px 8px 24px; border-radius: 32px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
       el.addEventListener('click', function (e) { try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
         if (e.target.closest('[data-hm-ack]')) { var f = ack; if (f) f(); window.__wfHomesAlert(null); return; }
         if (tap) tap(); });
