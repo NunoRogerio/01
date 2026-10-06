@@ -1168,18 +1168,21 @@
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
   /* (Oct 5, 11:40) a fire owner works on at most 3 incidents at a time: the others are assigned to other fire owners. The three are kept
      (the chat you open or act on joins them, the longest idle one leaves); a closed one is replaced by the next most active. */
-  var MAXOWN = 5, AKEY = 'wf-assigned-' + (role || 'anon'), HKEY = 'wf-assigned-hist-' + (role || 'anon');
+  /* (Oct 6) at most 5 incidents per person, the administrator included; each profile (role profiles share an area) keeps its own */
+  var RK = (function () { var c = ''; try { c = localStorage.getItem('wf-custom') || ''; } catch (e) {} return c || role || 'anon'; })();
+  var MAXOWN = 5, AKEY = 'wf-assigned-' + RK, HKEY = 'wf-assigned-hist-' + RK;
   /* (Oct 5, 20:45) every incident ever assigned here, so the Resolved tab can show the ones that were mine */
   function hist() { try { return JSON.parse(localStorage.getItem(HKEY) || '[]') || []; } catch (e) { return []; } }
   function remember(A) { var H = hist(), ch = false; A.forEach(function (k) { if (H.indexOf(k) < 0) { H.unshift(k); ch = true; } }); if (ch) try { localStorage.setItem(HKEY, JSON.stringify(H.slice(0, 60))); } catch (e) {} }
   function mineKeys() { try { return (JSON.parse(localStorage.getItem(AKEY) || '[]') || []).slice(0, MAXOWN); } catch (e) { return []; } }
-  function ownedChats(open, keep, only) {   /* the administrator sees every incident, with no limit, unless "Assigned to me" asks for the three (only); direct messages never take a place */
-    if (role === 'admin' && !only) return open;
+  function ownedChats(open, keep, only) {   /* (Oct 6) everyone, the administrator too, holds at most 5; direct messages never take a place. Until the five
+     places have been filled once, they fill by themselves; after that a free place is offered (the new assignment card) and never filled silently */
     var fires = open.filter(function (c) { return c.kind !== 'dm'; }), dms = open.filter(function (c) { return c.kind === 'dm'; });
+    var seeded = true; try { seeded = localStorage.getItem(AKEY + '-full') === '1'; } catch (e) {}   /* set once the five places have been filled the first time */
     var db = load(), A = mineKeys().filter(function (k) { var c = db.chats[k]; return c && !c.closed && c.kind !== 'dm'; }), by = {};   /* assignments in other areas stay while their fire is open */
     fires.forEach(function (c) { by[c.key] = c; });
-    fires.forEach(function (c) { if (A.length < MAXOWN && A.indexOf(c.key) < 0) A.push(c.key); });
-    if (!keep) { try { localStorage.setItem(AKEY, JSON.stringify(A)); } catch (e) {} } remember(A);
+    if (!seeded) fires.forEach(function (c) { if (A.length < MAXOWN && A.indexOf(c.key) < 0) A.push(c.key); });
+    if (!keep || !seeded) { try { localStorage.setItem(AKEY, JSON.stringify(A)); if (A.length >= MAXOWN) localStorage.setItem(AKEY + '-full', '1'); } catch (e) {} } remember(A);
     return A.filter(function (k) { return by[k]; }).map(function (k) { return by[k]; }).concat(dms); }
   function assign(k) { var A = mineKeys().filter(function (x) { return x !== k; }); A.unshift(k); try { localStorage.setItem(AKEY, JSON.stringify(A.slice(0, MAXOWN))); } catch (e) {} remember(A.slice(0, MAXOWN)); }
   function fresh(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }   /* newer than the last look (the badge itself stays on while a candidate is undecided) */
@@ -1304,11 +1307,12 @@
     // The chat badge counts what the chats list shows: open chats in the selected area (and direct messages), never chats
     // from another area the list cannot reach
     /* (Oct 5) after a fire is finished and the person is back home: the incident newly assigned to them, if any */
-    newAssignedPeek: function (snap) { if (snap === null || role === 'admin') return null; try { snap = JSON.parse(snap || '[]'); } catch (e) { snap = []; }
+    newAssignedPeek: function (snap) { if (snap === null) return null; try { snap = JSON.parse(snap || '[]'); } catch (e) { snap = []; }
       var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role || ''] || null;
       if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };
       var op = Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return !c.closed && inScope(c, SC); }).sort(function (a, b) { return (unread(b) ? 1 : 0) - (unread(a) ? 1 : 0) || (b.updated || 0) - (a.updated || 0); });
       var n = ownedChats(op, true).filter(function (c) { return snap.indexOf(c.key) < 0; }); return n.length ? n[0].key : null; },
+    offer: function () { return offerKey(); }, offerNow: function () { offerRender(); },
     snapAssigned: function () { try { sessionStorage.setItem('wf-assign-snap', JSON.stringify(mineKeys())); } catch (e) {} },
     totalUnread: function () { var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var r0 = null; try { r0 = localStorage.getItem('wf-role'); } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r0 || ''] || null;
       if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };   /* as the chats list reads it */
@@ -1326,7 +1330,7 @@
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
-    seen: function (k) { var c = load().chats[k]; if (c) { if (!c.closed) assign(k); if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
+    seen: function (k) { var c = load().chats[k]; if (c) { if (!c.closed && mineKeys().indexOf(k) >= 0) assign(k);   /* (Oct 6) opening an incident never takes a place: only Enroll does */ if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
     forget: function (k) { var db = load(); if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
     send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
@@ -1383,4 +1387,82 @@
   if (role) setTimeout(healTeam, 1500);
   if (role) setTimeout(heal, 900);
   if (role) setTimeout(healTwo, 1200);
+
+  // ---- (Oct 6) New assignment: a floating card offers an incident for a free place (Snooze | Enroll) ----------------------
+  // Worked out on the main screen only (after a fire is resolved there is a place again); once offered it stays on every
+  // screen, the incident's own page included, until Enroll or Snooze. Tapping the card opens the incident's page.
+  var OFK = 'wf-offer', OFS = 'wf-offer-shown', SNZ = 'wf-offer-snooze-' + RK, SNOOZE = 15 * MIN;
+  function scopeNow() { var SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role || ''] || null;
+    if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' }; }
+  function isHome() { return /Main\.dc\.html$|\/$/.test(location.pathname); }
+  function offerPick() {
+    if (!role || tourMute()) return null;
+    var until = 0; try { until = +localStorage.getItem(SNZ) || 0; } catch (e) {} if (Date.now() < until) return null;
+    var db = load(), A = mineKeys().filter(function (k) { var c = db.chats[k]; return c && !c.closed && c.kind !== 'dm'; });
+    if (A.length >= MAXOWN) return null;
+    var full = false; try { full = localStorage.getItem(AKEY + '-full') === '1'; } catch (e) {} if (!full) return null;   /* still filling the first five by themselves */
+    var SC = scopeNow(), C = Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return !c.closed && !c.dismissed && !c.drill && c.kind !== 'dm' && A.indexOf(c.key) < 0 && inScope(c, SC); })
+      .sort(function (a, b) { return (unread(b) ? 1 : 0) - (unread(a) ? 1 : 0) || (b.updated || 0) - (a.updated || 0); });
+    return C[0] ? C[0].key : null; }
+  function incPage(c) {   /* the incident's own page, as the chat's "view" button opens it */
+    if (c.kind === 'cand' && c.stage === 0) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: c.incId }); try { sessionStorage.setItem('wf-focus', c.incId); } catch (e) {} return 'Alert.dc.html'; }
+    var id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, v = { id: id, place: c.place, note: c.kind === 'cand' ? 'Confirmed from ' + c.incId : c.note, x: c.x, y: c.y, det: c.det || null, t: Date.now() };
+    window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} return 'Dispatch.dc.html'; }
+  function onPage(c) { var p = location.pathname; return c.kind === 'cand' && c.stage === 0 ? /Alert\.dc\.html$/.test(p) : /Dispatch\.dc\.html$/.test(p); }
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]; }); }
+  function offerKey() { try { return sessionStorage.getItem(OFK) || ''; } catch (e) { return ''; } }
+  function offerSet(k) { try { if (k) sessionStorage.setItem(OFK, k); else { sessionStorage.removeItem(OFK); sessionStorage.removeItem(OFS); } } catch (e) {} }
+  var ofEl = null, ofBusy = false;
+  function offerHide(anim) { var el = ofEl; ofEl = null; if (!el) return; if (!anim) { el.remove(); return; } el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; setTimeout(function () { el.remove(); }, 450); }
+  function offerChoose(k, how) {   /* the choice made: the other button goes, the chosen one fills the row in the past tense with a check, then the card folds away */
+    if (ofBusy || !ofEl) return; ofBusy = true; var PT = window.__wfLang === 'pt';
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+    if (how === 'enroll') { assign(k); emit(); } else { try { localStorage.setItem(SNZ, String(Date.now() + SNOOZE)); } catch (e) {} }
+    offerSet('');
+    var row = ofEl.querySelector('[data-of-row]'), keep = row && row.querySelector(how === 'enroll' ? '[data-of-enroll]' : '[data-of-snooze]'), drop = row && row.querySelector(how === 'enroll' ? '[data-of-snooze]' : '[data-of-enroll]');
+    if (drop) drop.remove();
+    if (keep) { keep.style.pointerEvents = 'none';   /* the chosen button keeps its own look, never the disabled one */
+      keep.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (how === 'enroll' ? (PT ? 'Assumido' : 'Enrolled') : (PT ? 'Adiado 15 min' : 'Snoozed 15 min')); }
+    setTimeout(function () { ofBusy = false; offerHide(true); }, 1400); }
+  function offerRender() {
+    var k = offerKey();
+    if (!k && isHome() && document.visibilityState !== 'hidden') { k = offerPick(); if (k) offerSet(k); }
+    var c = k ? load().chats[k] : null;
+    if (k && (!c || c.closed || c.dismissed || mineKeys().indexOf(k) >= 0)) { offerSet(''); c = null; }
+    if (!c || tourMute() || /Login\.dc\.html$|reset\.html$/.test(location.pathname)) { if (!ofBusy) offerHide(false); return; }
+    if (ofBusy) return;
+    var PT = window.__wfLang === 'pt', T = function (o) { return o ? (PT ? o.pt || o.en : o.en) : ''; };
+    var S = stageOf(c) || {}, u = unread(c), lm = lastMsg(c), who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? (PT ? 'Você' : 'You') : (c.people[lm.from] || {}).name || '') : '';
+    var txt = lm ? (lm.kind === 'card' ? T(lm.title) : (PT ? lm.pt || lm.en : lm.en)) : (PT ? 'A chamar as equipas…' : 'Calling the teams…');
+    var here = onPage(c), first = false; try { first = sessionStorage.getItem(OFS) !== k; sessionStorage.setItem(OFS, k); } catch (e) {}
+    var html =
+      /* qualifier band, top row edge to edge */
+      '<div style="display: flex; align-items: center; min-height: 44px; padding: 0 16px; background: var(--wf-fill, #E5E5EA); color: var(--wf-ink, #000000); font-size: 17px; font-weight: 600; line-height: 22px">' + (PT ? 'Nova atribuição' : 'New assignment') + '</div>' +
+      /* the incident, as its card in the assignments list */
+      '<div data-of-go role="' + (here ? 'group' : 'link') + '" tabindex="' + (here ? '-1' : '0') + '" aria-label="' + esc(c.place + (here ? '' : PT ? '. Ver incidente' : '. View incident')) + '" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; padding: 16px 16px 0; cursor: ' + (here ? 'default' : 'pointer') + '">' +
+        '<span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: var(--wf-ink, #000000); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">' + esc(c.place) + '</span>' +
+        '<span class="wf-stg" style="display: inline-flex; justify-self: end; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: ' + S.bg + '; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: ' + S.c + '"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="' + (ICON[S.icon] || '') + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + esc(T(S)) + '</span>' +
+        '<span style="grid-column: 1 / span 2; min-width: 0; font-size: 16px; line-height: 20px; color: var(--wf-sec, #6E6E73); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">' + esc((who ? who + ': ' : '') + txt) + '</span>' +
+        '<span style="grid-column: 1 / span 2; display: flex; align-items: center; gap: 8px; margin-top: 8px"><span style="min-width: 0; font-size: 16px; font-weight: 700; line-height: 20px; color: var(--wf-ink2, #3A3A3C)">' + (u ? u + ' ' + (PT ? (u === 1 ? 'mensagem por ler' : 'mensagens por ler') : (u === 1 ? 'unread message' : 'unread messages')) + '.' : (PT ? 'Todas as mensagens lidas.' : 'All messages read.')) + '</span>' +
+          (here ? '' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-left: auto; flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>') + '</span>' +
+      '</div>' +
+      /* the choice: secondary left, primary right, one row */
+      '<div data-of-row style="display: flex; gap: 16px; padding: 24px 16px 16px"><button type="button" class="btn wf-sec" data-of-snooze style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer">' + (PT ? 'Adiar' : 'Snooze') + '</button><button type="button" class="btn primary" data-of-enroll style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer">' + (PT ? 'Assumir' : 'Enroll') + '</button></div>';
+    if (!ofEl) {
+      ofEl = document.createElement('div'); ofEl.id = 'wf-offer'; ofEl.setAttribute('role', 'dialog'); ofEl.setAttribute('aria-label', PT ? 'Nova atribuição' : 'New assignment');
+      ofEl.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: 32px; z-index: 400; max-width: 420px; margin: 0 auto; box-sizing: border-box; border-radius: 16px; overflow: hidden; background: var(--wf-surface, #FFFFFF); box-shadow: 0 0 32px rgba(0,0,0,0.22); transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1); -webkit-user-select: none; user-select: none';
+      if (first) { ofEl.style.opacity = '0'; ofEl.style.transform = 'translateY(24px)'; }
+      ofEl.addEventListener('click', function (e) { var t = e.target, k0 = offerKey(), c0 = k0 ? load().chats[k0] : null; if (!c0) return;
+        if (t.closest('[data-of-enroll]')) return offerChoose(k0, 'enroll');
+        if (t.closest('[data-of-snooze]')) return offerChoose(k0, 'snooze');
+        if (t.closest('[data-of-go]') && !onPage(c0)) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} var href = incPage(c0); window.location.href = href; } });
+      document.body.appendChild(ofEl);
+      if (first) requestAnimationFrame(function () { requestAnimationFrame(function () { if (ofEl) { ofEl.style.opacity = '1'; ofEl.style.transform = 'translateY(0px)'; } }); });
+    }
+    if (ofEl.__html !== html) { ofEl.innerHTML = html; ofEl.__html = html; }
+  }
+  function offerBoot() { if (!role || !document.body) return; setTimeout(offerRender, 1200);
+    window.addEventListener('wf-chat', function () { setTimeout(offerRender, 0); }); window.addEventListener('focus', offerRender); window.addEventListener('pageshow', offerRender);
+    document.addEventListener('visibilitychange', offerRender); setInterval(offerRender, 5000); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', offerBoot); else offerBoot();
 })();

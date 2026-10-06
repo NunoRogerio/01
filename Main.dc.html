@@ -17,11 +17,11 @@
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=164"></script>
-<script src="avatar.js?v=11"></script>
-<script src="prefs.js?v=199"></script>
+<script src="avatar.js?v=12"></script>
+<script src="prefs.js?v=200"></script>
 <script src="i18n.js?v=168"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=84"></script>
+<script src="chat.js?v=85"></script>
 <script src="tour.js?v=112"></script>
 <script src="mapsearch.js?v=4"></script>
 <script src="stats.js?v=72"></script>
@@ -521,11 +521,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </section>
 
   </div>
-  <!-- (Oct 5) back home after a finished fire: a floating message points to the incident newly assigned to this fire owner -->
-  <button type="button" class="opt" onClick="{{as.go}}" aria-hidden="{{as.hid}}" style="position: absolute; left: 16px; right: 16px; top: 116px; z-index: 45; display: {{as.d}}; align-items: center; justify-content: space-between; gap: 16px; box-sizing: border-box; min-height: 56px; padding: 8px 16px; border: 0; border-radius: 28px; background: rgba(44,44,46,0.94); color: #FFFFFF; font: inherit; font-size: 17px; font-weight: 600; line-height: 22px; text-align: left; box-shadow: 0 8px 28px rgba(0,0,0,0.28); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: {{as.op}}; transform: translateY({{as.y}}); transition: opacity .4s ease, transform .4s ease">
-    <span>{{as.txt}}</span>
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-  </button>
   <!-- Open, the part of the screen still showing closes the menu with a tap -->
   <div class="wf-hap-scrim" aria-hidden="true" onClick="{{closePrefs}}" style="display: {{pm.catchD}}; position: absolute; inset: 0; z-index: 90"></div>
   </div>
@@ -1064,7 +1059,7 @@ class Component extends DCLogic {
       if (!th || !b || !box.offsetWidth || (th.__a && th.__a.playState === 'running')) return; const p = th.__p; if (th.style.opacity !== '1' || !p || p.l !== b.offsetLeft || p.t !== b.offsetTop || p.w !== b.offsetWidth) this.wfLangThumb(false); }, 250); } catch (e) {}
     try { const lt = () => setTimeout(() => this.wfLangThumb(false), 140); window.addEventListener('resize', lt); window.addEventListener('wf-prefs', lt); window.addEventListener('wf-lang', lt); } catch (e) {}
  window.__wfSwipeDrag = (k, dy) => this.setState({ hdK: dy ? k : null, hdY: dy });   // a whole-blade swipe (fit.js) shows as the blade's own drag
-    try { if (window === window.top) sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); try { let sn = null; try { sn = sessionStorage.getItem('wf-assign-snap'); } catch (e) {} if (sn !== null) { let tries = 0; const poll = () => { const C0 = window.__wfChat, nk = C0 && C0.newAssignedPeek ? C0.newAssignedPeek(sn) : null; if (nk) { try { sessionStorage.removeItem('wf-assign-snap'); } catch (e) {} this._asK = nk; setTimeout(() => this.setState({ asK: nk }), 400); setTimeout(() => this.setState({ asK: null }), 10400); } else if (++tries < 12) setTimeout(poll, 500); else { try { sessionStorage.removeItem('wf-assign-snap'); } catch (e) {} } }; poll(); } } catch (e) {} this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
+    try { if (window === window.top) sessionStorage.removeItem('wf-chat-return'); } catch (e) {} try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} if (window.__wfLiveMap && !this.wfRole()) { try { window.location.replace('Login.dc.html'); } catch (e) {} return; } this.wfApplyNav(); this.wfCheckFlip(); this.wfHomeCheck(); try { sessionStorage.removeItem('wf-assign-snap'); } catch (e) {} /* (Oct 6) a free place is offered by the new assignment card (chat.js) */ this._wfVp = () => this.forceUpdate(); try { window.addEventListener('wf-vp', this._wfVp); } catch (e) {} this._wfSync = () => { const h = this.wfHomeCheck(); if (!this.wfApplyNav() && !h) this.forceUpdate(); }; try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.addEventListener(n, this._wfSync)); document.addEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   componentWillUnmount() { try { window.removeEventListener('wf-ms', this._msSync); } catch (e) {} clearInterval(this._abtBlink); try { window.removeEventListener('wf-vp', this._wfVp); } catch (e) {} try { ['storage', 'focus', 'wf-sync', 'pageshow'].forEach((n) => window.removeEventListener(n, this._wfSync)); document.removeEventListener('visibilitychange', this._wfSync); } catch (e) {} }
   wfDismissed() { let d = null; try { const v = window.sessionStorage.getItem('wf-dismissed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).dismissed; return Object.assign({}, d || {}); }
   wfSave(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
@@ -1676,7 +1671,7 @@ class Component extends DCLogic {
     const ago = (tm) => { const m = Math.round((Date.now() - tm) / 60000); if (m < 1) return L('Just now', 'Agora mesmo'); if (m < 60) return L(m + ' min ago', 'há ' + m + ' min'); const d = new Date(tm), n = new Date(); return d.toDateString() === n.toDateString() ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString([], { day: 'numeric', month: 'short' }); };
     const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };
     const mn = this.wfMine('ch'), srt = all.filter((c) => !c.closed).sort((a, b) => (C.unread(b) ? 1 : 0) - (C.unread(a) ? 1 : 0) || lastT(b) - lastT(a));
-    const opn = mn.on ? C.mine(srt, false, true) : srt;   /* (Oct 5) at most 3 incidents are assigned to a fire owner; "Assigned to me" off shows every incident in the area */
+    const opn = mn.on ? C.mine(srt, false, true) : srt;   /* (Oct 6) at most 5 incidents are assigned to anyone, the administrator included; "Assigned to me" off shows every incident in the area */
     const done = all.filter((c) => c.closed && (!mn.on || (C.wasMine ? C.wasMine(c) : true))).sort((a, b) => lastT(b) - lastT(a));
     const tab = s.cbTab === 'resolved' ? 'resolved' : 'open', shown = tab === 'resolved' ? done : opn;
     const rows = shown.map((c) => { const S = C.stageOf(c), u = C.unread(c), lm = C.lastMsg(c);
@@ -1868,8 +1863,6 @@ class Component extends DCLogic {
     }));
     return {
       ...(() => { const ntV = this.wfNotes(CANDS, FIRES, scope, listFocus); return { nt: ntV, cb: this.wfChats(ntV.title) }; })(),
-      as: (() => { const k = s.asK, PTL = window.__wfLang === 'pt'; return { d: this._asK ? 'flex' : 'none', hid: k ? 'false' : 'true', op: k ? 1 : 0, y: k ? '0px' : '-16px', txt: PTL ? 'Veja o seu novo incidente atribuído' : 'Check your new incident assignment',
-        go: () => { try { sessionStorage.setItem('wf-chat-open', this._asK); if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._asK = null; window.location.href = 'Chat.dc.html'; } }; })(),
       ch: (() => { const C = window.__wfChat; if (!C) return { badgeD: 'none', n: '', aria: 'Assignments', open: null };
         // The system calls the coordinator when a candidate appears in the area: a chat starts for the most likely one
         const top = CANDS.slice().sort((a, b) => b.conf - a.conf)[0]; if (top && window.__wfLiveMap) C.autoStart(C.incCand(top));

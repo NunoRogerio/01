@@ -53,7 +53,10 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ca: ['MR', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', 'California region only', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     nv: ['DW', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', 'Nevada region only', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
-    admin: ['JW', 'James Whitmore', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/faces/us-m1.jpg', 'en']
+    admin: ['JW', 'James Whitmore', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/faces/us-m1.jpg', 'en'],
+    /* (Oct 6) role profiles, signed in with the California area (wf-role ca) and known by wf-custom */
+    coord: ['EO', 'Elena Ortiz', 'Team coordinator', 'Los Angeles County Fire Department', 'California region only', '', 'en'],
+    ff: ['DB', 'Daniel Brooks', 'Firefighter', 'Los Angeles County Fire Department', 'California region only', '', 'en']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)
   var SUMS = {
@@ -61,7 +64,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ca: 'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.',
     nv: 'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.',
     amz: 'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.',
-    admin: 'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.'
+    admin: 'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.',
+    coord: 'Leads a firefighter team. Takes on incidents, sends crews and vehicles, and keeps the team chat and the fire state up to date.',
+    ff: 'Works on the fire line in a team. Follows the incidents the team is on, reports from the field and answers the coordinator.'
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
@@ -358,15 +363,18 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
 
   // Demo profiles are shown in their own service's uniform (illustrated portraits, avatar.js)
-  var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1] };
+  var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1], coord: ['calfire', 1], ff: ['calfire', 0] };
   function uniform(r, name) { var k = KITS[r]; return k && window.__wfAvatar ? window.__wfAvatar(name, k[0], !!k[1]) : ''; }
-  var who = PEOPLE[role] || (role === 'design' ? PEOPLE.admin : null);   // a removed demo profile falls back to the administrator
+  var rid = (function () { var c = ''; try { c = localStorage.getItem('wf-custom') || ''; } catch (e) {} return (c === 'coord' || c === 'ff') ? c : role; })();   /* a role profile shows as itself */
+  var RANK = rid === 'coord' ? 'coord' : rid === 'ff' ? 'ff' : (role === 'admin' || role === 'design') ? 'admin' : role ? 'coord' : '';   /* (Oct 6) administrator, team coordinator or firefighter */
+  var who = PEOPLE[rid] || PEOPLE[role] || (role === 'design' ? PEOPLE.admin : null);   // a removed demo profile falls back to the administrator
   // A profile created on this phone (login screen, New profile) signs in with its area's role and shows as itself
   var cu = null; try { var cid = localStorage.getItem('wf-custom'); if (cid) cu = (JSON.parse(localStorage.getItem('wf-custom-profiles') || '[]') || []).find(function (x) { return x && x.id === cid && x.base === role; }) || null; } catch (e) {}
   var sumOf = function (r) { var e = null; try { e = (JSON.parse(localStorage.getItem('wf-profile-edits') || '{}') || {})[r]; } catch (x) {} return e && e.sum != null ? e.sum : (SUMS[r] || ''); };   /* an edit made on the login card wins */
   window.__wfPrefs = {
     role: role,
-    person: cu ? { id: role, code: cu.code, name: cu.name, title: cu.title || '', org: cu.org || '', access: 'All features. ' + (who ? who[4] : 'All regions'), photo: cu.photo || '', lang: who ? who[6] : 'en', custom: true, sum: cu.sum || '', demo: false } : who ? { id: role, code: who[0], name: who[1], title: who[2], org: who[3], access: 'All features. ' + who[4], photo: uniform(role, who[1]) || who[5], lang: who[6], sum: sumOf(role === 'design' ? 'admin' : role), demo: true } : null,
+    person: cu ? { id: role, code: cu.code, name: cu.name, title: cu.title || '', org: cu.org || '', access: 'All features. ' + (who ? who[4] : 'All regions'), photo: cu.photo || '', lang: who ? who[6] : 'en', custom: true, sum: cu.sum || '', demo: false } : who ? { id: rid, code: who[0], name: who[1], title: who[2], org: who[3], access: 'All features. ' + who[4], photo: uniform(rid, who[1]) || who[5], lang: who[6], sum: sumOf(role === 'design' ? 'admin' : rid), demo: true } : null,
+    rank: RANK,
     get: function (k) { return k === 'theme' ? get('theme', 'light') : k === 'text' ? get('text', 'normal') : get(k, ''); },
     set: function (k, v) {
       // Applied at once, like the language: no animation on the text size (the switcher's yellow has already landed)
