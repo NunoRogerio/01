@@ -198,7 +198,7 @@
     '.wfs.on{transform:none;visibility:visible}.wfs.out{visibility:visible}.wfs.hide{visibility:hidden}' +
     '.wfs .sc{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;padding:24px 16px 0;-webkit-overflow-scrolling:touch}.wfs .sc::-webkit-scrollbar{display:none}' +
     '.wfs .cd{position:relative;background:var(--wf-surface,#FFFFFF);border-radius:16px;box-shadow:0 0 10px rgba(0,0,0,.08);padding:16px 16px 24px;margin-bottom:24px;transition:transform .25s ' + EASE + ',box-shadow .2s ease;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
-    '.wfs .cd.lift{z-index:3;box-shadow:0 0 24px rgba(0,0,0,.16);transition:box-shadow .2s ease}' +
+    '.wfs .cd.fl>.fr,.wfs .cd:not(.fl)>.bk{display:none}.wfs .cd.lift{z-index:3;box-shadow:0 0 24px rgba(0,0,0,.16);transition:box-shadow .2s ease}' +
     '.wfs .xb{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;padding:0;border:0;border-radius:50%;background:var(--wf-track,rgba(118,118,128,.12));color:var(--wf-ink2,#3C3C43);cursor:pointer}' +
     '.wfs .xb svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}.wfs .xb.rot svg{transform:rotate(90deg)}' +
     '.wfs .add{display:flex;align-items:center;justify-content:center;width:56px;height:56px;padding:0;border:0;border-radius:8px;background:var(--wf-track,rgba(118,118,128,.12));color:var(--wf-ink2,#3C3C43);cursor:pointer}' +
@@ -232,12 +232,35 @@
     return true;
   }
   function chev() { return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>'; }
+  // (Oct 6) the back of each card: a short paragraph explaining the chart's data ({v} {u} the headline, {p} the period, {r} the area)
+  var EXPL = {
+    region: 'Where ignition candidates were spotted in {r} over {p}. Darker squares had more of them, so they show where to watch and where to place crews ahead of time. {v} candidates in all.',
+    split: 'Of the ignition candidates checked over {p}, how many were declared fires and how many were dismissed. A large dismissed share means many false alarms reach the team.',
+    burned: 'Area burned in {r}, adding up over {p}. Steep stretches are the days when fires grew fastest. {v} {u} in total.',
+    top5: 'The five fires that burned the most over {p}, largest first. Each bar is that fire\'s burned area; together they burned {v} {u}.',
+    mitig: 'The five fires brought under control fastest over {p}, from first alert to mitigation. The quickest took {v} h: the responses worth learning from.',
+    evac: 'People moved out of harm\'s way in {r} over {p}, each column one interval. Tall columns mark when fires came close to homes. {v} people in all.',
+    proj: 'How well the predicted fire spread matched the perimeter that actually burned, for five fires. Higher is better: {v}% on average.',
+    size: 'Fires over {p} sorted by how much land each burned, from class A (smallest) to G (largest). Most fires stay small; the few large ones take most of the effort.',
+    stage: 'The average hours a fire spends in each stage, from first alert to closed: {v} h in all. The longest bar shows where the time goes.',
+    res: 'Crews, vehicles and aircraft committed to fires over {p}. Peaks show when resources were stretched: {v} crews at the busiest point.',
+    resp: 'How quickly five stations get crews to a fire after the alert, fastest first. The median across them is {v} min.',
+    src: 'Which source spotted each ignition candidate first: satellites, cameras on the ground, drones, emergency calls, or cars and phones. It shows which eyes catch fires earliest.',
+    night: 'Ignitions over {p} split by whether they started at night or by day: {v} in all. Night fires are harder to see and to reach.',
+    tod: 'When ignition candidates appear during the day, against how likely they are to be real fires. Bigger, darker squares hold more candidates; the busiest slot starts at {v}.',
+    conf: 'The share of ignition candidates that turned out to be real fires over {p}: {v}% on average. A rising line means detections are getting more reliable.',
+    hour: 'Detections grouped by the hour of the day they came in, in local time. The busiest hour starts at {v}.',
+    decl: 'How long it took to declare a fire after its first alert, over {p}. {v}% were declared within 30 minutes.'
+  };
+  function explain(d, rg, o) { var t = EXPL[d.k]; if (!t) return '';
+    return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, o.u).replace(/\{p\}/g, 'the ' + rg.word.charAt(0).toLowerCase() + rg.word.slice(1)).replace(/\{r\}/g, regionName()) + ' Simulated data.'; }
   function cardHtml(d, rg, X) {
     var R = rng(S.region + '|' + rg.id + '|' + d.k), o = d.f(R, rg, X);
-    return '<article class="cd" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
-      '<div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
+    return '<article class="cd' + (S.fl && S.fl[d.k] ? ' fl' : '') + '" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
+      '<div class="bk"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div><p style="margin:4px 0 0;font-size:17px;line-height:24px;color:#3A3A3C">' + esc(explain(d, rg, o)) + '</p></div>' +
+      '<div class="fr"><div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:24px">' + esc(d.t) + '</div>' +
       '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.u) + '</span></div>' +
-      (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' : '<div style="height:16px"></div>') + o.h + '</article>';
+      (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73;margin-bottom:16px">' + esc(o.n) + '</div>' : '<div style="height:16px"></div>') + o.h + '</div></article>';
   }
 
   // the header: the selected region's shape in light grey with two blurred heat layers on it (simulated):
@@ -498,25 +521,48 @@
     list.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     list.addEventListener('pointerdown', function (e) {
       var c = e.target.closest && e.target.closest('.cd'); if (!c || e.button > 0) return;
-      if (e.target.closest('.tslot[data-ys]')) return;   // (Oct 6) a finger on a line chart slides its tooltip; the card lifts from anywhere else
-      d = { c: c, y0: cy(e), id: e.pointerId, lifted: false };
+      d = { c: c, y0: cy(e), x0: pt(e.clientX, e.clientY)[0], id: e.pointerId, lifted: false, moved: false };
+      // (Oct 6) a finger on a line or column chart slides its tooltip, so the card does not lift there; held still for half a second it still flips
+      if (e.target.closest('.tslot[data-ys]')) { d.chart = true; timer = setTimeout(function () { if (d) { d.long = true; buzz(12); } }, 500); return; }
       timer = setTimeout(function () { if (!d) return; d.lifted = true; var L = cards(); d.idx = L.indexOf(c); d.to = d.idx; d.tops = L.map(function (x) { var r = lrect(x); return { t: r.top, h: r.height }; });
         c.classList.add('lift'); c.style.transition = 'box-shadow .2s ease'; c.style.transform = 'scale(1.02)'; try { c.setPointerCapture(d.id); } catch (x) {} buzz(12); }, 250);
     });
     list.addEventListener('pointermove', function (e) {
-      if (!d) return; if (!d.lifted) { if (Math.abs(cy(e) - d.y0) > 8) { clearTimeout(timer); d = null; } return; }
-      var dy = cy(e) - d.y0, L = cards(), me = d.tops[d.idx], mid = me.t + me.h / 2 + dy, to = d.idx;
+      if (!d) return; if (!d.lifted) { if (Math.abs(cy(e) - d.y0) > 8 || (d.chart && Math.abs(pt(e.clientX, e.clientY)[0] - d.x0) > 8)) { clearTimeout(timer); d = null; } return; }
+      var dy = cy(e) - d.y0; if (Math.abs(dy) > 8) d.moved = true;
+      var L = cards(), me = d.tops[d.idx], mid = me.t + me.h / 2 + dy, to = d.idx;
       d.tops.forEach(function (t, j) { if (mid > t.t && mid < t.t + t.h) to = j; }); d.to = to;
       d.c.style.transform = 'translateY(' + dy.toFixed(1) + 'px) scale(1.02)';
       L.forEach(function (x, j) { if (j === d.idx) return; var shift = 0; if (d.idx < d.to && j > d.idx && j <= d.to) shift = -(me.h + 24); else if (d.idx > d.to && j < d.idx && j >= d.to) shift = me.h + 24; x.style.transform = shift ? 'translateY(' + shift + 'px)' : ''; });
     });
-    var end = function () {
-      clearTimeout(timer); if (!d) return; var dd = d; d = null; if (!dd.lifted) return;
+    var end = function (e) {
+      clearTimeout(timer); if (!d) return; var dd = d; d = null;
+      // (Oct 6) a long press released without dragging flips the card: its back explains the chart's data
+      if (e && e.type === 'pointerup' && (dd.long || (dd.lifted && !dd.moved))) {
+        if (dd.lifted) { dd.c.classList.remove('lift'); dd.c.style.transition = ''; dd.c.style.transform = ''; cards().forEach(function (x) { x.style.transform = ''; }); }
+        TIP.slid = Date.now(); tipHide(); flip(dd.c); return; }
+      if (!dd.lifted) return;
       var ks = cards().map(function (x) { return x.getAttribute('data-k'); }), k = ks.splice(dd.idx, 1)[0]; ks.splice(dd.to, 0, k);
       var all = order().filter(function (x) { return ks.indexOf(x) < 0; }); LS(K_ORDER, ks.concat(all)); buzz(10);
       var sc = S.el.querySelector('.sc'); render(true);
     };
     list.addEventListener('pointerup', end); list.addEventListener('pointercancel', end);
+    // a tap on a card's back turns it to the front again
+    list.addEventListener('click', function (e) { var c = e.target.closest && e.target.closest('.cd.fl'); if (c && !(TIP.slid && Date.now() - TIP.slid < 400)) flip(c); });
+  }
+  // (Oct 6) the card turns over in two halves around its vertical axis (to edge-on, swap the face, back to flat), easing in and out;
+  // the back keeps the front's height so the list does not move
+  function flip(c) {
+    if (c.__fl) return; c.__fl = 1; S.fl = S.fl || {}; var k = c.getAttribute('data-k'), h = c.offsetHeight, P = 'perspective(1200px) ';
+    if (RM) { c.classList.toggle('fl'); if (c.classList.contains('fl')) { S.fl[k] = 1; c.style.minHeight = h + 'px'; } else { delete S.fl[k]; c.style.minHeight = ''; } c.__fl = 0; buzz(8); return; }
+    c.style.transition = 'transform .22s cubic-bezier(.55,0,1,.45)'; c.style.transform = P + 'rotateY(90deg)';
+    setTimeout(function () {
+      var on = !c.classList.contains('fl'); c.classList.toggle('fl', on); if (on) { S.fl[k] = 1; c.style.minHeight = h + 'px'; } else { delete S.fl[k]; c.style.minHeight = ''; }
+      c.style.transition = 'none'; c.style.transform = P + 'rotateY(-90deg)'; void c.offsetWidth;
+      c.style.transition = 'transform .22s cubic-bezier(0,.55,.45,1)'; c.style.transform = '';
+      setTimeout(function () { c.style.transition = ''; c.__fl = 0; }, 240);
+    }, 220);
+    buzz(8);
   }
 
   // Coming back to the app (Oct 5): iOS may reload a page it put to sleep; the panel remembers, for this session only, that it was open
