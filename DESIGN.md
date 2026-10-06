@@ -1251,3 +1251,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Assigned to me, up to 5 (Oct 6, 06:53):** a fire owner holds up to five incidents at a time (was three).
 - **Tour button (Oct 6, 06:54):** "Tour" (was "Let's take a tour"): Visita, Visite, Tour, ツアー.
 - **Line charts at 4px (Oct 6, 06:57):** lines back to 4px (3px felt thin); same round ends and inset as before.
+- **Multi-line charts grow per line (Oct 6, 09:29, standing):** a line chart with more than one line is 16% taller for each line beyond the first (of the single-line 105 height): 2 lines 122, 3 lines 139 (resources in use). One rule in `lines()` in stats.js.

@@ -80,7 +80,8 @@
       reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y, true); }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + G1 + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
-    var h = 105, max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
+    // (Oct 6) each line beyond the first makes the chart 16% taller (of the single-line 105), so several lines keep room to read apart
+    var h = Math.round(105 * (1 + 0.16 * (sets.length - 1))), max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
     var cols = [G1, LIME, G2];   // line charts never use dark grey (too heavy): crews middle grey, vehicles the primary, aircraft light grey
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
       slots(sets[0].v.length, h, function (i, x) { return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14); }) +
