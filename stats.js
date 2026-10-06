@@ -432,12 +432,12 @@
       t.appendChild(dt); TIP.dot = dt; ax = fb.right - 4; ay = fb.top; }
     else { var rb = lrect(t), ep = e && e.clientX ? pt(e.clientX, e.clientY) : null; ax = ep ? ep[0] : rb.left + rb.width / 2; ay = ep ? ep[1] : rb.top; }
     var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
-    if (t.classList.contains('tseg')) {   // (Oct 6) the tapped donut part moves out to a ring 16px wider in radius, same length and gaps in proportion
-      var r0 = +t.getAttribute('r'), k2 = (r0 + 16) / r0, cc = +t.getAttribute('data-c') * k2, ll = +t.getAttribute('data-ln') * k2;
-      t.setAttribute('data-r0', r0); t.setAttribute('r', r0 + 16); t.style.r = (r0 + 16) + 'px'; t.style.strokeDasharray = ll.toFixed(2) + ' ' + (cc - ll).toFixed(2); t.style.strokeDashoffset = (-(+t.getAttribute('data-st')) * k2).toFixed(2);
+    if (t.classList.contains('tseg')) {   // (Oct 6) the tapped donut part moves out to a ring 8px wider in radius, same length and gaps in proportion
+      var r0 = +t.getAttribute('r'), k2 = (r0 + 8) / r0, cc = +t.getAttribute('data-c') * k2, ll = +t.getAttribute('data-ln') * k2;
+      t.setAttribute('data-r0', r0); t.setAttribute('r', r0 + 8); t.style.r = (r0 + 8) + 'px'; t.style.strokeDasharray = ll.toFixed(2) + ' ' + (cc - ll).toFixed(2); t.style.strokeDashoffset = (-(+t.getAttribute('data-st')) * k2).toFixed(2);
       var sv = t.ownerSVGElement; if (sv) { sv.style.overflow = 'visible';
         // the tooltip anchors on the part where it ends up (its outer edge), sampled along the moved arc
-        var m2 = sv.getScreenCTM(), R2 = r0 + 16 + 4, st2 = +t.getAttribute('data-st') * k2, cx0 = +t.getAttribute('cx'), cy0 = +t.getAttribute('cy'), bx = [1e9, 1e9, -1e9, -1e9];
+        var m2 = sv.getScreenCTM(), R2 = r0 + 8 + 4, st2 = +t.getAttribute('data-st') * k2, cx0 = +t.getAttribute('cx'), cy0 = +t.getAttribute('cy'), bx = [1e9, 1e9, -1e9, -1e9];
         if (m2) for (var j = 0; j <= 24; j++) { var f = 2 * Math.PI * (st2 + ll * j / 24) / cc, P2 = sv.createSVGPoint(); P2.x = cx0 + R2 * Math.cos(f); P2.y = cy0 + R2 * Math.sin(f); P2 = P2.matrixTransform(m2); var q2 = pt(P2.x, P2.y); bx[0] = Math.min(bx[0], q2[0]); bx[1] = Math.min(bx[1], q2[1]); bx[2] = Math.max(bx[2], q2[0]); bx[3] = Math.max(bx[3], q2[1]); }
         if (bx[2] > bx[0]) MB = bx; } }
     if (t.classList.contains('tseg') || (t.classList.contains('tslot') && !t.hasAttribute('data-ys'))) t.classList.add('on'); TIP.on = on;
