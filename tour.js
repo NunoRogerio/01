@@ -599,9 +599,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
         var snd0 = 0; try { snd0 = +sessionStorage.getItem('wf-ach-snd') || 0; sessionStorage.removeItem('wf-ach-snd'); } catch (e) {}
         var taEl = bub.querySelector('.ta');
         // (Oct 5, 02:26) the sound plays the moment the tag appears; one that already appeared (and sounded) on the tap that brought this screen stays still
-        if (!INFRAME && Date.now() - snd0 <= 8000) taEl.classList.add('still');
-        else setTimeout(function () { if (!taEl.isConnected) return; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {}
-          if (INFRAME) { try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (e) {} try { window.parent.__wfNavHold = Date.now() + 700; } catch (e) {} } }, ACH_LEAD + 150); }
+        /* (Oct 6) the card is rebuilt when its target appears or the step's state changes: an achievement already played for this step stays still (it used to pop and sound twice) */
+        if ((!INFRAME && Date.now() - snd0 <= 8000) || window.__wfAchDone === i) { taEl.classList.add('still'); window.__wfAchDone = i; }
+        else { setTimeout(function () { if (!taEl.isConnected || window.__wfAchDone === i) return; window.__wfAchDone = i; taEl.classList.add('go'); prlim(); try { if (navigator.vibrate) navigator.vibrate([10, 60, 14]); } catch (e) {}
+          if (INFRAME) { try { sessionStorage.setItem('wf-ach-snd', String(Date.now())); } catch (e) {} try { window.parent.__wfNavHold = Date.now() + 700; } catch (e) {} } }, ACH_LEAD + 150); } }
       bub.querySelector('.tt').textContent = L(st.t);
       // the tour's "under construction" sign sits right after the first card's title (it used to be a warning before the tour)
       if (st.wip) { var wp = document.createElement('p'); wp.className = 'twip'; wp.textContent = '\u26A0\uFE0F ' + (pt ? 'Em construção' : 'Under construction'); bub.querySelector('.tt').insertAdjacentElement('afterend', wp); }
