@@ -50,7 +50,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 - **Scale:** every padding, margin and gap is 4px or a multiple of 8 (4, 8, 16, 24, 32, 40, 48, 56…).
 - **Rhythm:** 16px padding and gaps inside a group; 56px between groups. Nothing touches a screen or container edge (16px from it).
 - **Groups:**
-  - a title and its description sit closer than 8px (4px); a title and a paragraph of body text (e.g. a metric card's back) sit 8px apart: the paragraph is content, not a caption;
+  - a title and its description sit closer than 8px (4px); a title and a paragraph of body text (e.g. a metric card's back) sit 8px apart: the paragraph is content, not a caption; a card that turns over keeps one size: both faces share it, so it is as tall as its taller face whether flipped, reordered or redrawn;
   - closely related content (a name and its details, a label and its control) sits 8px apart;
   - elements of one group sit 16px apart; related cards in a row or stack sit 8px apart;
   - separate groups sit 56px apart;
