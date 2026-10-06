@@ -67,7 +67,7 @@
   }
   function xAxis(h, lbls) { return '<text x="0" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + esc(lbls[0]) + '</text><text x="' + W + '" y="' + (h - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="end">' + esc(lbls[1]) + '</text>'; }
   function pathOf(vals, max, h, pad) { var bot = h - 20, top = pad + 14; return vals.map(function (v, i) { var x = lx(i, vals.length), y = bot - (bot - top) * (v / (max || 1)); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' '); }
-  var LW = 4;   // line charts' stroke (Oct 6, 06:57: 4px; 3px, 8px tried; first 2px)
+  var LW = 4;   // line charts' stroke: 4px on screen at any card width (non-scaling stroke, Oct 6, 13:54); 3px, 8px tried; first 2px
   var AG = 0;   // line charts: no fill under the line; each line casts a soft shadow in its own colour (the single line: the primary), centred on it (0 offset), 9px blur
   function lineShadow() { return ''; }   // (Oct 5, 20:00) no shadow under the lines; the line alone carries the chart
 
@@ -77,7 +77,7 @@
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y) + ' data-ys="' + y.toFixed(1) + '" data-cs="' + G1 + '"'; }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + G1 + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
+      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y) + ' data-ys="' + y.toFixed(1) + '" data-cs="' + G1 + '"'; }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + G1 + '" stroke-width="' + LW + '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
     // (Oct 6) each line beyond the first makes the chart 16% taller (of the single-line 105), so several lines keep room to read apart
@@ -90,7 +90,7 @@
       // drawn darkest first, so the brighter series sit above the darker ones (crews, then aircraft, then vehicles), each line with its own shadow;
       // the dark grey line's shadow is the middle grey (a dark shadow reads as dirt)
       reveal(h) + [0, 2, 1].filter(function (i) { return sets[i]; }).map(function (i) { var s = sets[i], d = pathOf(s.v, max, h, 0);
-        return lineShadow(d, h, 'wfls' + (++AG), cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + LW + '" stroke-linejoin="round" stroke-linecap="round"' + '/>'; }).join('') + '</g>' + xAxis(h, lbls) + '</svg>' +
+        return lineShadow(d, h, 'wfls' + (++AG), cols[i], sets.length > 1 ? 5.76 : 7.2) + '<path pointer-events="none" d="' + d + '" fill="none" style="stroke:' + cols[i] + '" stroke-width="' + LW + '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"' + '/>'; }).join('') + '</g>' + xAxis(h, lbls) + '</svg>' +
       '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">' + sets.map(function (s, i) { return '<span style="display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:20px;color:#3A3A3C"><span aria-hidden="true" style="width:24px;height:' + LW + 'px;border-radius:' + (LW / 2) + 'px;background:' + cols[i] + '"></span>' + esc(s.n) + '</span>'; }).join('') + '</div>';
   }
   // (Oct 6) a column chart shows at most 16 columns: longer series are summed into even groups of consecutive slots (2 days, 2 hours…),
