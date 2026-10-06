@@ -305,7 +305,7 @@
     var prev = S.el.querySelector('.sc'), st = prev && keepScroll ? prev.scrollTop : 0;
     S.el.innerHTML =
       '<div style="flex-shrink:0;padding:44px 16px 16px;display:flex;flex-direction:column;gap:16px">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:17px;font-weight:700;line-height:22px;color:#000">Metrics</h2><span data-sub="1" style="font-size:17px;line-height:22px;color:#000">Drag to reorder. + to add or remove charts.</span></div>' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:17px;font-weight:700;line-height:22px;color:#000">Metrics</h2><span data-sub="1" style="font-size:17px;line-height:22px;color:#000">Drag to reorder. Long press for more info. + to add or remove charts.</span></div>' +
         '<button type="button" class="xb" data-act="close" aria-label="Close">' + chev() + '</button></div>' +
         '<div class="wf-seg" role="tablist" aria-label="Period"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 3);transform:translateX(' + (ri * 100) + '%)"><span class="segblob"></span></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" class="segopt" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '" style="font-size:17px"><span style="display:inline-grid"><span style="grid-area:1/1">' + r.label + '</span><span aria-hidden="true" style="grid-area:1/1;visibility:hidden;font-weight:600">' + r.label + '</span></span></button>'; }).join('') + '</div>' +
       '</div>' +
