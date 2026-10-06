@@ -102,7 +102,8 @@
   }
   function hbars(items, max, best) {
     return '<div style="display:flex;flex-direction:column;gap:16px">' + items.map(function (it, i) {
-      return '<div><div style="display:flex;justify-content:space-between;gap:16px;font-size:16px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums">' + esc(it.t) + '</span></div>' +
+      // the whole row is the tooltip's trigger, invisible behind the bar (no shading); the tooltip sits above the bar's end
+      return '<div class="thb"' + tipA(it.t, it.l) + ' style="cursor:pointer"><div style="display:flex;justify-content:space-between;gap:16px;font-size:16px;line-height:20px;color:#3A3A3C"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (i === best ? 'font-weight:600' : '') + '">' + esc(it.l) + '</span><span style="flex-shrink:0;font-variant-numeric:tabular-nums">' + esc(it.t) + '</span></div>' +
         '<div aria-hidden="true" style="height:8px;margin-top:8px;border-radius:4px;overflow:hidden"><div class="an-w" style="width:' + Math.max(2, 100 * it.v / max).toFixed(1) + '%;height:100%;border-radius:4px;background:' + INK + '"></div></div></div>';
     }).join('') + '</div>';
   }
@@ -406,6 +407,7 @@
     TIP.el.innerHTML = '<b style="font-size:16px;line-height:20px">' + esc(parts[0]) + '</b>' + (parts[1] ? '<span style="font-size:16px;line-height:20px">' + esc(parts[1]) + '</span>' : ''); norm(TIP.el);
     if (svg && t.hasAttribute('data-cx')) { var sp = svg.createSVGPoint(), m = svg.getScreenCTM(); sp.x = +t.getAttribute('data-cx'); sp.y = +t.getAttribute('data-cy'); sp = sp.matrixTransform(m); var q = pt(sp.x, sp.y); ax = q[0]; ay = q[1];
       if (t.hasAttribute('data-dot')) { var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', t.getAttribute('data-cx')); c.setAttribute('cy', t.getAttribute('data-cy')); c.setAttribute('r', String(Math.max(5, LW / 2 + 3))); c.setAttribute('fill', '#FFFFFF'); c.setAttribute('stroke', G1); c.setAttribute('stroke-width', '2'); c.setAttribute('pointer-events', 'none'); svg.appendChild(c); TIP.dot = c; } }
+    else if (t.classList.contains('thb')) { var fb = lrect(t.querySelector('.an-w') || t); ax = fb.left + fb.width; ay = fb.top; }
     else { var rb = lrect(t), ep = e && e.clientX ? pt(e.clientX, e.clientY) : null; ax = ep ? ep[0] : rb.left + rb.width / 2; ay = ep ? ep[1] : rb.top; }
     var on = [t]; if (t.getAttribute('data-sq')) { var sq = t.previousElementSibling; if (sq && sq.classList.contains('tsq')) on.push(sq); }
     if (t.classList.contains('tseg') || t.classList.contains('tslot')) t.classList.add('on'); TIP.on = on;
