@@ -266,7 +266,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () {
           var tab = q('button[role=tab].segopt', function (x) { return /^(Crews|Equipas)/.test((x.textContent || '').trim()) && x.offsetParent !== null; });
           if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
-          if (window.__wfDispPlanReset && !q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; })) window.__wfDispPlanReset();
+          var aiOn = !!q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }); if (aiOn) return;   /* (Oct 6) the AI pack is offered: done (the loop used to empty the plan the AI tap had just filled: Send order dead) */
+          if (window.__wfDispPlanReset) window.__wfDispPlanReset();
           var g = get(); if (++t < 40 && g && S[g.i] && S[g.i].t && S[g.i].t[0] === 'Use the AI suggestion') setTimeout(f, 300); }; f(); },   /* (Oct 5, 03:17) for as long as this step lasts: nothing chosen yet, the AI suggestion showing */
       find: function () { return q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); },
       t: ['Use the AI suggestion', 'Use a sugestão da IA'],
@@ -280,7 +281,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
         var isSend = function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); };
         var inV = [].slice.call(document.querySelectorAll('button.btn.primary')).filter(function (x) { if (!isSend(x)) return false; var r = x.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= VH(); }).sort(function (a, c) { return c.getBoundingClientRect().top - a.getBoundingClientRect().top; });
         var b = inV[0] || q('button.btn.primary', isSend, true) || q('button.btn.primary', isSend);
-        if (b && b.getAttribute('aria-disabled') === 'true') { var ai = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); if (ai && !ai.__wfAuto) { ai.__wfAuto = 1; ai.click(); } }
+        var off = b && (b.getAttribute('aria-disabled') === 'true' || +getComputedStyle(b).opacity < 0.9);   /* (Oct 6) the Crews foot copy had no aria-disabled: the plan was never filled, a dead end */
+        if (off) { var ai = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); if (ai && Date.now() - (window.__wfAiAuto || 0) > 1200) { window.__wfAiAuto = Date.now(); selfTap = true; try { ai.click(); } catch (e) {} selfTap = false; } }
         return b; },
       also: 'button.btn.primary',   /* any Send order on screen moves the dispatch on (never blocked) */
       t: ['Send the orders', 'Envie as ordens'],
@@ -409,7 +411,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // Achievement sound (Oct 3, 17:20): a short bright "prlim", a quick rising trill landing on a soft bell note.
   // Web Audio, no file to load; the context is unlocked by the first touch (browsers block sound before one).
   var actx = null, ACH_LEAD = 450;   // the sound leads the achievement card by this much (ms)
-  function actxGet() { try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state !== 'running' && actx.state !== 'closed') actx.resume(); } catch (e) {} return actx; }
+  function actxGet() { try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch (e) {}   /* (Oct 6) iPhone: the achievement sound plays even with the silent switch on (Web Audio was muted as a ringer sound) */
+    try { if (!actx) { var A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state !== 'running' && actx.state !== 'closed') actx.resume(); } catch (e) {} return actx; }
   // (Oct 5, 09:53) unlocked inside the touch itself, with a silent sample (what iPhones need), on every kind of touch
   var unlocked = false;
   ['pointerdown', 'touchstart', 'touchend', 'click'].forEach(function (ev) { window.addEventListener(ev, function () { var c = actxGet(); if (!c || unlocked && c.state === 'running') return;
@@ -418,7 +421,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function prlim() {
     if (INFRAME) { try { if (window.parent && window.parent.__wfTourPrlim) { window.parent.__wfTourPrlim(); return; } } catch (e) {} }
     var c = actxGet(); if (!c) return;
-    if (c.state !== 'running') return;   // (Oct 5, 09:53) never queued for later: a locked sound used to play on the next touch, out of time
+    if (c.state !== 'running') { var asked = Date.now(); try { var pr = c.resume(); if (pr && pr.then) pr.then(function () { if (c.state === 'running' && Date.now() - asked < 500) play(c); }); } catch (e) {} return; }   // (Oct 6) a context that wakes at once still plays; never later than 0.5 s (out of time)
+    play(c);
+  }
+  function play(c) {
     try { var t0 = c.currentTime + 0.01, out = c.createGain(), lp = c.createBiquadFilter(), dl = c.createDelay(), fb = c.createGain(), wet = c.createGain();
       out.gain.value = 0.32; lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = 0.3;
       dl.delayTime.value = 0.23; fb.gain.value = 0.2; wet.gain.value = 0.22;
