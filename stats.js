@@ -77,12 +77,12 @@
   function area(vals, lbls, unit) {
     var h = 105, max = Math.min(unit === '%' ? 100 : 1e12, Math.max.apply(null, vals) * 1.05), p = pathOf(vals, max, h, 0), bot = h - 20;
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
-      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y) + ' data-ys="' + y.toFixed(1) + '" data-cs="' + G1 + '"'; }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + G1 + '" stroke-width="' + LW + '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
+      reveal(h) + lineShadow(p, h, 'wfag' + (++AG)) + '</g>' + slots(vals.length, h, function (i, x) { var y = bot - (bot - 14) * (vals[i] / (max || 1)); return tipA(unit === '%' ? Math.round(vals[i]) + '%' : fmt(vals[i]) + ' ' + unit, PTS[i] || '', x, y) + ' data-ys="' + y.toFixed(1) + '" data-cs="' + G1 + '"'; }) + reveal(h) + '<path d="' + p + '" fill="none" style="stroke:' + INK + '" stroke-width="' + LW + '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/></g>' + xAxis(h, lbls) + '</svg>';
   }
   function lines(sets, lbls, unit) {
     // (Oct 6) each line beyond the first makes the chart 16% taller (of the single-line 105), so several lines keep room to read apart
     var h = Math.round(105 * (1 + 0.16 * (sets.length - 1))), max = 0; sets.forEach(function (s) { max = Math.max(max, Math.max.apply(null, s.v)); }); max *= 1.05;
-    var cols = [G1, LIME, G2];   // line charts never use dark grey (too heavy): crews middle grey, vehicles the primary, aircraft light grey
+    var cols = [INK, LIME, G1];   // (Oct 7) dark grey is the darkest line again: crews dark grey, vehicles the primary, aircraft middle grey
     return '<svg viewBox="0 0 ' + W + ' ' + h + '" width="100%" role="img" aria-label="' + esc(unit) + ' through time" style="display:block">' + grid(h, 0, fmt(max) + ' ' + unit) +
       slots(sets[0].v.length, h, function (i, x) { var bot = h - 20, ord = [0, 2, 1].filter(function (k) { return sets[k]; });
         return tipA(PTS[i] || '', sets.map(function (s) { return s.n + ' ' + fmt(s.v[i]); }).join('. ') + '.', x, 14) +
