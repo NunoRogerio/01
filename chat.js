@@ -139,6 +139,7 @@
       var all = rows.map(function (r) { return { ck: r[1] + r[0], name: r[4] || 'Fire station', la: r[2], lo: r[3], km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
         .filter(function (q) { return isFinite(q.km) && !/aeroporto|airport|base aérea/i.test(q.name); })
         .sort(function (a, b) { return a.km - b.km; })
+        .slice(0, 60)   /* (Oct 7, perf) only the nearest few are ever used; de-duplicating the whole country (35,000 US stations) froze the screen */
         /* (Oct 7) one entry per station: the data can list a station twice (its building and its point); same name close by, or
            anything within 150 m, is the same station */
         .filter(function (q, i, A) { var sn = shortStation(q.name); return !A.slice(0, i).some(function (p) { var d = Math.hypot((p.la - q.la) * 110.57, (p.lo - q.lo) * kx); return d < 0.15 || (d < 2 && shortStation(p.name) === sn); }); });
