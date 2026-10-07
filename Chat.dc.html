@@ -771,7 +771,10 @@ class Component extends DCLogic {
       const fk = 'f:air', open = !(s.fxClosed || {})[fk], pl = c.air.pilot;
       forces.push({ tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fxClosed: Object.assign({}, (this.state || {}).fxClosed, { [fk]: open }) }); }, exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg',
         crest: window.__wfAirBadge ? window.__wfAirBadge() : '', station: c.air.name, veh: String(us ? c.air.kind : L('Firefighting helicopter', c.air.kind)).replace(/ · /g, '. '),
-        people: pl ? [{ name: pl, role: L('Pilot', 'Piloto'), w: 600, bg: '#E5E5EA', photo: pic(pl), ring: ring('#1C3A5E'), code: pl.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: pl + ', ' + L('Pilot', 'Piloto'), go: openPerson(pl) }] : [] }); }
+        /* (Oct 7) the air team lists its coordinator (Air Tactical Group Supervisor / air operations coordinator) first, then the pilot */
+        people: (c.people || []).filter((p) => p.kind === 'air' && !p.left).map((p) => { const r = L(p.roleEn || 'Air coordinator', p.rolePt || 'Coordenador de meios aéreos');
+          return { name: p.name, role: r, w: 600, bg: '#E5E5EA', photo: pic(p.name), ring: ring('#1C3A5E'), code: p.code || p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: p.name + ', ' + r, go: openPerson(p.name) }; })
+          .concat(pl ? [{ name: pl, role: L('Pilot', 'Piloto'), w: 600, bg: '#E5E5EA', photo: pic(pl), ring: ring('#1C3A5E'), code: pl.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: pl + ', ' + L('Pilot', 'Piloto'), go: openPerson(pl) }] : []) }); }
     if (c.evac) extras.push({ icon: '', iconD: 'none', name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
     const live = FF.filter((f) => f.st !== 'standby');
     // Published counts win over the scenario's (the named crews stay illustrative)
