@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=192"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=205"></script>
+<script src="prefs.js?v=206"></script>
 <script src="station.js?v=3"></script>
 <script src="menu.js?v=16"></script>
 <script src="i18n.js?v=172"></script>
@@ -303,7 +303,10 @@ class Component extends DCLogic {
   // (Oct 7, 19:40) the station home of a captain or team lead (Station.dc.html?home=1): their own station, its area and its incidents
   home() { try { return /[?&]home=1/.test(window.location.search) && window.__wfMine ? window.__wfMine() : null; } catch (e) { return null; } }
   station() {
-    { const M = this.home(); if (M) { const st = M.station; if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); window.addEventListener('wf-chat', this._areaL); } catch (e) {} }
+    { const M = this.home(); if (M) { const st = M.station; if (!this._areaL) { this._areaL = () => this.forceUpdate();
+      /* chats change often: refresh at most every 3 s, and never while a sheet is open or a card is held */
+      this._chatL = () => { if (this._chT) return; this._chT = setTimeout(() => { this._chT = null; const s0 = this.state || {}; if (window.__wfPkLift || window.__wfKpiLift || s0.pick || s0.sq) { this._chatL(); return; } this.forceUpdate(); }, 3000); };
+      try { window.addEventListener('wf-starea', this._areaL); window.addEventListener('wf-chat', this._chatL); } catch (e) {} }
       return Object.assign({}, st, { kmX: 111.32 * Math.cos(st.lat * Math.PI / 180) / 2345, kmY: 110.57 / 2829 }); } }
     let s = (window.__wfMem || {}).station || null;
     if (!s) { try { s = JSON.parse(window.sessionStorage.getItem('wf-station') || 'null'); } catch (e) {} }

@@ -628,24 +628,24 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
   if (!window.__wfPkTM) { window.__wfPkTM = true; document.addEventListener('touchmove', function (e) { if (window.__wfPkLift) e.preventDefault(); }, { passive: false, capture: true }); }
   window.__wfPickDrag = function (comp, g, key, onKeys) {
-    var D = null;
+    var D = comp.__pkD || null;   /* (Oct 7, 22:00) the press lives on the screen, so a refresh mid-drag never drops it */
     var rows = function (el) { var box = el.parentElement; return Array.prototype.slice.call(box.querySelectorAll('[data-pk-on="true"]')); };
     var clear = function (el) { rows(el).forEach(function (r) { r.style.transform = ''; r.style.transition = ''; r.style.zIndex = ''; r.style.boxShadow = ''; }); };
     return {
       gripV: onKeys.indexOf(key) < 0 ? 'hidden' : 'visible',
       down: function (e) { if (onKeys.indexOf(key) < 0) return; var el = e.currentTarget, k = (el.getBoundingClientRect().height / (el.offsetHeight || 1)) || 1;
-        D = { el: el, y0: e.clientY, x0: e.clientX, k: k, lifted: false, pid: e.pointerId };
+        D = comp.__pkD = { el: el, y0: e.clientY, x0: e.clientX, k: k, lifted: false, pid: e.pointerId };
         var gr = !!(e.target && e.target.closest && e.target.closest('[data-pk-grip]'));   /* the handle lifts the row at once, no hold */
         clearTimeout(comp.__pkT); comp.__pkT = setTimeout(function () { if (!D) return; D.lifted = true; window.__wfPkLift = true; var L = rows(el); D.idx = L.indexOf(el); D.to = D.idx; D.h = el.offsetHeight;
           try { el.setPointerCapture(D.pid); } catch (x) {} try { (window.__wfHaptic || function () { if (navigator.vibrate) navigator.vibrate(12); })(); } catch (x) {}
           el.style.zIndex = '3'; el.style.boxShadow = '0 0 24px rgba(0,0,0,0.16)'; el.style.transition = 'box-shadow .2s ease'; }, gr ? 0 : 250); },
-      move: function (e) { if (!D) return; var dy = (e.clientY - D.y0) / D.k;
-        if (!D.lifted) { if (Math.abs(dy) > 8 || Math.abs(e.clientX - D.x0) > 8) { clearTimeout(comp.__pkT); D = null; } return; }
+      move: function (e) { D = comp.__pkD || null; if (!D) return; var dy = (e.clientY - D.y0) / D.k;
+        if (!D.lifted) { if (Math.abs(dy) > 8 || Math.abs(e.clientX - D.x0) > 8) { clearTimeout(comp.__pkT); D = comp.__pkD = null; } return; }
         var L = rows(D.el), n = L.length, to = Math.max(0, Math.min(n - 1, D.idx + Math.round(dy / D.h)));
         D.el.style.transform = 'translateY(' + Math.max(-D.idx * D.h, Math.min((n - 1 - D.idx) * D.h, dy)) + 'px) scale(1.02)';
         if (to !== D.to) { D.to = to; try { if (navigator.vibrate) navigator.vibrate(6); } catch (x) {} }
         L.forEach(function (r, i) { if (r === D.el) return; var s = 0; if (D.idx < D.to && i > D.idx && i <= D.to) s = -D.h; if (D.idx > D.to && i < D.idx && i >= D.to) s = D.h; r.style.transition = 'transform .25s cubic-bezier(.2,.8,.2,1)'; r.style.transform = s ? 'translateY(' + s + 'px)' : ''; }); },
-      up: function () { clearTimeout(comp.__pkT); var d = D; D = null; if (!d || !d.lifted) return; window.__wfPkLift = false;
+      up: function () { clearTimeout(comp.__pkT); var d = comp.__pkD || D; D = comp.__pkD = null; if (!d || !d.lifted) return; window.__wfPkLift = false;
         // the click that ends a drag must not flip the switch under the finger
         var stop = function (ev) { ev.stopPropagation(); ev.preventDefault(); document.removeEventListener('click', stop, true); }; document.addEventListener('click', stop, true); setTimeout(function () { document.removeEventListener('click', stop, true); }, 400);
         var keys = onKeys.slice(), from = keys.indexOf(key); keys.splice(from, 1); keys.splice(d.to, 0, key);
