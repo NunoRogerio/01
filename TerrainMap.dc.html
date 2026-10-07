@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=184"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=187"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
@@ -606,7 +606,7 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } this._wfShow = (e) => { if (e && e.persisted && (this.state || {}).pop) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow);   /* (Oct 4) coming back (Back) to a map: no card left open */
+  componentDidMount() { if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
     this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
