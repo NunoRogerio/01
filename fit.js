@@ -933,8 +933,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   // The warning: a red pill floating over the screen (32px from the bottom, above the new assignment card when it shows),
   // a soft red glow of its own colour pulsing round it. o: { h, title, sub, aria, go } or null to remove it.
   function css() { if (document.getElementById('wf-homes-css')) return; var s = document.createElement('style'); s.id = 'wf-homes-css';
-    s.textContent = '@keyframes wfHomesPulse{0%,100%{box-shadow:0 0 8px 2px rgba(215,0,21,0.45)}50%{box-shadow:0 0 28px 10px rgba(215,0,21,0.55)}}' +
-      '#wf-homes{animation:wfHomesPulse 1.8s ease-in-out infinite}@media (prefers-reduced-motion: reduce){#wf-homes{animation:none;box-shadow:0 0 16px 4px rgba(215,0,21,0.5)}}';
+    s.textContent = '#wf-homes{box-shadow:0 0 30px rgba(0,0,0,0.16)}';   /* (Oct 7) a frosted notification panel, no red glow */
     document.head.appendChild(s); }
   // (Oct 7) the people-at-risk badge on the title line: a rounded red triangle with "!"; a tap shows a small tooltip
   // ("People at risk" over the warning's words) that grows from the badge; a tap on the tooltip opens that horizon, a tap outside closes it
@@ -965,16 +964,16 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
     css(); tap = o.go; ack = o.ack; var PT = window.__wfLang === 'pt';
     var off = document.getElementById('wf-offer'), bot = 32 + (off && off.offsetHeight ? off.offsetHeight + 16 : 0);
-    if (!el) { el = document.createElement('div'); el.id = 'wf-homes'; el.setAttribute('role', 'alert');
-      el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 8px 8px 8px 24px; border-radius: 32px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
+    if (!el) { el = document.createElement('div'); el.id = 'wf-homes'; el.className = 'wf-glass'; el.setAttribute('role', 'alert');
+      el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
       el.addEventListener('click', function (e) { try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
         if (e.target.closest('[data-hm-ack]')) { var f = ack; if (f) f(); window.__wfHomesAlert(null); return; }
         if (tap) tap(); });
       document.body.appendChild(el); requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0px)'; } }); }); }
     el.style.bottom = bot + 'px';
     var s = o.title + '|' + o.sub; if (s !== sig0) { sig0 = s;
-      el.innerHTML = '<span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: rgba(255,255,255,0.92); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">' + o.sub + '</span>' : '') + '</span>' +
-        '<button type="button" class="btn" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; background: rgb(255, 255, 255); color: rgb(176, 0, 32); font: inherit; cursor: pointer">' + (PT ? 'Entendido' : 'Understood') + '</button>'; } };
+      el.innerHTML = '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: var(--wf-ink2, rgb(84, 84, 88)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">' + o.sub + '</span>' : '') + '</span>' +
+        '<button type="button" class="btn wf-sec" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; font: inherit; cursor: pointer">' + (PT ? 'Entendido' : 'Understood') + '</button>'; } };
   // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
   window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, b = res.b[h] || 0, p = res.place[h] || '';
     var bl = b ? (pt ? 'Cerca de ' + b + (b === 1 ? ' edifício' : ' edifícios') : 'About ' + b + (b === 1 ? ' building' : ' buildings')) : '';
