@@ -942,9 +942,9 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     var tip = null, src = null;
     function close() { if (!tip) return; var t = tip; tip = null; src = null; t.classList.remove('on'); setTimeout(function () { t.remove(); }, 300); }
     function open(b) {
-      close(); src = b; var PT = window.__wfLang === 'pt', go = b.querySelector('[data-hm-go]'), sub = b.getAttribute('data-tip-sub') || '';
+      close(); src = b; var PT = window.__wfLang === 'pt', go = b.querySelector('[data-hm-go]'), sub = b.getAttribute('data-tip-sub') || '', ttl = b.getAttribute('data-tip-title') || (PT ? 'Habitações ameaçadas' : 'Structures threatened');
       tip = document.createElement('div'); tip.id = 'wf-hmtip'; tip.setAttribute('role', 'tooltip');
-      tip.innerHTML = '<b>' + (PT ? 'Populações em risco' : 'People at risk') + '</b>' + (sub ? '<span>' + sub.replace(/</g, '&lt;') + '.</span>' : '');
+      tip.innerHTML = '<b>' + ttl.replace(/</g, '&lt;') + '</b>' + (sub ? '<span>' + sub.replace(/</g, '&lt;') + '</span>' : '');   /* (Oct 7) the same words as the floating warning */
       if (go) tip.style.cursor = 'pointer';
       tip.addEventListener('click', function (e) { e.stopPropagation(); var g = go; close(); if (g) g.click(); });
       document.body.appendChild(tip);
@@ -960,22 +960,38 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     document.addEventListener('scroll', close, true); window.addEventListener('resize', close);
   })();
   var el = null, tap = null, ack = null, sig0 = '';
+  // (Oct 7) the warning floats like the app's other floating panels (the tour bubble): drag it anywhere but its button,
+  // throw it and it glides to a stop; it stays where it was put, kept 8px inside the screen
+  function drag(p) {
+    var st = null, fl = 0, dx = 0, dy = 0;
+    var clamp = function () { p.style.translate = '0px 0px'; var r = p.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+      dx = Math.min(W - 8 - r.right, Math.max(8 - r.left, dx)); dy = Math.min(H - 8 - r.bottom, Math.max(8 - r.top, dy)); p.style.translate = dx + 'px ' + dy + 'px'; };
+    p.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fl); st = { x: e.clientX, y: e.clientY, dx: dx, dy: dy, moved: false, tr: [] }; try { p.setPointerCapture(e.pointerId); } catch (x) {} });
+    p.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return;
+      st.moved = true; p.style.cursor = 'grabbing'; dx = st.dx + mx; dy = st.dy + my; clamp(); var t = performance.now(); st.tr.push([t, e.clientX, e.clientY]); while (st.tr.length > 2 && t - st.tr[0][0] > 90) st.tr.shift(); e.preventDefault(); });
+    var up = function () { if (!st) return; var s = st; st = null; p.style.cursor = 'grab'; if (!s.moved) return; p.__moved = true; setTimeout(function () { p.__moved = false; }, 350);
+      var a = s.tr[0], z = s.tr[s.tr.length - 1], dt = a && z ? Math.max(16, z[0] - a[0]) : 16, vx = a && z ? (z[1] - a[1]) / dt * 16 : 0, vy = a && z ? (z[2] - a[2]) / dt * 16 : 0;
+      (function glide() { vx *= 0.92; vy *= 0.92; if (Math.hypot(vx, vy) < 0.3) return; dx += vx; dy += vy; clamp(); fl = requestAnimationFrame(glide); })(); };
+    p.addEventListener('pointerup', up); p.addEventListener('pointercancel', up);
+    window.addEventListener('resize', function () { if (p.isConnected) clamp(); });
+  }
   window.__wfHomesAlert = function (o) {
     if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
     css(); tap = o.go; ack = o.ack; var PT = window.__wfLang === 'pt';
     var off = document.getElementById('wf-offer'), bot = 32 + (off && off.offsetHeight ? off.offsetHeight + 16 : 0);
     if (!el) { el = document.createElement('div'); el.id = 'wf-homes'; el.className = 'wf-glass'; el.setAttribute('role', 'alert');
       el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
-      el.addEventListener('click', function (e) { try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
+      el.style.touchAction = 'none'; el.style.cursor = 'grab'; drag(el);
+      el.addEventListener('click', function (e) { if (el && el.__moved) { el.__moved = false; return; } try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
         if (e.target.closest('[data-hm-ack]')) { var f = ack; if (f) f(); window.__wfHomesAlert(null); return; }
         if (tap) tap(); });
       document.body.appendChild(el); requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0px)'; } }); }); }
     el.style.bottom = bot + 'px';
     var s = o.title + '|' + o.sub; if (s !== sig0) { sig0 = s;
-      el.innerHTML = '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: var(--wf-ink2, rgb(84, 84, 88)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">' + o.sub + '</span>' : '') + '</span>' +
+      el.innerHTML = '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: var(--wf-ink2, rgb(84, 84, 88))">' + o.sub + '</span>' : '') + '</span>' +
         '<button type="button" class="btn wf-sec" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; font: inherit; cursor: pointer">' + 'OK' + '</button>'; } };
   // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
   window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, b = res.b[h] || 0, p = res.place[h] || '';
-    var bl = b ? (pt ? 'Cerca de ' + b + (b === 1 ? ' edifício' : ' edifícios') : 'About ' + b + (b === 1 ? ' building' : ' buildings')) : '';
-    return { h: h, title: pt ? 'Casas em risco em ' + h + ' h' : 'Houses at risk in ' + h + ' h', tag: pt ? 'Casas em ' + h + ' h' : 'Houses in ' + h + ' h', sub: [bl, p].filter(Boolean).join('. ') + '.' }; };
+    var bl = b ? (pt ? 'Cerca de ' + b + (b === 1 ? ' habitação' : ' habitações') : 'About ' + b + (b === 1 ? ' structure' : ' structures')) : '';
+    return { h: h, title: pt ? 'Habitações ameaçadas em ' + h + ' h' : 'Structures threatened in ' + h + ' h', tag: pt ? 'Casas em ' + h + ' h' : 'Houses in ' + h + ' h', sub: [bl, p].filter(Boolean).join('. ') + '.' }; };
 })();
