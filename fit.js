@@ -532,6 +532,19 @@ window.__wfBlink=function(path,dur){
   },false);
   // A screen returned to that no longer applies (its candidate was confirmed or dismissed) steps back once more.
   window.__wfBackOrHome=function(){var ref='';try{ref=document.referrer?new URL(document.referrer).origin:'';}catch(x){}if(history.length>1&&ref===location.origin){history.back();return;}try{location.replace('Main.dc.html');}catch(x){location.href='Main.dc.html';}};
+  // (Oct 7) Home through the incident name: on the incident screens (candidate, fire) and the incident chat there is no round back;
+  // a tap on the incident's name (data-wf-home) returns to the main screen: a real back when the main screen is the one just before
+  // (its place is kept), otherwise the main screen opens. Controls inside the name (the houses-warning tag) keep their own tap.
+  // (Oct 7, 09:10) a small left chevron in mid grey, in the 16px between the screen edge and the incident name ([data-wf-chev]), saying the name goes back
+  try{var cv=document.createElement('style');cv.textContent='[data-wf-chev]{position:relative}[data-wf-chev]::before{content:"";position:absolute;left:-12px;top:calc(var(--wf-chev-y,16px) - 7px);width:8px;height:14px;background:#6E6E73;pointer-events:none;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 14%27%3E%3Cpath d=%27M6.5 1.5 1.5 7l5 5.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 14%27%3E%3Cpath d=%27M6.5 1.5 1.5 7l5 5.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat}html.wf-dark [data-wf-chev]::before{background:#AEAEB2}';(document.head||document.documentElement).appendChild(cv);}catch(x){}
+  window.__wfHome=function(){var r=null;try{r=document.referrer?new URL(document.referrer):null;}catch(x){}
+    if(history.length>1&&r&&r.origin===location.origin&&/\/Main\.dc\.html$/.test(r.pathname)){history.back();return;}location.href='Main.dc.html';};
+  document.addEventListener('click',function(e){
+    var a=e.target&&e.target.closest&&e.target.closest('[data-wf-home]');if(!a||e.defaultPrevented)return;
+    var inner=e.target.closest('a,button,input,[role=button]');if(inner&&inner!==a&&a.contains(inner))return;
+    e.preventDefault();setTimeout(function(){window.__wfHome();},0);
+  },false);
+  document.addEventListener('keydown',function(e){if(e.key!=='Enter'&&e.key!==' ')return;var a=e.target&&e.target.getAttribute&&e.target.getAttribute('data-wf-home')!=null?e.target:null;if(!a||a.tagName==='BUTTON'||a.tagName==='A')return;e.preventDefault();a.click();},false);
   // coming back (from the phone's cache): screens refresh their live state
   addEventListener('pageshow',function(ev){if(ev.persisted){try{dispatchEvent(new Event('wf-sync'));}catch(x){}}});
 })();
@@ -819,6 +832,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
         try{if(an){var d=an.effect.getComputedTiming().duration;if(an.currentTime<d*.93)an.currentTime=d*.93;}else vt.skipTransition();}catch(x){try{vt.skipTransition();}catch(y){}}});});return;}setTimeout(wait,40);})();}).catch(function(){});},true);
   addEventListener('pagereveal',function(e){if(!e.viewTransition)return;var t=0;try{t=+sessionStorage.getItem('wf-vt-back')||0;sessionStorage.removeItem('wf-vt-back');}catch(x){}if(Date.now()-t<15000){try{e.viewTransition.types.add('wfback');}catch(x){}return;}});
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(a)mark();},true);
+  var oh=window.__wfHome;if(typeof oh==='function'){window.__wfHome=function(){mark();return oh.apply(this,arguments);};}   /* the incident name's way home is a back too */
   var ob=window.__wfBackOrHome;if(typeof ob==='function'){window.__wfBackOrHome=function(){mark();return ob.apply(this,arguments);};}
   var top=function(root){try{var L=(root||document).querySelectorAll('*');for(var i=0;i<L.length;i++){var el=L[i];if(el.closest&&el.closest('[data-wf-maproot],[data-wf-keepscroll]'))continue;if(el.scrollTop>0)el.scrollTop=0;if(el.scrollLeft>0&&el.getAttribute('role')!=='tablist')el.scrollLeft=0;}if(!root)window.scrollTo(0,0);}catch(x){}};
   // the place on each screen, remembered when leaving it, for a return through a back control that reloads the screen
