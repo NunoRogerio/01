@@ -1467,5 +1467,14 @@
   function offerBoot() { if (!role || !document.body) return; setTimeout(offerRender, 1200);
     window.addEventListener('wf-chat', function () { setTimeout(offerRender, 0); }); window.addEventListener('focus', offerRender); window.addEventListener('pageshow', offerRender);
     document.addEventListener('visibilitychange', offerRender); setInterval(offerRender, 5000); }
+  // (Oct 7) one story everywhere: a candidate declared (or dismissed) in its chat stays declared on every screen, also after
+  // the app is closed and opened again (the decision lives with the chat, which is kept; the screens' own memory is per session)
+  (function syncDecisions() { try { var db = load(), C0 = {}, D0 = {}, add = false;
+    try { C0 = JSON.parse(sessionStorage.getItem('wf-confirmed') || '{}') || {}; } catch (e) {} try { D0 = JSON.parse(sessionStorage.getItem('wf-dismissed') || '{}') || {}; } catch (e) {}
+    Object.keys(db.chats).forEach(function (k) { var c = db.chats[k]; if (!c || c.kind !== 'cand' || c.incId == null) return;
+      if (c.dismissed) { if (!D0[c.incId]) { D0[c.incId] = true; add = true; } }
+      else if (c.stage >= 1 && !C0[c.incId]) { C0[c.incId] = (c.hist || []).filter(function (h) { return h.s === 1; }).map(function (h) { return h.vt; })[0] || Date.now(); add = true; } });
+    if (add) { try { sessionStorage.setItem('wf-confirmed', JSON.stringify(C0)); sessionStorage.setItem('wf-dismissed', JSON.stringify(D0)); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { confirmed: C0, dismissed: D0 }); }
+  } catch (e) {} })();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', offerBoot); else offerBoot();
 })();
