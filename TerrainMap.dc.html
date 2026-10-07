@@ -14,9 +14,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=191"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=192"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=204"></script>
+<script src="station.js?v=1"></script>
 <script src="i18n.js?v=172"></script>
 <script src="live.js?v=43"></script>
 
@@ -99,6 +100,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <path d="{{geo.roads}}" fill="none" stroke="{{pal.roads}}" stroke-width="{{geo.roadW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
     </svg>
     <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
+      <!-- (Oct 7) the station's area (captain and team lead maps): a subtle thin outline, no fill -->
+      <path d="{{stAreaD}}" fill="none" stroke="#3A3A3C" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
            wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
@@ -267,7 +270,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
-      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="10.25" fill="{{fm.fill}}"></circle><circle cx="14" cy="14" r="12.25" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle></svg></button>
+      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="16" fill="none" stroke="#3A3A3C" stroke-width="1.5" style="display: {{fm.aidD}}"></circle><circle cx="14" cy="14" r="10.25" fill="{{fm.fill}}"></circle><circle cx="14" cy="14" r="12.25" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle></svg></button>
       <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><svg width="6" height="5" viewBox="0 0 6 5" aria-hidden="true" style="display: {{fm.riskD}}; position: absolute; left: {{fm.riskL}}px; top: {{fm.riskT}}px; pointer-events: none; overflow: visible"><path d="M3 0.9 5.4 4.4H0.6Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="1" stroke-linejoin="round"></path></svg><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
@@ -284,6 +287,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <button type="button" class="{{ig.cls}}" aria-label="{{ig.aria}}" onPointerEnter="{{ig.hover}}" onFocus="{{ig.hover}}" onClick="{{ig.sel}}" style="border: 0; padding: 0; background: transparent; position: absolute; left: {{ig.left}}px; top: {{ig.top}}px; width: 44px; height: 44px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: {{mvI}}">
         <!-- Night detection: a small black moon in the centre of the circle, over its fill, no border (the sun was down where and when the satellite saw the heat) -->
         <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style="display: {{ig.moonD}}; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; opacity: 1 !important; pointer-events: none; overflow: visible"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12) translate(1.5 0)" fill="#1C1C1E"></path></svg>
+        <!-- (Oct 7) mutual aid (an incident outside the station's area that the station answers as a closest unit): the same marker with a thin outer ring -->
+        <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true" style="display: {{ig.aidD}}; position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; overflow: visible; opacity: 1 !important"><circle cx="22" cy="22" r="{{ig.aidR}}" fill="none" stroke="#3A3A3C" stroke-width="1.5"></circle></svg>
         <!-- (Oct 7) structures at risk: a small solid red triangle, 1/4 of the marker, at its top right, 2px from it -->
         <svg width="6" height="5" viewBox="0 0 6 5" aria-hidden="true" style="display: {{ig.riskD}}; position: absolute; left: {{ig.riskL}}px; top: {{ig.riskT}}px; z-index: 4; pointer-events: none; overflow: visible; opacity: 1 !important"><path d="M3 0.9 5.4 4.4H0.6Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="1" stroke-linejoin="round"></path></svg>
         <!-- Likelihood tag (the incident list's component), beside the marker when zoomed in -->
@@ -382,6 +387,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <span class="wf-ctag" aria-hidden="true" style="margin-top: 4px; color: {{pop.tagFg}}; background: {{pop.tagBg}}">{{pop.pct}}</span>
         <!-- (Oct 7) structures at risk: the marker's red triangle explained, as a small red tag (13px tag size) with the same triangle, 8px under the tag above -->
         <span class="wf-ctag wf-risk-tag" role="status" style="display: {{pop.riskD}}; margin-top: 8px; min-height: 24px; max-width: 100%; padding: 4px 8px; gap: 4px; font-size: 13px; line-height: 16px; white-space: nowrap; text-align: left; color: rgb(190, 0, 18); background: rgba(215, 0, 21, 0.1)"><svg width="14" height="13" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span>{{pop.riskTxt}}</span></span>
+        <!-- (Oct 7) mutual aid: the same tag as in the station's list, 8px under the tag above (the marker's outer ring explained) -->
+        <span class="wf-ctag" role="status" style="display: {{pop.aidD}}; margin-top: 8px; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{pop.aidTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.place}}</b>
         <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
         <span style="display: {{pop.igNightD}}; align-items: center; gap: 8px; margin-top: 8px; font-size: 16px; line-height: 20px; color: #3A3A3C"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg>Night detection</span>
@@ -395,6 +402,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <span class="wf-ctag" role="status" style="margin-top: 4px; padding-left: 12px; padding-right: 12px; color: {{pop.fkTagFg}}; background: {{pop.fkTagBg}}">{{pop.fkTag}}</span>
         <!-- (Oct 7) structures at risk: the marker's red triangle explained, as a small red tag (13px tag size) with the same triangle, 8px under the tag above -->
         <span class="wf-ctag wf-risk-tag" role="status" style="display: {{pop.riskD}}; margin-top: 8px; min-height: 24px; max-width: 100%; padding: 4px 8px; gap: 4px; font-size: 13px; line-height: 16px; white-space: nowrap; text-align: left; color: rgb(190, 0, 18); background: rgba(215, 0, 21, 0.1)"><svg width="14" height="13" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span>{{pop.riskTxt}}</span></span>
+        <!-- (Oct 7) mutual aid: the same tag as in the station's list, 8px under the tag above (the marker's outer ring explained) -->
+        <span class="wf-ctag" role="status" style="display: {{pop.aidD}}; margin-top: 8px; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{pop.aidTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.fkName}}</b>
         <span class="wf-dot" style="display: {{pop.fkRegD}}; margin-top: -1px; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.fkReg}}</span>
         <span style="display: {{pop.fkNumD}}; align-items: center; gap: 4px; margin-top: 8px; font-size: 16px; line-height: 20px; color: #3A3A3C">{{pop.fkLbl}}<b style="margin-left: 4px; font-weight: 600; font-variant-numeric: tabular-nums">{{pop.fkNum}}</b></span>
@@ -612,7 +621,7 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
+  componentDidMount() { this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
     this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
@@ -1393,6 +1402,9 @@ class Component extends DCLogic {
       return withTip({ ...o, stat: busy ? 'busy' : 'available' }, 'Fire station ' + code + ' ' + nm, avail + (on ? '. Selected for dispatch.' : '.'));
     }).filter((o) => !isPin).filter(onScreen);
     const SF = this.stationFile();
+    /* (Oct 7) a station's own map (captain, team lead): the station always shows, whatever the stations layer */
+    const ownSt = (() => { const mine = (p.area === true || p.area === 'true') && window.__wfMine ? window.__wfMine() : null; if (!mine) return []; const st = mine.station, _st = { id: st.id, type: st.type, name: st.name, lat: st.lat, lon: st.lon, tags: st.tags || {}, x: st.x, y: st.y };
+      return [withTip(at(st.x, st.y + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st }), st.name, window.__wfLang === 'pt' ? 'O seu quartel.' : 'Your station.')]; })();
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
       const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 140 : zr < 4 ? 100 : zr < 8 ? 80 : 64, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
@@ -1638,7 +1650,7 @@ class Component extends DCLogic {
             return { countyLabels: counties, cityLabels: (window.__wfLiveMap && this.mapStyle() === 'standard') ? [] : cities };
           })(),
           showSea: !(window.__wfLiveMap && this.mapStyle() === 'standard'), sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: !LY.stations ? [] : window.__wfLiveMap ? (fileStations || (s >= 0.012 ? osmStations : [])) : ((near && laScope) ? stations : []), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
+          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: ownSt.concat((!LY.stations ? [] : window.__wfLiveMap ? (fileStations || (s >= 0.012 ? osmStations : [])) : ((near && laScope) ? stations : [])).filter((o) => !(ownSt.length && o._st && String(o._st.id) === String(ownSt[0]._st.id)))), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
         };
       })(),
       // The pin's label stays whole on screen: it slides sideways (never past the 16px margins) while the pin stays put.
@@ -1869,6 +1881,12 @@ class Component extends DCLogic {
     (OUT.fireMarks || []).forEach((m) => { const on1 = m.flameD === 'block' && m._g && atRisk(m._g.id), c = riskAt(m.bdW ? 14.25 : 10.25); m.riskD = on1 ? 'block' : 'none'; m.riskL = +(c - 3).toFixed(1); m.riskT = +(14 - c - 2.5).toFixed(1); });
     (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 5.2; m.bdW2 = o ? 10.4 : 5.2;   /* the candidate's outline: 2px, 4px when selected, outside the circle */ m.po = o ? 'stroke' : 'normal'; });
     (OUT.ignMarks || []).forEach((m) => { const c = riskAt(8.47 + (m.bdW || 5.2) * 0.77 / 2); m.riskD = atRisk(m._id) ? 'block' : 'none'; m.riskL = +(22 + c - 3).toFixed(1); m.riskT = +(22 - c - 2.5).toFixed(1); });
+    /* (Oct 7) mutual aid: on a captain's or team lead's maps, incidents outside the station's area that the station answers carry a thin outer ring */
+    { const mine = window.__wfMine ? window.__wfMine() : null, aidAt = (x, y) => { if (!mine || x == null || y == null || !window.__wfIncidentFor) return false; const ll = window.__wfIncLatLon(x, y); return window.__wfIncidentFor(ll[0], ll[1]) === 'aid'; };
+      const P0 = this.props || {}, IX = {}; (Array.isArray(P0.ignitions) ? P0.ignitions : []).forEach((g) => { IX[g.id] = g; });
+      (OUT.fireMarks || []).forEach((m) => { m.aidD = m.flameD === 'block' && m._g && aidAt(m._g.x, m._g.y) ? 'block' : 'none'; });
+      (OUT.ignMarks || []).forEach((m) => { const g = IX[m._id]; m.aidD = g && aidAt(g.x, g.y) ? 'block' : 'none'; m.aidR = +(8.47 + (m.bdW || 5.2) * 0.77 / 2 + 4).toFixed(1); });
+      OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }
     (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? '#3A3A3C' : 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
@@ -1918,7 +1936,9 @@ class Component extends DCLogic {
       hasView: !noView && (P.kind !== 'st' || !!m._st), viewD: !noView && (P.kind !== 'st' || !!m._st) ? 'flex' : 'none', href: P.kind === 'fire' ? 'Dispatch.dc.html' : P.kind === 'st' ? 'Station.dc.html' : 'Alert.dc.html', go: (e) => { if (m.pick) m.pick(e); },
       /* (Oct 7) structures at risk: the tooltip names what the marker's red triangle means (same incidents, same words as the warning) */
       ...(() => { let r = null; try { const id = P.kind === 'fire' ? (m.flameD === 'block' && m._g ? m._g.id : null) : P.kind === 'ign' ? m._id : null; r = id != null && window.__wfHomesGet ? window.__wfHomesGet(String(id)) : null; } catch (e) {}
-        const T = r && r.first != null && window.__wfHomesText ? window.__wfHomesText(r, window.__wfLang === 'pt') : null; return { riskD: T ? 'inline-flex' : 'none', riskTxt: T ? (window.__wfLang === 'pt' ? 'Habitações em risco' : 'Structures at risk') : '' }; })()   /* (Oct 7, 19:50) words only, no count or time here */   /* the card stays up while the next screen loads: its label says so (fit.js) */ };
+        const T = r && r.first != null && window.__wfHomesText ? window.__wfHomesText(r, window.__wfLang === 'pt') : null; const ll = P.kind === 'fire' ? (m._g ? [m._g.x, m._g.y] : null) : P.kind === 'ign' ? (() => { const g = (Array.isArray(this.props.ignitions) ? this.props.ignitions : []).find((q) => q.id === m._id); return g ? [g.x, g.y] : null; })() : null;
+        const aid = !!(ll && window.__wfMine && window.__wfMine() && window.__wfIncidentFor && window.__wfIncidentFor(...window.__wfIncLatLon(ll[0], ll[1])) === 'aid');
+        return { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid && window.__wfAidTag ? window.__wfAidTag().label : '', riskD: T ? 'inline-flex' : 'none', riskTxt: T ? (window.__wfLang === 'pt' ? 'Habitações em risco' : 'Structures at risk') : '' }; })()   /* (Oct 7, 19:50) words only, no count or time here */   /* the card stays up while the next screen loads: its label says so (fit.js) */ };
     return OUT;
   }
 }

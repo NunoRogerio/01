@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=191"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=192"></script>
 <script src="avatar.js?v=12"></script>
 <script src="i18n.js?v=172"></script>
 
@@ -535,7 +535,7 @@ class Component extends DCLogic {
           if (d) { const m = /matrix\(([^,]+)/.exec(getComputedStyle(d).transform || ''), u = /splash\/([^")]+)/.exec(d.style.backgroundImage || '');
             if (u) window.__wfSoftPhoto = { f: u[1], s: m ? parseFloat(m[1]) : 1, t: Date.now() }; } } catch (x) {}
         try { if (window.__wfSoftOut) window.__wfSoftOut(); } catch (x) {}   // the loading screen takes over right here, then carries on in the app
-        setTimeout(() => { window.location.href = 'Main.dc.html'; }, 560);   // once the loading screen has faded in (0.5 s)
+        setTimeout(() => { window.location.href = typeof wfHomeUrl === 'function' ? wfHomeUrl() : 'Main.dc.html'; }, 560);   // once the loading screen has faded in (0.5 s)
         if (window.__wfSetY) window.__wfSetY(sel[9] || sel[0]);   // the signed-in profile's hi-vis colour, from the loading screen on
         try { window.localStorage.setItem('wf-role', sel[9] || sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); if (sel[9]) window.localStorage.setItem('wf-custom', sel[0]); else window.localStorage.removeItem('wf-custom'); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); } catch (e) {}
         window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[9] || sel[0], scope: null });

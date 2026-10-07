@@ -14,10 +14,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=191"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=192"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=204"></script>
+<script src="station.js?v=1"></script>
 <script src="menu.js?v=16"></script>
 <script src="i18n.js?v=172"></script>
 <script src="live.js?v=43"></script>
@@ -43,7 +44,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- Full screen only: the map as its own layer. On the page the map is a band that scrolls with everything else. -->
   <sc-if value="{{fullLayer}}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; top: 0; width: var(--wf-w, 390px); height: 844px; z-index: 7">
-      <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{yes}}" close-x="true" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-crest="{{st.crest}}" pin-coords="{{st.coords}}" zoom="{{zoomFull}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attrFull}}" loader="true" no-routes="true" hint-size="390px,844px"></dc-import>
+      <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{yes}}" close-x="true" mode="{{mapMode}}" area="{{areaOn}}" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-crest="{{st.crest}}" pin-coords="{{st.coords}}" zoom="{{zoomFull}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attrFull}}" loader="true" no-routes="true" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
 
@@ -52,25 +53,45 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
     <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
-      <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
-      <div style="grid-column: 1 / -1; grid-row: 2; margin-top: 16px; display: flex; flex-direction: column; min-width: 0">
+      <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+      <div style="grid-column: {{ttlCol}}; grid-row: {{ttlRow}}; margin-top: {{ttlMt}}; display: flex; flex-direction: column; min-width: 0">
     <!-- (Oct 5, 07:20) the crest centred on the first two rows (title and description: 32 + 4 + 22px), not on the status row. (06:53) the crest centred on the title + description block (never reaching up to the back button); place and kind share the description row. (03:26) the crest on the left; the title and its description stacked beside it, the description right under the title (4px, the app's title + description rule) -->
     <span style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="display: {{st.crestD}}; width: 44px; height: 44px; flex-shrink: 0; margin-top: 7px; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{st.title}}</h1><span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.region}}<span style="display: {{st.kindD}}">. {{st.kind}}</span></span>
     <!-- (Oct 5, 07:03) in the title column, the row after the description: (06:57) only the station's status tag and, on the right, the green call button: a call with this
          station's fire coordinator alone (rings, connects, then shows them in the floating panel, as the police call does) -->
 <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 4px">
       <span role="status" class="wf-ctag" style="color: {{st.tagFg}}; background: {{st.tagBg}}">{{st.tag}}</span>
-      <button type="button" class="chbtn" data-round="1" onClick="{{stCall}}" data-call="1" aria-label="{{stCallAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #34C759; color: #fff; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
+      <button type="button" class="chbtn" data-round="1" onClick="{{stCall}}" data-call="1" aria-label="{{stCallAria}}" style="display: {{callD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #34C759; color: #fff; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
     </span>
 </span></span>
       </div>
       <!-- Header actions, as on the main screen: the incident chats, notifications, your profile (always at the top; the chat is an option, not a foot button) -->
-      <div data-wf-keepsp="1" style="grid-column: 3; grid-row: 1; display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; margin-top: 4px"><a href="Chat.dc.html" class="opt" onClick="{{hx.ch.open}}" aria-label="{{hx.ch.aria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{hx.ch.badgeD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ch.n}}</span></a><button type="button" class="opt" onClick="{{hx.openNt}}" aria-haspopup="dialog" aria-label="{{hx.ntAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{hx.ntD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ntN}}</span></button><button type="button" class="opt" data-wf-burger="1" onClick="{{hx.openPf}}" aria-haspopup="true" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button></div>
+      <div data-wf-keepsp="1" style="grid-column: 3; grid-row: 1; display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; margin-top: 4px"><a href="Chat.dc.html" class="opt" onClick="{{hx.ch.open}}" aria-label="{{hx.ch.aria}}" style="position: relative; display: {{chD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{hx.ch.badgeD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ch.n}}</span></a><button type="button" class="opt" onClick="{{hx.openNt}}" aria-haspopup="dialog" aria-label="{{hx.ntAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{hx.ntD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ntN}}</span></button><button type="button" class="opt" data-wf-burger="1" onClick="{{hx.openPf}}" aria-haspopup="true" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button></div>
     </div>
   </div>
 
   <!-- Everything under the header scrolls as one page, the map band included -->
   <div class="wf-page" style="position: relative; z-index: 5; display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 24px">
+    <!-- (Oct 7, 19:40) Station home (captain and team lead): the station is the protagonist. First the assignments: the incidents in the
+         station's area, then those it answers as a closest unit (mutual aid, with the same tag as the map's tooltip); the team lead sees
+         only the incidents his crew is dispatched to -->
+    <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 16px 0">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{asg.title}}</h3>
+        <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.noneTxt}}</p></sc-if>
+        <ul style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
+          <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
+            <li style="border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+              <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
+              <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
+              <span class="wf-stg" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
+              <span style="grid-column: 1 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span></span>
+            </a>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+    </sc-if>
     <sc-if value="{{hasMap}}" hint-placeholder-val="{{ false }}">
       <div style="position: relative; flex-shrink: 0; height: 234px; overflow: hidden">
         <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" locked="true" start-zoom="4" mode="pin" ignitions="{{noList}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="234" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-crest="{{st.crest}}" pin-coords="{{st.coords}}" zoom="{{zoom}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" no-routes="true" no-title="true" no-legend="true" hint-size="390px,234px"></dc-import>
@@ -78,7 +99,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </sc-if>
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
       <!-- Under the map, as on the incident screens: the GPS component (coordinates, Directions, copy), then the fires near the station, 8px apart -->
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: -40px; padding: 0 16px">
+      <div style="display: {{awayD}}; flex-direction: column; gap: 8px; margin-top: -40px; padding: 0 16px">
         <div style="display: flex; align-items: center; gap: 16px; min-height: 56px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
           <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{loc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{loc.rows}}; opacity: {{loc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 16px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span></span>
           <!-- Directions: an arrow going up and turning right, 16px left of the copy icon -->
@@ -147,8 +168,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
       <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
       <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.res}}</span>
-        <div style="padding: 0 16px 8px">
+        <span style="margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{resT}}</span>
+        <div style="display: {{rs.tabsD}}; padding: 0 16px 8px">
           <div role="tablist" aria-label="{{tx.res}}" class="wf-seg">
             <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 3); transform: translateX({{rs.x}})"><span class="segblob"></span></span>
             <sc-for list="{{rs.tabs}}" as="tb" hint-placeholder-count="3">
@@ -173,6 +194,17 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
         </ul>
       </div>
+
+      <!-- (Oct 7, 19:40) Station home: the area map as a card at the end, maximisable; the area as a thin outline, every incident of
+           the area and of mutual aid on it (mutual aid with a thin outer ring) -->
+      <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; padding: 0 16px">
+          <span style="margin: 0 0 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.area}}</span>
+          <div style="position: relative; flex-shrink: 0; height: {{homeMapH}}px; border-radius: 16px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+            <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" mode="risk" area="true" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" w="{{homeMapW}}" h="{{homeMapH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" zoom="{{zoom}}" focus-x="{{homeFx}}" focus-y="{{homeFy}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" hint-size="358px,280px"></dc-import>
+          </div>
+        </div>
+      </sc-if>
 
       <!-- The station's other details (operator, address, phone...), only when it has any; the crest, name, type and location are already above -->
       <div style="display: flex; flex-direction: column">
@@ -268,7 +300,11 @@ class Component extends DCLogic {
     }
     this._sync = () => this.forceUpdate(); try { window.addEventListener('wf-sync', this._sync); } catch (e) {} this._t = setTimeout(this._sync, 1500); }
   componentWillUnmount() { try { window.removeEventListener('wf-sync', this._sync); window.removeEventListener('wf-chat', this._chatSync); } catch (e) {} clearTimeout(this._t); }
+  // (Oct 7, 19:40) the station home of a captain or team lead (Station.dc.html?home=1): their own station, its area and its incidents
+  home() { try { return /[?&]home=1/.test(window.location.search) && window.__wfMine ? window.__wfMine() : null; } catch (e) { return null; } }
   station() {
+    { const M = this.home(); if (M) { const st = M.station; if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); window.addEventListener('wf-chat', this._areaL); } catch (e) {} }
+      return Object.assign({}, st, { kmX: 111.32 * Math.cos(st.lat * Math.PI / 180) / 2345, kmY: 110.57 / 2829 }); } }
     let s = (window.__wfMem || {}).station || null;
     if (!s) { try { s = JSON.parse(window.sessionStorage.getItem('wf-station') || 'null'); } catch (e) {} }
     // Opened without a map position (e.g. from a person's station card in a chat): place it from its latitude and longitude
@@ -287,14 +323,58 @@ class Component extends DCLogic {
       reset: () => { try { ['wf-hide-', 'wf-seen-'].forEach((p) => localStorage.removeItem(p + g)); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate(); },
       close: () => this.setState({ pick: false }) };
   }
+  // (Oct 7, 19:40) The station home's incidents. Captain: every live fire and ignition candidate inside the station's area, then
+  // those it answers as a closest unit across the border (mutual aid). Team lead: the incidents his crew is dispatched to (the
+  // incident chats' forces of this station). Also the map's view: the area framed, else the station.
+  homeAsg(S, MINE, L) {
+    const lead = MINE.level === 'lead', PT = window.__wfLang === 'pt', C = window.__wfChat;
+    const km = (la, lo) => Math.hypot((la - S.lat) * 110.57, (lo - S.lon) * 111.32 * Math.cos(S.lat * Math.PI / 180));
+    const kmT = (k) => (k < 10 ? k.toFixed(1) : String(Math.round(k))) + ' km', drv = (k) => { const m = Math.round(k * 1.3 / 50 * 60); return '~' + (m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0')) + L(' drive', ' de carro'); };
+    const aidT = window.__wfAidTag ? window.__wfAidTag() : { label: L('Mutual aid', 'Auxílio') };
+    const fireGo = (v) => () => { v.t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} };
+    const candGo = (id) => () => { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: id }); try { window.sessionStorage.setItem('wf-focus', id); } catch (e) {} };
+    const LF = (window.__wfLiveFires || []).filter((r) => r && r[5] != null && !((r[9] || {}).resolved)), LC = window.__wfLiveCands || [];
+    const items = [];
+    LF.forEach((r) => { const ll = window.__wfIncLatLon(r[5], r[6]), k = window.__wfIncidentFor(ll[0], ll[1], S); if (k) items.push({ kind: 'fire', r, k, km: km(ll[0], ll[1]) }); });
+    LC.forEach((r) => { const m = r[9] || {}, ll = m.lat != null ? [m.lat, m.lon] : window.__wfIncLatLon(r[7], r[8]), k = window.__wfIncidentFor(ll[0], ll[1], S); if (k) items.push({ kind: 'cand', r, k, km: km(ll[0], ll[1]) }); });
+    items.sort((a, b) => (a.k === b.k ? a.km - b.km : a.k === 'zone' ? -1 : 1));
+    const fireTag = (r) => { const T = window.__wfStageTag ? window.__wfStageTag({ info: r[9] || {}, note: r[4] }) : null; return { tagTxt: T ? T.label : L('Active', 'Ativo'), tagFg: T ? T.fg : '#3A3A3C', tagBg: T ? T.bg : 'rgba(118,118,128,0.12)', tagIc: T ? T.ic : '', tagIcD: T ? 'block' : 'none' }; };
+    let rows;
+    if (lead) {
+      const mineF = (c) => (c.forces || []).find((f) => (f.ck === (S.type === 'way' ? 'w' : 'n') + S.id || f.full === S.name) && f.st !== 'standby' && f.st !== 'released');
+      const ST = { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };
+      rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c)).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
+        return { place: c.place, aria: c.place, href: c.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html', go: c.kind === 'fire' ? fireGo({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }) : candGo(c.incId),
+          _id: c.incId, tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (ST[f.st] || '') + '. ' + (f.veh || []).join(', ') + '.' }; });
+    } else rows = items.map((q) => { const r = q.r, aid = q.k === 'aid', base = { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid ? aidT.label : '', sub: kmT(q.km) + '. ' + drv(q.km) + '.' };
+      if (q.kind === 'fire') return Object.assign(base, fireTag(r), { place: r[3] || r[2], aria: (r[3] || r[2]) + (aid ? ', ' + aidT.label : ''), href: 'Dispatch.dc.html', go: fireGo({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6] }) });
+      const CT = window.__wfConfTag ? window.__wfConfTag(r[4]) : { fg: '#185A93', bg: '#E3EEFB' };
+      return Object.assign(base, { place: r[3], aria: r[3] + ', ' + r[4] + L('% likelihood', '% de probabilidade') + (aid ? ', ' + aidT.label : ''), tagTxt: r[4] + '%', tagFg: CT.fg, tagBg: CT.bg, tagIc: '', tagIcD: 'none', href: 'Alert.dc.html', go: candGo(r[2]) }); });
+    // The map: the area framed when it has loaded, else the station; only this station's incidents on it
+    const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min(window.innerWidth || 390, 600) - 32, H = 280;
+    let fx = S.x, fy = S.y, z = 1.4;
+    if (A && A.rings && A.rings.length) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; A.rings.forEach((rg) => rg.forEach((q) => { const x = (q[1] + 118.13) * 2345 + 518, y = (34.19 - q[0]) * 2829 + 662; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }));
+      items.forEach((q) => { const x = q.kind === 'fire' ? q.r[5] : q.r[7], y = q.kind === 'fire' ? q.r[6] : q.r[8]; if (x == null) return; x0 = Math.min(x0, x - 12); x1 = Math.max(x1, x + 12); y0 = Math.min(y0, y - 12); y1 = Math.max(y1, y + 12); });   /* the incidents too, so mutual aid is in view */
+      z = Math.max(0.3, Math.min((W - 32 - 92) / Math.max(1, x1 - x0), (H - 96) / Math.max(1, y1 - y0))); fx = (x0 + x1) / 2 + 30 / z; fy = (y0 + y1) / 2 - 16 / z; }   /* clear of the map controls on the right and the legend at the top */
+    const SRCN = { sat: 'Satellite' };
+    const ign = onMap.filter((q) => q.kind === 'cand').map((q) => { const [st, co, id, place, conf, spec, ago, x, y, live] = q.r; const srcs = String(spec || '').split('|').map((p) => { const [k, ref] = p.split(':'); return { kind: k, ref: ref || '', label: (SRCN[k] || k) + (ref ? ' ' + ref : '') }; });
+      return { live: live || null, st, co, id, place, conf, srcs, nSrc: srcs.length, src: srcs.length > 1 ? srcs.length + ' sources' : srcs[0].label, srcList: srcs.map((q2) => q2.label).join(' · '), ago, x, y }; });
+    const nZone = items.filter((q) => q.k === 'zone').length, nAid = items.length - nZone;
+    const onMap = lead ? (() => { const ids = {}; rows.forEach((r) => { if (r._id) ids[r._id] = 1; }); return items.filter((q) => ids[q.r[2]]); })() : items;
+    return { title: lead ? L('Deployments', 'Destacamentos') : L('Assignments', 'Atribuições'), rows, none: !rows.length, listD: rows.length ? 'flex' : 'none',
+      noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),
+      nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
+      view: { homeMapW: W, homeMapH: H, homeFx: Math.round(fx), homeFy: Math.round(fy), homeZ: +z.toFixed(3) } };
+  }
   renderVals() {
     const S = this.station(), T = (S && S.tags) || {};
     const PT = window.__wfLang === 'pt', L = (en, pt) => (PT ? pt : en);
+    const MINE = this.home(), home = !!MINE, lead = home && MINE.level === 'lead';
     const back = () => {};   // the app-wide back (fit.js): the screen visited just before, the map only when opened straight here
-    const tx = { cmd: L('Command', 'Comando'), cmdTeam: L('Command team', 'Equipa de coordenação'), groupChat: L('Group chat', 'Conversa de grupo'), res: L('Resources', 'Recursos'),
+    const tx = { area: L('Station area', 'Área do quartel'), cmd: L('Command', 'Comando'), cmdTeam: L('Command team', 'Equipa de coordenação'), groupChat: L('Group chat', 'Conversa de grupo'), res: L('Resources', 'Recursos'),
       note: L('Resources, crews, people and the extra figures are simulated for this demonstration. Station details from OpenStreetMap contributors.', 'Recursos, equipas, pessoas e os indicadores extra são simulados para esta demonstração. Dados do quartel dos contribuidores do OpenStreetMap.') };
     const closed = { y: 'calc(100% + 120px)', op: 0, pe: 'none', hidden: 'true', rows: [], people: [], title: '', sub: '', chatLbl: L('Open chat', 'Abrir conversa'), close: () => {}, chat: () => {}, reset: () => {} };
-    if (!S) return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, none: true, some: false, hasMap: false, fullLayer: false, back, tx, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], rowsD: 'none', loc: { gps: '', rows: '0fr', op: 0, copyIc: '', copyC: '', copyAria: '', dir: '', copy: null }, fires: [], noFires: false, firesD: 'none', kpis: [], kp: closed, sq: closed, cmd: { faces: [] }, rs: { tabs: [], rows: [] } };
+    if (!S) return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, none: true, some: false, hasMap: false, fullLayer: false, back, tx, resT: tx.res, ttlCol: '1 / -1', ttlRow: '2', ttlMt: '16px', backD: 'flex', chD: 'flex', callD: 'flex', awayD: 'flex', home: false, st: { title: 'Fire station', region: '', kindD: 'none', kind: '', tag: '', tagBg: 'transparent', tagFg: '#3A3A3C', act: 'Main.dc.html', actLbl: 'Map', actTarget: '_self' }, rows: [], rowsD: 'none', loc: { gps: '', rows: '0fr', op: 0, copyIc: '', copyC: '', copyAria: '', dir: '', copy: null }, fires: [], noFires: false, firesD: 'none', kpis: [], kp: closed, sq: closed, cmd: { faces: [] }, rs: { tabs: [], rows: [] } };
     const name = S.name || T.official_name || 'Fire station';
     const op = T.operator || '';
     const blob = (name + ' ' + op).toLowerCase();
@@ -355,6 +435,21 @@ class Component extends DCLogic {
       { key: 'calls', opt: true, sim: true, l: L('Calls this year', 'Ocorrências este ano'), n: nf2(600 + H0 % 1400), u: '', sub: nf2(30 + H0 % 70) + L(' wildfires', ' incêndios rurais') },
       { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' },
       { key: 'area', opt: true, sim: true, l: L('Response area', 'Área de atuação'), n: nf2(120 + H0 % 360), u: 'km²', sub: '' }];
+    /* (Oct 7) station home: figures for the station's own job (captain), or for the team lead's crew */
+    const AS = home ? this.homeAsg(S, MINE, L) : null;
+    if (home) {
+      kAll.splice(0, kAll.length, ...(lead ? [
+        { key: 'h-dep', l: L('Deployed', 'Destacado'), n: String(AS.rows.length), u: '', sub: '' },
+        { key: 'h-near', l: L('Nearest active fire', 'Incêndio ativo mais próximo'), n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', sub: nf ? (nf.r[3] || '') : L('None within 60 km', 'Nenhum a 60 km') },
+        { key: 'h-drive', l: L('Drive to it', 'Chegada'), n: nf ? '~' + Math.round(nf.km * 1.3 / 50 * 60) : '—', u: nf ? 'min' : '', sub: nf ? L('At 50 km/h', 'A 50 km/h') : '' },
+        { key: 'risk', opt: true, sim: true, l: L('Fire danger today', 'Risco de incêndio hoje'), n: String(danger), u: '/ 5', sub: L(dW[0], dW[1]) }]
+      : [
+        { key: 'h-zone', l: L('In the area', 'Na área'), n: String(AS.nZone), u: '', sub: '' },
+        { key: 'h-aid', l: L('Mutual aid', 'Auxílio'), n: String(AS.nAid), u: '', sub: '' },
+        { key: 'h-near', l: L('Nearest active fire', 'Incêndio ativo mais próximo'), n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', sub: nf ? (nf.r[3] || '') : L('None within 60 km', 'Nenhum a 60 km') },
+        { key: 'risk', opt: true, sim: true, l: L('Fire danger today', 'Risco de incêndio hoje'), n: String(danger), u: '/ 5', sub: L(dW[0], dW[1]) },
+        { key: 'turn', opt: true, sim: true, l: L('Turnout time', 'Tempo de saída'), n: String(2 + H0 % 3), u: 'min', sub: L('Average', 'Média') },
+        { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' }])); }
     this._kAll = kAll.map((m) => ({ key: m.key, l: m.l, opt: !!m.opt }));
     const Hk = this.wfHidden();
     const kpis = kAll.filter((m) => Hk.indexOf(m.key) < 0).map((m) => ({ l: m.l, n: m.n, u: m.u, uD: m.u ? 'inline' : 'none', sub: m.sub, subD: m.sub ? 'block' : 'none', note: est, noteD: m.sim ? 'block' : 'none' }));
@@ -380,6 +475,8 @@ class Component extends DCLogic {
     const crewDefs = isPT ? [['EIP 1', 'VFCI 01', 5], ['ECIN Alfa', 'VFCI 02', 5], ['ECIN Bravo', 'VLCI 01', 5], ['ELAC 1', 'VTTF 01', 3]] : [['Engine ' + num + ' crew', 'Engine ' + num, 4], ['Brush ' + num + ' crew', 'Brush ' + num, 4], ['Patrol ' + num + ' crew', 'Patrol ' + num, 3], ['Hand Crew ' + (Number(num) % 20 + 1), 'Crew Buggy ' + num, 6]];
     const crewSt = (i) => (i === 0 ? 'ok' : ['ok', 'out', 'off', 'ok'][(H0 >> (i * 2)) % 4]);
     const crews = crewDefs.slice(0, nCrew).map((d, i) => { const chief = pick(), ppl = [chief]; for (let k = 1; k < d[2]; k++) ppl.push(pick()); return { name: d[0], veh: d[1], st: crewSt(i), chief, ppl }; });
+    /* (Oct 7) the profile stations tell one story: their captain commands, their team lead leads the first crew */
+    { const SF = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SF) { if (cmdP[1]) cmdP[1].name = SF.captain; if (crews[0]) { crews[0].chief = SF.lead; crews[0].ppl[0] = SF.lead; } } }
     // Vehicles: what a station of its kind usually has; the one a busy crew took is out with it
     const V = isPT ? [
       ['VCOT 01', 'cmd', 'Tactical command vehicle. 4 seats.', 'Veículo de comando tático. 4 lugares.'],
@@ -423,7 +520,12 @@ class Component extends DCLogic {
     const rs = { x: tab === 'crew' ? '100%' : tab === 'air' ? '200%' : '0',
       tabs: [['veh', L('Vehicles', 'Veículos')], ['crew', L('Crews', 'Equipas')], ['air', L('Aircraft', 'Meios aéreos')]].map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ rtab: k }); } })),
       sum: !list.length ? '' : list.length + ' ' + (tab === 'crew' ? L(list.length === 1 ? 'crew' : 'crews', list.length === 1 ? 'equipa' : 'equipas') : tab === 'air' ? L('aircraft', list.length === 1 ? 'meio aéreo' : 'meios aéreos') : L(list.length === 1 ? 'vehicle' : 'vehicles', list.length === 1 ? 'veículo' : 'veículos')) + '. ' + free + ' ' + L('available', free === 1 ? 'disponível' : 'disponíveis') + '.',
-      rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No aircraft based at this station.', 'Nenhum meio aéreo sediado neste quartel.') };
+      rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No aircraft based at this station.', 'Nenhum meio aéreo sediado neste quartel.'), tabsD: 'block' };
+    /* (Oct 7) the team lead's home shows his own crew and the vehicle it rides in, no switcher */
+    if (lead && crews[0]) { const c0 = crews[0], v0 = veh.find((v) => v.name === c0.veh);
+      rs.tabsD = 'none'; rs.empty = false; rs.listD = 'flex'; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + L('Chief ', 'Chefe ') + c0.chief + '.';
+      rs.rows = [{ name: c0.name, ic: IC.crew, sub: c0.ppl.slice(1).join(', ') + '.', ...tg(c0.st), chevW: '20px', chevD: 'flex', dis: false, cur: 'pointer', aria: c0.name + ', ' + c0.ppl.join(', '), go: () => this.setState({ sq: 'c0' }) }]
+        .concat(v0 ? [{ name: v0.name, ic: IC[v0.ic], sub: v0.sub, ...tg(v0.st), ...mob(), aria: v0.name + ', ' + v0.sub }] : []); }
 
     // Chats: the command team as a group, or a crew's chief; both offer the first crew they have free
     const offerCrew = crews.find((c) => c.st === 'ok') || crews[0];
@@ -441,22 +543,24 @@ class Component extends DCLogic {
       chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
 
     return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, 
-      none: false, some: true, hasMap: true, back, tx, zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
+      none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
+      asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
+      mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
       stCallAria: L('Call ', 'Ligar a ') + L(cmdRoles[0][0], cmdRoles[0][1]).toLowerCase() + ' ' + cmdP[0].name,
       stCall: (e) => { const F = window.__wfCamFeed; if (!F) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const c0 = cmdP[0];   /* the station's fire coordinator alone */
         F.open({ anchor: e && e.currentTarget, title: 'Call', label: L('Call', 'Chamada'), who: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + c0.name,
           call: { id: 'st-' + S.id, photo: (photo(c0.name) || '').replace(/^url\("|"\)$/g, '').replace(/^none$/, ''), alt: c0.name, calling: L('Calling…', 'A chamar…'), hangup: L('End call', 'Terminar chamada'), connecting: L('Connecting…', 'A ligar…'), live: L('Live. Call', 'Em direto. Chamada') } }); }, pkOpen: () => this.setState({ pick: true }), cmd, rs, sq,
-      mapFires: live.map((r) => ({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], res: r[7], ha: r[8], info: r[9] })),
+      mapFires: (home ? AS.fires : live).map((r) => ({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], res: r[7], ha: r[8], info: r[9] })),
       ...(() => { const Fu = !!(this.state || {}).full; return { full: Fu, fullLayer: Fu, toggleFull: () => this.setState({ full: !(this.state || {}).full }) }; })(),
-      ctrlTop: 60, zoom: 0.9, zoomFull: 1.08, attrFull: 40,
+      ctrlTop: 60, zoom: home ? AS.view.homeZ : 0.9, zoomFull: home ? AS.view.homeZ : 1.08, attrFull: 40,
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestD: K.url ? 'block' : 'none', crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
-        title: name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
+        title: home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
         ...(n25 ? { tag: n25 + (n25 === 1 ? ' fire' : ' fires'), tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
-        ...(() => { const r = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
+        ...(() => { const r0 = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : '', A = home && window.__wfStationArea ? window.__wfStationArea(S) : null, r = A && A.name ? A.name + '. ' + r0 : r0; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
-      rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length ? 'flex' : 'none', loc: lc, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
+      rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length && !home ? 'flex' : 'none', loc: lc, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'
     };
   }

@@ -20,6 +20,8 @@
   // The station profile signed in on this phone, or null (administrator and regional profiles)
   window.__wfMine = function () { var k = rid(); if (!signed() || !ME[k]) return null; var m = ME[k], s = m.station;
     return { key: k, level: m.level, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
+  // Who leads the profile stations, so every screen tells the same story (the captain commands, the team lead leads the first crew)
+  window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Elena Ortiz', lead: 'Daniel Brooks' } : null; };
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
   // ---- the station's area (OpenStreetMap boundary), kept 30 days on this phone ----

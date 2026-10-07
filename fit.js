@@ -1,4 +1,9 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
+// (Oct 7, 19:40) Station profiles (captain, team lead) have their station as their home screen instead of the region map.
+function wfHomeUrl(){try{var r=localStorage.getItem('wf-role')||'',c=localStorage.getItem('wf-custom')||'';if(r&&(c==='coord'||c==='ff'))return 'Station.dc.html?home=1';}catch(e){}return 'Main.dc.html';}
+(function(){try{if(!/\/Main\.dc\.html$/.test(location.pathname)||/[?&]menu=1/.test(location.search))return;var H=wfHomeUrl();if(H==='Main.dc.html')return;
+  /* the main screen still opens for its own panels (notifications, preferences) asked from another screen */
+  var S=sessionStorage;if(S.getItem('wf-nt-open')||S.getItem('wf-prefs-open')||S.getItem('wf-panel-return'))return;location.replace(H);}catch(e){}})();
 // Hi-vis accent, chosen by profile: the 3M yellow of firefighters' reflective stripes (#E5FF00) everywhere, and the
 // lime yellow of US fire services (#CCFF00) for the California and Nevada profiles. Screens use var(--wf-y) in CSS,
 // rgba(var(--wf-y-rgb), a) for tints, and window.__wfY where a real colour value is needed (SVG fills, canvas).
@@ -214,10 +219,10 @@ window.__wfBlink=function(path,dur){
       try{localStorage.setItem(K,v);}catch(e){}
       if(!seen)return false;                            // first run: nothing older to replace
       window.__wfUpdating=true;
-      var u=location.pathname+'?v='+v+location.hash;     // a new address skips the cached page
+      var q0=location.search.replace(/([?&])v=[^&]*&?/,'$1').replace(/[?&]$/,'');var u=location.pathname+(q0?q0+'&':'?')+'v='+v+location.hash;     // a new address skips the cached page (its other parameters kept: the station home)
       // Screens loaded inside other screens (the map) and the scripts keep their plain address, so refresh
       // the phone's copy of every file first; otherwise the new page could still run an old map.
-      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js','About.dc.html','tour.js','stats.js','index.html'];
+      var F=['Login.dc.html','Main.dc.html','Alert.dc.html','Drone.dc.html','Dispatch.dc.html','TerrainMap.dc.html','fit.js','i18n.js','prefs.js','live.js','support.js','Station.dc.html','Chat.dc.html','chat.js','trophy.js','avatar.js','station.js','About.dc.html','tour.js','stats.js','index.html'];
       // The new page opens as this one would have: the opening loading screen, or the one after log in, plays there once
       var go=function(){try{if(window.__wfColdPage)sessionStorage.removeItem('wf-cold');var S=window.__wfSnap||{};Object.keys(S).forEach(function(k){if(sessionStorage.getItem(k)==null)sessionStorage.setItem(k,S[k]);});sessionStorage.setItem('wf-updating','1');}catch(e){}location.replace(u);};   // (Oct 4) the new page opens on the same area and item (Green Valley bug: every first tap after a new version lost the tapped item)
       Promise.race([Promise.all(F.map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});})),new Promise(function(r){setTimeout(r,6000);})]).then(go,go);
@@ -531,14 +536,14 @@ window.__wfBlink=function(path,dur){
     if(history.length>1&&ref===location.origin){e.preventDefault();setTimeout(function(){history.back();},0);}
   },false);
   // A screen returned to that no longer applies (its candidate was confirmed or dismissed) steps back once more.
-  window.__wfBackOrHome=function(){var ref='';try{ref=document.referrer?new URL(document.referrer).origin:'';}catch(x){}if(history.length>1&&ref===location.origin){history.back();return;}try{location.replace('Main.dc.html');}catch(x){location.href='Main.dc.html';}};
+  window.__wfBackOrHome=function(){var ref='';try{ref=document.referrer?new URL(document.referrer).origin:'';}catch(x){}if(history.length>1&&ref===location.origin){history.back();return;}var H=wfHomeUrl();try{location.replace(H);}catch(x){location.href=H;}};
   // (Oct 7) Home through the incident name: on the incident screens (candidate, fire) and the incident chat there is no round back;
   // a tap on the incident's name (data-wf-home) returns to the main screen: a real back when the main screen is the one just before
   // (its place is kept), otherwise the main screen opens. Controls inside the name (the houses-warning tag) keep their own tap.
   // (Oct 7, 09:29: dark grey, 16% bigger, 4.6 x 8.1px) a small left chevron, in the 16px between the screen edge and the incident name ([data-wf-chev]), saying the name goes back
   try{var cv=document.createElement('style');cv.textContent='[data-wf-chev]{position:relative}[data-wf-chev]::before{content:"";position:absolute;left:-11.02px;top:calc(var(--wf-chev-y,16px) - 5.28px);width:6.03px;height:10.56px;background:#3A3A3C;pointer-events:none;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 14%27%3E%3Cpath d=%27M6.5 1.5 1.5 7l5 5.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 14%27%3E%3Cpath d=%27M6.5 1.5 1.5 7l5 5.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat}html.wf-dark [data-wf-chev]::before{background:#D1D1D6}';(document.head||document.documentElement).appendChild(cv);}catch(x){}
   window.__wfHome=function(){var r=null;try{r=document.referrer?new URL(document.referrer):null;}catch(x){}
-    if(history.length>1&&r&&r.origin===location.origin&&/\/Main\.dc\.html$/.test(r.pathname)){history.back();return;}location.href='Main.dc.html';};
+    var H=wfHomeUrl();if(history.length>1&&r&&r.origin===location.origin&&(/\/Main\.dc\.html$/.test(r.pathname)||(H!=='Main.dc.html'&&/\/Station\.dc\.html$/.test(r.pathname)&&/[?&]home=1/.test(r.search)))){history.back();return;}location.href=H;};
   document.addEventListener('click',function(e){
     var a=e.target&&e.target.closest&&e.target.closest('[data-wf-home]');if(!a||e.defaultPrevented)return;
     var inner=e.target.closest('a,button,input,[role=button]');if(inner&&inner!==a&&a.contains(inner))return;
