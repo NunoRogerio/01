@@ -1004,7 +1004,10 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
       el.innerHTML = '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: var(--wf-ink2, rgb(84, 84, 88))">' + o.sub + '</span>' : '') + '</span>' +
         '<button type="button" class="btn wf-sec" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; font: inherit; cursor: pointer">' + 'OK' + '</button>'; } };
   // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
+  // (Oct 7) as few words as possible, nothing said twice: where and when in the title, how many under it; the red triangle
+  // already says it is a threat. "Fonte da Pedra in 3 h" over "~8 structures threatened." (no place: the count leads)
   window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, b = res.b[h] || 0, p = res.place[h] || '';
-    var bl = b ? (pt ? 'Cerca de ' + b + (b === 1 ? ' habitação' : ' habitações') : 'About ' + b + (b === 1 ? ' structure' : ' structures')) : '';
-    return { h: h, title: pt ? 'Habitações ameaçadas em ' + h + ' h' : 'Structures threatened in ' + h + ' h', tag: pt ? 'Casas em ' + h + ' h' : 'Houses in ' + h + ' h', sub: [bl, p].filter(Boolean).join('. ') + '.' }; };
+    var what = b ? (pt ? '~' + b + (b === 1 ? ' habitação ameaçada' : ' habitações ameaçadas') : '~' + b + (b === 1 ? ' structure threatened' : ' structures threatened')) : (pt ? 'Habitações ameaçadas' : 'Structures threatened');
+    var when = (pt ? ' em ' : ' in ') + h + ' h';
+    return p ? { h: h, title: p + when, sub: what + '.', tag: p + when } : { h: h, title: what + when, sub: '', tag: what + when }; };
 })();
