@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=173"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=174"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
@@ -178,7 +178,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div role="tablist" aria-label="Projection" class="wf-seg" data-wf-cpfull="1" style="position: absolute; left: 16px; right: 68px; bottom: 20px; z-index: 30; display: {{cp.fullD}}; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
       <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 4); transform: translateX({{cp.x}})"><span class="segblob"></span></span>
       <sc-for list="{{cp.tabs}}" as="tb" hint-placeholder-count="4">
-        <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fg}}"><span style="position: relative">{{tb.label}}<span aria-hidden="true" style="display: {{tb.dotD}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
+        <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fg}}"><span style="position: relative">{{tb.label}}<svg aria-hidden="true" width="12" height="11" viewBox="0 0 12 11" style="display: {{tb.dotD}}; position: absolute; top: -2px; right: -14px"><path d="M6 1.6 10.6 9.4H1.4Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="2" stroke-linejoin="round"></path></svg></span></button>
       </sc-for>
     </div>
   </sc-if>
@@ -276,7 +276,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div role="tablist" aria-label="Projection" class="wf-seg" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; display: {{cp.d}}; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
           <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 4); transform: translateX({{cp.x}})"><span class="segblob"></span></span>
           <sc-for list="{{cp.tabs}}" as="tb" hint-placeholder-count="4">
-            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="padding: 0; font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fg}}"><span style="position: relative">{{tb.label}}<span aria-hidden="true" style="display: {{tb.dotD}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
+            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="padding: 0; font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fg}}"><span style="position: relative">{{tb.label}}<svg aria-hidden="true" width="12" height="11" viewBox="0 0 12 11" style="display: {{tb.dotD}}; position: absolute; top: -2px; right: -14px"><path d="M6 1.6 10.6 9.4H1.4Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="2" stroke-linejoin="round"></path></svg></span></button>
           </sc-for>
         </div>
       </div>
