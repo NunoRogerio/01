@@ -87,5 +87,11 @@
   window.__wfIncLatLon = function (x, y) { return [LAT(y), LON(x)]; };
   // One tag for both places (the list and the map tooltip), so the list says what the map's ring says
   window.__wfAidTag = function () { var PT = window.__wfLang === 'pt'; return { label: PT ? 'Auxílio' : 'Mutual aid', fg: '#3A3A3C', bg: 'rgba(118,118,128,0.14)' }; };
+  // (Oct 7, 19:40) Incident chats are between station captains, and only when two or more stations are on the fire. Team leads
+  // are not in them (they get the order and confirm it). A fire worked by one station has no chat. (Supersedes "never fewer
+  // than two stations": the second station is not forced.) Before any order (a candidate) the nearest stations' leads talk.
+  window.__wfChatAllowed = function (c) { var k = rid(); if (signed() && k === 'ff') return false; if (!c) return true;
+    var S = {}; (c.forces || []).forEach(function (f) { if (f.st !== 'standby' && f.st !== 'released') S[f.ck || f.station] = 1; });
+    var n = Object.keys(S).length; if ((c.flags && c.flags.dispatched) || n) return n >= 2; return true; };
   window.addEventListener('wf-starea', function () { MEMO = {}; });
 })();

@@ -83,7 +83,7 @@
   // the crew chief (chefe de equipa) of the fire brigade elsewhere
   function leadRole(c) { return isUS(c) ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' }; }
   // who is in the chat now: once the fire is declared, only the leads of the stations that were sent stay
-  function active(c) { return (c.people || []).filter(function (p) { return !p.left; }); }
+  function active(c) { return (c.people || []).filter(function (p) { return !p.left && !p.self; }); }   /* (Oct 7) the signed-in captain is "you", not another member */
   // (Oct 4, 00:00) the air side of a fire in progress has its own lead in the chat: the Air Tactical Group Supervisor (US) or
   // the air operations coordinator (Coordenador de Meios Aéreos, Portugal and elsewhere); one per chat, never a station's
   function airLead(c) { var us = isUS(c), n = pickNames(c, 1, 'air')[0];
@@ -166,6 +166,8 @@
     for (var k = 0; out.length < n; k++) out.push(pool[(i0 + k) % pool.length]);
     return out;
   }
+  // (Oct 7) the station profiles' own station: its captain leads it in the chats, its team lead leads its first crew
+  function staffOf(s) { var id = s && s.ck ? String(s.ck).replace(/^[nw]/, '') : ''; return id && window.__wfStaffOf ? window.__wfStaffOf(id) : null; }
   function vehiclesFor(c, s, i) {
     var num = (String(s.name).match(/(\d{1,3})\b/) || [])[1] || String(10 + hash(s.name) % 80);
     var k = 1 + hash(s.name) % 6, lg = langOf(c);
@@ -181,6 +183,7 @@
     // a Type 3 engine 3, a Type 6 brush patrol 2, a water tender 2 (ANEPC; NWCG minimum staffing)
     var veh = vehiclesFor(c, s, si), seats = veh.reduce(function (a, v) { return a + (/VFCI|CCF|BRP|ABTF/.test(v) ? 5 : /VLCI|VLHR|BFP|UR-/.test(v) ? 3 : /VTTF|Nodriza|CCGC|AT-|Tender/.test(v) ? 2 : /Brush Patrol/.test(v) ? 2 : /^Engine/.test(v) ? 3 : 3); }, 0);
     var crew = pickNames(c, Math.max(1, seats - 1), 'crew' + si);
+    var SF = staffOf(s); if (SF) crew[0] = SF.lead;   /* (Oct 7) the profile station's first crew is led by its team lead */
     return { si: si, ck: s.ck || '', station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: veh, st: st || 'standby' };
   }
   function setForces(c, from, to) { (c.forces || []).forEach(function (f) { if (!from || from.indexOf(f.st) >= 0) f.st = to; }); }
@@ -224,7 +227,7 @@
       c.stations = S.slice(0, 4);   // (Oct 3, 22:04) while a candidate: the leads of the four nearest stations
       c.reserve = S[4] || null;
       var nm = pickNames(c, c.stations.length, 'coord');
-      c.people = c.stations.map(function (s, i) { return { name: nm[i], code: initials(nm[i]), org: s.short, kind: 'lead' }; });
+      c.people = c.stations.map(function (s, i) { var SF = staffOf(s), n0 = SF ? SF.captain : nm[i], me = !!(SF && window.__wfMine && (window.__wfMine() || {}).key === 'coord'); return { name: n0, code: initials(n0), org: s.short, kind: 'lead', self: me || undefined }; });   /* (Oct 7) the profile station's lead is its captain */
       if (c.stage >= 2) {   // a fire already in progress: the first two stations are working it
         c.flags.dispatched = true;
         c.people.forEach(function (p, pi) { if (pi >= 2) p.left = true; });   // (Oct 3, 22:03) only the stations working it are in the chat
@@ -246,7 +249,7 @@
   function newId() { mid++; return Date.now().toString(36) + mid; }
   function push(c, m, delay, adv) { m.id = newId(); m.adv = adv == null ? 0 : adv; c.queue.push({ due: Date.now() + (delay || 0), m: m }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
   function sys(c, en, pt, delay, adv) { push(c, { kind: 'sys', en: en, pt: pt }, delay, adv == null ? 1 : adv); }
-  function say(c, who, en, pt, delay, adv) { var P = c.people || []; if (P[who] && P[who].left) { var j = P.findIndex(function (p) { return !p.left; }); if (j >= 0) who = j; }
+  function say(c, who, en, pt, delay, adv) { var P = c.people || []; if (P[who] && (P[who].left || P[who].self)) { var j = P.findIndex(function (p) { return !p.left && !p.self; }); if (j >= 0) who = j; }
     push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
   function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0);
@@ -1359,7 +1362,7 @@
       stationsFor(c0.st, c0.lat, c0.lon, function (S) { var dd = load(), c = dd.chats[k]; if (!c || (c.people && c.people.length) || !S.length) return;
         c.stations = S.slice(0, 4); c.reserve = S[4] || null;
         var nm = pickNames(c, c.stations.length, 'coord');
-        c.people = c.stations.map(function (s, i) { return { name: nm[i], code: initials(nm[i]), org: s.short, kind: 'lead' }; });
+        c.people = c.stations.map(function (s, i) { var SF = staffOf(s), n0 = SF ? SF.captain : nm[i], me = !!(SF && window.__wfMine && (window.__wfMine() || {}).key === 'coord'); return { name: n0, code: initials(n0), org: s.short, kind: 'lead', self: me || undefined }; });   /* (Oct 7) the profile station's lead is its captain */
         if (c.stage >= 2) { c.flags.dispatched = true;
           c.forces = c.stations.map(function (s, i) { return forceFor(c, i, i < 2 ? (c.stage === 2 ? 'enroute' : c.stage >= 7 ? 'released' : c.stage === 6 && i ? 'released' : c.stage === 6 ? 'watch' : 'onscene') : 'standby'); }); }
         c.estF = true;   // forces estimated afterwards (shown with ~)
@@ -1402,8 +1405,9 @@
   function scopeNow() { var SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role || ''] || null;
     if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' }; }
   function isHome() { return /Main\.dc\.html$|\/$/.test(location.pathname); }
+  function stationProfile() { try { return !!(window.__wfMine && window.__wfMine()); } catch (e) { return false; } }
   function offerPick() {
-    if (!role || tourMute()) return null;
+    if (!role || tourMute() || stationProfile()) return null;   /* (Oct 7) Enroll / Snooze is the administrator's; station profiles are dispatched */
     var until = 0; try { until = +localStorage.getItem(SNZ) || 0; } catch (e) {} if (Date.now() < until) return null;
     var db = load(), A = mineKeys().filter(function (k) { var c = db.chats[k]; return c && !c.closed && c.kind !== 'dm'; });
     if (A.length >= MAXOWN) return null;
@@ -1436,7 +1440,7 @@
     if (!k && isHome() && document.visibilityState !== 'hidden') { k = offerPick(); if (k) offerSet(k); }
     var c = k ? load().chats[k] : null;
     if (k && (!c || c.closed || c.dismissed || mineKeys().indexOf(k) >= 0)) { offerSet(''); c = null; }
-    if (!c || tourMute() || /Login\.dc\.html$|reset\.html$/.test(location.pathname)) { if (!ofBusy) offerHide(false); return; }
+    if (!c || tourMute() || stationProfile() || /Login\.dc\.html$|reset\.html$/.test(location.pathname)) { if (!ofBusy) offerHide(false); return; }
     if (ofBusy) return;
     var PT = window.__wfLang === 'pt', T = function (o) { return o ? (PT ? o.pt || o.en : o.en) : ''; };
     var S = stageOf(c) || {}, u = unread(c), lm = lastMsg(c), who = lm && lm.kind === 'msg' ? (lm.from === 'me' ? (PT ? 'Você' : 'You') : (c.people[lm.from] || {}).name || '') : '';
@@ -1481,4 +1485,47 @@
     if (add) { try { sessionStorage.setItem('wf-confirmed', JSON.stringify(C0)); sessionStorage.setItem('wf-dismissed', JSON.stringify(D0)); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { confirmed: C0, dismissed: D0 }); }
   } catch (e) {} })();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', offerBoot); else offerBoot();
+
+  // ---- (Oct 7, 19:40) Deployment: the team lead is dispatched automatically (no Enroll / Snooze) ----------------------------
+  // When a captain's dispatch puts the team lead's station on an incident, a floating card tells him (band "Deployment", the
+  // incident as its list card, what his crew takes), the incident goes to the top of his list, and one button confirms
+  // receipt ("On my way"): it turns into "✓ Confirmed" across the card, the card folds away, and the chat's captains see it.
+  var DAK = 'wf-deploy-ack';
+  function depAcks() { try { return JSON.parse(localStorage.getItem(DAK) || '{}') || {}; } catch (e) { return {}; } }
+  function myForce(c, M) { var ck = (M.station.type === 'way' ? 'w' : 'n') + M.station.id; return (c.forces || []).find(function (f) { return (f.ck === ck || f.full === M.station.name) && f.st !== 'standby' && f.st !== 'released'; }) || null; }
+  function deployments() { var M = window.__wfMine ? window.__wfMine() : null; if (!M || M.level !== 'lead') return [];
+    var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return c && !c.closed && !c.dismissed && c.kind !== 'dm' && myForce(c, M); })
+      .map(function (c) { return { c: c, f: myForce(c, M), acked: !!depAcks()[c.key] }; }); }
+  var dpEl = null, dpBusy = false;
+  function depHide(anim) { var el = dpEl; dpEl = null; if (!el) return; if (!anim) { el.remove(); return; } el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; setTimeout(function () { el.remove(); }, 450); }
+  function depRender() {
+    if (dpBusy) return;
+    var L0 = deployments().filter(function (d) { return !d.acked; }).sort(function (a, b) { return (b.c.updated || 0) - (a.c.updated || 0); }), d = L0[0];
+    if (!d || tourMute() || /Login\.dc\.html$|reset\.html$/.test(location.pathname)) { depHide(false); return; }
+    var PT = window.__wfLang === 'pt', c = d.c, S = stageOf(c) || {}, here = onPage(c);
+    var veh = (d.f.veh || []).join('. '), min = (c.stations[d.f.si] || {}).min;
+    var html = '<div style="display: flex; align-items: center; min-height: 44px; padding: 0 16px; background: var(--wf-fill, #E5E5EA); color: var(--wf-ink, #000000); font-size: 17px; font-weight: 600; line-height: 22px">' + (PT ? 'Destacamento' : 'Deployment') + '</div>' +
+      '<div data-dp-go role="' + (here ? 'group' : 'link') + '" tabindex="' + (here ? '-1' : '0') + '" aria-label="' + esc(c.place + (here ? '' : PT ? '. Ver incidente' : '. View incident')) + '" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; padding: 16px 16px 0; cursor: ' + (here ? 'default' : 'pointer') + '">' +
+        '<span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; color: var(--wf-ink, #000000); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">' + esc(c.place) + '</span>' +
+        '<span class="wf-stg" style="display: inline-flex; justify-self: end; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: ' + S.bg + '; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: ' + S.c + '"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="' + (ICON[S.icon] || '') + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + esc(PT ? S.pt : S.en) + '</span>' +
+        '<span style="grid-column: 1 / span 2; min-width: 0; font-size: 16px; line-height: 20px; color: var(--wf-sec, #6E6E73)">' + esc((veh ? veh + '. ' : '') + (min ? (PT ? '~' + min + ' min até ao incêndio.' : '~' + min + ' min to the fire.') : '')) + '</span>' +
+      '</div>' +
+      '<div data-dp-row style="display: flex; padding: 24px 16px 16px"><button type="button" class="btn primary" data-dp-ok style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer">' + (PT ? 'A caminho' : 'On my way') + '</button></div>';
+    if (!dpEl) { dpEl = document.createElement('div'); dpEl.id = 'wf-deploy'; dpEl.setAttribute('role', 'alertdialog'); dpEl.setAttribute('aria-label', PT ? 'Destacamento' : 'Deployment');
+      dpEl.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: 32px; z-index: 400; max-width: 420px; margin: 0 auto; box-sizing: border-box; border-radius: 16px; overflow: hidden; background: var(--wf-surface, #FFFFFF); box-shadow: 0 0 32px rgba(0,0,0,0.22); opacity: 0; transform: translateY(24px); transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1); -webkit-user-select: none; user-select: none';
+      dpEl.addEventListener('click', function (e) { var t = e.target, D = deployments().filter(function (q) { return !q.acked; }).sort(function (a, b) { return (b.c.updated || 0) - (a.c.updated || 0); })[0]; if (!D) return;
+        if (t.closest('[data-dp-ok]')) return depAck(D);
+        if (t.closest('[data-dp-go]') && !onPage(D.c)) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} window.location.href = incPage(D.c); } });
+      document.body.appendChild(dpEl); requestAnimationFrame(function () { requestAnimationFrame(function () { if (dpEl) { dpEl.style.opacity = '1'; dpEl.style.transform = 'translateY(0px)'; } }); }); }
+    if (dpEl.__html !== html) { dpEl.innerHTML = html; dpEl.__html = html; } }
+  function depAck(D) { if (dpBusy) return; dpBusy = true; var PT = window.__wfLang === 'pt', c = D.c, A = depAcks(); A[c.key] = Date.now(); try { localStorage.setItem(DAK, JSON.stringify(A)); } catch (e) {}
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+    var me = (window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || 'Team lead', v = (D.f.veh || [])[0] || D.f.station;
+    var db = load(), cc = db.chats[c.key]; if (cc) { cc.msgs.push({ id: newId(), kind: 'sys', en: me + ' (' + v + ') confirmed the order: on the way.', pt: me + ' (' + v + ') confirmou a ordem: a caminho.', t: Date.now(), vt: vnow(cc) }); cc.updated = Date.now(); save(); }
+    var b = dpEl && dpEl.querySelector('[data-dp-ok]'); if (b) { b.style.pointerEvents = 'none'; b.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (PT ? 'Confirmado' : 'Confirmed'); }
+    setTimeout(function () { dpBusy = false; depHide(true); emit(); setTimeout(depRender, 600); }, 1400); }
+  function depBoot() { if (!role || !document.body) return; setTimeout(depRender, 1400);
+    window.addEventListener('wf-chat', function () { setTimeout(depRender, 0); }); window.addEventListener('pageshow', depRender); document.addEventListener('visibilitychange', depRender); setInterval(depRender, 5000); }
+  window.__wfDeploy = { list: deployments, acked: function (k) { return !!depAcks()[k]; } };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', depBoot); else depBoot();
 })();
