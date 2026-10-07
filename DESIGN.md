@@ -1311,3 +1311,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Back on a screen, no card left open (Oct 7):** returning to the main screen (or any map screen) from an incident never shows the map card that opened it, and never a "Loading…" label; the card comes back on the next tap.
 
 - **Incident name is the way back (Oct 7):** the candidate page, the fire page and the incident chat have no round back button; a tap on the incident name returns to the main screen. A small left chevron (4 x 7px, halved at 09:18) in mid grey (#6E6E73; dark #AEAEB2) sits in the 16px between the screen edge and the name to say so. Configuring crews keeps its back to the fire page.
+
+- **Structures at risk on map markers (Oct 7):** a fire or candidate whose projection reaches structures carries a small solid red triangle (rgb(215,0,21), 6 x 5px, 1/4 of the marker) at the marker's top right, 2px off its edge, on every map. It shows once that incident has been checked (on its page or chat).
