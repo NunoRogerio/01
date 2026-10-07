@@ -608,7 +608,7 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
+  componentDidMount() { this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
     this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
@@ -636,7 +636,7 @@ class Component extends DCLogic {
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
   }
-  componentWillUnmount() { try { window.removeEventListener('wf-rail', this._wfRail); window.removeEventListener('pageshow', this._wfShow); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
+  componentWillUnmount() { clearInterval(this._hswT); try { window.removeEventListener('wf-rail', this._wfRail); window.removeEventListener('pageshow', this._wfShow); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
     if (this._uT) clearInterval(this._uT);
     if (this.el) this.el.removeEventListener('wheel', this.onWheel);
     if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync);
@@ -1032,13 +1032,59 @@ class Component extends DCLogic {
   // Ignition candidate projection: if the candidate is a fire, the area it burns by +h hours. The hourly forecast at the marker
   // (Open-Meteo: temperature, wind speed and direction) drives it hour by hour: the head runs downwind (faster with wind and
   // heat), the back creeps upwind and the flanks widen; a gentle wobble (seeded by the place) keeps it from looking drawn by hand.
+  /* (Oct 7) a projection that changes horizon (Now / +1 h / +3 h / +6 h) morphs instead of jumping: its points glide from the shape
+     shown to the new one in 0.53s, easing in and out as the app's slides. to: the new points, or null to fold back into base (Now);
+     base: the shape it grows out of (the fire's current outline, the candidate's marker). Same point count at every horizon. */
+  morphD(slot, to, base) {
+    const M = this._mph || (this._mph = {}), A = M[slot] || (M[slot] = { key: '', from: null, to: null, cur: null, t0: 0, raf: 0 }), now = performance.now();
+    const sig = (r) => r && r.length ? r.length + ':' + r[0][0].toFixed(1) + ',' + r[0][1].toFixed(1) + ':' + r[r.length >> 1][0].toFixed(1) + ',' + r[r.length >> 1][1].toFixed(1) : '';
+    const key = to ? 'to' + sig(to) : 'base' + sig(base);
+    if (A.key !== key) { const T = to || base, n = T ? T.length : 0, ok = A.cur && A.cur.length === n;
+      A.from = ok ? A.cur : (base && base.length === n ? base : null); A.to = T; A.key = key; A.t0 = A.from ? now : now - 1e4; if (!A.from) A.from = T; }
+    if (!A.to || !A.to.length) { A.cur = null; return ''; }
+    const q = Math.min(1, (now - A.t0) / 530), e = q < 0.5 ? 4 * q * q * q : 1 - Math.pow(-2 * q + 2, 3) / 2;
+    A.cur = A.to.map((b, i) => { const a = A.from[i] || b; return [a[0] + (b[0] - a[0]) * e, a[1] + (b[1] - a[1]) * e]; });
+    if (q < 1 && !A.raf) A.raf = requestAnimationFrame(() => { A.raf = 0; try { this.forceUpdate(); } catch (x) {} });
+    if (!to && q >= 1) { A.cur = null; return ''; }
+    return 'M' + A.cur.map((pt) => pt[0].toFixed(1) + ' ' + pt[1].toFixed(1)).join('L') + 'Z';
+  }
   pinGrowVals(px, py, h, sc) {
     this.pinHomes(px, py);
-    const G = this.pinGrowShape(px, py, h); if (!G) return { pgOn: false, pgD: '', pgW: 1, pgDash: '6 5' };
+    /* (Oct 7) choosing Now / +1 h / +3 h / +6 h morphs the shape (morphD); Now folds it into the marker and back out of it */
+    const G0 = h > 0 ? this.pinGrowShape(px, py, h) : null, D = this.morphD('pin', G0 && G0.xy ? G0.xy : null, Array.from({ length: 72 }, () => [px, py]));
+    if (!D) return { pgOn: false, pgD: '', pgW: 1, pgDash: '6 5' };
+    const G = { d: D };
     const k = sc > 0 ? sc : 1;   // the map layer is scaled with CSS, so the edge is sized here to stay 1.6px on screen
     return { pgOn: true, pgD: G.d, pgW: +(1.6 / k).toFixed(5), pgDash: +(6 / k).toFixed(5) + ' ' + +(5 / k).toFixed(5) };
   }
   /* (Oct 6) houses in reach of the candidate's projected shapes (+1 / +3 / +6 h, as drawn), checked once the forecast and the terrain are in (fit.js) */
+  /* (Oct 7) structures at risk on every incident of an overview map, not only the ones already opened: one incident at a time in the
+     background (candidates through their own projection, fires through their outline or the map's illustrative one), each answer cached
+     for 6 h (fit.js), so the red sub icon on the markers fills in by itself; one building query every few seconds, never two at once */
+  homesSweep() {
+    const P = this.props || {}; if ((P.mode || 'risk') === 'pin' || !window.__wfHomesCheck || !window.__wfHomesGet || !window.__wfLiveMap) return;
+    const S = this._hsw || (this._hsw = { busy: null, t: 0, tried: {} }), now = Date.now();
+    if (S.busy) { if (window.__wfHomesGet(S.busy) || now - S.t > 30000) { S.tried[S.busy] = now; S.busy = null; S.next = now + 3000; } return; }
+    if (now < (S.next || 0)) return;
+    const todo = [].concat((Array.isArray(P.ignitions) ? P.ignitions : []).map((g) => ['ign', g]), (Array.isArray(P.fires) ? P.fires : []).filter((g) => !(g.info && g.info.resolved)).map((g) => ['fire', g]))
+      .filter(([, g]) => g && g.id != null && !window.__wfHomesGet(String(g.id)) && !(S.tried[String(g.id)] && now - S.tried[String(g.id)] < 600000));
+    let pend = 0;   /* at most 3 forecasts loading at once */
+    for (const [k, g] of todo) {
+      const id = String(g.id);
+      if (k === 'ign') {
+        const SH = [1, 3, 6].map((h) => this.pinGrowShape(g.x, g.y, h)); if (SH.some((q) => !q || !q.ready)) { if (++pend >= 3) return; continue; }   /* its forecast and terrain still loading: the next one meanwhile */
+        const lat = 34.19 - (g.y - 662) / 2829, lon = (g.x - 518) / 2345 - 118.13, c0 = [];
+        for (let i = 0; i < 16; i++) { const t = i / 16 * 2 * Math.PI; c0.push([lat + 0.05 * Math.cos(t) / 111.32, lon + 0.05 * Math.sin(t) / (111.32 * Math.cos(lat * Math.PI / 180))]); }
+        window.__wfHomesCheck(id, null, null, { 0: c0, 1: SH[0].ll, 3: SH[1].ll, 6: SH[2].ll });
+      } else {
+        const M = (window.__wfModels || {})[g.id], ll = M && M.done && !M.failed && M.snaps && M.snaps[0] && M.snaps[0].ring && M.snaps[0].ring.length ? M.snaps[0].ring : (((window.__wfBRGeo || {})[g.id] || {}).ring || null);
+        if (ll) window.__wfHomesCheck(id, ll, null);
+        else { const ox = (Number(g.x) || 610) - 610, oy = (Number(g.y) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); ring.push([598 + ox + x * Math.cos(a) - y * Math.sin(a), 298 + oy + x * Math.sin(a) + y * Math.cos(a)]); }
+          window.__wfHomesCheck(id, null, ring); }
+      }
+      S.busy = id; S.t = now; return;
+    }
+  }
   pinHomes(px, py) { const id = (this.props || {}).pinId; if (!id || !window.__wfHomesCheck) return;
     const S = [1, 3, 6].map((h) => this.pinGrowShape(px, py, h)); if (S.some((g) => !g || !g.ready)) return;
     const lat = 34.19 - (py - 662) / 2829, lon = (px - 518) / 2345 - 118.13, c0 = [];
@@ -1084,7 +1130,7 @@ class Component extends DCLogic {
     const kx = 2345 / (111.32 * Math.cos(lat * Math.PI / 180)), ky = 2829 / 111.32;   // km → map units
     let seed = 7; for (const ch of key) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
     const rr = (i) => { const x = Math.sin(seed * 0.001 + i * 12.9898) * 43758.5453; return x - Math.floor(x); };
-    const ph = [rr(1) * 6.28, rr(2) * 6.28, rr(3) * 6.28], pts = [], ll = []; let ex = 0, ey = 0;
+    const ph = [rr(1) * 6.28, rr(2) * 6.28, rr(3) * 6.28], pts = [], ll = [], xy = []; let ex = 0, ey = 0;
     for (let i = 0; i < 72; i++) {
       const t = i / 72 * 2 * Math.PI, w = 1 + 0.07 * Math.sin(3 * t + ph[0]) + 0.05 * Math.sin(5 * t + ph[1]) + 0.03 * Math.sin(7 * t + ph[2]);
       const head = Math.cos(t) > 0 ? 1 - 0.18 * Math.pow(Math.sin(t), 2) : 1;   // a rounder back, a fuller head
@@ -1092,9 +1138,9 @@ class Component extends DCLogic {
       let e = along * ux - across * uy, n = along * uy + across * ux;   // rotate into the downwind direction
       const sk = slopeK(Math.atan2(e, n)); e *= sk; n *= sk;   // uphill reaches further, downhill less
       ex = Math.max(ex, Math.abs(e * kx)); ey = Math.max(ey, Math.abs(n * ky));
-      pts.push((px + e * kx).toFixed(1) + ' ' + (py - n * ky).toFixed(1)); ll.push([lat + n / 111.32, lon + e / (111.32 * Math.cos(lat * Math.PI / 180))]);
+      pts.push((px + e * kx).toFixed(1) + ' ' + (py - n * ky).toFixed(1)); xy.push([px + e * kx, py - n * ky]); ll.push([lat + n / 111.32, lon + e / (111.32 * Math.cos(lat * Math.PI / 180))]);
     }
-    return { d: 'M' + pts.join('L') + 'Z', ex: ex, ey: ey, terrain: !!EL, ll: ll, wx: !!H, ready: C[key] !== null && EC[EK] !== null };
+    return { d: 'M' + pts.join('L') + 'Z', xy: xy, ex: ex, ey: ey, terrain: !!EL, ll: ll, wx: !!H, ready: C[key] !== null && EC[EK] !== null };
   }
   wxFetch(key, lat, lon, C) { clearTimeout(this._wxT);
     this._wxT = setTimeout(() => { if (C[key] !== undefined) return; C[key] = null;
@@ -1399,7 +1445,10 @@ class Component extends DCLogic {
     // The projected shape is not a scaled copy: the outline grows unevenly, most downwind, with its own wobble at each horizon
     // (seeded by the fire, so it is stable), then is sized to the target area (current × factor) and never falls inside the current outline
     const grownXY = (pts) => (isGrow && window.__wfGrowXY ? window.__wfGrowXY(pts, GR, p.fireId || p.fireX || 'f') : null);   /* shared with the fire page's framing (fit.js) */
-    const growPath = (r) => { if (!r || !r.length) return ''; const c = Math.cos((r[0][0] || 0) * Math.PI / 180) || 1, g = grownXY(r.map((q) => [q[1] * c, q[0]])); return g ? ringPath(g.map((q) => [q[1], q[0] / c])) : ''; };
+    /* (Oct 7) the grown outline morphs out of the current one and between horizons (morphD), in map units */
+    const XY = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662];
+    const growPath = (r) => { if (!r || !r.length) return ''; const c = Math.cos((r[0][0] || 0) * Math.PI / 180) || 1, g = grownXY(r.map((q) => [q[1] * c, q[0]]));
+      return this.morphD('fire', g ? g.map((q) => XY(q[1], q[0] / c)) : null, r.map((q) => XY(q[0], q[1]))); };
     // without a model run: the illustrative outline (an ellipse in map pixels) grown the same way
     const fakeRing = (() => { const out = [], a = -35 * Math.PI / 180; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); out.push([598 + x * Math.cos(a) - y * Math.sin(a), 298 + x * Math.sin(a) + y * Math.cos(a)]); } return out; })();
     const gFake = (() => { const g = grownXY(fakeRing); return g ? 'M' + g.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L') + 'Z' : ''; })();
@@ -1633,7 +1682,7 @@ class Component extends DCLogic {
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
       hmD: (() => { const id = isPin ? p.pinId : p.fireId, h = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0); return id && h && window.__wfHomesPath ? window.__wfHomesPath(String(id), h) : ''; })(),   /* (Oct 7) populated areas reached by the projection, in red */
-      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow ? gFake : '' }, gNowD: LY.burn ? 'inline' : 'none', ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
+      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow && !modelVals.hasModel ? this.morphD('fake', grownXY(fakeRing), fakeRing) : '' }, gNowD: LY.burn ? 'inline' : 'none', ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */
