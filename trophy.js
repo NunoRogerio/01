@@ -3,7 +3,7 @@
 // resolution summary). Change it here and every card changes. (Oct 4, 17:50: the trophy, the fireworks and the moving nature
 // photos are gone; the card now shows the forces that did the job.)
 //   <wf-trophy kicker="Fire resolved" headline="Well done" fire="Bouquet Fire" meta="Closed 4 Oct. 2 d 14 h"
-//              size="Class D. 135 ac" crests='[{"u":"…","n":"Station 1"}]' air="1" n="3" action="See the summary" credit="1"></wf-trophy>
+//              size="Class D. 135 ac" crests='[{"u":"…","n":"Station 1"}]' air="1" n="3" action="Resolution summary" credit="1"></wf-trophy>
 // - a group photo of firefighters with their engines behind, as the background: a small crew for 1 or 2 stations, a medium one
 //   for 3 to 5, a large one for 6 or more (the photo follows the number of stations that took part). Oct 4: one photo per station,
 //   and one of aircraft when air support helped; with more than one the photos slide to the left on their own, 4 s each, in a loop,

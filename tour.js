@@ -324,7 +324,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('wf-trophy'); },
       ach: ['Fire out. Outstanding work!', 'Incêndio extinto. Trabalho notável!'], then: ['Now let\'s see what it took.', 'Agora vamos ver o que foi preciso.'],
       t: ['The fire summary', 'O resumo do incêndio'],
-      b: ['Tap the card to open the fire summary.', 'Toque no cartão para abrir o resumo do incêndio.'] },
+      b: ['Tap the card to open the resolution summary.', 'Toque no cartão para abrir o resumo da resolução.'] },
     { page: 'Chat.dc.html', mode: 'next', find: function () { return q('header.chview'); }, next: ['Finish', 'Terminar'],
       ach: ['Well done. You resolved your first fire.', 'Muito bem. Resolveu o seu primeiro incêndio.'], then: ['Now let\'s do it for real.', 'Agora vamos fazê-lo a sério.'],
       t: ['Explore the summary', 'Explore o resumo'],
