@@ -19,7 +19,7 @@
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=89"></script>
+<script src="chat.js?v=90"></script>
 <script src="tour.js?v=114"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="trophy.js?v=34"></script>
@@ -666,7 +666,7 @@ class Component extends DCLogic {
     const whenTxt = (tm) => dayTxt(tm) + ', ' + C.hhmm(tm);
     // the resolution card's facts (trophy.js): the stations that took part with their crests, air support, the fire, when it closed and how long it took, its size class
     const winAttrs = (Z) => { const F = (c.forces || []).filter((f) => f.st !== 'standby'), sc = C.sizeClass(Z.ha, c.st);
-      return { crests: JSON.stringify(F.map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))), air: Z.air || c.air || (c.flags && c.flags.air) ? '1' : '0', n: String(Z.stations), fire: c.place, meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
+      return { crests: JSON.stringify(F.filter((f, i) => F.findIndex((g) => g.station === f.station) === i).map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))),   /* one crest per station */ air: Z.air || c.air || (c.flags && c.flags.air) ? '1' : '0', n: String(Z.stations), fire: c.place, meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
     const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
     const photo = (p) => (p && p.photo ? 'url("' + p.photo + '")' : 'none');
     const openPerson = (name) => () => this.go('person', { person: name });
@@ -757,7 +757,12 @@ class Component extends DCLogic {
     // Forces
     const stTxt = { standby: [L('Standby', 'Prevenção'), 'rgba(135,88,0,0.12)', '#875800'], enroute: [L('En route', 'A caminho'), 'rgba(184,54,10,0.12)', '#B8360A'], onscene: [L('On scene', 'No local'), 'rgba(179,20,27,0.10)', '#B3141B'],
       watch: [L('On watch', 'Em vigilância'), 'rgba(20,83,45,0.14)', '#14532D'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
-    const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby');
+    /* (Oct 7) one card per station: forces sent by the same station (two dispatch rows, or a station listed twice) are one team */
+    const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby').reduce((A, f) => { const g = A.find((x) => x.station === f.station);
+      if (!g) { A.push(Object.assign({}, f, { veh: (f.veh || []).slice(), crew: (f.crew || []).slice() })); return A; }
+      const R = { onscene: 4, enroute: 3, released: 2, standby: 1 }; g.veh = g.veh.concat(f.veh || []); g.crew = g.crew.concat(f.coord && f.coord !== g.coord ? [f.coord] : [], f.crew || []);
+      if ((R[f.st] || 0) > (R[g.st] || 0)) g.st = f.st; return A; }, []);
+    const vehN = (v) => v.reduce((a, x) => a + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1), 0);   /* "2 × Engines" is two vehicles */
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
       const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk];
@@ -779,7 +784,7 @@ class Component extends DCLogic {
     const live = FF.filter((f) => f.st !== 'standby');
     // Published counts win over the scenario's (the named crews stay illustrative)
     const RR = c.realRes, EE = (RR && RR.estF) || {}, fk = RR ? [{ v: (EE.man ? '~' : '') + RR.man, l: L('Personnel', 'Operacionais') }, { v: (EE.terrain ? '~' : '') + RR.terrain, l: L('Ground vehicles', 'Meios terrestres') }, { v: (EE.aerial ? '~' : '') + RR.aerial, l: L('Aircraft', 'Meios aéreos') }]
-      : [{ v: String(live.reduce((a, f) => a + 1 + f.crew.length, 0)), l: L('People', 'Pessoas') }, { v: String(live.reduce((a, f) => a + f.veh.length, 0)), l: L('Vehicles', 'Veículos') }, { v: String(c.air ? 1 : 0), l: L('Aircraft', 'Meios aéreos') }];
+      : [{ v: String(live.reduce((a, f) => a + 1 + f.crew.length, 0)), l: L('People', 'Pessoas') }, { v: String(live.reduce((a, f) => a + vehN(f.veh), 0)), l: L('Vehicles', 'Veículos') }, { v: String(c.air ? 1 : 0), l: L('Aircraft', 'Meios aéreos') }];
 
     // Simulate: replay a resolved fire (or try a drill again) from its ignition, against the real outcome
     const srcKey = c.drill ? c.drill.from : c.key, B = c.drill || null;
@@ -801,7 +806,7 @@ class Component extends DCLogic {
           get kPx() { return window.__wfKpiPx ? window.__wfKpiPx(this.kpis.map((k) => k.v), 2, 318) : '44px'; },
           kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Response time', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Final duration', 'Duração final'), c: '#186B2D', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
             { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800', ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC', cmp: '', cmpD: 'none', cmpC: '#545458' }],
-          forcesSub: (Z.est ? '~' : '') + Z.people + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + Z.veh + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
+          forcesSub: (Z.est ? '~' : '') + (Z.est ? Z.people : FF.reduce((a, f) => a + 1 + f.crew.length, 0)) + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + (Z.est ? Z.veh : FF.reduce((a, f) => a + vehN(f.veh), 0)) + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
           me: { name: me.name, code: me.code, photo: photo(me) }, goOwner: openPerson(me.name) },
         // Key figures as mini cards: five on by default, five more from the + tile; order and choice kept on this phone
         sk: (() => {

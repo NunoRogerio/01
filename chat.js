@@ -138,7 +138,10 @@
       var kx = 111.32 * Math.cos(lat * Math.PI / 180);
       var all = rows.map(function (r) { return { ck: r[1] + r[0], name: r[4] || 'Fire station', la: r[2], lo: r[3], km: Math.hypot((r[2] - lat) * 110.57, (r[3] - lon) * kx) }; })
         .filter(function (q) { return isFinite(q.km) && !/aeroporto|airport|base aérea/i.test(q.name); })
-        .sort(function (a, b) { return a.km - b.km; });
+        .sort(function (a, b) { return a.km - b.km; })
+        /* (Oct 7) one entry per station: the data can list a station twice (its building and its point); same name close by, or
+           anything within 150 m, is the same station */
+        .filter(function (q, i, A) { var sn = shortStation(q.name); return !A.slice(0, i).some(function (p) { var d = Math.hypot((p.la - q.la) * 110.57, (p.lo - q.lo) * kx); return d < 0.15 || (d < 2 && shortStation(p.name) === sn); }); });
       // Every fire gets a team: the nearest stations within 80 km, else the nearest ones at all (up to 250 km)
       var near = all.filter(function (q) { return q.km < 80; }); if (near.length < 3) near = all.filter(function (q) { return q.km < 250; });
       if (near.length < 2) near = all.slice(0, 2);   // never fewer than two stations (and two station chiefs)
@@ -1116,7 +1119,7 @@
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
     return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
-      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.length; }, 0), air: c.air || (c.flags && c.flags.air) ? 1 : 0, stations: F.length, est: !!c.estF };
+      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.reduce(function (n, x) { return n + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1); }, 0); }, 0), air: c.air || (c.flags && c.flags.air) ? 1 : 0, stations: F.filter(function (f, i) { return F.findIndex(function (g) { return g.station === f.station; }) === i; }).length, est: !!c.estF };
   }
   // Fire size class (Oct 4): the US scale of NWCG, which CAL FIRE uses (A to G by acres, from the final perimeter); everywhere else the
   // names of the Portuguese ICNF (fogacho under 1 ha, incêndio, grande incêndio from 100 ha), with the size in hectares
