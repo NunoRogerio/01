@@ -15,13 +15,13 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=168"></script>
-<script src="feedcam.js?v=23"></script>
+<script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=202"></script>
+<script src="prefs.js?v=203"></script>
 <script src="menu.js?v=16"></script>
 <script src="i18n.js?v=171"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=85"></script>
+<script src="chat.js?v=86"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -114,7 +114,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <li style="border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <a href="Dispatch.dc.html" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
-              <span class="wf-stg" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
+              <span class="wf-stg" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
               <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span>
             </a>
             </li>
@@ -165,7 +165,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <button type="button" class="strow2" data-wf-keepsp="1" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto {{r.chevW}}; gap: 4px 8px; align-items: center; width: 100%; min-height: 60px; padding: 16px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
-                <span class="wf-stag" style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 14px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{r.tag}}</span>
+                <span class="wf-stag" style="justify-self: end; display: inline-flex; align-items: center; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{r.tag}}</span>
                 <span aria-hidden="true" style="grid-row: 1; grid-column: 4; display: {{r.chevD}}; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
                 <span style="grid-column: 2 / span 3; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.sub}}</span>
               </button>
