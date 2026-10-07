@@ -189,7 +189,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   '.wf-dot::after{content:"."}html[lang=ja] .wf-dot::after{content:"\u3002"}' +   // full stop at the end of a normal-text or annotation block (outside the translated text)
     /* "Tap me" pulse, shared (to-do cards, the Unconfirmed tag): a steady dark 1.4px outline on the element, and a dark line that grows from it (about 9px) and fades to 0, then rests invisible for a moment before the next one (fading the line's own colour, not the element, so Safari never flashes it black), like the candidate markers on the map. Put <span class="wf-pulse"> inside a position:relative element; --wf-pr sets its corner radius, --wf-pc its colour (dark by default). */
     /* Reset in the card pickers: disabled (faded, not tappable) while the cards are already the defaults */
-    '.wf-reset{transition:opacity .25s ease}.wf-reset[aria-disabled="true"]{opacity:.4;pointer-events:none}.wf-rpill{background:transparent!important;box-shadow:none!important;color:var(--wf-ink,#3A3A3C)!important}' +
+    '.wf-reset{transition:opacity .25s ease}.wf-reset[aria-disabled="true"]{opacity:.4;pointer-events:none}.wf-rpill.wf-rpill,.wf-rpill.wf-rpill[style]{background:transparent!important;box-shadow:none!important;color:var(--wf-ink,#3A3A3C)!important}' +
     '.wf-pulse{position:absolute;inset:-1.4px;border-radius:var(--wf-pr,17.4px);outline:1.4px solid transparent;outline-offset:-1.4px;pointer-events:none;animation:wfPulse 1.6s linear infinite}@keyframes wfPulse{0%{outline-offset:-1.4px;outline-color:var(--wf-pc,#3A3A3C)}88%{outline-offset:9.3px;outline-color:color-mix(in srgb,var(--wf-pc,#3A3A3C) 0%,transparent)}100%{outline-offset:9.3px;outline-color:transparent}}@media (prefers-reduced-motion: reduce){.wf-pulse{animation:none}}' +
     'html{--wf-panel-r:28px;--wf-panel-sh:0 0 40px rgba(0,0,0,.14);--wf-safe-b:48px}' +   // shared panel: radius, shadow, 48px clear of the home indicator
     'html .wf-panel{bottom:var(--wf-safe-b)!important;border-radius:0 0 var(--wf-panel-r) var(--wf-panel-r)!important;box-shadow:var(--wf-panel-sh)!important}' +
@@ -609,14 +609,23 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
 // order as on the screen, and can be reordered here with a long press and a drag; the cards that are off follow, A to Z.
 (function () {
   var SK = function (g) { return g === 'kpi' ? 'wf-kpi-order' : 'wf-order-' + g; };
-  window.__wfPickSort = function (g, items, isOn) {
+  // (Oct 7, 21:52, standing) while a picker is open its rows never move: the order is set when it opens (on first, then off
+  // A to Z) and kept until it closes, so a tap never shifts the list under the finger (a switch turned off stays where it is)
+  var FROZEN = {};
+  window.__wfPickSort = function (g, items, isOn, open) {
+    if (!open) { if (g) delete FROZEN[g]; else FROZEN = {}; }   /* closed (or no group open): sorted afresh next time */
+    if (open && FROZEN[g]) { var F = FROZEN[g], keys = items.map(function (m) { return m.key; }), kept = F.filter(function (k) { return keys.indexOf(k) >= 0; }), extra = keys.filter(function (k) { return kept.indexOf(k) < 0; });
+      if (!extra.length) return kept.map(function (k) { return items.find(function (m) { return m.key === k; }); }); }
+    var res = sortNow(g, items, isOn); if (open) FROZEN[g] = res.map(function (m) { return m.key; }); return res; };
+  window.__wfPickUnfreeze = function (g) { delete FROZEN[g]; };   // after a reorder by drag, the new order shows at once
+  function sortNow(g, items, isOn) {
     var ord = null; try { ord = JSON.parse(localStorage.getItem(SK(g)) || 'null'); } catch (e) {}
     ord = Array.isArray(ord) ? ord : items.map(function (m) { return m.key; });
     var ix = function (k) { var i = ord.indexOf(k); return i < 0 ? 999 + items.findIndex(function (m) { return m.key === k; }) : i; };
     var on = items.filter(function (m) { return isOn(m.key); }).sort(function (a, b) { return ix(a.key) - ix(b.key); });
     var off = items.filter(function (m) { return !isOn(m.key); }).sort(function (a, b) { return String(a.l).localeCompare(String(b.l)); });
     return on.concat(off);
-  };
+  }
   if (!window.__wfPkTM) { window.__wfPkTM = true; document.addEventListener('touchmove', function (e) { if (window.__wfPkLift) e.preventDefault(); }, { passive: false, capture: true }); }
   window.__wfPickDrag = function (comp, g, key, onKeys) {
     var D = null;
@@ -642,7 +651,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
         var keys = onKeys.slice(), from = keys.indexOf(key); keys.splice(from, 1); keys.splice(d.to, 0, key);
         var ord = null; try { ord = JSON.parse(localStorage.getItem(SK(g)) || 'null'); } catch (x) {} ord = Array.isArray(ord) ? ord : [];
         var rest = ord.filter(function (k) { return keys.indexOf(k) < 0; }); try { localStorage.setItem(SK(g), JSON.stringify(keys.concat(rest))); } catch (x) {}
-        clear(d.el); try { comp.forceUpdate(); } catch (x) {} }
+        clear(d.el); delete FROZEN[g]; try { comp.forceUpdate(); } catch (x) {} }
     };
   };
 })();

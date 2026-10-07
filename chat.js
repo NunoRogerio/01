@@ -1494,7 +1494,7 @@
   function depAcks() { try { return JSON.parse(localStorage.getItem(DAK) || '{}') || {}; } catch (e) { return {}; } }
   function myForce(c, M) { var ck = (M.station.type === 'way' ? 'w' : 'n') + M.station.id; return (c.forces || []).find(function (f) { return (f.ck === ck || f.full === M.station.name) && f.st !== 'standby' && f.st !== 'released'; }) || null; }
   function deployments() { var M = window.__wfMine ? window.__wfMine() : null; if (!M || M.level !== 'lead') return [];
-    var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return c && !c.closed && !c.dismissed && c.kind !== 'dm' && myForce(c, M); })
+    var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return c && !c.closed && !c.dismissed && c.kind !== 'dm' && myForce(c, M) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, M.station)); })   /* only the station's own incidents: its area or mutual aid */
       .map(function (c) { return { c: c, f: myForce(c, M), acked: !!depAcks()[c.key] }; }); }
   var dpEl = null, dpBusy = false;
   function depHide(anim) { var el = dpEl; dpEl = null; if (!el) return; if (!anim) { el.remove(); return; } el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; setTimeout(function () { el.remove(); }, 450); }
