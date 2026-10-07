@@ -954,6 +954,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   var AK = 'wf-homes-ack';
   function acks() { try { return JSON.parse(localStorage.getItem(AK) || '{}') || {}; } catch (e) { return {}; } }
   window.__wfHomesAck = function (id, h) { var A = acks(); A[id] = h; try { localStorage.setItem(AK, JSON.stringify(A)); } catch (e) {} emit(); };
+  window.__wfHomesUnack = function (id) { var A = acks(); delete A[id]; try { localStorage.setItem(AK, JSON.stringify(A)); } catch (e) {} emit(); };
   window.__wfHomesAcked = function (id, res) { var a = acks()[id]; return a != null && res && res.first != null && res.first >= a; };
   // The warning: a red pill floating over the screen (32px from the bottom, above the new assignment card when it shows),
   // a soft red glow of its own colour pulsing round it. o: { h, title, sub, aria, go } or null to remove it.
@@ -963,7 +964,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   // (Oct 7) the people-at-risk badge on the title line: a rounded red triangle with "!"; a tap shows a small tooltip
   // ("People at risk" over the warning's words) that grows from the badge; a tap on the tooltip opens that horizon, a tap outside closes it
   (function () {
-    try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{-webkit-tap-highlight-color:transparent}#wf-hmtip{position:fixed;z-index:420;max-width:260px;box-sizing:border-box;padding:16px;border-radius:16px;background:var(--wf-surface,#FFFFFF);color:var(--wf-ink,#1C1C1E);box-shadow:0 0 30px rgba(0,0,0,.16);transform-origin:top right;transform:scale(.6);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease;-webkit-user-select:none;user-select:none}#wf-hmtip.on{transform:none;opacity:1}#wf-hmtip b{display:block;font-size:16px;line-height:20px;font-weight:600}#wf-hmtip span{display:block;margin-top:4px;font-size:16px;line-height:20px;color:var(--wf-sec,#545458)}'; (document.head || document.documentElement).appendChild(s); } catch (e) {}
+    try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{-webkit-tap-highlight-color:transparent;touch-action:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1),background-color .25s ease}' + ':root .wf-hmtag[data-docked="0"]{background:rgba(118,118,128,0.12)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;opacity:0;pointer-events:none}:root .wf-hmtag[data-docked="0"] svg{opacity:0}' + 'html.wf-hm-drag .wf-hmtag[data-docked="0"]{opacity:1}html.wf-hm-near .wf-hmtag[data-docked="0"]{transform:scale(1.15);background:rgba(118,118,128,0.24)!important}.wf-hmtag[data-docked="1"]{box-shadow:0 0 16px rgba(0,0,0,.12)}.wf-hmtag.wf-hm-hide{visibility:hidden}' + '#wf-hmtip{position:fixed;z-index:420;max-width:260px;box-sizing:border-box;padding:16px;border-radius:16px;background:var(--wf-surface,#FFFFFF);color:var(--wf-ink,#1C1C1E);box-shadow:0 0 30px rgba(0,0,0,.16);transform-origin:top right;transform:scale(.6);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease;-webkit-user-select:none;user-select:none}#wf-hmtip.on{transform:none;opacity:1}#wf-hmtip b{display:block;font-size:16px;line-height:20px;font-weight:600}#wf-hmtip span{display:block;margin-top:4px;font-size:16px;line-height:20px;color:var(--wf-sec,#545458)}'; (document.head || document.documentElement).appendChild(s); } catch (e) {}
     var tip = null, src = null;
     function close() { if (!tip) return; var t = tip; tip = null; src = null; t.classList.remove('on'); setTimeout(function () { t.remove(); }, 300); }
     function open(b) {
@@ -979,12 +980,41 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     document.addEventListener('click', function (e) {
       if (e.target && e.target.closest && e.target.closest('[data-hm-go]')) return;   /* the tooltip's own call through to the page */
       var b = e.target && e.target.closest ? e.target.closest('.wf-hmtag') : null;
-      if (b) { e.stopPropagation(); e.preventDefault(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (src === b) close(); else open(b); return; }
+      if (b) { e.stopPropagation(); e.preventDefault(); if (b.__moved || b.getAttribute('data-docked') !== '1') return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (src === b) close(); else open(b); return; }
       if (tip && !(e.target.closest && e.target.closest('#wf-hmtip'))) close();
     }, true);
     document.addEventListener('scroll', close, true); window.addEventListener('resize', close);
   })();
-  var el = null, tap = null, ack = null, sig0 = '';
+  var el = null, tap = null, ack = null, sig0 = '', pull = null;
+  // (Oct 7) the dock: the badge's place on the title line. Drag the warning onto it and it is sucked in, becoming the badge
+  // (the warning's glass, the triangle in red); drag the badge out and the full warning comes back under the finger.
+  function zone() { var Z = document.querySelectorAll('.wf-hmtag'); for (var i = 0; i < Z.length; i++) { var r = Z[i].getBoundingClientRect(); if (r.width > 0) return Z[i]; } return null; }
+  var nearOn = false;
+  function near(x, y, on) { var z = on ? zone() : null, r = z ? z.getBoundingClientRect() : null, n = !!(r && Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2)) < 72);
+    document.documentElement.classList.toggle('wf-hm-drag', !!(on && z)); document.documentElement.classList.toggle('wf-hm-near', n);
+    if (n !== nearOn) { nearOn = n; if (n) { try { if (navigator.vibrate) navigator.vibrate(6); } catch (x) {} } } return n; }
+  function dock() { var z = zone(), p = el; if (!p) return; var f0 = ack; el = null; sig0 = '';
+    if (!z) { near(0, 0, false); if (f0) f0(); p.remove(); return; }
+    try { if (navigator.vibrate) navigator.vibrate([8, 40, 16]); } catch (x) {}
+    var r = p.getBoundingClientRect(), zr = z.getBoundingClientRect(), ic = p.querySelector('svg');
+    p.style.transition = 'none'; p.style.translate = '0px 0px'; p.style.transform = 'none'; p.style.left = r.left + 'px'; p.style.top = r.top + 'px'; p.style.right = 'auto'; p.style.bottom = 'auto'; p.style.width = r.width + 'px'; p.style.height = r.height + 'px'; p.style.maxWidth = 'none'; p.style.margin = '0'; p.style.minHeight = '0'; p.style.pointerEvents = 'none';
+    [].forEach.call(p.children, function (c) { if (c !== ic) { c.style.transition = 'opacity .12s ease'; c.style.opacity = '0'; c.style.position = 'absolute'; c.style.pointerEvents = 'none'; } });   /* out of the flow: the triangle stays centred as the panel closes in */
+    p.style.justifyContent = 'center'; p.style.gap = '0px';
+    requestAnimationFrame(function () { requestAnimationFrame(function () { var E = '.45s cubic-bezier(.4,0,.2,1)';
+      p.style.transition = 'left ' + E + ',top ' + E + ',width ' + E + ',height ' + E + ',border-radius ' + E + ',padding ' + E;
+      p.style.left = zr.left + 'px'; p.style.top = zr.top + 'px'; p.style.width = zr.width + 'px'; p.style.height = zr.height + 'px'; p.style.padding = '0px'; p.style.borderRadius = '16px';
+      ic.style.transition = 'transform ' + E; ic.style.transformOrigin = '50% 50%'; ic.style.transform = 'scale(' + (24 / 36) + ')'; }); });
+    setTimeout(function () { near(0, 0, false); if (f0) f0(); p.remove(); setTimeout(function () { var b = zone(); try { if (b) b.animate([{ transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 280, easing: 'cubic-bezier(.2,.8,.2,1)' }); if (navigator.vibrate) navigator.vibrate(10); } catch (x) {} }, 30); }, 470); }
+  // pulling the badge out: past 10px it pops (a tick), the warning comes back under the finger and follows it
+  document.addEventListener('pointerdown', function (e) { var b = e.target && e.target.closest ? e.target.closest('.wf-hmtag[data-docked="1"]') : null; if (!b) return;
+    pull = { b: b, x: e.clientX, y: e.clientY, on: false }; b.__moved = false; }, true);
+  document.addEventListener('pointermove', function (e) { if (!pull) return;
+    if (!pull.on) { if (Math.hypot(e.clientX - pull.x, e.clientY - pull.y) < 10) return; pull.on = true; pull.b.__moved = true; var id = pull.b.getAttribute('data-hm-id');
+      try { if (navigator.vibrate) navigator.vibrate([12, 30, 8]); } catch (x) {} pull.b.classList.add('wf-hm-hide'); if (window.__wfHomesUnack) window.__wfHomesUnack(id); }
+    pull.cx = e.clientX; pull.cy = e.clientY; if (el && el.__to) el.__to(e.clientX, e.clientY); near(e.clientX, e.clientY, true); e.preventDefault(); }, { capture: true, passive: false });
+  var pullUp = function (e) { if (!pull) return; var P = pull; pull = null; P.b.classList.remove('wf-hm-hide'); setTimeout(function () { P.b.__moved = false; }, 350); if (!P.on) return;
+    if (el && near(e.clientX, e.clientY, true)) dock(); else near(0, 0, false); };
+  document.addEventListener('pointerup', pullUp, true); document.addEventListener('pointercancel', pullUp, true);
   // (Oct 7) the warning floats like the app's other floating panels (the tour bubble): drag it anywhere but its button,
   // throw it and it glides to a stop; it stays where it was put, kept 8px inside the screen
   function drag(p) {
@@ -992,9 +1022,11 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     var clamp = function () { p.style.translate = '0px 0px'; var r = p.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
       dx = Math.min(W - 8 - r.right, Math.max(8 - r.left, dx)); dy = Math.min(H - 8 - r.bottom, Math.max(8 - r.top, dy)); p.style.translate = dx + 'px ' + dy + 'px'; };
     p.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fl); st = { x: e.clientX, y: e.clientY, dx: dx, dy: dy, moved: false, tr: [] }; try { p.setPointerCapture(e.pointerId); } catch (x) {} });
+    p.__to = function (x, y) { p.style.translate = '0px 0px'; var r = p.getBoundingClientRect(); dx = x - (r.left + 34); dy = y - (r.top + r.height / 2); clamp(); };   /* the triangle under the finger */
     p.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return;
-      st.moved = true; p.style.cursor = 'grabbing'; dx = st.dx + mx; dy = st.dy + my; clamp(); var t = performance.now(); st.tr.push([t, e.clientX, e.clientY]); while (st.tr.length > 2 && t - st.tr[0][0] > 90) st.tr.shift(); e.preventDefault(); });
-    var up = function () { if (!st) return; var s = st; st = null; p.style.cursor = 'grab'; if (!s.moved) return; p.__moved = true; setTimeout(function () { p.__moved = false; }, 350);
+      st.moved = true; p.style.cursor = 'grabbing'; dx = st.dx + mx; dy = st.dy + my; clamp(); near(e.clientX, e.clientY, true); var t = performance.now(); st.tr.push([t, e.clientX, e.clientY]); while (st.tr.length > 2 && t - st.tr[0][0] > 90) st.tr.shift(); e.preventDefault(); });
+    var up = function (e) { if (!st) return; var s = st; st = null; p.style.cursor = 'grab'; if (!s.moved) return; p.__moved = true; setTimeout(function () { p.__moved = false; }, 350);
+      if (e && e.type === 'pointerup' && near(e.clientX, e.clientY, true)) { dock(); return; } near(0, 0, false);
       var a = s.tr[0], z = s.tr[s.tr.length - 1], dt = a && z ? Math.max(16, z[0] - a[0]) : 16, vx = a && z ? (z[1] - a[1]) / dt * 16 : 0, vy = a && z ? (z[2] - a[2]) / dt * 16 : 0;
       (function glide() { vx *= 0.92; vy *= 0.92; if (Math.hypot(vx, vy) < 0.3) return; dx += vx; dy += vy; clamp(); fl = requestAnimationFrame(glide); })(); };
     p.addEventListener('pointerup', up); p.addEventListener('pointercancel', up);
@@ -1008,13 +1040,16 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
       el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
       el.style.touchAction = 'none'; el.style.cursor = 'grab'; drag(el);
       el.addEventListener('click', function (e) { if (el && el.__moved) { el.__moved = false; return; } try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
-        if (e.target.closest('[data-hm-ack]')) { var f = ack; if (f) f(); window.__wfHomesAlert(null); return; }
+        if (e.target.closest('[data-hm-ack]')) { dock(); return; }   /* OK: into the badge's place too */
         if (tap) tap(); });
-      document.body.appendChild(el); requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0px)'; } }); }); }
+      document.body.appendChild(el);
+      if (pull && pull.on) { var e1 = el; e1.style.transition = 'none'; e1.style.opacity = '1'; e1.style.transform = 'scale(.4)'; e1.style.transformOrigin = '34px 50%'; requestAnimationFrame(function () { e1.style.transition = 'opacity .4s ease, transform .35s cubic-bezier(.2,.8,.2,1), bottom .4s ease'; e1.style.transform = 'none'; }); }
+      else requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0px)'; } }); }); }
     el.style.bottom = bot + 'px';
     var s = o.title + '|' + o.sub; if (s !== sig0) { sig0 = s;
       el.innerHTML = '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: var(--wf-ink2, rgb(84, 84, 88))">' + o.sub + '</span>' : '') + '</span>' +
-        '<button type="button" class="btn wf-sec" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; font: inherit; cursor: pointer">' + 'OK' + '</button>'; } };
+        '<button type="button" class="btn wf-sec" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; font: inherit; cursor: pointer">' + 'OK' + '</button>'; }
+    if (pull && pull.on && pull.cx != null && el.__to) el.__to(pull.cx, pull.cy); };
   // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
   // (Oct 7) what first, then when, precise (not the projection's horizon): "~8 structures at risk in 2 h 10 min"; the place
   // alone under it. The time counts down from when the projection was read; to the nearest 5 min.
