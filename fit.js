@@ -887,7 +887,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
 // the app's projection. A horizon that reaches houses gets a red dot on the projection switcher; the fire's screen shows a
 // pulsing red warning that opens the earliest one. Results are kept for 6 hours per fire on this phone.
 (function () {
-  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes3-', MIN_B = 3;
+  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes4-', MIN_B = 3;
   var NOT = '^(garage|garages|shed|barn|farm_auxiliary|greenhouse|industrial|warehouse|roof|carport|hangar|silo|storage_tank|construction|ruins|service|transformer_tower|bunker|kiosk|toilets|cowshed|stable|sty|bridge)$';
   function toLL(x, y) { return [34.19 - (y - 662) / 2829, (x - 518) / 2345 - 118.13]; }
   function rings(id, ll, px) {
@@ -927,6 +927,18 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
         res.pts = E.filter(function (e) { return e.type === 'way' && e.center && e.tags && e.tags.building; }).map(function (e) { var P = [e.center.lat, e.center.lon]; return [r5(P[0]), r5(P[1]), hOf(P)]; }).filter(function (q) { return q[2]; });
         res.areas = E.filter(function (e) { return e.type === 'way' && e.geometry && e.tags && e.tags.landuse === 'residential'; }).map(function (e) { var g = thin(e.geometry.map(function (q) { return [r5(q.lat), r5(q.lon)]; }), 32), hs = g.map(hOf).filter(Boolean);
           return { h: hs.length ? Math.min.apply(null, hs) : 0, r: g }; }).filter(function (a) { return a.h; });
+        /* (Oct 7) a precise time, not the horizon: each structure's arrival is read between the two projected shapes around it
+           (from the fire's centre, how far it sits between the earlier outline and the later one); the earliest one leads,
+           with the structures reached by the end of that horizon as the count */
+        (function () { var c0 = R[0].reduce(function (a, q) { return [a[0] + q[0] / R[0].length, a[1] + q[1] / R[0].length]; }, [0, 0]), k = Math.cos(c0[0] * Math.PI / 180) || 1;
+          var xy = function (q) { return [(q[1] - c0[1]) * k, q[0] - c0[0]]; };
+          var reach = function (r, ux, uy) { var m = 0; for (var i = 0, j = r.length - 1; i < r.length; j = i++) { var a = xy(r[j]), b = xy(r[i]), ex = b[0] - a[0], ey = b[1] - a[1], den = ux * ey - uy * ex; if (Math.abs(den) < 1e-15) continue;
+            var t = (a[0] * ey - a[1] * ex) / den, s = (a[0] * uy - a[1] * ux) / den; if (t > 0 && s >= 0 && s <= 1) m = Math.max(m, t); } return m; };
+          var eta = function (P, h) { var v = xy(P), d = Math.hypot(v[0], v[1]); if (!d) return 0; var ux = v[0] / d, uy = v[1] / d, i = HZ.indexOf(h), hp = i > 0 ? HZ[i - 1] : 0;
+            var rp = reach(R[hp], ux, uy), rh = reach(R[h], ux, uy), fr = rh > rp ? Math.min(1, Math.max(0, (d - rp) / (rh - rp))) : 1; return hp + (h - hp) * fr; };
+          var T = (res.pts || []).map(function (q) { return eta([q[0], q[1]], q[2]); });
+          pl.forEach(function (e) { var P = [e.lat, e.lon], h = 0; if (inside(P, R[0])) return; for (var z = 0; z < HZ.length; z++) if (inside(P, R[HZ[z]])) { h = HZ[z]; break; } if (h) T.push(eta(P, h)); });
+          if (T.length && res.first != null) { res.eta = Math.min.apply(null, T); res.nAt = (res.pts || []).filter(function (q) { return q[2] && q[2] <= res.first; }).length || res.b[res.first] || 0; } })();
         MEM[id] = { sig: sig, st: 'done', res: res }; try { localStorage.setItem(LK + id, JSON.stringify(res)); } catch (e) {} emit();
       }).catch(function () { MEM[id] = { sig: sig, st: 'fail' }; setTimeout(function () { if (MEM[id] && MEM[id].st === 'fail') delete MEM[id]; }, 60000); });   /* no answer, no warning: tried again a minute later */
     return null; };
@@ -1004,10 +1016,11 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
       el.innerHTML = '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 17px; font-weight: 600; line-height: 22px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: var(--wf-ink2, rgb(84, 84, 88))">' + o.sub + '</span>' : '') + '</span>' +
         '<button type="button" class="btn wf-sec" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; font: inherit; cursor: pointer">' + 'OK' + '</button>'; } };
   // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
-  // (Oct 7) as few words as possible, nothing said twice: where and when in the title, how many under it; the red triangle
-  // already says it is a threat. "Fonte da Pedra in 3 h" over "~8 structures threatened." (no place: the count leads)
-  window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, b = res.b[h] || 0, p = res.place[h] || '';
-    var what = b ? (pt ? '~' + b + (b === 1 ? ' habitação ameaçada' : ' habitações ameaçadas') : '~' + b + (b === 1 ? ' structure threatened' : ' structures threatened')) : (pt ? 'Habitações ameaçadas' : 'Structures threatened');
-    var when = (pt ? ' em ' : ' in ') + h + ' h';
-    return p ? { h: h, title: p + when, sub: what + '.', tag: p + when } : { h: h, title: what + when, sub: '', tag: what + when }; };
+  // (Oct 7) what first, then when, precise (not the projection's horizon): "~8 structures at risk in 2 h 10 min"; the place
+  // alone under it. The time counts down from when the projection was read; to the nearest 5 min.
+  window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, p = res.place[h] || '', b = res.nAt || res.b[h] || 0;
+    var hrs = res.eta != null ? Math.max(0, res.eta - (Date.now() - (res.t || Date.now())) / 3600e3) : h, m = Math.round(hrs * 60 / 5) * 5;
+    var when = m <= 0 ? (pt ? ' agora' : ' now') : (pt ? ' em ' : ' in ') + (m >= 60 ? Math.floor(m / 60) + '\u00a0h' + (m % 60 ? '\u00a0' + (m % 60) + '\u00a0min' : '') : m + '\u00a0min')   /* the time never splits across lines */;
+    var what = b ? '~' + b + (pt ? (b === 1 ? ' habitação em risco' : ' habitações em risco') : (b === 1 ? ' structure at risk' : ' structures at risk')) : (pt ? 'Habitações em risco' : 'Structures at risk');
+    return { h: h, title: what + when, sub: p ? p + '.' : '', tag: what + when }; };
 })();
