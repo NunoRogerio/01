@@ -19,7 +19,7 @@
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=86"></script>
+<script src="chat.js?v=87"></script>
 <script src="tour.js?v=113"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="trophy.js?v=34"></script>
@@ -666,7 +666,7 @@ class Component extends DCLogic {
     const whenTxt = (tm) => dayTxt(tm) + ', ' + C.hhmm(tm);
     // the resolution card's facts (trophy.js): the stations that took part with their crests, air support, the fire, when it closed and how long it took, its size class
     const winAttrs = (Z) => { const F = (c.forces || []).filter((f) => f.st !== 'standby'), sc = C.sizeClass(Z.ha, c.st);
-      return { crests: JSON.stringify(F.map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))), air: Z.air || c.air ? '1' : '0', n: String(Z.stations), fire: c.place, meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
+      return { crests: JSON.stringify(F.map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))), air: Z.air || c.air || (c.flags && c.flags.air) ? '1' : '0', n: String(Z.stations), fire: c.place, meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
     const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
     const photo = (p) => (p && p.photo ? 'url("' + p.photo + '")' : 'none');
     const openPerson = (name) => () => this.go('person', { person: name });
@@ -955,7 +955,7 @@ class Component extends DCLogic {
       pj: sh ? this.wfPj(c) : { full: false, view: {}, tabs: [], hz: 0, grow: 1, w: 390 },
       ...(() => { const H = this.wfHomes(c), HT = H.HT;
         setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && !H.ackd && document.visibilityState !== 'hidden' ? Object.assign({}, HT, { go: () => { openSheet(); this.setState({ pjHz: HT.h }); }, ack: () => window.__wfHomesAck(H.id, HT.h) }) : null); }, 0);
-        return { hm: { tagD: HT && H.ackd ? 'inline-flex' : 'none', tag: HT ? HT.tag : '', txt: HT ? HT.title : '' } }; })(),
+        return { hm: { tagD: HT && H.ackd && !c.closed && !c.dismissed ? 'inline-flex' : 'none', tag: HT ? HT.tag : '', txt: HT ? HT.title : '' } }; })(),
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';

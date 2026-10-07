@@ -21,7 +21,7 @@
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=86"></script>
+<script src="chat.js?v=87"></script>
 <script src="tour.js?v=113"></script>
 <script src="mapsearch.js?v=4"></script>
 <script src="stats.js?v=83"></script>
@@ -1682,7 +1682,7 @@ class Component extends DCLogic {
          it in the dark tooltip (the copy-link one) without opening the chat */
       const bk = (i) => c.key + '|' + i, Z = c.closed ? (c.sum || C.stats(c)) : null;
       const B = !c.closed ? [] : (c.forces || []).filter((f) => f.st !== 'standby').map((f) => ({ u: C.crest(c, f.station).url, n: f.station, air: '' }))
-        .concat(Z.air || c.air ? [{ u: window.__wfAirBadge ? window.__wfAirBadge() : '', n: (c.air && c.air.name) || L('Air support', 'Meio aéreo'), air: '1' }] : []);
+        .concat(Z.air || c.air || (c.flags && c.flags.air) ? [{ u: window.__wfAirBadge ? window.__wfAirBadge() : '', n: (c.air && c.air.name) || L('Air support', 'Meio aéreo'), air: '1' }] : []);
       const badges = B.map((b, i) => ({ u: b.u, n: b.n, crest: b.air ? '' : b.n, tipOp: s.cbTip === bk(i) ? 1 : 0, tipY: s.cbTip === bk(i) ? '0px' : '4px',
         tip: (e) => { if (e) { if (e.preventDefault) e.preventDefault(); if (e.stopPropagation) e.stopPropagation(); } try { if (navigator.vibrate) navigator.vibrate(6); } catch (x) {}
           clearTimeout(this._cbTipT); const on = s.cbTip !== bk(i); this.setState({ cbTip: on ? bk(i) : '' }); if (on) this._cbTipT = setTimeout(() => this.setState({ cbTip: '' }), 2200); } }));

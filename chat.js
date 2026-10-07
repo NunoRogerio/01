@@ -89,7 +89,7 @@
   function airLead(c) { var us = isUS(c), n = pickNames(c, 1, 'air')[0];
     return { name: n, code: initials(n), org: us ? (ccOf(c.st) === 'us' && c.st === 'CA' ? 'CAL FIRE Air Attack' : 'Air Attack') : 'ANEPC. Meios aéreos', kind: 'air',
       roleEn: us ? 'Air Tactical Group Supervisor' : 'Air operations coordinator', rolePt: us ? 'Supervisor de meios aéreos' : 'Coordenador de meios aéreos' }; }
-  function wantsAir(c) { return !c.dismissed && c.kind !== 'dm' && (c.stage >= 3 || (c.flags && c.flags.air)); }
+  function wantsAir(c) { return !c.dismissed && c.kind !== 'dm' && !!(c.flags && c.flags.air); }   // (Oct 7) the air lead joins only when air resources were ordered (dispatch or Air support)
   function ensureAir(c) { if (!wantsAir(c) || (c.people || []).some(function (p) { return p.kind === 'air'; })) return false; c.people.push(airLead(c)); return true; }
   // Portraits for the team (illustrated, avatar.js), only on fires in California, Nevada and Portugal: each person in
   // their own service's uniform; coordinators wear the command helmet.
@@ -735,7 +735,8 @@
     // to the fire; they arrive unread, so the chat's badge counts one per station and air team
     var OK = [['Order received. Rolling now, ETA {m} min.', 'Ordem recebida. A sair agora, chegada em {m} min.'], ['Copy that. Crew on the way to the fire, {m} min out.', 'Recebido. Equipa a caminho do incêndio, a {m} min.'], ['Received. We are moving, about {m} min to the fire line.', 'Recebido. Estamos a mover-nos, cerca de {m} min até à linha de fogo.'], ['Order confirmed. Leaving the station now, {m} min.', 'Ordem confirmada. A sair do quartel, {m} min.']];
     var who = sent.map(function (x) { return { i: x.i < c.people.length ? x.i : 0, m: (c.stations[x.i] && c.stations[x.i].min) || 15 }; });
-    if (airOrd) { c.flags.air = true; ensureAir(c); var ai = c.people.findIndex(function (p) { return p.kind === 'air'; }); if (ai >= 0) who.push({ i: ai, m: 12, air: true }); }
+    if (airOrd) { c.flags.air = true; if (!c.air) { var us0 = isUS(c), hl = us0 ? 'Helicopter 15' : 'Helicóptero H-21'; c.air = { name: hl, kind: us0 ? 'Firefighting helicopter · LAFD Air Operations' : 'Helicóptero de ataque inicial · Força Aérea', st: 'assigned' }; }   /* (Oct 7) air ordered in the dispatch is part of the story: forces, summary, trophy */
+      ensureAir(c); var ai = c.people.findIndex(function (p) { return p.kind === 'air'; }); if (ai >= 0) who.push({ i: ai, m: 12, air: true }); }
     for (var z = who.length - 1; z > 0; z--) { var r = Math.floor(Math.random() * (z + 1)), tmp = who[z]; who[z] = who[r]; who[r] = tmp; }
     var at = d + 1200;
     who.forEach(function (w, n) { var o = w.air ? ['Air support received the order. Wheels up, over the fire in {m} min.', 'Meios aéreos receberam a ordem. A descolar, sobre o incêndio em {m} min.'] : OK[n % OK.length];
@@ -1116,7 +1117,7 @@
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
     return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
-      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.length; }, 0), air: c.air ? 1 : 0, stations: F.length, est: !!c.estF };
+      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.length; }, 0), air: c.air || (c.flags && c.flags.air) ? 1 : 0, stations: F.length, est: !!c.estF };
   }
   // Fire size class (Oct 4): the US scale of NWCG, which CAL FIRE uses (A to G by acres, from the final perimeter); everywhere else the
   // names of the Portuguese ICNF (fogacho under 1 ha, incêndio, grande incêndio from 100 ha), with the size in hectares
@@ -1381,6 +1382,9 @@
       else if (c.flags && c.flags.dispatched && !c.sentIdx && c.stage >= 2) c.people.forEach(function (p, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); if (!p.left && p.kind !== 'air' && (!f || f.st === 'standby')) { p.left = true; fixed = true; } });
       else if (!c.closed && c.stage === 0 && c.people.length < 4 && c.reserve) { var r = c.reserve; c.reserve = null; var n = pickNames(c, 1, 'more')[0];
         c.people.push({ name: n, code: initials(n), org: r.short, kind: 'lead' }); c.stations.push(r); fixed = true; }
+      /* (Oct 7) the team follows the dispatch: an air lead without air resources ordered leaves the team */
+      if (c.flags && c.flags.air && !c.air) { var u1 = isUS(c), h1 = u1 ? 'Helicopter 15' : 'Helicóptero H-21'; c.air = { name: h1, kind: u1 ? 'Firefighting helicopter · LAFD Air Operations' : 'Helicóptero de ataque inicial · Força Aérea', st: c.closed ? 'released' : 'assigned' }; fixed = true; }
+      if (!(c.flags && c.flags.air) && !c.air) c.people.forEach(function (p) { if (p.kind === 'air' && !p.left) { p.left = true; fixed = true; } });
       if (!c.closed && ensureAir(c)) fixed = true; });
     if (fixed) { save(); emit(); }
   }
