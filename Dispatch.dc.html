@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=192"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=193"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=206"></script>
 <script src="station.js?v=3"></script>
@@ -1292,7 +1292,7 @@ class Component extends DCLogic {
       const HM = on && window.__wfHomesCheck ? (() => { const id = o.fireId, M = (window.__wfModels || {})[id], ll = M && M.done && !M.failed && M.snaps && M.snaps[0] && M.snaps[0].ring && M.snaps[0].ring.length ? M.snaps[0].ring : (((window.__wfBRGeo || {})[id] || {}).ring || null);
         if (ll) return window.__wfHomesCheck(id, ll, null);
         /* no mapped outline: the map's illustrative one around the fire, as the band frames it */
-        const ox = (Number(o.fireX) || 610) - 610, oy = (Number(o.fireY) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); ring.push([598 + ox + x * Math.cos(a) - y * Math.sin(a), 298 + oy + x * Math.sin(a) + y * Math.cos(a)]); }
+        const ring = window.__wfFireRing(o.fireX, o.fireY);   /* (Oct 7) the fire's irregular polygon, as the map draws it */
         return window.__wfHomesCheck(id, null, ring); })() : null;
       o.fp = { d: on && !o.full ? 'grid' : 'none', fullD: on && o.full ? 'grid' : 'none', grow: on ? G[h] : 0, x: (HZ.indexOf(h) * 100) + '%', stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
         tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fgD: k === h ? '#1C1C1E' : '#FFFFFF', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Structures threatened' : ''), pick: () => { if (((this.state || {}).fhz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: k }); } })) };
@@ -1836,7 +1836,7 @@ class Component extends DCLogic {
         return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; const zB = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 148) * 0.92 / bh))); if (RO && !s.full) { const F = this.wfBandFit(pts, RING6, zB, cx, cy); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy + 12 / F.z).toFixed(2) }; } if (RO) { const FF = window.__wfFrameFire ? window.__wfFrameFire(pts, RING6, 358, 605) : null, zF = FF ? FF.z : Math.max(zB, Math.min(20, Math.min(390 * 0.62 / bw, 605 * 0.72 / bh))); return { zoom: +zF.toFixed(4), fx: Math.round(cx), fy: +(cy - 65 / zF).toFixed(2) }; }   /* full screen: zoomed into the current perimeter (62% of the width or 72% of the clear height under the title and legend), centred in that clear part, never further out than the band */
           const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: Math.round(cy) }; })();
       })() : (window.__wfLiveMap && fv && RO) ? (() => { if (s.full) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };   /* no outline published: the map's illustrative one; the small map frames its +6 h shape too */
-        const ox = (Number(FIRE[0]) || 610) - 610, oy = (Number(FIRE[1]) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); ring.push([598 + ox + x * Math.cos(a) - y * Math.sin(a), 298 + oy + x * Math.sin(a) + y * Math.cos(a)]); }
+        const ring = window.__wfFireRing(FIRE[0], FIRE[1]);   /* (Oct 7) the fire's irregular polygon, as the map draws it */
         const g = HELD || !window.__wfGrowXY ? null : window.__wfGrowXY(ring, 3.6, fireId); const F = this.wfBandFit(ring, g || [], 3, FIRE[0], FIRE[1]); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy + (g ? 12 / F.z : 0)).toFixed(2) }; })() : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
       mapUnits: RO ? [] : mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),
       firstEta: deployed.length ? deployed[0].eta : '–', firstAt: deployed.length ? deployed[0].at : '', lastEta: maxEta, lastAt: clock(maxEta),

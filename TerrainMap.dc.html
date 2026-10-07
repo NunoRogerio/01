@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=192"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=193"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=206"></script>
 <script src="station.js?v=3"></script>
@@ -114,16 +114,16 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <path d="{{route}}" fill="none" stroke="#0079A6" stroke-width="{{lw.w16}}" stroke-linecap="round" stroke-dasharray="{{lw.d27}}" style="opacity: {{routeOp}}"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="0.9s" repeatCount="indefinite"></animate></path>
         <sc-if value="{{fakeSpread}}" hint-placeholder-val="{{ true }}">
         <g transform="translate({{fdx}} {{fdy}})">
-        <ellipse cx="540" cy="340" rx="112" ry="52" transform="rotate(-35 540 340)" fill="#E86A00" fill-opacity="{{r3.fill}}" stroke="#E86A00" stroke-opacity="{{r3.stroke}}" stroke-width="{{r3.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
-        <ellipse cx="576" cy="314" rx="62" ry="30" transform="rotate(-35 576 314)" fill="#E86A00" fill-opacity="{{r2.fill}}" stroke="#E86A00" stroke-opacity="{{r2.stroke}}" stroke-width="{{r2.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
-        <ellipse cx="598" cy="298" rx="26" ry="14" transform="rotate(-35 598 298)" fill="#E86A00" fill-opacity="{{r1.fill}}" stroke="#E86A00" stroke-opacity="{{r1.stroke}}" stroke-width="{{r1.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
+        <path d="{{r3D}}" fill="#E86A00" fill-opacity="{{r3.fill}}" stroke="#E86A00" stroke-opacity="{{r3.stroke}}" stroke-width="{{r3.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
+        <path d="{{r2D}}" fill="#E86A00" fill-opacity="{{r2.fill}}" stroke="#E86A00" stroke-opacity="{{r2.stroke}}" stroke-width="{{r2.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
+        <path d="{{r1D}}" fill="#E86A00" fill-opacity="{{r1.fill}}" stroke="#E86A00" stroke-opacity="{{r1.stroke}}" stroke-width="{{r1.w}}" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" style="transition: fill-opacity .4s, stroke-opacity .4s"></ellipse>
         </g>
         </sc-if>
         <!-- Projection screen: the shape the fire grows to at the chosen horizon, in the lime at 50% around the current outline -->
         <sc-if value="{{growFake}}" hint-placeholder-val="{{ false }}">
         <g transform="translate({{fdx}} {{fdy}})">
         <path d="{{gF.d}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-dasharray="6 5" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-        <ellipse style="display: {{gNowD}}" cx="598" cy="298" rx="26" ry="14" transform="rotate(-35 598 298)" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="1" vector-effect="non-scaling-stroke"></ellipse>
+        <path style="display: {{gNowD}}" d="{{fakeNowD}}" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="1" vector-effect="non-scaling-stroke"></ellipse>
         </g>
         </sc-if>
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
@@ -1092,7 +1092,7 @@ class Component extends DCLogic {
       } else {
         const M = (window.__wfModels || {})[g.id], ll = M && M.done && !M.failed && M.snaps && M.snaps[0] && M.snaps[0].ring && M.snaps[0].ring.length ? M.snaps[0].ring : (((window.__wfBRGeo || {})[g.id] || {}).ring || null);
         if (ll) window.__wfHomesCheck(id, ll, null);
-        else { const ox = (Number(g.x) || 610) - 610, oy = (Number(g.y) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); ring.push([598 + ox + x * Math.cos(a) - y * Math.sin(a), 298 + oy + x * Math.sin(a) + y * Math.cos(a)]); }
+        else { const ring = window.__wfFireRing(g.x, g.y);   /* (Oct 7) the fire's irregular polygon, as the map draws it */
           window.__wfHomesCheck(id, null, ring); }
       }
       S.busy = id; S.t = now; return;
@@ -1466,7 +1466,7 @@ class Component extends DCLogic {
     const growPath = (r) => { if (!r || !r.length) return ''; const c = Math.cos((r[0][0] || 0) * Math.PI / 180) || 1, g = grownXY(r.map((q) => [q[1] * c, q[0]]));
       return this.morphD('fire', g ? g.map((q) => XY(q[1], q[0] / c)) : null, r.map((q) => XY(q[0], q[1]))); };
     // without a model run: the illustrative outline (an ellipse in map pixels) grown the same way
-    const fakeRing = (() => { const out = [], a = -35 * Math.PI / 180; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); out.push([598 + x * Math.cos(a) - y * Math.sin(a), 298 + x * Math.sin(a) + y * Math.cos(a)]); } return out; })();
+    const fakeRing = window.__wfFireRing(p.fireX, p.fireY, { origin: true });   /* (Oct 7, 22:02) an irregular polygon (stable per fire), not an ellipse; drawn inside the fire's translate */
     const gFake = (() => { const g = grownXY(fakeRing); return g ? 'M' + g.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L') + 'Z' : ''; })();
     const edges = (sn, held) => { let d = ''; const r = sn.ring, n = r.length; for (let i = 0; i < n; i++) { const j = (i + 1) % n; if (!!sn.done[i] === held && !!sn.done[j] === held) d += 'M' + Pf(r[i][0], r[i][1]) + 'L' + Pf(r[j][0], r[j][1]); } return d; };
     // No mapped perimeter (e.g. most Portuguese fires): the model's outline from the reported size, labelled 'Estimated'.
@@ -1698,7 +1698,7 @@ class Component extends DCLogic {
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
       hmD: (() => { const id = isPin ? p.pinId : p.fireId, h = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0); return id && h && window.__wfHomesPath ? window.__wfHomesPath(String(id), h) : ''; })(),   /* (Oct 7) populated areas reached by the projection, in red */
-      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow && !modelVals.hasModel ? this.morphD('fake', grownXY(fakeRing), fakeRing) : '' }, gNowD: LY.burn ? 'inline' : 'none', ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
+      ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow && !modelVals.hasModel ? this.morphD('fake', grownXY(fakeRing), fakeRing) : '' }, gNowD: LY.burn ? 'inline' : 'none', fakeNowD: window.__wfRingD(fakeRing), r1D: window.__wfRingD(fakeRing), r2D: window.__wfRingD(window.__wfFireRing(p.fireX, p.fireY, { origin: true, cx: 576, cy: 314, rx: 62, ry: 30 })), r3D: window.__wfRingD(window.__wfFireRing(p.fireX, p.fireY, { origin: true, cx: 540, cy: 340, rx: 112, ry: 52 })), ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const has = { burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */

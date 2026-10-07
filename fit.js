@@ -773,6 +773,17 @@ window.__wfBlink=function(path,dur){
 
 // The projected fire shape (Projection, fire page): the outline grown unevenly, most downwind, sized to GR x its area,
 // seeded by the fire so it is stable. One definition shared by the map (drawing) and the fire page (framing the +6 h shape).
+// (Oct 7, 22:02) A fire with no mapped perimeter is drawn as an irregular polygon, never an ideal ellipse: the wind-stretched
+// oval (-35°) with a ragged edge, stable per fire (seeded by its position). fx, fy: the fire on the map (defaults 610, 290);
+// o.origin draws it at the illustrative origin (598, 298) for maps that move it with a transform; o.rx, o.ry, o.cx, o.cy size it.
+window.__wfFireRing = function (fx, fy, o) { o = o || {}; fx = Number(fx) || 610; fy = Number(fy) || 290;
+  var h = 11, sd = String(Math.round(fx)) + ',' + String(Math.round(fy)); for (var i0 = 0; i0 < sd.length; i0++) h = (h * 31 + sd.charCodeAt(i0)) >>> 0;
+  var ph = function (k) { var x = Math.sin(h * 0.0013 + k * 7.31) * 43758.5453; return (x - Math.floor(x)) * 6.2832; };
+  var cx = (o.cx != null ? o.cx : 598) + (o.origin ? 0 : fx - 610), cy = (o.cy != null ? o.cy : 298) + (o.origin ? 0 : fy - 290), rx = o.rx || 26, ry = o.ry || 14, a = -35 * Math.PI / 180, N = 72, out = [];
+  for (var i = 0; i < N; i++) { var t = i / N * 6.2832, m = 1 + 0.13 * Math.sin(2 * t + ph(1)) + 0.09 * Math.sin(3 * t + ph(2)) + 0.06 * Math.sin(5 * t + ph(3)) + 0.04 * Math.sin(8 * t + ph(4)) + 0.025 * Math.sin(13 * t + ph(5));
+    m = Math.max(0.72, Math.min(1.28, m)); var u = rx * m * Math.cos(t), v = ry * m * Math.sin(t); out.push([cx + u * Math.cos(a) - v * Math.sin(a), cy + u * Math.sin(a) + v * Math.cos(a)]); }
+  return out; };
+window.__wfRingD = function (r) { return r && r.length ? 'M' + r.map(function (q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join('L') + 'Z' : ''; };
 window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.length < 3) return null;
   let h = 7; for (const ch of String(seedSrc || 'f')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const gSeed = h;
   const rr = (k) => { const x = Math.sin(gSeed * 0.001 + k * 12.9898) * 43758.5453; return x - Math.floor(x); };
@@ -989,7 +1000,11 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{position:relative}.wf-hmtag>svg{position:absolute;inset:0;width:100%!important;height:100%!important}.wf-hmtag{-webkit-tap-highlight-color:transparent;touch-action:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1),background-color .25s ease}' + ':root .wf-hmtag[data-docked="0"]{background:rgba(118,118,128,0.12)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;opacity:0;pointer-events:none}:root .wf-hmtag[data-docked="0"] svg{opacity:0}' + 'html.wf-hm-docking .wf-hmtag{visibility:hidden}html.wf-hm-drag .wf-hmtag[data-docked="0"]{opacity:1}html.wf-hm-near .wf-hmtag[data-docked="0"]{transform:scale(1.15);background:rgba(118,118,128,0.24)!important}.wf-hmtag.wf-hm-hide{visibility:hidden}' + '#wf-hmtip{position:fixed;z-index:420;max-width:260px;box-sizing:border-box;padding:16px;border-radius:16px;background:var(--wf-surface,#FFFFFF);color:var(--wf-ink,#1C1C1E);box-shadow:0 0 30px rgba(0,0,0,.16);transform-origin:top right;transform:scale(.6);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease;-webkit-user-select:none;user-select:none}#wf-hmtip.on{transform:none;opacity:1}#wf-hmtip b{display:block;font-size:16px;line-height:20px;font-weight:600}#wf-hmtip span{display:block;margin-top:4px;font-size:16px;line-height:20px;color:var(--wf-sec,#545458)}'; (document.head || document.documentElement).appendChild(s); } catch (e) {}
     /* (Oct 7, 21:04, standing) the triangle is exactly as tall as the stage tag beside it, on every screen: the badge stretches to the
        tag's row, its drawing fills that box (trimmed to the triangle) and its width follows the triangle's proportions */
-    var fq = 0; function fitB() { fq = 0; var B = document.querySelectorAll('.wf-hmtag'); for (var i = 0; i < B.length; i++) { var h = B[i].getBoundingClientRect().height; if (h > 0) { var w = Math.round(h * 34 / 28.5) + 'px'; if (B[i].style.width !== w) B[i].style.width = w; } } }
+    var fq = 0; function fitB() { fq = 0; var B = document.querySelectorAll('.wf-hmtag'); for (var i = 0; i < B.length; i++) { var b = B[i], t = b.previousElementSibling;
+        /* (Oct 7, 22:05) the height of the stage tag beside it, set outright (not left to the row, which Safari can size differently) */
+        if (b.parentElement && b.parentElement.style.alignItems !== 'center') b.parentElement.style.alignItems = 'center';   /* the tag keeps its own height: nothing stretches it */
+        var tg = t && t.querySelector ? (t.querySelector('.qtag') || t) : null, h = tg ? tg.getBoundingClientRect().height : b.getBoundingClientRect().height; if (!(h > 0)) continue;
+        var hs = h.toFixed(2) + 'px', w = (h * 34 / 28.5).toFixed(2) + 'px'; if (b.style.height !== hs) { b.style.height = hs; b.style.alignSelf = 'center'; } if (b.style.width !== w) b.style.width = w; } }
     function askFit() { if (!fq) { fq = 1; requestAnimationFrame(fitB); } }
     try { new MutationObserver(askFit).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] }); } catch (e) {}
     addEventListener('resize', askFit); addEventListener('load', askFit);
@@ -1087,6 +1102,25 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   // the warning's words, shared by the fire page and the chat's fire card: the earliest horizon, then its buildings and place
   // (Oct 7) what first, then when, precise (not the projection's horizon): "~8 structures at risk in 2 h 10 min"; the place
   // alone under it. The time counts down from when the projection was read; to the nearest 5 min.
+  // (Oct 7, 22:04, standing) text on glass stays readable: what lies under a glass panel is sampled (a video frame, the
+  // page's own colour), blended with the glass tint; when dark ink would fall under 4.5:1 there, the text turns white.
+  var LUM = function (c) { var f = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
+  var CR = function (a, b) { var x = LUM(a), y = LUM(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  var cvs = null;
+  function under(el, x, y) { var L = document.elementsFromPoint(x, y) || [];
+    for (var i = 0; i < L.length; i++) { var e = L[i]; if (e === el || el.contains(e)) continue;
+      if (e.tagName === 'VIDEO' || e.tagName === 'IMG') { try { cvs = cvs || document.createElement('canvas'); cvs.width = cvs.height = 1; var r = e.getBoundingClientRect(), w = e.videoWidth || e.naturalWidth, h = e.videoHeight || e.naturalHeight; if (!w || !h) continue;
+          var cx = ctxOf(); cx.drawImage(e, (x - r.left) / r.width * w, (y - r.top) / r.height * h, 2, 2, 0, 0, 1, 1); var d = cx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; } catch (x1) { continue; } }   /* a tile that cannot be read: look further down */
+      for (var a = e; a; a = a.parentElement) { var m = /rgba?\(([^)]+)\)/.exec(getComputedStyle(a).backgroundColor || ''); if (m) { var v = m[1].split(',').map(Number); if (v.length < 4 || v[3] > 0.5) return [v[0], v[1], v[2]]; } }
+      return null; }
+    return null; }
+  function ctxOf() { return cvs.getContext('2d', { willReadFrequently: true }); }
+  window.__wfGlassInk = function (el) { if (!el || !el.getBoundingClientRect) return; var r = el.getBoundingClientRect(); if (!r.width) return;
+    var P = [[0.2, 0.3], [0.5, 0.3], [0.8, 0.3], [0.2, 0.7], [0.5, 0.7], [0.8, 0.7]], worst = 99, ink = [28, 28, 30];
+    P.forEach(function (q) { var c = under(el, r.left + r.width * q[0], r.top + r.height * q[1]); if (!c) return; var g = [c[0] * 0.76 + 60 * 0.24, c[1] * 0.76 + 60 * 0.24, c[2] * 0.76 + 67 * 0.24]; worst = Math.min(worst, CR(ink, g)); });
+    el.classList.toggle('wf-ondark', worst < 4.5); };
+  try { var sd = document.createElement('style'); sd.textContent = '.wf-ondark,.wf-ondark span,.wf-ondark b{color:#FFFFFF!important}.wf-ondark span span{color:rgba(255,255,255,0.88)!important}'; (document.head || document.documentElement).appendChild(sd); } catch (e) {}
+  setInterval(function () { var w = document.getElementById('wf-homes'); if (w) window.__wfGlassInk(w); }, 500);
   window.__wfHomesText = function (res, pt) { if (!res || res.first == null) return null; var h = res.first, p = res.place[h] || '', b = res.nAt || res.b[h] || 0;
     var hrs = res.eta != null ? Math.max(0, res.eta - (Date.now() - (res.t || Date.now())) / 3600e3) : h, m = Math.round(hrs * 60 / 5) * 5;
     var when = m <= 0 ? (pt ? ' agora' : ' now') : (pt ? ' em ' : ' in ') + (m >= 60 ? Math.floor(m / 60) + '\u00a0h' + (m % 60 ? '\u00a0' + (m % 60) + '\u00a0min' : '') : m + '\u00a0min')   /* the time never splits across lines */;

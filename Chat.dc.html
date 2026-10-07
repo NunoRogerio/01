@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=192"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=193"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=206"></script>
 <script src="station.js?v=3"></script>
@@ -576,7 +576,7 @@ class Component extends DCLogic {
     const M = r && window.__wfLiveMap && window.__wfFireModel ? (window.__wfFireModel({ id: r[2], st: r[0], lat, lon, ha: r[8], res: r[7], note: r[4] }) || null) : null;
     const mdl = M && !M.failed && M.snaps && M.snaps[0] ? M : null;
     const HELD0 = c.closed || c.stage >= 7, HM = !HELD0 && window.__wfHomesCheck ? (mdl && mdl.snaps[0].ring && mdl.snaps[0].ring.length ? window.__wfHomesCheck(id, mdl.snaps[0].ring, null) : (() => {
-      const ox = (Number(x) || 610) - 610, oy = (Number(y) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, u = 26 * Math.cos(t), v = 14 * Math.sin(t); ring.push([598 + ox + u * Math.cos(a) - v * Math.sin(a), 298 + oy + u * Math.sin(a) + v * Math.cos(a)]); }
+      const ring = window.__wfFireRing(x, y);   /* (Oct 7) the fire's irregular polygon, as the map draws it */
       return window.__wfHomesCheck(id, null, ring); })()) : null;
     const HT = HM && window.__wfHomesText ? window.__wfHomesText(HM, PT) : null;
     return { HM, HT, ackd: !!(HT && window.__wfHomesAcked && window.__wfHomesAcked(id, HM)), id };
@@ -909,7 +909,7 @@ class Component extends DCLogic {
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;
-        items.push({ isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: tone(S).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
+        items.push({ isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: tone(St || S).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)
