@@ -55,8 +55,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
     admin: ['JW', 'James Whitmore', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/faces/us-m1.jpg', 'en'],
     /* (Oct 6) role profiles, signed in with the California area (wf-role ca) and known by wf-custom */
-    coord: ['EO', 'Elena Ortiz', 'Team coordinator', 'Los Angeles County Fire Department', 'California region only', '', 'en'],
-    ff: ['DB', 'Daniel Brooks', 'Firefighter', 'Los Angeles County Fire Department', 'California region only', '', 'en']
+    coord: ['EO', 'Elena Ortiz', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
+    ff: ['DB', 'Daniel Brooks', 'Lieutenant', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)
   var SUMS = {
@@ -65,8 +65,8 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     nv: 'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.',
     amz: 'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.',
     admin: 'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.',
-    coord: 'Leads a firefighter team. Takes on incidents, sends crews and vehicles, and keeps the team chat and the fire state up to date.',
-    ff: 'Works on the fire line in a team. Follows the incidents the team is on, reports from the field and answers the coordinator.'
+    coord: "Commands Station 11 and its area. Takes every incident in the area, assigns the station's crews and vehicles, and works with the other captains when a fire needs more than one station.",
+    ff: "Leads the Engine 11 crew at Station 11. Gets the captain's dispatch orders, confirms them and takes the crew to the fire."
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
