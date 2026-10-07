@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=171"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=172"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
@@ -864,7 +864,7 @@ class Component extends DCLogic {
     o.hm = { tagD: HT && ackd ? 'inline-flex' : 'none', tag: HT ? HT.tag : '', txt: HT ? HT.title : '', go: hmGo };
     setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && !ackd && document.visibilityState !== 'hidden' ? Object.assign({}, HT, { go: hmGo, ack: () => window.__wfHomesAck(cid, HT.h) }) : null); }, 0);
     o.cp = { d: on ? 'grid' : 'none', fullD: on && o.downPE === 'none' ? 'grid' : 'none', gpsMt: '0', bandH: on ? 310 : 234, lift: on ? 38 : 0, attrB: on ? 82 : 0, h: String(h), x: (HZ.indexOf(h) * 100) + '%',
-      tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Houses in reach' : ''), sel: String(k === h), w: k === h ? 600 : 400, fg: k === h ? '#1C1C1E' : '#FFFFFF', pick: () => { if (((this.state || {}).chz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chz: k }); } })) };
+      tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Houses at risk' : ''), sel: String(k === h), w: k === h ? 600 : 400, fg: k === h ? '#1C1C1E' : '#FFFFFF', pick: () => { if (((this.state || {}).chz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ chz: k }); } })) };
     /* full screen: the switcher sits left of the stacked round controls, level with the lowest (fixed: bottom 20px, right 68px) */
     return o;
   }

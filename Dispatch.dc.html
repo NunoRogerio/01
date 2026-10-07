@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=171"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=172"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
@@ -1251,7 +1251,7 @@ class Component extends DCLogic {
         const ox = (Number(o.fireX) || 610) - 610, oy = (Number(o.fireY) || 290) - 290, a = -35 * Math.PI / 180, ring = []; for (let i = 0; i < 48; i++) { const t = i / 48 * 6.2832, x = 26 * Math.cos(t), y = 14 * Math.sin(t); ring.push([598 + ox + x * Math.cos(a) - y * Math.sin(a), 298 + oy + x * Math.sin(a) + y * Math.cos(a)]); }
         return window.__wfHomesCheck(id, null, ring); })() : null;
       o.fp = { d: on && !o.full ? 'grid' : 'none', fullD: on && o.full ? 'grid' : 'none', grow: on ? G[h] : 0, x: (HZ.indexOf(h) * 100) + '%', stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
-        tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fgD: k === h ? '#1C1C1E' : '#FFFFFF', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Houses in reach' : ''), pick: () => { if (((this.state || {}).fhz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: k }); } })) };
+        tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fgD: k === h ? '#1C1C1E' : '#FFFFFF', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Houses at risk' : ''), pick: () => { if (((this.state || {}).fhz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: k }); } })) };
       /* (Oct 6) houses in reach: a red dot on each horizon whose projected shape reaches them, and the pulsing red warning that opens the earliest */
       const HT = on && HM && window.__wfHomesText ? window.__wfHomesText(HM, window.__wfLang === 'pt') : null;
       const hmGo = () => { if (!HT) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: HT.h, ftab: 'fire', full: false }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} };
