@@ -964,7 +964,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   // (Oct 7) the people-at-risk badge on the title line: a rounded red triangle with "!"; a tap shows a small tooltip
   // ("People at risk" over the warning's words) that grows from the badge; a tap on the tooltip opens that horizon, a tap outside closes it
   (function () {
-    try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{-webkit-tap-highlight-color:transparent;touch-action:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1),background-color .25s ease}' + ':root .wf-hmtag[data-docked="0"]{background:rgba(118,118,128,0.12)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;opacity:0;pointer-events:none}:root .wf-hmtag[data-docked="0"] svg{opacity:0}' + 'html.wf-hm-drag .wf-hmtag[data-docked="0"]{opacity:1}html.wf-hm-near .wf-hmtag[data-docked="0"]{transform:scale(1.15);background:rgba(118,118,128,0.24)!important}.wf-hmtag[data-docked="1"]{box-shadow:0 0 16px rgba(0,0,0,.12)}.wf-hmtag.wf-hm-hide{visibility:hidden}' + '#wf-hmtip{position:fixed;z-index:420;max-width:260px;box-sizing:border-box;padding:16px;border-radius:16px;background:var(--wf-surface,#FFFFFF);color:var(--wf-ink,#1C1C1E);box-shadow:0 0 30px rgba(0,0,0,.16);transform-origin:top right;transform:scale(.6);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease;-webkit-user-select:none;user-select:none}#wf-hmtip.on{transform:none;opacity:1}#wf-hmtip b{display:block;font-size:16px;line-height:20px;font-weight:600}#wf-hmtip span{display:block;margin-top:4px;font-size:16px;line-height:20px;color:var(--wf-sec,#545458)}'; (document.head || document.documentElement).appendChild(s); } catch (e) {}
+    try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{-webkit-tap-highlight-color:transparent;touch-action:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1),background-color .25s ease}' + ':root .wf-hmtag[data-docked="0"]{background:rgba(118,118,128,0.12)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;opacity:0;pointer-events:none}:root .wf-hmtag[data-docked="0"] svg{opacity:0}' + 'html.wf-hm-docking .wf-hmtag{visibility:hidden}html.wf-hm-drag .wf-hmtag[data-docked="0"]{opacity:1}html.wf-hm-near .wf-hmtag[data-docked="0"]{transform:scale(1.15);background:rgba(118,118,128,0.24)!important}.wf-hmtag[data-docked="1"]{box-shadow:0 0 16px rgba(0,0,0,.12)}.wf-hmtag.wf-hm-hide{visibility:hidden}' + '#wf-hmtip{position:fixed;z-index:420;max-width:260px;box-sizing:border-box;padding:16px;border-radius:16px;background:var(--wf-surface,#FFFFFF);color:var(--wf-ink,#1C1C1E);box-shadow:0 0 30px rgba(0,0,0,.16);transform-origin:top right;transform:scale(.6);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease;-webkit-user-select:none;user-select:none}#wf-hmtip.on{transform:none;opacity:1}#wf-hmtip b{display:block;font-size:16px;line-height:20px;font-weight:600}#wf-hmtip span{display:block;margin-top:4px;font-size:16px;line-height:20px;color:var(--wf-sec,#545458)}'; (document.head || document.documentElement).appendChild(s); } catch (e) {}
     var tip = null, src = null;
     function close() { if (!tip) return; var t = tip; tip = null; src = null; t.classList.remove('on'); setTimeout(function () { t.remove(); }, 300); }
     function open(b) {
@@ -993,8 +993,12 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   function near(x, y, on) { var z = on ? zone() : null, r = z ? z.getBoundingClientRect() : null, n = !!(r && Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2)) < 72);
     document.documentElement.classList.toggle('wf-hm-drag', !!(on && z)); document.documentElement.classList.toggle('wf-hm-near', n);
     if (n !== nearOn) { nearOn = n; if (n) { try { if (navigator.vibrate) navigator.vibrate(6); } catch (x) {} } } return n; }
-  function dock() { var z = zone(), p = el; if (!p) return; var f0 = ack; el = null; sig0 = '';
+  var docking = false;
+  function dock() { var z = zone(), p = el; if (!p) return; var f0 = ack; el = null; sig0 = ''; p.id = 'wf-homes-morph';
     if (!z) { near(0, 0, false); if (f0) f0(); p.remove(); return; }
+    /* (Oct 7) robust: the page learns it is docked at once (its badge stays hidden until the morph lands), nothing can
+       bring a second warning up meanwhile, and the morph is always cleared, whatever happens */
+    docking = true; document.documentElement.classList.add('wf-hm-docking'); try { if (f0) f0(); } catch (x) {}
     try { if (navigator.vibrate) navigator.vibrate([8, 40, 16]); } catch (x) {}
     var r = p.getBoundingClientRect(), zr = z.getBoundingClientRect(), ic = p.querySelector('svg');
     p.style.transition = 'none'; p.style.translate = '0px 0px'; p.style.transform = 'none'; p.style.left = r.left + 'px'; p.style.top = r.top + 'px'; p.style.right = 'auto'; p.style.bottom = 'auto'; p.style.width = r.width + 'px'; p.style.height = r.height + 'px'; p.style.maxWidth = 'none'; p.style.margin = '0'; p.style.minHeight = '0'; p.style.pointerEvents = 'none';
@@ -1004,7 +1008,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
       p.style.transition = 'left ' + E + ',top ' + E + ',width ' + E + ',height ' + E + ',border-radius ' + E + ',padding ' + E;
       p.style.left = zr.left + 'px'; p.style.top = zr.top + 'px'; p.style.width = zr.width + 'px'; p.style.height = zr.height + 'px'; p.style.padding = '0px'; p.style.borderRadius = '16px';
       ic.style.transition = 'transform ' + E; ic.style.transformOrigin = '50% 50%'; ic.style.transform = 'scale(' + (24 / 36) + ')'; }); });
-    setTimeout(function () { near(0, 0, false); if (f0) f0(); p.remove(); setTimeout(function () { var b = zone(); try { if (b) b.animate([{ transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 280, easing: 'cubic-bezier(.2,.8,.2,1)' }); if (navigator.vibrate) navigator.vibrate(10); } catch (x) {} }, 30); }, 470); }
+    setTimeout(function () { try { near(0, 0, false); } catch (x) {} try { p.remove(); } catch (x) {} docking = false; document.documentElement.classList.remove('wf-hm-docking'); setTimeout(function () { var b = zone(); try { if (b) b.animate([{ transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 280, easing: 'cubic-bezier(.2,.8,.2,1)' }); if (navigator.vibrate) navigator.vibrate(10); } catch (x) {} }, 30); }, 470); }
   // pulling the badge out: past 10px it pops (a tick), the warning comes back under the finger and follows it
   document.addEventListener('pointerdown', function (e) { var b = e.target && e.target.closest ? e.target.closest('.wf-hmtag[data-docked="1"]') : null; if (!b) return;
     pull = { b: b, x: e.clientX, y: e.clientY, on: false }; b.__moved = false; }, true);
@@ -1033,6 +1037,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     window.addEventListener('resize', function () { if (p.isConnected) clamp(); });
   }
   window.__wfHomesAlert = function (o) {
+    if (docking) return;
     if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
     css(); tap = o.go; ack = o.ack; var PT = window.__wfLang === 'pt';
     var off = document.getElementById('wf-offer'), bot = 32 + (off && off.offsetHeight ? off.offsetHeight + 16 : 0);
