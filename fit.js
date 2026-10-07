@@ -138,6 +138,8 @@ window.__wfBlink=function(path,dur){
   // way, so it reads exactly as in portrait whatever way the phone is turned.
   var rotSty=null;
   function unrotate(iw,ih){var a=typeof window.orientation==='number'?window.orientation:(screen.orientation?(screen.orientation.angle>180?screen.orientation.angle-360:screen.orientation.angle):0);
+    if(!a&&iw>ih&&!DESK){try{var ty=screen.orientation&&screen.orientation.type||'';a=/secondary/.test(ty)?-90:90;}catch(e){a=90;}}   // (Oct 7) no angle reported: still keep the screen upright
+    try{if(!DESK&&screen.orientation&&screen.orientation.lock&&!window.__wfFluidLand&&!fluid)screen.orientation.lock('portrait').catch(function(){});}catch(e){}   // where the browser allows (installed on Android), lock it outright
     if(!rotSty){rotSty=document.createElement('style');rotSty.id='wf-rot';document.head.appendChild(rotSty);}
     if(!(iw>ih)||DESK||!a){rotSty.textContent='';document.documentElement.classList.remove('wf-rot');window.__wfRotA=0;return null;}
     var tf=a>0?'translateX('+iw+'px) rotate(90deg)':'translateY('+ih+'px) rotate(-90deg)';
@@ -146,7 +148,8 @@ window.__wfBlink=function(path,dur){
   function fit(){
     var iw=window.innerWidth,ih=window.innerHeight,r=document.documentElement.style,s,vp;
     var flu=fluid||(!DESK&&!!window.__wfFluidLand&&iw>ih);
-    var R=(flu&&!window.__wfHoldUp)?unrotate(0,1):unrotate(iw,ih);   // (Oct 5) a panel over a map screen (statistics) can hold it upright: window.__wfHoldUp, then a 'resize' eventif(R){iw=R[0];ih=R[1];}   // a fixed screen can ask to fill the screen in landscape (the candidate's full-screen map)
+    var R=(flu&&!window.__wfHoldUp)?unrotate(0,1):unrotate(iw,ih);   // (Oct 5) a panel over a map screen (statistics) can hold it upright: window.__wfHoldUp, then a 'resize' event
+    if(R){iw=R[0];ih=R[1];}   // (Oct 7, fix: this line had slipped into the comment above, so turned screens were drawn landscape-sized) a fixed screen can ask to fill the screen in landscape (the candidate's full-screen map)
     if(flu){
       s=Math.min(Math.min(iw,ih)/W,MAXS);
       var ins=insets();
@@ -1064,3 +1067,8 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     var what = b ? '~' + b + (pt ? (b === 1 ? ' habitação em risco' : ' habitações em risco') : (b === 1 ? ' structure at risk' : ' structures at risk')) : (pt ? 'Habitações em risco' : 'Structures at risk');
     return { h: h, title: what + when, sub: p ? p + '.' : '', tag: what + when }; };
 })();
+// (Oct 7) the unit icons, one set for the whole app (Crews tab units, summary vehicles): 24px line drawings, stroke 1.8
+window.__wfUnitIC = { crew: 'M8.5 7.2a3.5 3.5 0 0 1 7 0M7 7.2h10M12 7.2v0M9.2 8.6a2.8 2.8 0 0 0 5.6 0M5.5 20.5v-1.8a4.5 4.5 0 0 1 4.5-4.5h4a4.5 4.5 0 0 1 4.5 4.5v1.8',
+            tender: 'M5.5 6.5h6a3 3 0 0 1 3 3v.5a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3v-.5a3 3 0 0 1 3-3Z M8.5 7.9c.8 1 1.3 1.7 1.3 2.3a1.3 1.3 0 0 1-2.6 0c0-.6.5-1.3 1.3-2.3Z M2.5 15.5h1.8M8.6 15.5h6.8M19.6 15.5h1.4v-3.3L18.6 8.5h-3.1v7 M6.5 13v2.5 M4.4 16.8a2 2 0 1 0 4 0a2 2 0 1 0-4 0 M15.4 16.8a2 2 0 1 0 4 0a2 2 0 1 0-4 0',
+            engine: 'M2.5 7.5h11v9h-11Z M13.5 10.5h4l3 3v3h-7 M5.3 18.4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M15.3 18.4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M2.5 5.5l9-1.5M5 5.1l.4 2.4M8.5 4.5l.4 2.4',
+            heli: 'M3 5h16M11 5v3 M6.5 8H13a5 5 0 0 1 5 5 2.5 2.5 0 0 1-2.5 2.5H9A4.5 4.5 0 0 1 4.5 11 3 3 0 0 1 6.5 8Z M17.8 12H22.5M22.5 10v4 M8 15.5v3M14.5 15.5v3M5 18.5h12.5', tanker: 'M12 2c.8 0 1.3.9 1.3 2v5.5h8.2v2.3l-8.2 1.4v5.4l2.9 1.8V22H7.8v-1.6l2.9-1.8v-5.4l-8.2-1.4V9.5h8.2V4c0-1.1.5-2 1.3-2Z M6 9.5V7.5M18 9.5V7.5 M4.5 7.5h3M16.5 7.5h3', plane: 'M12 2.5c.9 0 1.4 1.4 1.4 2.8v4.3l7.1 4.2v1.9l-7.1-2.3v4.1l2.3 1.8v1.4L12 19.8l-3.7.9v-1.4l2.3-1.8v-4.1l-7.1 2.3v-1.9l7.1-4.2V5.3c0-1.4.5-2.8 1.4-2.8Z' };

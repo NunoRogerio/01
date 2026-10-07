@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=181"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=184"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=203"></script>
 <script src="i18n.js?v=171"></script>
@@ -397,16 +397,24 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-for list="{{forces}}" as="f" hint-placeholder-count="2">
           <!-- (Oct 5) the same team card as the fire's Crews tab: the station (or air team) heads it and folds its people away and back; a full-width line between the head and the people -->
           <article style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); overflow: hidden">
-            <button type="button" class="chrow" onClick="{{f.tog}}" aria-expanded="{{f.exp}}" style="display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.station}}</span><span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{f.veh}}</span></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{f.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></button>
+            <button type="button" class="chrow" onClick="{{f.tog}}" aria-expanded="{{f.exp}}" style="display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer"><img src="{{f.crest}}" data-crest="{{f.station}}" alt="" style="width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.station}}</span><span role="img" aria-label="{{f.vAria}}" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; color: #545458"><sc-for list="{{f.vicons}}" as="vi" hint-placeholder-count="2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{vi.d}}"></path></svg></sc-for></span></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{f.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg></button>
             <div style="display: grid; grid-template-rows: {{f.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><div style="display: flex; flex-direction: column; min-height: 0; overflow: hidden; border-top: 1px solid rgba(60,60,67,0.22)">
             <sc-for list="{{f.people}}" as="p" hint-placeholder-count="3">
               <button type="button" class="chrow" onClick="{{p.go}}" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 20px; align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-top: {{p.sep}}; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: {{p.bg}}; font-size: 16px; font-weight: 600; overflow: hidden; box-shadow: {{p.ring}}">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px">{{p.name}}</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="grid-row: 1 / span 2; grid-column: 3"><path d="m9 6 6 6-6 6"></path></svg>
-                <span style="grid-column: 2; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
+                <span style="grid-column: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}<span style="display: {{p.vtagD}}; align-items: center; min-height: 24px; padding: 2px 8px; box-sizing: border-box; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3A3A3C; font-size: 13px; font-weight: 600; line-height: 16px; white-space: nowrap">{{p.vtag}}</span></span>
               </button>
             </sc-for>
+            <!-- (Oct 7) the team's vehicles, under its people: the unit icon, the vehicle, its type and how many ride in it -->
+            <div style="display: {{f.vehD}}; border-top: 1px solid rgba(60,60,67,0.22)"><sc-for list="{{f.vehs}}" as="v" hint-placeholder-count="2">
+              <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box; background: #FFFFFF; color: #000000">
+                <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{v.ic}}"></path></svg></span>
+                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px">{{v.name}}</span>
+                <span style="grid-column: 2; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{v.sub}}</span>
+              </div>
+            </sc-for></div>
             </div></div>
           </article>
         </sc-for>
@@ -763,12 +771,24 @@ class Component extends DCLogic {
       const R = { onscene: 4, enroute: 3, released: 2, standby: 1 }; g.veh = g.veh.concat(f.veh || []); g.crew = g.crew.concat(f.coord && f.coord !== g.coord ? [f.coord] : [], f.crew || []);
       if ((R[f.st] || 0) > (R[g.st] || 0)) g.st = f.st; return A; }, []);
     const vehN = (v) => v.reduce((a, x) => a + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1), 0);   /* "2 × Engines" is two vehicles */
+    /* (Oct 7) each team's vehicles, one by one, with their icon (the app's unit icons), and who rides in which:
+       "2 × Engines" is Engine 141 and Engine 141-2; the coordinator rides in the first, the crew fills the seats in order */
+    const UIC = window.__wfUnitIC || {}, vKind = (n) => /tender|VTTF|autotanque|Nodriza|\bAT-/i.test(n) ? 'tender' : /heli|Helic/i.test(n) ? 'heli' : /tanker|plane|avião/i.test(n) ? 'plane' : 'engine';
+    const vSeats = (n) => /VFCI|CCF|BRP|ABTF/.test(n) ? 5 : /VLCI|VLHR|BFP|UR-/.test(n) ? 3 : /VTTF|Nodriza|CCGC|AT-|Tender/i.test(n) ? 2 : /Brush Patrol/i.test(n) ? 2 : 3;
+    const vType = (k, n) => k === 'tender' ? L('Water tender', 'Autotanque') : /Brush Patrol/i.test(n) ? L('Brush patrol', 'Patrulha') : /VLCI|BFP|UR-/.test(n) ? L('Light engine', 'Veículo ligeiro') : L('Engine', 'Veículo de combate');
+    const vehOf = (f) => { const num = (String(f.full || f.station).match(/(\d{1,3})\b/) || [])[1] || ''; const out = [];
+      (f.veh || []).forEach((v) => { const m = String(v).match(/^(\d+)\s*×\s*(.+)$/); if (!m) { out.push(String(v)); return; }
+        const one = m[2].replace(/tenders$/i, 'tender').replace(/ines$/i, 'ine').replace(/s$/, '').replace(/^\w/, (q) => q.toUpperCase());
+        for (let i = 0; i < +m[1]; i++) out.push(one + (num ? ' ' + num : '') + (i ? '-' + (i + 1) : '')); });
+      return out.filter((v, i) => out.indexOf(v) === i).map((n) => { const k = vKind(n); return { name: n, k, ic: UIC[k] || UIC.engine || '', seats: vSeats(n), type: vType(k, n) }; }); };
+    const ride = (V, names) => { const by = {}, cnt = V.map(() => 0); names.forEach((n, i) => { if (!V.length) return; let vi = i < V.length ? i : V.findIndex((v, j) => cnt[j] < v.seats); if (vi < 0) vi = 0; by[n] = V[vi].name; cnt[vi]++; }); return by; };   /* every vehicle gets its driver first, then the seats fill in order */
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
-      const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk];
+      const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk], V = vehOf(f), rd = ride(V, ppl.filter((p) => p.name).map((p) => p.name));
       return { tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fxClosed: Object.assign({}, (this.state || {}).fxClosed, { [fk]: open }) }); }, exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg',
         hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
-        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: p.name + ', ' + p.role, go: openPerson(p.name)   /* a full-width line between the station and its people */ })) }; });
+        vicons: V.map((v) => ({ d: v.ic })), vAria: V.map((v) => v.name).join(', '), vehs: V.map((v) => ({ ...v, sub: v.type + '. ' + Object.keys(rd).filter((n) => rd[n] === v.name).length + ' ' + L('people', 'pessoas') })), vehD: V.length ? 'block' : 'none',
+        people: ppl.filter((p) => p.name).map((p, i) => ({ ...p, vtag: rd[p.name] || '', vtagD: rd[p.name] ? 'inline-flex' : 'none', photo: pic(p.name), ring: ring(colOrg), code: p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: p.name + ', ' + p.role, go: openPerson(p.name)   /* a full-width line between the station and its people */ })) }; });
     const extras = [];
     /* (Oct 5) the air team is a team card like the stations: the shared air badge, its aircraft, and its pilot */
     if (c.air) { if (!c.air.pilot) { const taken = {}; (c.people || []).forEach((p) => { taken[p.name] = 1; }); FF.forEach((f) => { taken[f.coord] = 1; f.crew.forEach((n) => { taken[n] = 1; }); });
@@ -776,10 +796,11 @@ class Component extends DCLogic {
       const fk = 'f:air', open = !(s.fxClosed || {})[fk], pl = c.air.pilot;
       forces.push({ tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fxClosed: Object.assign({}, (this.state || {}).fxClosed, { [fk]: open }) }); }, exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg',
         crest: window.__wfAirBadge ? window.__wfAirBadge() : '', station: c.air.name, veh: String(us ? c.air.kind : L('Firefighting helicopter', c.air.kind)).replace(/ · /g, '. '),
+        vicons: [{ d: UIC.heli || '' }], vAria: c.air.name, vehD: 'block', vehs: [{ name: c.air.name, ic: UIC.heli || '', sub: L('Helicopter', 'Helicóptero') + '. ' + (pl ? 1 : 0) + ' ' + L(pl ? 'person' : 'people', pl ? 'pessoa' : 'pessoas') }],
         /* (Oct 7) the air team lists its coordinator (Air Tactical Group Supervisor / air operations coordinator) first, then the pilot */
         people: (c.people || []).filter((p) => p.kind === 'air' && !p.left).map((p) => { const r = L(p.roleEn || 'Air coordinator', p.rolePt || 'Coordenador de meios aéreos');
-          return { name: p.name, role: r, w: 600, bg: '#E5E5EA', photo: pic(p.name), ring: ring('#1C3A5E'), code: p.code || p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: p.name + ', ' + r, go: openPerson(p.name) }; })
-          .concat(pl ? [{ name: pl, role: L('Pilot', 'Piloto'), w: 600, bg: '#E5E5EA', photo: pic(pl), ring: ring('#1C3A5E'), code: pl.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: pl + ', ' + L('Pilot', 'Piloto'), go: openPerson(pl) }] : []) }); }
+          return { name: p.name, role: r, vtag: '', vtagD: 'none', w: 600, bg: '#E5E5EA', photo: pic(p.name), ring: ring('#1C3A5E'), code: p.code || p.name.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: p.name + ', ' + r, go: openPerson(p.name) }; })
+          .concat(pl ? [{ name: pl, role: L('Pilot', 'Piloto'), vtag: c.air.name, vtagD: 'inline-flex', w: 600, bg: '#E5E5EA', photo: pic(pl), ring: ring('#1C3A5E'), code: pl.split(' ').map((w) => w[0]).slice(0, 2).join(''), sep: '0', aria: pl + ', ' + L('Pilot', 'Piloto'), go: openPerson(pl) }] : []) }); }
     if (c.evac) extras.push({ icon: '', iconD: 'none', name: L('Evacuation', 'Evacuação'), sub: c.evac.people + ' ' + L('residents moved to safety', 'moradores em segurança'), stTxt: c.stage >= 6 ? L('Lifted', 'Levantada') : L('In force', 'Em vigor'), pillBg: c.stage >= 6 ? 'rgba(118,118,128,0.14)' : 'rgba(215,0,21,0.10)', pillFg: c.stage >= 6 ? '#48484A' : '#B3001B' });
     const live = FF.filter((f) => f.st !== 'standby');
     // Published counts win over the scenario's (the named crews stay illustrative)
