@@ -936,8 +936,8 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     s.textContent = '@keyframes wfHomesPulse{0%,100%{box-shadow:0 0 8px 2px rgba(215,0,21,0.45)}50%{box-shadow:0 0 28px 10px rgba(215,0,21,0.55)}}' +
       '#wf-homes{animation:wfHomesPulse 1.8s ease-in-out infinite}@media (prefers-reduced-motion: reduce){#wf-homes{animation:none;box-shadow:0 0 16px 4px rgba(215,0,21,0.5)}}';
     document.head.appendChild(s); }
-  // (Oct 7) the houses tag on the title line: a 40px square (16px corners), building icon, with the warning's soft red glow pulsing round it
-  (function () { try { var s = document.createElement('style'); s.textContent = '@keyframes wfHmTag{0%,100%{box-shadow:0 0 4px 1px rgba(215,0,21,0.4)}50%{box-shadow:0 0 16px 6px rgba(215,0,21,0.5)}}.wf-hmtag{animation:wfHmTag 1.8s ease-in-out infinite;-webkit-tap-highlight-color:transparent}@media (prefers-reduced-motion: reduce){.wf-hmtag{animation:none;box-shadow:0 0 8px 2px rgba(215,0,21,0.45)}}'; (document.head || document.documentElement).appendChild(s); } catch (e) {} })();
+  // (Oct 7) the houses-in-reach badge on the title line: a traffic-style warning sign, no glow
+  (function () { try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{-webkit-tap-highlight-color:transparent}'; (document.head || document.documentElement).appendChild(s); } catch (e) {} })();
   var el = null, tap = null, ack = null, sig0 = '';
   window.__wfHomesAlert = function (o) {
     if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
