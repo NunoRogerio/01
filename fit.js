@@ -936,8 +936,30 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     s.textContent = '@keyframes wfHomesPulse{0%,100%{box-shadow:0 0 8px 2px rgba(215,0,21,0.45)}50%{box-shadow:0 0 28px 10px rgba(215,0,21,0.55)}}' +
       '#wf-homes{animation:wfHomesPulse 1.8s ease-in-out infinite}@media (prefers-reduced-motion: reduce){#wf-homes{animation:none;box-shadow:0 0 16px 4px rgba(215,0,21,0.5)}}';
     document.head.appendChild(s); }
-  // (Oct 7) the houses-in-reach badge on the title line: a traffic-style warning sign, no glow
-  (function () { try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{-webkit-tap-highlight-color:transparent}'; (document.head || document.documentElement).appendChild(s); } catch (e) {} })();
+  // (Oct 7) the people-at-risk badge on the title line: a rounded red triangle with "!"; a tap shows a small tooltip
+  // ("People at risk" over the warning's words) that grows from the badge; a tap on the tooltip opens that horizon, a tap outside closes it
+  (function () {
+    try { var s = document.createElement('style'); s.textContent = '.wf-hmtag{-webkit-tap-highlight-color:transparent}#wf-hmtip{position:fixed;z-index:420;max-width:260px;box-sizing:border-box;padding:16px;border-radius:16px;background:var(--wf-surface,#FFFFFF);color:var(--wf-ink,#1C1C1E);box-shadow:0 0 30px rgba(0,0,0,.16);transform-origin:top right;transform:scale(.6);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease;-webkit-user-select:none;user-select:none}#wf-hmtip.on{transform:none;opacity:1}#wf-hmtip b{display:block;font-size:16px;line-height:20px;font-weight:600}#wf-hmtip span{display:block;margin-top:4px;font-size:16px;line-height:20px;color:var(--wf-sec,#545458)}'; (document.head || document.documentElement).appendChild(s); } catch (e) {}
+    var tip = null, src = null;
+    function close() { if (!tip) return; var t = tip; tip = null; src = null; t.classList.remove('on'); setTimeout(function () { t.remove(); }, 300); }
+    function open(b) {
+      close(); src = b; var PT = window.__wfLang === 'pt', go = b.querySelector('[data-hm-go]'), sub = b.getAttribute('data-tip-sub') || '';
+      tip = document.createElement('div'); tip.id = 'wf-hmtip'; tip.setAttribute('role', 'tooltip');
+      tip.innerHTML = '<b>' + (PT ? 'Populações em risco' : 'People at risk') + '</b>' + (sub ? '<span>' + sub.replace(/</g, '&lt;') + '.</span>' : '');
+      if (go) tip.style.cursor = 'pointer';
+      tip.addEventListener('click', function (e) { e.stopPropagation(); var g = go; close(); if (g) g.click(); });
+      document.body.appendChild(tip);
+      var r = b.getBoundingClientRect(); tip.style.top = Math.round(r.bottom + 8) + 'px'; tip.style.right = Math.max(16, Math.round(window.innerWidth - r.right)) + 'px';
+      requestAnimationFrame(function () { requestAnimationFrame(function () { if (tip) tip.classList.add('on'); }); });
+    }
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('[data-hm-go]')) return;   /* the tooltip's own call through to the page */
+      var b = e.target && e.target.closest ? e.target.closest('.wf-hmtag') : null;
+      if (b) { e.stopPropagation(); e.preventDefault(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (src === b) close(); else open(b); return; }
+      if (tip && !(e.target.closest && e.target.closest('#wf-hmtip'))) close();
+    }, true);
+    document.addEventListener('scroll', close, true); window.addEventListener('resize', close);
+  })();
   var el = null, tap = null, ack = null, sig0 = '';
   window.__wfHomesAlert = function (o) {
     if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
