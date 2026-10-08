@@ -74,7 +74,9 @@
   function open() {
     frame(); if (!ready) { want = open; return; }
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-    place(); mode = 'open'; through(true); ifr.style.visibility = 'visible'; send('open'); slide('open'); clack(true);
+    // (Oct 8, 08:40) captain and team lead: the menu opens on its icon column only, no section pulled open; a tap on an icon opens it
+    var r = false; try { r = !!(window.__wfMine && window.__wfMine()); } catch (e) {}
+    place(); mode = r ? 'rail' : 'open'; through(true); ifr.style.visibility = 'visible'; send(r ? 'openrail' : 'open'); slide(mode); clack(true);
   }
   function close() {
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}

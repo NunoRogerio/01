@@ -19,7 +19,7 @@
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=207"></script>
 <script src="station.js?v=3"></script>
-<script src="menu.js?v=16"></script>
+<script src="menu.js?v=17"></script>
 <script src="i18n.js?v=172"></script>
 <script src="live.js?v=43"></script>
 <script src="chat.js?v=93"></script>
@@ -99,7 +99,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </li>
           </sc-for>
         </ul>
-        <!-- (Oct 8) no incidents: the day's station duties, as the same list cards; a tap marks one done (or undoes it) -->
+        <!-- (Oct 8) the day's station duties, under the incidents (08:40: always, not only without incidents), as the same list cards; a tap marks one done (or undoes it) -->
         <ul style="display: {{asg.dutyD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.duties}}" as="d" hint-placeholder-count="3">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
@@ -390,7 +390,8 @@ class Component extends DCLogic {
     // (Oct 8) Between incidents the station works its routine (LACoFD 24-hour shift from 08:00, station time): the team lead runs his
     // engine company's day, the captain the station's. Each duty is Done once its time has passed, Now while on, Later before; a tap
     // marks it done (or undoes it), kept for the shift on this phone. Simulated for the demonstration (*).
-    const dutyList = (() => { if (rows.length) return [];
+    // (Oct 8, 08:40) the duties stay listed with the incidents too, so what is done and what is left always shows
+    const dutyList = (() => {
       const nowLA = (() => { try { const p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date()); const g = (t) => +((p.find((q) => q.type === t) || {}).value || 0); return g('hour') * 60 + g('minute'); } catch (e) { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); } })();
       const shift = (() => { const d = new Date(Date.now() - (nowLA < 480 ? 864e5 : 0)); return d.toISOString().slice(0, 10); })(), SK = 'wf-duty-' + MINE.key + '-' + shift;
       let MK = {}; try { MK = JSON.parse(localStorage.getItem(SK) || '{}') || {}; } catch (e) {}
@@ -435,12 +436,12 @@ class Component extends DCLogic {
     const shownRows = resolvedTab ? closedRows : rows, shownDuties = dutyList.filter((d) => (d.doneStr === 'true') === resolvedTab);
     const nTodo = rows.length + dutyLeft, nDone = closedRows.length + (dutyList.length - dutyLeft);
     return { title: lead ? L('Deployments', 'Destacamentos') : L('Assignments', 'Atribuições'), rows: shownRows, none: false, listD: shownRows.length ? 'flex' : 'none',
-      duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: dutyList.length ? 'block' : 'none',
+      duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: dutyList.length && !rows.length ? 'block' : 'none',
       tabX: resolvedTab ? '100%' : '0%',
       tabs: [['todo', L('To do', 'Por fazer'), nTodo], ['done', L('Resolved', 'Resolvidos'), nDone]].map(([k, l, n]) => ({ label: l + (n ? ' ' + n : ''), sel: String(tab === k), w: tab === k ? 600 : 400,
         pick: () => { if (tab === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ atab: k }); } })),
       emptyOn: !shownRows.length && !shownDuties.length, emptyTxt: resolvedTab ? L('Nothing resolved yet this shift.', 'Nada resolvido ainda neste turno.') : L('Every duty done this shift.', 'Todas as tarefas do turno feitas.'),
-      sub: dutyList.length ? (lead ? L('No deployments.', 'Sem destacamentos.') : L('No incidents in the area.', 'Sem incidentes na área.')) : '',   /* the counts are on the switcher */
+      sub: dutyList.length && !rows.length ? (lead ? L('No deployments.', 'Sem destacamentos.') : L('No incidents in the area.', 'Sem incidentes na área.')) : '',   /* the counts are on the switcher */
       noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),
       nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
       view: { homeMapW: W, homeMapH: H, homeFx: Math.round(fx), homeFy: Math.round(fy), homeZ: +z.toFixed(3) } };
@@ -637,10 +638,11 @@ class Component extends DCLogic {
       ctrlTop: 60, zoom: home ? AS.view.homeZ : 0.9, zoomFull: home ? AS.view.homeZ : 1.08, attrFull: 40,
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestD: K.url ? 'block' : 'none', crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
-        title: home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
-        ...((nOn || (!(window.__wfStaffOf && window.__wfStaffOf(S.id)) && n25)) ? { tag: (nOn || n25) + ((nOn || n25) === 1 ? ' fire' : ' fires'),   /* a profile station's tag counts only the fires it is working (the same as Deployed) */ tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
+        /* (Oct 8, 08:40) the team lead's home: his team is the protagonist (its name, its state); the station goes in the description */
+        title: lead && crews[0] ? crews[0].name : home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
+        ...(lead && crews[0] ? tg(crews[0].st) : (nOn || (!(window.__wfStaffOf && window.__wfStaffOf(S.id)) && n25)) ? { tag: (nOn || n25) + ((nOn || n25) === 1 ? ' fire' : ' fires'),   /* a profile station's tag counts only the fires it is working (the same as Deployed) */ tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
-        ...(() => { const r0 = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : '', A = home && window.__wfStationArea ? window.__wfStationArea(S) : null, r = A && A.name ? A.name + '. ' + r0 : r0; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
+        ...(() => { const r0 = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : '', A = home && window.__wfStationArea ? window.__wfStationArea(S) : null, r = A && A.name ? A.name + '. ' + r0 : r0, stN = lead ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : ''; if (stN) return { region: stN + '. ' + (A && A.name ? A.name : r0), regD: 'block' }; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
       rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length && !home ? 'flex' : 'none', loc: lc, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'
