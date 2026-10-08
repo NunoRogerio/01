@@ -1355,3 +1355,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Risk badge beside an unfolding band:** the badge matches the band's tag row (40px), never the unfolded band, and stays level with the row (it had grown to the band's full height and crushed it).
 - **Structures-at-risk warning:** its OK button is in the warning's red (rgb(215, 0, 21), white text), like the triangle.
 - **Action items (standing):** concluding one always asks for confirmation (shared bottom dialog: "Mark as done?", Cancel / Mark done); undoing does not ask.
+- **Menu on the icon column (Oct 8, 14:00):** when a dialog opens in the menu (e.g. Sign out?) while the screen rests on the icon column, the screen slides out all the way so the dialog shows whole; Cancel brings it back to the column. Dialog body text wraps without a lone last word (text-wrap: pretty).
+- **Risk badge (Oct 8, 14:00):** the triangle keeps the same position and size when the stage band unfolds (top right, as tall as the tag row).

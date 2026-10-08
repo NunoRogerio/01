@@ -65,7 +65,7 @@
     if (m === 'rail') p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; else if (m) p.style.clipPath = p.style.webkitClipPath = 'inset(0px ' + R + 'px 0px -24px)'; else { p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; setTimeout(function () { if (!mode && p) { p.style.clipPath = p.style.webkitClipPath = ''; } }, DUR + 60); } }
   // (Oct 4, 16:10) folded to the icon column, the screen is really resized to the visible 330px (not cropped): its width variable and the
   // viewport the screens read both shrink, and everything that reads them (maps, bands, rows) lays out again, as on the main screen
-  var vp0 = null;
+  var vp0 = null, dlgRail = false;
   function rail(on, p) { var V = window.__wfVP; if (!V) return; var HW = host() ? host().offsetWidth : 390;
     if (on) { if (!vp0) vp0 = V; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); p.style.width = (HW - 60) + 'px'; p.style.overflow = 'hidden'; }
     else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); p.style.width = ''; p.style.overflow = ''; }
@@ -86,7 +86,10 @@
   function toggle() { if (mode) close(); else open(); }
   // the menu tells which way it is: a section open, or folded to its icon column
   window.addEventListener('message', function (e) { if (e.origin !== location.origin || !e.data || !e.data.wfMenu) return; var m = e.data.wfMenu;
-    if (m === 'dlgon' || m === 'dlgoff') { if (btn) { btn.style.opacity = m === 'dlgon' ? '0' : ''; btn.style.pointerEvents = m === 'dlgon' ? 'none' : 'auto'; } return; }   // (Oct 4) a dialog in the menu: the button gives way
+    if (m === 'dlgon' || m === 'dlgoff') { if (btn) { btn.style.opacity = m === 'dlgon' ? '0' : ''; btn.style.pointerEvents = m === 'dlgon' ? 'none' : 'auto'; }
+      /* (Oct 8, 14:00) a dialog in the menu while the screen rests on the icon column: the screen slides out all the way so the dialog shows whole; it comes back to the column when the dialog closes */
+      if (m === 'dlgon' && mode === 'rail') { dlgRail = true; mode = 'open'; slide('open'); } else if (m === 'dlgoff' && dlgRail) { dlgRail = false; if (mode) { mode = 'rail'; slide('rail'); } }
+      return; }   // (Oct 4) a dialog in the menu: the button gives way
     if (m === 'rail' && mode) { mode = 'rail'; slide('rail'); } else if (m === 'open' && mode) { mode = 'open'; slide('open'); } else if (m === 'close' && mode) close(); });
   // keep the button on its spot while the screen is showing (the screen can re-render or resize)
   function tick() { if (!btn) make(); else if (!mode) place(); }

@@ -833,7 +833,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <section class="wf-dlg" role="alertdialog" aria-modal="true" aria-labelledby="aicTitle" aria-describedby="aicBody" aria-hidden="{{aic.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 0 60px rgba(0,0,0,0.132); pointer-events: {{aic.pe}}; transform: translateY({{aic.y}}); transition: transform {{aic.dur}} {{aic.ease}}">
     <!-- Text styles as in the user settings: title, description, annotation -->
     <h2 id="aicTitle" style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; color: #000000">{{aic.title}}</h2>
-    <p id="aicBody" style="margin: 4px 0 0; font-size: 17px; line-height: 22px; color: #000000">{{aic.body}}</p>
+    <p id="aicBody" style="margin: 4px 0 0; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty">{{aic.body}}</p>
     <p style="display: {{aic.noteD}}; margin: 4px 0 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{aic.note}}</p>
     <div class="wf-dlg-acts">
       <button type="button" class="btn wf-sec" onClick="{{aic.close}}" style="height: 48px; font-size: 17px; font-weight: 600">{{aic.cancel}}</button>
