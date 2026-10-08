@@ -131,26 +131,24 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="chsurf" style="position: relative; display: flex; flex-direction: column; flex-grow: 1; min-height: 0">
     <!-- (Oct 8, 21:16) scrolled up away from the newest messages: a dark round button with a down arrow, centred 16px above the chat box, takes you back down -->
     <button type="button" class="chbtn" data-round="1" onClick="{{toEnd}}" aria-label="Newest messages" style="position: absolute; z-index: 6; left: 50%; bottom: 16px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin-left: -22px; padding: 0; border: 0; border-radius: 50%; background: rgb(58, 58, 60); color: rgb(255, 255, 255); box-shadow: 0 2px 10px rgba(0,0,0,0.2); opacity: {{toEndOp}}; pointer-events: {{toEndPe}}; transform: translateY({{toEndY}}); transition: opacity .25s ease, transform .3s cubic-bezier(.2,.8,.2,1); cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></button>
-    <div class="chscroll" data-wf-keepscroll="1" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
+    <div class="chscroll" data-wf-keepscroll="1" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
       <sc-for list="{{items}}" as="m" hint-placeholder-count="4">
         <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
         <sc-if value="{{m.isSys}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="align-self: center; max-width: 300px; font-size: 16px; line-height: 20px; color: #545458; text-align: center">{{m.text}} · {{m.time}}</div>
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
-          <!-- (Oct 8, 21:00) the sender above the bubble: photo, name and station on one line, so the bubble takes the full width -->
-          <div class="chfade" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: {{m.gap}}">
-            <div style="display: {{m.hdD}}; align-items: center; gap: 8px; max-width: 100%; min-width: 0">
+          <!-- (Oct 8, 21:18) the sender inside the bubble, at its top: photo, name and station on one line, 16px above the message -->
+          <div class="chfade chbubL" style="display: flex; flex-direction: column; gap: 4px; align-self: flex-start; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
+            <div style="display: {{m.hdD}}; align-items: center; gap: 8px; max-width: 100%; min-width: 0; margin-bottom: 12px">
               <!-- Tap the photo: a tooltip with the name and role (as on the icon cards); tap it again or anywhere else to hide it -->
               <span data-avtip="1" role="button" tabindex="0" onClick="{{m.tip}}" aria-label="{{m.tipAria}}" style="position: relative; flex-shrink: 0; width: 32px; height: 32px; cursor: pointer">
                 <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
               </span>
               <span style="min-width: 0; font-size: 16px; line-height: 20px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><b style="font-weight: 600; color: #1C1C1E">{{m.who}}</b>{{m.whoOrg}}</span>
             </div>
-            <div class="chbubL" style="display: flex; flex-direction: column; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; padding: 16px; border-radius: 6px 18px 18px 18px; background: {{m.bub}}">
-              <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
-              <span style="align-self: flex-end; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
-            </div>
+            <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
+            <span style="align-self: flex-end; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
@@ -917,7 +915,7 @@ class Component extends DCLogic {
       if (d !== prevDay) { items.push({ isDay: true, day: d === today ? L('Today', 'Hoje') : dayTxt(vt) }); prevDay = d; prevFrom = null; }
       const time = C.hhmm(vt);
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
-      if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
+      if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: '0' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
         items.push({ isThem: true, text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', hdD: same ? 'none' : 'flex', who: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name, whoOrg: p.org ? '. ' + p.org : '', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
           tip: (e) => { try { e.stopPropagation(); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (on) { this.setState({ avTip: null }); return; }
