@@ -122,17 +122,27 @@
   function emit() { try { var ch = false; if (DB && DB.chats) Object.keys(DB.chats).forEach(function (k) { if (ensureLts(DB.chats[k])) ch = true; }); if (ch) save(); } catch (e) {} try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} }
   // (Oct 8, 21:00) every station working the fire has its lieutenant (the crew's chief) in the chat too, with the station's real
   // people: Station 11's lieutenant is Daniel Brooks (the lieutenant profile himself when he is signed in)
-  function ensureLts(c) { if (!c || c.kind === 'dm' || !c.people) return false; var ch = false, M = window.__wfMine ? window.__wfMine() : null;
+  // (Oct 8, 21:54) the simulated Rubio Fire is Station 11's alone: its captain and its two crews (Engine 11, Lieutenant Daniel
+  // Brooks; Brush 11, Lieutenant Kevin Marsh); the other stations are not on it. The fire page's Crews tab shows the same.
+  function soloSim(c) { if (!c || c.incId !== 'SIM-ST11-F1' || !(c.stations || []).length || !(c.forces || []).length) return false;
+    if (c.solo && (c.forces || []).some(function (f) { return f.second; })) return false;   /* done (the second crew is put back if a dispatch rebuilt the list) */
+    var i0 = c.stations.findIndex(function (s) { return !!staffOf(s); }); if (i0 < 0) return false; var s0 = c.stations[i0], SF = staffOf(s0), f0 = c.forces.find(function (f) { return f.si === i0; }); if (!f0) return false;
+    c.solo = true; var on = c.stage >= 7 ? 'released' : 'onscene'; f0.st = on;
+    c.forces.forEach(function (f) { if (f !== f0) f.st = 'standby'; });
+    c.people.forEach(function (p) { if ((p.org !== s0.short && p.kind !== 'air') || (p.kind === 'air' && !c.flags.air)) p.left = true; });   /* no air ordered: no air supervisor */
+    c.forces.push({ si: i0, ck: f0.ck, station: f0.station, full: f0.full, km: f0.km, coord: f0.coord, crew: (SF.crew2 || [SF.lead2]).slice(), veh: ['Brush ' + ((String(s0.name).match(/(\d{1,3})\b/) || [])[1] || '11')], st: on, second: true });
+    c.flags.dispatched = true; return true; }
+  function ensureLts(c) { if (!c || c.kind === 'dm' || !c.people) return false; var ch = soloSim(c), M = window.__wfMine ? window.__wfMine() : null;
     /* chats saved before: their stations by the short names people use */
     (c.people || []).forEach(function (p) { var o = shortStation(p.org); if (p.org && o !== p.org) { p.org = o; ch = true; } }); (c.stations || []).forEach(function (q) { var o = shortStation(q.short || q.name); if (q.short !== o) { q.short = o; ch = true; } }); (c.forces || []).forEach(function (f) { var o = shortStation(f.station); if (f.station && o !== f.station) { f.station = o; ch = true; } });
     if (!c.forces || !c.forces.length) return ch;
-    c.forces.forEach(function (f) { var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF ? SF.lead : (f.crew && f.crew[0]); if (!nm) return;
+    c.forces.forEach(function (f) { var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF && !f.second ? SF.lead : (f.crew && f.crew[0]); if (!nm) return;
       /* (Oct 8, 21:38) a station whose captain is in the chat is on the fire: its lieutenant is in too (unless its crew was released) */
       var capIn = c.people.some(function (p) { return p.kind === 'lead' && !p.left && p.org === (s.short || f.station); });
       var on = f.st !== 'released' && (f.st !== 'standby' || capIn), ex = c.people.find(function (p) { return p.name === nm; });
       if (ex) { if (ex.kind === 'lt' && !!ex.left === on) { ex.left = on ? undefined : true; ch = true; } return; }   /* the lieutenant is in while the crew works the fire */
       if (!on) return; var v = (f.veh || [])[0] || '', org = s.short || f.station || '';
-      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: 'Lieutenant. ' + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && M && M.key === 'ff') || undefined }); ch = true; });
+      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: 'Lieutenant. ' + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && !f.second && M && M.key === 'ff') || undefined }); ch = true; });
     return ch; }
   window.addEventListener('storage', function (e) { if (e.key === KEY) { DB = null; emit(); } });
 

@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=31"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=8"></script>
+<script src="station.js?v=9"></script>
 <script src="menu.js?v=20"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=105"></script>
+<script src="chat.js?v=107"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -660,9 +660,12 @@ class Component extends DCLogic {
     const crewSt = (i) => (i === 0 ? 'ok' : ((window.__wfStaffOf && window.__wfStaffOf(S.id)) ? ['ok', 'off', 'off', 'ok'] : ['ok', 'out', 'off', 'ok'])[(H0 >>> (i * 2)) % 4]);   /* a profile station is out only where the app sends it (statuses follow what is happening) */
     const crews = crewDefs.slice(0, nCrew).map((d, i) => { const chief = pick(), ppl = [chief]; for (let k = 1; k < d[2]; k++) ppl.push(pick()); return { name: d[0], veh: d[1], st: crewSt(i), chief, ppl }; });
     /* (Oct 7) the profile stations tell one story: their captain commands, their team lead leads the first crew */
-    { const SF = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SF) { if (cmdP[1]) cmdP[1].name = SF.captain; if (crews[0]) { crews[0].chief = SF.lead; crews[0].ppl = SF.crew && SF.crew.length ? SF.crew.slice() : [SF.lead].concat(crews[0].ppl.slice(1)); } } }   /* (Oct 8, 19:10) the team lead's crew is fixed (station.js) */
+    { const SF = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SF) { if (cmdP[1]) cmdP[1].name = SF.captain; if (crews[0]) { crews[0].chief = SF.lead; crews[0].ppl = SF.crew && SF.crew.length ? SF.crew.slice() : [SF.lead].concat(crews[0].ppl.slice(1)); }
+      if (crews[1] && SF.lead2) { crews[1].chief = SF.lead2; crews[1].ppl = SF.crew2 && SF.crew2.length ? SF.crew2.slice() : [SF.lead2].concat(crews[1].ppl.slice(1)); } } }   /* (Oct 8, 21:54) the second crew (Brush 11) is Lieutenant Kevin Marsh's, as in the chats */   /* (Oct 8, 19:10) the team lead's crew is fixed (station.js) */
     /* (Oct 7) statuses follow what is happening: a station sent to incidents (the incident chats' forces) has its first crew out, and its tag counts those fires */
     const nOn = (() => { const CC = window.__wfChat, ck = (S.type === 'way' ? 'w' : 'n') + S.id; try { return CC && CC.list ? CC.list().filter((c) => c && !c.closed && !c.dismissed && (c.forces || []).some((f) => (f.ck === ck || f.full === S.name) && f.st !== 'standby' && f.st !== 'released') && (!window.__wfChatIsOurs || !window.__wfStaffOf || !window.__wfStaffOf(S.id) || window.__wfChatIsOurs(c, S))).length : 0; } catch (e) { return 0; } })();
+    /* (Oct 8, 21:54) the profile station's crews on a fire are out on it: Engine 11 and Brush 11 at the Rubio Fire */
+    { const SFo = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SFo && nOn) { if (crews[0]) crews[0].st = 'out'; if (crews[1]) crews[1].st = 'out'; } }
     if (nOn && crews[0]) crews[0].st = 'out';
     // Vehicles: what a station of its kind usually has; the one a busy crew took is out with it
     const V = isPT ? [

@@ -17,10 +17,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=206"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=8"></script>
+<script src="station.js?v=9"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=105"></script>
+<script src="chat.js?v=107"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="menu.js?v=20"></script>
@@ -1662,9 +1662,21 @@ class Component extends DCLogic {
         const groups = oCnt ? (() => { const cr = ground.filter((u) => u.k === 0), tk = ground.filter((u) => u.k === 1);
             return ORD.filter((o) => o.id !== 'air').map((o) => ({ r: SRC.find((q) => q.id === o.id) || { id: o.id, name: o.name }, units: cr.splice(0, (o.n || [])[0] || 0).concat(tk.splice(0, (o.n || [])[1] || 0)).sort((a, b) => a.o - b.o || a.k - b.k).concat(xOf(o)) })); })()
           : SRC.map((r, i) => ({ r, units: ground.filter((u, j) => j % SRC.length === i).concat(xSeed(r)) }));
+        /* (Oct 8, 21:54) a fire with a chat: its crews are exactly the chat's crews, station by station (the same people as the chat's
+           members: each crew under its lieutenant), so the two never disagree */
+        const CHF = (() => { const C = window.__wfChat; if (!C || !C.list) return null; const id = String(fireId), raw = id.replace(/^F-/, '');
+          return C.list().find((c) => c && c.kind !== 'dm' && (String(c.incId) === id || String(c.incId) === raw)) || null; })();
+        const chatForces = CHF ? (CHF.forces || []).filter((f) => f.st !== 'standby' && f.st !== 'released') : [];
+        if (chatForces.length) { const cr = ground.filter((u) => u.k === 0), tk = ground.filter((u) => u.k === 1), by = {};
+          chatForces.forEach((f) => { const k = f.ck || f.station; (by[k] = by[k] || { r: { id: k, ck: f.ck, name: f.station || f.full, km: f.km != null ? Math.round(f.km * 10) / 10 : null, full: f.full }, fs: [] }).fs.push(f); });
+          groups.length = 0; Object.keys(by).forEach((k, gi) => { const g = by[k], units = [];
+            g.fs.forEach((f, j) => { const u0 = cr.shift() || cr[0] || ground[0]; if (!u0) return; const ppl = (f.crew || []).length || u0.ppl;
+              units.push({ ...u0, name: (f.veh || [])[0] || u0.name, ppl, sub: (f.crew && f.crew[0] ? 'Lt ' + f.crew[0] + '. ' : '') + ppl + ' firefighters. ' + (String(u0.sub).match(/[^.]* on shift\./) || [''])[0] }); });
+            const t0 = tk.shift(); if (t0) units.push({ ...t0, name: 'Water Tender ' + ((String(g.r.full || g.r.name).match(/(\d{1,3})\b/) || [])[1] || (gi + 1)) });
+            groups.push({ r: g.r, units: units.sort((a, b) => a.k - b.k) }); }); }
         const gOut = groups.filter((g) => g.units.length).map((g) => { const r = g.r; let hh = 0; for (const ch of String(r.id)) hh = (hh * 31 + ch.charCodeAt(0)) >>> 0;
           const crewsHere = g.units.filter((u) => u.k === 0).length, tot = Math.max(crewsHere, 2 + (hh % 4)), free = Math.max(0, tot - crewsHere);
-          const K = window.__wfCrest ? window.__wfCrest(r.ck || '', r.name) : { url: '' };
+          const K = window.__wfCrest ? window.__wfCrest(r.full ? '' : (r.ck || ''), r.full || r.name) : { url: '' };
           return { crest: K.url || '', crestD: K.url ? 'block' : 'none', shD: K.url ? 'none' : 'block', name: r.name, sub: (r.km != null ? r.km + duf + '. ' : '') + (free ? free + ' of ' + tot + ' crews free' : 'All crews on this fire') + '.', units: g.units }; });
         // The fire's chat answers from these same figures (water and relief), so the coordinators say what the Crews tab shows
         try { const M = JSON.parse(localStorage.getItem('wf-crew') || '{}'); M[fireId] = { t: Date.now(), st: gOut.map((g) => { const w = g.units.filter((u) => u.k === 1), cr = g.units.filter((u) => u.k === 0);

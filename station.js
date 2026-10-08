@@ -22,11 +22,12 @@
     return { key: k, level: m.level, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
   // Who leads the profile stations, so every screen tells the same story (the captain commands, the team lead leads the first crew)
   // (Oct 8, 19:10) and the team lead's own crew, fixed, so nobody in it turns up elsewhere as another station's captain
+  var CREW11B = ['Kevin Marsh', 'Ana Ruiz', 'Ben Ortega'];   /* (Oct 8, 21:54) Station 11's second crew (Brush 11), led by Lieutenant Kevin Marsh */
   var CREW11 = ['Daniel Brooks', 'Laura Chen', 'Tom Alvarez', 'Lisa Wong'], ST11P = { 'Laura Chen': 'train', 'Tom Alvarez': 'sick' };   /* the shift: Chen in training, Alvarez on sick leave */
-  window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Elena Ortiz', lead: 'Daniel Brooks', crew: CREW11.slice(), state: Object.assign({}, ST11P),
+  window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Elena Ortiz', lead: 'Daniel Brooks', lead2: 'Kevin Marsh', crew2: CREW11B.slice(), crew: CREW11.slice(), state: Object.assign({}, ST11P),
     onDuty: CREW11.filter(function (n) { return !ST11P[n]; }) } : null; };
   // Names that belong to the profile station: the incident chats never give them to anyone else
-  window.__wfReservedNames = function () { var R = { 'Elena Ortiz': 1 }; CREW11.forEach(function (n) { R[n] = 1; }); return R; };
+  window.__wfReservedNames = function () { var R = { 'Elena Ortiz': 1 }; CREW11.concat(CREW11B).forEach(function (n) { R[n] = 1; }); return R; };
   // (Oct 8, 14:35) Simulated incidents in the station's area, so the captain and the team lead always have a story to work:
   // one fire (a copy of a real Los Angeles County fire's data, moved into the area and renamed) and one ignition candidate
   // (a copy of a real satellite detection, moved into the area). Marked sim: shown with the simulation star. Station profiles only.
@@ -142,7 +143,8 @@
   // than two stations": the second station is not forced.) Before any order (a candidate) the nearest stations' leads talk.
   // (Oct 8, 18:50) supersedes "team leads are not in them": the team lead on the fire is an active member (writes, reports; does not decide)
   window.__wfChatAllowed = function (c) { if (!c) return true;
-    var S = {}; (c.forces || []).forEach(function (f) { if (f.st !== 'standby' && f.st !== 'released') S[f.ck || f.station] = 1; });
+    /* (Oct 8, 21:54) two crews on the fire (two stations, or one station's two crews with their lieutenants and its captain) */
+    var S = {}; (c.forces || []).forEach(function (f, i) { if (f.st !== 'standby' && f.st !== 'released') S[(f.ck || f.station) + (f.second ? ':2' : '')] = 1; });
     var n = Object.keys(S).length; if ((c.flags && c.flags.dispatched) || n) return n >= 2; return true; };
   window.addEventListener('wf-starea', function () { MEMO = {}; });
 })();
