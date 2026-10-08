@@ -199,7 +199,19 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </sc-for>
           </div>
         </div>
-        <span style="margin: 8px 16px 8px; font-size: 16px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
+        <span style="margin: {{rs.sumMt}} 16px 8px; font-size: 16px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
+        <!-- (Oct 8, 14:00) the team lead's home: his team's people, with their photos, as on the crew sheet (the same person cards), then the vehicle it rides in -->
+        <ul style="display: {{crewPD}}; flex-direction: column; gap: 8px; margin: 0 16px 8px; padding: 0; list-style: none">
+          <sc-for list="{{crewP}}" as="p" hint-placeholder-count="4">
+            <li style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
+              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
+                <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
+              </span>
+            </li>
+          </sc-for>
+        </ul>
         <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 16px; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{rs.emptyTxt}}</p></sc-if>
         <ul style="display: {{rs.listD}}; flex-direction: column; gap: 8px; margin: 0 16px; padding: 0; list-style: none">
           <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
@@ -603,12 +615,12 @@ class Component extends DCLogic {
     const rs = { x: tab === 'crew' ? '100%' : tab === 'air' ? '200%' : '0',
       tabs: [['veh', L('Vehicles', 'Veículos')], ['crew', L('Crews', 'Equipas')], ['air', L('Aircraft', 'Meios aéreos')]].map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ rtab: k }); } })),
       sum: !list.length ? '' : list.length + ' ' + (tab === 'crew' ? L(list.length === 1 ? 'crew' : 'crews', list.length === 1 ? 'equipa' : 'equipas') : tab === 'air' ? L('aircraft', list.length === 1 ? 'meio aéreo' : 'meios aéreos') : L(list.length === 1 ? 'vehicle' : 'vehicles', list.length === 1 ? 'veículo' : 'veículos')) + '. ' + free + ' ' + L('available', free === 1 ? 'disponível' : 'disponíveis') + '.',
-      rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No aircraft based at this station.', 'Nenhum meio aéreo sediado neste quartel.'), tabsD: 'block' };
+      rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No aircraft based at this station.', 'Nenhum meio aéreo sediado neste quartel.'), tabsD: 'block', sumMt: '8px' };
     /* (Oct 7) the team lead's home shows his own crew and the vehicle it rides in, no switcher */
     if (lead && crews[0]) { const c0 = crews[0], v0 = veh.find((v) => v.name === c0.veh);
-      rs.tabsD = 'none'; rs.empty = false; rs.listD = 'flex'; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + L('Chief ', 'Chefe ') + c0.chief + '.';
-      rs.rows = [{ name: c0.name, ic: IC.crew, sub: c0.ppl.slice(1).join(', ') + '.', ...tg(c0.st), chevW: '20px', chevD: 'flex', dis: false, cur: 'pointer', aria: c0.name + ', ' + c0.ppl.join(', '), go: () => this.setState({ sq: 'c0' }) }]
-        .concat(v0 ? [{ name: v0.name, ic: IC[v0.ic], sub: v0.sub, ...tg(v0.st), ...mob(), aria: v0.name + ', ' + v0.sub }] : []); }
+      rs.tabsD = 'none'; rs.sumMt = '-4px'; /* title + description: 4px apart */ rs.empty = false; rs.listD = 'flex'; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + c0.veh + '.';   /* the crew sheet's own words */
+      /* (Oct 8, 14:00) the people show on the screen itself (the crew row that opened them is gone); the vehicle follows */
+      rs.rows = v0 ? [{ name: v0.name, ic: IC[v0.ic], sub: v0.sub, ...tg(v0.st), ...mob(), aria: v0.name + ', ' + v0.sub }] : []; rs.listD = rs.rows.length ? 'flex' : 'none'; }
 
     // Chats: the command team as a group, or a crew's chief; both offer the first crew they have free
     const offerCrew = crews.find((c) => c.st === 'ok') || crews[0];
@@ -626,6 +638,7 @@ class Component extends DCLogic {
       chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
 
     return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, 
+      crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, code: ini(n), photo: photo(n) })) : [], crewPD: lead && crews[0] ? 'flex' : 'none',
       none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
       mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
