@@ -79,6 +79,14 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 16px 0">
         <h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{asg.title}}</h3>
         <span style="display: {{asg.subD}}; margin: -4px 0 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{asg.sub}}</span>
+        <!-- (Oct 8) To do | Resolved: the chats panel's value switcher; what is still to do, and what is done or closed -->
+        <div role="tablist" aria-label="{{asg.title}}" class="wf-seg" style="margin: 8px 0 8px">
+          <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{asg.tabX}})"><span class="segblob"></span></span>
+          <sc-for list="{{asg.tabs}}" as="tb" hint-placeholder-count="2">
+            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{asg.emptyOn}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.emptyTxt}}</p></sc-if>
         <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.noneTxt}}</p></sc-if>
         <ul style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
@@ -418,9 +426,21 @@ class Component extends DCLogic {
           aria: L(ti[0], ti[1]) + ', ' + hm(t0) + ', ' + TG[0] + '. ' + (st === 'done' ? L('Tap to undo', 'Toque para desfazer') : L('Tap to mark done', 'Toque para marcar como feito')),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const M2 = Object.assign({}, MK); if (st === 'done') M2[id] = 0; else M2[id] = 1; try { localStorage.setItem(SK, JSON.stringify(M2)); } catch (e) {} this.forceUpdate(); } }; }); })();
     const dutyLeft = dutyList.filter((d) => d.doneStr === 'false').length;
-    return { title: lead ? L('Deployments', 'Destacamentos') : L('Assignments', 'Atribuições'), rows, none: false, listD: rows.length ? 'flex' : 'none',
-      duties: dutyList, dutyD: dutyList.length ? 'flex' : 'none', subD: dutyList.length ? 'block' : 'none',
-      sub: dutyList.length ? (lead ? L('No deployments. ', 'Sem destacamentos. ') : L('No incidents in the area. ', 'Sem incidentes na área. ')) + (dutyLeft ? L(dutyLeft + (dutyLeft === 1 ? ' duty' : ' duties') + ' left today.', (dutyLeft === 1 ? 'Falta 1 tarefa' : 'Faltam ' + dutyLeft + ' tarefas') + ' hoje.') : L('Every duty done today.', 'Todas as tarefas de hoje feitas.')) : '',
+    // (Oct 8) To do | Resolved. Resolved: the duties done and the station's incidents closed or dismissed
+    const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';
+    const ck0 = (S.type === 'way' ? 'w' : 'n') + S.id;
+    const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (c.closed || c.dismissed) && c.kind !== 'dm' && (c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const Sg = C.stageOf(c);
+      return { place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+        tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.closedVt ? new Date(c.closedVt).toLocaleDateString(PT ? 'pt-PT' : 'en-US', { day: 'numeric', month: 'short' }) + '. ' : '') + L('Resolution summary in the chat.', 'Resumo da resolução na conversa.') }; });
+    const shownRows = resolvedTab ? closedRows : rows, shownDuties = dutyList.filter((d) => (d.doneStr === 'true') === resolvedTab);
+    const nTodo = rows.length + dutyLeft, nDone = closedRows.length + (dutyList.length - dutyLeft);
+    return { title: lead ? L('Deployments', 'Destacamentos') : L('Assignments', 'Atribuições'), rows: shownRows, none: false, listD: shownRows.length ? 'flex' : 'none',
+      duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: dutyList.length ? 'block' : 'none',
+      tabX: resolvedTab ? '100%' : '0%',
+      tabs: [['todo', L('To do', 'Por fazer'), nTodo], ['done', L('Resolved', 'Resolvidos'), nDone]].map(([k, l, n]) => ({ label: l + (n ? ' ' + n : ''), sel: String(tab === k), w: tab === k ? 600 : 400,
+        pick: () => { if (tab === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ atab: k }); } })),
+      emptyOn: !shownRows.length && !shownDuties.length, emptyTxt: resolvedTab ? L('Nothing resolved yet this shift.', 'Nada resolvido ainda neste turno.') : L('Every duty done this shift.', 'Todas as tarefas do turno feitas.'),
+      sub: dutyList.length ? (lead ? L('No deployments.', 'Sem destacamentos.') : L('No incidents in the area.', 'Sem incidentes na área.')) : '',   /* the counts are on the switcher */
       noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),
       nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
       view: { homeMapW: W, homeMapH: H, homeFx: Math.round(fx), homeFy: Math.round(fy), homeZ: +z.toFixed(3) } };
