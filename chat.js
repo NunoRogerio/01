@@ -766,7 +766,7 @@
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
     if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
-    if (c.kind === 'dm' && c.help) { helpReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
+    if (c.kind === 'dm' && c.help) { if (aiKey()) helpAi(c, text); else helpReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (!c.dismissed && c.stage < 7 && c.people.length) {
       var rules = function (c) { ruleReply(c, text); };
@@ -885,6 +885,31 @@
           'Ótimo, obrigado. Apresentem-se no posto de comando do ' + c.help.place + ' e ponho a vossa equipa no flanco. Liguem-me a 10 min de chegar.', 2400, 2); return; }
       say(c, 0, 'An engine and a crew would do. Can you send them?', 'Um veículo e uma equipa chegam. Podem enviá-los?', 2000, 1); return; }
     say(c, 0, 'Understood. I will keep you posted.', 'Entendido. Vou dando notícias.', 1800, 1);
+  }
+  // With a Claude key: the captain of the station working the fire answers in character, from the fire's own figures. The
+  // decision (help needed or not) comes from those figures and stays the same; Claude only writes the words.
+  var HELP_SYS = 'You role-play the captain of the fire station that is working a wildfire, in a phone chat inside a wildfire command app. This is a realistic training simulation. The person writing to you is the captain of another station, outside your area, who asked whether you need help. ' +
+    'Stay consistent with the facts in the brief and with what you already said: whether you need help is decided by the brief and never changes. If you need help, you want an engine and a crew on the flank; when they agree, tell them where to report (the command post at the fire) and to call when about 10 min out. If you do not need help, thank them and say you will call if that changes. ' +
+    'Use only the figures in the brief (containment, size); never invent other figures, people or events. Calm, professional, plain human sentences; 1 to 3 sentences. No emojis, no markdown. Everything you write must be in LANGUAGE. ' +
+    'Answer with JSON only: {"replies":[{"who":0,"text":"<message>","minutes":<minutes before this message, 1 to 10>}]} with one reply.';
+  function helpBrief(c) {
+    var P = c.people[0] || {}, h = c.help || {}, pt = PT();
+    var tr = c.msgs.slice(-24).map(function (m) { var at = '[' + hhmm(m.vt || m.t) + '] ';
+      if (m.kind === 'msg') return at + (m.from === 'me' ? 'OTHER CAPTAIN' : P.name) + ': ' + (pt ? m.pt || m.en : m.en);
+      if (m.kind === 'card') return at + 'CARD: ' + [m.tag && m.tag.en, m.title && m.title.en, m.body && m.body.en].filter(Boolean).join('. ');
+      return ''; }).filter(Boolean).join('\n');
+    return 'You are ' + P.name + ', ' + (P.roleEn || 'station captain') + '. The fire: ' + h.place + (h.reg ? ' (' + h.reg + ')' : '') + '. Facts: ' + helpFacts(h, false) + '. ' +
+      (h.need ? 'You DO need help: an engine and a crew on the flank.' : 'You do NOT need help for now.') + ' The other station (' + h.from + ') is ' + Math.round(h.km) + ' km from the fire.' +
+      (c.step === 2 ? ' They have already agreed to send an engine and a crew.' : c.step === 3 && h.need ? ' They said they cannot send anyone now.' : '') + '\n\nChat so far, oldest first:\n' + tr;
+  }
+  function helpAi(c, text) {
+    var key = c.key, t = String(text).toLowerCase(), s0 = c.step; c.pending = { who: 0, at: Date.now(), q: text }; INF[key] = 1;
+    if (c.step === 1) { if (/\b(no|not|can't|cannot|não|nao|impossível)\b/.test(t)) c.step = 3; else if (/\b(yes|sim|ok|okay|sure|claro|send|sending|envio|enviamos|vamos|on our way|a caminho|can)\b/.test(t)) c.step = 2; }
+    aiCall(HELP_SYS.replace('LANGUAGE', LNAME(false)), helpBrief(c) + '\n\nThe other captain just wrote: "' + text + '"\nReply now.', 400, function (err, txt) {
+      delete INF[key]; var c2 = load().chats[key]; if (!c2) return;
+      if (err) { c2.pending = null; c2.step = s0; helpReply(c2, text); save(); emit(); return; }   /* no answer from Claude: the in-app reply, from the step it was at */
+      aiDeliver(key, txt, function (c3) { c3.step = s0; helpReply(c3, text); });
+    });
   }
   function dmReply(c, text) {
     var t = String(text).toLowerCase(), n = c.people.length, b = c.beat++, O = c.offer || { en: 'a crew of 5 and a fire engine', pt: 'uma equipa de 5 e um veículo' };
