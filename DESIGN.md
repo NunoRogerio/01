@@ -1409,3 +1409,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Sender inside the bubble (Oct 8, 21:18; supersedes 21:00):** the photo (32px), name in semibold and station sit at the top inside the bubble, within its 16px padding, 16px above the message; the bubble keeps the wider width. Every chat item is 24px apart (bubbles, cards, notes).
 
 - **Normal text 18px (Oct 8, 21:18, app-wide):** every 17px text (Title S, normal text, text buttons, switchers, message text) is now 18px; where it sat on a 22px line, the line is 24px. Sizes in use: 26, 18, 16, 13.
+- **Back chevron by titles (Oct 8, 21:20, app-wide):** 20% bigger (7.2 x 12.7px, was 6 x 10.6), its right edge where it was (5px before the title).
