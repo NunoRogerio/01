@@ -1410,3 +1410,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - **Normal text 18px (Oct 8, 21:18, app-wide):** every 17px text (Title S, normal text, text buttons, switchers, message text) is now 18px; where it sat on a 22px line, the line is 24px. Sizes in use: 26, 18, 16, 13.
 - **Back chevron by titles (Oct 8, 21:20, app-wide):** 20% bigger (7.2 x 12.7px, was 6 x 10.6), its right edge where it was (5px before the title).
+- **One status everywhere (Oct 8, 21:21):** on the station home, an incident that has a chat shows the chat's own stage tag (a declared candidate is a fire, with the fire marker) and opens that chat; once the chat is closed or the candidate dismissed it leaves To do and the map, and the captain's Resolved lists it.
