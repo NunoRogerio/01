@@ -67,9 +67,16 @@
   // viewport the screens read both shrink, and everything that reads them (maps, bands, rows) lays out again, as on the main screen
   var vp0 = null, dlgRail = false;
   function rail(on, p) { var V = window.__wfVP; if (!V) return; var HW = host() ? host().offsetWidth : 390;
-    if (on) { if (!vp0) vp0 = V; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); p.style.width = (HW - 60) + 'px'; p.style.overflow = 'hidden'; }
-    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); p.style.width = ''; p.style.overflow = ''; }
-    try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }
+    // (Oct 8, 14:25) the resize animates: the screen's width eases in step with the slide, uncovering the icon column as it narrows
+    // (and covering it again as it widens). Shrinking, the content lays out narrow once the screen has arrived; widening, at once
+    // (the growing screen reveals it), so nothing reflows mid-motion.
+    clearTimeout(rail.t); var ease = DUR + 'ms ' + EASE;
+    if (on) { if (!vp0) vp0 = V; if (V.rail) return; if (!p.style.width) { p.style.width = HW + 'px'; void p.offsetWidth; } p.style.overflow = 'hidden';
+      p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease; p.style.width = (HW - 60) + 'px';
+      rail.t = setTimeout(function () { if (mode !== 'rail') return; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }, DUR); return; }
+    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {}
+      p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease; p.style.width = HW + 'px';
+      rail.t = setTimeout(function () { if (mode === 'rail') return; p.style.width = ''; p.style.overflow = ''; }, DUR + 40); } }
   function mw() { var h = host(); return Math.min(h ? h.offsetWidth : 390, MW); }
   function open() {
     frame(); if (!ready) { want = open; return; }

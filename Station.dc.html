@@ -19,7 +19,7 @@
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=207"></script>
 <script src="station.js?v=4"></script>
-<script src="menu.js?v=118"></script>
+<script src="menu.js?v=18"></script>
 <script src="i18n.js?v=173"></script>
 <script src="live.js?v=43"></script>
 <script src="chat.js?v=94"></script>
@@ -213,6 +213,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
                 <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
               </span>
+              <span class="wf-stag" style="display: {{p.tagD}}; align-items: center; flex-shrink: 0; margin-left: auto; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span>
             </li>
           </sc-for>
         </ul>
@@ -291,8 +292,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
             <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
           </span>
+          <span class="wf-stag" style="display: {{p.tagD}}; align-items: center; flex-shrink: 0; margin-left: auto; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span>
           <!-- The crew chief's card carries the chat (the screen's primary action): a round primary button with the chat icon -->
-          <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{p.chatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-left: auto; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -8px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 2px solid #FFFFFF; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 20px; text-align: center">{{sq.bN}}</span></button>
+          <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{p.chatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-left: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -8px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 2px solid #FFFFFF; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 20px; text-align: center">{{sq.bN}}</span></button>
         </li>
       </sc-for>
     </ul>
@@ -593,7 +595,11 @@ class Component extends DCLogic {
     const holder = { st: cc, face: F };
     const photo = (nm) => { const u = C && C.photo ? C.photo(holder, nm) : ''; try { sessionStorage.setItem(FK, JSON.stringify(F)); } catch (e) {} return u ? 'url("' + u + '")' : 'none'; };
     const ini = (nm) => nm.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
-    const TAG = { ok: ['Available', 'Disponível', window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], out: ['On a mission', 'Em missão', 'rgba(184,74,0,0.14)', '#963B00'], off: ['Off duty', 'De folga', 'rgba(118,118,128,0.14)', '#636366'], fix: ['In the workshop', 'Em manutenção', 'rgba(118,118,128,0.14)', '#636366'] };
+    /* (Oct 8, 14:25) each person's state for the shift: the crew chief is on (he leads it); the others are mostly on, some on sick leave, a day off or training (simulated, steady per person) */
+    const pSt = (nm, i) => { if (!i) return 'ok'; let h = 0; for (const ch of String(nm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return ['ok', 'ok', 'ok', 'sick', 'ok', 'kelly', 'ok', 'train'][h % 8]; };
+    const TAG = { ok: ['Available', 'Disponível', window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], out: ['On a mission', 'Em missão', 'rgba(184,74,0,0.14)', '#963B00'], off: ['Off duty', 'De folga', 'rgba(118,118,128,0.14)', '#636366'], fix: ['In the workshop', 'Em manutenção', 'rgba(118,118,128,0.14)', '#636366'],
+      /* (Oct 8, 14:25) a person's state, in the services' own words: LACoFD sick leave, Kelly day (the 24-hour shift's scheduled day off), training; PT baixa médica, folga, formação */
+      sick: ['Sick leave', 'Baixa médica', 'rgba(118,118,128,0.14)', '#636366'], kelly: [isPT ? 'Day off' : 'Kelly day', 'De folga', 'rgba(118,118,128,0.14)', '#636366'], train: ['Training', 'Em formação', 'rgba(118,118,128,0.14)', '#636366'] };
     const org = (name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'BV ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim()) || name;
 
     // Command team
@@ -655,7 +661,7 @@ class Component extends DCLogic {
       rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No aircraft based at this station.', 'Nenhum meio aéreo sediado neste quartel.'), tabsD: 'block', sumMt: '8px' };
     /* (Oct 7) the team lead's home shows his own crew and the vehicle it rides in, no switcher */
     if (lead && crews[0]) { const c0 = crews[0], v0 = veh.find((v) => v.name === c0.veh);
-      rs.tabsD = 'none'; rs.sumMt = '-4px'; /* title + description: 4px apart */ rs.empty = false; rs.listD = 'flex'; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + c0.veh + '.';   /* the crew sheet's own words */
+      rs.tabsD = 'none'; rs.sumMt = '-4px'; /* title + description: 4px apart */ rs.empty = false; rs.listD = 'flex'; { const nA = c0.ppl.filter((n, i) => pSt(n, i) === 'ok').length; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + nA + ' ' + L('available', nA === 1 ? 'disponível' : 'disponíveis') + '. ' + c0.veh + '.'; }   /* the crew sheet's own words */
       /* (Oct 8, 14:00) the people show on the screen itself (the crew row that opened them is gone); the vehicle follows */
       rs.rows = v0 ? [{ name: v0.name, ic: IC[v0.ic], sub: v0.sub, ...tg(v0.st), ...mob(), aria: v0.name + ', ' + v0.sub }] : []; rs.listD = rs.rows.length ? 'flex' : 'none'; }
 
@@ -669,13 +675,13 @@ class Component extends DCLogic {
       aria: tx.cmdTeam + ', ' + cmdP.map((p) => p.name).join(', '), open: () => this.setState({ sq: 'cmd' }), chat: cmdChat, ...bdg(unr('cmd-' + S.id)), chatAria: tx.groupChat + (unr('cmd-' + S.id) ? ', ' + unr('cmd-' + S.id) + L(' unread', ' por ler') : '') };
     const sqK = s0.sq || '', sqC = /^c\d+$/.test(sqK) ? crews[Number(sqK.slice(1))] : null, sqOn = sqK === 'cmd' || !!sqC;
     const sq = { y: sqOn ? '0%' : 'calc(100% + 120px)', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
-      title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.veh + '.' : org,
-      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700 })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700 }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 && !(lead && sqC === crews[0]) ? 'flex' : 'none' }))   /* the team lead does not chat with himself */, hdChatD: sqC ? 'none' : 'flex',
+      title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.ppl.filter((n, i) => pSt(n, i) === 'ok').length + ' ' + L('available', sqC.ppl.filter((n, i) => pSt(n, i) === 'ok').length === 1 ? 'disponível' : 'disponíveis') + '. ' + sqC.veh + '.' : org,
+      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, ...tg(pSt(n, i)), tagD: 'inline-flex' })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700, tag: '', tagD: 'none' }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 && !(lead && sqC === crews[0]) ? 'flex' : 'none' }))   /* the team lead does not chat with himself */, hdChatD: sqC ? 'none' : 'flex',
       chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat, ...bdg(unr(sqC ? 'crew-' + S.id + '-' + sqC.name : 'cmd-' + S.id)),
       chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
 
     return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, 
-      crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, code: ini(n), photo: photo(n) })) : [], crewPD: lead && crews[0] ? 'flex' : 'none',
+      crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...tg(pSt(n, i)), tagD: 'inline-flex' })) : [], crewPD: lead && crews[0] ? 'flex' : 'none',
       none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
       help, greet: home ? this.wfGreet(S, lead, L) : '', mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
