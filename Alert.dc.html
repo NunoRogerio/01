@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=195"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=196"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=207"></script>
 <script src="station.js?v=3"></script>
@@ -538,38 +538,7 @@ class Component extends DCLogic {
   }
   // KPI cards: press and hold (250 ms) lifts a card; sliding it sideways moves it among the others; letting go keeps the new order
   // KPI cards: press and hold (250 ms) lifts a card; moving it over another place makes room there; letting go keeps the new order
-  wfKpiDrag(key, grp, onTap) {
-    grp = grp || 'kpi'; const SK = grp === 'kpi' ? 'wf-kpi-order' : 'wf-order-' + grp;
-    const self = this;
-    // While a card is lifted the page must not scroll, so it can move up and down too (touch-action is fixed at touch start,
-    // so the scroll is stopped here, on each touch move, only while a card is held)
-    if (!window.__wfKpiTM) { window.__wfKpiTM = true; document.addEventListener('touchmove', (e) => { if (window.__wfKpiLift) e.preventDefault(); }, { passive: false, capture: true }); }
-    const cards = () => [...document.querySelectorAll('[data-wf-kpi][data-g="' + grp + '"]')];
-    const reset = () => cards().forEach((c) => { c.style.transform = ''; c.style.zIndex = ''; c.style.transition = ''; const k = c.querySelector('[data-wf-kpicard]'); if (k) k.style.boxShadow = ''; });
-    return {
-      noMenu: (e) => { try { e.preventDefault(); } catch (x) {} },
-      down: (e) => { const el = e.currentTarget, x0 = e.clientX, y0 = e.clientY; let k = 1; try { const R = el.closest('[data-wfroot]').getBoundingClientRect(); k = R.width / 390 || 1; } catch (x) {}
-        clearTimeout(self._kpT); self._kd = { key, el, x0, y0, k, lifted: false, pid: e.pointerId }; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}   // iPhone buzzes only inside the touch itself: at the press and at the drop
-        self._kpT = setTimeout(() => { const d = self._kd; if (!d || d.key !== key) return; d.lifted = true; const L = cards(); d.idx = L.indexOf(d.el); d.to = d.idx;
-          d.slots = L.map((c) => { const r = c.getBoundingClientRect(); return [(r.left + r.width / 2) / d.k, (r.top + r.height / 2) / d.k]; });
-          try { d.el.setPointerCapture(d.pid); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
-          const kc = d.el.querySelector('[data-wf-kpicard]'); if (kc) kc.style.boxShadow = '0 0 24px rgba(0,0,0,0.16)';
-          d.el.style.zIndex = '3'; d.el.style.transition = 'none'; d.el.style.transform = 'scale(1.04)'; window.__wfKpiLift = true; }, 250); },
-      move: (e) => { const d = self._kd; if (!d || d.key !== key) return;
-        if (!d.lifted) { if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 8) { clearTimeout(self._kpT); self._kd = null; } return; }
-        const dx = (e.clientX - d.x0) / d.k, dy = (e.clientY - d.y0) / d.k, L = cards(), me = d.slots[d.idx], px = me[0] + dx, py = me[1] + dy;
-        let best = d.idx, bd = 1e9; d.slots.forEach((q, j) => { const dd = Math.hypot(q[0] - px, q[1] - py); if (dd < bd) { bd = dd; best = j; } }); d.to = best;
-        e.preventDefault && e.preventDefault();
-        d.el.style.transform = 'translate(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px) scale(1.04)';
-        const order = L.map((_, j) => j); order.splice(d.idx, 1); order.splice(d.to, 0, d.idx);
-        order.forEach((j, pos) => { if (j === d.idx) return; const c = L[j], a = d.slots[j], b = d.slots[pos]; c.style.transform = pos !== j ? 'translate(' + (b[0] - a[0]).toFixed(1) + 'px, ' + (b[1] - a[1]).toFixed(1) + 'px)' : ''; }); },
-      up: () => { clearTimeout(self._kpT); window.__wfKpiLift = false; const d = self._kd; self._kd = null; if (d && !d.lifted && d.key === key && typeof onTap === 'function') { onTap(); return; } if (!d || !d.lifted) return; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}
-        const L = cards().map((c) => c.getAttribute('data-wf-kpi')), from = d.idx, to = d.to; if (to !== from) { const [x] = L.splice(from, 1); L.splice(to, 0, x); }
-        let all = null; try { all = JSON.parse(localStorage.getItem(SK) || 'null'); } catch (x) {} all = Array.isArray(all) ? all : []; const rest = all.filter((q) => L.indexOf(q) < 0);
-        try { localStorage.setItem(SK, JSON.stringify(L.concat(rest))); } catch (x) {}
-        reset(); self.forceUpdate(); }
-    };
-  }
+  wfKpiDrag(key, grp, onTap) { grp = grp || 'kpi'; return window.__wfKpiDrag(this, key, grp, onTap, grp === 'kpi' ? 'wf-kpi-order' : 'wf-order-' + grp); }   /* (Oct 8) the shared reorder (fit.js) */
   // The candidate's key figures and header lines. Real where the source gives them (likelihood, radiative power, detections,
   // detection time); the nearest station's drive and the fire danger are simulated, seeded by the candidate, and labelled.
   wfIgn(cur, hasFig, raw) {

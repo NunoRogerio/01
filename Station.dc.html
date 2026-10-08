@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=195"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=196"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=207"></script>
@@ -172,11 +172,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
       <!-- Key figures: three per row, a grey + tile at the end adds or removes cards; simulated figures say so along the right edge -->
       <div style="display: flex; flex-direction: column; padding: 0 16px">
-        <span style="margin: 0 0 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">Key figures</span>
+        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px; font-size: 16px; font-weight: 400; line-height: 20px; color: #6E6E73"><span style="white-space: nowrap; font-weight: 600">Key figures</span><span class="wf-hint" style="font-size: 16px; font-weight: 400; line-height: 20px; color: #6E6E73; text-align: right">(move cards to reorder)</span></span>
         <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
           <sc-for list="{{kpis}}" as="m" hint-placeholder-count="3">
-            <div role="listitem" style="display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0">
-              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 16px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+            <div role="listitem" data-wf-kpi="{{m.key}}" data-g="stk" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
+              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 16px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
                 <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 16px; line-height: 20px; color: #6E6E73; text-align: center; overflow-wrap: anywhere">{{m.l}}</span>
                 <span style="display: flex; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 16px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                 <span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
@@ -349,6 +349,7 @@ class Component extends DCLogic {
     return s;
   }
   // Key figures can be trimmed: the + tile opens the list with toggles; the extra cards start hidden (kept on this phone)
+  wfKpiDrag(key, grp, onTap) { return window.__wfKpiDrag(this, key, grp, onTap, 'wf-order-' + grp); }   /* (Oct 8) the shared mini-card reorder (fit.js) */
   wfHidden() { const g = 'stk'; let v = null, sn = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + g) || 'null'); sn = JSON.parse(localStorage.getItem('wf-seen-' + g) || 'null'); } catch (e) {} const opt = (this._kAll || []).filter((m) => m.opt).map((m) => m.key); if (!Array.isArray(v)) return opt; return v.concat(opt.filter((k) => v.indexOf(k) < 0 && !(Array.isArray(sn) && sn.indexOf(k) >= 0))); }
   wfPicker() {
     const g = 'stk', open = !!(this.state || {}).pick, all = this._kAll || [], H = this.wfHidden();
@@ -546,7 +547,9 @@ class Component extends DCLogic {
         { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' }])); }
     this._kAll = kAll.map((m) => ({ key: m.key, l: m.l, opt: !!m.opt }));
     const Hk = this.wfHidden();
-    const kpis = kAll.filter((m) => Hk.indexOf(m.key) < 0).map((m) => ({ l: m.l, n: m.n, u: m.u, uD: m.u ? 'inline' : 'none', sub: m.sub, subD: m.sub ? 'block' : 'none', note: est, noteD: m.sim ? 'block' : 'none' }));
+    /* (Oct 8, standing) the same mini cards as everywhere: in the saved order (shared with the + picker), press, hold and move to reorder */
+    const kOrd = (() => { let o = null; try { o = JSON.parse(localStorage.getItem('wf-order-stk') || 'null'); } catch (e) {} return Array.isArray(o) ? o : []; })(), kIx = (k) => { const i = kOrd.indexOf(k); return i < 0 ? 999 + kAll.findIndex((m) => m.key === k) : i; };
+    const kpis = kAll.filter((m) => Hk.indexOf(m.key) < 0).sort((a, b) => kIx(a.key) - kIx(b.key)).map((m) => ({ key: m.key, l: m.l, n: m.n, u: m.u, uD: m.u ? 'inline' : 'none', sub: m.sub, subD: m.sub ? 'block' : 'none', note: est, noteD: m.sim ? 'block' : 'none', ...this.wfKpiDrag(m.key, 'stk') }));
 
     // People: names from the station's country; photos (Portugal and California) kept per station for this visit, so its chats show the same faces
     const C = window.__wfChat || null;
