@@ -149,9 +149,11 @@ window.__wfBlink=function(path,dur){
     try{if(!DESK&&screen.orientation&&screen.orientation.lock&&!window.__wfFluidLand&&!fluid)screen.orientation.lock('portrait').catch(function(){});}catch(e){}   // where the browser allows (installed on Android), lock it outright
     if(!rotSty){rotSty=document.createElement('style');rotSty.id='wf-rot';document.head.appendChild(rotSty);}
     if(!(iw>ih)||DESK||!a){rotSty.textContent='';document.documentElement.classList.remove('wf-rot');window.__wfRotA=0;return null;}
-    var tf=a>0?'translateX('+iw+'px) rotate(90deg)':'translateY('+ih+'px) rotate(-90deg)';
+    /* (Oct 8, 21:32) the screen turns against the phone, so its top (the header) stays on the side of the camera and the clock:
+       phone turned left (a 90) -> the page turns -90; phone turned right (a -90) -> the page turns 90 */
+    var rd=a>0?-1:1,tf=rd>0?'translateX('+iw+'px) rotate(90deg)':'translateY('+ih+'px) rotate(-90deg)';
     rotSty.textContent='html.wf-rot,html.wf-rot body{overflow:hidden}html.wf-rot body{position:fixed;left:0;top:0;width:'+ih+'px;height:'+iw+'px;transform-origin:0 0;transform:'+tf+'}';
-    document.documentElement.classList.add('wf-rot');window.__wfRotA=a>0?1:-1;window.__wfRotWH=[iw,ih];return [ih,iw];}
+    document.documentElement.classList.add('wf-rot');window.__wfRotA=rd;window.__wfRotWH=[iw,ih];return [ih,iw];}
   function fit(){
     var iw=window.innerWidth,ih=window.innerHeight,r=document.documentElement.style,s,vp;
     var flu=fluid||(!DESK&&!!window.__wfFluidLand&&iw>ih);
@@ -749,7 +751,7 @@ window.__wfBlink=function(path,dur){
   var T=0;
   function fix(){T=0;try{document.querySelectorAll('[data-wf-kpicard]').forEach(function(c){var l=c.firstElementChild;if(!l||l.tagName!=='SPAN'||!/min-height:\s*40px/.test(l.getAttribute('style')||''))return;
       if(l.style.getPropertyValue('line-height')==='16px')l.style.removeProperty('line-height');
-      var r=document.createRange();r.selectNodeContents(l);if(r.getBoundingClientRect().height>26)l.style.setProperty('line-height','16px','important');});}catch(e){}}
+      var r=document.createRange();r.selectNodeContents(l);var R0=r.getBoundingClientRect();if((document.documentElement.classList.contains('wf-rot')?R0.width:R0.height)>26)l.style.setProperty('line-height','16px','important');});}catch(e){}}
   function soon(){if(!T)T=setTimeout(fix,80);}
   try{new MutationObserver(soon).observe(document.documentElement,{childList:true,subtree:true,characterData:true});}catch(e){}
   window.addEventListener('resize',soon);window.addEventListener('load',soon);
@@ -1006,7 +1008,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
         /* (Oct 7, 22:05) the height of the stage tag beside it, set outright (not left to the row, which Safari can size differently) */
         if (b.parentElement && b.parentElement.style.alignItems !== 'center') b.parentElement.style.alignItems = 'center';   /* the tag keeps its own height: nothing stretches it */
         /* (Oct 8) a band that unfolds (the chat's stage band): its tag row, not the whole band, so the badge never grows with it and stays level with the row */
-        var row = t && t.matches && t.matches('[data-wf-stband]') ? t.firstElementChild : null, tg = t && t.querySelector ? (t.querySelector('.qtag') || row || t) : null, h = tg ? tg.getBoundingClientRect().height : b.getBoundingClientRect().height; if (!(h > 0)) continue;
+        var row = t && t.matches && t.matches('[data-wf-stband]') ? t.firstElementChild : null, tg = t && t.querySelector ? (t.querySelector('.qtag') || row || t) : null, h = tg ? tg.offsetHeight : b.offsetHeight;   /* (Oct 8, 21:32) layout height, not the on-screen box: on a turned screen the box's height is its width */ if (!(h > 0)) continue;
         var hs = h.toFixed(2) + 'px', w = (h * 34 / 28.5).toFixed(2) + 'px', al = row ? 'flex-start' : 'center'; if (b.style.height !== hs || b.style.alignSelf !== al) { b.style.height = hs; b.style.alignSelf = al; } if (b.style.width !== w) b.style.width = w; } }
     function askFit() { if (!fq) { fq = 1; requestAnimationFrame(fitB); } }
     try { new MutationObserver(askFit).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] }); } catch (e) {}

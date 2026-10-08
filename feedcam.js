@@ -89,7 +89,11 @@
   var FV = /samantha|karen|moira|tessa|victoria|allison|ava|susan|zoe|serena|fiona|nicky|kate|joana|catarina|luciana|fernanda|female|mulher|monica|paulina|amelie|anna|helena|sara|ines|google uk english female|google us english/i,
       MV = /alex|daniel|fred|rishi|aaron|arthur|tom|oliver|gordon|lee|male|duarte|felipe|diego|jorge|thomas|reed|eddy|grandpa|ralph|google uk english male/i;
   function vList(PT) { var V = (window.speechSynthesis && speechSynthesis.getVoices()) || [], k = PT ? /^pt[-_]pt/i : /^en[-_]/i;
-    var L = V.filter(function (v) { return k.test(v.lang || ''); }); if (!L.length && PT) L = V.filter(function (v) { return /^pt/i.test(v.lang || ''); }); return L; }
+    var L = V.filter(function (v) { return k.test(v.lang || ''); }); if (!L.length && PT) L = V.filter(function (v) { return /^pt/i.test(v.lang || ''); });
+    /* (Oct 8, 21:33) the most natural voices on the phone first: Premium, Enhanced and Siri voices, then the voice of the user's own variant (en-US / pt-PT); the novelty voices (Bells, Bubbles, Zarvox...) never */
+    var odd = /bells|bubbles|boing|cellos|zarvox|whisper|wobble|trinoids|organ|bad news|good news|superstar|jester|albert|bahh|hysterical|deranged|grandma|grandpa|rocko|shelley|flo|eddy|reed|sandy/i;
+    var q = function (v) { var n = v.name || ''; return (/premium/i.test(n) ? 0 : /enhanced|siri|neural|natural/i.test(n) ? 1 : 3) + (/^(en-US|pt-PT)$/i.test(v.lang || '') ? 0 : 1); };
+    return L.filter(function (v) { return !odd.test(v.name || ''); }).sort(function (a, b) { return q(a) - q(b); }).concat(L.filter(function (v) { return odd.test(v.name || ''); }).length && !L.some(function (v) { return !odd.test(v.name || ''); }) ? L : []); }
   function vFor(name, idx, PT) { var g = (window.__wfGender && window.__wfGender(name)) || (/a$/.test(String(name).split(' ')[0]) ? 'f' : 'm'), L = vList(PT);
     var mine = L.filter(function (v) { return g === 'f' ? FV.test(v.name) && !MV.test(v.name) : MV.test(v.name) && !FV.test(v.name); });
     var v = mine.length ? mine[idx % mine.length] : (L.length ? L[0] : null);
