@@ -174,9 +174,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // raw: any in the chat, even scrolled out of view (to bring it in)
   function reqApproveRaw() { return [].slice.call(document.querySelectorAll('article.chmsg [data-fitrow] > button.chbtn')).filter(function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }).pop() || null; }
   function reqApprove() { return q('article.chmsg [data-fitrow] > button.chbtn', function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }); }
-  function stExpand() { var c = q('header + button.chrow[aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
+  function stExpand() { var c = q('button.chrow[data-wf-stband][aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
   // the candidate was confirmed: its Confirm / Dismiss suggestions are gone (checked a moment after the step began)
-  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss fire', 'Descartar incêndio']) && !!q('header + button.chrow[aria-expanded]'); }
+  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss fire', 'Descartar incêndio']) && !!q('button.chrow[data-wf-stband][aria-expanded]'); }
   function topMarker() {
     var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap[aria-label*="ignition candidate"]')), best = null, bp = -1;
     L.forEach(function (b) { if (shown(b) !== true) return; var m = /(\d+) percent/.exec(b.getAttribute('aria-label') || ''), v = m ? +m[1] : 0; if (v > bp) { bp = v; best = b; } });
@@ -251,12 +251,12 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['The evidence, live', 'As evidências, em direto'],
       b: ['The nearest station sent its drone when the ignition was detected. Its feed is evidence beside the satellite, and every coordinator has given a reading below.', 'O quartel mais próximo enviou o drone quando a ignição foi detetada. A imagem é uma evidência ao lado do satélite, e cada coordenador deu a sua leitura abaixo.'] },
     // the decision: Approve on the coordinator's request card (or, without one, the state card's Move to First alert)
-    { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, before: function () { var t = 0, f = function () { var ra = reqApproveRaw(); if (ra) { try { ra.scrollIntoView({ block: 'center' }); } catch (x) {} scrolled = false; return; } if (!q('header + button.chrow[aria-expanded="true"]')) stExpand(); if (++t < 6 && !stMove()) setTimeout(f, 300); }; setTimeout(f, 400); },
-      find: function () { return reqApprove() || stMove() || q('header + button.chrow[aria-expanded]'); },
+    { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, before: function () { var t = 0, f = function () { var ra = reqApproveRaw(); if (ra) { try { ra.scrollIntoView({ block: 'center' }); } catch (x) {} scrolled = false; return; } if (!q('button.chrow[data-wf-stband][aria-expanded="true"]')) stExpand(); if (++t < 6 && !stMove()) setTimeout(f, 300); }; setTimeout(f, 400); },
+      find: function () { return reqApprove() || stMove() || q('button.chrow[data-wf-stband][aria-expanded]'); },
       t: ['Declare the fire', 'Declare o incêndio'],
       b: ['A coordinator asks you to declare it. Tap Approve.', 'Um coordenador pede-lhe que o declare. Toque em Aprovar.'] },
     // (Oct 5, 02:28) crews are dispatched from the chat: the cursor on the Configure dispatch button of the Ignition confirmed card
-    { page: 'Chat.dc.html', mode: 'tap', before: function () { var c = q('header + button.chrow[aria-expanded="true"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } },   /* the state card closes: straight to the chat with the card */
+    { page: 'Chat.dc.html', mode: 'tap', before: function () { var c = q('button.chrow[data-wf-stband][aria-expanded="true"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } },   /* the state card closes: straight to the chat with the card */
       find: function () { return q('article.chmsg button.chbtn', function (b) { return /^(Configure dispatch|Configurar despacho)/.test(txt(b)) && !b.disabled; }) || chip(['Configure dispatch', 'Configurar despacho']); },
       ach: ['You\'ve confirmed an ignition. Great work!', 'Confirmou uma ignição. Excelente trabalho!'], then: ['Now send crews to it.', 'Agora envie equipas.'],
       t: ['Configure the dispatch', 'Configure o despacho'],
@@ -298,22 +298,22 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['Tap the Move to button to take the fire to its next stage. You move it three times; the stages between run by themselves.', 'Toque no botão Passar a para levar o incêndio à fase seguinte. Faz três passagens; as fases entre elas correm sozinhas.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 3 && !!moveOn(); },
-      find: function () { return q('header + button.chrow[aria-expanded]'); },
+      find: function () { return q('button.chrow[data-wf-stband][aria-expanded]'); },
       t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
     { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['Tap Move to again: the crews are on scene and the fire is being brought under control.', 'Toque outra vez em Passar a: as equipas estão no local e o fogo está a ser dominado.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 5 && !!moveOn(); },
-      find: function () { return q('header + button.chrow[aria-expanded]'); },
+      find: function () { return q('button.chrow[data-wf-stband][aria-expanded]'); },
       t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
     { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['One more move: the fire is nearly out, so take it to surveillance.', 'Mais uma passagem: o fogo está quase extinto, leve-o para vigilância.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true,
       until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
-      find: function () { return q('header + button.chrow[aria-expanded]'); },
+      find: function () { return q('button.chrow[data-wf-stband][aria-expanded]'); },
       t: ['The fire holds', 'O incêndio está dominado'], b: ['Surveillance. You will close it next.', 'Vigilância. A seguir, encerra-o.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || stMove() || q('header + button.chrow[aria-expanded]'); },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || stMove() || q('button.chrow[data-wf-stband][aria-expanded]'); },
       t: ['Close the fire', 'Encerre o incêndio'],
       b: ['It is under surveillance and holding. Tap Close fire.', 'Está em vigilância e dominado. Toque em Encerrar incêndio.'] },
     // the closing checks run by themselves: no cursor here (it comes back on the summary card)
@@ -365,6 +365,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       '#wf-tour .tdot.on{opacity:1;animation:wftd 1.8s infinite}' +
       '@keyframes wftd{0%{transform:scale(1);animation-timing-function:ease-in-out}75%{transform:scale(1.1);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:scale(1)}}' +
       '@media (prefers-reduced-motion:reduce){#wf-tour .tdot.on{animation:none}}' +
+      /* (Oct 8) not tapped 8 s after it shows: the pulse grows (30% larger at its peak, fill 20 points more opaque) and a tap icon blinks in its centre; 5 s later it is back to normal (wfCurNudge) */
+      '#wf-tour .tdot{transition:opacity .35s ease,left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),background-color .6s ease}#wf-tour .tdot.wf-nz{background:rgba(var(--wf-y-rgb,229,255,0),0.5)}#wf-tour .tdot.on.wf-nz{animation:wftdz 1.8s infinite}' +
+      '@keyframes wftdz{0%{transform:scale(1);animation-timing-function:ease-in-out}75%{transform:scale(1.43);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:scale(1)}}' +
       '#wf-tour.demo .tb,#wf-tour.demo .tdot{opacity:0!important;pointer-events:none!important}' +
       '#wf-tour.demo.demopick .tdot{opacity:1!important}' +
       '#wf-tour svg.tsv{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}' +
@@ -956,6 +959,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function css() { if (document.getElementById('wf-nudge-css')) return; var st = document.createElement('style'); st.id = 'wf-nudge-css';
     st.textContent = '#wf-nudge{position:fixed;left:0;top:0;z-index:99990;width:80px;height:80px;margin:-40px 0 0 -40px;box-sizing:border-box;border-radius:50%;background:rgba(var(--wf-y-rgb,229,255,0),0.3);box-shadow:inset 0 0 0 2px rgba(var(--wf-y-rgb,229,255,0),0.95),0 0 0 1px rgba(28,28,30,0.35);pointer-events:none;opacity:0;transition:opacity .35s ease;animation:wfnd 1.8s infinite}#wf-nudge.on{opacity:1}' +
       '.wf-ndg{position:fixed;z-index:99989;width:31px;height:0;opacity:0;pointer-events:none;filter:blur(2px);transition:opacity .35s ease,height .35s ease,top .35s ease}.wf-ndg.on{opacity:1;animation:wfndg 1.8s ease-in-out infinite}.wf-ndg.l{left:0;background:linear-gradient(90deg,rgba(var(--wf-y-rgb,229,255,0),.95) 0,rgba(var(--wf-y-rgb,229,255,0),.55) 4px,transparent 100%)}.wf-ndg.r{right:0;background:linear-gradient(270deg,rgba(var(--wf-y-rgb,229,255,0),.95) 0,rgba(var(--wf-y-rgb,229,255,0),.55) 4px,transparent 100%)}@keyframes wfndg{0%,100%{opacity:1}50%{opacity:.4}}@media (prefers-reduced-motion:reduce){.wf-ndg.on{animation:none}}' +
+      '#wf-nudge{transition:opacity .35s ease,background-color .6s ease}#wf-nudge.wf-nz{background:rgba(var(--wf-y-rgb,229,255,0),0.5);animation-name:wfndz}@keyframes wfndz{0%,100%{transform:translate(var(--x),var(--y)) scale(1)}50%{transform:translate(var(--x),var(--y)) scale(1.43)}}' +
       '@keyframes wfnd{0%,100%{transform:translate(var(--x),var(--y)) scale(1)}50%{transform:translate(var(--x),var(--y)) scale(1.1)}}@media (prefers-reduced-motion:reduce){#wf-nudge{animation:none;transform:translate(var(--x),var(--y))}}';
     document.head.appendChild(st); }
   function find() { var L = document.querySelectorAll(sel); for (var i = 0; i < L.length; i++) { var r = L[i].getBoundingClientRect(); if (r.width > 4 && r.height > 4 && getComputedStyle(L[i]).visibility !== 'hidden') return L[i]; } return null; }
@@ -979,4 +983,29 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       document.addEventListener('pointerdown', used, true); last = Date.now() - 1800; raf = requestAnimationFrame(frame); },
     off: function () { off(true); }
   };
+})();
+
+
+// (Oct 8) Every guide circle (the tour's cursor and the guide on its own): if it is not tapped 8 s after it shows on a control,
+// its pulse grows (30% larger at its peak, fill 20 points more opaque) and a tap icon fades in and out in its centre; 5 s later
+// it is back to normal, and the cycle starts again while the circle waits on the same control. A new control restarts the count.
+(function () {
+  if (typeof document === 'undefined' || window.__wfCurNudge) return; window.__wfCurNudge = 1;
+  var ST = new WeakMap(), WAIT = 8000, SHOW = 5000;
+  var ICON = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 14a8 8 0 0 1-8 8"></path><path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"></path><path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"></path><path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"></path><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>';
+  function css() { if (document.getElementById('wf-curnz-css')) return; var st = document.createElement('style'); st.id = 'wf-curnz-css';
+    st.textContent = '.wf-tapic{position:absolute;left:50%;top:50%;width:32px;height:32px;margin:-16px 0 0 -16px;color:#1C1C1E;opacity:0;pointer-events:none;transition:opacity .4s ease}' +
+      '.wf-nz>.wf-tapic{animation:wftapb 1.2s ease-in-out infinite}@keyframes wftapb{0%,100%{opacity:0}50%{opacity:1}}' +
+      '@media (prefers-reduced-motion:reduce){.wf-nz>.wf-tapic{animation:none;opacity:1}}';
+    document.head.appendChild(st); }
+  function where(d) { var x = d.style.left || d.style.getPropertyValue('--x'), y = d.style.top || d.style.getPropertyValue('--y'); return [parseFloat(x) || 0, parseFloat(y) || 0]; }
+  setInterval(function () {
+    var L = document.querySelectorAll('#wf-tour .tdot, #wf-nudge'); if (!L.length) return; css(); var now = Date.now();
+    for (var i = 0; i < L.length; i++) { var d = L[i], s = ST.get(d), on = d.classList.contains('on') && getComputedStyle(d).opacity !== '0', p = where(d);
+      if (!d.querySelector('.wf-tapic')) { var ic = document.createElement('span'); ic.className = 'wf-tapic'; ic.innerHTML = ICON; d.appendChild(ic); }
+      if (!on) { if (s) ST.delete(d); d.classList.remove('wf-nz'); continue; }
+      if (!s || Math.abs(s.x - p[0]) > 24 || Math.abs(s.y - p[1]) > 24) { ST.set(d, { x: p[0], y: p[1], t: now }); d.classList.remove('wf-nz'); continue; }
+      s.x = p[0]; s.y = p[1];   /* it follows its control as the page scrolls: same control, the count goes on */
+      d.classList.toggle('wf-nz', (now - s.t) % (WAIT + SHOW) >= WAIT); }
+  }, 200);
 })();

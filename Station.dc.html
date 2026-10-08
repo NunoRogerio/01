@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=194"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=195"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=207"></script>
@@ -437,7 +437,9 @@ class Component extends DCLogic {
         const TG = { done: [L('Done', 'Feito'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg, 'block'], now: [L('Now', 'Agora'), 'rgba(204,153,0,0.16)', '#745200', 'none'], later: [hm(t0), 'rgba(118,118,128,0.12)', '#3A3A3C', 'none'] }[st];
         return { title: L(ti[0], ti[1]), sub: (st === 'later' ? '' : hm(t0) + '. ') + L(tx[0], tx[1]), tag: TG[0], tagBg: TG[1], tagFg: TG[2], chkD: TG[3], doneStr: st === 'done' ? 'true' : 'false',
           aria: L(ti[0], ti[1]) + ', ' + hm(t0) + ', ' + TG[0] + '. ' + (st === 'done' ? L('Tap to undo', 'Toque para desfazer') : L('Tap to mark done', 'Toque para marcar como feito')),
-          go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const M2 = Object.assign({}, MK); if (st === 'done') M2[id] = 0; else M2[id] = 1; try { localStorage.setItem(SK, JSON.stringify(M2)); } catch (e) {} this.forceUpdate(); } }; }); })();
+          go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const set = () => { const M2 = Object.assign({}, MK); if (st === 'done') M2[id] = 0; else M2[id] = 1; try { localStorage.setItem(SK, JSON.stringify(M2)); } catch (e) {} this.forceUpdate(); };
+            /* (Oct 8, standing) concluding an action item always asks first; undoing does not */
+            if (st === 'done' || !window.__wfConfirm) return set(); window.__wfConfirm({ title: L('Mark as done?', 'Marcar como feito?'), body: L(ti[0] + ' moves to Resolved.', ti[1] + ' passa para Resolvidos.'), cancel: L('Cancel', 'Cancelar'), ok: L('Mark done', 'Marcar feito'), onOk: set }); } }; }); })();
     const dutyLeft = dutyList.filter((d) => d.doneStr === 'false').length;
     // (Oct 8) To do | Resolved. Resolved: the duties done and the station's incidents closed or dismissed
     const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';

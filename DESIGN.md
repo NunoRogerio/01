@@ -1348,3 +1348,10 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Duties always listed (Oct 8):** the station duties stay in the To do | Resolved list under the incidents or deployments, not only when there are none, so what is done and what is left always shows.
 - **Menu on the station profiles (Oct 8):** for the captain and the team lead the menu button opens only the icon column, with no section pulled open (it used to open straight into a section); a tap on an icon opens that section. The admin keeps opening on the profile. The settings sections are to be sorted later (story settings vs experiments).
 - **Team lead's crew on his home (Oct 8):** under "My crew" (description "4 firefighters. Engine 11.", the crew sheet's own words, 4px under the title) the team's people show on the screen itself with their photos, as the same person cards as the crew sheet (chief bold, role under it), then the vehicle they ride in. The crew row that opened the sheet is gone (no two things with the same function).
+
+## Oct 8, 13:50
+- **Guide circle nudge (app-wide, tour cursor and the guide on its own):** if the circle is not tapped 8 s after it shows on a control, its pulse grows 30% larger at its peak, its fill goes 20 points more opaque (0.3 → 0.5) and a tap icon (dark grey hand) fades in and out in its centre. 5 s later it is back to normal; the cycle repeats while it waits on the same control. A new control restarts the count.
+- **Tour on the chat's stage band:** the band is marked `data-wf-stband` and the tour targets it (the Oct 7 risk badge wrapper had broken the old `header + button` selector, so the cursor was missing on the stage steps).
+- **Risk badge beside an unfolding band:** the badge matches the band's tag row (40px), never the unfolded band, and stays level with the row (it had grown to the band's full height and crushed it).
+- **Structures-at-risk warning:** its OK button is in the warning's red (rgb(215, 0, 21), white text), like the triangle.
+- **Action items (standing):** concluding one always asks for confirmation (shared bottom dialog: "Mark as done?", Cancel / Mark done); undoing does not ask.
