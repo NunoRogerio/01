@@ -27,7 +27,7 @@
   window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Elena Ortiz', lead: 'Daniel Brooks', lead2: 'Kevin Marsh', crew2: CREW11B.slice(), crew: CREW11.slice(), state: Object.assign({}, ST11P),
     onDuty: CREW11.filter(function (n) { return !ST11P[n]; }) } : null; };
   // Names that belong to the profile station: the incident chats never give them to anyone else
-  window.__wfReservedNames = function () { var R = { 'Elena Ortiz': 1 }; CREW11.concat(CREW11B).forEach(function (n) { R[n] = 1; }); return R; };
+  window.__wfReservedNames = function () { var R = { 'Elena Ortiz': 1 }; CREW11.concat(CREW11B).forEach(function (n) { R[n] = 1; }); try { (JSON.parse(localStorage.getItem('wf-st-reserved') || '[]') || []).forEach(function (n) { R[n] = 1; }); } catch (e) {} return R; };
   // (Oct 8, 14:35) Simulated incidents in the station's area, so the captain and the team lead always have a story to work:
   // one fire (a copy of a real Los Angeles County fire's data, moved into the area and renamed) and one ignition candidate
   // (a copy of a real satellite detection, moved into the area). Marked sim: shown with the simulation star. Station profiles only.

@@ -19,10 +19,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=211"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=14"></script>
+<script src="station.js?v=15"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=112"></script>
+<script src="chat.js?v=113"></script>
 <script src="tour.js?v=117"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=85"></script>
@@ -1634,7 +1634,7 @@ class Component extends DCLogic {
           pick: () => { if (c.kind === 'fire') this.wfSetFireView({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }); else this.wfSetFocus(c.incId); } }); });
       else { CANDS.forEach((cd) => { const ll = cd.live && cd.live.lat != null ? [cd.live.lat, cd.live.lon] : window.__wfIncLatLon(cd.x, cd.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k) return;
           out.push({ t: (cd.live && cd.live.simAt) || T0 - 3 * 60000, kind: 'ign', title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New ignition detection', text: cd.place + '. ' + cd.conf + '% likelihood. ' + (cd.srcList || cd.src || ''), href: 'Alert.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
-        FIRES.forEach((f) => { if (f.x == null) return; const ll = window.__wfIncLatLon(f.x, f.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k || !f.info || !f.info.stEn || (f.info.sim && f.info.resolved)) return;
+        FIRES.forEach((f) => { if (f.x == null) return; const ll = window.__wfIncLatLon(f.x, f.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k || !f.info || !f.info.stEn || (f.info.sim && f.info.resolved)) return; try { if (CHm.find && CHm.find({ id: f.id, kind: 'fire' })) return; } catch (e) {}   /* (Oct 8, 23:09) a fire with a chat speaks through its chat's notice (its own stage), not the feed's */
           out.push({ t: f.info.simAt || T0 - 11 * 60000, kind: 'fire', stage: f.info.stEn, title: (k === 'aid' ? 'Mutual aid. ' : '') + f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) }); });
         CHm.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm' && own(c) && (!window.__wfChatAllowed || window.__wfChatAllowed(c))).forEach((c) => { const S = CHm.stageOf(c) || {}, lm = CHm.lastMsg(c), who = lm && lm.kind === 'msg' && lm.from !== 'me' ? ((c.people[lm.from] || {}).name || '') : '';
           const tx = lm ? (lm.kind === 'card' ? ((lm.title || {}).en || '') : (lm.en || '')) : ''; out.push({ t: lm ? lm.t : (c.updated || T0), kind: c.stage > 0 ? 'fire' : 'ign', stage: S.en, title: c.place + ': ' + (S.en || ''), text: (who ? who + ': ' : '') + tx, href: 'Chat.dc.html', pick: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} } }); }); }

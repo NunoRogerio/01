@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=31"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=14"></script>
+<script src="station.js?v=15"></script>
 <script src="menu.js?v=21"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=112"></script>
+<script src="chat.js?v=113"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -457,6 +457,12 @@ class Component extends DCLogic {
     const HO = !lead && this._helpOffer;
     if (HO) MA.unshift({ place: HO.lbl, aria: HO.lbl, href: 'Chat.dc.html', go: (e) => { if (e && e.preventDefault) e.preventDefault(); HO.go(); }, simD: 'none', ...MK.fire, moonD: 'none',
       sub: HO.place + '. ' + kmT(HO.km) + L('. Outside our area.', '. Fora da nossa área.'), sub2: '', sub2D: 'none', tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '' });
+    /* (Oct 8, 23:21) a crew sent to help on another station's fire: that fire is in our To do (Mutual aid) until it is resolved */
+    try { const AA = JSON.parse(localStorage.getItem('wf-aid-assign') || '{}') || {}, LFa = window.__wfLiveFires || [];
+      Object.keys(AA).forEach((k) => { const a = AA[k], fr = LFa.find((r) => r && String(r[2]) === String(a.id)); if (fr && (fr[9] || {}).resolved) return; if (Date.now() - (a.at || 0) > 864e5) return;
+        const v = { id: a.id, place: a.place, note: fr ? fr[4] : '', x: a.x, y: a.y }, veh = 'Engine ' + ((String(S.name).match(/(\d{1,3})\b/) || [])[1] || '11');
+        MA.unshift({ place: a.place, aria: a.place + ', ' + aidT.label, href: 'Dispatch.dc.html', go: fireGo(v), simD: 'none', ...MK.fire, moonD: 'none', sub: L('Crew sent: ', 'Equipa enviada: ') + veh + L(' to the command post. ', ' para o posto de comando. ') + (a.station || ''), sub2: kmT(a.km || 0) + '. ' + drv(a.km || 0) + '.', sub2D: 'block',
+          tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '' }); }); } catch (e) {}
     rows = MA.concat(rows);
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min(window.innerWidth || 390, 600) - 32, H = 280;
@@ -676,7 +682,9 @@ class Component extends DCLogic {
 
     // Command team
     const cmdRoles = isPT ? [['Commander', 'Comandante'], ['Second in command', '2.º Comandante'], ['Deputy commander', 'Adjunto de comando']] : [['Battalion chief', 'Chefe de batalhão'], ['Station captain', 'Capitão do quartel'], ['Fire captain', 'Capitão']];
-    const cmdP = cmdRoles.map((r) => ({ name: pick(), roleEn: r[0], rolePt: r[1] }));
+    const SF11 = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null;
+    const cmdP = cmdRoles.map((r) => ({ name: SF11 && r[0] === 'Station captain' ? SF11.captain : pick(), roleEn: r[0], rolePt: r[1] }));   /* (Oct 8, 23:09) Station 11's station captain is Elena Ortiz everywhere */
+    if (SF11) { try { const v = JSON.stringify(cmdP.map((p) => p.name)); if (localStorage.getItem('wf-st-reserved') !== v) localStorage.setItem('wf-st-reserved', v); } catch (e) {} }   /* its command team is never someone else in a chat */
     // Crews: Portugal's permanent intervention team (EIP), firefighting teams (ECIN) and a logistics team (ELAC); US engine and hand crews
     const nCrew = 3 + bit(3);
     const crewDefs = isPT ? [['EIP 1', 'VFCI 01', 5], ['ECIN Alfa', 'VFCI 02', 5], ['ECIN Bravo', 'VLCI 01', 5], ['ELAC 1', 'VTTF 01', 3]] : [['Engine ' + num + ' crew', 'Engine ' + num, 4], ['Brush ' + num + ' crew', 'Brush ' + num, 4], ['Patrol ' + num + ' crew', 'Patrol ' + num, 3], ['Hand Crew ' + (Number(num) % 20 + 1), 'Crew Buggy ' + num, 6]];

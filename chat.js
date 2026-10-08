@@ -81,6 +81,17 @@
   function isUS(c) { return ccOf(c.st) === 'us'; }
   // (Oct 3, 22:03) the person each station puts in the incident chat, by their real title: a company Captain in the US,
   // the crew chief (chefe de equipa) of the fire brigade elsewhere
+  /* (Oct 8, 23:09) one rank per person, on every screen: the signed-in station profile by its rank (Captain, Lieutenant), else
+     the fire owner; a station's lead by the country's title; Station 11's lieutenants and anyone in the chat as a lieutenant as
+     Lieutenant (chefe de equipa in Portugal); everyone else on a crew as Firefighter */
+  function rankOf(c, name) { var us = !c || isUS(c), LT = us ? { en: 'Lieutenant', pt: 'Tenente' } : { en: 'Crew chief', pt: 'Chefe de equipa' };
+    var me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null;
+    if (name && me.name && name === me.name) return M ? (M.level === 'lead' ? LT : { en: 'Captain', pt: 'Capitão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
+    var P = c && (c.people || []).find(function (p) { return p.name === name; }); if (P && P.kind === 'lt') return LT; if (P && P.kind === 'air') return { en: P.roleEn || 'Air coordinator', pt: P.rolePt || 'Coordenador de meios aéreos' };
+    var SF = window.__wfStaffOf ? window.__wfStaffOf('1353638773') : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT; if (SF && name === SF.captain) return { en: 'Captain', pt: 'Capitão' };
+    if (c && (c.forces || []).some(function (f) { return f.coord === name; })) return leadRole(c);
+    if (P && P.kind === 'lead') return leadRole(c);
+    return { en: 'Firefighter', pt: 'Bombeiro' }; }
   function leadRole(c) { return isUS(c) ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' }; }
   // who is in the chat now: once the fire is declared, only the leads of the stations that were sent stay
   function active(c) { return (c.people || []).filter(function (p) { return !p.left && !p.self; }); }   /* (Oct 7) the signed-in captain is "you", not another member */
@@ -134,11 +145,11 @@
     c.flags.dispatched = true; return true; }
   function ensureLts(c) { if (!c || c.kind === 'dm' || !c.people) return false; var ch = soloSim(c), M = window.__wfMine ? window.__wfMine() : null;
     /* (Oct 8, 22:43) chats saved before the reservation: Station 11's people (its captain, lieutenants and crews) are never someone else in another station's chat */
-    if (window.__wfReservedNames && !c.fixedRes) { var RS0 = window.__wfReservedNames(), own = {}; (c.stations || []).forEach(function (q) { if (staffOf(q)) own[q.short] = 1; });
+    if (window.__wfReservedNames && !c.fixedRes2) { var RS0 = window.__wfReservedNames(), own = {}; (c.stations || []).forEach(function (q) { if (staffOf(q)) own[q.short] = 1; });
       (c.people || []).forEach(function (p, i) { if (!RS0[p.name] || own[p.org]) return; var old = p.name, nm = pickNames(c, 1, 'res' + i)[0]; if (!nm || RS0[nm]) return; p.name = nm; p.code = initials(nm);
         (c.forces || []).forEach(function (f) { if (f.coord === old) f.coord = nm; if (f.crew) f.crew = f.crew.map(function (x) { return x === old ? nm : x; }); }); ch = true; });
       (c.forces || []).forEach(function (f, i) { if (own[f.station] || !f.crew) return; f.crew = f.crew.map(function (x, j) { if (!RS0[x]) return x; ch = true; return pickNames(c, 1, 'resc' + i + '-' + j)[0] || x; }); });
-      c.fixedRes = true; ch = true; }
+      c.fixedRes2 = true; ch = true; }
     /* chats saved before: their stations by the short names people use */
     (c.people || []).forEach(function (p) { var o = shortStation(p.org); if (p.org && o !== p.org) { p.org = o; ch = true; } }); (c.stations || []).forEach(function (q) { var o = shortStation(q.short || q.name); if (q.short !== o) { q.short = o; ch = true; } }); (c.forces || []).forEach(function (f) { var o = shortStation(f.station); if (f.station && o !== f.station) { f.station = o; ch = true; } });
     if (!c.forces || !c.forces.length) return ch;
@@ -289,7 +300,7 @@
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
   function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0);
     // (Oct 4) crews on the fire line: the air lead joins the chat
-    if (s >= 3 && !c.dismissed && !(c.people || []).some(function (p) { return p.kind === 'air'; })) { var a = airLead(c); c.people.push(a); sys(c, a.name + ', ' + a.roleEn.toLowerCase() + ', joined', a.name + ', ' + a.rolePt.toLowerCase() + ', entrou na conversa', (delay || 0) + 500, 0); } }
+    if (s >= 3 && wantsAir(c) && !(c.people || []).some(function (p) { return p.kind === 'air'; })) {   /* (Oct 8, 23:09) only when air was ordered */ var a = airLead(c); c.people.push(a); sys(c, a.name + ', ' + a.roleEn.toLowerCase() + ', joined', a.name + ', ' + a.rolePt.toLowerCase() + ', entrou na conversa', (delay || 0) + 500, 0); } }
   function lead(c, i) { return Math.min(i, Math.max(0, c.people.length - 1)); }
   function mine(c, en, pt) { c.msgs.push({ id: newId(), kind: 'msg', from: 'me', en: en, pt: pt, t: Date.now(), vt: vnow(c) }); }
 
@@ -609,6 +620,10 @@
     if (msgId) { var m = c.msgs.find(function (x) { return x.id === msgId; }); if (m) m.done = a; }
     var me = function (en, pt) { mine(c, en, pt); };
     if (a === 'reqNo') { me('Not yet. Keep the drone on it.', 'Ainda não. Mantenham o drone no local.'); save(); emit(); return; }
+    if (a === 'helpYes') { me('Yes, we can send them.', 'Sim, podemos enviá-los.'); helpSend(c);
+      say(c, 0, 'Great, thank you. Report to the command post at ' + c.help.place + ' and I will put your crew on the flank. Call me when you are 10 min out.', 'Ótimo, obrigado. Apresentem-se no posto de comando do ' + c.help.place + ' e ponho a vossa equipa no flanco. Liguem-me a 10 min de chegar.', 2200, 2); c.updated = Date.now(); save(); emit(); return; }
+    if (a === 'helpNo') { me('Not this time, we need our crews here.', 'Desta vez não, precisamos das nossas equipas aqui.'); c.step = 3;
+      say(c, 0, 'Understood. I will ask the next station.', 'Entendido. Peço ao quartel seguinte.', 2000, 1); c.updated = Date.now(); save(); emit(); return; }
     if (a === 'reqConfirm') a = 'confirm';
     if (a === 'reqDismiss') a = 'dismiss';
     if (a === 'confirm' || a === 'dismiss') settleReq(c, a === 'confirm');
@@ -631,6 +646,7 @@
       c.flags.dispatched = true;
       c.forces = c.stations.map(function (s, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
       c.forces.forEach(function (f) { f.st = f.si < 2 || f.extra ? 'enroute' : 'standby'; });
+      c.people.forEach(function (p, pi) { if (p.kind !== 'lead' || p.self || p.left) return; var f = c.forces.find(function (x) { return x.si === pi; }); if (f && f.st === 'standby') p.left = true; });   /* (Oct 8, 23:09) the stations not sent leave the chat, as with a dispatch from the incident page */
       var cm = c.msgs.filter(function (x) { return x.kind === 'card' && x.stage === 1; }).pop();
       if (cm && cm.rows) cm.rows.forEach(function (r, i) { r.r = i < 2 ? { en: 'Dispatched', pt: 'Despachado' } : { en: 'Standby', pt: 'Prevenção' }; r.rc = i < 2 ? '#186B2D' : '#875800'; });
       setStage(c, 2, 1500, 2);
@@ -837,6 +853,7 @@
     text = String(text).trim(); mine(c, text, text);
     if (c.kind !== 'dm' && c.stage >= 3 && evacText(text) && !(c.flags || {}).evac) evacAsk(c, Math.max(0, (c.people || []).findIndex(function (p) { return !p.self && !p.left && p.kind !== 'air'; })));   /* I bring it up: the request card comes up for the fire owner */
     if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
+    if (c.kind === 'dm' && c.help && c.step === 2 && /obrigad|thank|valeu|cheers|stay safe|cuid/i.test(text)) { helpEnd(c); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm' && c.help) { if (aiKey()) helpAi(c, text); else helpReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (!c.dismissed && c.stage < 7 && c.people.length) {
@@ -946,6 +963,7 @@
     mine(ch, 'Hello ' + first + '. We see the ' + h.place + ' ' + Math.round(h.km) + ' km from ' + h.from + '. Do you need help?', 'Olá ' + first + '. Vemos o ' + h.place + ' a ' + Math.round(h.km) + ' km do ' + h.from + '. Precisa de ajuda?');
     if (ch.help.need) say(ch, 0, 'Thanks for asking. Yes, we do. We are at ' + helpFacts(h, false) + ' and it is still spreading. An engine and a crew on the flank would help. Can you send them?',
       'Obrigado por perguntar. Sim, precisamos. Estamos com ' + helpFacts(h, true) + ' e ainda está a progredir. Um veículo e uma equipa no flanco ajudavam. Pode enviá-los?', 2600, 2);
+    if (ch.help.need) helpCard(ch, 3400);
     else say(ch, 0, 'Thanks for asking. We have it: ' + helpFacts(h, false) + '. No help needed for now. I will call you if that changes.',
       'Obrigado por perguntar. Está controlado por nós: ' + helpFacts(h, true) + '. Para já não precisamos de ajuda. Ligo-lhe se isso mudar.', 2600, 2);
   }
@@ -957,17 +975,28 @@
       body: { en: (h.reg ? h.reg + '. ' : '') + Math.round(h.km) + ' km from our station', pt: (h.reg ? h.reg + '. ' : '') + Math.round(h.km) + ' km do nosso quartel' }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic });
     var P = ch.people[0] || {};
     say(ch, 0, 'Hello, this is ' + P.name + ', captain at ' + (ch.reg || 'our station') + '. We are on the ' + h.place + ': ' + helpFacts(h, false) + ', and it is still spreading. Could you send an engine and a crew to the flank?',
-      'Olá, fala ' + P.name + ', capitão do ' + (ch.reg || 'nosso quartel') + '. Estamos no ' + h.place + ': ' + helpFacts(h, true) + ', e ainda está a progredir. Podem enviar um veículo e uma equipa para o flanco?', 400, 0); }
+      'Olá, fala ' + P.name + ', capitão do ' + (ch.reg || 'nosso quartel') + '. Estamos no ' + h.place + ': ' + helpFacts(h, true) + ', e ainda está a progredir. Podem enviar um veículo e uma equipa para o flanco?', 400, 0); helpCard(ch, 1200); }
+  /* (Oct 8, 23:21) the other station's ask is answered on a card (Not now / Send a crew), not with a typed bubble */
+  function helpCard(ch, delay) { var P = ch.people[0] || {}, h = ch.help || {};
+    card(ch, { req: 'help', by: 0, tag: { en: 'Request · ' + (P.name || ''), pt: 'Pedido · ' + (P.name || '') }, tagC: '#B8360A', title: { en: 'Help on the ' + h.place, pt: 'Ajuda no ' + h.place },
+      body: { en: 'An engine and a crew on the flank. ' + Math.round(h.km || 0) + ' km from our station', pt: 'Um veículo e uma equipa no flanco. ' + Math.round(h.km || 0) + ' km do nosso quartel' },
+      actions: [{ key: 'helpNo', en: 'Not now', pt: 'Agora não' }, { key: 'helpYes', en: 'Send a crew', pt: 'Enviar equipa' }] }, delay, 0); }
+  // We send a crew: the fire goes into our To do as a mutual aid assignment (kept on this phone)
+  function helpSend(c) { var h = c.help || {}; c.step = 2;
+    try { var A = JSON.parse(localStorage.getItem('wf-aid-assign') || '{}') || {}; A[h.id] = { id: h.id, place: h.place, reg: h.reg || '', km: h.km, x: h.x, y: h.y, lat: h.lat, lon: h.lon, station: c.reg || '', chat: c.key, at: Date.now() }; localStorage.setItem('wf-aid-assign', JSON.stringify(A)); } catch (e) {} }
   // (Oct 8, 22:52) a conversation with another station (help offered, asked or requested) is a To do item until marked done
   function mutualOpen(c) { return !!c && c.kind === 'dm' && !c.police && !c.done && !c.closed; }
   function markDone(key) { var c = load().chats[key]; if (!c || c.done) return; c.done = true; c.doneAt = Date.now(); c.closedVt = Date.now();
     sys(c, 'Marked as done', 'Marcado como feito', 0, 0); c.updated = Date.now(); save(); emit(); }
+  /* (Oct 8, 23:21) the crew is agreed and we say goodbye: their captain answers, the conversation is done and the screen goes back
+     to the station, where the fire now waits in To do */
+  function helpEnd(c) { c.step = 4; say(c, 0, 'You too, Captain. See you at the command post.', 'Igualmente. Vemo-nos no posto de comando.', 1600, 1); c.leaveAt = Date.now() + 1600 + 2600; }
   function helpReply(c, text) {
     var t = String(text).toLowerCase();
-    if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Thank you. Stay safe.', 'Obrigado. Cuidem-se.', 1800, 1); return; }
+    if (/obrigad|thank|valeu|cheers|stay safe|cuid/.test(t)) { if (c.step === 2) { helpEnd(c); return; } say(c, 0, 'Thank you. Stay safe.', 'Obrigado. Cuidem-se.', 1800, 1); return; }
     if (c.step === 1) {
       if (/\b(no|not|can't|cannot|não|nao|impossível)\b/.test(t)) { c.step = 3; say(c, 0, 'Understood. I will ask the next station.', 'Entendido. Peço ao quartel seguinte.', 2000, 1); return; }
-      if (/\b(yes|sim|ok|okay|sure|claro|send|sending|envio|enviamos|vamos|on our way|a caminho|can)\b/.test(t)) { c.step = 2;
+      if (/\b(yes|sim|ok|okay|sure|claro|send|sending|envio|enviamos|vamos|on our way|a caminho|can)\b/.test(t)) { helpSend(c); (c.msgs || []).forEach(function (m) { if (m.req === 'help' && !m.done) m.done = 'helpYes'; });
         say(c, 0, 'Great, thank you. Report to the command post at ' + c.help.place + ' and I will put your crew on the flank. Call me when you are 10 min out.',
           'Ótimo, obrigado. Apresentem-se no posto de comando do ' + c.help.place + ' e ponho a vossa equipa no flanco. Liguem-me a 10 min de chegar.', 2400, 2); return; }
       say(c, 0, 'An engine and a crew would do. Can you send them?', 'Um veículo e uma equipa chegam. Podem enviá-los?', 2000, 1); return; }
@@ -1229,7 +1258,7 @@
     if (s === 3) setForces(c, ['enroute'], 'onscene');
     if (s === 5 && c.air) c.air.st = 'released';
     if (s === 6) { var first = true; (c.forces || []).forEach(function (f) { if (f.st === 'onscene' && first) { f.st = 'watch'; first = false; } else if (f.st !== 'standby') f.st = 'released'; }); }
-    if (s === 7) { setForces(c, null, 'released'); if (c.air) c.air.st = 'released'; c.closedVt = vnow(c); c.sum = stats(c); award(c); }
+    if (s === 7) { setForces(c, ['onscene', 'enroute', 'watch', 'assigned'], 'released');   /* (Oct 8, 23:09) only the crews that went are released; standby stations never went */ if (c.air) c.air.st = 'released'; c.closedVt = vnow(c); c.sum = stats(c); award(c); }
   }
 
   // ---- the clock: due messages arrive, on whichever screen is open --------------------------------------------------
@@ -1298,7 +1327,7 @@
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
     return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
-      people: F.reduce(function (a, f) { return a + 1 + f.crew.length; }, 0), veh: F.reduce(function (a, f) { return a + f.veh.reduce(function (n, x) { return n + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1); }, 0); }, 0), air: c.air || (c.flags && c.flags.air) ? 1 : 0, stations: F.filter(function (f, i) { return F.findIndex(function (g) { return g.station === f.station; }) === i; }).length, est: !!c.estF };
+      people: (function () { var u = {}; F.forEach(function (f) { [f.coord].concat(f.crew || []).forEach(function (n) { if (n) u[n] = 1; }); }); return Object.keys(u).length; })(),   /* (Oct 8, 23:09) each person once (a captain over two crews is one person) */ veh: F.reduce(function (a, f) { return a + f.veh.reduce(function (n, x) { return n + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1); }, 0); }, 0), air: c.air || (c.flags && c.flags.air) ? 1 : 0, stations: F.filter(function (f, i) { return F.findIndex(function (g) { return g.station === f.station; }) === i; }).length, est: !!c.estF };
   }
   // Fire size class (Oct 4): the US scale of NWCG, which CAL FIRE uses (A to G by acres, from the final perimeter); everywhere else the
   // names of the Portuguese ICNF (fogacho under 1 ha, incêndio, grande incêndio from 100 ha), with the size in hectares
@@ -1317,10 +1346,10 @@
       if (list.some(function (r) { return r.key === c.key; })) return;
       list.push({ key: c.key, place: c.place, reg: c.reg, vt: S.end, res: S.res, resp: S.resp, ha: S.ha, acres: S.acres, us: S.us, pop: S.pop, roleEn: roleEn, rolePt: rolePt, station: station || '' });
     };
-    rec(me.name, 'Fire owner', 'Responsável pelo incêndio', '');
+    var R0 = rankOf(c, me.name); rec(me.name, R0.en, R0.pt, '');
     (c.forces || []).filter(function (f) { return f.st !== 'standby'; }).forEach(function (f) {
-      if (f.coord) rec(f.coord, 'Crew coordinator', 'Coordenador de equipa', f.station);
-      f.crew.forEach(function (n) { rec(n, 'Firefighter', 'Bombeiro', f.station); });
+      if (f.coord && f.coord !== me.name) { var R1 = rankOf(c, f.coord); rec(f.coord, R1.en, R1.pt, f.station); }
+      f.crew.forEach(function (n) { var R2 = rankOf(c, n); rec(n, R2.en, R2.pt, f.station); });
     });
     try { localStorage.setItem(ACH, JSON.stringify(A)); } catch (e) {}
   }
@@ -1328,13 +1357,12 @@
   function person(name) {
     var me = (window.__wfPrefs && window.__wfPrefs.person) || {};
     var A = (loadAch()[name] || []).slice().sort(function (a, b) { return b.vt - a.vt; });
-    if (me.name && name === me.name) return { name: name, code: me.code || initials(name), photo: me.photo || '', roleEn: 'Fire owner', rolePt: 'Responsável pelo incêndio', station: me.title || '', ach: A, me: true };
+    if (me.name && name === me.name) { var RM = rankOf(null, name); return { name: name, code: me.code || initials(name), photo: me.photo || '', roleEn: RM.en, rolePt: RM.pt, station: me.title || '', ach: A, me: true }; }
     var db = load(), out = null, ch = null;
     Object.keys(db.chats).some(function (k) { ch = db.chats[k];
       return (db.chats[k].forces || []).concat(db.chats[k].people.map(function (p) { return { coord: p.name, station: p.org, crew: [] }; })).some(function (f) {
         var stOf = function () { var S = (ch.stations || []).find(function (q) { return q.short === f.station || q.name === f.full; }) || {}; return { ck: S.ck || f.ck || '', name: S.name || f.full || f.station, short: f.station, la: S.la, lo: S.lo, km: S.km, chat: ch.key }; };
-        if (f.coord === name) { out = { roleEn: 'Crew coordinator', rolePt: 'Coordenador de equipa', station: f.station, st: stOf() }; return true; }
-        if (f.crew.indexOf(name) >= 0) { out = { roleEn: 'Firefighter', rolePt: 'Bombeiro', station: f.station, st: stOf() }; return true; }
+        if (f.coord === name || f.crew.indexOf(name) >= 0) { var RK = rankOf(ch, name); out = { roleEn: RK.en, rolePt: RK.pt, station: f.station, st: stOf() }; return true; }
         return false;
       });
     });
@@ -1462,7 +1490,10 @@
   }
   // The fire's stage as one shared component (tags in lists, bands, map tooltips, headers): its stage on the chat's
   // spectrum (ANEPC code, else the feed's tone), the label the source gives (e.g. "45% contained"), and the stage's colours and icon
-  function stageIdx(f) { var I = (f && f.info) || {}, sc = /^F-/.test((f && f.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
+  /* (Oct 8, 23:09) one status everywhere: a fire with a chat is at the chat's stage (incident page, map, lists, notifications) */
+  function chatStage(f) { try { var id = String((f && f.id) || ''); if (!id) return null; var D = load().chats, raw = id.replace(/^F-/, ''), c = D['f:' + id] || D['c:' + raw] || D['f:' + raw];
+      return c && !c.dismissed && c.stage >= 1 ? Math.min(7, c.stage) : null; } catch (e) { return null; } }
+  function stageIdx(f) { var cs = chatStage(f); if (cs != null) return cs; var I = (f && f.info) || {}, sc = /^F-/.test((f && f.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
     if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6; return stageFromCode(sc); }
   function stageTag(f) { var i = stageIdx(f), S = STAGES[i] || STAGES[2], I = (f && f.info) || {}, conf = /^Confirmed from /.test((f && f.note) || '');
     // (Oct 3, 22:23) the label is the stage's own name, so words, colour and icon always agree (the feed's wording, e.g. "Not contained", spans several stages)
@@ -1507,7 +1538,7 @@
     callFace: function (key) { var c = load().chats[key]; return c ? faceOfPolice(c) : 'police-a'; },   /* the police leader's face for this report: one of three, chosen at random once, then the same in every call */
     policeChat: function (id) { return load().chats['p:' + id] || null; },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
-    helpIn: function (o) { return direct(o); }, mutualOpen: mutualOpen, markDone: markDone,   /* (Oct 8, 22:52) a help request arrives (not opened); mutual aid conversations as To do items */
+    rankOf: rankOf,     helpIn: function (o) { return direct(o); }, mutualOpen: mutualOpen, markDone: markDone,   /* (Oct 8, 22:52) a help request arrives (not opened); mutual aid conversations as To do items */
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */

@@ -17,10 +17,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=211"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=14"></script>
+<script src="station.js?v=15"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=112"></script>
+<script src="chat.js?v=113"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=36"></script>
@@ -173,7 +173,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </div>
             <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 8px; padding: 16px 16px">
               <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
-                <span style="font-size: 18px; font-weight: 400; line-height: 24px">{{m.title}}</span>
+                <span style="font-size: 18px; font-weight: 700; line-height: 24px">{{m.title}}</span>
                 <span style="display: {{m.bodyD}}; font-size: 18px; line-height: 24px; color: #000000">{{m.body}}</span>
               </div>
               <sc-if value="{{m.hasKpi}}" hint-placeholder-val="{{ false }}">
@@ -394,6 +394,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== Resolution summary ===== -->
   <sc-if value="{{isSummary}}" hint-placeholder-val="{{ false }}">
+    <!-- (Oct 8, 23:11) a blade from the top like the others: it ends 48px above the bottom of the screen, rounded, over the shade -->
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(60,60,67,0.16)"></div>
+    <div class="chblade" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin: -56px 0 48px; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden">
     <header class="chdrop" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 40px 16px; flex-shrink: 0">
       <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.sumTitle}}</h1>
@@ -461,7 +464,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-for>
         <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: flex; align-items: center; gap: 8px; padding: 16px 16px; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; overflow: hidden">{{sum.me.code}}<span style="position: absolute; inset: 0; background-image: {{sum.me.photo}}; background-size: cover; background-position: center"></span></span>
-          <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0"><span style="font-size: 18px; font-weight: 600; line-height: 24px">{{sum.me.name}}</span><span style="font-size: 16px; line-height: 18px; color: #545458">{{t.owner}}</span></span>
+          <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0"><span style="font-size: 18px; font-weight: 600; line-height: 24px">{{sum.me.name}}</span><span style="font-size: 16px; line-height: 18px; color: #545458">{{sum.me.role}}</span></span>
           <svg width="17.5" height="17.5" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2.06" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
         </button>
       </section>
@@ -470,6 +473,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- (Oct 8, 22:32) no closing line nor "Go to main screen" at the foot: the grabber folds the summary back into the chat -->
     <!-- (Oct 8, 22:15) the summary drops from the top as a blade: no back arrow, the grabber at its foot (tap or swipe up) folds it back into the chat -->
     <div role="button" data-grab-show="1" class="chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    </div>
     <!-- Cards picker for the key figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-hap-scrim wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
     <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
@@ -489,6 +493,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== A firefighter's profile and achievements ===== -->
   <sc-if value="{{isPerson}}" hint-placeholder-val="{{ false }}">
+    <!-- (Oct 8, 23:11) a blade from the top like the others: it ends 48px above the bottom of the screen, rounded, over the shade -->
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(60,60,67,0.16)"></div>
+    <div class="chblade" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin: -56px 0 48px; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden">
     <header class="chdrop" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 16px; flex-shrink: 0">
     </header>
     <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
@@ -533,6 +540,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <!-- Grabber: a swipe up (or a tap) dismisses the profile, back to where it was opened (the team list) -->
     <div role="button" data-grab-show="1" class="chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    </div>
     <!-- Cards picker for this person figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-hap-scrim wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
     <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
@@ -663,6 +671,8 @@ class Component extends DCLogic {
   componentDidUpdate() {
     this.fitRows();
     const s = this.state || {}, C = window.__wfChat;
+    /* (Oct 8, 23:21) a help conversation said goodbye: it is marked done and the screen goes back to the station, where the fire waits in To do */
+    if (s.view === 'chat' && C && s.key && !this._leaving) { const c0 = C.get(s.key); if (c0 && c0.leaveAt && !c0.done) { this._leaving = setTimeout(() => { try { if (!c0.done && C.markDone) C.markDone(c0.key); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.location.href = window.__wfHomeUrl ? window.__wfHomeUrl() : 'Main.dc.html'; }, Math.max(300, c0.leaveAt - Date.now())); } }
     if (s.view === 'chat' && C && s.key) {
       const c = C.get(s.key);
       if (c && (C.fresh ? C.fresh(c) : C.unread(c)) > 0 && document.visibilityState !== 'hidden') C.seen(s.key);
@@ -737,7 +747,7 @@ class Component extends DCLogic {
       // A swipe up on the grabber (or a tap) dismisses the profile, as the back does
       const self = this, ppH = this.grabUp();
       return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), sk, ppH, ppY: (s.ppDy || 0) + 'px', ppT: self._ppd ? '0s' : '.3s',
-        pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? (LEAD ? L('Crew chief', 'Chefe de equipa') : L('Fire owner', 'Responsável pelo incêndio')) + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
+        pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
           // The station this person serves at: its crest and name, and a link to the station page
           ...(() => { const S = P.st || null; if (!S || !S.name) return { stD: 'none', stName: '', stSub: '', stCrest: '', stCrestD: 'none', stLinkD: 'none', goStation: null };
             const ch = S.chat ? C.get(S.chat) : null, cr = ch && C.crest ? C.crest(ch, S.short).url : '';
@@ -811,7 +821,8 @@ class Component extends DCLogic {
     const isAirF = (f) => (f.veh || []).length && (f.veh || []).every((v) => /heli|Helic|tanker|plane|avião|air/i.test(v));
     const onTeam = (f) => !(c.people || []).length || (isAirF(f) ? hasAir : PO.has(f.station));
     const FF = (c.forces || []).filter((f) => (s.view !== 'summary' || f.st !== 'standby') && onTeam(f)).reduce((A, f) => { const g = A.find((x) => x.station === f.station);
-      if (!g) { A.push(Object.assign({}, f, { veh: (f.veh || []).slice(), crew: (f.crew || []).slice() })); return A; }
+      if (!g) { A.push(Object.assign({}, f, { veh: (f.veh || []).slice(), crew: (f.crew || []).slice(), parts: [{ veh: (f.veh || []).slice(), names: [f.coord].concat(f.crew || []).filter(Boolean) }] })); return A; }
+      g.parts.push({ veh: (f.veh || []).slice(), names: (f.coord && f.coord !== g.coord ? [f.coord] : []).concat(f.crew || []) });   /* (Oct 8, 23:09) each crew keeps its own vehicle (Brush 11 with its lieutenant) */
       const R = { onscene: 4, enroute: 3, released: 2, standby: 1 }; g.veh = g.veh.concat(f.veh || []); g.crew = g.crew.concat(f.coord && f.coord !== g.coord ? [f.coord] : [], f.crew || []);
       if ((R[f.st] || 0) > (R[g.st] || 0)) g.st = f.st; return A; }, []);
     const vehN = (v) => v.reduce((a, x) => a + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1), 0);   /* "2 × Engines" is two vehicles */
@@ -827,8 +838,8 @@ class Component extends DCLogic {
       return out.filter((v, i) => out.indexOf(v) === i).map((n) => { const k = vKind(n); return { name: n, k, ic: UIC[k] || UIC.engine || '', seats: vSeats(n), type: vType(k, n) }; }); };
     const ride = (V, names) => { const by = {}, cnt = V.map(() => 0); names.forEach((n, i) => { if (!V.length) return; let vi = i < V.length ? i : V.findIndex((v, j) => cnt[j] < v.seats); if (vi < 0) vi = 0; by[n] = V[vi].name; cnt[vi]++; }); return by; };   /* every vehicle gets its driver first, then the seats fill in order */
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
-      const ppl = [{ name: f.coord, role: L('Crew coordinator', 'Coordenador de equipa'), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: L('Firefighter', 'Bombeiro'), w: 400, bg: '#E5E5EA' })));
-      const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk], V = vehOf(f), rd = ride(V, ppl.filter((p) => p.name).map((p) => p.name));
+      const rk = (n) => { const R = C.rankOf ? C.rankOf(c, n) : { en: 'Firefighter', pt: 'Bombeiro' }; return L(R.en, R.pt); }, ppl = [{ name: f.coord, role: rk(f.coord), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: rk(n), w: /Lieutenant|Tenente|Crew chief|Chefe/.test(rk(n)) ? 600 : 400, bg: '#E5E5EA' })));
+      const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk], V = vehOf(f), rd = (f.parts || [{ veh: f.veh, names: ppl.filter((p) => p.name).map((p) => p.name) }]).reduce((acc, pt) => Object.assign(acc, ride(vehOf(Object.assign({}, f, { veh: pt.veh })), pt.names)), {});
       return { tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fxClosed: Object.assign({}, (this.state || {}).fxClosed, { [fk]: open }) }); }, exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg',
         hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
         vicons: V.map((v) => ({ d: v.ic })), vAria: V.map((v) => v.name).join(', '), vehs: V.map((v) => ({ ...v, sub: v.type + '. ' + Object.keys(rd).filter((n) => rd[n] === v.name).length + ' ' + L('people', 'pessoas') })), vehD: V.length ? 'block' : 'none',
@@ -872,7 +883,7 @@ class Component extends DCLogic {
           kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Response time', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Final duration', 'Duração final'), c: '#186B2D', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
             { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800', ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC', cmp: '', cmpD: 'none', cmpC: '#545458' }],
           forcesSub: (Z.est ? '~' : '') + (Z.est ? Z.people : FF.reduce((a, f) => a + 1 + f.crew.length, 0)) + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + (Z.est ? Z.veh : FF.reduce((a, f) => a + vehN(f.veh), 0)) + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
-          me: { name: me.name, code: me.code, photo: photo(me) }, goOwner: openPerson(me.name) },
+          me: { name: me.name, code: me.code, photo: photo(me), role: (() => { const R = C.rankOf ? C.rankOf(c, me.name) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' }; return L(R.en, R.pt); })() }, goOwner: openPerson(me.name) },
         // Key figures as mini cards: five on by default, five more from the + tile; order and choice kept on this phone
         sk: (() => {
           const hr = Math.max(1, (Z.res || 0) / 3600000), burn = (Z.us ? Z.acres : Z.ha) / hr;
@@ -945,11 +956,11 @@ class Component extends DCLogic {
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
-        const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
+        const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], helpYes: ['Crew sent', 'Equipa enviada'], helpNo: ['Not sent', 'Não enviada'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
         const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
-            ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
+            ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
               /* (Oct 8, 22:39) decided: the button is no longer a button (no action, no press) and wears the card's header band colour, its text the header's ink */
               if (done) return { cls: '', bg: tone(St || S).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', w: 600, pe: 'none' };
@@ -984,7 +995,7 @@ class Component extends DCLogic {
       }
     });
     // The team: you, the fire owner, then the crew coordinator of each station
-    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : LEAD ? (/^[A-Z]{2}$/.test(c.st || '') && c.st !== 'PT' ? L('Lieutenant · you', 'Chefe de equipa · você') : L('Crew chief · you', 'Chefe de equipa · você')) : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
+    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : (() => { const R = C.rankOf ? C.rankOf(c, me.name) : { en: 'Fire owner', pt: 'Responsável' }; return L(R.en, R.pt) + L('. You', '. Você'); })(),   /* (Oct 8, 23:09) the same rank as everywhere */ code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
       .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left && !p.self && p.name !== me.name).map(([p, i]) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
