@@ -99,7 +99,8 @@
   function vStart(f, key, el) { var C = window.__wfChat; if (!C || !key || !window.speechSynthesis) return; var PT = window.__wfLang === 'pt', seen = {};
     var c0 = C.get(key); (c0 && c0.msgs || []).forEach(function (m) { seen[m.id] = 1; });
     var cap = document.createElement('div'); cap.className = 'vcap'; cap.setAttribute('aria-live', 'polite'); el.appendChild(cap);
-    var say = function (p, i, text) { var u = new SpeechSynthesisUtterance(text), V = vFor(p.name || '', i, PT); u.lang = PT ? 'pt-PT' : 'en-US'; if (V.v) u.voice = V.v; u.pitch = V.pitch; u.rate = V.rate;
+    var say = function (p, i, text) { if (f.quiet) return;   /* (Oct 8, 21:11) you are writing or dictating: the team stays quiet (their words still land in the chat) */
+      var u = new SpeechSynthesisUtterance(text), V = vFor(p.name || '', i, PT); u.lang = PT ? 'pt-PT' : 'en-US'; if (V.v) u.voice = V.v; u.pitch = V.pitch; u.rate = V.rate;
       u.onstart = function () { cap.textContent = (p.name || '').split(' ')[0] + ': ' + text; cap.classList.add('on');
         var gt = el.querySelectorAll('.gt'); Array.prototype.forEach.call(gt, function (t) { t.classList.toggle('sp', (t.querySelector('b') || {}).textContent === (p.name || '').split(' ')[0]); }); };
       /* one voice at a time, then a breath before the next (the chat holds its next bubble meanwhile) */
@@ -110,6 +111,10 @@
     f.vOn = function () { var c = C.get(key); if (!c) return; (c.msgs || []).forEach(function (m) { if (seen[m.id]) return; seen[m.id] = 1; if (m.kind !== 'msg' || m.from === 'me') return;
       var i = typeof m.from === 'number' ? m.from : 0, p = (c.people || [])[i] || { name: '' }; say(p, i, PT ? m.pt : m.en); }); };
     addEventListener('wf-chat', f.vOn); f.vT = setInterval(f.vOn, 1200);
+    /* (Oct 8, 21:11) you start writing or dictating in the chat box: the voices stop at once and stay quiet until you leave it */
+    f.vIn = function (e) { var t = e.target; if (!t || !t.closest || !t.closest('[data-wf-composer]')) return; f.quiet = true; try { speechSynthesis.cancel(); } catch (x) {} cap.classList.remove('on'); window.__wfVoiceBusy = false; };
+    f.vOut = function (e) { var t = e.target; if (!t || !t.closest || !t.closest('[data-wf-composer]')) return; setTimeout(function () { var a = document.activeElement; if (!(a && a.closest && a.closest('[data-wf-composer]'))) f.quiet = false; }, 300); };
+    document.addEventListener('focusin', f.vIn); document.addEventListener('focusout', f.vOut);
     /* calling the team is asking where things stand: they answer aloud */
     window.__wfVoiceKey = key; window.__wfVoiceBusy = false;
     setTimeout(function () { try { if (C.callStart) C.callStart(key); } catch (x) {} }, 600);
@@ -121,9 +126,9 @@
     mic.addEventListener('click', function (e) { e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
       if (rec) { try { rec.stop(); } catch (x) {} return; }
       try { speechSynthesis.cancel(); } catch (x) {} rec = new SR(); rec.lang = PT ? 'pt-PT' : 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
-      mic.setAttribute('aria-pressed', 'true'); mic.classList.add('on'); window.__wfVoiceBusy = true;
+      mic.setAttribute('aria-pressed', 'true'); mic.classList.add('on'); window.__wfVoiceBusy = true; f.quiet = true;
       rec.onresult = function (ev) { var t = ev.results && ev.results[0] && ev.results[0][0] ? ev.results[0][0].transcript : ''; if (t && t.trim()) { try { C.send(key, t.trim().charAt(0).toUpperCase() + t.trim().slice(1)); } catch (x) {} } };
-      rec.onend = rec.onerror = function () { window.__wfVoiceBusy = false; rec = null; mic.setAttribute('aria-pressed', 'false'); mic.classList.remove('on'); };
+      rec.onend = rec.onerror = function () { window.__wfVoiceBusy = false; f.quiet = false; rec = null; mic.setAttribute('aria-pressed', 'false'); mic.classList.remove('on'); };
       try { rec.start(); } catch (x) { rec = null; mic.classList.remove('on'); } });
     f.vRec = function () { if (rec) try { rec.abort(); } catch (x) {} }; }
   // (Oct 8, 21:09) call sounds, made here (Web Audio): an outgoing ring, a soft rising three-note chime as in Teams or Zoom,
@@ -136,7 +141,16 @@
   function ringStart(f) { ringOnce(); f.ring = setInterval(ringOnce, 1500); }
   function ringStop(f) { if (f && f.ring) { clearInterval(f.ring); f.ring = null; } }
   function plim() { var A = ac(); if (!A) return; var t = A.currentTime + 0.02; note(A, t, 1318.5, 0.7, 0.18); note(A, t + 0.09, 1975.5, 0.55, 0.1); }
-  function vStop(f) { if (f.vOn) removeEventListener('wf-chat', f.vOn); clearInterval(f.vT); clearTimeout(f.vP); window.__wfVoiceKey = null; window.__wfVoiceBusy = false; if (f.vRec) f.vRec(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (x) {} }
+  // (Oct 8, 21:11) typing with a call card up: the card moves above the chat box (16px over it) so what you write stays in view;
+  // it goes back where it was when the keyboard closes
+  (function () { var vv = window.visualViewport;
+    function clear() { var c = document.querySelector('[data-wf-composer]'), a = document.activeElement, typing = c && a && c.contains(a) && /^(INPUT|TEXTAREA)$/.test(a.tagName);
+      feeds.forEach(function (f) { if (!f.el || f.el.classList.contains('max')) return; var d = dims(f);
+        if (typing) { var r = c.getBoundingClientRect(), top = (vv ? vv.offsetTop : 0) + 8, y = Math.max(top, r.top - 16 - d.h); if (f.st.y + d.h > r.top - 8) { if (!f.pre) f.pre = { x: f.st.x, y: f.st.y }; setPos(f, f.st.x, y, true); } }
+        else if (f.pre) { var p = f.pre; f.pre = null; setPos(f, p.x, p.y, true); } }); }
+    var q = 0; function soon() { clearTimeout(q); q = setTimeout(clear, 120); setTimeout(clear, 450); }
+    document.addEventListener('focusin', soon); document.addEventListener('focusout', soon); if (vv) vv.addEventListener('resize', soon); })();
+  function vStop(f) { if (f.vIn) { document.removeEventListener('focusin', f.vIn); document.removeEventListener('focusout', f.vOut); } if (f.vOn) removeEventListener('wf-chat', f.vOn); clearInterval(f.vT); clearTimeout(f.vP); window.__wfVoiceKey = null; window.__wfVoiceBusy = false; if (f.vRec) f.vRec(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (x) {} }
   function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return; (f.timers || []).forEach(clearTimeout); ringStop(f); vStop(f);
     var e = f.el, a = f.st.anchor; if (!e.querySelector('.hu')) e.querySelector('.x svg').style.transform = 'rotate(90deg)';
     if (f.callBtn) { try { f.callBtn.removeAttribute('data-wf-oncall'); } catch (x) {} }   // the call button is green again the moment the call ends
