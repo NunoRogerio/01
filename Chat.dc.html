@@ -1110,7 +1110,7 @@ class Component extends DCLogic {
 (function(){var vv=window.visualViewport;if(!vv)return;
 function fit(){var c=document.querySelector('[data-wf-composer]');if(!c)return;var a=document.activeElement,typing=a&&c.contains(a)&&/^(INPUT|TEXTAREA)$/.test(a.tagName);
   var kb=typing?Math.max(0,innerHeight-(vv.height+vv.offsetTop)):0,r=c.getBoundingClientRect(),k=c.offsetWidth?r.width/c.offsetWidth:1;
-  c.style.paddingBottom=kb>40?Math.round(kb/k+8)+'px':'';if(kb>40){try{window.scrollTo(0,0);}catch(x){}var L=document.querySelector('[data-wf-keepscroll]');if(L)L.scrollTop=L.scrollHeight;}}
+  if(c.__pb0==null)c.__pb0=c.style.paddingBottom||'32px';c.style.paddingBottom=kb>40?Math.round(kb/k+8)+'px':c.__pb0;/* (Oct 8, 20:57) back to its own 32px (clearing it left the composer on the bottom edge) */if(kb>40){try{window.scrollTo(0,0);}catch(x){}var L=document.querySelector('[data-wf-keepscroll]');if(L)L.scrollTop=L.scrollHeight;}}
 vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);document.addEventListener('focusin',function(){setTimeout(fit,50);setTimeout(fit,350);});document.addEventListener('focusout',function(){setTimeout(fit,50);});})();
 </script>
 <script>/* (Oct 7) the one-line suggestion row fades at a side only while chips are hidden past it */
