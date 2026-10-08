@@ -20,7 +20,7 @@
 <script src="station.js?v=10"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=109"></script>
+<script src="chat.js?v=110"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=36"></script>
@@ -215,7 +215,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{m.hasActions}}" hint-placeholder-val="{{ false }}">
               <div data-fitrow="1" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px">
                 <sc-for list="{{m.actions}}" as="a" hint-placeholder-count="2">
-                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="flex: 1 1 0; min-width: max-content; height: 48px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 18px; font-weight: {{a.w}}; white-space: nowrap; opacity: {{a.op}}; cursor: {{a.cur}}; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{a.chk}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{a.label}}</button>
+                  <button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.dis}}" style="pointer-events: {{a.pe}}; flex: 1 1 0; min-width: max-content; height: 48px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; font: inherit; font-size: 18px; font-weight: {{a.w}}; white-space: nowrap; opacity: {{a.op}}; cursor: {{a.cur}}; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{a.chk}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{a.label}}</button>
                 </sc-for>
               </div>
             </sc-if>
@@ -378,7 +378,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span style="grid-column: 2; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.sub}}</span>
           </div>
         </sc-for>
-        <div style="display: flex; padding-top: 16px"><button type="button" class="btn primary" onClick="{{ds.send}}" aria-pressed="{{ds.dis}}" style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer; pointer-events: {{ds.btnPe}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{ds.chkD}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{ds.btn}}</button></div>
+        <div style="display: flex; padding-top: 16px"><button type="button" class="btn primary" onClick="{{ds.send}}" aria-pressed="{{ds.dis}}" style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer; pointer-events: {{ds.btnPe}}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{ds.chkD}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{ds.btn}}</button></div>
         <p class="wf-note" style="margin: 8px 0 0 !important">{{ds.note}}</p>
       </div>
       <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{ds.h.down}}" onPointerMove="{{ds.h.move}}" onPointerUp="{{ds.h.up}}" onPointerCancel="{{ds.h.cancel}}" onKeyDown="{{ds.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
@@ -952,7 +952,9 @@ class Component extends DCLogic {
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
             ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
-              return { cls: done ? '' : pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? (window.__wfY || '#E5FF00') : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? '#1C1C1E' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600 }; })(),
+              /* (Oct 8, 22:39) decided: the button is no longer a button (no action, no press) and wears the card's header band colour, its text the header's ink */
+              if (done) return { cls: '', bg: tone(St || S).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', w: 600, pe: 'none' };
+              return { cls: pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? (window.__wfY || '#E5FF00') : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? '#1C1C1E' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600, pe: 'auto' }; })(),
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;

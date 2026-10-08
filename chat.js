@@ -1603,7 +1603,7 @@
     var row = ofEl.querySelector('[data-of-row]'), keep = row && row.querySelector(how === 'enroll' ? '[data-of-enroll]' : '[data-of-snooze]'), drop = row && row.querySelector(how === 'enroll' ? '[data-of-snooze]' : '[data-of-enroll]');
     if (drop) drop.remove();
     if (keep) { keep.style.pointerEvents = 'none';   /* the chosen button keeps its own look, never the disabled one */
-      keep.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (how === 'enroll' ? (PT ? 'Assumido' : 'Enrolled') : (PT ? 'Adiado 15 min' : 'Snoozed 15 min')); }
+      keep.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (how === 'enroll' ? (PT ? 'Assumido' : 'Enrolled') : (PT ? 'Adiado 15 min' : 'Snoozed 15 min')); }
     setTimeout(function () { ofBusy = false; offerHide(true); }, 1400); }
   function offerRender() {
     var k = offerKey();
@@ -1692,7 +1692,7 @@
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     var me = (window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || 'Team lead', v = (D.f.veh || [])[0] || D.f.station;
     var db = load(), cc = db.chats[c.key]; if (cc) { cc.msgs.push({ id: newId(), kind: 'sys', en: me + ' (' + v + ') confirmed the order: on the way.', pt: me + ' (' + v + ') confirmou a ordem: a caminho.', t: Date.now(), vt: vnow(cc) }); cc.updated = Date.now(); save(); }
-    var b = dpEl && dpEl.querySelector('[data-dp-ok]'); if (b) { b.style.pointerEvents = 'none'; b.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (PT ? 'Confirmado' : 'Confirmed'); }
+    var b = dpEl && dpEl.querySelector('[data-dp-ok]'); if (b) { b.style.pointerEvents = 'none'; b.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (PT ? 'Confirmado' : 'Confirmed'); }
     setTimeout(function () { dpBusy = false; depHide(true); emit(); setTimeout(depRender, 600); }, 1400); }
   function depBoot() { if (!role || !document.body) return; setTimeout(depRender, 1400);
     window.addEventListener('wf-chat', function () { setTimeout(depRender, 0); }); window.addEventListener('pageshow', depRender); document.addEventListener('visibilitychange', depRender); setInterval(depRender, 5000); }
