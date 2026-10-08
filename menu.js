@@ -10,6 +10,9 @@
   var mode = '', ifr = null, ready = false, btn = null, want = null;
   var css = document.createElement('style');
   css.textContent = 'html.wf-menujs [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +
+    /* (Oct 8, 17:50) folded to the icon column, the menu's button lives in the column: its empty spot in the header closes, so the
+       header's other buttons (notifications) sit on the screen's right edge and the title gets the room */
+    'html.wf-rail [data-wf-burger]:not(.wf-mb){display:none!important}' +
     '.wf-mb{position:absolute;z-index:200;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,0.12);color:#3C3C43;cursor:pointer}';
   (document.head || document.documentElement).appendChild(css);
   document.documentElement.classList.add('wf-menujs');
@@ -84,8 +87,8 @@
     clearTimeout(rail.t); var ease = DUR + 'ms ' + EASE;
     if (on) { if (!vp0) vp0 = V; if (V.rail) return; if (!p.style.width) { p.style.width = HW + 'px'; void p.offsetWidth; } p.style.overflow = 'hidden';
       p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease; p.style.width = (HW - 60) + 'px';
-      rail.t = setTimeout(function () { if (mode !== 'rail') return; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }, DUR); return; }
-    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {}
+      rail.t = setTimeout(function () { if (mode !== 'rail') return; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); document.documentElement.classList.add('wf-rail'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }, DUR); return; }
+    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); document.documentElement.classList.remove('wf-rail'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {}
       p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease; p.style.width = HW + 'px';
       rail.t = setTimeout(function () { if (mode === 'rail') return; p.style.width = ''; p.style.overflow = ''; }, DUR + 40); } }
   function mw() { var h = host(); return Math.min(h ? h.offsetWidth : 390, MW); }
