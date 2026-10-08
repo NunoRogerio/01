@@ -126,8 +126,18 @@
       rec.onend = rec.onerror = function () { window.__wfVoiceBusy = false; rec = null; mic.setAttribute('aria-pressed', 'false'); mic.classList.remove('on'); };
       try { rec.start(); } catch (x) { rec = null; mic.classList.remove('on'); } });
     f.vRec = function () { if (rec) try { rec.abort(); } catch (x) {} }; }
+  // (Oct 8, 21:09) call sounds, made here (Web Audio): an outgoing ring, a soft rising three-note chime as in Teams or Zoom,
+  // repeated until the call connects; a bright "plim" when you hang up
+  function ac() { try { var A = window.__wfAC || (window.__wfAC = new (window.AudioContext || window.webkitAudioContext)()); if (A.state === 'suspended') A.resume(); return A; } catch (e) { return null; } }
+  function note(A, t, hz, dur, vol) { var o = A.createOscillator(), o2 = A.createOscillator(), g = A.createGain(); o.type = 'sine'; o2.type = 'sine'; o.frequency.value = hz; o2.frequency.value = hz * 2;
+    var g2 = A.createGain(); g2.gain.value = 0.18; o2.connect(g2); g2.connect(g); o.connect(g); g.connect(A.destination);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.start(t); o2.start(t); o.stop(t + dur + 0.05); o2.stop(t + dur + 0.05); }
+  function ringOnce() { var A = ac(); if (!A) return; var t = A.currentTime + 0.02; [659.3, 830.6, 987.8].forEach(function (hz, i) { note(A, t + i * 0.16, hz, 0.42, 0.16); }); }
+  function ringStart(f) { ringOnce(); f.ring = setInterval(ringOnce, 1500); }
+  function ringStop(f) { if (f && f.ring) { clearInterval(f.ring); f.ring = null; } }
+  function plim() { var A = ac(); if (!A) return; var t = A.currentTime + 0.02; note(A, t, 1318.5, 0.7, 0.18); note(A, t + 0.09, 1975.5, 0.55, 0.1); }
   function vStop(f) { if (f.vOn) removeEventListener('wf-chat', f.vOn); clearInterval(f.vT); clearTimeout(f.vP); window.__wfVoiceKey = null; window.__wfVoiceBusy = false; if (f.vRec) f.vRec(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (x) {} }
-  function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return; (f.timers || []).forEach(clearTimeout); vStop(f);
+  function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return; (f.timers || []).forEach(clearTimeout); ringStop(f); vStop(f);
     var e = f.el, a = f.st.anchor; if (!e.querySelector('.hu')) e.querySelector('.x svg').style.transform = 'rotate(90deg)';
     if (f.callBtn) { try { f.callBtn.removeAttribute('data-wf-oncall'); } catch (x) {} }   // the call button is green again the moment the call ends
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
@@ -187,10 +197,10 @@
     document.body.appendChild(el);
     /* iPhone speaks only after a tap: an empty line now, inside the tap that opened the call */
     if (CALL && window.speechSynthesis) { try { var u0 = new SpeechSynthesisUtterance(' '); u0.volume = 0; speechSynthesis.speak(u0); speechSynthesis.getVoices(); } catch (x) {} }
-    if (CALL) { var ob = a || document.querySelector('[data-call]'); if (ob) { f.callBtn = ob; ob.setAttribute('data-wf-oncall', '1'); } }   // while the call card is up the call button is mid grey
+    if (CALL) { var ob = a || document.querySelector('[data-call]'); if (ob) { f.callBtn = ob; ob.setAttribute('data-wf-oncall', '1'); } ringStart(f); }   // while the call card is up the call button is mid grey
     // a video call: rings (calling), then connects, then the other person's picture fades in
     if (CALL) { var ct = el.querySelector('.ct'), cl = el.querySelector('.cl'), lt = el.querySelector('.lt'), im = el.querySelector('.pf');
-      var tm = [setTimeout(function () { if (ct) ct.textContent = CALL.connecting || 'Connecting'; if (cl) cl.classList.add('cn'); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} }, 2600),
+      var tm = [setTimeout(function () { ringStop(f); if (ct) ct.textContent = CALL.connecting || 'Connecting'; if (cl) cl.classList.add('cn'); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} }, 2600),
         setTimeout(function () { try { vStart(f, CALL.id, el); } catch (x) {} if (CALL.grid) { el.classList.add('on'); var gt = el.querySelectorAll('.gt'), k = 0; if (gt.length) { gt[0].classList.add('sp'); f.timers.push(setInterval(function () { if (gt[k]) gt[k].classList.remove('sp'); k = (k + 1 + Math.floor(Math.random() * Math.max(1, gt.length - 1))) % gt.length; gt[k].classList.add('sp'); }, 1800)); } } else if (im && im.complete && im.naturalWidth) el.classList.add('on'); else if (im) im.addEventListener('load', function () { el.classList.add('on'); }); if (lt) lt.textContent = CALL.live || 'Live. Video call'; try { if (navigator.vibrate) navigator.vibrate([8, 40, 8]); } catch (x) {} }, 4300)];
       if (im) im.addEventListener('error', function () { if (cl) { cl.style.opacity = '1'; } if (ct) ct.textContent = CALL.noPhoto || ''; });
       f.timers = tm; }
@@ -205,7 +215,7 @@
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
     el.querySelector('.x').addEventListener('click', function (e) { e.stopPropagation(); if (!CALL) { close(f); return; }
       /* hanging up: the button is green at once, the card swells 10% and settles quickly (about its centre), then scales down into the button */
-      if (f.hanging) return; f.hanging = 1; try { if (f.callBtn) f.callBtn.removeAttribute('data-wf-oncall'); } catch (x) {}
+      if (f.hanging) return; f.hanging = 1; ringStop(f); plim(); try { if (f.callBtn) f.callBtn.removeAttribute('data-wf-oncall'); } catch (x) {}
       try { var q = el.getBoundingClientRect(), k = 1.1, cx = q.left + q.width / 2, cy = q.top + q.height / 2; el.animate([{ scale: '1', translate: '0 0' }, { scale: String(k), translate: (cx * (1 - k)) + 'px ' + (cy * (1 - k)) + 'px', offset: 0.5 }, { scale: '1', translate: '0 0' }], { duration: 200, easing: 'ease-in-out' }); } catch (x) {}
       setTimeout(function () { close(f); }, 200); });
     el.querySelector('.mx').addEventListener('click', function (e) { e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} maxi(f, !el.classList.contains('max')); });
