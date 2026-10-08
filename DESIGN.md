@@ -29,7 +29,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 ### Rules
 
-- **Only these sizes** exist in the app: 26 (Title M), 17 (Title S or normal text), 16 (Title XS, annotation, label; it replaced 15), 13 (note, for estimates and simulations only). The exceptions are KPI numbers (responsive), cartographic labels drawn on the maps, small badges and pills (count badges, 18–22px tags), avatar initials and the logo. New sizes are added here first, and only when truly needed.
+- **Only these sizes** exist in the app: 26 (Title M), 18 (Title S or normal text; 17 until Oct 8, 21:18), 16 (Title XS, annotation, label; it replaced 15), 13 (note, for estimates and simulations only). The exceptions are KPI numbers (responsive), cartographic labels drawn on the maps, small badges and pills (count badges, 18–22px tags), avatar initials and the logo. New sizes are added here first, and only when truly needed.
 - **Save space whenever possible:** put things on one line when they fit (a band and its tag, two actions), drop repeats. When Claude spots such a chance it applies it and says so in one line.
 - **Hierarchy follows the references** (user preferences, map tooltips, ignition detail): conclusion first (the KPI and state a firefighter acts on), then where, then evidence and detail, then actions. Every screen should help a Portuguese or Californian firefighter decide faster and better.
 - **Case:** sentence case everywhere. No all caps.
@@ -1407,3 +1407,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Video call panels never resize (Oct 8, 21:14):** pushing a video call against a screen edge no longer shrinks it, and a long press does nothing to its size (other floating feeds, drone and helmet cameras, keep shrinking). A drag that loses the finger always ends, so the screen never stays frozen.
 - **Go to newest (Oct 8, 21:16):** in every chat, when you scroll more than 200px up from the newest message, a dark round button (44px, #3A3A3C, white down arrow, soft shadow) fades in centred 16px above the chat box; a tap glides to the newest message and the button fades out.
 - **Sender inside the bubble (Oct 8, 21:18; supersedes 21:00):** the photo (32px), name in semibold and station sit at the top inside the bubble, within its 16px padding, 16px above the message; the bubble keeps the wider width. Every chat item is 24px apart (bubbles, cards, notes).
+
+- **Normal text 18px (Oct 8, 21:18, app-wide):** every 17px text (Title S, normal text, text buttons, switchers, message text) is now 18px; where it sat on a 22px line, the line is 24px. Sizes in use: 26, 18, 16, 13.

@@ -346,7 +346,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       '#wf-tour .ta.go{animation:wfach .3s cubic-bezier(.3,1.5,.5,1) both}#wf-tour .ta::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:inherit;pointer-events:none}#wf-tour .ta.go::before{animation:wfachBg .5s cubic-bezier(.3,0,.3,1) .05s both}@keyframes wfachBg{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}' +
       '#wf-tour .ta.still{opacity:1}' + '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
       '#wf-tour .tth{margin:0 0 16px;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86)}' +
-      '#wf-tour .tt{margin:0;font-size:17px;font-weight:600;line-height:22px}' +
+      '#wf-tour .tt{margin:0;font-size:18px;font-weight:600;line-height:24px}' +
       '#wf-tour .twip{margin:4px 0 0;font-size:16px;font-weight:600;line-height:20px;color:var(--wf-y,#E5FF00)}' +
       '#wf-tour .tx{margin:4px 0 0;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty}' +
       '#wf-tour .tf{display:flex;align-items:center;gap:8px;margin-top:16px}' +
@@ -502,7 +502,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       var old = document.getElementById('wf-tour-ended'); if (old) old.remove();
       var c = document.createElement('div'); c.id = 'wf-tour-ended'; c.setAttribute('role', 'status');
       c.style.cssText = 'position:fixed;left:50%;top:50%;z-index:2147483000;width:min(300px,calc(100vw - 32px));box-sizing:border-box;padding:16px;display:flex;align-items:flex-start;gap:16px;border-radius:28px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);box-shadow:0 8px 32px rgba(0,0,0,.16);font:inherit;color:#000;opacity:0;transform:translate(-50%,-50%) scale(.96);transition:opacity .3s ease,transform .3s ease';
-      var t = document.createElement('p'); t.style.cssText = 'margin:0;flex:1 1 auto;min-width:0;padding-top:11px;font-size:17px;line-height:22px;font-weight:400;color:#000';
+      var t = document.createElement('p'); t.style.cssText = 'margin:0;flex:1 1 auto;min-width:0;padding-top:11px;font-size:18px;line-height:24px;font-weight:400;color:#000';
       t.textContent = PT() ? 'Dispensou o tour. Recomece no ecrã inicial.' : 'You\'ve dismissed the tour. Restart on the Home screen.';
       var x = document.createElement('button'); x.type = 'button'; x.className = 'mbtn'; x.setAttribute('aria-label', PT() ? 'Fechar' : 'Close');
       x.style.cssText = 'flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,.12);color:#1C1C1E;cursor:pointer';
@@ -547,7 +547,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     css(); var pt = PT(), w = document.createElement('div'); w.id = 'wf-tourwarn'; w.setAttribute('role', 'dialog'); w.setAttribute('translate', 'no');
     var r = anchor ? anchor.getBoundingClientRect() : { top: innerHeight - 140, left: innerWidth - 80, width: 60 };
     w.style.cssText = 'position:fixed;left:16px;right:16px;bottom:' + Math.max(16, innerHeight - r.top + 12) + 'px;z-index:99995;padding:16px;border-radius:20px;background:rgba(28,28,30,0.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 0 0 0.5px rgba(255,255,255,0.18);color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased';
-    w.innerHTML = '<p style="margin:0;font-size:17px;font-weight:600;line-height:22px">⚠️ ' + (pt ? 'Visita em construção' : 'Tour under construction') + '</p>' +
+    w.innerHTML = '<p style="margin:0;font-size:18px;font-weight:600;line-height:24px">⚠️ ' + (pt ? 'Visita em construção' : 'Tour under construction') + '</p>' +
       '<p style="margin:4px 0 0;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty">' + (pt ? 'Estamos a trabalhar nela e ainda tem muitas falhas. Terminar visita está sempre à mão para sair.' : 'We\'re still working on it and it has lots of bugs. End tour is always there to get you out.') + '</p>' +
       '<div style="display:flex;gap:8px;margin-top:16px"><button type="button" data-a="no" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:transparent;color:#FFFFFF;font:inherit;font-size:16px;font-weight:600;cursor:pointer">' + (pt ? 'Agora não' : 'Not now') + '</button>' +
       '<button type="button" data-a="go" style="flex:1 1 0;height:40px;border:0;border-radius:999px;background:var(--wf-y,#E5FF00);color:#1C1C1E;font:inherit;font-size:16px;font-weight:600;cursor:pointer">' + (pt ? 'Começar visita' : 'Start tour') + '</button></div>' +

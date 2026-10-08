@@ -14,15 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=201"></script>
-<script src="feedcam.js?v=29"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=202"></script>
+<script src="feedcam.js?v=30"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=209"></script>
+<script src="prefs.js?v=210"></script>
 <script src="station.js?v=8"></script>
 <script src="menu.js?v=20"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=102"></script>
+<script src="chat.js?v=103"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -56,7 +56,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <div style="grid-column: {{ttlCol}}; grid-row: {{ttlRow}}; margin-top: {{ttlMt}}; display: flex; flex-direction: column; min-width: 0">
     <!-- (Oct 5, 07:20) the crest centred on the first two rows (title and description: 32 + 4 + 22px), not on the status row. (06:53) the crest centred on the title + description block (never reaching up to the back button); place and kind share the description row. (03:26) the crest on the left; the title and its description stacked beside it, the description right under the title (4px, the app's title + description rule) -->
-    <span style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="display: {{st.crestD}}; width: 44px; height: 44px; flex-shrink: 0; margin-top: 7px; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{st.title}}</h1><span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.region}}<span style="display: {{st.kindD}}">. {{st.kind}}</span></span>
+    <span style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><img src="{{st.crest}}" data-crest="{{st.name}}" alt="{{st.crestAlt}}" style="display: {{st.crestD}}; width: 44px; height: 44px; flex-shrink: 0; margin-top: 7px; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{st.title}}</h1><span style="min-width: 0; font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{st.region}}<span style="display: {{st.kindD}}">. {{st.kind}}</span></span>
     <!-- (Oct 5, 07:03) in the title column, the row after the description: (06:57) only the station's status tag and, on the right, the green call button: a call with this
          station's fire coordinator alone (rings, connects, then shows them in the floating panel, as the police call does) -->
 <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 4px">
@@ -79,24 +79,24 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 16px 0">
         <!-- (Oct 8, 14:11) the captain and the lieutenant are greeted by rank and name, one of five greetings at random, by the time of day -->
         <!-- (Oct 8, 17:58) the rank and name of the person signed in, in bold -->
-        <p style="margin: 0 0 16px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty">{{greet.a}}<b style="font-weight: 700">{{greet.who}}</b>{{greet.b}}</p>
+        <p style="margin: 0 0 16px; font-size: 18px; line-height: 24px; color: #000000; text-wrap: pretty">{{greet.a}}<b style="font-weight: 700">{{greet.who}}</b>{{greet.b}}</p>
         <!-- (Oct 8, 17:58) no heading over the list: "Deployments" did not help read it (it holds incidents and the shift's duties) -->
         <!-- (Oct 8) To do | Resolved: the chats panel's value switcher; what is still to do, and what is done or closed -->
         <div role="tablist" aria-label="{{asg.title}}" class="wf-seg" style="margin: 0 0 8px">
           <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{asg.tabX}})"><span class="segblob"></span></span>
           <sc-for list="{{asg.tabs}}" as="tb" hint-placeholder-count="2">
-            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}<span class="wf-segn" style="display: {{tb.nD}}">{{tb.n}}</span></button>
+            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="font-size: 18px; font-weight: {{tb.w}}">{{tb.label}}<span class="wf-segn" style="display: {{tb.nD}}">{{tb.n}}</span></button>
           </sc-for>
         </div>
-        <sc-if value="{{asg.emptyOn}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.emptyTxt}}</p></sc-if>
-        <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.noneTxt}}</p></sc-if>
+        <sc-if value="{{asg.emptyOn}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.emptyTxt}}</p></sc-if>
+        <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.noneTxt}}</p></sc-if>
         <ul style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <!-- (Oct 8, 18:55) the incident's map marker, the same as its map and legend marker -->
               <svg width="20" height="20" viewBox="0 0 14 14" aria-hidden="true" style="grid-row: 1; align-self: center"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{f.mkFill}}" stroke="{{f.mkStroke}}" stroke-width="{{f.mkSw}}"></path></svg>
-              <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
+              <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
               <span class="wf-stg" data-wf-eqw="asg-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
               <span style="grid-column: 2 / -1; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span></span>
               <span style="display: {{f.sub2D}}; grid-column: 2 / -1; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub2}}</span>
@@ -110,7 +110,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <sc-for list="{{asg.duties}}" as="d" hint-placeholder-count="3">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <button type="button" class="sqrow stfire" data-wf-keepsp="1" onClick="{{d.go}}" aria-pressed="{{d.doneStr}}" aria-label="{{d.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; width: 100%; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; cursor: pointer">
-                <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; overflow-wrap: anywhere">{{d.title}}</span>
+                <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{d.title}}</span>
                 <span class="wf-stg" data-wf-eqw="asg-tags" style="justify-self: end; align-self: start; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{d.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{d.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{d.chkD}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{d.tag}}</span>
                 <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73">{{d.sub}}</span>
               </button>
@@ -131,7 +131,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- Under the map, as on the incident screens: the GPS component (coordinates, Directions, copy), then the fires near the station, 8px apart -->
       <div style="display: {{awayD}}; flex-direction: column; gap: 8px; margin-top: -40px; padding: 0 16px">
         <div style="display: flex; align-items: center; gap: 16px; min-height: 56px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
-          <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{loc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{loc.rows}}; opacity: {{loc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 16px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span></span>
+          <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 18px; line-height: 24px; color: #000000; font-variant-numeric: tabular-nums">{{loc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{loc.rows}}; opacity: {{loc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 16px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span></span>
           <!-- Directions: an arrow going up and turning right, 16px left of the copy icon -->
           <a href="{{loc.dir}}" target="_blank" rel="noopener" class="mbtn" aria-label="Directions" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: -22px; border-radius: 50%; color: #3C3C43; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 20.5V13a3.5 3.5 0 0 1 3.5-3.5H19"></path><path d="m15.5 6 3.5 3.5-3.5 3.5"></path></svg></a>
           <button type="button" class="mbtn" onClick="{{loc.copy}}" aria-label="{{loc.copyAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{loc.copyC}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{loc.copyIc}}"></path></svg></button>
@@ -147,7 +147,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 </sc-for>
               </span>
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-                <span style="font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{tx.cmdTeam}}</span>
+                <span style="font-size: 18px; font-weight: 700; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{tx.cmdTeam}}</span>
                 <span style="font-size: 16px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{cmd.sub}}</span>
               </span>
             </button>
@@ -158,13 +158,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <!-- (Oct 5, 06:44) titled like the other groups; each incident leads with its map marker -->
         <h3 style="margin: 48px 0 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{nearT}}</h3>
         <!-- (Oct 5, 06:49) one white card per fire, 8px apart: its marker, the place, its stage tag under it, distance and drive time, and an arrow to the right -->
-        <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{noFiresTxt}}</p></sc-if>
+        <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{noFiresTxt}}</p></sc-if>
         <ul style="display: {{firesD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{fires}}" as="f" hint-placeholder-count="2">
             <!-- (Oct 5, 07:46) the incident card of the incidents list (Main): place and stage tag, then distance and drive time -->
             <li style="border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <a href="Dispatch.dc.html" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
-              <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
+              <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
               <span class="wf-stg" data-wf-eqw="near-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
               <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span>
             </a>
@@ -175,7 +175,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </div>
     </sc-if>
     <sc-if value="{{none}}" hint-placeholder-val="{{ false }}">
-      <p style="margin: 56px 16px 0; font-size: 17px; line-height: 22px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
+      <p style="margin: 56px 16px 0; font-size: 18px; line-height: 24px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
     </sc-if>
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
       <!-- Key figures: three per row, a grey + tile at the end adds or removes cards; simulated figures say so along the right edge -->
@@ -195,7 +195,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <button type="button" class="mbtn" onClick="{{pkOpen}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
         <!-- (Oct 8) the nearest fire is outside the area: ask the station working it if they need help (24px under the cards it is about) -->
-        <sc-if value="{{help.on}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn wf-ter" onClick="{{help.go}}" style="display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 24px; padding: 12px 16px; font-size: 17px; font-weight: 600; line-height: 22px; text-align: center">{{help.lbl}}</button></sc-if>
+        <sc-if value="{{help.on}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn wf-ter" onClick="{{help.go}}" style="display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 24px; padding: 12px 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: center">{{help.lbl}}</button></sc-if>
       </div>
 
       <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
@@ -205,7 +205,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <div role="tablist" aria-label="{{tx.res}}" class="wf-seg">
             <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 3); transform: translateX({{rs.x}})"><span class="segblob"></span></span>
             <sc-for list="{{rs.tabs}}" as="tb" hint-placeholder-count="3">
-              <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}</button>
+              <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 18px; font-weight: {{tb.w}}">{{tb.label}}</button>
             </sc-for>
           </div>
         </div>
@@ -216,21 +216,21 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <li style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
               <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-                <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
+                <span style="font-size: 18px; font-weight: {{p.w}}; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
                 <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
               </span>
               <span class="wf-stag" data-wf-eqw="res-tags" style="display: {{p.tagD}}; align-items: center; justify-content: center; flex-shrink: 0; margin-left: auto; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span>
             </li>
           </sc-for>
         </ul>
-        <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 16px; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 17px; line-height: 22px; color: #000000; text-align: center">{{rs.emptyTxt}}</p></sc-if>
+        <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 16px; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 18px; line-height: 24px; color: #000000; text-align: center">{{rs.emptyTxt}}</p></sc-if>
         <ul style="display: {{rs.listD}}; flex-direction: column; gap: 8px; margin: 0 16px; padding: 0; list-style: none">
           <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
             <!-- each vehicle, crew or aircraft is its own white card, 8px apart -->
             <li style="border-radius: 16px; background: #FFFFFF; overflow: hidden">
               <button type="button" class="strow2" data-wf-keepsp="1" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: {{r.cols}}; gap: 4px 8px; align-items: center; width: 100%; min-height: 60px; padding: 16px {{r.padR}} 16px 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
-                <span style="min-width: 0; font-size: 17px; font-weight: 700; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+                <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
                 <span class="wf-stag" data-wf-eqw="res-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{r.tag}}</span>
                 <span aria-hidden="true" style="grid-row: 1; grid-column: 4; display: {{r.chevD}}; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
                 <span style="grid-column: 2 / -1; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.sub}}</span>
@@ -260,8 +260,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <li data-wf-keepsp="1" style="display: flex; align-items: center; gap: 8px; padding: 16px; box-sizing: border-box; border-top: {{r.bd}}">
               <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
                 <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{r.k}}</span>
-                <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 17px; line-height: 22px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
-                <sc-if value="{{r.plain}}" hint-placeholder-val="{{ true }}"><span style="font-size: 17px; line-height: 22px; overflow-wrap: anywhere">{{r.v}}</span></sc-if>
+                <sc-if value="{{r.link}}" hint-placeholder-val="{{ false }}"><a href="{{r.href}}" target="_blank" rel="noopener" style="min-width: 0; font-size: 18px; line-height: 24px; color: #0062CC; text-decoration: none; overflow-wrap: anywhere">{{r.v}}</a></sc-if>
+                <sc-if value="{{r.plain}}" hint-placeholder-val="{{ true }}"><span style="font-size: 18px; line-height: 24px; overflow-wrap: anywhere">{{r.v}}</span></sc-if>
                 <span aria-live="polite" style="display: grid; grid-template-rows: {{r.cpRows}}; opacity: {{r.cpOp}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 16px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span>
               </span>
               <!-- Directions and copy, as on the GPS card -->
@@ -285,7 +285,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 0 0 0 8px; margin-bottom: 40px">
       <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
         <h2 id="sqTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
-        <span style="font-size: 17px; line-height: 22px; color: #000000">{{sq.sub}}</span>
+        <span style="font-size: 18px; line-height: 24px; color: #000000">{{sq.sub}}</span>
       </div>
       <!-- No X: the grabber closes the dialog. The command team's group chat (the primary action) sits here as a round primary button -->
       <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{sq.hdChatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center">{{sq.bN}}</span></button>
@@ -295,7 +295,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <li style="display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-            <span style="font-size: 17px; font-weight: {{p.w}}; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
+            <span style="font-size: 18px; font-weight: {{p.w}}; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span>
             <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
           </span>
           <span class="wf-stag" data-wf-eqw="sheet-tags" style="display: {{p.tagD}}; align-items: center; justify-content: center; flex-shrink: 0; margin-left: auto; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span>
@@ -313,13 +313,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down (on it, or anywhere when the list does not scroll) closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{kp.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 40px; padding: 0 16px">
-      <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="kpTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">Key figures</h2><span style="font-size: 17px; line-height: 22px; color: #000000">Show or hide KPIs.</span><span style="font-size: 17px; line-height: 22px; color: #000000">Drag to reorder.</span></span></div>
+      <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="kpTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">Key figures</h2><span style="font-size: 18px; line-height: 24px; color: #000000">Show or hide KPIs.</span><span style="font-size: 18px; line-height: 24px; color: #000000">Drag to reorder.</span></span></div>
       <span style="display: flex; align-items: center; gap: 8px; flex-shrink: 0"><button type="button" class="mbtn wf-reset wf-rpill" onClick="{{kp.reset}}" aria-label="Reset to the default cards" aria-disabled="{{kp.resetDis}}" style="display: inline-flex; align-items: center; height: 32px; margin-top: 0; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: #3A3A3C; font: inherit; font-size: 16px; line-height: 20px; font-weight: 600; cursor: pointer; flex-shrink: 0">Reset</button><button type="button" class="mbtn" onClick="{{kp.close}}" aria-label="Done" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -6px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button></span>
     </div>
     <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; border-radius: 16px; background: #FFFFFF">
       <sc-for list="{{kp.rows}}" as="r" hint-placeholder-count="6">
         <div data-pk-row="{{r.key}}" data-pk-on="{{r.onStr}}" onPointerDown="{{r.down}}" onPointerMove="{{r.move}}" onPointerUp="{{r.up}}" onPointerCancel="{{r.up}}" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 52px; padding: 0 16px; border-top: {{r.sep}}; background: #FFFFFF; touch-action: pan-y; -webkit-user-select: none; user-select: none">
-          <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span data-pk-grip="1" aria-hidden="true" style="visibility: {{r.gripV}}; display: flex; align-items: center; justify-content: center; width: 32px; height: 44px; margin-left: -8px; flex-shrink: 0; color: #8E8E93; touch-action: none; cursor: grab"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><span style="min-width: 0; font-size: 17px; line-height: 22px; color: #000000">{{r.name}}</span></span>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span data-pk-grip="1" aria-hidden="true" style="visibility: {{r.gripV}}; display: flex; align-items: center; justify-content: center; width: 32px; height: 44px; margin-left: -8px; flex-shrink: 0; color: #8E8E93; touch-action: none; cursor: grab"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><span style="min-width: 0; font-size: 18px; line-height: 24px; color: #000000">{{r.name}}</span></span>
           <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
         </div>
       </sc-for>

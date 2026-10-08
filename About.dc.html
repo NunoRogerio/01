@@ -16,8 +16,8 @@
 <link rel="icon" href="icon-192.png?v=4">
 <!-- Shown inside the menu's About section (Oct 3, 17:39): ?embed=1 fills the frame at its own width, without the header and title -->
 <script>(function () { if (/[?&]embed=1/.test(location.search)) { document.write('<meta name="wf-layout" content="fluid">'); document.documentElement.classList.add('wf-embed'); } })();</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=201"></script>
-<script src="prefs.js?v=209"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=202"></script>
+<script src="prefs.js?v=210"></script>
 <script src="station.js?v=8"></script>
 <script src="i18n.js?v=174"></script>
 
@@ -41,7 +41,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
   <!-- Header, fixed: back on the left, the logo (as in the user preferences) centred, an empty column on the right to balance it -->
   <div data-wf-about-hdr="1" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; flex-shrink: 0; padding: 8px 16px 8px">
     <a href="{{backHref}}" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="{{tx.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
-    <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; justify-self: center; gap: 8px; min-width: 0; transform: scale(1.08); color: #6E6E73; font-size: 17px; font-weight: 600; letter-spacing: 0.02em; line-height: 22px; white-space: nowrap">
+    <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; justify-self: center; gap: 8px; min-width: 0; transform: scale(1.08); color: #6E6E73; font-size: 18px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; white-space: nowrap">
       <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path data-wf-about-logo="1" fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
     </span>
     <span aria-hidden="true"></span>
@@ -54,14 +54,14 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
     <!-- (Oct 5) title + description, as on the menu's About panel; 40px from the description to the first group -->
     <div data-wf-about-ttl="1" style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-bottom: -16px">
       <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; letter-spacing: -0.01em; text-align: left">{{tx.title}}</h1>
-      <p style="margin: 0; font-size: 17px; line-height: 22px; color: #6E6E73; text-align: left">{{tx.desc}}</p>
+      <p style="margin: 0; font-size: 18px; line-height: 24px; color: #6E6E73; text-align: left">{{tx.desc}}</p>
     </div>
 
     <!-- Part 2, The goal: the goal in two lines, then the flow (detect, confirm, deploy) with the incident chat across every step -->
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
       <h2 style="margin: 0; font-size: 20px; font-weight: 600; line-height: 24px; color: #000000">{{tx.idea}}</h2>
       <div data-wf-card="1" style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
-        <p style="font-size: 17px; line-height: 22px">{{tx.goal}}<br><b style="font-weight: 700">{{tx.goalQ}}</b></p>
+        <p style="font-size: 18px; line-height: 24px">{{tx.goal}}<br><b style="font-weight: 700">{{tx.goalQ}}</b></p>
         <ol aria-label="{{tx.idea}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
             <li style="display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px">
@@ -70,8 +70,8 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
                 <span style="display: {{st.lineD}}; flex: 1 1 auto; width: 2px; min-height: 16px; margin: 4px 0; border-radius: 999px; background: rgba(60,60,67,0.2)"></span>
               </span>
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 0 0 {{st.pb}}px">
-                <span style="font-size: 17px; font-weight: 600; line-height: 22px">{{st.n}}. {{st.t}}</span>
-                <span style="font-size: 17px; line-height: 22px; color: #000000">{{st.d}}</span>
+                <span style="font-size: 18px; font-weight: 600; line-height: 24px">{{st.n}}. {{st.t}}</span>
+                <span style="font-size: 18px; line-height: 24px; color: #000000">{{st.d}}</span>
               </span>
             </li>
           </sc-for>
@@ -79,7 +79,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
         <!-- Across all three steps: one chat per incident -->
         <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: rgba(118,118,128,0.12)">
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></span>
-          <span style="font-size: 17px; line-height: 22px">{{tx.chat}}</span>
+          <span style="font-size: 18px; line-height: 24px">{{tx.chat}}</span>
         </div>
       </div>
     </div>
@@ -92,12 +92,12 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
         <sc-for list="{{stages}}" as="sg" hint-placeholder-count="3">
           <li aria-current="{{sg.cur}}" style="display: flex; align-items: center; gap: 16px; min-height: 52px; padding: 16px 0; box-sizing: border-box; border-top: {{sg.bt}}">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; background: {{sg.bg}}; color: {{sg.fg}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.57" stroke-linecap="round" stroke-linejoin="round"><path d="{{sg.ic}}"></path></svg></span>
-            <span style="flex-grow: 1; min-width: 0; font-size: 17px; font-weight: {{sg.w}}; line-height: 22px">{{sg.t}}</span>
+            <span style="flex-grow: 1; min-width: 0; font-size: 18px; font-weight: {{sg.w}}; line-height: 24px">{{sg.t}}</span>
             <span style="display: {{sg.tagD}}; align-items: center; height: 24px; padding: 0 8px; flex-shrink: 0; border-radius: 8px; background: var(--wf-y); color: #1C1C1E; font-size: 13px; font-weight: 600; line-height: 20px">{{tx.now}}</span>
           </li>
         </sc-for>
       </ol>
-      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 8px; font-size: 17px; line-height: 22px">
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 8px; font-size: 18px; line-height: 24px">
         <p>{{tx.stage1}}</p>
         <p>{{tx.users}}</p>
         <p>{{tx.stage2}}<br><b style="font-weight: 700">{{tx.stage2Q}}</b></p>
@@ -106,11 +106,11 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
 
     <span aria-hidden="true" style="flex-shrink: 0; height: 1px; margin: -24px 0; background: rgba(60,60,67,0.22)"></span><!-- (Oct 5) a line between the sections, 32px either side -->
     <!-- A simple thank you, the authors as a note, then the build line as on Login -->
-    <span style="flex-shrink: 0; font-size: 17px; font-weight: 700; line-height: 22px; text-align: left">{{tx.thanks}}</span>
+    <span style="flex-shrink: 0; font-size: 18px; font-weight: 700; line-height: 24px; text-align: left">{{tx.thanks}}</span>
     <!-- (Oct 4) The story and thanks: right under the thank you, as its description (4px) -->
-    <p style="flex-shrink: 0; margin-top: -52px; font-size: 17px; line-height: 22px; text-align: left">{{tx.story}}</p>
+    <p style="flex-shrink: 0; margin-top: -52px; font-size: 18px; line-height: 24px; text-align: left">{{tx.story}}</p>
     <!-- The authors: "Project by", then one line each (Anastasia first) -->
-    <p style="flex-shrink: 0; margin-top: -32px; font-size: 17px; line-height: 22px; text-align: left">{{tx.by}}<br>Anastasia Osling, {{tx.usa}}<br>Nuno Rogério, {{tx.pt}}</p>
+    <p style="flex-shrink: 0; margin-top: -32px; font-size: 18px; line-height: 24px; text-align: left">{{tx.by}}<br>Anastasia Osling, {{tx.usa}}<br>Nuno Rogério, {{tx.pt}}</p>
     <p style="flex-shrink: 0; margin-top: -32px; font-size: 16px; line-height: 20px; color: #6E6E73; text-align: left"><span style="font-weight: 700; color: #3A3A3C">{{tx.alpha}}</span><br>{{verTxt}}</p>
   </div>
 </div>

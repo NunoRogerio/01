@@ -14,9 +14,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=201"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=202"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=209"></script>
+<script src="prefs.js?v=210"></script>
 <script src="station.js?v=8"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
@@ -65,7 +65,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 @media (hover:none){.tip,.igpill{display:none!important}}
 .ighide .igpill{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease}
 .wf-pinpulse{transform-box:fill-box;transform-origin:center;animation:wfPinPulse 1.6s linear infinite}@keyframes wfPinPulse{0%{transform:scale(1);opacity:1}100%{transform:scale(2.31);opacity:0}}
-[data-wf-pop] .wf-title-xs{font-size:17px!important;line-height:22px!important}
+[data-wf-pop] .wf-title-xs{font-size:18px!important;line-height:24px!important}
 </style>
 </helmet>
 <div ref="{{setEl}}" data-wf-maproot="1" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onLostPointerCapture="{{onLost}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: {{rootTA}}; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
@@ -231,7 +231,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     <div style="position: absolute; z-index: 50; left: {{pinTtlLeft}}; right: {{pinTtlRight}}; top: {{ttlTop}}px; display: {{pinTtlD}}; flex-direction: column; gap: 4px; box-sizing: border-box; height: {{pinTtlH}}; max-width: {{pinTtlMax}}; padding: {{pinTtlPad}}; border-radius: 20px; background: {{pinTtlBg}}; box-shadow: {{pinTtlSh}}; -webkit-backdrop-filter: {{pinTtlBf}}; backdrop-filter: {{pinTtlBf}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <!-- (Oct 5, 03:24) a station's card leads with its crest, 32px, on the left -->
       <span style="display: flex; align-items: center; gap: 16px; min-width: 0"><img src="{{pinCrest}}" alt="" aria-hidden="true" style="display: {{pinCrestD}}; width: 32px; height: 32px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-      <span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinLabel}}</span>
+      <span style="font-size: 18px; font-weight: 700; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinLabel}}</span>
       <span style="font-size: 16px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinCoords}}</span>
       </span></span>
     </div>
@@ -245,11 +245,11 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
         <!-- the same title, subtitle and status band as the fire page's header, so the stage tag and its stack sit exactly as there -->
         <span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; overflow-wrap: anywhere">{{mapTtl}}</span>
-        <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
+        <span style="font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
       </span>
       <span data-wf-hdrst="1" style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0; box-sizing: border-box; min-height: 52px; padding: 0 8px 0 16px; border-radius: 26px; background: rgba(118,118,128,0.12); width: {{hdrStW}}">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{mapDot}}"></path></svg>
-        <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapKind}}</span>
+        <span style="min-width: 0; font-size: 18px; font-weight: 600; line-height: 24px; color: #1C1C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapKind}}</span>
         <span style="display: {{mapTagD}}; margin-left: auto; flex-shrink: 0; align-items: center; min-height: 32px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{mapTagBg}}; color: {{mapTagFg}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{mapTag}}</span>
       </span>
     </div>
@@ -261,7 +261,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     <!-- the title sits in its own solid container (the legend chips' surface and shadow) so the map never runs through it -->
     <div style="position: absolute; z-index: 50; left: {{ttlLeftCss}}; right: {{ttlRightCss}}; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px); display: flex; flex-direction: column; justify-content: center; gap: 4px; box-sizing: border-box; min-height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <!-- (Oct 3, 23:36) lines size with the text (any text size setting), the card grows with them, so the title is never cropped -->
-      <span style="font-size: 17px; font-weight: 700; line-height: 1.3; flex-shrink: 0; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapTtl}}</span>
+      <span style="font-size: 18px; font-weight: 700; line-height: 1.3; flex-shrink: 0; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapTtl}}</span>
       <span style="font-size: 16px; line-height: 1.33; flex-shrink: 0; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapSub}}</span>
       <!-- (Oct 4) the room of the fire's stage tag: the page lays its live tag (and the stack that unfolds from it) over this row, under the place, as on the page -->
       <span style="display: {{mapSinceD}}; font-size: 16px; line-height: 1.33; flex-shrink: 0; color: #3A3A3C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapSince}}</span>

@@ -10,7 +10,7 @@
     '.wf-ms{position:fixed;left:0;top:0;z-index:110;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#FFFFFF;touch-action:none}' +
     '.wf-ms .bx{position:relative;display:flex;align-items:center;height:44px;box-sizing:border-box;border-radius:22px;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);overflow:hidden;box-shadow:0 0 16px rgba(0,0,0,.16);cursor:grab}' +
     '.wf-ms .ic{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0}' +
-    '.wf-ms input{flex:1 1 auto;min-width:0;height:44px;padding:0;border:0;outline:0;background:transparent;color:#FFFFFF;font:inherit;font-size:17px;caret-color:var(--wf-y,#E5FF00);opacity:0;transition:opacity .25s ease .12s;touch-action:auto}' +
+    '.wf-ms input{flex:1 1 auto;min-width:0;height:44px;padding:0;border:0;outline:0;background:transparent;color:#FFFFFF;font:inherit;font-size:18px;caret-color:var(--wf-y,#E5FF00);opacity:0;transition:opacity .25s ease .12s;touch-action:auto}' +
     '.wf-ms input::placeholder{color:rgba(255,255,255,.72)}' +
     '.wf-ms.on input{opacity:1}' +
     '.wf-ms .x{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;padding:0;border:0;background:transparent;color:#FFFFFF;cursor:pointer;opacity:0;transition:opacity .25s ease .12s}' +
@@ -18,7 +18,7 @@
     '.wf-ms .ls{position:absolute;left:0;right:0;margin:0;padding:8px 0;list-style:none;border-radius:20px;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:0 0 16px rgba(0,0,0,.16);max-height:288px;overflow-y:auto;touch-action:pan-y;opacity:0;transform:translateY(-4px);transition:opacity .2s ease,transform .25s ' + EASE + ';pointer-events:none}' +
     '.wf-ms .ls.on{opacity:1;transform:none;pointer-events:auto}' +
     '.wf-ms .ls button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;padding:8px 16px;border:0;background:transparent;color:#FFFFFF;font:inherit;text-align:left;cursor:pointer}' +
-    '.wf-ms .ls b{font-size:17px;line-height:22px;font-weight:600}.wf-ms .ls span{font-size:16px;line-height:20px;color:rgba(255,255,255,.78)}' +
+    '.wf-ms .ls b{font-size:18px;line-height:24px;font-weight:600}.wf-ms .ls span{font-size:16px;line-height:20px;color:rgba(255,255,255,.78)}' +
     '.wf-ms .ls p{margin:0;padding:8px 16px;font-size:16px;line-height:20px;color:rgba(255,255,255,.78)}';
   (document.head || document.documentElement).appendChild(css);
   var el = null, st = null;

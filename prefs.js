@@ -82,7 +82,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     });
     LINES.forEach(function (v) { out.push('[style*="line-height: ' + v + 'px"]{line-height:' + r(v) + 'px!important}'); });
     // Sizes the screens set in their own style sheets
-    out.push('.kpi{font-size:' + r(30) + 'px!important}.kpi small,.lbl{font-size:' + r(15) + 'px!important}.ctip b{font-size:' + r(17) + 'px!important}');
+    out.push('.kpi{font-size:' + r(30) + 'px!important}.kpi small,.lbl{font-size:' + r(15) + 'px!important}.ctip b{font-size:' + r(18) + 'px!important}');
     return out.join('\n');
   }
 
@@ -178,7 +178,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   /* tabs (not a switcher): labels on a hairline, the active one dark and semibold over an 8px lime bar, rounded at both ends, that glides between them; shared by every tab set */
   '[data-wf-kpicard]>span:first-child[style*="min-height: 40px"]{min-height:40px!important}' +   // mini cards: the title sits 40% closer to its value (all cards)
   '.wf-tabs{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:48px;box-shadow:none;margin-bottom:16px!important}' +
-  '.wf-tabs .tabopt{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 8px;border:0;background:transparent;font:inherit;font-size:17px;font-weight:400;color:#6E6E73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .3s ease}' +
+  '.wf-tabs .tabopt{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 8px;border:0;background:transparent;font:inherit;font-size:18px;font-weight:400;color:#6E6E73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .3s ease}' +
   '.wf-tabs .tabopt[aria-selected=true]{color:#1C1C1E;font-weight:600}' +
   '.wf-tabs::before{content:"";position:absolute;z-index:1;left:0;right:0;bottom:0;height:12px;border-radius:6px;background:rgba(118,118,128,0.12);pointer-events:none}' +   /* the track: full width of the tabs, the band's grey, under the lime bar */
   '.wf-tabs>.tabbar{position:absolute;z-index:2;bottom:2px;height:8px;min-height:8px;border-radius:4px;background:var(--wf-y,#E5FF00);box-shadow:0 0 0 0.5px rgba(0,0,0,0.12);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform;pointer-events:none}' +
@@ -206,7 +206,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     /* Disabled buttons: the secondary formula, faded (grey and its white label both see-through), so nothing disabled looks like a lime action */ ':root .wf-dis,:root .wf-sec:disabled,:root .wf-sec[aria-disabled="true"],:root .wf-pri:disabled,:root .wf-pri[aria-disabled="true"],:root .btn.primary:disabled,:root .btn.primary[aria-disabled="true"],:root .wf-b:disabled,:root button[aria-disabled="true"][style*="background: var(--wf-y)"]{background:var(--wf-dis-bg)!important;color:var(--wf-dis-fg)!important;-webkit-text-fill-color:var(--wf-dis-fg)!important;box-shadow:none!important;opacity:1!important;cursor:default!important;pointer-events:none}' +
     /* Subtle button (.wf-ter, formerly tertiary): full width inside its container with 16px padding all round */ ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
     // One button: every text button in the app is 48px tall, 17px semibold, one corner radius; roles are primary, secondary, tertiary
-    ':root .btn:not(.round):not(.wf-cmp),:root .wf-b{height:48px!important;min-height:48px;box-sizing:border-box;border-radius:999px!important;font-size:17px!important;font-weight:600!important;line-height:22px!important;padding-top:0!important;padding-bottom:0!important;text-decoration:none}' +
+    ':root .btn:not(.round):not(.wf-cmp),:root .wf-b{height:48px!important;min-height:48px;box-sizing:border-box;border-radius:999px!important;font-size:18px!important;font-weight:600!important;line-height:24px!important;padding-top:0!important;padding-bottom:0!important;text-decoration:none}' +
     // Tooltip panels: a text button next to the round chat button takes the chat button's height (44px)
     ':root .wf-b.wf-h44{height:44px!important;min-height:44px!important}' +
     // Title XS (compact surfaces such as map tooltips): the condensed button's font, 16px semibold
@@ -219,12 +219,12 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
     // Big KPI numbers across the app (forces, resolution summary, profiles): dark grey, one size
     // Rows of 2 or 3 KPIs go as big as their numbers allow: each row sets --k from window.__wfKpiPx (below)
-    '[data-wf-kpicard]{padding:8px!important}' + '.wf-note.wf-simhid{display:none!important}.wf-simstar{position:absolute;bottom:4px;right:8px;z-index:2;font-size:17px;line-height:22px;font-weight:600;color:#6E6E73;pointer-events:none}.wf-note.wf-simfoot{display:block!important;align-self:flex-start;flex-shrink:0;margin-left:16px;margin-right:16px;font-size:13px;line-height:18px;color:#6E6E73;text-align:left;writing-mode:horizontal-tb;transform:none}' + '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
+    '[data-wf-kpicard]{padding:8px!important}' + '.wf-note.wf-simhid{display:none!important}.wf-simstar{position:absolute;bottom:4px;right:8px;z-index:2;font-size:18px;line-height:24px;font-weight:600;color:#6E6E73;pointer-events:none}.wf-note.wf-simfoot{display:block!important;align-self:flex-start;flex-shrink:0;margin-left:16px;margin-right:16px;font-size:13px;line-height:18px;color:#6E6E73;text-align:left;writing-mode:horizontal-tb;transform:none}' + '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
     // Qualifier band (what an item is: ignition detection, active fire, fire station): not a button. Full width, square
     // corners, the map marker's colour, the marker itself before the label. One definition for the whole app.
     /* Status tags in lists: one width for every tag, set by the longest expected label (e.g. Building line), text centred; a longer translation still grows it */
     '.wf-stag{min-width:132px;justify-content:center;text-align:center}' +
-    '.wf-qual{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 16px;border-radius:0;background:rgba(118,118,128,0.12);color:#1C1C1E;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
+    '.wf-qual{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 16px;border-radius:0;background:rgba(118,118,128,0.12);color:#1C1C1E;font-size:18px;line-height:24px;font-weight:600;white-space:nowrap;overflow:hidden;box-sizing:border-box}' +
     '.wf-qual svg{flex-shrink:0;scale:1.2}' +
     '.wf-qual.hd{overflow:visible!important;position:relative;z-index:8;min-height:56px;padding:0 8px 0 16px!important;border-radius:16px!important;transition:padding-left .35s cubic-bezier(.2,.8,.2,1)}.wf-qual.hd.open{padding-left:8px!important}.wf-qual.hd [role=status]:not(.wf-hst),.wf-qual.hd .qtag,.wf-hst-fs .qtag{min-height:40px!important;padding:8px 16px!important;border-radius:8px!important;box-sizing:border-box}:root{--wf-band-solid:#E3E3E8}' +
     /* (Oct 8) every tag fits its container: never wider than the space it sits in; a label too long for it ends in an ellipsis rather than spilling out */
