@@ -33,32 +33,62 @@
   // (a copy of a real satellite detection, moved into the area). Marked sim: shown with the simulation star. Station profiles only.
   var SIMF = { id: 'SIM-ST11-F1', name: 'Rubio Fire', near: 'Rubio Canyon, above Altadena', lat: 34.2005, lon: -118.1225, ac: 38, pc: 0, minAgo: 52 };
   var SIMC = { lat: 34.2052, lon: -118.1498, place: 'Altadena', near: '2.5 km northwest of Altadena', conf: 88, minAgo: 12 };
+  /* (Oct 8, 22:21) After the captain closes a simulated fire, a new pair comes up in the area (one fire, one ignition candidate):
+     in the To do list, on the map and in the notifications. Each round is kept on this phone (wf-sim-rounds); round 0 is the
+     Rubio Fire and the Altadena candidate. The new fire starts at First alert and follows its own lifecycle. */
+  var VAR = [
+    { f: { name: 'Farnsworth Fire', near: 'Farnsworth Park, Altadena', lat: 34.2045, lon: -118.1385, ac: 4 }, c: { lat: 34.2090, lon: -118.1600, place: 'Altadena', near: 'Millard Canyon, north Altadena', conf: 81 } },
+    { f: { name: 'Loma Alta Fire', near: 'Loma Alta Drive, Altadena', lat: 34.1990, lon: -118.1580, ac: 6 }, c: { lat: 34.2100, lon: -118.1300, place: 'Altadena', near: 'Echo Mountain trail, above Altadena', conf: 76 } },
+    { f: { name: 'Lake Fire', near: 'North Lake Avenue, Altadena', lat: 34.1880, lon: -118.1310, ac: 3 }, c: { lat: 34.1960, lon: -118.1620, place: 'Altadena', near: 'Arroyo Seco edge, west Altadena', conf: 84 } }];
+  function rounds() { var R = []; try { R = JSON.parse(localStorage.getItem('wf-sim-rounds') || '[]') || []; } catch (e) {} return Array.isArray(R) ? R : []; }
+  function fireDef(n, R) { if (!n) return { id: SIMF.id, name: SIMF.name, near: SIMF.near, lat: SIMF.lat, lon: SIMF.lon, ac: SIMF.ac, pc: SIMF.pc, sc: 6, st: 'Active', stEn: SIMF.pc + '% contained', startMs: null, minAgo: SIMF.minAgo };
+    var v = VAR[(n - 1) % VAR.length].f, at = (R[n - 1] || {}).at || Date.now();
+    return { id: 'SIM-ST11-F' + (n + 1), name: v.name, near: v.near, lat: v.lat, lon: v.lon, ac: v.ac, pc: 0, sc: 4, st: 'New', stEn: 'First alert', startMs: at - 6 * 6e4, at: at }; }
+  function candDef(n, R) { if (!n) return { id: 'HS-SIM-ST11', lat: SIMC.lat, lon: SIMC.lon, place: SIMC.place, near: SIMC.near, conf: SIMC.conf, t: null, minAgo: SIMC.minAgo };
+    var v = VAR[(n - 1) % VAR.length].c, at = (R[n - 1] || {}).at || Date.now();
+    return { id: 'HS-SIM-ST11-' + (n + 1), lat: v.lat, lon: v.lon, place: v.place, near: v.near, conf: v.conf, t: at - 2 * 6e4, at: at }; }
+  function chatOf(kind, id) { var C = window.__wfChat; return C && C.find ? C.find({ id: id, kind: kind }) : null; }
   window.__wfSim = function () { var M = window.__wfMine ? window.__wfMine() : null; if (!M) return;
-    var F = window.__wfLiveFires, C = window.__wfLiveCands, now = Date.now();
-    if (F && !F.some(function (r) { return r && r[2] === SIMF.id; })) {
-      var T = F.find(function (r) { return r && r[0] === 'CA' && /^Los Angeles/.test(r[1] || ''); }) || F.find(function (r) { return r && r[0] === 'CA'; }) || F[0];
-      var r = T ? JSON.parse(JSON.stringify(T)) : ['CA', 'Los Angeles', '', '', '', 0, 0, { man: 0, terrain: 0, aerial: 0, est: true }, 0, {}, ''];
-      var ha = Math.round(SIMF.ac * 0.4047 * 10) / 10, k = T && T[8] ? Math.max(0.05, ha / T[8]) : 1;
-      r[0] = 'CA'; r[1] = 'Los Angeles'; r[2] = SIMF.id; r[3] = SIMF.name; r[4] = 'Contained ' + SIMF.pc + '% · ' + SIMF.ac + ' ac';
-      r[5] = Math.round(X(SIMF.lon)); r[6] = Math.round(Y(SIMF.lat)); r[8] = ha; r[10] = SIMF.near;
-      if (r[7] && typeof r[7] === 'object') ['man', 'terrain', 'aerial'].forEach(function (q) { if (typeof r[7][q] === 'number') r[7][q] = Math.max(q === 'aerial' ? 0 : 1, Math.round(r[7][q] * k)); });
-      r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: 'Active', stEn: SIMF.pc + '% contained', tone: 'red', sc: 6, pc: SIMF.pc, startMs: now - SIMF.minAgo * 6e4, updMs: now - 6e4 * 4, ac: SIMF.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: 'Los Angeles County · CA', url: '', sim: true, lat: SIMF.lat, lon: SIMF.lon });
-      F.push(r); }
-    if (C && !C.some(function (r) { return r && r[2] === 'HS-SIM-ST11'; })) {
-      var TC = C.find(function (r) { return r && r[0] === 'CA'; }) || C[0];
-      var c = TC ? JSON.parse(JSON.stringify(TC)) : ['CA', 'Los Angeles', '', '', 0, 'sat:VIIRS NOAA-20', '', 0, 0, {}];
-      var t = new Date(now - SIMC.minAgo * 6e4).toISOString().slice(0, 16) + 'Z';
-      c[0] = 'CA'; c[1] = 'Los Angeles'; c[2] = 'HS-SIM-ST11'; c[3] = SIMC.place; c[4] = SIMC.conf; c[6] = SIMC.minAgo + ' min ago'; c[7] = Math.round(X(SIMC.lon)); c[8] = Math.round(Y(SIMC.lat));
-      c[9] = Object.assign({}, c[9] || {}, { lat: SIMC.lat, lon: SIMC.lon, t: t, ll: SIMC.lat.toFixed(2) + '°N ' + Math.abs(SIMC.lon).toFixed(2) + '°W', near: SIMC.near, night: window.__wfSunAlt ? window.__wfSunAlt(SIMC.lat, SIMC.lon, now) < -0.833 : false, sim: true });
-      C.push(c); }
+    var F = window.__wfLiveFires, C = window.__wfLiveCands, now = Date.now(), R = rounds();
+    for (var n = 0; n <= R.length; n++) {
+      var D = fireDef(n, R), fc = chatOf('fire', D.id);
+      if (F) { var ex = F.find(function (r) { return r && r[2] === D.id; });
+        if (!ex) {
+          var T = F.find(function (r) { return r && r[0] === 'CA' && /^Los Angeles/.test(r[1] || '') && !/^SIM-/.test(r[2] || ''); }) || F.find(function (r) { return r && r[0] === 'CA'; }) || F[0];
+          var r = T ? JSON.parse(JSON.stringify(T)) : ['CA', 'Los Angeles', '', '', '', 0, 0, { man: 0, terrain: 0, aerial: 0, est: true }, 0, {}, ''];
+          var ha = Math.round(D.ac * 0.4047 * 10) / 10, k = T && T[8] ? Math.max(0.05, ha / T[8]) : 1;
+          r[0] = 'CA'; r[1] = 'Los Angeles'; r[2] = D.id; r[3] = D.name; r[4] = (n ? 'New' : 'Contained ' + D.pc + '%') + ' · ' + D.ac + ' ac';
+          r[5] = Math.round(X(D.lon)); r[6] = Math.round(Y(D.lat)); r[8] = ha; r[10] = D.near;
+          if (r[7] && typeof r[7] === 'object') ['man', 'terrain', 'aerial'].forEach(function (q) { if (typeof r[7][q] === 'number') r[7][q] = Math.max(q === 'aerial' ? 0 : 1, Math.round(r[7][q] * k)); });
+          r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: D.st, stEn: D.stEn, tone: 'red', sc: D.sc, pc: D.pc, startMs: D.startMs || now - D.minAgo * 6e4, updMs: D.at || now - 6e4 * 4, ac: D.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: 'Los Angeles County · CA', url: '', sim: true, simAt: D.at || 0, lat: D.lat, lon: D.lon });
+          F.push(r); ex = r; }
+        if (ex[9]) ex[9].resolved = !!(fc && fc.closed); }   /* a closed simulated fire leaves the lists; its chat keeps the record */
+      var Q = candDef(n, R), cc = chatOf('cand', Q.id);
+      if (C && !(cc && (cc.closed || cc.dismissed)) && !C.some(function (r) { return r && r[2] === Q.id; })) {
+        var TC = C.find(function (r) { return r && r[0] === 'CA' && !/^HS-SIM-/.test(r[2] || ''); }) || C[0];
+        var c = TC ? JSON.parse(JSON.stringify(TC)) : ['CA', 'Los Angeles', '', '', 0, 'sat:VIIRS NOAA-20', '', 0, 0, {}];
+        var tms = Q.t || now - Q.minAgo * 6e4, t = new Date(tms).toISOString().slice(0, 16) + 'Z', ago = Math.max(1, Math.round((now - tms) / 6e4));
+        c[0] = 'CA'; c[1] = 'Los Angeles'; c[2] = Q.id; c[3] = Q.place; c[4] = Q.conf; c[6] = ago + ' min ago'; c[7] = Math.round(X(Q.lon)); c[8] = Math.round(Y(Q.lat));
+        c[9] = Object.assign({}, c[9] || {}, { lat: Q.lat, lon: Q.lon, t: t, ll: Q.lat.toFixed(2) + '°N ' + Math.abs(Q.lon).toFixed(2) + '°W', near: Q.near, night: window.__wfSunAlt ? window.__wfSunAlt(Q.lat, Q.lon, now) < -0.833 : false, sim: true, simAt: Q.at || 0 });
+        C.push(c); }
+      else if (C && cc && (cc.closed || cc.dismissed)) { var ix = C.findIndex(function (r) { return r && r[2] === Q.id; }); if (ix >= 0) C.splice(ix, 1); } }   /* dismissed or closed: Resolved lists it from its chat */
     setTimeout(function () { try { window.__wfSimChat(); } catch (e) {} }, 0); };
   // (Oct 8, 17:55) The simulated fire is being fought, so the story agrees everywhere: crews on scene (stage 3), Station 11 among
   // the two stations working it (its first crew, the team lead's Engine 11 crew, on scene), its incident record made at once (not
   // only when someone opens the fire), and the team lead's order already confirmed (he has been on scene since).
+  // (Oct 8, 22:21) each new round's fire gets its record too, at First alert: the captain dispatches it from there
   window.__wfSimChat = function () { var C = window.__wfChat, M = window.__wfMine ? window.__wfMine() : null; if (!C || !C.ensure || !M) return;
-    var r = (window.__wfLiveFires || []).find(function (q) { return q && q[2] === SIMF.id; }); if (!r || C.find({ id: SIMF.id, kind: 'fire' })) return;
-    var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: SIMF.id, place: SIMF.name, reg: 'Los Angeles', st: 'CA', lat: SIMF.lat, lon: SIMF.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: 6, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
-    if (c && window.__wfDeploy && window.__wfDeploy.ack) window.__wfDeploy.ack(c.key); };
+    var R = rounds();
+    for (var n = 0; n <= R.length; n++) { var D = fireDef(n, R);
+      var r = (window.__wfLiveFires || []).find(function (q) { return q && q[2] === D.id; }); if (!r || C.find({ id: D.id, kind: 'fire' })) continue;
+      var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: D.id, place: D.name, reg: 'Los Angeles', st: 'CA', lat: D.lat, lon: D.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: D.sc, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
+      if (!n && c && window.__wfDeploy && window.__wfDeploy.ack) window.__wfDeploy.ack(c.key); } };
+  // When the newest simulated fire is closed, the next round starts (once)
+  var simBusy = false;
+  window.addEventListener('wf-chat', function () { if (simBusy || !(window.__wfMine && window.__wfMine())) return; var R = rounds(), D = fireDef(R.length, R), fc = chatOf('fire', D.id);
+    if (!fc || !fc.closed) return; simBusy = true;
+    try { R.push({ at: Date.now() }); localStorage.setItem('wf-sim-rounds', JSON.stringify(R)); window.__wfSim(); window.__wfWorld = null; window.__wfGeo = null; } catch (e) {}
+    setTimeout(function () { simBusy = false; try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }, 0); });
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
   // ---- the station's area, kept 30 days on this phone ----
