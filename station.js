@@ -22,6 +22,29 @@
     return { key: k, level: m.level, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
   // Who leads the profile stations, so every screen tells the same story (the captain commands, the team lead leads the first crew)
   window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Elena Ortiz', lead: 'Daniel Brooks' } : null; };
+  // (Oct 8, 14:35) Simulated incidents in the station's area, so the captain and the team lead always have a story to work:
+  // one fire (a copy of a real Los Angeles County fire's data, moved into the area and renamed) and one ignition candidate
+  // (a copy of a real satellite detection, moved into the area). Marked sim: shown with the simulation star. Station profiles only.
+  var SIMF = { id: 'SIM-ST11-F1', name: 'Rubio Fire', near: 'Rubio Canyon, above Altadena', lat: 34.2005, lon: -118.1225, ac: 38, pc: 0, minAgo: 52 };
+  var SIMC = { lat: 34.2052, lon: -118.1498, place: 'Altadena', near: '2.5 km northwest of Altadena', conf: 88, minAgo: 12 };
+  window.__wfSim = function () { var M = window.__wfMine ? window.__wfMine() : null; if (!M) return;
+    var F = window.__wfLiveFires, C = window.__wfLiveCands, now = Date.now();
+    if (F && !F.some(function (r) { return r && r[2] === SIMF.id; })) {
+      var T = F.find(function (r) { return r && r[0] === 'CA' && /^Los Angeles/.test(r[1] || ''); }) || F.find(function (r) { return r && r[0] === 'CA'; }) || F[0];
+      var r = T ? JSON.parse(JSON.stringify(T)) : ['CA', 'Los Angeles', '', '', '', 0, 0, { man: 0, terrain: 0, aerial: 0, est: true }, 0, {}, ''];
+      var ha = Math.round(SIMF.ac * 0.4047 * 10) / 10, k = T && T[8] ? Math.max(0.05, ha / T[8]) : 1;
+      r[0] = 'CA'; r[1] = 'Los Angeles'; r[2] = SIMF.id; r[3] = SIMF.name; r[4] = 'Contained ' + SIMF.pc + '% · ' + SIMF.ac + ' ac';
+      r[5] = Math.round(X(SIMF.lon)); r[6] = Math.round(Y(SIMF.lat)); r[8] = ha; r[10] = SIMF.near;
+      if (r[7] && typeof r[7] === 'object') ['man', 'terrain', 'aerial'].forEach(function (q) { if (typeof r[7][q] === 'number') r[7][q] = Math.max(q === 'aerial' ? 0 : 1, Math.round(r[7][q] * k)); });
+      r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: 'Active', stEn: SIMF.pc + '% contained', tone: 'red', pc: SIMF.pc, startMs: now - SIMF.minAgo * 6e4, updMs: now - 6e4 * 4, ac: SIMF.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: 'Los Angeles County · CA', url: '', sim: true, lat: SIMF.lat, lon: SIMF.lon });
+      F.push(r); }
+    if (C && !C.some(function (r) { return r && r[2] === 'HS-SIM-ST11'; })) {
+      var TC = C.find(function (r) { return r && r[0] === 'CA'; }) || C[0];
+      var c = TC ? JSON.parse(JSON.stringify(TC)) : ['CA', 'Los Angeles', '', '', 0, 'sat:VIIRS NOAA-20', '', 0, 0, {}];
+      var t = new Date(now - SIMC.minAgo * 6e4).toISOString().slice(0, 16) + 'Z';
+      c[0] = 'CA'; c[1] = 'Los Angeles'; c[2] = 'HS-SIM-ST11'; c[3] = SIMC.place; c[4] = SIMC.conf; c[6] = SIMC.minAgo + ' min ago'; c[7] = Math.round(X(SIMC.lon)); c[8] = Math.round(Y(SIMC.lat));
+      c[9] = Object.assign({}, c[9] || {}, { lat: SIMC.lat, lon: SIMC.lon, t: t, ll: SIMC.lat.toFixed(2) + '°N ' + Math.abs(SIMC.lon).toFixed(2) + '°W', near: SIMC.near, night: window.__wfSunAlt ? window.__wfSunAlt(SIMC.lat, SIMC.lon, now) < -0.833 : false, sim: true });
+      C.push(c); } };
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
   // ---- the station's area, kept 30 days on this phone ----

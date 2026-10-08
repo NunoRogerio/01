@@ -53,7 +53,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ca: ['MR', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', 'California region only', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     nv: ['DW', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', 'Nevada region only', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
-    admin: ['JW', 'James Whitmore', 'Platform administrator', 'Forest Fire Watch', 'All regions', 'assets/faces/us-m1.jpg', 'en'],
+    admin: ['JW', 'James Whitmore', 'Emergency management director', 'Government overview', 'All regions', 'assets/faces/us-m1.jpg', 'en'],
     /* (Oct 6) role profiles, signed in with the California area (wf-role ca) and known by wf-custom */
     coord: ['EO', 'Elena Ortiz', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
     ff: ['DB', 'Daniel Brooks', 'Lieutenant', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
@@ -64,7 +64,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ca: 'Directs statewide fire operations. Sets priorities between competing fires, moves strike teams and air tankers between units, and requests mutual aid through Cal OES.',
     nv: 'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.',
     amz: 'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.',
-    admin: 'Oversees the platform across every country: user access, data feeds and model health. Supports the commanders when a fire crosses a border.',
+    admin: 'One level above the station captains: follows every fire and ignition in all countries, where forces are and where risk is rising, and calls in help across borders. Also manages user access and data feeds.',
     coord: "Commands Station 11 and its area. Takes every incident in the area, assigns the station's crews and vehicles, and works with the other captains when a fire needs more than one station.",
     ff: "Leads the Engine 11 crew at Station 11. Gets the captain's dispatch orders, confirms them and takes the crew to the fire."
   };

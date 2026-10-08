@@ -163,6 +163,7 @@ window.__wfRegionUp = function (st, co) {
       var nifc=L.filter(function(r){return r[0]==='CA'&&srcOf(r)==='US';});
       window.__wfLiveFires=L.filter(function(r){return srcOf(r)!=='CF'||!nifc.some(function(q){return Math.hypot(q[5]-r[5],q[6]-r[6])<100;});});}
     if(window.__wfLiveCandsAll)window.__wfLiveCands=DSOFF.SAT?[]:window.__wfLiveCandsAll.filter(on);
+    if(window.__wfSim)try{window.__wfSim();}catch(e){}   // (Oct 8) station profiles: the simulated fire and candidate in their area
     window.__wfWorld=null;window.__wfGeo=null;
     if(sync){try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
   }

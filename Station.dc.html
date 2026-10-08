@@ -17,11 +17,11 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=196"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=207"></script>
-<script src="station.js?v=4"></script>
+<script src="prefs.js?v=208"></script>
+<script src="station.js?v=5"></script>
 <script src="menu.js?v=19"></script>
-<script src="i18n.js?v=173"></script>
-<script src="live.js?v=43"></script>
+<script src="i18n.js?v=174"></script>
+<script src="live.js?v=44"></script>
 <script src="chat.js?v=94"></script>
 
 <title>Fire station</title>
@@ -92,12 +92,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.noneTxt}}</p></sc-if>
         <ul style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
-            <li style="border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+            <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
               <span class="wf-stg" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
               <span style="grid-column: 1 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span></span>
             </a>
+            <span class="wf-simstar" aria-hidden="true" style="display: {{f.simD}}">*</span>
             </li>
           </sc-for>
         </ul>
@@ -392,7 +393,7 @@ class Component extends DCLogic {
     const fireGo = (v) => () => { v.t = Date.now(); window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} };
     const candGo = (id) => () => { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: id }); try { window.sessionStorage.setItem('wf-focus', id); } catch (e) {} };
     const LF = (window.__wfLiveFires || []).filter((r) => r && r[5] != null && !((r[9] || {}).resolved)), LC = window.__wfLiveCands || [];
-    const items = [];
+    const items = [], simOf = (id) => /^(SIM-|HS-SIM-)/.test(String(id || '')) ? 'block' : 'none';   /* (Oct 8) the simulated incidents carry the simulation star */
     LF.forEach((r) => { const ll = window.__wfIncLatLon(r[5], r[6]), k = window.__wfIncidentFor(ll[0], ll[1], S); if (k) items.push({ kind: 'fire', r, k, km: km(ll[0], ll[1]) }); });
     LC.forEach((r) => { const m = r[9] || {}, ll = m.lat != null ? [m.lat, m.lon] : window.__wfIncLatLon(r[7], r[8]), k = window.__wfIncidentFor(ll[0], ll[1], S); if (k) items.push({ kind: 'cand', r, k, km: km(ll[0], ll[1]) }); });
     items.sort((a, b) => (a.k === b.k ? a.km - b.km : a.k === 'zone' ? -1 : 1));
@@ -403,9 +404,9 @@ class Component extends DCLogic {
       const ST = { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };
       rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
         return { place: c.place, aria: c.place, href: c.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html', go: c.kind === 'fire' ? fireGo({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }) : candGo(c.incId),
-          _id: c.incId, tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)), sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) ? L('Confirm the order. ', 'Confirme a ordem. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
+          _id: c.incId, simD: simOf(c.incId), tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)), sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) ? L('Confirm the order. ', 'Confirme a ordem. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
         .sort((a, b) => (a._ack ? 1 : 0) - (b._ack ? 1 : 0));   /* a new deployment (not yet confirmed) goes to the top */
-    } else rows = items.map((q) => { const r = q.r, aid = q.k === 'aid', base = { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid ? aidT.label : '', sub: kmT(q.km) + '. ' + drv(q.km) + '.' };
+    } else rows = items.map((q) => { const r = q.r, aid = q.k === 'aid', base = { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid ? aidT.label : '', sub: kmT(q.km) + '. ' + drv(q.km) + '.', simD: simOf(r[2]) };
       if (q.kind === 'fire') return Object.assign(base, fireTag(r), { place: r[3] || r[2], aria: (r[3] || r[2]) + (aid ? ', ' + aidT.label : ''), href: 'Dispatch.dc.html', go: fireGo({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6] }) });
       const CT = window.__wfConfTag ? window.__wfConfTag(r[4]) : { fg: '#185A93', bg: '#E3EEFB' };
       return Object.assign(base, { place: r[3], aria: r[3] + ', ' + r[4] + L('% likelihood', '% de probabilidade') + (aid ? ', ' + aidT.label : ''), tagTxt: r[4] + '%', tagFg: CT.fg, tagBg: CT.bg, tagIc: '', tagIcD: 'none', href: 'Alert.dc.html', go: candGo(r[2]) }); });
@@ -415,7 +416,7 @@ class Component extends DCLogic {
     if (A && A.rings && A.rings.length) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; A.rings.forEach((rg) => rg.forEach((q) => { const x = (q[1] + 118.13) * 2345 + 518, y = (34.19 - q[0]) * 2829 + 662; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }));
       items.forEach((q) => { const x = q.kind === 'fire' ? q.r[5] : q.r[7], y = q.kind === 'fire' ? q.r[6] : q.r[8]; if (x == null) return; x0 = Math.min(x0, x - 12); x1 = Math.max(x1, x + 12); y0 = Math.min(y0, y - 12); y1 = Math.max(y1, y + 12); });   /* the incidents too, so mutual aid is in view */
       z = Math.max(0.3, Math.min((W - 32 - 92) / Math.max(1, x1 - x0), (H - 96) / Math.max(1, y1 - y0))); fx = (x0 + x1) / 2 + 30 / z; fy = (y0 + y1) / 2 - 16 / z; }   /* clear of the map controls on the right and the legend at the top */
-    const onMap = lead ? (() => { const ids = {}; rows.forEach((r) => { if (r._id) ids[r._id] = 1; }); return items.filter((q) => ids[q.r[2]]); })() : items;
+    const onMap = items;   /* (Oct 8) the team lead's area map shows every incident of the station's area too (his list stays his deployments) */
     const SRCN = { sat: 'Satellite' };
     const ign = onMap.filter((q) => q.kind === 'cand').map((q) => { const [st, co, id, place, conf, spec, ago, x, y, live] = q.r; const srcs = String(spec || '').split('|').map((p) => { const [k, ref] = p.split(':'); return { kind: k, ref: ref || '', label: (SRCN[k] || k) + (ref ? ' ' + ref : '') }; });
       return { live: live || null, st, co, id, place, conf, srcs, nSrc: srcs.length, src: srcs.length > 1 ? srcs.length + ' sources' : srcs[0].label, srcList: srcs.map((q2) => q2.label).join(' · '), ago, x, y }; });
@@ -466,7 +467,7 @@ class Component extends DCLogic {
     const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';
     const ck0 = (S.type === 'way' ? 'w' : 'n') + S.id;
     const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (c.closed || c.dismissed) && c.kind !== 'dm' && (c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const Sg = C.stageOf(c);
-      return { place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+      return { simD: simOf(c.incId), place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
         tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.closedVt ? new Date(c.closedVt).toLocaleDateString(PT ? 'pt-PT' : 'en-US', { day: 'numeric', month: 'short' }) + '. ' : '') + L('Resolution summary in the chat.', 'Resumo da resolução na conversa.') }; });
     const shownRows = resolvedTab ? closedRows : rows, shownDuties = dutyList.filter((d) => (d.doneStr === 'true') === resolvedTab);
     const nTodo = rows.length + dutyLeft, nDone = closedRows.length + (dutyList.length - dutyLeft);

@@ -18,10 +18,10 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=196"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=207"></script>
-<script src="station.js?v=4"></script>
-<script src="i18n.js?v=173"></script>
-<script src="live.js?v=43"></script>
+<script src="prefs.js?v=208"></script>
+<script src="station.js?v=5"></script>
+<script src="i18n.js?v=174"></script>
+<script src="live.js?v=44"></script>
 <script src="chat.js?v=94"></script>
 <script src="tour.js?v=116"></script>
 <script src="mapsearch.js?v=4"></script>
@@ -1157,7 +1157,7 @@ class Component extends DCLogic {
     const MENU = window.__wfMenuOnly;
     if (this._pfBoot === undefined) { let f = false; try { f = window.sessionStorage.getItem('wf-prefs-open') === '1'; window.sessionStorage.removeItem('wf-prefs-open'); } catch (e) {} this._pfBoot = f; }
     const s = this.state || {}, P = window.__wfPrefs, boot = this._pfBoot && s.pf === undefined, pf = MENU ? true : s.pf === undefined ? !!this._pfBoot : !!s.pf;
-    const me = (P && P.person) || { code: 'JW', name: 'James Whitmore', title: 'Platform administrator', org: 'Forest Fire Watch', access: 'All features. All regions', photo: '', lang: 'en' };
+    const me = (P && P.person) || { code: 'JW', name: 'James Whitmore', title: 'Emergency management director', org: 'Government overview', access: 'All features. All regions', photo: '', lang: 'en' };
     const theme = P ? P.get('theme') : (s.theme || 'light'), text = P ? P.get('text') : (s.text || 'normal'), lang = window.__wfLang || 'en';
     const setPref = (k, v) => { if (P) P.set(k, v); this.setState({ [k]: v }); };
     const pmMode = pf ? (s.pm || 'open') : '', pmSec = s.pmSec || 'profile';   // menu (Oct 3, 17:18): '' closed, 'open' (a section showing) or 'rail' (only the icon column)
@@ -1889,7 +1889,7 @@ class Component extends DCLogic {
       hScope: this.wfHandle('sc', 'up', () => this.setState({ scOpen: false })), scDy: 0, scDyT: '0s',
       hList: this.wfHandle('li', 'down', () => { this.wfListFlag(false); this.setState({ list: false }); }), liDy: 0, liDyT: '0s', liClipT: this.wfDrag('li').y ? '0s' : '.55s',
       openScope: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.setState({ scOpen: true, scBrowse: undefined }); }, pScope: this.wfPull('sc', 'down', () => this.setState({ scOpen: true, scBrowse: undefined })), pList: this.wfPull('li', 'up', () => { this.wfListFlag(false); this.setState({ list: true }); }), closeScope: () => this.setState({ scOpen: false }),
-      backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : brObj && brObj.id === 'AMZ' ? 'BRA' : '@', q: '' })), acct: ({ amz: { name: 'Rafael Nogueira · Prevfogo Amazônia', area: 'Ibama · Access: Amazônia Legal only' }, admin: { name: 'Nuno Rogerio · Platform administrator', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
+      backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : brObj && brObj.id === 'AMZ' ? 'BRA' : '@', q: '' })), acct: ({ amz: { name: 'Rafael Nogueira · Prevfogo Amazônia', area: 'Ibama · Access: Amazônia Legal only' }, admin: { name: 'Nuno Rogerio · Emergency management director', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
       signOut: (e) => { if (e && e.preventDefault) e.preventDefault(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ aiAsk: 'out' }); },
       signOutNow: () => { try { window.localStorage.removeItem('wf-role'); window.localStorage.removeItem('wf-last-user'); window.sessionStorage.removeItem('wf-scope'); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { role: null, scope: null }); },
       backLbl: brObj && brObj.country === 'US' ? 'Back to United States' : brObj && brObj.id === 'AMZ' ? 'Back to Brazil' : 'Back to countries', slX: (this.state || {}).slX || 0, slO: (this.state || {}).slO == null ? 1 : this.state.slO, slT: (this.state || {}).slT || 'none',
