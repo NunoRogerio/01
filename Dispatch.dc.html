@@ -1088,6 +1088,17 @@ class Component extends DCLogic {
     if (counts.slice(2).some((x) => x > 0)) { const a = get({ id: 'air', code: '', name: 'Air support', km: null }); for (let i = 2; i < 6; i++) a.n[i] += counts[i] || 0; }
     return out.filter((o) => o.n.some((x) => x > 0));
   }
+  /* (Oct 8, 22:59) orders made in the fire's chat (its dispatch blade or chips) read here as the page's own orders, station by
+     station, so the Crews tab shows what the chat sent; orders sent from here reach the chat the other way (pend / dispatched) */
+  wfChatOrders(fv, fireId) { const C = window.__wfChat; if (!C || !C.list) return [];
+    const id = String(fireId || (fv && fv.id) || ''), raw = id.replace(/^F-/, ''), c = C.list().find((q) => q && q.kind !== 'dm' && (String(q.incId) === id || String(q.incId) === raw)); if (!c || c.dismissed) return [];
+    const F = (c.forces || []).filter((f) => f.st !== 'standby'); if (!F.length) return [];
+    const at = new Date(c.updated || Date.now()).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), by = {};
+    F.forEach((f) => { const k = f.ck || f.station, o = by[k] || (by[k] = { id: k, code: '', name: f.station || f.full, km: f.km != null ? Math.round(f.km * 10) / 10 : null, du: 'km', n: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], at, chat: true });
+      (f.veh || []).forEach((v) => { const m = String(v).match(/^(\d+)\s*×\s*(.+)$/), q = m ? +m[1] : 1, name = m ? m[2] : v; o.n[/tender|VTTF|autotanque|Nodriza|\bAT-/i.test(name) ? 1 : 0] += q; }); });
+    const out = Object.keys(by).map((k) => by[k]);
+    if (c.flags && c.flags.air && c.air) out.push({ id: 'air', code: '', name: c.air.name, km: null, du: 'km', n: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], at, chat: true });
+    return out; }
   wfSaveOrder(fireId, list, counts, du, per) {
     const all = this.wfOrders(), cur = all[fireId] || [], at = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     this.wfSplit(list, counts, per).forEach((p) => {
@@ -1161,10 +1172,12 @@ class Component extends DCLogic {
     // the fire's stage, as its chat reads it (ANEPC code, else the feed's tone)
     const sc0 = /^F-/.test(S.frow.id || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
     const sc = !I.sc && sc0 === 5 && I.startMs && now - I.startMs > 90 * 60000 ? 6 : sc0;
-    const stg = sc >= 10 ? 7 : sc === 9 ? 6 : sc === 8 ? 5 : sc === 7 ? 4 : sc === 6 ? 3 : sc === 5 ? 2 : 1;
+    /* (Oct 8, 22:59) one status everywhere: with a chat, the stage is the chat's (moved there or here, both read the same) */
+    const ch = (() => { try { return C.find(C.incFire(S.frow)); } catch (e) { return null; } })(), chOk = ch && !ch.dismissed && ch.stage >= 1;
+    const stg = chOk ? Math.min(7, ch.stage) : sc >= 10 ? 7 : sc === 9 ? 6 : sc === 8 ? 5 : sc === 7 ? 4 : sc === 6 ? 3 : sc === 5 ? 2 : 1;
     const first = /^Confirmed from /.test(S.frow.note || '') ? 0 : 1;
     // time in each stage: the fire's chat when it has one at the same stage, else an estimate over the time since the start
-    let ms = {}; const ch = (() => { try { return C.find(C.incFire(S.frow)); } catch (e) { return null; } })();
+    let ms = {};
     if (ch && ch.stage === stg && C.stageDurs) C.stageDurs(ch).forEach((d) => { ms[d.s] = (ms[d.s] || 0) + d.ms; });
     else if (I.startMs && now > I.startMs) { /* typical times for the earlier stages, shrunk to fit at most 70% of the time since the start; the current stage has the rest */ const M = 60000, TYP = { 0: 10 * M, 1: 15 * M, 2: 40 * M, 3: 300 * M, 4: 240 * M, 5: 180 * M, 6: 600 * M }, T = now - I.startMs; let sum = 0; for (let i = first; i < stg; i++) sum += TYP[i]; const k = sum ? Math.min(1, 0.7 * T / sum) : 1; let used = 0; for (let i = first; i < stg; i++) { ms[i] = TYP[i] * k; used += ms[i]; } ms[stg] = T - used; }
     const dur = (v) => { if (!(v > 0)) return ''; const m = Math.floor(v / 60000); return m >= 1440 ? Math.floor(m / 1440) + ' d' : m >= 60 ? Math.floor(m / 60) + ' h' : Math.max(1, m) + ' min'; };
@@ -1396,7 +1409,7 @@ class Component extends DCLogic {
     // The fire's country: a live fire's own, or the candidate it was confirmed from, or the area on screen.
     const stC = frow ? frow.st : (() => { const m = /Confirmed from (IC-[\d-]+)/.exec((fv && fv.note) || ''); const c = m && this.wfWorld().cands.find((q) => q.id === m[1]); return c ? c.st : fv ? ((this.wfScope && this.wfScope().st) || '') : 'CA'; })();   // no fire chosen: the design fire in Los Angeles
     // Dispatch orders sent from this app for this fire, per station: [{ id, code, name, km, n: [crews, tenders, helicopters, air tankers, jets, swarms], at }]
-    const ORD = this.wfOrders()[fireId] || [], reinforce = !!s.reinforce;
+    const ORD = (() => { const o0 = this.wfOrders()[fireId] || []; return o0.length ? o0 : this.wfChatOrders(fv, fireId); })(), reinforce = !!s.reinforce;   /* (Oct 8, 22:59) dispatched in the chat: the same orders here */
     const sentN = (id) => { const o = ORD.find((q) => q.id === id); return o ? o.n : null; };
     const NEAR = this.wfNearRows(fv, FIRE, /^[A-Z]{2}$/.test(stC || '') && stC !== 'PT', stC, reinforce || (!!s.crew && !this.wfChatFor(fv)) || !!s.inl);   /* (Oct 4) a fire with a chat: its crews are the chat's stations, nothing else */   /* configuring crews: stations further away too, for the full list */
     const DU = NEAR.du;
