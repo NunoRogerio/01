@@ -239,7 +239,7 @@
     var D = null;
     var LP = 0, R = 240;   // pushing a feed against a screen edge shrinks it (240px of push = down to 40%); a long press brings it back
     var clearLP = function () { if (LP) { clearTimeout(LP); LP = 0; } };
-    var restore = function () { if (st.sc >= 1) return; cancelAnimationFrame(st.fling || 0); st.sc = 1; el.classList.remove('mini'); applySize(f);
+    var restore = function () { if (CALL || st.sc >= 1) return;   /* (Oct 8, 21:14) video calls never resize */ cancelAnimationFrame(st.fling || 0); st.sc = 1; el.classList.remove('mini'); applySize(f);
       try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
       var q = nearest(f, st.x, st.y); setPos(f, q.x, q.y, true);
       /* (Oct 4, 23:03) the hang-up bounce (swells 10% and settles quickly about its centre), but the feed stays */
@@ -249,7 +249,7 @@
     el.addEventListener('pointermove', function (e) { if (!D) return; var mx = e.clientX - D.x, my = e.clientY - D.y; if (!D.moved && Math.hypot(mx, my) < 6) return; D.moved = true; clearLP();
       var now = performance.now(); D.tr.push([now, e.clientX, e.clientY]); while (D.tr.length > 2 && now - D.tr[0][0] > 90) D.tr.shift();
       var tx = D.x0 + mx, ty = D.y0 + my, B0 = boundsF(f, D.sc0), ov = Math.max(B0.x0 - tx, tx - B0.x1, B0.y0 - ty, ty - B0.y1, 0);
-      if (ov > 0) { var k = Math.max(0.4, Math.min(st.sc, D.sc0 - ov / R * 0.6)); if (k < st.sc) { st.sc = k; el.classList.add('mini'); applySize(f); } }   // only ever smaller while pushing
+      if (ov > 0 && !CALL) { var k = Math.max(0.4, Math.min(st.sc, D.sc0 - ov / R * 0.6)); if (k < st.sc) { st.sc = k; el.classList.add('mini'); applySize(f); } }   // only ever smaller while pushing
       put(f, tx, ty, false); e.preventDefault(); });
     var up = function () { clearLP(); if (!D || feeds.indexOf(f) < 0) { D = null; return; } var d = D; D = null; if (st.sc < 1) el.classList.add('mini'); var tr = d.tr, A = tr[0], Z = tr[tr.length - 1], vx = 0, vy = 0;
       if (d.moved && A && Z && Z[0] - A[0] > 8 && performance.now() - Z[0] < 80) { vx = (Z[1] - A[1]) / ((Z[0] - A[0]) / 1000); vy = (Z[2] - A[2]) / ((Z[0] - A[0]) / 1000); var sp = Math.hypot(vx, vy); if (sp > 2500) { vx *= 2500 / sp; vy *= 2500 / sp; } }
@@ -263,7 +263,7 @@
         var q = put(f, x, y, false); if (q.hx) vx = -vx * 0.3; if (q.hy) vy = -vy * 0.3;   // bounces off another feed like off an edge
         if (Math.hypot(vx, vy) < 12) { st.fling = 0; settle(f); return; } st.fling = requestAnimationFrame(step); };
       st.fling = requestAnimationFrame(step); };
-    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);   /* a drag that loses the finger always ends (never stuck) */
   }
   addEventListener('pagehide', function () { feeds.forEach(function (g) { try { g.el.remove(); } catch (x) {} }); feeds = []; });
   window.__wfCamFeed = { open: open, close: close, isOpen: function () { return feeds.length > 0; } };
