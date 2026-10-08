@@ -552,6 +552,7 @@
   var REC = { 4: ['Head held, no spread. We recommend Resolving.', 'Cabeça dominada, sem progressão. Recomendamos Em resolução.'], 5: ['Flanks tied in, no open edge. Ready for Concluding.', 'Flancos fechados, sem frente aberta. Prontos para Em conclusão.'],
     6: ['Mop-up done along the perimeter. Ready for Surveillance.', 'Rescaldo feito no perímetro. Prontos para Vigilância.'], 7: ['No hotspots left. Ready to close.', 'Sem pontos quentes. Prontos a encerrar.'] };
   function paceDue(c, s) {
+    if (s === 2) { setStage(c, 3, 300, 3); return; }   /* (Oct 8, 22:01) en route: the crews reach the fire within 15 s (field-driven, for everyone) */
     var nx = s + 1, R = REC[nx]; if (!R) return;
     if (isLt()) { captMove(c, nx); return; }
     c.flags['rec' + s] = true;
@@ -1238,7 +1239,7 @@
         c.updated = q.due; changed = true;
       }
       /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
-      if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 3 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
+      if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
         if (!c.flags[pk] && now - c.stageAt > 15000)   /* (Oct 8, 21:37) 15 s at most per stage */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread

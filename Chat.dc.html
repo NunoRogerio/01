@@ -14,13 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=206"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=208"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
 <script src="station.js?v=9"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=107"></script>
+<script src="chat.js?v=108"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=36"></script>
@@ -36,7 +36,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .chrow{transition:background-color .15s ease,filter .15s ease}.chrow:active{filter:brightness(.94)}
 .chbtn{transition:opacity .15s ease}.chbtn:active{opacity:.68}
 .sqsearch::placeholder{color:#545458}
-.chsurf{background:#E8E8ED}html.wf-dark .chsurf{background:#141416!important}
+.chsurf{background:color-mix(in srgb, var(--wf-page, #F2F2F7) 94%, #000000)}html.wf-dark .chsurf{background:#141416!important}
 .chscroll{scrollbar-width:none}.chscroll>*{flex-shrink:0}.chscroll::-webkit-scrollbar{display:none}
 @keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}@keyframes chFade{from{opacity:0}to{opacity:1}}.chfade{animation:chFade .4s ease-out}@keyframes chBub{from{opacity:0;transform:scale(.72)}60%{opacity:1}to{opacity:1;transform:none}}.chbubL,.chbubR{animation:chBub .55s cubic-bezier(.22,.9,.3,1) both}.chbubL{transform-origin:0 100%}.chbubR{transform-origin:100% 100%}@media (prefers-reduced-motion:reduce){.chbubL,.chbubR,.chfade{animation:none}}
 @keyframes chDot{0%,80%,100%{opacity:.25}40%{opacity:1}}.chdot{animation:chDot 1.2s infinite}
@@ -141,7 +141,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
           <!-- (Oct 8, 21:18) the sender inside the bubble, at its top: photo, name and station on one line, 16px above the message -->
-          <div class="chfade chbubL" style="display: flex; flex-direction: column; gap: 4px; align-self: flex-start; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
+          <div class="chfade chbubL" style="display: flex; flex-direction: column; gap: 4px; align-self: stretch; max-width: 100%; box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
             <div style="display: {{m.hdD}}; align-items: center; gap: 8px; max-width: 100%; min-width: 0; margin-bottom: 12px">
               <!-- Tap the photo: a tooltip with the name and role (as on the icon cards); tap it again or anywhere else to hide it -->
               <span data-avtip="1" role="button" tabindex="0" onClick="{{m.tip}}" aria-label="{{m.tipAria}}" style="position: relative; flex-shrink: 0; width: 32px; height: 32px; cursor: pointer">
@@ -383,6 +383,15 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <p class="wf-note" style="margin: 8px 0 0 !important">{{ds.note}}</p>
       </div>
       <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{ds.h.down}}" onPointerMove="{{ds.h.move}}" onPointerUp="{{ds.h.up}}" onPointerCancel="{{ds.h.cancel}}" onKeyDown="{{ds.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    </section>
+    <!-- ===== (Oct 8, 21:57) The incident's page in a blade over the chat (as the team, the projection and the dispatch): the marker
+         button opens it; the back arrow, the grabber or a tap outside fold it back up into the chat ===== -->
+    <div class="wf-hap-scrim wf-glass" onClick="{{ib.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 32; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{ib.scrimOp}}; pointer-events: {{ib.pe}}; transition: opacity .4s ease"></div>
+    <section role="dialog" aria-modal="true" aria-label="{{c.place}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{ib.b}}px; z-index: 33; display: flex; flex-direction: column; padding-top: 0; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden; transform: translateY({{ib.y}}); visibility: {{ib.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{ib.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ib.visDelay}}">
+      <!-- the page's own header shows the incident; the blade's back arrow sits where the page's header buttons were (top right) -->
+      <button type="button" class="chbtn" onClick="{{ib.close}}" aria-label="{{t.back}}" style="position: absolute; z-index: 2; top: 56px; right: 36px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
+      <iframe title="{{c.place}}" src="{{ib.src}}" style="flex: 1 1 auto; min-height: 0; width: 100%; border: 0; background: #F2F2F7"></iframe>
+      <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{ib.h.down}}" onPointerMove="{{ib.h.move}}" onPointerUp="{{ib.h.up}}" onPointerCancel="{{ib.h.cancel}}" onKeyDown="{{ib.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     </section>
   </sc-if>
 
@@ -890,7 +899,7 @@ class Component extends DCLogic {
       return { href: 'Dispatch.dc.html', go: () => { const v = { id, place: c.place, note, x: c.x, y: c.y, det: c.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     })();
     /* (Oct 8, 21:45) the header's incident button: the map's own marker for what the incident is now */
-    const hdInc = (() => { const fire = c.kind === 'fire' || c.stage >= 1; return { d: c.kind === 'dm' ? 'none' : 'flex', href: inc.href, go: inc.go, aria: L(fire ? 'Open the fire' : 'Open the ignition candidate', fire ? 'Abrir o incêndio' : 'Abrir o candidato a ignição'),
+    const hdInc = (() => { const fire = c.kind === 'fire' || c.stage >= 1; return { d: c.kind === 'dm' ? 'none' : 'flex', href: inc.href, go: (e) => { try { if (e && e.preventDefault) e.preventDefault(); if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (inc.go) inc.go(); this.setState({ ib: true, ibDy: 0, ibSrc: inc.href + '?embed=1&t=' + Date.now(), ibFire: fire }); },   /* (Oct 8, 21:57) the incident's page opens in a blade over the chat, the chat stays */ aria: L(fire ? 'Open the fire' : 'Open the ignition candidate', fire ? 'Abrir o incêndio' : 'Abrir o candidato a ignição'),
       r: fire ? '7' : '6.5', fill: fire ? '#E8590C' : 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', stroke: fire ? 'none' : '#3A3A3C', sw: fire ? '0' : '2' }; })();
     // The topic's own screen: a fire opens its fire page, a candidate its candidate page
     const topicGo = (T0) => () => { if (T0.kind === 'fire') { const v = { id: T0.id, place: T0.place, note: '', x: T0.x, y: T0.y, det: null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} }
@@ -922,7 +931,7 @@ class Component extends DCLogic {
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: '0' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', hdD: same ? 'none' : 'flex', who: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name, whoOrg: p.org ? '. ' + p.org : '', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: 'var(--wf-surface, #FFFFFF)',   /* (Oct 8, 21:45) the team's bubbles are white; yours have no background */ bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', hdD: same ? 'none' : 'flex', who: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name, whoOrg: (() => { /* (Oct 8, 22:02) name, rank, station */ const R = c.police ? '' : p.kind === 'lt' ? L('Lieutenant', 'Chefe de equipa') : p.kind === 'air' ? L(p.roleEn || '', p.rolePt || '') : p.roleEn && c.kind === 'dm' ? L(String(p.roleEn).split(' · ')[0], String(p.rolePt || p.roleEn).split(' · ')[0]) : (C.leadRole ? L(C.leadRole(c).en, C.leadRole(c).pt) : ''); return (R ? '. ' + R : '') + (p.org ? '. ' + p.org : ''); })(), code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: 'var(--wf-surface, #FFFFFF)',   /* (Oct 8, 21:45) the team's bubbles are white; yours have no background */ bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
           tip: (e) => { try { e.stopPropagation(); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (on) { this.setState({ avTip: null }); return; }
             let pos = { x: 16, y: 0, below: false }; try { const el = e.currentTarget, root = el.closest('[data-wfroot]') || document.body, R0 = root.getBoundingClientRect(), k = R0.width / ((window.__wfVP || {}).w || 390) || 1, r = el.getBoundingClientRect(), sc = el.closest('.chscroll'), top = sc ? sc.getBoundingClientRect().top : R0.top;
               const x = (r.left - R0.left) / k, yT = (r.top - R0.top) / k, below = (r.top - top) / k < 60; pos = { x: Math.max(16, x), y: below ? (r.bottom - R0.top) / k + 6 : yT - 6, below }; } catch (x) {}
@@ -1006,7 +1015,10 @@ class Component extends DCLogic {
     const endT = c.closed ? (c.closedVt || vn) : vn;
     const sh = !!s.sheet;
     const firePt = { x: c.x, y: c.y, id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, st: c.st, zoom: 2.2 };
-    return { hdInc,
+    const ib = (() => { const on = !!s.ib, close = () => { this._shd = null; this.setState({ ib: false, ibDy: 0 }); };
+      return { h: this.shHandle('ib', 'ibDy'), close, b: 48 - (s.ibDy || 0), bT: s.ibDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none',
+        src: s.ibSrc || 'about:blank', sub: s.ibFire ? L('Fire', 'Incêndio') : L('Ignition candidate', 'Candidato a ignição') }; })();
+    return { hdInc, ib,
       isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, items, team, tl, tlTotal, forces, extras, fk, fkPx: window.__wfKpiPx ? window.__wfKpiPx(fk.map((k) => k.v), 3, 326) : '44px',
       meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),

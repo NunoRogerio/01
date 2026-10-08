@@ -121,12 +121,13 @@ window.__wfBlink=function(path,dur){
   /* only when the page really runs under the status bar (a top safe area): an app installed before the change keeps the old bar */
   function under(){var u=false;try{if(SA){var pr=document.createElement('div');pr.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';(document.body||document.documentElement).appendChild(pr);u=(parseFloat(getComputedStyle(pr).paddingTop)||0)>20;pr.remove();if(!u&&innerHeight>innerWidth&&innerHeight>=Math.max(screen.width,screen.height)-2)u=true;   /* (Oct 5, 20:45) upright only: held sideways the screen's long side always fits, which wrongly read as 'under the status bar' and pushed every screen 52px down */}}catch(e){}return u;}
   var UNDER=under();
-  var W=390,H=844,TOP=UNDER?0:52,VH=H-TOP,MAXS=1.6;window.__wfTOP=TOP;try{document.documentElement.style.setProperty('--wf-top',TOP+'px');}catch(e){}   /* the frame's top hidden behind the browser's bar: tall sheets keep their 48px clear below what is really visible */
+  var EMB0=window.top!==window&&/[?&]embed=1/.test(location.search);   /* (Oct 8, 22:02) in the chat's incident blade: no browser bar to hide */
+  var W=390,H=844,TOP=(UNDER||EMB0)?0:52,VH=H-TOP,MAXS=1.6;window.__wfTOP=TOP;try{document.documentElement.style.setProperty('--wf-top',TOP+'px');}catch(e){}   /* the frame's top hidden behind the browser's bar: tall sheets keep their 48px clear below what is really visible */
   /* Desktop browsers (Chrome, Safari, Firefox on a computer: a mouse, no touch) show the app as the phone it is, centred and
      scaled to the window's height, instead of stretching to a wide window (and never treat the wide window as a phone
      turned sideways) */
   var DESK=false;try{DESK=!!(matchMedia('(hover: hover) and (pointer: fine)').matches&&!('ontouchstart' in window)&&!(navigator.maxTouchPoints>0))||/OculusBrowser|Quest|Pico|Wolvic/i.test(navigator.userAgent);}catch(e){}window.__wfDesk=DESK;   /* VR headset browsers (Meta Quest) too: a floating window, so the phone frame */
-  var m=document.querySelector('meta[name="wf-layout"]'),fluid=!DESK&&!!(m&&m.getAttribute('content')==='fluid');
+  var m=document.querySelector('meta[name="wf-layout"]'),fluid=!DESK&&!!(m&&m.getAttribute('content')==='fluid');   /* (Oct 8, 22:02) in the chat's incident blade the page is the whole phone screen, scaled to fit the blade */
   var st=document.createElement('style');
   st.textContent='html,body{background:#F2F2F7;overflow:hidden;height:100%;margin:0;overscroll-behavior:none}*{scrollbar-width:none}*::-webkit-scrollbar{display:none;width:0;height:0}'+   /* no scrollbars in any browser (desktop Safari and Chrome draw them) */
     
@@ -1184,3 +1185,11 @@ document.addEventListener('click', function (e) { if (Date.now() - (window.__wfK
     Array.prototype.forEach.call(document.querySelectorAll('[data-wf-maproot][data-wf-isfull="1"]'), function (m) { if (on || !m.offsetWidth) return; var r = m.getBoundingClientRect(), big = Math.max(r.width, r.height) >= Math.max(W, H) * 0.85 && Math.min(r.width, r.height) >= Math.min(W, H) * 0.9;
       if (big && r.top < H && r.bottom > 0 && getComputedStyle(m).visibility !== 'hidden') on = true; });
     document.documentElement.classList.toggle('wf-mapfull', on && !menuOpen); }, 250); })();
+
+// (Oct 8, 21:57) An incident page shown in a blade over the chat (?embed=1, in a frame): only its content. No back, menu, chat or
+// notifications buttons, and its title no longer leads away (the blade's own back arrow folds it back into the chat).
+(function () { try { if (window.top === window || !/[?&]embed=1/.test(location.search)) return; document.documentElement.classList.add('wf-embed');
+  var st = document.createElement('style'); st.textContent = 'html.wf-embed [data-wf-back],html.wf-embed .wf-mb,html.wf-embed button[data-wf-burger],html.wf-embed [data-wf-burger-spot],html.wf-embed a[href^="Chat.dc.html"],html.wf-embed [aria-label^="Notifications"],html.wf-embed [aria-label^="Assignments"],html.wf-embed [aria-label="Preferences"]{display:none!important}html.wf-embed [data-wf-chev]{pointer-events:none!important}html.wf-embed [data-wf-chev]::before{display:none!important}'; (document.head || document.documentElement).appendChild(st);
+  /* links that would leave the incident open in the whole app, not inside the blade */
+  document.addEventListener('click', function (e) { var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a || /^#|^javascript/.test(a.getAttribute('href') || '')) return; var h = a.getAttribute('href'); if (/^(Dispatch|Alert)\.dc\.html/.test(h)) return; e.preventDefault(); e.stopPropagation(); try { window.top.location.href = h; } catch (x) {} }, true);
+} catch (e) {} })();
