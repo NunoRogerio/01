@@ -278,6 +278,7 @@
   function push(c, m, delay, adv) { m.id = newId(); m.adv = adv == null ? 0 : adv; c.queue.push({ due: Date.now() + (delay || 0), m: m }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
   function sys(c, en, pt, delay, adv) { push(c, { kind: 'sys', en: en, pt: pt }, delay, adv == null ? 1 : adv); }
   function say(c, who, en, pt, delay, adv) { var P = c.people || []; if (P[who] && (P[who].left || P[who].self)) { var j = P.findIndex(function (p) { return !p.left && !p.self; }); if (j >= 0) who = j; }
+    if (c.stage >= 3 && evacText(en) && !(c.flags || {}).evac) evacAsk(c, who);   /* (Oct 8, 22:15) anyone on the team who brings up evacuating raises the request card for the fire owner */
     push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
   function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0);
@@ -659,12 +660,10 @@
       try { var EV = JSON.parse(localStorage.getItem('wf-evac') || '{}'); EV[c.incId] = Date.now(); localStorage.setItem('wf-evac', JSON.stringify(EV)); } catch (x) {}
       say(c, 0, "Understood. We're taking measures and evacuating the people at risk " + (c.place ? 'in ' + c.place + ' ' : '') + 'now, ' + c.evac.people + ' residents, with ' + (us ? "the sheriff's deputies" : 'the local police') + '. I will report when everyone is out.',
         'Entendido. Estamos a tomar medidas e a evacuar as pessoas em risco ' + (c.place ? 'em ' + c.place + ' ' : '') + 'agora, ' + c.evac.people + ' moradores, com ' + (us ? 'os xerifes' : 'a GNR') + '. Informo quando estiverem todos fora.', 2400, 2);
-    } else if (a === 'evac') {
-      c.flags.evac = true; me('Evacuation order for the homes north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.');
-      try { var EV2 = JSON.parse(localStorage.getItem('wf-evac') || '{}'); EV2[c.incId] = Date.now(); localStorage.setItem('wf-evac', JSON.stringify(EV2)); } catch (x) {}   // the fire screen's People at risk then reads Evacuating
-      c.evac = { people: 60 + hash(c.key + 'ev') % 180 };
-      card(c, { tag: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, tagC: '#B3001B', title: { en: 'Homes north-east of the fire', pt: 'Casas a nordeste do incêndio' }, body: { en: 'Sent to civil protection and ' + (us ? "the sheriff's department" : 'the local police'), pt: 'Enviada à proteção civil e às forças de segurança locais' } }, 800, 1);
-      sys(c, us ? "Sheriff's deputies moving " + c.evac.people + ' residents to the evacuation center' : 'Local police (GNR) moving ' + c.evac.people + ' residents to the parish hall', us ? 'Xerifes a encaminhar ' + c.evac.people + ' moradores para o centro de evacuação' : 'GNR a encaminhar ' + c.evac.people + ' moradores para a junta de freguesia', 5000, 14);
+    } else if (a === 'evacNo') {
+      c.flags.evacNo = true; me('Not yet. Hold the homes with the engines.', 'Ainda não. Protejam as casas com os veículos.');
+      if (P[0]) say(c, 0, 'Understood. We keep the engines between the head and the homes.', 'Entendido. Mantemos os veículos entre a cabeça e as casas.', 2400, 2);
+    } else if (a === 'evac') { c.msgs.forEach(function (x) { if (x.req === 'evac' && !x.done) x.done = 'evac'; }); evacDo(c, -1);
     } else if (a === 'drone3') {
       c.flags.drone3 = true; me('Send a drone over the head to read the fire behaviour.', 'Enviem um drone sobre a cabeça para ler o comportamento do fogo.');
       card(c, { tag: { en: 'Drone D-5 · over the head', pt: 'Drone D-5 · sobre a cabeça' }, tagC: '#0A66CC', title: { en: 'Running upslope', pt: 'A subir a encosta' }, body: { en: 'Spotting up to 50 m ahead of the head', pt: 'Projeções até 50 m à frente da cabeça' }, fire: true }, 6000, 8);
@@ -830,6 +829,7 @@
   function send(key, text) {
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
+    if (c.kind !== 'dm' && c.stage >= 3 && evacText(text) && !(c.flags || {}).evac) evacAsk(c, Math.max(0, (c.people || []).findIndex(function (p) { return !p.self && !p.left && p.kind !== 'air'; })));   /* I bring it up: the request card comes up for the fire owner */
     if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm' && c.help) { if (aiKey()) helpAi(c, text); else helpReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
@@ -1059,6 +1059,20 @@
     'If the fire owner names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
     'Answer with JSON only, no prose around it: {"replies":[{"who":<team index>,"text":"<message>","minutes":<minutes of fire time before this message, 1 to 15>}]} with one reply, or two when a second coordinator genuinely adds something.';
   function aiSys() { return AI_SYS.replace('LANGUAGE', LNAME(true)); }
+  // (Oct 8, 22:10) a member asking for an evacuation is a request, as air support: a card the captain (fire owner) approves or
+  // declines; a lieutenant sees it and the captain decides it in the chat a few seconds later
+  function evacAsk(c, who) { if (!c || c.kind === 'dm' || c.flags.evac || c.flags.evacAsked || c.closed || c.dismissed) return; c.flags.evacAsked = true; var P = c.people[who] || {};
+    card(c, { req: 'evac', by: who, tag: { en: 'Request · ' + (P.name || 'Captain'), pt: 'Pedido · ' + (P.name || 'Chefe') }, tagC: '#B3001B', title: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, body: { en: 'Homes north-east of the fire, in the path of the head', pt: 'Casas a nordeste do incêndio, no caminho da cabeça' },
+      actions: [{ key: 'evacNo', en: 'Not now', pt: 'Agora não' }, { key: 'evac', en: 'Approve', pt: 'Aprovar', primary: true }] }, 1800, 0);
+    if (isLt()) push(c, { kind: 'capt', a: 'evac', ent: c.sEnt }, 6500, 0); }
+  function evacDo(c, by) { var us = isUS(c);
+      c.flags.evac = true; if (by < 0) mine(c, 'Evacuation order for the homes north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.'); else say(c, by, 'Approved. Evacuation order for the homes north-east of the fire.', 'Aprovado. Ordem de evacuação para as casas a nordeste do incêndio.', 300, 0);
+      try { var EV2 = JSON.parse(localStorage.getItem('wf-evac') || '{}'); EV2[c.incId] = Date.now(); localStorage.setItem('wf-evac', JSON.stringify(EV2)); } catch (x) {}   // the fire screen's People at risk then reads Evacuating
+      c.evac = { people: 60 + hash(c.key + 'ev') % 180 };
+      card(c, { tag: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, tagC: '#B3001B', title: { en: 'Homes north-east of the fire', pt: 'Casas a nordeste do incêndio' }, body: { en: 'Sent to civil protection and ' + (us ? "the sheriff's department" : 'the local police'), pt: 'Enviada à proteção civil e às forças de segurança locais' } }, 800, 1);
+      sys(c, us ? "Sheriff's deputies moving " + c.evac.people + ' residents to the evacuation center' : 'Local police (GNR) moving ' + c.evac.people + ' residents to the parish hall', us ? 'Xerifes a encaminhar ' + c.evac.people + ' moradores para o centro de evacuação' : 'GNR a encaminhar ' + c.evac.people + ' moradores para a junta de freguesia', 5000, 14);
+  }
+  function evacText(t) { return /evacuat|evacua[çc]/i.test(String(t || '')); }
   function aiDeliver(key, txt, fallback) {
     var c = load().chats[key]; if (!c) return; c.pending = null;
     var js = parseJSON(txt), R = js && Array.isArray(js.replies) ? js.replies : null;
@@ -1066,7 +1080,7 @@
     R.slice(0, 2).forEach(function (r, i) {
       var who = Math.max(0, Math.min(c.people.length - 1, parseInt(r.who, 10) || 0)), t = String(r.text || '').trim().slice(0, 720);
       if (!t) return;
-      say(c, who, t, t, 400 + i * 2600, Math.max(1, Math.min(15, parseInt(r.minutes, 10) || 3)));
+      say(c, who, t, t, 400 + i * 2600, Math.max(1, Math.min(15, parseInt(r.minutes, 10) || 3)));;
     });
     c.updated = Date.now(); save(); emit();
   }
@@ -1234,6 +1248,7 @@
             push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#186B2D' }, 4000, 0);
           }
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
+        else if (m.kind === 'capt' && m.a === 'evac') { if (!c.closed && !c.dismissed && !c.flags.evac) { var ec = c.msgs.find(function (x) { return x.req === 'evac' && !x.done; }); if (ec) ec.done = 'evac'; evacDo(c, 0); } }
         else if (m.kind === 'capt') { if (!c.closed && !c.dismissed && c.sEnt === m.ent && !c.flags.rekindled) { var rc = c.msgs.find(function (x) { return x.rekindle && !x.done; }); if (rc) rc.done = 'back'; captMove(c, 3, true); } }
         else c.msgs.push(m);
         c.updated = q.due; changed = true;

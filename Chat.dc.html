@@ -20,7 +20,7 @@
 <script src="station.js?v=9"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=108"></script>
+<script src="chat.js?v=109"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=36"></script>
@@ -40,6 +40,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .chscroll{scrollbar-width:none}.chscroll>*{flex-shrink:0}.chscroll::-webkit-scrollbar{display:none}
 @keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}@keyframes chFade{from{opacity:0}to{opacity:1}}.chfade{animation:chFade .4s ease-out}@keyframes chBub{from{opacity:0;transform:scale(.72)}60%{opacity:1}to{opacity:1;transform:none}}.chbubL,.chbubR{animation:chBub .55s cubic-bezier(.22,.9,.3,1) both}.chbubL{transform-origin:0 100%}.chbubR{transform-origin:100% 100%}@media (prefers-reduced-motion:reduce){.chbubL,.chbubR,.chfade{animation:none}}
 @keyframes chDot{0%,80%,100%{opacity:.25}40%{opacity:1}}.chdot{animation:chDot 1.2s infinite}
+@keyframes chDrop{from{opacity:0;transform:translateY(-48px)}to{opacity:1;transform:none}}.chdrop{animation:chDrop .55s cubic-bezier(.2,.8,.2,1)}[data-grab-show] [style*="width: 86px; height: 3px"]{opacity:1!important}
 @keyframes chView{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}.chview{animation:chView .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes chGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}.chbar{transform-origin:left center;animation:chGrow .8s cubic-bezier(.2,.8,.2,1)}
 @keyframes chPulse{0%,100%{opacity:1}50%{opacity:.55}}.chnow{animation:chPulse 1.6s ease-in-out infinite}
@@ -282,7 +283,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </button>
         </sc-for>
       </div>
-      <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{tm.h.down}}" onPointerMove="{{tm.h.move}}" onPointerUp="{{tm.h.up}}" onPointerCancel="{{tm.h.cancel}}" onKeyDown="{{tm.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{tm.h.down}}" onPointerMove="{{tm.h.move}}" onPointerUp="{{tm.h.up}}" onPointerCancel="{{tm.h.cancel}}" onKeyDown="{{tm.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     </section>
 
     <!-- ===== Topic picker: the incidents within 50 km of this station (fires, then ignition candidates), nearest first ===== -->
@@ -321,7 +322,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="wf-hap-scrim wf-glass" onClick="{{closeSheet}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sh.scrimOp}}; pointer-events: {{sh.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{t.fireCard}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{sh.b}}px; z-index: 31; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); transform: translateY({{sh.y}}); visibility: {{sh.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{sh.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{sh.visDelay}}">
       <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 40px">
-        <button type="button" class="chbtn" onClick="{{closeSheet}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
         <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h2>
           <span style="font-size: 18px; line-height: 24px; color: #000000">{{t.fireCardSub}}</span>
@@ -355,7 +355,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
       </div>
       <!-- The grabber: drag it up (the sheet's edge follows, the content stays still) or tap it to close -->
-      <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{sh.h.down}}" onPointerMove="{{sh.h.move}}" onPointerUp="{{sh.h.up}}" onPointerCancel="{{sh.h.cancel}}" onKeyDown="{{sh.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{sh.h.down}}" onPointerMove="{{sh.h.move}}" onPointerUp="{{sh.h.up}}" onPointerCancel="{{sh.h.cancel}}" onKeyDown="{{sh.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     </section>
     <!-- ===== (Oct 8, 19:15) Configure dispatch: the same blade as Progress and projection, dropping from the top over the chat. Pick
          the stations (toggles, several can go), each with its distance, drive time and the vehicles it sends; Dispatch crews turns into
@@ -363,7 +363,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="wf-hap-scrim wf-glass" onClick="{{ds.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 32; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{ds.scrimOp}}; pointer-events: {{ds.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{ds.title}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{ds.b}}px; z-index: 33; display: flex; flex-direction: column; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); transform: translateY({{ds.y}}); visibility: {{ds.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{ds.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ds.visDelay}}">
       <header style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 40px">
-        <button type="button" class="chbtn" onClick="{{ds.close}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
         <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; padding-top: 4px">
           <h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.place}}</h2>
           <span style="font-size: 18px; line-height: 24px; color: #000000">{{ds.title}}</span>
@@ -382,29 +381,27 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="display: flex; padding-top: 16px"><button type="button" class="btn primary" onClick="{{ds.send}}" aria-pressed="{{ds.dis}}" style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer; pointer-events: {{ds.btnPe}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{ds.chkD}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{ds.btn}}</button></div>
         <p class="wf-note" style="margin: 8px 0 0 !important">{{ds.note}}</p>
       </div>
-      <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{ds.h.down}}" onPointerMove="{{ds.h.move}}" onPointerUp="{{ds.h.up}}" onPointerCancel="{{ds.h.cancel}}" onKeyDown="{{ds.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{ds.h.down}}" onPointerMove="{{ds.h.move}}" onPointerUp="{{ds.h.up}}" onPointerCancel="{{ds.h.cancel}}" onKeyDown="{{ds.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     </section>
     <!-- ===== (Oct 8, 21:57) The incident's page in a blade over the chat (as the team, the projection and the dispatch): the marker
-         button opens it; the back arrow, the grabber or a tap outside fold it back up into the chat ===== -->
+         button opens it; the grabber or a tap outside fold it back up into the chat ===== -->
     <div class="wf-hap-scrim wf-glass" onClick="{{ib.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 32; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{ib.scrimOp}}; pointer-events: {{ib.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{c.place}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{ib.b}}px; z-index: 33; display: flex; flex-direction: column; padding-top: 0; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden; transform: translateY({{ib.y}}); visibility: {{ib.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{ib.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ib.visDelay}}">
-      <!-- the page's own header shows the incident; the blade's back arrow sits where the page's header buttons were (top right) -->
-      <button type="button" class="chbtn" onClick="{{ib.close}}" aria-label="{{t.back}}" style="position: absolute; z-index: 2; top: 56px; right: 36px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
+      <!-- (Oct 8, 22:12) no back arrow on the blades from the chat: the grabber at the foot (tap or swipe up) or a tap outside closes them -->
       <iframe title="{{c.place}}" src="{{ib.src}}" style="flex: 1 1 auto; min-height: 0; width: 100%; border: 0; background: #F2F2F7"></iframe>
-      <div role="button" tabindex="0" class="wf-grab gb" onPointerDown="{{ib.h.down}}" onPointerMove="{{ib.h.move}}" onPointerUp="{{ib.h.up}}" onPointerCancel="{{ib.h.cancel}}" onKeyDown="{{ib.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{ib.h.down}}" onPointerMove="{{ib.h.move}}" onPointerUp="{{ib.h.up}}" onPointerCancel="{{ib.h.cancel}}" onKeyDown="{{ib.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     </section>
   </sc-if>
 
   <!-- ===== Resolution summary ===== -->
   <sc-if value="{{isSummary}}" hint-placeholder-val="{{ false }}">
-    <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 40px 16px; flex-shrink: 0">
-      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+    <header class="chdrop" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 40px 16px; flex-shrink: 0">
       <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; padding-top: 4px">
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.sumTitle}}</h1>
         <div style="font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
       </div>
     </header>
-    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+    <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
       <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.well}}" fire="{{sum.fire}}" meta="{{sum.meta}}" size="{{sum.size}}" crests="{{sum.crests}}" air="{{sum.air}}" n="{{sum.n}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
       <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column">
@@ -472,10 +469,12 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <p class="wf-note" style="display: {{sum.noteD}}; margin: 0 4px">{{sum.note}}</p>
     </div>
     <!-- Home: back to the home screen, fixed at the foot (Oct 4) -->
-    <div class="chview" style="flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; padding: 16px 16px 32px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08)">
+    <div class="chdrop" style="flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; padding: 16px 16px 8px; background: #F2F2F7">
       <span style="font-size: 16px; line-height: 20px; color: #545458; text-align: center; text-wrap: balance">{{t.homeNote}}</span>
       <a href="Main.dc.html" class="btn primary" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; box-sizing: border-box; border-radius: 999px; font-size: 18px; font-weight: 600; text-decoration: none">{{t.home}}</a>
     </div>
+    <!-- (Oct 8, 22:15) the summary drops from the top as a blade: no back arrow, the grabber at its foot (tap or swipe up) folds it back into the chat -->
+    <div role="button" data-grab-show="1" class="chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <!-- Cards picker for the key figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-hap-scrim wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
     <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
@@ -495,10 +494,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- ===== A firefighter's profile and achievements ===== -->
   <sc-if value="{{isPerson}}" hint-placeholder-val="{{ false }}">
-    <header class="chview" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 16px; flex-shrink: 0">
-      <a href="Chat.dc.html" class="chbtn" onClick="{{pop}}" aria-label="{{t.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+    <header class="chdrop" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 16px; flex-shrink: 0">
     </header>
-    <div class="chscroll chview" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+    <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
         <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 88px; height: 88px; border-radius: 50%; background: #E5E5EA; font-size: 28px; font-weight: 600; overflow: hidden">{{pp.code}}<span style="position: absolute; inset: 0; background-image: {{pp.photo}}; background-size: cover; background-position: center"></span></span>
         <h1 style="margin: 8px 0 0; font-size: 26px; font-weight: 600; line-height: 32px">{{pp.name}}</h1>
@@ -539,7 +537,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </a>
     </div>
     <!-- Grabber: a swipe up (or a tap) dismisses the profile, back to where it was opened (the team list) -->
-    <div role="button" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    <div role="button" data-grab-show="1" class="chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <!-- Cards picker for this person figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-hap-scrim wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
     <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-label="{{t.kf}}" aria-hidden="{{sk.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{sk.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
@@ -676,12 +674,16 @@ class Component extends DCLogic {
       // Declared resolved: the chat stays; the resolution summary opens only from the trophy card or the state card
       const el = this._sc, n = c ? c.msgs.length : 0;
       if (el && (el !== this._posEl || s.key !== this._posKey)) { this._posEl = el; this._posKey = s.key; this._n = n; this._typ = !!(c && C.typing(c)); this.restorePos(el, s.key); }
-      else if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { this.pin(); this._n = n; this._typ = !!(c && C.typing(c)); }
+      else if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { { const last = n > this._n && c.msgs[n - 1]; let call = false; try { call = window.__wfVoiceKey === s.key; } catch (x) {} if ((last && last.from === 'me') || call) { this._stick = true; if (s.toEnd) this.setState({ toEnd: false }); } }   /* (Oct 8, 22:12) my own message (typed, chip or mic) and every line said during a call bring the chat to the newest message */ this.pin(); this._n = n; this._typ = !!(c && C.typing(c)); }
     } else { this._posEl = null; }
   }
   // Views inside this screen stack up, so every back returns to the one you came from
   // The screen's main scrolling area (the tallest visible one): its place is kept when you go on and restored by Back
   wfMainScroller() { let best = null; document.querySelectorAll('*').forEach((el) => { if (el.scrollHeight <= el.clientHeight + 2 || !el.offsetParent) return; const o = getComputedStyle(el).overflowY; if (o !== 'auto' && o !== 'scroll') return; if (!best || el.clientHeight > best.clientHeight) best = el; }); return best; }
+  grabUp() { const self = this; return { down: (e) => { let k = 1; try { k = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect().height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._ppd = { y: e.clientY, k, dy: 0 }; },
+        move: (e) => { const h = self._ppd; if (!h) return; h.dy = Math.min(0, (e.clientY - h.y) / h.k); self.setState({ ppDy: h.dy }); },
+        up: () => { const h = self._ppd; self._ppd = null; if (!h) return; const d = Math.abs(h.dy); if (d < 6 || d > 60) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} self.popFn()(); } else self.setState({ ppDy: 0 }); },
+        cancel: () => { self._ppd = null; self.setState({ ppDy: 0 }); } }; }   /* the bottom grabber of the profile and the summary blades: a tap or a swipe up folds them back */
   go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const sc = this.wfMainScroller(); this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person, team: !!(extra && extra.fromTeam), top: sc ? sc.scrollTop : 0 }]), view, sheet: false, ...(extra || {}) }); }
   renderVals() {
     const s = this.state || {}, C = window.__wfChat;
@@ -715,7 +717,7 @@ class Component extends DCLogic {
     const dayTxt = (tm) => new Date(tm).toLocaleDateString(L('en-GB', 'pt-PT'), { weekday: 'short', day: 'numeric', month: 'short' });
     const whenTxt = (tm) => dayTxt(tm) + ', ' + C.hhmm(tm);
     // the resolution card's facts (trophy.js): the stations that took part with their crests, air support, the fire, when it closed and how long it took, its size class
-    const winAttrs = (Z) => { const F = (c.forces || []).filter((f) => f.st !== 'standby'), sc = C.sizeClass(Z.ha, c.st);
+    const winAttrs = (Z) => { const PO2 = new Set((c.people || []).filter((p) => p.kind !== 'air' && !p.left).map((p) => p.org)), air2 = (c.people || []).some((p) => p.kind === 'air' && !p.left) || !!c.air, F = (c.forces || []).filter((f) => f.st !== 'standby' && (!(c.people || []).length || ((f.veh || []).length && (f.veh || []).every((v) => /heli|Helic|tanker|plane|avião|air/i.test(v)) ? air2 : PO2.has(f.station)))),   /* (Oct 8, 22:18) the trophy's crests: the stations on the fire's team */ sc = C.sizeClass(Z.ha, c.st);
       return { crests: JSON.stringify(F.filter((f, i) => F.findIndex((g) => g.station === f.station) === i).map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))),   /* one crest per station */ air: Z.air || c.air || (c.flags && c.flags.air) ? '1' : '0', n: String(Z.stations), fire: c.place, meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
     const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
     /* (Oct 8, 18:50) the lieutenant (chefe de equipa) is an active member of his incident's chat: he is on the fire, so he writes and
@@ -738,10 +740,7 @@ class Component extends DCLogic {
         { key: 'fast', l: L('Fastest resolution', 'Resolução mais rápida'), v: fast && isFinite(fast) ? C.dur(fast) : '—', opt: true },
         { key: 'sts', l: L('Stations', 'Quartéis'), v: String(new Set(A.map((r) => r.station).filter(Boolean)).size || (P.station ? 1 : 0)), opt: true }]);
       // A swipe up on the grabber (or a tap) dismisses the profile, as the back does
-      const self = this, ppH = { down: (e) => { let k = 1; try { k = e.currentTarget.closest('[data-wfroot]').getBoundingClientRect().height / 844 || 1; e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} self._ppd = { y: e.clientY, k, dy: 0 }; },
-        move: (e) => { const h = self._ppd; if (!h) return; h.dy = Math.min(0, (e.clientY - h.y) / h.k); self.setState({ ppDy: h.dy }); },
-        up: () => { const h = self._ppd; self._ppd = null; if (!h) return; const d = Math.abs(h.dy); if (d < 6 || d > 60) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} self.popFn()(); } else self.setState({ ppDy: 0 }); },
-        cancel: () => { self._ppd = null; self.setState({ ppDy: 0 }); } };
+      const self = this, ppH = this.grabUp();
       return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), sk, ppH, ppY: (s.ppDy || 0) + 'px', ppT: self._ppd ? '0s' : '.3s',
         pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? (LEAD ? L('Crew chief', 'Chefe de equipa') : L('Fire owner', 'Responsável pelo incêndio')) + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
           // The station this person serves at: its crest and name, and a link to the station page
@@ -811,7 +810,12 @@ class Component extends DCLogic {
     const stTxt = { standby: [L('Standby', 'Prevenção'), 'rgba(135,88,0,0.12)', '#875800'], enroute: [L('En route', 'A caminho'), 'rgba(184,54,10,0.12)', '#B8360A'], onscene: [L('On scene', 'No local'), 'rgba(179,20,27,0.10)', '#B3141B'],
       watch: [L('On watch', 'Em vigilância'), 'rgba(20,83,45,0.14)', '#14532D'], released: [L('Released', 'Libertado'), 'rgba(118,118,128,0.14)', '#48484A'], assigned: [L('Assigned', 'Atribuído'), 'rgba(184,54,10,0.12)', '#B8360A'] };
     /* (Oct 7) one card per station: forces sent by the same station (two dispatch rows, or a station listed twice) are one team */
-    const FF = (c.forces || []).filter((f) => s.view !== 'summary' || f.st !== 'standby').reduce((A, f) => { const g = A.find((x) => x.station === f.station);
+    /* (Oct 8, 22:18) the forces shown (fire card, resolution summary) are the stations and crews on the fire's team: a ground team
+       counts when someone of its station is in the chat, aircraft when the air attack lead is */
+    const PO = new Set((c.people || []).filter((p) => p.kind !== 'air' && !p.left).map((p) => p.org)), hasAir = (c.people || []).some((p) => p.kind === 'air' && !p.left) || !!c.air;
+    const isAirF = (f) => (f.veh || []).length && (f.veh || []).every((v) => /heli|Helic|tanker|plane|avião|air/i.test(v));
+    const onTeam = (f) => !(c.people || []).length || (isAirF(f) ? hasAir : PO.has(f.station));
+    const FF = (c.forces || []).filter((f) => (s.view !== 'summary' || f.st !== 'standby') && onTeam(f)).reduce((A, f) => { const g = A.find((x) => x.station === f.station);
       if (!g) { A.push(Object.assign({}, f, { veh: (f.veh || []).slice(), crew: (f.crew || []).slice() })); return A; }
       const R = { onscene: 4, enroute: 3, released: 2, standby: 1 }; g.veh = g.veh.concat(f.veh || []); g.crew = g.crew.concat(f.coord && f.coord !== g.coord ? [f.coord] : [], f.crew || []);
       if ((R[f.st] || 0) > (R[g.st] || 0)) g.st = f.st; return A; }, []);
@@ -866,7 +870,7 @@ class Component extends DCLogic {
     if (s.view === 'summary') {
       const Z = c.sum || C.stats(c);
       const area = Z.us ? { v: String(Z.acres), u: 'acres' } : { v: String(Z.ha).replace('.', PTL ? ',' : '.'), u: 'ha' };
-      return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), tl, tlTotal, forces, extras, sim,
+      return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), ppH: this.grabUp(), ppY: (s.ppDy || 0) + 'px', ppT: this._ppd ? '0s' : '.3s', tl, tlTotal, forces, extras, sim,
         sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: B ? L('Drill complete', 'Simulação concluída') : L('Fire resolved', 'Incêndio resolvido'), headline: c.place, ...winAttrs(Z), meta: B ? benchTxt : winAttrs(Z).meta, closedAt: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + (Z.est ? '~' : '') + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
           note: B ? L('Training drill against the real fire of ', 'Simulação contra o incêndio real de ') + dayTxt(B.t) + L('. Crew replies are role-played, and drills do not go into firefighters’ profiles.', '. As respostas das equipas são encenadas e as simulações não entram nos perfis dos bombeiros.') : '', noteD: B ? 'block' : 'none',
           get kPx() { return window.__wfKpiPx ? window.__wfKpiPx(this.kpis.map((k) => k.v), 2, 318) : '44px'; },
@@ -924,7 +928,7 @@ class Component extends DCLogic {
     const items = [];
     const onlyDec = c.closed && s.hTab === 'dec';
     c.msgs.forEach((m) => {
-      if (onlyDec && !(m.kind === 'card' || (m.kind === 'msg' && m.from === 'me'))) return;
+      if (onlyDec && m.kind !== 'card') return;   /* (Oct 8, 22:15) Decisions: the cards only, no chat text (mine included) */
       const vt = m.vt || m.t, d = new Date(vt).toDateString();
       if (d !== prevDay) { items.push({ isDay: true, day: d === today ? L('Today', 'Hoje') : dayTxt(vt) }); prevDay = d; prevFrom = null; }
       const time = C.hhmm(vt);
@@ -946,11 +950,11 @@ class Component extends DCLogic {
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
-        const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
+        const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
         const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
-            ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
+            ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
               return { cls: done ? '' : pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? (window.__wfY || '#E5FF00') : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? '#1C1C1E' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600 }; })(),
             go: () => { if (m.done) return; run(a.key, m.id); } };

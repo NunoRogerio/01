@@ -1426,3 +1426,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Chat bubbles (Oct 8, 22:01–22:02):** the team's bubbles use the full width; the sender line reads name, rank, station ("Sarah Kim. Captain. Station 12", "Daniel Brooks. Lieutenant. Station 11").
 - **Chat surface follows the palette (Oct 8, 22:05):** a shade darker than the chosen palette's page colour (was a fixed grey).
 - **En route paced too (Oct 8, 22:01):** a fire left en route (Ongoing) reaches Crews on scene within 15 s, for everyone.
+- **Blades from the chat (Oct 8, 22:12):** the team, Progress and projection, Configure dispatch, the incident page, a person's profile and the resolution summary have no back arrow; each shows its grabber at its foot (tap or swipe up folds it back into the chat), the line visible on these blades (`data-grab-show`). The summary and the profile drop in from the top like the other blades.
+- **Decisions tab (Oct 8, 22:15):** only the cards (requests, stage moves, orders); no chat text, mine included.
+- **Chat follows new messages (Oct 8, 22:12):** my own message (typed, chip or mic) and every line said during a call bring the chat to the newest message.
+- **Evacuation request (Oct 8, 22:12):** once crews are on scene, anyone on the team (or me) bringing up evacuating raises a request card "Evacuation order" with Not now / Approve. The fire owner (captain or coordinator) decides; a lieutenant sees the card and the captain approves it in the chat. Approving sends the order card and the police/sheriff line.
+- **Forces match the team (Oct 8, 22:18):** the fire card and the resolution summary (and the trophy's crests) list only the stations with someone in the chat's team, and aircraft only when the air attack lead is in it.
