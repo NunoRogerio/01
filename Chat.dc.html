@@ -14,13 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=211"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=212"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
 <script src="station.js?v=15"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=114"></script>
+<script src="chat.js?v=115"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=36"></script>
@@ -995,8 +995,8 @@ class Component extends DCLogic {
       }
     });
     // The team: you, the fire owner, then the crew coordinator of each station
-    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : (() => { const R = C.rankOf ? C.rankOf(c, me.name) : { en: 'Fire owner', pt: 'Responsável' }; return L(R.en, R.pt) + L('. You', '. Você'); })(),   /* (Oct 8, 23:09) the same rank as everywhere */ code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
-      .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left && !p.self && p.name !== me.name).map(([p, i]) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
+    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : (() => { const R = C.rankOf ? C.rankOf(c, me.name) : { en: 'Fire owner', pt: 'Responsável' }; const MN = window.__wfMine ? window.__wfMine() : null, sn = MN && MN.station ? String(MN.station.name).replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') : ''; return L(R.en, R.pt) + (sn ? '. ' + sn : '') + L('. You', '. Você'); })(),   /* (Oct 8, 23:09) the same rank as everywhere; (23:30) with my station */ code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
+      .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left && !p.self && p.name !== me.name).sort((a, b) => { const so = (p) => { const k = (c.stations || []).findIndex((q) => q.short === p.org); return k < 0 ? 99 : k; }; return (so(a[0]) - so(b[0])) || ((a[0].kind === 'lt') - (b[0].kind === 'lt')) || (a[1] - b[1]); }).map(([p, i]) =>   /* (Oct 8, 23:30) each station's captain, then its lieutenants */ ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
     // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)

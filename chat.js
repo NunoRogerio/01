@@ -152,7 +152,7 @@
       c.fixedRes2 = true; ch = true; }
     /* chats saved before: their stations by the short names people use */
     (c.people || []).forEach(function (p) { var o = shortStation(p.org); if (p.org && o !== p.org) { p.org = o; ch = true; } }); (c.stations || []).forEach(function (q) { var o = shortStation(q.short || q.name); if (q.short !== o) { q.short = o; ch = true; } }); (c.forces || []).forEach(function (f) { var o = shortStation(f.station); if (f.station && o !== f.station) { f.station = o; ch = true; } });
-    if (!c.forces || !c.forces.length) return ch;
+    if (!c.forces || !c.forces.length) return ltsOfLeads(c) || ch;
     c.forces.forEach(function (f) { var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF && !f.second ? SF.lead : (f.crew && f.crew[0]); if (!nm) return;
       /* (Oct 8, 21:38) a station whose captain is in the chat is on the fire: its lieutenant is in too (unless its crew was released) */
       var capIn = c.people.some(function (p) { return p.kind === 'lead' && !p.left && p.org === (s.short || f.station); });
@@ -160,6 +160,18 @@
       if (ex) { if (ex.kind === 'lt' && !!ex.left === on) { ex.left = on ? undefined : true; ch = true; } return; }   /* the lieutenant is in while the crew works the fire */
       if (!on) return; var v = (f.veh || [])[0] || '', org = s.short || f.station || '';
       c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: 'Lieutenant. ' + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && !f.second && M && M.key === 'ff') || undefined }); ch = true; });
+    ch = ltsOfLeads(c) || ch;
+    return ch; }
+  /* (Oct 8, 23:30) every station in an incident chat has its lieutenant there too, not only its captain (also before any
+     dispatch); when a station leaves (not sent, released), its lieutenant leaves with it */
+  function ltsOfLeads(c) { if (!c || c.kind === 'dm' || !c.people) return false; var ch = false, me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null, us = isUS(c);
+    c.people.slice().forEach(function (p) { if (p.kind !== 'lead') return; var org = p.org, st = (c.stations || []).find(function (q) { return q.short === org; }) || {}, SF = staffOf(st);
+      var lts = c.people.filter(function (q) { return q.kind === 'lt' && q.org === org; }), working = (c.forces || []).some(function (f) { return f.station === org && f.st !== 'standby' && f.st !== 'released'; });
+      if (p.left && !working) { lts.forEach(function (q) { if (!q.left) { q.left = true; ch = true; } }); return; }
+      if (p.left || lts.some(function (q) { return !q.left; })) return;
+      if (lts.length) { lts[0].left = undefined; ch = true; return; }
+      var nm = SF ? SF.lead : pickNames(c, 1, 'lt-' + org)[0]; if (!nm || c.people.some(function (q) { return q.name === nm; })) return;
+      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: (us ? 'Lieutenant. ' : 'Crew chief. ') + org, rolePt: 'Chefe de equipa. ' + org, self: (SF && M && M.key === 'ff') || undefined }); ch = true; });
     return ch; }
   window.addEventListener('storage', function (e) { if (e.key === KEY) { DB = null; emit(); } });
 
@@ -1045,12 +1057,22 @@
       aiDeliver(key, txt, function (c3) { c3.step = s0; helpReply(c3, text); });
     });
   }
+  /* (Oct 8, 23:30) another station agreed to send a crew to the topic's incident: its captain joins that incident's chat (and
+     its crew rolls); a floating note says so for 3 s */
+  function aidJoin(c) { try { var T = c.topic; if (!T || c.aidJoined) return; var db = load(), ic = db.chats[keyOf({ id: T.id, kind: T.kind })] || db.chats[keyOf({ id: T.id, kind: 'fire' })] || db.chats[keyOf({ id: T.id, kind: 'cand' })];
+      if (!ic || ic.closed || ic.dismissed) return; var P = c.people[0] || {}, org = shortStation(c.reg || P.org || 'Station'); c.aidJoined = true;
+      if (!ic.people.some(function (p) { return p.name === P.name; })) { ic.people.push({ name: P.name, code: initials(P.name), org: org, kind: 'lead' }); ic.used = ic.used || {}; ic.used[P.name] = 1;
+        ic.stations.push({ ck: (c.stations[0] || {}).ck || '', name: c.reg || org, short: org, km: c.eta ? Math.round(c.eta * 50 / 60 * 10) / 10 : 8, min: c.eta || 15 });
+        var f = forceFor(ic, ic.stations.length - 1, ic.stage >= 2 ? 'enroute' : 'standby'); f.extra = true; ic.forces = (ic.forces || []).concat([f]);
+        sys(ic, P.name + ', captain of ' + org + ', joined', P.name + ', capitão do ' + org + ', entrou na conversa', 0, 0); ic.updated = Date.now(); }
+      setTimeout(function () { try { if (window.__wfFloatNote) window.__wfFloatNote({ name: P.name, title: P.name + (PT() ? ' entrou no grupo' : ' joined the group'), sub: (PT() ? 'Equipa do ' : 'The team of the ') + ic.place + '. ' + org + (PT() ? ' envia uma equipa.' : ' sends a crew.') }); } catch (e) {} }, 2600); } catch (e) {} }
   function dmReply(c, text) {
     var t = String(text).toLowerCase(), n = c.people.length, b = c.beat++, O = c.offer || { en: 'a crew of 5 and a fire engine', pt: 'uma equipa de 5 e um veículo' };
     var q = String(text).trim().replace(/[.!?]+$/, '');
     if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Anytime. We keep you posted.', 'Às ordens. Vamos dando notícias.', 1800, 1); return; }
     if (c.step === 0) {   // the ask: they offer what the station has free
       if (c.topic && /(send|crew|team|equipa|enviar|mandar|ajuda|help)/.test(t)) { c.step = 2;   // the topic already says where
+        aidJoin(c);
         say(c, 0, 'Yes. I can send ' + O.en + ' to ' + c.topic.place + ', out of the station in 5 min, about ' + c.eta + ' min to get there.', 'Sim. Posso enviar ' + O.pt + ' para ' + c.topic.place + ', a sair do quartel em 5 min, cerca de ' + c.eta + ' min até lá.', 2400, 2);
         if (n > 1) say(c, 1, 'Crew kitting up now.', 'Equipa a equipar-se.', 5200, 1); return; }
       c.step = 1;
@@ -1059,7 +1081,7 @@
       return;
     }
     if (c.step === 1) {   // the place: they roll
-      c.step = 2;
+      c.step = 2; aidJoin(c);
       say(c, 0, 'Understood: "' + q + '". Rolling now, about ' + c.eta + ' min out. I will report on arrival.', 'Entendido: "' + q + '". A sair agora, cerca de ' + c.eta + ' min até lá. Dou notícias à chegada.', 2400, 2);
       say(c, n > 1 ? 1 : 0, 'Crew out of the station.', 'Equipa saiu do quartel.', 9000, 5);
       return;
