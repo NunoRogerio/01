@@ -17,10 +17,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=210"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=13"></script>
+<script src="station.js?v=14"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=111"></script>
+<script src="chat.js?v=112"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=36"></script>
@@ -992,6 +992,9 @@ class Component extends DCLogic {
     const nxS = C.STAGES[Math.min(c.stage + 1, C.STAGES.length - 1)], nxT = nxS ? tone(nxS) : null;
     const acts0 = (LEAD ? [] : C.actions(c)).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-y, #E5FF00)', chFg: '#1C1C1E' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
     go: () => run(a.key), p1: ['next', 'closeCheck', 'confirm', 'dismiss', 'dispatch'].indexOf(a.key) >= 0 }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
+    /* (Oct 8, 22:52) a conversation with another station is a To do item: Mark as done (asks first) moves it to Resolved */
+    if (C.mutualOpen && C.mutualOpen(c)) acts0.unshift({ label: L('Mark as done', 'Marcar como feito'), go: () => { if (!window.__wfConfirm) { C.markDone(c.key); return; }
+      window.__wfConfirm({ title: L('Mark as done?', 'Marcar como feito?'), body: L('This conversation moves to Resolved.', 'Esta conversa passa para Resolvidos.'), cancel: L('Cancel', 'Cancelar'), ok: L('Mark done', 'Marcar feito'), onOk: () => C.markDone(c.key) }); } });
     // Opened from the fire screen's People at risk card (Not evacuated): Evacuation plan leads the suggestions until it is used
     (() => { let sg = null; try { sg = JSON.parse(sessionStorage.getItem('wf-chat-sugg') || 'null'); } catch (e) {}
       if (sg && sg.s === 'evac' && sg.fire && (sg.fire === c.incId || ('F-' + c.incId) === sg.fire) && !c.flags.evac && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 5)

@@ -118,11 +118,12 @@
   function banners(list) { var host = document.getElementById('dc-root'); if (!host || !list.length) return; var PT = window.__wfLang === 'pt';
     var box = document.getElementById('wf-nbx'); if (!box) { box = document.createElement('div'); box.id = 'wf-nbx'; box.style.cssText = 'position:absolute;left:8px;right:8px;top:calc(var(--wf-top, 0px) + 56px);z-index:2147481000;display:flex;flex-direction:column;gap:8px;pointer-events:none'; host.appendChild(box); }
     list.forEach(function (it, i) { setTimeout(function () { var d = it.d, fire = it.kind === 'fire', C = window.__wfChat;
-      var b = document.createElement('div'); b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0');
+      var b = document.createElement('div'); b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0'); d = d || {};
       b.style.cssText = 'pointer-events:auto;display:flex;align-items:center;gap:16px;padding:16px;border-radius:24px;background:color-mix(in srgb, var(--wf-surface, #FFFFFF) 72%, transparent);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.16);transform:translateY(-140%);opacity:0;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s ease;cursor:pointer;touch-action:none';
       var mk = fire ? '<circle cx="7" cy="7" r="4.8" fill="#E8590C"></circle>' : '<circle cx="7" cy="7" r="4.8" fill="color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)" stroke="#3A3A3C" stroke-width="1.6"></circle>';
-      var ttl = fire ? d.name + (PT ? ': Primeiro alerta' : ': First alert') : (PT ? 'Nova deteção de ignição' : 'New ignition detection');
-      var txt = fire ? d.near + '. ' + d.ac + ' ac.' : 'Altadena. ' + d.conf + (PT ? '% de probabilidade. ' : '% likelihood. ') + d.near + '.';
+      var hq = it.kind === 'help', hc = it.c || {}, hp = (hc.people || [])[0] || {};
+      var ttl = hq ? (PT ? 'Pedido de ajuda. ' : 'Help request. ') + (hc.reg || hp.name || '') : fire ? d.name + (PT ? ': Primeiro alerta' : ': First alert') : (PT ? 'Nova deteção de ignição' : 'New ignition detection');
+      var txt = hq ? hp.name + ': ' + (PT ? 'Podem enviar um veículo e uma equipa para o ' : 'Could you send an engine and a crew to the ') + ((hc.topic || {}).place || '') + '?' : fire ? d.near + '. ' + d.ac + ' ac.' : 'Altadena. ' + d.conf + (PT ? '% de probabilidade. ' : '% likelihood. ') + d.near + '.';
       b.innerHTML = '<span aria-hidden="true" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;border-radius:50%;background:' + (fire ? '#FCE9E1' : '#ECECEF') + '"><svg width="20" height="20" viewBox="0 0 14 14">' + mk + '</svg></span>' +
         '<span style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto"><span style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:16px;line-height:20px;font-weight:600;color:var(--wf-ink, #1C1C1E);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + ttl + '</b><span style="font-size:13px;line-height:20px;color:var(--wf-ink2, #6E6E73);flex-shrink:0">' + (PT ? 'agora' : 'now') + '</span></span>' +
         '<span style="font-size:16px;line-height:20px;color:var(--wf-ink, #3A3A3C);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden">' + txt + '</span></span>';
@@ -130,8 +131,8 @@
       var gone = false, out = function () { if (gone) return; gone = true; b.style.transform = 'translateY(-140%)'; b.style.opacity = '0'; setTimeout(function () { b.remove(); }, 520); };
       var y0 = null; b.addEventListener('pointerdown', function (e) { y0 = e.clientY; }); b.addEventListener('pointerup', function (e) { var dy = y0 == null ? 0 : e.clientY - y0; y0 = null; if (dy < -20) { out(); return; }
         out(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
-        try { if (!C) return; var c = fire ? C.find({ id: d.id, kind: 'fire' }) : null;
-          if (!c && !fire && C.incCand && C.open) { var r = (window.__wfLiveCands || []).find(function (q) { return q && q[2] === d.id; }); if (r) c = C.open(C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] })); }
+        try { if (!C) return; var c = hq ? hc : fire ? C.find({ id: d.id, kind: 'fire' }) : null;
+          if (!c && !fire && !hq && C.incCand && C.open) { var r = (window.__wfLiveCands || []).find(function (q) { return q && q[2] === d.id; }); if (r) c = C.open(C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] })); }
           if (c) { sessionStorage.setItem('wf-chat-open', c.key); location.href = 'Chat.dc.html'; } } catch (x) {} });
       box.appendChild(b); requestAnimationFrame(function () { requestAnimationFrame(function () { b.style.transform = 'none'; b.style.opacity = '1'; }); });
       try { if (navigator.vibrate) navigator.vibrate([10, 60, 10]); } catch (x) {}
@@ -142,7 +143,9 @@
     ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) { window.addEventListener(ev, poke, { passive: true, capture: true }); });
     setInterval(function () { if (busy || document.visibilityState === 'hidden' || Date.now() - last < 5000) return; if (!(window.__wfMine && window.__wfMine())) return;
       if (window.__wfTodoInc == null || window.__wfTodoInc > 0) return; if (document.querySelector('.wf-cfm,[data-wf-tour-on]')) return;
-      busy = true; var L = []; try { L = window.__wfSimSpawn() || []; } catch (e) {} banners(L); last = Date.now(); setTimeout(function () { busy = false; }, 3000); }, 1000); })();
+      busy = true; var L = []; try { L = window.__wfSimSpawn() || []; } catch (e) {}
+      try { if (window.__wfHelpIn && Math.random() < 0.5) { var hc = window.__wfHelpIn(); if (hc) L.push({ kind: 'help', c: hc }); } } catch (e) {}   /* (Oct 8, 22:52) sometimes the station on a fire outside our area asks us for help */
+      banners(L); last = Date.now(); setTimeout(function () { busy = false; }, 3000); }, 1000); })();
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
   // ---- the station's area, kept 30 days on this phone ----

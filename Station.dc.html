@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=31"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=13"></script>
+<script src="station.js?v=14"></script>
 <script src="menu.js?v=21"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=111"></script>
+<script src="chat.js?v=112"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -187,7 +187,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <div role="listitem" data-wf-kpi="{{m.key}}" data-g="stk" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
               <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 16px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
                 <!-- (Oct 8, 22:24) the station badge card: the crest alone, 60% of the card, centred (it left the header) -->
-                <img src="{{m.img}}" data-crest="{{m.crestN}}" alt="{{m.l}}" draggable="false" style="display: {{m.imgD}}; width: 60%; aspect-ratio: 1; margin: auto 0; object-fit: contain; pointer-events: none">
+                <img src="{{m.img}}" data-crest="{{m.crestN}}" alt="{{m.l}}" draggable="false" style="display: {{m.imgD}}; width: 80%; aspect-ratio: 1; margin: auto 0; object-fit: contain; pointer-events: none">
                 <span style="display: {{m.lD}}; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 16px; line-height: 20px; color: #6E6E73; text-align: center; overflow-wrap: anywhere">{{m.l}}</span>
                 <span style="display: {{m.nD}}; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: 30px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 16px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                 <span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
@@ -197,8 +197,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
           <button type="button" class="mbtn" onClick="{{pkOpen}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
-        <!-- (Oct 8) the nearest fire is outside the area: ask the station working it if they need help (24px under the cards it is about) -->
-        <sc-if value="{{help.on}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn wf-ter" onClick="{{help.go}}" style="display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 24px; padding: 12px 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: center">{{help.lbl}}</button></sc-if>
       </div>
 
       <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
@@ -416,7 +414,7 @@ class Component extends DCLogic {
     const chatOf = (q) => { if (!C || !C.get) return null; const id = String(q.r[2]); return C.get((q.kind === 'cand' ? 'c:' : 'f:') + id) || C.get('c:' + id) || C.get('f:' + id); };
     items.forEach((q) => { q.c = chatOf(q); });
     for (let i = items.length - 1; i >= 0; i--) { const c = items[i].c; if (c && (c.closed || c.dismissed)) items.splice(i, 1); }
-    if (MINE) window.__wfTodoInc = items.length;   /* (Oct 8, 22:48) station.js brings new incidents after 5 s left alone with none to do */
+    if (MINE) window.__wfTodoInc = items.length + ((C && C.list && C.mutualOpen) ? C.list().filter((c) => C.mutualOpen(c)).length : 0);   /* (Oct 8, 22:48) station.js brings new incidents after 5 s left alone with none to do */
     items.sort((a, b) => (a.k === b.k ? a.km - b.km : a.k === 'zone' ? -1 : 1));
     const fireTag = (r) => { const T = window.__wfStageTag ? window.__wfStageTag({ info: r[9] || {}, note: r[4] }) : null; return { tagTxt: T ? T.label : L('Active', 'Ativo'), tagFg: T ? T.fg : '#3A3A3C', tagBg: T ? T.bg : 'rgba(118,118,128,0.12)', tagIc: T ? T.ic : '', tagIcD: T ? 'block' : 'none' }; };
     /* (Oct 8, 18:55) the map's own markers: a candidate is the primary colour at 80% with the dark outline; a fire the orange dot */
@@ -450,6 +448,16 @@ class Component extends DCLogic {
     if (lead) rows.forEach((x) => { const q = items.find((y) => String(y.r[2]) === String(x._id)); if (!q) return; const ar = areaRow(q); x.sub2 = x.sub; x.sub2D = 'block'; x.sub = ar.sub2D === 'block' ? ar.sub : ar.sub; x.moonD = ar.moonD; });
     if (lead) { const had = {}; rows.forEach((x) => { had[String(x._id)] = 1; }); rows = rows.concat(items.filter((q) => !had[String(q.r[2])]).map(areaRow)); }
     else rows = items.map(areaRow);
+    /* (Oct 8, 22:52) mutual aid is To do too: offering help to the station on a fire outside our area, a help request from another
+       station, or asking one for help; each conversation stays here until it is marked done (in its chat) */
+    const MA = (C && C.list && C.mutualOpen ? C.list().filter((c) => C.mutualOpen(c)) : []).map((c) => { const P0 = (c.people || [])[0] || {}, lm = C.lastMsg ? C.lastMsg(c) : null, tx = lm ? (lm.kind === 'card' ? (lm.title ? (PT ? lm.title.pt || lm.title.en : lm.title.en) : '') : (PT ? lm.pt || lm.en : lm.en)) || '' : '';
+      const ttl = c.req ? L('Help request. ', 'Pedido de ajuda. ') + (c.reg || P0.name) : c.help ? L('Help offered. ', 'Ajuda oferecida. ') + (c.reg || P0.name) : (c.reg || c.place);
+      return { place: ttl, aria: ttl, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} }, simD: 'block', ...MK.fire, moonD: 'none',
+        sub: (c.topic ? c.topic.place + '. ' : '') + (P0.name ? P0.name + ': ' : '') + tx, sub2: '', sub2D: 'none', tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '', _t: c.updated || 0 }; }).sort((a, b) => b._t - a._t);
+    const HO = !lead && this._helpOffer;
+    if (HO) MA.unshift({ place: HO.lbl, aria: HO.lbl, href: 'Chat.dc.html', go: (e) => { if (e && e.preventDefault) e.preventDefault(); HO.go(); }, simD: 'none', ...MK.fire, moonD: 'none',
+      sub: HO.place + '. ' + kmT(HO.km) + L('. Outside our area.', '. Fora da nossa área.'), sub2: '', sub2D: 'none', tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '' });
+    rows = MA.concat(rows);
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min(window.innerWidth || 390, 600) - 32, H = 280;
     let fx = S.x, fy = S.y, z = 1.4;
@@ -511,7 +519,9 @@ class Component extends DCLogic {
     // (Oct 8) To do | Resolved. Resolved: the duties done and the station's incidents closed or dismissed
     const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';
     const ck0 = (S.type === 'way' ? 'w' : 'n') + S.id;
-    const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (c.closed || c.dismissed) && c.kind !== 'dm' && ((c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) || !lead || c.dismissed) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const Sg = C.stageOf(c);
+    const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (((c.closed || c.dismissed) && c.kind !== 'dm') || (c.kind === 'dm' && c.done && !c.police)) && ((c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) || !lead || c.dismissed) && (c.kind === 'dm' || !window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { if (c.kind === 'dm') { const P0 = (c.people || [])[0] || {}, OK = (window.__wfStTag || {}).ok || { bg: 'rgba(52,199,89,0.16)', fg: '#186B2D' }, ttl = c.req ? L('Help request. ', 'Pedido de ajuda. ') + (c.reg || P0.name) : c.help ? L('Help offered. ', 'Ajuda oferecida. ') + (c.reg || P0.name) : (c.reg || c.place);   /* (Oct 8, 22:52) a mutual aid conversation marked done */
+        return { simD: 'block', ...MK.fire, moonD: 'none', sub2: '', sub2D: 'none', place: ttl, aria: ttl, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} }, _t: c.doneAt || 0, tagTxt: L('Done', 'Feito'), tagFg: OK.fg, tagBg: OK.bg, tagIc: 'M5 12.5l4.5 4.5L19 7.5', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.topic ? c.topic.place + '. ' : '') + L('Mutual aid.', 'Auxílio.') }; }
+      const Sg = C.stageOf(c);
       return { simD: simOf(c.incId), ...((c.kind === 'fire' || (c.stage >= 1 && !c.dismissed)) ? { mkFill: '#6F2B06', mkStroke: 'none', mkSw: '0' } : MK.cand)   /* (Oct 8, 22:21) a candidate declared a fire is listed as the fire it became; a dismissed one as a candidate */, moonD: 'none', sub2: '', sub2D: 'none', place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
         _t: c.closedVt || 0, tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.closedVt ? new Date(c.closedVt).toLocaleDateString(PT ? 'pt-PT' : 'en-US', { day: 'numeric', month: 'short' }) + '. ' : '') + (c.dismissed ? L('No fire on the ground.', 'Sem incêndio no terreno.') : L('Resolution summary in the chat.', 'Resumo da resolução na conversa.')) }; });
     // (Oct 8, 17:35) Resolved loads lazily: the last 5 first (the newest closed incidents, then the latest duties done), and a swipe
@@ -628,12 +638,19 @@ class Component extends DCLogic {
       const R = window.__wfNearestStation(ll[0], ll[1], S.id, S.cc || (isPT ? 'pt' : 'us')); if (!R) return off;
       const rm = /\b(Station|Company|Quartel)\s*\d+[A-Za-z]?\b/.exec(R.name), rn = rm ? rm[0] : R.name.replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || R.name;
       const P0 = C.names ? C.names(cc) : [], cap = P0.length ? P0[hsh(R.id) % P0.length] : 'Station captain', info = nf.r[9] || {};
-      const go = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-        C.direct({ id: 'help-' + nf.r[2], title: cap, org: rn, st: cc, ck: String(R.type || 'n') + R.id, lat: R.lat, lon: R.lon, face: {}, eta: 15,
+      const args = { id: 'help-' + nf.r[2], title: cap, org: rn, st: cc, ck: String(R.type || 'n') + R.id, lat: R.lat, lon: R.lon, face: {}, eta: 15,
           people: [{ name: cap, roleEn: 'Station captain · ' + rn, rolePt: 'Capitão do quartel · ' + rn }],
-          help: { id: nf.r[2], place: nf.r[3] || L('the fire', 'o incêndio'), reg: (info.place || '').replace(/ · /g, '. '), lat: ll[0], lon: ll[1], x: nf.r[5], y: nf.r[6], km: nf.km, pc: info.pc != null ? info.pc : null, ac: info.ac != null ? info.ac : null, from: ((/\b(Station|Company|Quartel)\s*\d+[A-Za-z]?\b/.exec(name) || [])[0] || name) } });
-        window.location.href = 'Chat.dc.html'; };
-      return { on: true, lbl: L('Ask ' + rn + ' if they need help', 'Perguntar se ' + rn + ' precisa de ajuda'), go }; })();
+          help: { id: nf.r[2], place: nf.r[3] || L('the fire', 'o incêndio'), reg: (info.place || '').replace(/ · /g, '. '), lat: ll[0], lon: ll[1], x: nf.r[5], y: nf.r[6], km: nf.km, pc: info.pc != null ? info.pc : null, ac: info.ac != null ? info.ac : null, from: ((/\b(Station|Company|Quartel)\s*\d+[A-Za-z]?\b/.exec(name) || [])[0] || name) } };
+      const go = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} C.direct(args); window.location.href = 'Chat.dc.html'; };
+      /* (Oct 8, 22:52) the same fire's station can ask us first (station.js, when the screen is left alone): a help request */
+      const fid = nf.r[2], taken = () => !!(C.get && (C.get('d:help-' + fid) || C.get('d:helpin-' + fid)));
+      window.__wfHelpIn = () => { if (taken() || !C.helpIn) return null; return C.helpIn(Object.assign({}, args, { id: 'helpin-' + fid, help: null, helpIn: Object.assign({}, args.help) })); };
+      const lbl = L('Ask ' + rn + ' if they need help', 'Perguntar se ' + rn + ' precisa de ajuda');
+      try { const v = taken() ? '' : JSON.stringify({ id: fid, place: nf.r[3] || '', km: Math.round(nf.km), rn }); if ((localStorage.getItem('wf-help-offer') || '') !== v) { if (v) localStorage.setItem('wf-help-offer', v); else localStorage.removeItem('wf-help-offer'); } } catch (e) {}
+      return { on: !taken(), lbl, go, fid, place: nf.r[3] || L('Unnamed fire', 'Incêndio sem nome'), km: nf.km, rn }; })();
+    if (help.on) { let hg = null; try { hg = sessionStorage.getItem('wf-help-go'); if (hg) sessionStorage.removeItem('wf-help-go'); } catch (e) {} if (hg) setTimeout(() => help.go(), 300); }   /* from the notification */
+    /* (Oct 8, 22:52) offering help is a To do item (not a button under the cards): homeAsg lists it on the next draw */
+    { const k = help.on ? help.fid : ''; if ((this._helpOffer && this._helpOffer.fid) !== (k || undefined)) { this._helpOffer = help.on ? help : null; setTimeout(() => this.forceUpdate(), 0); } else if (help.on) this._helpOffer = help; }
     /* (Oct 8, standing) the same mini cards as everywhere: in the saved order (shared with the + picker), press, hold and move to reorder */
     const kOrd = (() => { let o = null; try { o = JSON.parse(localStorage.getItem('wf-order-stk') || 'null'); } catch (e) {} return Array.isArray(o) ? o : []; })(), kIx = (k) => { const i = kOrd.indexOf(k); return i < 0 ? (k === 'crest' ? -1 : 999 + kAll.findIndex((m) => m.key === k)) : i; };
     const kpis = kAll.filter((m) => Hk.indexOf(m.key) < 0).sort((a, b) => kIx(a.key) - kIx(b.key)).map((m) => ({ key: m.key, l: m.l, img: m.img || '', imgD: m.img ? 'block' : 'none', lD: m.img ? 'none' : '-webkit-box', nD: m.img ? 'none' : 'flex', crestN: name, n: m.n, u: m.u, uD: m.u ? 'inline' : 'none', sub: m.sub, subD: m.sub ? 'block' : 'none', note: m.img ? '' : est, noteD: m.sim ? 'block' : 'none', ...this.wfKpiDrag(m.key, 'stk') }));   /* the badge is not a figure: no simulation star */

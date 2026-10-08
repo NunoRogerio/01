@@ -900,6 +900,7 @@
       msgs: [], queue: [], seenAt: now, beat: 0, flags: {}, closed: false, dismissed: false, updated: now, face: o.face || {}, used: {}, step: 0 };
     o.people.forEach(function (p) { ch.used[p.name] = 1; });
     if (o.help) { helpOpen(ch, o.help); db.chats[k] = ch; save(); emit(); return ch; }
+    if (o.helpIn) { helpInOpen(ch, o.helpIn); db.chats[k] = ch; save(); emit(); return ch; }   /* (Oct 8, 22:52) another station asks us for help */
     mine(ch, g ? 'Hello everyone, how are you?' : 'Hello ' + o.people[0].name.split(' ')[0] + ', how are you?', g ? 'Olá a todos, como estão?' : 'Olá ' + o.people[0].name.split(' ')[0] + ', como estás?');
     say(ch, 0, g ? 'Hello! All good, the command team is here. How can we help?' : 'Hello! All good here. How can I help?', g ? 'Olá! Tudo bem, está cá a equipa de comando. Em que podemos ser úteis?' : 'Olá! Tudo bem por aqui. Em que posso ser útil?', 2200, 1);
     db.chats[k] = ch; save(); emit(); return ch;
@@ -948,6 +949,19 @@
     else say(ch, 0, 'Thanks for asking. We have it: ' + helpFacts(h, false) + '. No help needed for now. I will call you if that changes.',
       'Obrigado por perguntar. Está controlado por nós: ' + helpFacts(h, true) + '. Para já não precisamos de ajuda. Ligo-lhe se isso mudar.', 2600, 2);
   }
+  /* (Oct 8, 22:52) a help request from the station working a fire outside our area: their captain writes first; the rest
+     of the conversation is the same as when we offer (help is needed) */
+  function helpInOpen(ch, h) { h.need = true; ch.help = h; ch.req = true; ch.step = 1;
+    ch.topic = { id: h.id, kind: 'fire', place: h.place, reg: h.reg || '', st: ch.st, lat: h.lat, lon: h.lon, x: h.x, y: h.y };
+    ch.msgs.push({ id: newId(), kind: 'card', adv: 0, t: Date.now(), vt: vnow(ch), topic: true, tag: { en: 'Help request', pt: 'Pedido de ajuda' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + h.place, pt: 'Incêndio. ' + h.place },
+      body: { en: (h.reg ? h.reg + '. ' : '') + Math.round(h.km) + ' km from our station', pt: (h.reg ? h.reg + '. ' : '') + Math.round(h.km) + ' km do nosso quartel' }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic });
+    var P = ch.people[0] || {};
+    say(ch, 0, 'Hello, this is ' + P.name + ', captain at ' + (ch.reg || 'our station') + '. We are on the ' + h.place + ': ' + helpFacts(h, false) + ', and it is still spreading. Could you send an engine and a crew to the flank?',
+      'Olá, fala ' + P.name + ', capitão do ' + (ch.reg || 'nosso quartel') + '. Estamos no ' + h.place + ': ' + helpFacts(h, true) + ', e ainda está a progredir. Podem enviar um veículo e uma equipa para o flanco?', 400, 0); }
+  // (Oct 8, 22:52) a conversation with another station (help offered, asked or requested) is a To do item until marked done
+  function mutualOpen(c) { return !!c && c.kind === 'dm' && !c.police && !c.done && !c.closed; }
+  function markDone(key) { var c = load().chats[key]; if (!c || c.done) return; c.done = true; c.doneAt = Date.now(); c.closedVt = Date.now();
+    sys(c, 'Marked as done', 'Marcado como feito', 0, 0); c.updated = Date.now(); save(); emit(); }
   function helpReply(c, text) {
     var t = String(text).toLowerCase();
     if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Thank you. Stay safe.', 'Obrigado. Cuidem-se.', 1800, 1); return; }
@@ -1493,6 +1507,7 @@
     callFace: function (key) { var c = load().chats[key]; return c ? faceOfPolice(c) : 'police-a'; },   /* the police leader's face for this report: one of three, chosen at random once, then the same in every call */
     policeChat: function (id) { return load().chats['p:' + id] || null; },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
+    helpIn: function (o) { return direct(o); }, mutualOpen: mutualOpen, markDone: markDone,   /* (Oct 8, 22:52) a help request arrives (not opened); mutual aid conversations as To do items */
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */

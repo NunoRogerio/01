@@ -19,10 +19,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=210"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
-<script src="station.js?v=13"></script>
+<script src="station.js?v=14"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=111"></script>
+<script src="chat.js?v=112"></script>
 <script src="tour.js?v=117"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=85"></script>
@@ -1638,6 +1638,11 @@ class Component extends DCLogic {
           out.push({ t: f.info.simAt || T0 - 11 * 60000, kind: 'fire', stage: f.info.stEn, title: (k === 'aid' ? 'Mutual aid. ' : '') + f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) }); });
         CHm.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm' && own(c) && (!window.__wfChatAllowed || window.__wfChatAllowed(c))).forEach((c) => { const S = CHm.stageOf(c) || {}, lm = CHm.lastMsg(c), who = lm && lm.kind === 'msg' && lm.from !== 'me' ? ((c.people[lm.from] || {}).name || '') : '';
           const tx = lm ? (lm.kind === 'card' ? ((lm.title || {}).en || '') : (lm.en || '')) : ''; out.push({ t: lm ? lm.t : (c.updated || T0), kind: c.stage > 0 ? 'fire' : 'ign', stage: S.en, title: c.place + ': ' + (S.en || ''), text: (who ? who + ': ' : '') + tx, href: 'Chat.dc.html', pick: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} } }); }); }
+      /* (Oct 8, 22:52) mutual aid is To do, so it is in the notifications too: each open conversation with another station, and the offer to help on a fire outside the area (the captain) */
+      if (CHm.mutualOpen) CHm.list().filter((c) => CHm.mutualOpen(c)).forEach((c) => { const lm = CHm.lastMsg(c), who = lm && lm.kind === 'msg' && lm.from !== 'me' ? ((c.people[lm.from] || {}).name || '') : '', tx = lm ? (lm.kind === 'card' ? ((lm.title || {}).en || '') : (lm.en || '')) : '';
+        out.push({ t: lm ? lm.t : (c.updated || T0), kind: 'st', unit: 'crew', title: (c.req ? 'Help request. ' : c.help ? 'Help offered. ' : 'Mutual aid. ') + (c.reg || c.place), text: (who ? who + ': ' : '') + tx, href: 'Chat.dc.html', pick: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} } }); });
+      if (MINE.level !== 'lead') { let HO = null; try { HO = JSON.parse(localStorage.getItem('wf-help-offer') || 'null'); } catch (e) {}
+        if (HO && HO.rn) out.push({ t: T0 - 5 * 60000, kind: 'st', unit: 'crew', title: 'Mutual aid. ' + (HO.place || 'Fire') + ', ' + HO.km + ' km', text: 'Outside our area. Ask ' + HO.rn + ' if they need help.', href: 'Station.dc.html?home=1', pick: () => { try { sessionStorage.setItem('wf-help-go', '1'); } catch (e) {} } }); }
       out.sort((a, b) => b.t - a.t); }
     const unread = out.filter((n) => n.t > seen).length;
     const items = out.map((n, i) => {
