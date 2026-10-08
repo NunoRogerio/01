@@ -56,11 +56,22 @@
   function through(on) { var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
   // (Oct 4, 15:56) as on the main screen: the screen slides to the RIGHT and rests under the icon column (cut at the column's edge,
   // wiping the column in as it goes); folded to the column it stays in place, cut at the column; closing, it slides back from the right
+  // (Oct 8, 14:30) the icon column stays on top and still: while a section is open or the menu is folded to its icons, the screen's
+  // frame (not the sliding screen) is cut at the column's left edge, so the screen slides out from under the column and can never
+  // pass over it, whatever the browser does with the slide. The cut leaves a window for the menu button, which lives in the column.
+  var hcT = 0;
+  function hclip(on) { var h = host(); if (!h) return; clearTimeout(hcT);
+    if (!on) { h.style.clipPath = h.style.webkitClipPath = ''; return; }
+    var W = h.offsetWidth, H = h.offsetHeight, t = btn ? (parseFloat(btn.style.top) || 0) : 0, c = W - 60;
+    var poly = 'polygon(-24px 0px, ' + c + 'px 0px, ' + c + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t + 52) + 'px, ' + c + 'px ' + (t + 52) + 'px, ' + c + 'px ' + H + 'px, -24px ' + H + 'px)';
+    h.style.clipPath = h.style.webkitClipPath = poly; }
   function slide(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
     var ease = DUR + 'ms ' + EASE; p.style.willChange = 'transform, clip-path';
     if (m && !p.style.clipPath) { p.style.transition = 'none'; p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; void p.offsetWidth; }
     p.style.transition = 'transform ' + ease + ', clip-path ' + ease + ', -webkit-clip-path ' + ease;
     rail(m === 'rail', p);
+    if (!m) hclip(false); else if (m === 'open' || p.__wfFolded) hclip(true); else hcT = setTimeout(function () { if (mode) hclip(true); }, DUR);   /* first fold from closed: the narrowing screen uncovers the column itself, then the cut holds it */
+    p.__wfFolded = !!m;
     p.style.transform = D ? 'translateX(' + D + 'px)' : ''; p.style.boxShadow = m ? SH : '';
     if (m === 'rail') p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; else if (m) p.style.clipPath = p.style.webkitClipPath = 'inset(0px ' + R + 'px 0px -24px)'; else { p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; setTimeout(function () { if (!mode && p) { p.style.clipPath = p.style.webkitClipPath = ''; } }, DUR + 60); } }
   // (Oct 4, 16:10) folded to the icon column, the screen is really resized to the visible 330px (not cropped): its width variable and the
