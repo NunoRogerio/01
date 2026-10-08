@@ -366,7 +366,7 @@ class Component extends DCLogic {
   wfGreet(S, lead, L) {
     const staff = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null, full = staff ? (lead ? staff.lead : staff.captain) : '', last = full ? full.split(' ').slice(-1)[0] : '';
     const rk = lead ? L('Lieutenant', 'Chefe de equipa') : L('Captain', 'Chefe'), who = (rk + (last ? ' ' + last : '')).trim();
-    let h = new Date().getHours(); try { h = +new Intl.DateTimeFormat('en-US', { timeZone: S.lat > 30 && S.lat < 43 && S.lon > -32 && S.lon < -6 ? 'Europe/Lisbon' : 'America/Los_Angeles', hour: 'numeric', hourCycle: 'h23' }).format(new Date()); } catch (e) {}
+    const h = new Date().getHours();   /* (Oct 8, 17:45) the user's own time of day, like the shift's duties */
     const tod = h >= 5 && h < 12 ? L('Good morning', 'Bom dia') : h >= 12 && h < 18 ? L('Good afternoon', 'Boa tarde') : h >= 18 && h < 22 ? L('Good evening', 'Boa noite') : null;   /* at night "good night" reads as a goodbye: a late-shift line instead */
     const G = [
       [L('Hello ' + who + ', here’s what you need to know today.', 'Olá ' + who + ', eis o que precisa de saber hoje.')],
@@ -412,10 +412,16 @@ class Component extends DCLogic {
         return { place: c.place, aria: c.place, href: c.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html', go: c.kind === 'fire' ? fireGo({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }) : candGo(c.incId),
           _id: c.incId, simD: simOf(c.incId), tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)), sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) ? L('Confirm the order. ', 'Confirme a ordem. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
         .sort((a, b) => (a._ack ? 1 : 0) - (b._ack ? 1 : 0));   /* a new deployment (not yet confirmed) goes to the top */
-    } else rows = items.map((q) => { const r = q.r, aid = q.k === 'aid', base = { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid ? aidT.label : '', sub: kmT(q.km) + '. ' + drv(q.km) + '.', simD: simOf(r[2]) };
+    }
+    const areaRow = (q) => { const r = q.r, aid = q.k === 'aid', base = { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid ? aidT.label : '', sub: kmT(q.km) + '. ' + drv(q.km) + '.', simD: simOf(r[2]) };
       if (q.kind === 'fire') return Object.assign(base, fireTag(r), { place: r[3] || r[2], aria: (r[3] || r[2]) + (aid ? ', ' + aidT.label : ''), href: 'Dispatch.dc.html', go: fireGo({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6] }) });
       const CT = window.__wfConfTag ? window.__wfConfTag(r[4]) : { fg: '#185A93', bg: '#E3EEFB' };
-      return Object.assign(base, { place: r[3], aria: r[3] + ', ' + r[4] + L('% likelihood', '% de probabilidade') + (aid ? ', ' + aidT.label : ''), tagTxt: r[4] + '%', tagFg: CT.fg, tagBg: CT.bg, tagIc: '', tagIcD: 'none', href: 'Alert.dc.html', go: candGo(r[2]) }); });
+      return Object.assign(base, { place: r[3], aria: r[3] + ', ' + r[4] + L('% likelihood', '% de probabilidade') + (aid ? ', ' + aidT.label : ''), tagTxt: r[4] + '%', tagFg: CT.fg, tagBg: CT.bg, tagIc: '', tagIcD: 'none', href: 'Alert.dc.html', go: candGo(r[2]) }); };
+    // (Oct 8, 17:45) the team lead sees the incidents first too: his deployments on top, then every incident of the station's area
+    // (the captain's incident cards, the same everywhere), so what matters most is never only on the map at the end
+    const nDep = lead ? rows.length : 0;
+    if (lead) { const had = {}; rows.forEach((x) => { had[String(x._id)] = 1; }); rows = rows.concat(items.filter((q) => !had[String(q.r[2])]).map(areaRow)); }
+    else rows = items.map(areaRow);
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min(window.innerWidth || 390, 600) - 32, H = 280;
     let fx = S.x, fy = S.y, z = 1.4;
@@ -432,8 +438,9 @@ class Component extends DCLogic {
     // marks it done (or undoes it), kept for the shift on this phone. Simulated for the demonstration (*).
     // (Oct 8, 08:40) the duties stay listed with the incidents too, so what is done and what is left always shows
     const dutyList = (() => {
-      const nowLA = (() => { try { const p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date()); const g = (t) => +((p.find((q) => q.type === t) || {}).value || 0); return g('hour') * 60 + g('minute'); } catch (e) { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); } })();
-      const shift = (() => { const d = new Date(Date.now() - (nowLA < 480 ? 864e5 : 0)); return d.toISOString().slice(0, 10); })(), SK = 'wf-duty-' + MINE.key + '-' + shift;
+      /* (Oct 8, 17:45) the shift runs on the user's own clock (the phone's time where he is), so Now and the times ahead feel real */
+      const nowLA = (() => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); })();
+      const shift = (() => { const d = new Date(Date.now() - (nowLA < 480 ? 864e5 : 0)); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })(), SK = 'wf-duty-' + MINE.key + '-' + shift;
       let MK = {}; try { MK = JSON.parse(localStorage.getItem(SK) || '{}') || {}; } catch (e) {}
       const veh = 'Engine ' + ((String(S.name).match(/(\d{1,3})\b/) || [])[1] || '11');
       const D = lead ? [
@@ -464,10 +471,12 @@ class Component extends DCLogic {
       return D.map(([t0, du, ti, tx], i) => { const id = 'd' + i, auto = nowM >= t0 + du ? 'done' : nowM >= t0 ? 'now' : 'later', st = MK[id] === 1 ? 'done' : MK[id] === 0 ? (auto === 'done' ? 'now' : auto) : auto;
         const TG = { done: [L('Done', 'Feito'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg, 'block'], now: [L('Now', 'Agora'), 'rgba(204,153,0,0.16)', '#745200', 'none'], later: [hm(t0), 'rgba(118,118,128,0.12)', '#3A3A3C', 'none'] }[st];
         return { title: L(ti[0], ti[1]), sub: (st === 'later' ? '' : hm(t0) + '. ') + L(tx[0], tx[1]), tag: TG[0], tagBg: TG[1], tagFg: TG[2], chkD: TG[3], doneStr: st === 'done' ? 'true' : 'false',
-          aria: L(ti[0], ti[1]) + ', ' + hm(t0) + ', ' + TG[0] + '. ' + (st === 'done' ? L('Tap to undo', 'Toque para desfazer') : L('Tap to mark done', 'Toque para marcar como feito')),
+          aria: L(ti[0], ti[1]) + ', ' + hm(t0) + ', ' + TG[0] + '. ' + (st === 'done' ? L('Tap to reopen', 'Toque para reabrir') : L('Tap to mark done', 'Toque para marcar como feito')),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const set = () => { const M2 = Object.assign({}, MK); if (st === 'done') M2[id] = 0; else M2[id] = 1; try { localStorage.setItem(SK, JSON.stringify(M2)); } catch (e) {} this.forceUpdate(); };
-            /* (Oct 8, standing) concluding an action item always asks first; undoing does not */
-            if (st === 'done' || !window.__wfConfirm) return set(); window.__wfConfirm({ title: L('Mark as done?', 'Marcar como feito?'), body: L(ti[0] + ' moves to Resolved.', ti[1] + ' passa para Resolvidos.'), cancel: L('Cancel', 'Cancelar'), ok: L('Mark done', 'Marcar feito'), onOk: set }); } }; }); })();
+            /* (Oct 8, standing) concluding an action item always asks first. (17:50) A resolved item stays put on a tap: it is a record,
+               reopened only after its own confirmation (back to To do) */
+            if (!window.__wfConfirm) return; if (st === 'done') return window.__wfConfirm({ title: L('Reopen?', 'Reabrir?'), body: L(ti[0] + ' moves back to To do.', ti[1] + ' volta para Por fazer.'), cancel: L('Cancel', 'Cancelar'), ok: L('Reopen', 'Reabrir'), onOk: set });
+            window.__wfConfirm({ title: L('Mark as done?', 'Marcar como feito?'), body: L(ti[0] + ' moves to Resolved.', ti[1] + ' passa para Resolvidos.'), cancel: L('Cancel', 'Cancelar'), ok: L('Mark done', 'Marcar feito'), onOk: set }); } }; }); })();
     const dutyLeft = dutyList.filter((d) => d.doneStr === 'false').length;
     // (Oct 8) To do | Resolved. Resolved: the duties done and the station's incidents closed or dismissed
     const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';
@@ -481,14 +490,14 @@ class Component extends DCLogic {
     const shownRows = resolvedTab ? closedNew.slice(0, rLim) : rows, shownDuties = resolvedTab ? doneNew.slice(0, Math.max(0, rLim - shownRows.length)) : dutyList.filter((d) => d.doneStr === 'false');
     const rMore = resolvedTab && closedNew.length + doneNew.length > rLim;
     const nTodo = rows.length + dutyLeft, nDone = closedRows.length + (dutyList.length - dutyLeft);
-    return { title: lead ? L('Deployments', 'Destacamentos') : L('Assignments', 'Atribuições'), rows: shownRows, none: false, listD: shownRows.length ? 'flex' : 'none',
-      duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: dutyList.length && !rows.length ? 'block' : 'none',
+    return { title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows, none: false, listD: shownRows.length ? 'flex' : 'none',
+      duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: (lead ? !nDep : dutyList.length && !rows.length) ? 'block' : 'none',
       tabX: resolvedTab ? '100%' : '0%',
       moreD: rMore ? 'block' : 'none',
       tabs: [['todo', L('To do', 'Por fazer'), nTodo], ['done', L('Resolved', 'Resolvidos'), nDone]].map(([k, l, n]) => ({ label: l + (n ? ' ' + n : ''), sel: String(tab === k), w: tab === k ? 600 : 400,
         pick: () => { if (tab === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ atab: k, rLim: 5 }); } })),
       emptyOn: !shownRows.length && !shownDuties.length, emptyTxt: resolvedTab ? L('Nothing resolved yet this shift.', 'Nada resolvido ainda neste turno.') : L('Every duty done this shift.', 'Todas as tarefas do turno feitas.'),
-      sub: dutyList.length && !rows.length ? (lead ? L('No deployments.', 'Sem destacamentos.') : L('No incidents in the area.', 'Sem incidentes na área.')) : '',   /* the counts are on the switcher */
+      sub: lead ? (nDep ? '' : L('No deployments.', 'Sem destacamentos.')) : dutyList.length && !rows.length ? L('No incidents in the area.', 'Sem incidentes na área.') : '',   /* the counts are on the switcher */
       noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),
       nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
       view: { homeMapW: W, homeMapH: H, homeFx: Math.round(fx), homeFy: Math.round(fy), homeZ: +z.toFixed(3) } };
