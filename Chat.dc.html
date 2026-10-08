@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=210"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=211"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=211"></script>
 <script src="station.js?v=14"></script>
@@ -127,7 +127,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </span>
         <span role="button" tabindex="0" class="wf-b wf-sec" data-wf-stmove="1" onClick="{{c.mv.go}}" style="display: {{c.mv.d}}; align-items: center; justify-content: center; width: calc(100% - 32px); height: 48px; margin: 0 16px 16px; box-sizing: border-box; border-radius: 999px; font-size: 18px; font-weight: 600; line-height: 24px; cursor: pointer; gap: 8px">{{c.mv.label}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
         </span></span>
-      </button><span class="wf-hmtag" data-docked="{{rk.dock}}" data-hm-id="{{rk.id}}" role="button" tabindex="0" aria-label="{{rk.txt}}" data-tip-title="{{rk.txt}}" data-tip-sub="{{rk.sub}}" style="display: {{rk.tagD}}; flex: none; align-self: stretch; width: 46px; align-items: center; justify-content: center; box-sizing: border-box; padding: 0px; border-radius: 16px; cursor: pointer"><svg viewBox="1 2.5 34 28.5" width="100%" height="100%" aria-hidden="true" style="display: block"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg></span></div>
+      </button><span class="wf-hmtag" data-docked="{{rk.dock}}" data-hm-id="{{rk.id}}" role="button" tabindex="0" aria-label="{{rk.txt}}" data-tip-title="{{rk.txt}}" data-tip-sub="{{rk.sub}}"  style="display: {{rk.tagD}}; opacity: {{rk.op}}; pointer-events: {{rk.pe}}; filter: {{rk.flt}}; flex: none; align-self: stretch; width: 46px; align-items: center; justify-content: center; box-sizing: border-box; padding: 0px; border-radius: 16px; cursor: pointer"><svg viewBox="1 2.5 34 28.5" width="100%" height="100%" aria-hidden="true" style="display: block"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg></span></div>
     </div>
 
     <!-- The chat surface: a shade darker than the header and the composer, so they read apart without shadows; the list's edge fade sits on it -->
@@ -750,7 +750,7 @@ class Component extends DCLogic {
 
     // ----- list -----
     if (s.view !== 'chat' && s.view !== 'summary') {
-      setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); }, 0);   /* (Oct 6) the houses warning belongs to an open chat, not the list */
+      setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); if (window.__wfHomesSafe) window.__wfHomesSafe(null); }, 0);   /* (Oct 6) the houses warning belongs to an open chat, not the list */
       /* the area chosen on the main screen: only its chats, and its name under the title */
       const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope || null;   /* as the main screen reads it */
         let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} const lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r || ''] || null;
@@ -778,7 +778,7 @@ class Component extends DCLogic {
     }
 
     const c = C.get(s.key);
-    if (!c) { setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); }, 0); }
+    if (!c) { setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(null); if (window.__wfHomesSafe) window.__wfHomesSafe(null); }, 0); }
     if (!c) return { isList: true, isChat: false, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, groups: [], noChats: true, listSub: '', listTitle: t.chats };
     const S = C.stageOf(c), us = C.isUS(c), vn = C.vnow(c), t0 = C.since(c);
     // One outline colour per station (you keep the hi-vis yellow); message bubbles carry it at 10%
@@ -1059,9 +1059,10 @@ class Component extends DCLogic {
       sh: { h: this.shHandle(), b: 48 - (s.shDy || 0), bT: s.shDy ? '0s' : '.35s', y: sh ? '0' : 'calc(-100% - 40px)', vis: sh ? 'visible' : 'hidden', visDelay: sh ? '0s' : '.55s', scrimOp: sh ? 1 : 0, pe: sh ? 'auto' : 'none', xRot: sh ? '0deg' : '90deg' },
       openSheet, closeSheet: () => { this.setState({ sheet: false, shDy: 0, pjFull: false, pjHz: 0 }); }, goFire: inc.go,
       pj: sh ? this.wfPj(c) : { full: false, view: {}, tabs: [], hz: 0, grow: 1, w: 390 },
-      ...(() => { const H = this.wfHomes(c), HT = H.HT;
-        setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && !H.ackd && document.visibilityState !== 'hidden' ? Object.assign({}, HT, { go: () => { openSheet(); this.setState({ pjHz: HT.h }); }, ack: () => window.__wfHomesAck(H.id, HT.h) }) : null); }, 0);
-        return { rk: { tagD: HT && !c.closed && !c.dismissed ? 'inline-flex' : 'none', dock: H.ackd ? '1' : '0', id: H.id, tag: HT ? HT.tag : '', txt: HT ? HT.title : '', sub: HT ? HT.sub : '' } }; })(),
+      ...(() => { const H = this.wfHomes(c), HT = H.HT, safe = !!HT && c.kind !== 'dm' && c.stage >= 4 && !c.dismissed;   /* (Oct 8, 23:04) the fire is being controlled (Resolving on): the homes are safe */
+        setTimeout(() => { if (window.__wfHomesAlert) window.__wfHomesAlert(HT && !safe && !H.ackd && document.visibilityState !== 'hidden' ? Object.assign({}, HT, { go: () => { openSheet(); this.setState({ pjHz: HT.h }); }, ack: () => window.__wfHomesAck(H.id, HT.h) }) : null);
+          if (window.__wfHomesSafe) window.__wfHomesSafe(safe && !c.closed && document.visibilityState !== 'hidden' ? { id: c.key, title: L('Structures are now safe', 'As habitações estão seguras'), sub: HT.sub } : null); }, 0);
+        return { rk: { tagD: HT && !c.closed && !c.dismissed ? 'inline-flex' : 'none', dock: H.ackd || safe ? '1' : '0', id: H.id, tag: HT ? HT.tag : '', txt: HT ? (safe ? L('Structures are now safe', 'As habitações estão seguras') : HT.title) : '', sub: HT ? HT.sub : '', op: safe ? '0.32' : '1', pe: safe ? 'none' : 'auto', flt: safe ? 'grayscale(1)' : 'none' } }; })(),
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
