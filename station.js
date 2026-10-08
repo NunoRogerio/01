@@ -92,6 +92,11 @@
       var d = km(lat, lon, r[2], r[3]); if (d < d0 - 0.15 && String(r[0]) !== String(st.id)) near++; if (near >= 2) break; }
     return (MEMO[k] = near < 2 ? 'aid' : ''); };
   window.__wfIncLatLon = function (x, y) { return [LAT(y), LON(x)]; };
+  // (Oct 8) The station responsible for a place outside this station's area: the nearest other station (not an airport base), or null while loading
+  window.__wfNearestStation = function (lat, lon, exceptId, cc) { var S = stations(cc || 'us'); if (!S || !isFinite(lat) || !isFinite(lon)) return null; var best = null, bd = 1e9;
+    for (var i = 0; i < S.length; i++) { var r = S[i]; if (String(r[0]) === String(exceptId) || /airport|aeroporto|heliport|heliporto/i.test(r[4] || '') || Math.abs(r[2] - lat) > 1 || Math.abs(r[3] - lon) > 1.2) continue;
+      var d = km(lat, lon, r[2], r[3]); if (d < bd) { bd = d; best = r; } }
+    return best ? { id: best[0], type: best[1], lat: best[2], lon: best[3], name: best[4] || 'Fire station', km: bd } : null; };
   // An incident chat is this station's (its area or mutual aid), from where the incident is
   window.__wfChatIsOurs = function (c, st) { if (!c) return false; var ll = c.x != null && c.y != null ? [LAT(c.y), LON(c.x)] : [c.lat, c.lon]; return !!window.__wfIncidentFor(ll[0], ll[1], st); };
   // One tag for both places (the list and the map tooltip), so the list says what the map's ring says

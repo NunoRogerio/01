@@ -17,10 +17,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=196"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=207"></script>
-<script src="station.js?v=3"></script>
+<script src="station.js?v=4"></script>
 <script src="i18n.js?v=172"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=93"></script>
+<script src="chat.js?v=94"></script>
 <script src="tour.js?v=116"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="trophy.js?v=35"></script>
@@ -951,7 +951,7 @@ class Component extends DCLogic {
     // (Oct 7) the chips that change the fire's status (declare, dismiss, dispatch, next stage, close) lead the row
     (() => { const p = acts0.filter((a) => a.p1), r = acts0.filter((a) => !a.p1); acts0.length = 0; acts0.push(...p, ...r); })();
     // Quick replies fill the suggestions up to five: questions the team answers (status, safety, water, homes, wind…), by stage
-    const QR = c.police ? [['Detected by satellite', 'Detetado por satélite'], ['No one seen nearby', 'Ninguém visto por perto'], ['A vehicle was seen nearby', 'Foi vista uma viatura por perto'], ['No lightning last night', 'Sem trovoada esta noite'], ['The origin is preserved', 'O ponto de início está preservado'], ['Could it be arson?', 'Pode ser fogo posto?'], ['Thank you', 'Obrigado']] : c.kind === 'dm' ? (c.step === 0 ? [['Can you send a crew?', 'Podem enviar uma equipa?'], ['Who is free now?', 'Quem está livre agora?']] : c.step === 1 ? [['Main road, north side', 'Estrada principal, lado norte'], ['I will send the location', 'Envio a localização']] : [['How long until you arrive?', 'Quanto tempo até chegarem?'], ['Is the water enough?', 'A água chega?'], ['Thank you', 'Obrigado']])
+    const QR = c.police ? [['Detected by satellite', 'Detetado por satélite'], ['No one seen nearby', 'Ninguém visto por perto'], ['A vehicle was seen nearby', 'Foi vista uma viatura por perto'], ['No lightning last night', 'Sem trovoada esta noite'], ['The origin is preserved', 'O ponto de início está preservado'], ['Could it be arson?', 'Pode ser fogo posto?'], ['Thank you', 'Obrigado']] : c.kind === 'dm' && c.help ? (c.step === 1 ? [['Yes, we can send them', 'Sim, podemos enviá-los'], ['Not right now', 'Agora não']] : [['Thank you. Stay safe', 'Obrigado. Cuidem-se']]) /* (Oct 8) offering help to the station on a fire outside our area */ : c.kind === 'dm' ? (c.step === 0 ? [['Can you send a crew?', 'Podem enviar uma equipa?'], ['Who is free now?', 'Quem está livre agora?']] : c.step === 1 ? [['Main road, north side', 'Estrada principal, lado norte'], ['I will send the location', 'Envio a localização']] : [['How long until you arrive?', 'Quanto tempo até chegarem?'], ['Is the water enough?', 'A água chega?'], ['Thank you', 'Obrigado']])
       : c.stage <= 1 ? [['Can you see smoke?', 'Veem fumo?'], ['How long to get there?', 'Quanto tempo até lá?'], ['Crews ready?', 'Equipas prontas?']]
       : c.stage === 2 ? [['How long to arrive?', 'Quanto falta para chegar?'], ['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?']]
       : c.stage <= 5 ? [['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?'], ['Enough water?', 'A água chega?'], ['Homes at risk?', 'Há casas em risco?'], ['How is the wind?', 'Como está o vento?']]

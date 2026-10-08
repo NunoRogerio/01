@@ -762,6 +762,7 @@
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
     if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
+    if (c.kind === 'dm' && c.help) { helpReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (!c.dismissed && c.stage < 7 && c.people.length) {
       var rules = function (c) { ruleReply(c, text); };
@@ -821,6 +822,7 @@
       stations: [{ ck: o.ck || '', name: o.station || o.org || '', short: o.org || '', km: 0, min: 0 }], forces: [], air: null, evac: null,
       msgs: [], queue: [], seenAt: now, beat: 0, flags: {}, closed: false, dismissed: false, updated: now, face: o.face || {}, used: {}, step: 0 };
     o.people.forEach(function (p) { ch.used[p.name] = 1; });
+    if (o.help) { helpOpen(ch, o.help); db.chats[k] = ch; save(); emit(); return ch; }
     mine(ch, g ? 'Hello everyone, how are you?' : 'Hello ' + o.people[0].name.split(' ')[0] + ', how are you?', g ? 'Olá a todos, como estão?' : 'Olá ' + o.people[0].name.split(' ')[0] + ', como estás?');
     say(ch, 0, g ? 'Hello! All good, the command team is here. How can we help?' : 'Hello! All good here. How can I help?', g ? 'Olá! Tudo bem, está cá a equipa de comando. Em que podemos ser úteis?' : 'Olá! Tudo bem por aqui. Em que posso ser útil?', 2200, 1);
     db.chats[k] = ch; save(); emit(); return ch;
@@ -847,6 +849,38 @@
     say(c, 0, fire ? 'Copy, ' + inc.place + '. We know the area, tell us what you need there.' : 'Copy, the candidate at ' + inc.place + '. We can go and check it if you want.',
       fire ? 'Entendido, ' + inc.place + '. Conhecemos a zona, diga o que precisa lá.' : 'Entendido, o candidato em ' + inc.place + '. Podemos ir verificar, se quiser.', 2400, 2);
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit();
+  }
+  // ---- (Oct 8) offering help to the station working a fire outside our area ---------------------------------------
+  // The captain of the responsible station answers as the one fighting the fire, from the feed's own figures (containment,
+  // size): help is welcome while the fire is under half contained and not small; otherwise they have it.
+  function helpNeed(h) { var pc = h.pc, ac = h.ac; if (pc != null && pc >= 50) return false; if (ac != null && ac < 50) return false; return true; }
+  function helpFacts(h, pt) { var a = [];
+    if (h.pc != null) a.push(pt ? h.pc + '% dominado' : h.pc + '% contained'); else a.push(pt ? 'ainda sem perímetro dominado' : 'no containment yet');
+    if (h.ac != null) a.push(pt ? 'cerca de ' + Math.round(h.ac * 0.4047).toLocaleString('pt-PT') + ' ha' : 'about ' + Number(h.ac).toLocaleString('en-US') + ' acres');
+    return a.join(pt ? ', ' : ', '); }
+  function helpOpen(ch, h) {
+    var first = (ch.people[0] || {}).name ? ch.people[0].name.split(' ')[0] : '';
+    ch.help = h; ch.help.need = helpNeed(h); ch.step = ch.help.need ? 1 : 3;
+    ch.topic = { id: h.id, kind: 'fire', place: h.place, reg: h.reg || '', st: ch.st, lat: h.lat, lon: h.lon, x: h.x, y: h.y };
+    /* the fire as the chat's topic, first in the chat (shown at once, before the question) */
+    ch.msgs.push({ id: newId(), kind: 'card', adv: 0, t: Date.now(), vt: vnow(ch), topic: true, tag: { en: 'Topic', pt: 'Tópico' }, tagC: '#3A3A3C', title: { en: 'Fire. ' + h.place, pt: 'Incêndio. ' + h.place },
+      body: { en: (h.reg ? h.reg + '. ' : '') + Math.round(h.km) + ' km from our station', pt: (h.reg ? h.reg + '. ' : '') + Math.round(h.km) + ' km do nosso quartel' }, link: { en: 'View', pt: 'Ver' }, inc: ch.topic });
+    mine(ch, 'Hello ' + first + '. We see the ' + h.place + ' ' + Math.round(h.km) + ' km from ' + h.from + '. Do you need help?', 'Olá ' + first + '. Vemos o ' + h.place + ' a ' + Math.round(h.km) + ' km do ' + h.from + '. Precisa de ajuda?');
+    if (ch.help.need) say(ch, 0, 'Thanks for asking. Yes, we do. We are at ' + helpFacts(h, false) + ' and it is still spreading. An engine and a crew on the flank would help. Can you send them?',
+      'Obrigado por perguntar. Sim, precisamos. Estamos com ' + helpFacts(h, true) + ' e ainda está a progredir. Um veículo e uma equipa no flanco ajudavam. Pode enviá-los?', 2600, 2);
+    else say(ch, 0, 'Thanks for asking. We have it: ' + helpFacts(h, false) + '. No help needed for now. I will call you if that changes.',
+      'Obrigado por perguntar. Está controlado por nós: ' + helpFacts(h, true) + '. Para já não precisamos de ajuda. Ligo-lhe se isso mudar.', 2600, 2);
+  }
+  function helpReply(c, text) {
+    var t = String(text).toLowerCase();
+    if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Thank you. Stay safe.', 'Obrigado. Cuidem-se.', 1800, 1); return; }
+    if (c.step === 1) {
+      if (/\b(no|not|can't|cannot|não|nao|impossível)\b/.test(t)) { c.step = 3; say(c, 0, 'Understood. I will ask the next station.', 'Entendido. Peço ao quartel seguinte.', 2000, 1); return; }
+      if (/\b(yes|sim|ok|okay|sure|claro|send|sending|envio|enviamos|vamos|on our way|a caminho|can)\b/.test(t)) { c.step = 2;
+        say(c, 0, 'Great, thank you. Report to the command post at ' + c.help.place + ' and I will put your crew on the flank. Call me when you are 10 min out.',
+          'Ótimo, obrigado. Apresentem-se no posto de comando do ' + c.help.place + ' e ponho a vossa equipa no flanco. Liguem-me a 10 min de chegar.', 2400, 2); return; }
+      say(c, 0, 'An engine and a crew would do. Can you send them?', 'Um veículo e uma equipa chegam. Podem enviá-los?', 2000, 1); return; }
+    say(c, 0, 'Understood. I will keep you posted.', 'Entendido. Vou dando notícias.', 1800, 1);
   }
   function dmReply(c, text) {
     var t = String(text).toLowerCase(), n = c.people.length, b = c.beat++, O = c.offer || { en: 'a crew of 5 and a fire engine', pt: 'uma equipa de 5 e um veículo' };

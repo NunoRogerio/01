@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=207"></script>
-<script src="station.js?v=3"></script>
+<script src="station.js?v=4"></script>
 <script src="menu.js?v=118"></script>
 <script src="i18n.js?v=172"></script>
 <script src="live.js?v=43"></script>
-<script src="chat.js?v=93"></script>
+<script src="chat.js?v=94"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -186,6 +186,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
           <button type="button" class="mbtn" onClick="{{pkOpen}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
+        <!-- (Oct 8) the nearest fire is outside the area: ask the station working it if they need help (24px under the cards it is about) -->
+        <sc-if value="{{help.on}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn wf-ter" onClick="{{help.go}}" style="display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 24px; padding: 12px 16px; font-size: 17px; font-weight: 600; line-height: 22px; text-align: center">{{help.lbl}}</button></sc-if>
       </div>
 
       <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
@@ -547,6 +549,20 @@ class Component extends DCLogic {
         { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' }])); }
     this._kAll = kAll.map((m) => ({ key: m.key, l: m.l, opt: !!m.opt }));
     const Hk = this.wfHidden();
+    /* (Oct 8, 14:04) the nearest fire outside this station's area (not ours, not mutual aid): the captain can ask the station working
+       it whether they need help; the chat opens with that station's captain, who answers from the fire's own figures */
+    const help = (() => { const off = { on: false }, C = window.__wfChat || null;   /* (the screen's own C is declared further down) */
+      if (!home || lead || !nf || !C || !C.direct || !window.__wfIncLatLon || !window.__wfIncidentFor || !window.__wfNearestStation) return off;
+      const ll = window.__wfIncLatLon(nf.r[5], nf.r[6]); if (window.__wfIncidentFor(ll[0], ll[1], S)) return off;   /* ours: it is in Assignments and follows its lifecycle */
+      const R = window.__wfNearestStation(ll[0], ll[1], S.id, S.cc || (isPT ? 'pt' : 'us')); if (!R) return off;
+      const rm = /\b(Station|Company|Quartel)\s*\d+[A-Za-z]?\b/.exec(R.name), rn = rm ? rm[0] : R.name.replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || R.name;
+      const P0 = C.names ? C.names(cc) : [], cap = P0.length ? P0[hsh(R.id) % P0.length] : 'Station captain', info = nf.r[9] || {};
+      const go = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+        C.direct({ id: 'help-' + nf.r[2], title: cap, org: rn, st: cc, ck: String(R.type || 'n') + R.id, lat: R.lat, lon: R.lon, face: {}, eta: 15,
+          people: [{ name: cap, roleEn: 'Station captain · ' + rn, rolePt: 'Capitão do quartel · ' + rn }],
+          help: { id: nf.r[2], place: nf.r[3] || L('the fire', 'o incêndio'), reg: (info.place || '').replace(/ · /g, '. '), lat: ll[0], lon: ll[1], x: nf.r[5], y: nf.r[6], km: nf.km, pc: info.pc != null ? info.pc : null, ac: info.ac != null ? info.ac : null, from: ((/\b(Station|Company|Quartel)\s*\d+[A-Za-z]?\b/.exec(name) || [])[0] || name) } });
+        window.location.href = 'Chat.dc.html'; };
+      return { on: true, lbl: L('Ask ' + rn + ' if they need help', 'Perguntar se ' + rn + ' precisa de ajuda'), go }; })();
     /* (Oct 8, standing) the same mini cards as everywhere: in the saved order (shared with the + picker), press, hold and move to reorder */
     const kOrd = (() => { let o = null; try { o = JSON.parse(localStorage.getItem('wf-order-stk') || 'null'); } catch (e) {} return Array.isArray(o) ? o : []; })(), kIx = (k) => { const i = kOrd.indexOf(k); return i < 0 ? 999 + kAll.findIndex((m) => m.key === k) : i; };
     const kpis = kAll.filter((m) => Hk.indexOf(m.key) < 0).sort((a, b) => kIx(a.key) - kIx(b.key)).map((m) => ({ key: m.key, l: m.l, n: m.n, u: m.u, uD: m.u ? 'inline' : 'none', sub: m.sub, subD: m.sub ? 'block' : 'none', note: est, noteD: m.sim ? 'block' : 'none', ...this.wfKpiDrag(m.key, 'stk') }));
@@ -646,7 +662,7 @@ class Component extends DCLogic {
       crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, code: ini(n), photo: photo(n) })) : [], crewPD: lead && crews[0] ? 'flex' : 'none',
       none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
-      mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
+      help, mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
       stCallAria: L('Call ', 'Ligar a ') + L(cmdRoles[0][0], cmdRoles[0][1]).toLowerCase() + ' ' + cmdP[0].name,
       stCall: (e) => { const F = window.__wfCamFeed; if (!F) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const c0 = cmdP[0];   /* the station's fire coordinator alone */
         F.open({ anchor: e && e.currentTarget, title: 'Call', label: L('Call', 'Chamada'), who: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + c0.name,
