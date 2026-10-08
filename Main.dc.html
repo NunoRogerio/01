@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=193"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=194"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=206"></script>
 <script src="station.js?v=3"></script>
@@ -456,7 +456,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </div>
     <div class="wf-snap" style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 16px 0; opacity: {{nt.inOp}}; transform: translateY({{nt.inY}}); transition: opacity .3s ease {{nt.inDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{nt.inDelay}}">
       <!-- (Oct 6) as in the chats: the title above the cards carries the "Assigned to me" switch -->
-      <div style="padding-top: 0"><div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; margin: 0 0 0px"><span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">{{nt.mine.label}}</span><button type="button" role="switch" class="wf-tog" aria-checked="{{nt.mine.onStr}}" aria-label="{{nt.mine.label}}" onClick="{{nt.mine.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{nt.mine.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{nt.mine.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button></div></div>
+      <div style="padding-top: 0"><div style="display: {{nt.mineD}}; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; margin: 0 0 0px"><span style="font-size: 17px; font-weight: 700; line-height: 22px; color: #000000">{{nt.mine.label}}</span><button type="button" role="switch" class="wf-tog" aria-checked="{{nt.mine.onStr}}" aria-label="{{nt.mine.label}}" onClick="{{nt.mine.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{nt.mine.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{nt.mine.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button></div></div>
       <sc-if value="{{nt.none}}" hint-placeholder-val="{{ false }}"><span style="padding: 16px 4px; font-size: 17px; color: #000000; line-height: 22px">{{nt.noneTxt}}</span></sc-if>
       <!-- Calm list, like the chats and incidents: rows edge to edge between full-width dividers, the headline in Title S,
            one grey annotation line, the time on the right in grey with a lime dot while unread, a chevron -->
@@ -1624,6 +1624,20 @@ class Component extends DCLogic {
         out.push({ t: lm ? lm.t : (c.updated || T0), kind: c.stage > 0 ? 'fire' : 'ign', stage: S.en, title: c.place + ': ' + (S.en || ''), text: (who ? who + ': ' : '') + tx, href: 'Chat.dc.html', pick: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} } }); });
       out.sort((a, b) => b.t - a.t);
     }
+    /* (Oct 8) a station profile's notifications are its station's: the captain gets the incidents in the area and mutual aid,
+       the team lead his deployments; titled with the station, no "Assigned to me" switch (everything listed is theirs) */
+    const MINE = window.__wfMine ? window.__wfMine() : null;
+    if (MINE && CHm) { const ST = MINE.station, own = (c) => !window.__wfChatIsOurs || window.__wfChatIsOurs(c, ST); out.length = 0;
+      if (MINE.level === 'lead') (window.__wfDeploy ? window.__wfDeploy.list() : []).forEach((d) => { const c = d.c, S = CHm.stageOf(c) || {};
+        out.push({ t: c.updated || T0, kind: c.stage > 0 ? 'fire' : 'ign', stage: S.en, title: (d.acked ? '' : 'Deployment. ') + c.place, text: (d.acked ? (S.en || '') + '. ' : 'Confirm the order. ') + (d.f.veh || []).join(', ') + '.', href: c.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html',
+          pick: () => { if (c.kind === 'fire') this.wfSetFireView({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }); else this.wfSetFocus(c.incId); } }); });
+      else { CANDS.forEach((cd) => { const ll = cd.live && cd.live.lat != null ? [cd.live.lat, cd.live.lon] : window.__wfIncLatLon(cd.x, cd.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k) return;
+          out.push({ t: T0 - 3 * 60000, kind: 'ign', title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New ignition detection', text: cd.place + '. ' + cd.conf + '% likelihood. ' + (cd.srcList || cd.src || ''), href: 'Alert.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
+        FIRES.forEach((f) => { if (f.x == null) return; const ll = window.__wfIncLatLon(f.x, f.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k || !f.info || !f.info.stEn) return;
+          out.push({ t: T0 - 11 * 60000, kind: 'fire', stage: f.info.stEn, title: (k === 'aid' ? 'Mutual aid. ' : '') + f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) }); });
+        CHm.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm' && own(c) && (!window.__wfChatAllowed || window.__wfChatAllowed(c))).forEach((c) => { const S = CHm.stageOf(c) || {}, lm = CHm.lastMsg(c), who = lm && lm.kind === 'msg' && lm.from !== 'me' ? ((c.people[lm.from] || {}).name || '') : '';
+          const tx = lm ? (lm.kind === 'card' ? ((lm.title || {}).en || '') : (lm.en || '')) : ''; out.push({ t: lm ? lm.t : (c.updated || T0), kind: c.stage > 0 ? 'fire' : 'ign', stage: S.en, title: c.place + ': ' + (S.en || ''), text: (who ? who + ': ' : '') + tx, href: 'Chat.dc.html', pick: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} } }); }); }
+      out.sort((a, b) => b.t - a.t); }
     const unread = out.filter((n) => n.t > seen).length;
     const items = out.map((n, i) => {
       const un = n.t > seen;
@@ -1642,14 +1656,14 @@ class Component extends DCLogic {
         sep: i ? '0' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
     });
-    const where = (scope && scope.title) || 'All areas';
+    const where = MINE ? (String(MINE.station.name).replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || 'Station') : ((scope && scope.title) || 'All areas');
     return {
-      items, none: items.length === 0, mine: mn, noneTxt: mn.on ? 'No updates on your incidents yet.' : 'No updates in this area yet.', listD: items.length ? 'flex' : 'none', title: where, sub: 'Notifications. ' + (unread ? unread + ' unread' : items.length + (items.length === 1 ? ' update' : ' updates')) + '.', unread: unread > 20 ? '20+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
+      items, none: items.length === 0, mine: mn, mineD: MINE ? 'none' : 'flex', noneTxt: MINE ? (MINE.level === 'lead' ? 'No deployments yet.' : 'No updates in the station area yet.') : mn.on ? 'No updates on your incidents yet.' : 'No updates in this area yet.', listD: items.length ? 'flex' : 'none', title: where, sub: 'Notifications. ' + (unread ? unread + ' unread' : items.length ? items.length + (items.length === 1 ? ' update' : ' updates') : 'No updates') + '.', unread: unread > 20 ? '20+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
       ring: 'none',   // the bell stays still; the yellow count badge alone shows unread updates
       note: 'Station updates are examples until a dispatch feed is connected.', noteD: out.some((n) => n.kind === 'st') ? 'block' : 'none',
       aria: (() => { try { window.sessionStorage.setItem('wf-nt-unread', String(unread)); } catch (e) {} return unread ? 'Notifications, ' + unread + ' unread' : 'Notifications'; })(), str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
       op: open ? 1 : 0, pe: open ? 'auto' : 'none', y: open ? '0%' : '-104%', dur: open ? '.55s' : '.45s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '.5s',
-      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg', dy: 0, cl: this.wfDrag('nt').y ? Math.max(0, -this.wfDrag('nt').y) : -80, sb: Math.max(0, -(this.wfDrag('nt').y || 0)), clT: this.wfDrag('nt').y ? '0s' : '.3s', h: this.wfHandle('nt', 'up', () => this.setState({ ntOpen: false })),
+      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg', dy: 0, cl: this.wfDrag('nt').y ? Math.max(0, -this.wfDrag('nt').y) : -80, sb: Math.max(0, -(this.wfDrag('nt').y || 0)), clT: this.wfDrag('nt').y ? '0s' : '.3s', h: this.wfHandle('nt', 'up', () => { this.wfNtSeen(now); this.setState({ ntOpen: false }); this.wfPanelReturn(); }),
       open: () => { this.setState({ ntOpen: true, scOpen: false }); },
       close: () => { if (this._ntT) return; this.wfNtSeen(now); this.setState({ ntSpin: true }); this._ntT = setTimeout(() => { this._ntT = null; this.setState({ ntOpen: false, ntSpin: false }); if (this.wfPanelReturn()) return; }, 260); }
     };
@@ -1701,7 +1715,7 @@ class Component extends DCLogic {
       note: L('Simulation: crew coordinators, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: coordenadores, respostas, veículos e tempos são encenados. Quartéis e incidentes são reais.'), noteD: rows.length ? 'block' : 'none',
       str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
       op: open ? 1 : 0, pe: open ? 'auto' : 'none', y: open ? '0%' : '-104%', dur: open ? '.55s' : '.45s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '.5s',
-      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.cbSpin ? '90deg' : '0deg', cl: this.wfDrag('cb').y ? Math.max(0, -this.wfDrag('cb').y) : -80, sb: Math.max(0, -(this.wfDrag('cb').y || 0)), clT: this.wfDrag('cb').y ? '0s' : '.3s', h: this.wfHandle('cb', 'up', () => this.setState({ cbOpen: false })),
+      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.cbSpin ? '90deg' : '0deg', cl: this.wfDrag('cb').y ? Math.max(0, -this.wfDrag('cb').y) : -80, sb: Math.max(0, -(this.wfDrag('cb').y || 0)), clT: this.wfDrag('cb').y ? '0s' : '.3s', h: this.wfHandle('cb', 'up', () => { this.setState({ cbOpen: false }); this.wfPanelReturn(); }),
       open: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ cbOpen: true, ntOpen: false, scOpen: false }); },
       close: () => { if (this._cbT) return; this.setState({ cbSpin: true }); this._cbT = setTimeout(() => { this._cbT = null; this.setState({ cbOpen: false, cbSpin: false }); if (this.wfPanelReturn()) return; }, 260); }
     };

@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=193"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=194"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=206"></script>
@@ -563,7 +563,7 @@ class Component extends DCLogic {
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestD: K.url ? 'block' : 'none', crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
         title: home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
-        ...((nOn || n25) ? { tag: (nOn || n25) + ((nOn || n25) === 1 ? ' fire' : ' fires'), tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
+        ...((nOn || (!(window.__wfStaffOf && window.__wfStaffOf(S.id)) && n25)) ? { tag: (nOn || n25) + ((nOn || n25) === 1 ? ' fire' : ' fires'),   /* a profile station's tag counts only the fires it is working (the same as Deployed) */ tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
         ...(() => { const r0 = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : '', A = home && window.__wfStationArea ? window.__wfStationArea(S) : null, r = A && A.name ? A.name + '. ' + r0 : r0; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },

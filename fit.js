@@ -3,7 +3,9 @@
 function wfHomeUrl(){try{var r=localStorage.getItem('wf-role')||'',c=localStorage.getItem('wf-custom')||'';if(r&&(c==='coord'||c==='ff'))return 'Station.dc.html?home=1';}catch(e){}return 'Main.dc.html';}
 (function(){try{if(!/\/Main\.dc\.html$/.test(location.pathname)||/[?&]menu=1/.test(location.search))return;var H=wfHomeUrl();if(H==='Main.dc.html')return;
   /* the main screen still opens for its own panels (notifications, preferences) asked from another screen */
-  var S=sessionStorage;if(S.getItem('wf-nt-open')||S.getItem('wf-prefs-open')||S.getItem('wf-panel-return'))return;location.replace(H);}catch(e){}})();
+  var S=sessionStorage;if(S.getItem('wf-nt-open')||S.getItem('wf-prefs-open'))return;location.replace(H);}catch(e){}})();
+/* (Oct 8) back on the main screen from the browser's memory (after a notification led elsewhere): a station profile goes home */
+addEventListener('pageshow',function(e){try{if(!e.persisted||!/\/Main\.dc\.html$/.test(location.pathname)||/[?&]menu=1/.test(location.search))return;var H=wfHomeUrl();if(H!=='Main.dc.html'){sessionStorage.removeItem('wf-panel-return');location.replace(H);}}catch(x){}});
 // Hi-vis accent, chosen by profile: the 3M yellow of firefighters' reflective stripes (#E5FF00) everywhere, and the
 // lime yellow of US fire services (#CCFF00) for the California and Nevada profiles. Screens use var(--wf-y) in CSS,
 // rgba(var(--wf-y-rgb), a) for tints, and window.__wfY where a real colour value is needed (SVG fills, canvas).
