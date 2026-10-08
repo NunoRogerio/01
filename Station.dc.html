@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=200"></script>
 <script src="feedcam.js?v=26"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=208"></script>
+<script src="prefs.js?v=209"></script>
 <script src="station.js?v=8"></script>
 <script src="menu.js?v=20"></script>
 <script src="i18n.js?v=174"></script>
@@ -85,7 +85,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div role="tablist" aria-label="{{asg.title}}" class="wf-seg" style="margin: 0 0 8px">
           <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{asg.tabX}})"><span class="segblob"></span></span>
           <sc-for list="{{asg.tabs}}" as="tb" hint-placeholder-count="2">
-            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}</button>
+            <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}<span class="wf-segn" style="display: {{tb.nD}}">{{tb.n}}</span></button>
           </sc-for>
         </div>
         <sc-if value="{{asg.emptyOn}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.emptyTxt}}</p></sc-if>
@@ -513,7 +513,7 @@ class Component extends DCLogic {
       duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: (lead ? !nDep : dutyList.length && !rows.length) ? 'block' : 'none',
       tabX: resolvedTab ? '100%' : '0%',
       moreD: rMore ? 'block' : 'none',
-      tabs: [['todo', L('To do', 'Por fazer'), nTodo], ['done', L('Resolved', 'Resolvidos'), nDone]].map(([k, l, n]) => ({ label: l + (n ? ' ' + n : ''), sel: String(tab === k), w: tab === k ? 600 : 400,
+      tabs: [['todo', L('To do', 'Por fazer'), nTodo], ['done', L('Resolved', 'Resolvidos'), nDone]].map(([k, l, n]) => ({ label: l, n: n ? String(n) : '', nD: n ? 'inline-flex' : 'none', aria: l + (n ? ', ' + n : ''), sel: String(tab === k), w: tab === k ? 600 : 400,
         pick: () => { if (tab === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ atab: k, rLim: 5 }); } })),
       emptyOn: !shownRows.length && !shownDuties.length, emptyTxt: resolvedTab ? L('Nothing resolved yet this shift.', 'Nada resolvido ainda neste turno.') : L('Every duty done this shift.', 'Todas as tarefas do turno feitas.'),
       sub: lead ? (nDep ? '' : L('No deployments.', 'Sem destacamentos.')) : dutyList.length && !rows.length ? L('No incidents in the area.', 'Sem incidentes na área.') : '',   /* the counts are on the switcher */
