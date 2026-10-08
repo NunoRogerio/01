@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=194"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=206"></script>
+<script src="prefs.js?v=207"></script>
 <script src="station.js?v=3"></script>
 <script src="i18n.js?v=172"></script>
 <script src="live.js?v=43"></script>
@@ -255,6 +255,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </sc-if>
   <sc-if value="{{hasMapTtl}}" hint-placeholder-val="{{ false }}">
+    <!-- (Oct 8) an invisible ruler as wide as the title card can grow (beside the legend), so the stage tag laid over it never spills out -->
+    <div data-wf-hdrcap="1" aria-hidden="true" style="position: absolute; visibility: hidden; pointer-events: none; height: 0; left: {{ttlLeftCss}}; top: {{ttlTop}}px; width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px)"></div>
     <!-- A fire's full-screen map is titled with the fire, the legend inside the same box -->
     <!-- the title sits in its own solid container (the legend chips' surface and shadow) so the map never runs through it -->
     <div style="position: absolute; z-index: 50; left: {{ttlLeftCss}}; right: {{ttlRightCss}}; top: {{ttlTop}}px; max-width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px); display: flex; flex-direction: column; justify-content: center; gap: 4px; box-sizing: border-box; min-height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
@@ -263,7 +265,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <span style="font-size: 16px; line-height: 1.33; flex-shrink: 0; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapSub}}</span>
       <!-- (Oct 4) the room of the fire's stage tag: the page lays its live tag (and the stack that unfolds from it) over this row, under the place, as on the page -->
       <span style="display: {{mapSinceD}}; font-size: 16px; line-height: 1.33; flex-shrink: 0; color: #3A3A3C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapSince}}</span>
-      <span data-wf-hdrst="1" aria-hidden="true" style="display: {{mapTagRowD}}; flex-shrink: 0; height: 40px; width: {{mapTagW}}px; margin: 4px -8px -8px"></span>
+      <span data-wf-hdrst="1" aria-hidden="true" style="display: {{mapTagRowD}}; flex-shrink: 0; height: 40px; width: {{mapTagW}}px; max-width: calc(100% + 16px); margin: 4px -8px -8px"></span>
     </div>
   </sc-if>
 
