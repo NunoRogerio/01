@@ -78,6 +78,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 16px 0">
         <h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{asg.title}}</h3>
+        <span style="display: {{asg.subD}}; margin: -4px 0 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{asg.sub}}</span>
         <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 17px; line-height: 22px; color: #000000">{{asg.noneTxt}}</p></sc-if>
         <ul style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
@@ -87,6 +88,19 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <span class="wf-stg" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
               <span style="grid-column: 1 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span></span>
             </a>
+            </li>
+          </sc-for>
+        </ul>
+        <!-- (Oct 8) no incidents: the day's station duties, as the same list cards; a tap marks one done (or undoes it) -->
+        <ul style="display: {{asg.dutyD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
+          <sc-for list="{{asg.duties}}" as="d" hint-placeholder-count="3">
+            <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+              <button type="button" class="sqrow stfire" data-wf-keepsp="1" onClick="{{d.go}}" aria-pressed="{{d.doneStr}}" aria-label="{{d.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; width: 100%; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; cursor: pointer">
+                <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; overflow-wrap: anywhere">{{d.title}}</span>
+                <span class="wf-stg" style="justify-self: end; align-self: start; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{d.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{d.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{d.chkD}}; flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{d.tag}}</span>
+                <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73">{{d.sub}}</span>
+              </button>
+              <span class="wf-simstar" aria-hidden="true">*</span>
             </li>
           </sc-for>
         </ul>
@@ -365,7 +379,48 @@ class Component extends DCLogic {
     const ign = onMap.filter((q) => q.kind === 'cand').map((q) => { const [st, co, id, place, conf, spec, ago, x, y, live] = q.r; const srcs = String(spec || '').split('|').map((p) => { const [k, ref] = p.split(':'); return { kind: k, ref: ref || '', label: (SRCN[k] || k) + (ref ? ' ' + ref : '') }; });
       return { live: live || null, st, co, id, place, conf, srcs, nSrc: srcs.length, src: srcs.length > 1 ? srcs.length + ' sources' : srcs[0].label, srcList: srcs.map((q2) => q2.label).join(' · '), ago, x, y }; });
     const nZone = items.filter((q) => q.k === 'zone').length, nAid = items.length - nZone;
-    return { title: lead ? L('Deployments', 'Destacamentos') : L('Assignments', 'Atribuições'), rows, none: !rows.length, listD: rows.length ? 'flex' : 'none',
+    // (Oct 8) Between incidents the station works its routine (LACoFD 24-hour shift from 08:00, station time): the team lead runs his
+    // engine company's day, the captain the station's. Each duty is Done once its time has passed, Now while on, Later before; a tap
+    // marks it done (or undoes it), kept for the shift on this phone. Simulated for the demonstration (*).
+    const dutyList = (() => { if (rows.length) return [];
+      const nowLA = (() => { try { const p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date()); const g = (t) => +((p.find((q) => q.type === t) || {}).value || 0); return g('hour') * 60 + g('minute'); } catch (e) { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); } })();
+      const shift = (() => { const d = new Date(Date.now() - (nowLA < 480 ? 864e5 : 0)); return d.toISOString().slice(0, 10); })(), SK = 'wf-duty-' + MINE.key + '-' + shift;
+      let MK = {}; try { MK = JSON.parse(localStorage.getItem(SK) || '{}') || {}; } catch (e) {}
+      const veh = 'Engine ' + ((String(S.name).match(/(\d{1,3})\b/) || [])[1] || '11');
+      const D = lead ? [
+        [480, 45, ['Apparatus check', 'Verificação do veículo'], [veh + ': pump, water, fuel, hose and tools. Report any fault to the captain.', veh + ': bomba, água, combustível, mangueiras e ferramentas. Comunicar avarias ao chefe.']],
+        [525, 30, ['SCBA and radio checks', 'Verificação de ARICA e rádios'], ['Air cylinders full, masks sealed, radios charged and on the right channels.', 'Garrafas cheias, máscaras estanques, rádios carregados e nos canais certos.']],
+        [570, 75, ['Hose lay drill', 'Exercício de estabelecimento de mangueiras'], ['Progressive hose lay up a slope, with the crew and ' + veh + '.', 'Estabelecimento progressivo de mangueiras numa encosta, com a equipa e o ' + veh + '.']],
+        [660, 90, ['Hydrant inspections', 'Inspeção de hidrantes'], ['Flow and access of the hydrants on the first-due streets. Log any that need repair.', 'Caudal e acesso dos hidrantes nas ruas da primeira saída. Registar os que precisam de reparação.']],
+        [810, 120, ['Brush clearance inspections', 'Inspeção de limpeza de mato'], ['Defensible space checks on the hillside homes: 200 ft of cleared brush around each.', 'Faixas de gestão de combustível nas casas da encosta: 60 m de mato limpo em volta de cada uma.']],
+        [960, 60, ['Physical training', 'Treino físico'], ['The crew together: cardio and a pack test walk.', 'A equipa em conjunto: cardio e marcha com carga.']],
+        [1050, 60, ['Station duties', 'Serviço de quartel'], ['Clean and restock ' + veh + ', check the workshop and the kitchen roster.', 'Limpar e reabastecer o ' + veh + ', verificar a oficina e a escala da cozinha.']],
+        [1140, 60, ['EMS training', 'Formação em emergência médica'], ['The month\'s continuing education module, for the whole crew.', 'O módulo de formação contínua do mês, para toda a equipa.']],
+        [1260, 30, ['Night readiness', 'Prontidão noturna'], [veh + ' ready to roll: gear on the rig, turnouts by the doors.', veh + ' pronto a sair: equipamento a bordo, fardamento junto às portas.']],
+        [1380, 480, ['Night watch', 'Vigilância noturna'], ['On call through the night. Calls go straight to the crew.', 'De prevenção durante a noite. As chamadas vão diretas à equipa.']]
+      ] : [
+        [480, 30, ['Shift briefing', 'Briefing de turno'], ['Roll call, fire danger for today, units in service and anything carried over from the last shift.', 'Chamada, perigo de incêndio do dia, meios operacionais e pendentes do turno anterior.']],
+        [510, 40, ['Staffing and daily log', 'Escala e livro de ocorrências'], ['Confirm the roster for every unit and open the station log.', 'Confirmar a escala de cada meio e abrir o livro do quartel.']],
+        [600, 60, ['Review brush clearance', 'Rever a limpeza de mato'], ['Sign off the inspections from last week and send notices for the homes that failed.', 'Validar as inspeções da semana passada e enviar avisos às casas que falharam.']],
+        [690, 90, ['Pre-fire plan walk-through', 'Visita de planeamento pré-incêndio'], ['The wildland edge above Altadena: access roads, water and safety zones, with the team leads.', 'A orla florestal acima de Altadena: acessos, água e zonas de segurança, com os chefes de equipa.']],
+        [840, 60, ['Community preparedness talk', 'Sessão de preparação com a comunidade'], ['Ready, Set, Go! with local residents: evacuation routes and defensible space.', 'Ready, Set, Go! com os moradores: rotas de evacuação e faixas de gestão de combustível.']],
+        [930, 45, ['Approve the training plan', 'Aprovar o plano de formação'], ['Next week\'s drills for each crew, with the team leads\' notes.', 'Os exercícios da próxima semana para cada equipa, com as notas dos chefes de equipa.']],
+        [990, 30, ['Red flag readiness', 'Prontidão para alerta vermelho'], ['Check units, water and staffing against the fire weather forecast.', 'Verificar meios, água e efetivos face à previsão meteorológica de incêndio.']],
+        [1080, 60, ['Station inspection and report', 'Inspeção do quartel e relatório'], ['Walk the station, close the daily log and hand over to the night watch.', 'Percorrer o quartel, fechar o livro do dia e passar a vigilância noturna.']],
+        [1320, 30, ['Night staffing check', 'Verificação de efetivos noturnos'], ['Every unit staffed for the night; a relief named for anyone off sick.', 'Todos os meios com efetivo para a noite; substituto nomeado para quem estiver de baixa.']],
+        [1380, 480, ['Night command', 'Comando noturno'], ['On call through the night for the station area and mutual aid.', 'De prevenção durante a noite para a área do quartel e auxílio.']]
+      ];
+      const hm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+      const nowM = nowLA < 480 ? nowLA + 1440 : nowLA;
+      return D.map(([t0, du, ti, tx], i) => { const id = 'd' + i, auto = nowM >= t0 + du ? 'done' : nowM >= t0 ? 'now' : 'later', st = MK[id] === 1 ? 'done' : MK[id] === 0 ? (auto === 'done' ? 'now' : auto) : auto;
+        const TG = { done: [L('Done', 'Feito'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg, 'block'], now: [L('Now', 'Agora'), 'rgba(204,153,0,0.16)', '#745200', 'none'], later: [hm(t0), 'rgba(118,118,128,0.12)', '#3A3A3C', 'none'] }[st];
+        return { title: L(ti[0], ti[1]), sub: (st === 'later' ? '' : hm(t0) + '. ') + L(tx[0], tx[1]), tag: TG[0], tagBg: TG[1], tagFg: TG[2], chkD: TG[3], doneStr: st === 'done' ? 'true' : 'false',
+          aria: L(ti[0], ti[1]) + ', ' + hm(t0) + ', ' + TG[0] + '. ' + (st === 'done' ? L('Tap to undo', 'Toque para desfazer') : L('Tap to mark done', 'Toque para marcar como feito')),
+          go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const M2 = Object.assign({}, MK); if (st === 'done') M2[id] = 0; else M2[id] = 1; try { localStorage.setItem(SK, JSON.stringify(M2)); } catch (e) {} this.forceUpdate(); } }; }); })();
+    const dutyLeft = dutyList.filter((d) => d.doneStr === 'false').length;
+    return { title: lead ? L('Deployments', 'Destacamentos') : L('Assignments', 'Atribuições'), rows, none: false, listD: rows.length ? 'flex' : 'none',
+      duties: dutyList, dutyD: dutyList.length ? 'flex' : 'none', subD: dutyList.length ? 'block' : 'none',
+      sub: dutyList.length ? (lead ? L('No deployments. ', 'Sem destacamentos. ') : L('No incidents in the area. ', 'Sem incidentes na área. ')) + (dutyLeft ? L(dutyLeft + (dutyLeft === 1 ? ' duty' : ' duties') + ' left today.', (dutyLeft === 1 ? 'Falta 1 tarefa' : 'Faltam ' + dutyLeft + ' tarefas') + ' hoje.') : L('Every duty done today.', 'Todas as tarefas de hoje feitas.')) : '',
       noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),
       nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
       view: { homeMapW: W, homeMapH: H, homeFx: Math.round(fx), homeFy: Math.round(fy), homeZ: +z.toFixed(3) } };
