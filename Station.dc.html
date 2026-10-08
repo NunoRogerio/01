@@ -424,7 +424,7 @@ class Component extends DCLogic {
 
     // ---- the station's own demonstration data, stable per station (seeded by its id) ----
     const hsh = (x) => { let h = 0; x = String(x); for (let i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) >>> 0; return h; };
-    const H0 = hsh(S.id), bit = (k) => (H0 >> k) & 1;
+    const H0 = hsh(S.id), bit = (k) => (H0 >>> k) & 1;
     const isPT = S.lat > 30 && S.lat < 43 && S.lon > -32 && S.lon < -6, cc = isPT ? 'PT' : 'CA';
     const num = (String(name).match(/(\d{1,3})\b/) || [])[1] || String(10 + H0 % 80);
     const nf2 = (n) => Number(n).toLocaleString(PT ? 'pt-PT' : 'en-US');
@@ -477,7 +477,7 @@ class Component extends DCLogic {
     // Crews: Portugal's permanent intervention team (EIP), firefighting teams (ECIN) and a logistics team (ELAC); US engine and hand crews
     const nCrew = 3 + bit(3);
     const crewDefs = isPT ? [['EIP 1', 'VFCI 01', 5], ['ECIN Alfa', 'VFCI 02', 5], ['ECIN Bravo', 'VLCI 01', 5], ['ELAC 1', 'VTTF 01', 3]] : [['Engine ' + num + ' crew', 'Engine ' + num, 4], ['Brush ' + num + ' crew', 'Brush ' + num, 4], ['Patrol ' + num + ' crew', 'Patrol ' + num, 3], ['Hand Crew ' + (Number(num) % 20 + 1), 'Crew Buggy ' + num, 6]];
-    const crewSt = (i) => (i === 0 ? 'ok' : ['ok', 'out', 'off', 'ok'][(H0 >> (i * 2)) % 4]);
+    const crewSt = (i) => (i === 0 ? 'ok' : ((window.__wfStaffOf && window.__wfStaffOf(S.id)) ? ['ok', 'off', 'off', 'ok'] : ['ok', 'out', 'off', 'ok'])[(H0 >>> (i * 2)) % 4]);   /* a profile station is out only where the app sends it (statuses follow what is happening) */
     const crews = crewDefs.slice(0, nCrew).map((d, i) => { const chief = pick(), ppl = [chief]; for (let k = 1; k < d[2]; k++) ppl.push(pick()); return { name: d[0], veh: d[1], st: crewSt(i), chief, ppl }; });
     /* (Oct 7) the profile stations tell one story: their captain commands, their team lead leads the first crew */
     { const SF = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SF) { if (cmdP[1]) cmdP[1].name = SF.captain; if (crews[0]) { crews[0].chief = SF.lead; crews[0].ppl[0] = SF.lead; } } }
