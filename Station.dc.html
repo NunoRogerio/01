@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=208"></script>
-<script src="station.js?v=7"></script>
+<script src="station.js?v=8"></script>
 <script src="menu.js?v=20"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=95"></script>
+<script src="chat.js?v=96"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -485,9 +485,11 @@ class Component extends DCLogic {
       ];
       const hm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
       const nowM = nowLA < 480 ? nowLA + 1440 : nowLA;
-      return D.map(([t0, du, ti, tx], i) => { const id = 'd' + i, auto = nowM >= t0 + du ? 'done' : nowM >= t0 ? 'now' : 'later', st = MK[id] === 1 ? 'done' : MK[id] === 0 ? (auto === 'done' ? 'now' : auto) : auto;
-        const TG = { done: [L('Done', 'Feito'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg, 'block'], now: [L('Now', 'Agora'), 'rgba(204,153,0,0.16)', '#745200', 'none'], later: [hm(t0), 'rgba(118,118,128,0.12)', '#3A3A3C', 'none'] }[st];
-        return { title: L(ti[0], ti[1]), sub: (st === 'later' ? '' : hm(t0) + '. ') + L(tx[0], tx[1]), tag: TG[0], tagBg: TG[1], tagFg: TG[2], chkD: TG[3], doneStr: st === 'done' ? 'true' : 'false',
+      /* (Oct 8, 19:10) while his crew is out on an incident, the team lead's duties due now or later wait: "On hold" (the crew is at the fire) */
+      const away = lead && nDep > 0;
+      return D.map(([t0, du, ti, tx], i) => { const id = 'd' + i, auto0 = nowM >= t0 + du ? 'done' : nowM >= t0 ? 'now' : 'later', auto = away && auto0 !== 'done' ? 'hold' : auto0, st = MK[id] === 1 ? 'done' : MK[id] === 0 ? (auto === 'done' ? 'now' : auto) : auto;
+        const TG = { done: [L('Done', 'Feito'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg, 'block'], now: [L('Now', 'Agora'), 'rgba(204,153,0,0.16)', '#745200', 'none'], later: [hm(t0), 'rgba(118,118,128,0.12)', '#3A3A3C', 'none'], hold: [L('On hold', 'Em espera'), 'rgba(118,118,128,0.12)', '#3A3A3C', 'none'] }[st];
+        return { title: L(ti[0], ti[1]), sub: (st === 'later' ? '' : hm(t0) + '. ') + (st === 'hold' ? L('The crew is at the fire. ', 'A equipa está no incêndio. ') : '') + L(tx[0], tx[1]), tag: TG[0], tagBg: TG[1], tagFg: TG[2], chkD: TG[3], doneStr: st === 'done' ? 'true' : 'false',
           aria: L(ti[0], ti[1]) + ', ' + hm(t0) + ', ' + TG[0] + '. ' + (st === 'done' ? L('Tap to reopen', 'Toque para reabrir') : L('Tap to mark done', 'Toque para marcar como feito')),
           go: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const set = () => { const M2 = Object.assign({}, MK); if (st === 'done') M2[id] = 0; else M2[id] = 1; try { localStorage.setItem(SK, JSON.stringify(M2)); } catch (e) {} this.forceUpdate(); };
             /* (Oct 8, standing) concluding an action item always asks first. (17:50) A resolved item stays put on a tap: it is a record,
@@ -634,7 +636,8 @@ class Component extends DCLogic {
     const photo = (nm) => { const u = C && C.photo ? C.photo(holder, nm) : ''; try { sessionStorage.setItem(FK, JSON.stringify(F)); } catch (e) {} return u ? 'url("' + u + '")' : 'none'; };
     const ini = (nm) => nm.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
     /* (Oct 8, 14:25) each person's state for the shift: the crew chief is on (he leads it); the others are mostly on, some on sick leave, a day off or training (simulated, steady per person) */
-    const pSt = (nm, i) => { if (!i) return 'ok'; let h = 0; for (const ch of String(nm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return ['ok', 'ok', 'ok', 'sick', 'ok', 'kelly', 'ok', 'train'][h % 8]; };
+    const pSt = (nm, i) => { const SF0 = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SF0 && SF0.state && SF0.crew.indexOf(nm) >= 0) return SF0.state[nm] || 'ok';   /* (Oct 8, 19:10) the profile crew's shift is fixed (station.js), the same in the chats */
+      if (!i) return 'ok'; let h = 0; for (const ch of String(nm)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return ['ok', 'ok', 'ok', 'sick', 'ok', 'kelly', 'ok', 'train'][h % 8]; };
     const TAG = { ok: ['Available', 'Disponível', window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], out: ['On a mission', 'Em missão', 'rgba(184,74,0,0.14)', '#963B00'], off: ['Off duty', 'De folga', 'rgba(118,118,128,0.14)', '#636366'], /* (Oct 8, 17:40) a vehicle can also be off the road: scheduled maintenance, or in repair after a fault */
       maint: ['Maintenance', 'Em manutenção', 'rgba(118,118,128,0.14)', '#636366'], repair: ['In repair', 'Em reparação', 'rgba(118,118,128,0.14)', '#636366'],
       /* (Oct 8, 14:25) a person's state, in the services' own words: LACoFD sick leave, Kelly day (the 24-hour shift's scheduled day off), training; PT baixa médica, folga, formação */
@@ -650,7 +653,7 @@ class Component extends DCLogic {
     const crewSt = (i) => (i === 0 ? 'ok' : ((window.__wfStaffOf && window.__wfStaffOf(S.id)) ? ['ok', 'off', 'off', 'ok'] : ['ok', 'out', 'off', 'ok'])[(H0 >>> (i * 2)) % 4]);   /* a profile station is out only where the app sends it (statuses follow what is happening) */
     const crews = crewDefs.slice(0, nCrew).map((d, i) => { const chief = pick(), ppl = [chief]; for (let k = 1; k < d[2]; k++) ppl.push(pick()); return { name: d[0], veh: d[1], st: crewSt(i), chief, ppl }; });
     /* (Oct 7) the profile stations tell one story: their captain commands, their team lead leads the first crew */
-    { const SF = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SF) { if (cmdP[1]) cmdP[1].name = SF.captain; if (crews[0]) { crews[0].chief = SF.lead; crews[0].ppl[0] = SF.lead; } } }
+    { const SF = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null; if (SF) { if (cmdP[1]) cmdP[1].name = SF.captain; if (crews[0]) { crews[0].chief = SF.lead; crews[0].ppl = SF.crew && SF.crew.length ? SF.crew.slice() : [SF.lead].concat(crews[0].ppl.slice(1)); } } }   /* (Oct 8, 19:10) the team lead's crew is fixed (station.js) */
     /* (Oct 7) statuses follow what is happening: a station sent to incidents (the incident chats' forces) has its first crew out, and its tag counts those fires */
     const nOn = (() => { const CC = window.__wfChat, ck = (S.type === 'way' ? 'w' : 'n') + S.id; try { return CC && CC.list ? CC.list().filter((c) => c && !c.closed && !c.dismissed && (c.forces || []).some((f) => (f.ck === ck || f.full === S.name) && f.st !== 'standby' && f.st !== 'released') && (!window.__wfChatIsOurs || !window.__wfStaffOf || !window.__wfStaffOf(S.id) || window.__wfChatIsOurs(c, S))).length : 0; } catch (e) { return 0; } })();
     if (nOn && crews[0]) crews[0].st = 'out';

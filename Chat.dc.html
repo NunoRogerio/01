@@ -17,10 +17,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=200"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=208"></script>
-<script src="station.js?v=7"></script>
+<script src="station.js?v=8"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=95"></script>
+<script src="chat.js?v=96"></script>
 <script src="tour.js?v=116"></script>
 <script src="feedcam.js?v=24"></script>
 <script src="trophy.js?v=35"></script>
@@ -1003,7 +1003,9 @@ class Component extends DCLogic {
           return { forT: d ? L('for ', 'há ') + d : '', forD: d ? 'inline' : 'none', ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
         ...(() => { const ex = !!s.stEx; return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-8px', tmPb: '16px',
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
-          mv: (() => { const st = c.stage, nx = C.STAGES[st + 1]; if (c.kind === 'dm' || c.dismissed || c.closed || st >= 7 || !nx) return { d: 'none', label: '', go: null };
+          /* (Oct 8, 19:10, app-wide) the stages the field drives are never moved by hand: Ongoing starts when the crews leave on the
+             order, Crews on scene when they arrive and say so; the captain moves only the stages he decides. The lieutenant moves none. */
+          mv: (() => { const st = c.stage, nx = C.STAGES[st + 1]; if (LEAD || c.kind === 'dm' || c.dismissed || c.closed || st >= 7 || !nx || (st === 1 && c.flags.dispatched) || st === 2) return { d: 'none', label: '', go: null };
             const key = st === 0 ? 'confirm' : st === 1 && !c.flags.dispatched ? 'dispatch' : st === 6 ? 'closeCheck' : 'next'; if (!key) return { d: 'none', label: '', go: null };
             return { d: 'flex', label: L('Move to ', 'Passar a ') + T(nx), go: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: false }); if (key !== 'next') moveSnd(); run(key); } }; })(),
           tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ stEx: !ex }); } }; })(),

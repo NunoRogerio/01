@@ -144,6 +144,7 @@
            anything within 150 m, is the same station */
         .filter(function (q, i, A) { var sn = shortStation(q.name); return !A.slice(0, i).some(function (p) { var d = Math.hypot((p.la - q.la) * 110.57, (p.lo - q.lo) * kx); return d < 0.15 || (d < 2 && shortStation(p.name) === sn); }); });
       // Every fire gets a team: the nearest stations within 80 km, else the nearest ones at all (up to 250 km)
+      all = all.filter(function (q) { return !/^(fire station|station|quartel|bombeiros)$/i.test(String(q.name).trim()); });   /* (Oct 8, 19:10) a station with no name in the data never joins a chat ("Station" alone is not believable) */
       var near = all.filter(function (q) { return q.km < 80; }); if (near.length < 3) near = all.filter(function (q) { return q.km < 250; });
       if (near.length < 2) near = all.slice(0, 2);   // never fewer than two stations (and two station chiefs)
       near = near.slice(0, 4);
@@ -162,6 +163,8 @@
   function pickNames(c, n, salt) {
     // Walk the whole pool once from a stable starting point; if every name is taken, reuse names rather than loop forever
     var pool = NAMES[langOf(c)] || NAMES.us, used = c.used || (c.used = {}), out = [], i0 = hash(c.key + salt);
+    /* (Oct 8, 19:10) the profile station's own people (its captain, the team lead's crew) are never someone else in a chat */
+    var RS = window.__wfReservedNames ? window.__wfReservedNames() : {}; Object.keys(RS).forEach(function (n) { if (!used[n]) used[n] = 2; });
     for (var j = 0; j < pool.length && out.length < n; j++) { var nm = pool[(i0 + j) % pool.length]; if (!used[nm]) { used[nm] = 1; out.push(nm); } }
     for (var k = 0; out.length < n; k++) out.push(pool[(i0 + k) % pool.length]);
     return out;
@@ -181,9 +184,9 @@
     var s = c.stations[si], P = c.people[si];
     // As many people as the vehicles really carry (the coordinator is one of them): a VFCI 5, a VLCI 3, a VTTF 2;
     // a Type 3 engine 3, a Type 6 brush patrol 2, a water tender 2 (ANEPC; NWCG minimum staffing)
-    var veh = vehiclesFor(c, s, si), seats = veh.reduce(function (a, v) { return a + (/VFCI|CCF|BRP|ABTF/.test(v) ? 5 : /VLCI|VLHR|BFP|UR-/.test(v) ? 3 : /VTTF|Nodriza|CCGC|AT-|Tender/.test(v) ? 2 : /Brush Patrol/.test(v) ? 2 : /^Engine/.test(v) ? 3 : 3); }, 0);
+    var veh = staffOf(s) ? ['Engine ' + ((String(s.name).match(/(\d{1,3})\b/) || [])[1] || '11')] : vehiclesFor(c, s, si), seats = veh.reduce(function (a, v) { return a + (/VFCI|CCF|BRP|ABTF/.test(v) ? 5 : /VLCI|VLHR|BFP|UR-/.test(v) ? 3 : /VTTF|Nodriza|CCGC|AT-|Tender/.test(v) ? 2 : /Brush Patrol/.test(v) ? 2 : /^Engine/.test(v) ? 3 : 3); }, 0);
     var crew = pickNames(c, Math.max(1, seats - 1), 'crew' + si);
-    var SF = staffOf(s); if (SF) crew[0] = SF.lead;   /* (Oct 7) the profile station's first crew is led by its team lead */
+    var SF = staffOf(s); if (SF) crew = SF.onDuty && SF.onDuty.length ? SF.onDuty.slice() : [SF.lead];   /* (Oct 8, 19:10) the profile station's first crew is its real crew on duty (not those on sick leave or training) */   /* (Oct 7) the profile station's first crew is led by its team lead */
     return { si: si, ck: s.ck || '', station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: veh, st: st || 'standby' };
   }
   function setForces(c, from, to) { (c.forces || []).forEach(function (f) { if (!from || from.indexOf(f.st) >= 0) f.st = to; }); }
