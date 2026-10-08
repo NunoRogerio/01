@@ -1111,6 +1111,7 @@
     var db = load(), now = Date.now(), changed = false;
     Object.keys(db.chats).forEach(function (k) {
       var c = db.chats[k];
+      delete c._vOne;
       /* (Oct 5, 10:50) in the tour the team's chatter waits while a step points at something (the evidence, Declare the fire), and is left out after: nothing moves under the cursor */
       var mute = tourMute();
       if (mute && c.queue.length) {
@@ -1119,6 +1120,9 @@
         else { c.queue.forEach(function (x) { if (x.m.kind === 'msg' && x.due <= now + 3000) x.due = now + 3000; }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
       }
       while (c.queue.length && c.queue[0].due <= now) {
+        /* (Oct 8, 19:20) on a video call the team speaks one at a time: the next message waits while someone is still talking (and the pause after) */
+        if (window.__wfVoiceKey === k && c.queue[0].m && c.queue[0].m.kind === 'msg' && (window.__wfVoiceBusy || c._vOne)) break;
+        if (window.__wfVoiceKey === k && c.queue[0].m && c.queue[0].m.kind === 'msg') { c._vOne = 1; window.__wfVoiceBusy = true; }   /* one bubble, then its voice */
         var q = c.queue.shift(), m = q.m;
         if (c.closed && m.kind !== 'msg' && m.kind !== 'sys') { if (!(m.kind === 'card' && m.summary)) continue; }
         if (m.adv && !c.closedVt) jump(c, m.adv * MIN);
@@ -1378,6 +1382,19 @@
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { if (!c.closed && mineKeys().indexOf(k) >= 0) assign(k);   /* (Oct 6) opening an incident never takes a place: only Enroll does */ if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
     forget: function (k) { var db = load(); if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
+    /* (Oct 8, 19:20) a video call starts like a real one: each member on the line greets you by rank and name, then the first gives
+       where things stand. Said as chat messages, so the bubbles and the voices are the same words. */
+    callStart: function (key) { var d = load(), c = d.chats[key]; if (!c || c.closed || c.dismissed) return;
+      var M = window.__wfMine ? window.__wfMine() : null, PT = window.__wfLang === 'pt', staff = M && window.__wfStaffOf ? window.__wfStaffOf(M.station.id) : null;
+      var full = staff ? (M.level === 'lead' ? staff.lead : staff.captain) : ((window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || ''), last = full.split(' ').slice(-1)[0] || '';
+      var rk = M ? (M.level === 'lead' ? ['Lieutenant', 'Chefe de equipa'] : ['Captain', 'Chefe']) : ['', ''], who = { en: (rk[0] + ' ' + last).trim(), pt: (rk[1] + ' ' + last).trim() };
+      var P = (c.people || []).map(function (p, i) { return [p, i]; }).filter(function (q) { return !q[0].left && !q[0].self; });
+      var G = [function (p) { return ['Hello ' + who.en + ', ' + p.name.split(' ')[0] + ' here.', 'Olá ' + who.pt + ', fala ' + p.name.split(' ')[0] + '.']; },
+        function (p) { return ['Hi ' + who.en + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', on the line.', 'Olá ' + who.pt + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', em linha.']; },
+        function (p) { return ['Good to hear you, ' + who.en + '.', 'Bom ouvi-lo, ' + who.pt + '.']; }];
+      P.forEach(function (q, j) { var g = G[j % G.length](q[0]); say(c, q[1], g[0], g[1], 1200 + j * 600, 0); });
+      if (P.length && c.stage >= 1 && c.stage <= 6) { var a = reply(c, P[0][1], 'status', '').map(function (t) { return String(t).replace(/^(Copy|Copiado|Recebido|Entendido)[.,!]\s*/i, ''); }); a = a.map(function (t) { return t.charAt(0).toUpperCase() + t.slice(1); }); say(c, P[0][1], (PT ? 'Ponto de situação: ' : 'Where we are: ') + a[0], a[1], 1200 + P.length * 600 + 400, 1); }
+      c.updated = Date.now(); save(); emit(); },
     veh: function (c, i) { return c && c.stations && c.stations[i] ? vehiclesFor(c, c.stations[i], i) : []; },
     send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },

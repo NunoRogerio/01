@@ -20,9 +20,9 @@
 <script src="station.js?v=8"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=97"></script>
+<script src="chat.js?v=99"></script>
 <script src="tour.js?v=116"></script>
-<script src="feedcam.js?v=25"></script>
+<script src="feedcam.js?v=26"></script>
 <script src="trophy.js?v=35"></script>
 
 <title>Chats</title>
@@ -239,7 +239,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- The photo tooltip lives outside the scrolling list, above its edge fade: placed over the tapped photo (or under it near the top) -->
     <span role="tooltip" aria-hidden="true" style="position: absolute; left: {{avt.x}}px; top: {{avt.y}}px; z-index: 25; display: flex; flex-direction: column; width: max-content; max-width: 300px; transform: translateY({{avt.dy}}); opacity: {{avt.op}}; padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 16px; line-height: 20px; pointer-events: none; transition: opacity .2s ease, transform .2s ease"><span style="font-weight: 600">{{avt.name}}</span><span>{{avt.role}}</span></span>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
-    <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 0">
+    <div data-wf-composer="1" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 8px 0 32px; background: #F2F2F7; border-top: 0">
       <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
         <button type="button" class="chbtn" data-round="1" onClick="{{camGo}}" aria-label="{{t.cam}}" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16a7.5 7.5 0 0 1 15 0M2 16h18.5c.8 0 1.5.7 1.5 1.5V19H6M10.2 9.6h3.6v3.4L12 14.2 10.2 13Z M12 8.5v-3"></path></svg></button>
         <button type="button" class="chbtn" data-round="1" onClick="{{callGo}}" data-call="1" aria-label="{{callAria}}" style="display: {{callD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #34C759; color: #fff; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
@@ -1104,6 +1104,14 @@ class Component extends DCLogic {
       if (prev.top > 0 && prev.view !== 'chat') { const t0 = Date.now(), step = () => { const sc = this.wfMainScroller(); if (sc && sc.scrollHeight - sc.clientHeight >= prev.top - 1) { sc.scrollTop = prev.top; if (Math.abs(sc.scrollTop - prev.top) < 2) return; } if (Date.now() - t0 < 1200) requestAnimationFrame(step); else if (sc) sc.scrollTop = prev.top; }; requestAnimationFrame(step); } };
   }
 }
+</script>
+<script>/* (Oct 8, 19:25) typing: the iPhone keyboard covers the bottom of the screen, so the composer rises above it (what you write
+   stays in view, the newest messages just above it); it settles back when the keyboard goes */
+(function(){var vv=window.visualViewport;if(!vv)return;
+function fit(){var c=document.querySelector('[data-wf-composer]');if(!c)return;var a=document.activeElement,typing=a&&c.contains(a)&&/^(INPUT|TEXTAREA)$/.test(a.tagName);
+  var kb=typing?Math.max(0,innerHeight-(vv.height+vv.offsetTop)):0,r=c.getBoundingClientRect(),k=c.offsetWidth?r.width/c.offsetWidth:1;
+  c.style.paddingBottom=kb>40?Math.round(kb/k+8)+'px':'';if(kb>40){try{window.scrollTo(0,0);}catch(x){}var L=document.querySelector('[data-wf-keepscroll]');if(L)L.scrollTop=L.scrollHeight;}}
+vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);document.addEventListener('focusin',function(){setTimeout(fit,50);setTimeout(fit,350);});document.addEventListener('focusout',function(){setTimeout(fit,50);});})();
 </script>
 <script>/* (Oct 7) the one-line suggestion row fades at a side only while chips are hidden past it */
 (function(){function u(e){var l=e.scrollLeft>1,r=e.scrollLeft+e.clientWidth<e.scrollWidth-1,m=l&&r?'linear-gradient(to right,transparent 0,#000 24px,#000 calc(100% - 24px),transparent 100%)':l?'linear-gradient(to right,transparent 0,#000 24px)':r?'linear-gradient(to left,transparent 0,#000 24px)':'none';if(e.style.webkitMaskImage!==m){e.style.webkitMaskImage=m;e.style.maskImage=m;}}

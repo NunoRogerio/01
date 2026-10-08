@@ -102,12 +102,17 @@
     var say = function (p, i, text) { var u = new SpeechSynthesisUtterance(text), V = vFor(p.name || '', i, PT); u.lang = PT ? 'pt-PT' : 'en-US'; if (V.v) u.voice = V.v; u.pitch = V.pitch; u.rate = V.rate;
       u.onstart = function () { cap.textContent = (p.name || '').split(' ')[0] + ': ' + text; cap.classList.add('on');
         var gt = el.querySelectorAll('.gt'); Array.prototype.forEach.call(gt, function (t) { t.classList.toggle('sp', (t.querySelector('b') || {}).textContent === (p.name || '').split(' ')[0]); }); };
-      u.onend = function () { cap.classList.remove('on'); }; speechSynthesis.speak(u); };
+      /* one voice at a time, then a breath before the next (the chat holds its next bubble meanwhile) */
+      window.__wfVoiceBusy = true; clearTimeout(f.vP);
+      u.onend = u.onerror = function () { cap.classList.remove('on'); clearTimeout(f.vP); f.vP = setTimeout(function () { if (!speechSynthesis.speaking) window.__wfVoiceBusy = false; }, 1100 + Math.random() * 700); };
+      f.vP = setTimeout(function () { window.__wfVoiceBusy = false; }, 15000 + text.length * 80);   /* never stuck if a voice fails silently */
+      speechSynthesis.speak(u); };
     f.vOn = function () { var c = C.get(key); if (!c) return; (c.msgs || []).forEach(function (m) { if (seen[m.id]) return; seen[m.id] = 1; if (m.kind !== 'msg' || m.from === 'me') return;
       var i = typeof m.from === 'number' ? m.from : 0, p = (c.people || [])[i] || { name: '' }; say(p, i, PT ? m.pt : m.en); }); };
     addEventListener('wf-chat', f.vOn); f.vT = setInterval(f.vOn, 1200);
     /* calling the team is asking where things stand: they answer aloud */
-    setTimeout(function () { try { C.send(key, PT ? 'Ponto de situação?' : 'Status update?'); } catch (x) {} }, 900);
+    window.__wfVoiceKey = key; window.__wfVoiceBusy = false;
+    setTimeout(function () { try { if (C.callStart) C.callStart(key); } catch (x) {} }, 600);
     /* the mic: optional, only where the browser can listen */
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
     var mic = document.createElement('button'); mic.type = 'button'; mic.className = 'mic mbtn'; mic.setAttribute('aria-label', PT ? 'Falar' : 'Speak'); mic.setAttribute('aria-pressed', 'false');
@@ -116,12 +121,12 @@
     mic.addEventListener('click', function (e) { e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
       if (rec) { try { rec.stop(); } catch (x) {} return; }
       try { speechSynthesis.cancel(); } catch (x) {} rec = new SR(); rec.lang = PT ? 'pt-PT' : 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
-      mic.setAttribute('aria-pressed', 'true'); mic.classList.add('on');
+      mic.setAttribute('aria-pressed', 'true'); mic.classList.add('on'); window.__wfVoiceBusy = true;
       rec.onresult = function (ev) { var t = ev.results && ev.results[0] && ev.results[0][0] ? ev.results[0][0].transcript : ''; if (t && t.trim()) { try { C.send(key, t.trim().charAt(0).toUpperCase() + t.trim().slice(1)); } catch (x) {} } };
-      rec.onend = rec.onerror = function () { rec = null; mic.setAttribute('aria-pressed', 'false'); mic.classList.remove('on'); };
+      rec.onend = rec.onerror = function () { window.__wfVoiceBusy = false; rec = null; mic.setAttribute('aria-pressed', 'false'); mic.classList.remove('on'); };
       try { rec.start(); } catch (x) { rec = null; mic.classList.remove('on'); } });
     f.vRec = function () { if (rec) try { rec.abort(); } catch (x) {} }; }
-  function vStop(f) { if (f.vOn) removeEventListener('wf-chat', f.vOn); clearInterval(f.vT); if (f.vRec) f.vRec(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (x) {} }
+  function vStop(f) { if (f.vOn) removeEventListener('wf-chat', f.vOn); clearInterval(f.vT); clearTimeout(f.vP); window.__wfVoiceKey = null; window.__wfVoiceBusy = false; if (f.vRec) f.vRec(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (x) {} }
   function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return; (f.timers || []).forEach(clearTimeout); vStop(f);
     var e = f.el, a = f.st.anchor; if (!e.querySelector('.hu')) e.querySelector('.x svg').style.transform = 'rotate(90deg)';
     if (f.callBtn) { try { f.callBtn.removeAttribute('data-wf-oncall'); } catch (x) {} }   // the call button is green again the moment the call ends
