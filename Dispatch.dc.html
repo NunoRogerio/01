@@ -1316,8 +1316,8 @@ class Component extends DCLogic {
       if (fsOn) { if (F.ok) { o.mapTagBg = 'transparent'; o.mapTagFg = 'transparent'; }   /* the band keeps the tag's room (so the kind shortens as on the page); the live tag lies over it */ setTimeout(() => this.wfFsTagMeasure(), 60); } }
     { const rhOn = !!(o.rh && o.rh.op !== 0 && o.rh.pe !== 'none'); o.rh = Object.assign({ op: 0, pe: 'none' }, o.rh || {}, { b: '52px' }); }   /* the dispatch pill alone floats; the ignition report is a button under the start time */
     o.ft = { d: 'grid', x: res ? 'calc(100% + 4px)' : '0%', sx: res ? '100%' : '0%',   /* the bar is 80% of its tab's width, centred under it */ fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
-      resDot: !res && crewAlert ? 'block' : 'none', fireDot: res && sitAlert ? 'block' : 'none',
-      resAria: 'Crews' + (!res && crewAlert ? '. Needs attention' : ''), fireAria: 'Situation' + (res && sitAlert ? '. Needs attention' : '') };
+      resDot: (!res && crewAlert) || this._crewIssue ? 'block' : 'none', fireDot: res && sitAlert ? 'block' : 'none',
+      resAria: 'Crews' + ((!res && crewAlert) || this._crewIssue ? '. Needs attention' : ''), fireAria: 'Situation' + (res && sitAlert ? '. Needs attention' : '') };
     // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
     // Vehicles and People are already there (Vehicles, Personnel), so only the crew-specific figures join.
     if (o.cc && Array.isArray(o.cc.med) && o.cc.medD !== 'none') { const fx = (o.deployed || []).find((d) => d.fx); const none = { svgD: 'none', segD: 'none', dot: '', line: '', lineC: 'none', area: '', areaFill: 'none', bars: '', barC: 'none', bar2: '', bar2C: 'none', segs: [], aria: '' };
@@ -1706,8 +1706,9 @@ class Component extends DCLogic {
             u.ic = u.ic0 ? u.ic0 : u.k === 0 ? IC.crew : u.k === 1 ? (/tender|VTTF|autotanque/i.test(nm) ? IC.tender : IC.engine) : (/heli/i.test(nm) ? IC.heli : IC.plane);
             const hasB = u.k === 0 || u.k === 1 || u.bat, on = !hasB ? 0 : Math.max(0, Math.min(8, Math.round((Number(u.pct) || 0) / 100 * 8)));   /* eight bars: black = left, light grey = used */
             u.batD = hasB ? 'block' : 'none'; u.batHi = seg(0, on); u.batLo = seg(on, 8); u.tagRowD = u.tag ? 'flex' : 'none'; })); }
+        { const ci = gOut.some((g) => (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A')); if (ci !== !!this._crewIssue) { this._crewIssue = ci; setTimeout(() => this.forceUpdate(), 0); } }   /* (Oct 8, 23:36) the red dot goes on the Crews label, not on the station card */
         gOut.forEach((g) => { const k = g.name, open = !!GO[k], issue = (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A');   /* a folded station with a crew needing relief or a tender low on water gets the red dot */
-          Object.assign(g, { dotD: !open && issue ? 'block' : 'none', exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg', aria: g.name + (!open && issue ? '. Needs attention' : '') + (open ? '. Fold' : '. Unfold'),
+          Object.assign(g, { dotD: 'none', exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg', aria: g.name + (!open && issue ? '. Needs attention' : '') + (open ? '. Fold' : '. Unfold'),
           gk: String(gOut.indexOf(g)),
           tog: () => { try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} const set = () => this.setState({ gpO: { ...((this.state || {}).gpO || {}), [k]: !open } });
             if (open) { set(); return; }   // folding: in place
