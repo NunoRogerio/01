@@ -20,7 +20,7 @@
 <script src="station.js?v=8"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=101"></script>
+<script src="chat.js?v=102"></script>
 <script src="tour.js?v=116"></script>
 <script src="feedcam.js?v=26"></script>
 <script src="trophy.js?v=35"></script>
@@ -932,11 +932,11 @@ class Component extends DCLogic {
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
-        const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'] };
+        const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
         const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
-            ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
+            ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
               return { cls: done ? '' : pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? (window.__wfY || '#E5FF00') : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? '#1C1C1E' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600 }; })(),
             go: () => { if (m.done) return; run(a.key, m.id); } };

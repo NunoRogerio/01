@@ -506,20 +506,53 @@
       if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 3000, 1);
       if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000, 2); }
       setStage(c, 3, d + 12000, Math.max(4, eta - 3));   /* (Oct 8, 19:28) a demo storyline: the crews reach the fire within ~12 s of leaving (well under 30 s); the clock still advances the drive time */
+    } else if (s === 3 && c.flags.rekindled) {   /* (Oct 8, 21:06) back on scene after a rekindle */
+      say(c, ltOf(c, 0), 'Back on the rekindle. Knocking it down.', 'De volta ao reacendimento. A apagá-lo.', d + 3000, 3);
     } else if (s === 3) {
-      if (P[0]) say(c, 0, 'On scene. Fire in ' + (isUS(c) ? 'chaparral and dry grass' : 'pine and eucalyptus') + ', head running north-east with the wind.', 'No local. Fogo em ' + (isUS(c) ? 'chaparral e erva seca' : 'pinhal e eucaliptal') + ', cabeça a progredir para nordeste com o vento.', d + 3000, 3);
-      if (P[1]) say(c, 1, 'Homes about 1 km north-east. We need air support to hold the head before it gets there.', 'Casas a cerca de 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça antes de lá chegar.', d + 8000, 6);
+      /* (Oct 8, 21:06) lines by role: lieutenants report from the fire line, captains speak for resources and decisions */
+      say(c, ltOf(c, 0), 'On scene. ' + (isUS(c) ? 'Chaparral and dry grass' : 'Pine and eucalyptus') + ', head running north-east.', 'No local. ' + (isUS(c) ? 'Chaparral e erva seca' : 'Pinhal e eucaliptal') + ', cabeça a progredir para nordeste.', d + 3000, 3);
+      if (P[1]) say(c, 1, 'Homes 1 km north-east. We need air support to hold the head.', 'Casas a 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça.', d + 7000, 6);
       card(c, { req: 'air', by: lead(c, 1), tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Crew coordinator'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Coordenador de equipa') }, tagC: '#B8360A',
         title: { en: 'Air support', pt: 'Meio aéreo' }, body: { en: 'One helicopter to hold the head before it reaches the homes', pt: 'Um helicóptero para segurar a cabeça antes de chegar às casas' },
-        actions: [{ key: 'declineAir', en: 'Not now', pt: 'Agora não' }, { key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + 9500, 0);
+        actions: [{ key: 'declineAir', en: 'Not now', pt: 'Agora não' }, { key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + 8500, 0);
     } else if (s === 4) {
-      if (P[0]) say(c, 0, 'Head is held. Working both flanks, no spread for 20 min.', 'Cabeça dominada. A trabalhar os dois flancos, sem progressão há 20 min.', d + 3000, 4);
+      say(c, ltOf(c, 0), 'Head held. Working both flanks.', 'Cabeça dominada. A trabalhar os dois flancos.', d + 3000, 4);
     } else if (s === 5) {
-      if (P[1]) say(c, lead(c, 1), 'Perimeter held. Starting mop-up along the edge.', 'Perímetro dominado. A iniciar o rescaldo no perímetro.', d + 3000, 5);
+      say(c, ltOf(c, 1), 'Perimeter held. Mop-up along the edge.', 'Perímetro dominado. Rescaldo no perímetro.', d + 3000, 5);
+      /* a rekindle, now and then: the team reports it and invites a step back to Crews on scene */
+      if (!c.flags.rekindleAsked && hash(c.key + 'rk') % 3 === 0) { c.flags.rekindleAsked = true;
+        say(c, ltOf(c, 0), 'Rekindle on the north flank. Flames back in the brush.', 'Reacendimento no flanco norte. Chamas de volta no mato.', d + 9000, 4);
+        if (P[0]) say(c, 0, 'I recommend we step back to Crews on scene.', 'Recomendo voltar a Equipas no local.', d + 11000, 1);
+        card(c, { rekindle: true, tag: { en: 'Rekindle', pt: 'Reacendimento' }, tagC: '#B3261E', title: { en: 'Step back to Crews on scene', pt: 'Voltar a Equipas no local' }, body: { en: 'Flames back on the north flank. The team recommends it.', pt: 'Chamas de volta no flanco norte. A equipa recomenda.' },
+          actions: [{ key: 'stayStage', en: 'Not now', pt: 'Agora não' }, { key: 'back', en: 'Step back', pt: 'Voltar atrás', primary: true }] }, d + 12500, 0);
+        if (isLt()) push(c, { kind: 'capt', a: 'back', ent: c.sEnt }, d + 17000, 0);   /* the lieutenant waits: the captain decides */
+        return; }
     } else if (s === 6) {
-      if (P[0]) say(c, 0, 'We stay on watch. Thermal camera shows no hotspots.', 'Ficamos em vigilância. A câmara térmica não mostra pontos quentes.', d + 3000, 8);
-      if (P[1]) say(c, 1, 'Released and heading back to the station.', 'Libertados, a regressar ao quartel.', d + 6000, 3);
+      say(c, ltOf(c, 0), 'On watch. No hotspots on the thermal camera.', 'Em vigilância. Sem pontos quentes na câmara térmica.', d + 3000, 8);
+      say(c, ltOf(c, 1), 'Released. Heading back to the station.', 'Libertados. A regressar ao quartel.', d + 6000, 3);
     }
+    /* (Oct 8, 21:06) demo pace: no stage lasts more than 20 s. Then the captain is invited to move on, as the team recommends;
+       a lieutenant waits for the captain, who moves it */
+  }
+  function isLt() { try { var M = window.__wfMine ? window.__wfMine() : null; return !!(M && M.level === 'lead'); } catch (e) { return false; } }
+  // the lieutenant of the station at index i (a field voice), else that station's captain
+  function ltOf(c, i) { var st = (c.stations[i] || {}).short, j = (c.people || []).findIndex(function (p) { return p.kind === 'lt' && !p.left && !p.self && p.org === st; }); return j >= 0 ? j : lead(c, i); }
+  var REC = { 4: ['Head held, no spread. We recommend Resolving.', 'Cabeça dominada, sem progressão. Recomendamos Em resolução.'], 5: ['Flanks tied in, no open edge. Ready for Concluding.', 'Flancos fechados, sem frente aberta. Prontos para Em conclusão.'],
+    6: ['Mop-up done along the perimeter. Ready for Surveillance.', 'Rescaldo feito no perímetro. Prontos para Vigilância.'], 7: ['No hotspots left. Ready to close.', 'Sem pontos quentes. Prontos a encerrar.'] };
+  function paceDue(c, s) {
+    var nx = s + 1, R = REC[nx]; if (!R) return;
+    if (isLt()) { captMove(c, nx); return; }
+    c.flags['rec' + s] = true;
+    say(c, ltOf(c, 0), R[0], R[1], 300, 1);
+    card(c, { rec: true, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
+      actions: [nx === 7 ? { key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true } : { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt, primary: true }] }, 1500, 0);
+  }
+  // the lieutenant's view: the captain (the first station's lead) moves the fire on, or back after a rekindle
+  function captMove(c, nx, back) {
+    var cap = 0; jump(c, (back ? 20 : stageSpan(c, nx)) * MIN);
+    if (back) { c.flags.rekindled = true; say(c, cap, 'Stepping back to Crews on scene. Hit the rekindle.', 'Voltamos a Equipas no local. Ataquem o reacendimento.', 200, 0); setStage(c, 3, 1500, 0); return; }
+    say(c, cap, nx === 7 ? 'Closing the fire. Thank you all.' : 'Moving the fire to ' + STAGES[nx].en + '.', nx === 7 ? 'Encerro o incêndio. Obrigado a todos.' : 'Passo o incêndio a ' + STAGES[nx].pt + '.', 200, 0);
+    setStage(c, nx, 1500, 0);
   }
 
   // Quick actions for the fire owner, per stage
@@ -530,7 +563,7 @@
     if (s === 0) { if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Enviar drone' }); A.push({ key: 'dismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }); }   // Dismiss then Confirm, as everywhere
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
-    if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
+    if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air || c.flags.rec3) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
     if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Deploy another station', pt: 'Empenhar outro quartel' });
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     if (s === 4) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
@@ -627,6 +660,13 @@
       jump(c, stageSpan(c, nx) * MIN);   // the hours this stage took, before you move it on
       me('Moving the fire to ' + STAGES[nx].en + '.', 'Passo o incêndio a ' + STAGES[nx].pt + '.');
       setStage(c, nx, 800, 0);
+    } else if (a === 'back') {   /* (Oct 8, 21:06) a rekindle: the fire steps back to Crews on scene */
+      c.flags.rekindled = true; jump(c, 20 * MIN);
+      me('Stepping back to Crews on scene. Hit the rekindle.', 'Voltamos a Equipas no local. Ataquem o reacendimento.');
+      setStage(c, 3, 800, 0);
+    } else if (a === 'stayStage') {
+      me('Hold the stage. Knock it down and report.', 'Mantemos a fase. Apaguem-no e informem.');
+      say(c, ltOf(c, 0), 'Copy. On it.', 'Entendido. Já estamos nisso.', 2200, 2);
     } else if (a === 'closeCheck') {
       c.flags.closeCard = true;
       // (Oct 4) asked again while the "Ready to close" card is still waiting far up the chat: it comes down to the bottom, so closing is never out of reach
@@ -814,6 +854,8 @@
       if ((it === 'water' || (it === 'safety' && /fatigue|tired|rest|relief|cansa|descans|rend/i.test(text))) && crewReply(c, it === 'water' ? 'water' : 'relief')) return;
       var byTopic = { safety: 1, water: 2, homes: 1, wind: 0, eta: 0, need: 1, status: 0, order: 0, thanks: 0, other: c.beat % n };
       var who = named >= 0 ? named : Math.min(n - 1, byTopic[it] != null ? byTopic[it] : 0);
+      /* (Oct 8, 21:07) what the crew sees and does is answered from the fire line (the lieutenants); resources and decisions by the captains */
+      if (named < 0 && c.stage >= 3 && /^(water|wind|status|safety|eta)$/.test(it)) who = ltOf(c, Math.min(1, byTopic[it] || 0));
       var a = reply(c, who, it, text); c.beat++;
       say(c, who, a[0], a[1], 2000 + (c.beat % 3) * 700, vary(c, 1, 6, 'b' + c.beat));
       if (named < 0 && n > 1 && (it === 'status' || it === 'safety') && c.stage >= 2 && c.stage <= 5) {
@@ -996,7 +1038,8 @@
   }
   var AI_SYS = 'You role-play the crew coordinators of fire stations in a wildfire incident chat. This is a realistic training simulation inside a fire command app; the person writing to you is the fire owner (incident commander) who makes all decisions. ' +
     'Stay in character: each coordinator has their own voice (given in the brief). Write like real people on a phone chat during a fire, not like a form: natural, warm and human, with the rhythm and small asides colleagues use with each other, always focused on the job at hand. ' +
-    'Match the fire owner: a short order gets a short, crisp answer (1 or 2 sentences); a question, a worry or a chat gets a fuller, conversational answer (3 to 6 sentences) that explains what they see, what they are doing and why. ' +
+    'Match the fire owner: a short order gets a short, crisp answer (1 sentence); a question, a worry or a chat gets a conversational answer (2 to 4 short sentences, at most 60 words) that explains what they see, what they are doing and why. ' +
+    'Speak to your role: captains speak for their station (resources, priorities, decisions); lieutenants speak from the fire line (what their crew sees and does right now). ' +
     'If the fire owner jokes, vents or says something off the wall, react like a real colleague would (a bit of humour, surprise or a straight word), then bring it back to the fire. No emojis, no markdown. ' +
     'Be consistent with the brief: the stage, the forces and where they are, the time elapsed, the burnt area, air support and evacuation. Describe fire behaviour, terrain, water, crew welfare and needs plausibly for this stage. ' +
     'Coordinators may take operational decisions themselves (deploy or recall their own crews, launch the drone, order a local evacuation) and announce them as decisions. Only the fire owner changes the incident stage: never declare the fire held, resolved or closed, and never invent new stations, aircraft or people. ' +
@@ -1008,7 +1051,7 @@
     var js = parseJSON(txt), R = js && Array.isArray(js.replies) ? js.replies : null;
     if (!R || !R.length) { fallback(c); save(); emit(); return; }
     R.slice(0, 2).forEach(function (r, i) {
-      var who = Math.max(0, Math.min(c.people.length - 1, parseInt(r.who, 10) || 0)), t = String(r.text || '').trim().slice(0, 900);
+      var who = Math.max(0, Math.min(c.people.length - 1, parseInt(r.who, 10) || 0)), t = String(r.text || '').trim().slice(0, 720);
       if (!t) return;
       say(c, who, t, t, 400 + i * 2600, Math.max(1, Math.min(15, parseInt(r.minutes, 10) || 3)));
     });
@@ -1166,7 +1209,7 @@
         m.t = q.due; m.vt = vnow(c); delete m.adv;
         if (m.kind === 'stage') {
           if (c.dismissed) continue;
-          c.stage = m.stage; c.hist.push({ s: m.stage, vt: m.vt });
+          c.stage = m.stage; c.hist.push({ s: m.stage, vt: m.vt }); c.sEnt = (c.sEnt || 0) + 1; c.stageAt = q.due; c.msgs.forEach(function (x) { if ((x.rec || x.rekindle) && !x.done) x.done = 'moved'; });   /* the stage moved: an open recommendation is settled */   /* each time a stage begins (a stage can come back after a rekindle) */
           onStage(c, c.stage);
           if (c.stage === 7) c.closed = true;
           var sc = stageCard(c, c.stage); sc.id = newId(); sc.kind = 'card'; sc.t = q.due; sc.vt = m.vt;
@@ -1178,9 +1221,14 @@
             push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#186B2D' }, 4000, 0);
           }
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
+        else if (m.kind === 'capt') { if (!c.closed && !c.dismissed && c.sEnt === m.ent && !c.flags.rekindled) { var rc = c.msgs.find(function (x) { return x.rekindle && !x.done; }); if (rc) rc.done = 'back'; captMove(c, 3, true); } }
         else c.msgs.push(m);
         c.updated = q.due; changed = true;
       }
+      /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
+      if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 3 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
+        if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
+        if (!c.flags[pk] && now - c.stageAt > 20000) { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
       if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;
