@@ -1176,3 +1176,11 @@ window.__wfKpiDrag = function (self, key, grp, onTap, SK) {
 };
 /* a card that was just moved is not also tapped (a unit switch or link inside it) */
 document.addEventListener('click', function (e) { if (Date.now() - (window.__wfKpiDrop || 0) < 450 && e.target && e.target.closest && e.target.closest('[data-wf-kpi]')) { e.preventDefault(); e.stopPropagation(); } }, true);
+
+// (Oct 8, 21:48, app-wide) A map in full screen hides the preferences (menu) button: only the map and its own controls show.
+(function () { if (window.__wfMbFull || typeof document === 'undefined') return;
+  var st = document.createElement('style'); st.textContent = '.wf-mb,button[data-wf-burger]{transition:opacity .3s ease}html.wf-mapfull .wf-mb,html.wf-mapfull button[data-wf-burger]{opacity:0!important;pointer-events:none!important}'; (document.head || document.documentElement).appendChild(st);
+  window.__wfMbFull = setInterval(function () { var on = false, W = innerWidth, H = innerHeight, menuOpen = !!document.querySelector('button[data-wf-x], .wf-mb[data-wf-x]');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-wf-maproot][data-wf-isfull="1"]'), function (m) { if (on || !m.offsetWidth) return; var r = m.getBoundingClientRect(), big = Math.max(r.width, r.height) >= Math.max(W, H) * 0.85 && Math.min(r.width, r.height) >= Math.min(W, H) * 0.9;
+      if (big && r.top < H && r.bottom > 0 && getComputedStyle(m).visibility !== 'hidden') on = true; });
+    document.documentElement.classList.toggle('wf-mapfull', on && !menuOpen); }, 250); })();

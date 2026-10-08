@@ -1419,3 +1419,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Lieutenants with their captains (Oct 8, 21:38):** every station whose captain is in an incident chat has its lieutenant in it too (the chief of its first crew), even before its crew is formally sent; a released crew's lieutenant leaves.
 - **Chat bubbles (Oct 8, 21:45):** the team's bubbles are white (the surface colour), yours have no background (your text on the chat surface, right-aligned).
 - **Incident button in the chat header (Oct 8, 21:45):** before the members pill, a round 44px button in the pill's colour carries the incident's map marker: the candidate's ring (primary at 80%, dark outline) and, once declared, the fire's orange dot (as on the station home list). It opens the incident's page (candidate page, or fire page).
+- **No menu button over a full-screen map (Oct 8, 21:48, app-wide):** while any map is in full screen (it carries data-wf-isfull), the preferences/menu button fades out and takes no taps; it returns when the map leaves full screen.
+- **Switcher count circle (Oct 8, 21:49):** 20% bigger (29px, was 24) and white at 50% (was 20%, +30 points).
