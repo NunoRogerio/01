@@ -172,6 +172,7 @@
   // (Oct 7) the station profiles' own station: its captain leads it in the chats, its team lead leads its first crew
   function staffOf(s) { var id = s && s.ck ? String(s.ck).replace(/^[nw]/, '') : ''; return id && window.__wfStaffOf ? window.__wfStaffOf(id) : null; }
   function vehiclesFor(c, s, i) {
+    if (staffOf(s)) return ['Engine ' + ((String(s.name).match(/(\d{1,3})\b/) || [])[1] || '11')];   /* (Oct 8, 19:10) the team lead's crew rides its own engine only */
     var num = (String(s.name).match(/(\d{1,3})\b/) || [])[1] || String(10 + hash(s.name) % 80);
     var k = 1 + hash(s.name) % 6, lg = langOf(c);
     if (lg === 'pt') return i === 0 ? ['VFCI 0' + k, 'VLCI 01'] : i === 1 ? ['VFCI 0' + k] : ['VTTF 0' + k];
@@ -1377,6 +1378,7 @@
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { if (!c.closed && mineKeys().indexOf(k) >= 0) assign(k);   /* (Oct 6) opening an incident never takes a place: only Enroll does */ if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
     forget: function (k) { var db = load(); if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
+    veh: function (c, i) { return c && c.stations && c.stations[i] ? vehiclesFor(c, c.stations[i], i) : []; },
     send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
       setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
