@@ -107,6 +107,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <div style="display: flex; align-items: baseline; gap: 8px; min-width: 0"><span style="flex: 1 1 auto; min-width: 0; font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sub}}</span></div>
         </div>
         <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
+        <!-- (Oct 8, 21:45) the incident itself: a round button in the pill's colour with the incident's map marker (a candidate's ring, a fire's orange dot once declared); it opens the incident's page -->
+        <a href="{{hdInc.href}}" class="chbtn" data-round="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: {{hdInc.d}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); text-decoration: none"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="{{hdInc.r}}" fill="{{hdInc.fill}}" stroke="{{hdInc.stroke}}" stroke-width="{{hdInc.sw}}"></circle></svg></a>
         <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 18px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
@@ -152,7 +154,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: #FFFFFF; color: #000000; text-align: left">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: transparent; color: #000000; text-align: left">
             <span style="font-size: 18px; line-height: 24px">{{m.text}}</span>
             <span style="align-self: flex-end; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
@@ -887,6 +889,9 @@ class Component extends DCLogic {
       const id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, note = c.kind === 'cand' ? 'Confirmed from ' + c.incId : c.note;
       return { href: 'Dispatch.dc.html', go: () => { const v = { id, place: c.place, note, x: c.x, y: c.y, det: c.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     })();
+    /* (Oct 8, 21:45) the header's incident button: the map's own marker for what the incident is now */
+    const hdInc = (() => { const fire = c.kind === 'fire' || c.stage >= 1; return { d: c.kind === 'dm' ? 'none' : 'flex', href: inc.href, go: inc.go, aria: L(fire ? 'Open the fire' : 'Open the ignition candidate', fire ? 'Abrir o incêndio' : 'Abrir o candidato a ignição'),
+      r: fire ? '7' : '6.5', fill: fire ? '#E8590C' : 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', stroke: fire ? 'none' : '#3A3A3C', sw: fire ? '0' : '2' }; })();
     // The topic's own screen: a fire opens its fire page, a candidate its candidate page
     const topicGo = (T0) => () => { if (T0.kind === 'fire') { const v = { id: T0.id, place: T0.place, note: '', x: T0.x, y: T0.y, det: null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} }
       else { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: T0.id }); try { sessionStorage.setItem('wf-focus', T0.id); } catch (e) {} } };
@@ -917,7 +922,7 @@ class Component extends DCLogic {
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: '0' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', hdD: same ? 'none' : 'flex', who: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name, whoOrg: p.org ? '. ' + p.org : '', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', hdD: same ? 'none' : 'flex', who: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name, whoOrg: p.org ? '. ' + p.org : '', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: 'var(--wf-surface, #FFFFFF)',   /* (Oct 8, 21:45) the team's bubbles are white; yours have no background */ bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
           tip: (e) => { try { e.stopPropagation(); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (on) { this.setState({ avTip: null }); return; }
             let pos = { x: 16, y: 0, below: false }; try { const el = e.currentTarget, root = el.closest('[data-wfroot]') || document.body, R0 = root.getBoundingClientRect(), k = R0.width / ((window.__wfVP || {}).w || 390) || 1, r = el.getBoundingClientRect(), sc = el.closest('.chscroll'), top = sc ? sc.getBoundingClientRect().top : R0.top;
               const x = (r.left - R0.left) / k, yT = (r.top - R0.top) / k, below = (r.top - top) / k < 60; pos = { x: Math.max(16, x), y: below ? (r.bottom - R0.top) / k + 6 : yT - 6, below }; } catch (x) {}
@@ -1001,7 +1006,7 @@ class Component extends DCLogic {
     const endT = c.closed ? (c.closedVt || vn) : vn;
     const sh = !!s.sheet;
     const firePt = { x: c.x, y: c.y, id: c.kind === 'cand' ? 'F-' + c.incId : c.incId, st: c.st, zoom: 2.2 };
-    return {
+    return { hdInc,
       isList: false, isChat: true, isSummary: false, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, items, team, tl, tlTotal, forces, extras, fk, fkPx: window.__wfKpiPx ? window.__wfKpiPx(fk.map((k) => k.v), 3, 326) : '44px',
       meBub: tint(ME_C), meLine: line(ME_C), sim, histTxt: B ? t.histDrill : t.hist, isHist: !!c.closed, isLive: !c.closed, hTabX: s.hTab === 'dec' ? '100%' : '0',
       hTabs: [['all', L('All', 'Tudo')], ['dec', L('Decisions', 'Decisões')]].map(([k, label]) => ({ label, sel: String((s.hTab || 'all') === k), w: (s.hTab || 'all') === k ? 600 : 400, pick: () => { this._stick = true; this._n = -1; this.setState({ hTab: k }); } })),
