@@ -20,7 +20,7 @@
 <script src="prefs.js?v=207"></script>
 <script src="station.js?v=4"></script>
 <script src="menu.js?v=118"></script>
-<script src="i18n.js?v=172"></script>
+<script src="i18n.js?v=173"></script>
 <script src="live.js?v=43"></script>
 <script src="chat.js?v=94"></script>
 
@@ -77,6 +77,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
          only the incidents his crew is dispatched to -->
     <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 16px 0">
+        <!-- (Oct 8, 14:11) the captain and the lieutenant are greeted by rank and name, one of five greetings at random, by the time of day -->
+        <p style="margin: 0 0 16px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty">{{greet}}</p>
         <h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{asg.title}}</h3>
         <span style="display: {{asg.subD}}; margin: -4px 0 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{asg.sub}}</span>
         <!-- (Oct 8) To do | Resolved: the chats panel's value switcher; what is still to do, and what is done or closed -->
@@ -351,6 +353,20 @@ class Component extends DCLogic {
     return s;
   }
   // Key figures can be trimmed: the + tile opens the list with toggles; the extra cards start hidden (kept on this phone)
+  // (Oct 8, 14:11) Hello [rank] [name]: five greetings, one picked at random when the screen opens; the time of day at the station
+  wfGreet(S, lead, L) {
+    const staff = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null, full = staff ? (lead ? staff.lead : staff.captain) : '', last = full ? full.split(' ').slice(-1)[0] : '';
+    const rk = lead ? L('Lieutenant', 'Chefe de equipa') : L('Captain', 'Chefe'), who = (rk + (last ? ' ' + last : '')).trim();
+    let h = new Date().getHours(); try { h = +new Intl.DateTimeFormat('en-US', { timeZone: S.lat > 30 && S.lat < 43 && S.lon > -32 && S.lon < -6 ? 'Europe/Lisbon' : 'America/Los_Angeles', hour: 'numeric', hourCycle: 'h23' }).format(new Date()); } catch (e) {}
+    const tod = h >= 5 && h < 12 ? L('Good morning', 'Bom dia') : h >= 12 && h < 18 ? L('Good afternoon', 'Boa tarde') : h >= 18 && h < 22 ? L('Good evening', 'Boa noite') : null;   /* at night "good night" reads as a goodbye: a late-shift line instead */
+    const G = [
+      [L('Hello ' + who + ', here’s what you need to know today.', 'Olá ' + who + ', eis o que precisa de saber hoje.')],
+      [L('Howdy ' + who + ', here’s your day at a glance.', 'Viva ' + who + ', eis o seu dia num relance.')],
+      [tod ? tod + ', ' + who + L('. Here’s what you need to know.', '. Eis o que precisa de saber.') : L('Working late, ' + who + '? Here’s what you need to know.', 'A trabalhar até tarde, ' + who + '? Eis o que precisa de saber.')],
+      [L('How are things today, ' + who + '? Here’s what matters.', 'Como vão as coisas hoje, ' + who + '? Eis o que importa.')],
+      [L('Hope all is well, ' + who + '. Here’s what you need to know today.', 'Espero que esteja tudo bem, ' + who + '. Eis o que precisa de saber hoje.')]];
+    if (this._greetI == null) this._greetI = Math.floor(Math.random() * G.length);
+    return G[this._greetI][0]; }
   wfKpiDrag(key, grp, onTap) { return window.__wfKpiDrag(this, key, grp, onTap, 'wf-order-' + grp); }   /* (Oct 8) the shared mini-card reorder (fit.js) */
   wfHidden() { const g = 'stk'; let v = null, sn = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + g) || 'null'); sn = JSON.parse(localStorage.getItem('wf-seen-' + g) || 'null'); } catch (e) {} const opt = (this._kAll || []).filter((m) => m.opt).map((m) => m.key); if (!Array.isArray(v)) return opt; return v.concat(opt.filter((k) => v.indexOf(k) < 0 && !(Array.isArray(sn) && sn.indexOf(k) >= 0))); }
   wfPicker() {
@@ -662,7 +678,7 @@ class Component extends DCLogic {
       crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, code: ini(n), photo: photo(n) })) : [], crewPD: lead && crews[0] ? 'flex' : 'none',
       none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
-      help, mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
+      help, greet: home ? this.wfGreet(S, lead, L) : '', mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
       stCallAria: L('Call ', 'Ligar a ') + L(cmdRoles[0][0], cmdRoles[0][1]).toLowerCase() + ' ' + cmdP[0].name,
       stCall: (e) => { const F = window.__wfCamFeed; if (!F) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const c0 = cmdP[0];   /* the station's fire coordinator alone */
         F.open({ anchor: e && e.currentTarget, title: 'Call', label: L('Call', 'Chamada'), who: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + c0.name,
