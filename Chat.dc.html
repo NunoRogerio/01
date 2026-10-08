@@ -20,7 +20,7 @@
 <script src="station.js?v=8"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=100"></script>
+<script src="chat.js?v=101"></script>
 <script src="tour.js?v=116"></script>
 <script src="feedcam.js?v=26"></script>
 <script src="trophy.js?v=35"></script>
@@ -136,20 +136,23 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <div class="chmsg" style="align-self: center; max-width: 300px; font-size: 16px; line-height: 20px; color: #545458; text-align: center">{{m.text}} · {{m.time}}</div>
         </sc-if>
         <sc-if value="{{m.isThem}}" hint-placeholder-val="{{ false }}">
-          <div class="chfade" style="display: flex; gap: 8px; align-items: flex-end; margin-top: {{m.gap}}">
-            <!-- Tap the photo: a tooltip with the name and role (as on the icon cards); tap it again or anywhere else to hide it -->
-            <span data-avtip="1" role="button" tabindex="0" onClick="{{m.tip}}" aria-label="{{m.tipAria}}" style="position: relative; flex-shrink: 0; width: 32px; height: 32px; visibility: {{m.avVis}}; cursor: pointer">
-              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
-            </span>
-            <div class="chbubL" style="display: flex; flex-direction: column; gap: 4px; max-width: 272px; padding: 16px; border-radius: 18px 18px 18px 6px; background: {{m.bub}}">
-              <span style="display: {{m.nameD}}; font-size: 16px; line-height: 20px; color: #545458">{{m.name}}</span>
+          <!-- (Oct 8, 21:00) the sender above the bubble: photo, name and station on one line, so the bubble takes the full width -->
+          <div class="chfade" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: {{m.gap}}">
+            <div style="display: {{m.hdD}}; align-items: center; gap: 8px; max-width: 100%; min-width: 0">
+              <!-- Tap the photo: a tooltip with the name and role (as on the icon cards); tap it again or anywhere else to hide it -->
+              <span data-avtip="1" role="button" tabindex="0" onClick="{{m.tip}}" aria-label="{{m.tipAria}}" style="position: relative; flex-shrink: 0; width: 32px; height: 32px; cursor: pointer">
+                <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; overflow: hidden; box-shadow: {{m.ring}}">{{m.code}}<span style="position: absolute; inset: 0; background-image: {{m.photo}}; background-size: cover; background-position: center"></span></span>
+              </span>
+              <span style="min-width: 0; font-size: 16px; line-height: 20px; color: #545458; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><b style="font-weight: 600; color: #1C1C1E">{{m.who}}</b>{{m.whoOrg}}</span>
+            </div>
+            <div class="chbubL" style="display: flex; flex-direction: column; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; padding: 16px; border-radius: 6px 18px 18px 18px; background: {{m.bub}}">
               <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
               <span style="align-self: flex-end; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
             </div>
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: 272px; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: #FFFFFF; color: #000000; text-align: left">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: #FFFFFF; color: #000000; text-align: left">
             <span style="font-size: 17px; line-height: 22px">{{m.text}}</span>
             <span style="align-self: flex-end; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
           </div>
@@ -914,7 +917,7 @@ class Component extends DCLogic {
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: prevFrom === 'me' ? '0' : '4px' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
-        items.push({ isThem: true, text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
+        items.push({ isThem: true, text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', hdD: same ? 'none' : 'flex', who: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name, whoOrg: p.org ? '. ' + p.org : '', code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: tint(colOf(m.from)), bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
           tip: (e) => { try { e.stopPropagation(); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (on) { this.setState({ avTip: null }); return; }
             let pos = { x: 16, y: 0, below: false }; try { const el = e.currentTarget, root = el.closest('[data-wfroot]') || document.body, R0 = root.getBoundingClientRect(), k = R0.width / ((window.__wfVP || {}).w || 390) || 1, r = el.getBoundingClientRect(), sc = el.closest('.chscroll'), top = sc ? sc.getBoundingClientRect().top : R0.top;
               const x = (r.left - R0.left) / k, yT = (r.top - R0.top) / k, below = (r.top - top) / k < 60; pos = { x: Math.max(16, x), y: below ? (r.bottom - R0.top) / k + 6 : yT - 6, below }; } catch (x) {}
@@ -966,8 +969,8 @@ class Component extends DCLogic {
       }
     });
     // The team: you, the fire owner, then the crew coordinator of each station
-    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : LEAD ? L('Crew chief · you', 'Chefe de equipa · você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
-      .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left).map(([p, i]) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
+    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : LEAD ? (/^[A-Z]{2}$/.test(c.st || '') && c.st !== 'PT' ? L('Lieutenant · you', 'Chefe de equipa · você') : L('Crew chief · you', 'Chefe de equipa · você')) : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
+      .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left && !p.self && p.name !== me.name).map(([p, i]) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
     // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)
