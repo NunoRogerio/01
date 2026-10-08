@@ -15,7 +15,8 @@
     '.wf-cf .lb i{width:6px;height:6px;border-radius:50%;background:#FF453A;flex-shrink:0}' +
     '.wf-cf .lb small{display:block;font-size:13px;font-weight:400;opacity:.9}' +
     '.wf-cf button{position:absolute;display:flex;align-items:center;justify-content:center;width:44px;height:44px;box-sizing:border-box;padding:0;border-radius:50%;background:rgba(0,0,0,.5);border:0;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#FFFFFF;cursor:pointer}' +
-    '.wf-cf .x{right:16px;top:16px}.wf-cf .mw{position:absolute;inset:0;border-radius:16px;overflow:hidden;isolation:isolate;transform:translateZ(0);-webkit-mask-image:-webkit-radial-gradient(white,black)}.wf-cf .hu{background:#D70015;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf .mx{right:16px;bottom:16px}' +
+    '.wf-cf .x{right:16px;top:16px}'+
+    /* (Oct 8, 19:10) the call's voice: the mic (optional) bottom-left, the caption of who is speaking along the bottom */ '.wf-cf .mic{left:16px;bottom:16px}.wf-cf .mic.on{background:var(--wf-y,#E5FF00);color:#1C1C1E;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf .vcap{position:absolute;left:68px;right:68px;bottom:16px;max-height:44px;overflow:hidden;font-size:13px;line-height:16px;color:#FFFFFF;text-shadow:0 0 2px rgba(0,0,0,.9),0 0 6px rgba(0,0,0,.8);opacity:0;transition:opacity .3s ease;pointer-events:none}.wf-cf .vcap.on{opacity:1}.wf-cf .mw{position:absolute;inset:0;border-radius:16px;overflow:hidden;isolation:isolate;transform:translateZ(0);-webkit-mask-image:-webkit-radial-gradient(white,black)}.wf-cf .hu{background:#D70015;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf .mx{right:16px;bottom:16px}' +
     '.wf-cf .x svg{transition:transform .6s cubic-bezier(.25,.1,.25,1)}' +
     '.wf-cf .cam{position:absolute;left:16px;bottom:16px;width:200px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}.wf-cf.max .cam{bottom:calc(24px + env(safe-area-inset-bottom))}.wf-cf .cam button{position:relative;width:auto;height:auto;padding:0 4px;border-radius:999px;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}.wf-cf.mini .lb,.wf-cf.mini .cam,.wf-cf.mini .cross{display:none}.wf-cf.nomx .mx{display:none}.wf-cf.heat video{filter:url(#wf-thermal) contrast(1.15)}' +
     '.wf-cf.max .x{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .lb{top:calc(16px + env(safe-area-inset-top))}.wf-cf.max .mx{bottom:calc(24px + env(safe-area-inset-bottom))}';
@@ -81,7 +82,47 @@
     c.push({ x: x, y: innerHeight - s.h - 96 }, { x: x, y: 64 });
     for (var i = 0; i < c.length; i++) { var q = clampB(null, c[i].x, c[i].y, 1), ok = true; if (Math.abs(q.y - c[i].y) > 1 && i) ok = false; feeds.forEach(function (g) { if (hits(q.x, q.y, s.w, s.h, g, GAP)) ok = false; }); if (ok) return q; }
     return clampB(null, x, y, 1); }
-  function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return; (f.timers || []).forEach(clearTimeout);
+
+  // (Oct 8, 19:10) Voice in video calls: the team speaks its lines aloud (the phone's own voices), each person with a voice of their
+  // own gender and their own pitch, captioned on the card; the user can answer by tapping the chat's suggestions, or by voice with
+  // the mic button (where the browser has speech recognition). Everything said is written in the incident chat too.
+  var FV = /samantha|karen|moira|tessa|victoria|allison|ava|susan|zoe|serena|fiona|nicky|kate|joana|catarina|luciana|fernanda|female|mulher|monica|paulina|amelie|anna|helena|sara|ines|google uk english female|google us english/i,
+      MV = /alex|daniel|fred|rishi|aaron|arthur|tom|oliver|gordon|lee|male|duarte|felipe|diego|jorge|thomas|reed|eddy|grandpa|ralph|google uk english male/i;
+  function vList(PT) { var V = (window.speechSynthesis && speechSynthesis.getVoices()) || [], k = PT ? /^pt[-_]pt/i : /^en[-_]/i;
+    var L = V.filter(function (v) { return k.test(v.lang || ''); }); if (!L.length && PT) L = V.filter(function (v) { return /^pt/i.test(v.lang || ''); }); return L; }
+  function vFor(name, idx, PT) { var g = (window.__wfGender && window.__wfGender(name)) || (/a$/.test(String(name).split(' ')[0]) ? 'f' : 'm'), L = vList(PT);
+    var mine = L.filter(function (v) { return g === 'f' ? FV.test(v.name) && !MV.test(v.name) : MV.test(v.name) && !FV.test(v.name); });
+    var v = mine.length ? mine[idx % mine.length] : (L.length ? L[0] : null);
+    /* a voice of the wrong gender, or the only voice there is, is pitched towards theirs; each person a little different */
+    var p = (g === 'f' ? 1.12 : 0.86) + ((idx % 3) - 1) * 0.06; if (mine.length) p = 1 + ((idx % 3) - 1) * 0.06;
+    return { v: v, pitch: p, rate: 0.98 + (idx % 2) * 0.04 }; }
+  function vStart(f, key, el) { var C = window.__wfChat; if (!C || !key || !window.speechSynthesis) return; var PT = window.__wfLang === 'pt', seen = {};
+    var c0 = C.get(key); (c0 && c0.msgs || []).forEach(function (m) { seen[m.id] = 1; });
+    var cap = document.createElement('div'); cap.className = 'vcap'; cap.setAttribute('aria-live', 'polite'); el.appendChild(cap);
+    var say = function (p, i, text) { var u = new SpeechSynthesisUtterance(text), V = vFor(p.name || '', i, PT); u.lang = PT ? 'pt-PT' : 'en-US'; if (V.v) u.voice = V.v; u.pitch = V.pitch; u.rate = V.rate;
+      u.onstart = function () { cap.textContent = (p.name || '').split(' ')[0] + ': ' + text; cap.classList.add('on');
+        var gt = el.querySelectorAll('.gt'); Array.prototype.forEach.call(gt, function (t) { t.classList.toggle('sp', (t.querySelector('b') || {}).textContent === (p.name || '').split(' ')[0]); }); };
+      u.onend = function () { cap.classList.remove('on'); }; speechSynthesis.speak(u); };
+    f.vOn = function () { var c = C.get(key); if (!c) return; (c.msgs || []).forEach(function (m) { if (seen[m.id]) return; seen[m.id] = 1; if (m.kind !== 'msg' || m.from === 'me') return;
+      var i = typeof m.from === 'number' ? m.from : 0, p = (c.people || [])[i] || { name: '' }; say(p, i, PT ? m.pt : m.en); }); };
+    addEventListener('wf-chat', f.vOn); f.vT = setInterval(f.vOn, 1200);
+    /* calling the team is asking where things stand: they answer aloud */
+    setTimeout(function () { try { C.send(key, PT ? 'Ponto de situação?' : 'Status update?'); } catch (x) {} }, 900);
+    /* the mic: optional, only where the browser can listen */
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
+    var mic = document.createElement('button'); mic.type = 'button'; mic.className = 'mic mbtn'; mic.setAttribute('aria-label', PT ? 'Falar' : 'Speak'); mic.setAttribute('aria-pressed', 'false');
+    mic.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"></path></svg>';
+    el.appendChild(mic); var rec = null;
+    mic.addEventListener('click', function (e) { e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
+      if (rec) { try { rec.stop(); } catch (x) {} return; }
+      try { speechSynthesis.cancel(); } catch (x) {} rec = new SR(); rec.lang = PT ? 'pt-PT' : 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
+      mic.setAttribute('aria-pressed', 'true'); mic.classList.add('on');
+      rec.onresult = function (ev) { var t = ev.results && ev.results[0] && ev.results[0][0] ? ev.results[0][0].transcript : ''; if (t && t.trim()) { try { C.send(key, t.trim().charAt(0).toUpperCase() + t.trim().slice(1)); } catch (x) {} } };
+      rec.onend = rec.onerror = function () { rec = null; mic.setAttribute('aria-pressed', 'false'); mic.classList.remove('on'); };
+      try { rec.start(); } catch (x) { rec = null; mic.classList.remove('on'); } });
+    f.vRec = function () { if (rec) try { rec.abort(); } catch (x) {} }; }
+  function vStop(f) { if (f.vOn) removeEventListener('wf-chat', f.vOn); clearInterval(f.vT); if (f.vRec) f.vRec(); try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (x) {} }
+  function close(f) { if (!f) { feeds.slice().forEach(close); return; } if (feeds.indexOf(f) < 0) return; (f.timers || []).forEach(clearTimeout); vStop(f);
     var e = f.el, a = f.st.anchor; if (!e.querySelector('.hu')) e.querySelector('.x svg').style.transform = 'rotate(90deg)';
     if (f.callBtn) { try { f.callBtn.removeAttribute('data-wf-oncall'); } catch (x) {} }   // the call button is green again the moment the call ends
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
@@ -139,11 +180,13 @@
       (CALL || IMG ? '' : '<div role="group" aria-label="Camera" class="wf-seg cam"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 2);transform:translateX(100%)"><span class="segblob"></span></span><button type="button" class="segopt" data-cam="t" aria-selected="false" style="font-size:17px">Thermal</button><button type="button" class="segopt" data-cam="v" aria-selected="true" style="font-size:17px">Visual</button></div>') +
       '<button type="button" class="mx mbtn" aria-label="Maximize camera feed">' + MAXI + '</button>';
     document.body.appendChild(el);
+    /* iPhone speaks only after a tap: an empty line now, inside the tap that opened the call */
+    if (CALL && window.speechSynthesis) { try { var u0 = new SpeechSynthesisUtterance(' '); u0.volume = 0; speechSynthesis.speak(u0); speechSynthesis.getVoices(); } catch (x) {} }
     if (CALL) { var ob = a || document.querySelector('[data-call]'); if (ob) { f.callBtn = ob; ob.setAttribute('data-wf-oncall', '1'); } }   // while the call card is up the call button is mid grey
     // a video call: rings (calling), then connects, then the other person's picture fades in
     if (CALL) { var ct = el.querySelector('.ct'), cl = el.querySelector('.cl'), lt = el.querySelector('.lt'), im = el.querySelector('.pf');
       var tm = [setTimeout(function () { if (ct) ct.textContent = CALL.connecting || 'Connecting'; if (cl) cl.classList.add('cn'); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} }, 2600),
-        setTimeout(function () { if (CALL.grid) { el.classList.add('on'); var gt = el.querySelectorAll('.gt'), k = 0; if (gt.length) { gt[0].classList.add('sp'); f.timers.push(setInterval(function () { if (gt[k]) gt[k].classList.remove('sp'); k = (k + 1 + Math.floor(Math.random() * Math.max(1, gt.length - 1))) % gt.length; gt[k].classList.add('sp'); }, 1800)); } } else if (im && im.complete && im.naturalWidth) el.classList.add('on'); else if (im) im.addEventListener('load', function () { el.classList.add('on'); }); if (lt) lt.textContent = CALL.live || 'Live. Video call'; try { if (navigator.vibrate) navigator.vibrate([8, 40, 8]); } catch (x) {} }, 4300)];
+        setTimeout(function () { try { vStart(f, CALL.id, el); } catch (x) {} if (CALL.grid) { el.classList.add('on'); var gt = el.querySelectorAll('.gt'), k = 0; if (gt.length) { gt[0].classList.add('sp'); f.timers.push(setInterval(function () { if (gt[k]) gt[k].classList.remove('sp'); k = (k + 1 + Math.floor(Math.random() * Math.max(1, gt.length - 1))) % gt.length; gt[k].classList.add('sp'); }, 1800)); } } else if (im && im.complete && im.naturalWidth) el.classList.add('on'); else if (im) im.addEventListener('load', function () { el.classList.add('on'); }); if (lt) lt.textContent = CALL.live || 'Live. Video call'; try { if (navigator.vibrate) navigator.vibrate([8, 40, 8]); } catch (x) {} }, 4300)];
       if (im) im.addEventListener('error', function () { if (cl) { cl.style.opacity = '1'; } if (ct) ct.textContent = CALL.noPhoto || ''; });
       f.timers = tm; }
     // starts as a small feed on its button, then glides, growing, to its place: above the button, centred
