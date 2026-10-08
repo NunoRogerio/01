@@ -18,7 +18,7 @@
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=208"></script>
-<script src="station.js?v=6"></script>
+<script src="station.js?v=7"></script>
 <script src="menu.js?v=20"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
@@ -244,7 +244,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="display: flex; flex-direction: column; padding: 0 16px">
           <span style="margin: 0 0 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.area}}</span>
           <div style="position: relative; flex-shrink: 0; height: {{homeMapH}}px; border-radius: 16px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
-            <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" mode="risk" area="true" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" w="{{homeMapW}}" h="{{homeMapH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" zoom="{{zoom}}" focus-x="{{homeFx}}" focus-y="{{homeFy}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" hint-size="358px,280px"></dc-import>
+            <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" locked="true" mode="risk" area="true" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" w="{{homeMapW}}" h="{{homeMapH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" zoom="{{zoom}}" focus-x="{{homeFx}}" focus-y="{{homeFy}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" hint-size="358px,280px"></dc-import>
           </div>
         </div>
       </sc-if>

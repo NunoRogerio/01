@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=196"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=208"></script>
-<script src="station.js?v=6"></script>
+<script src="station.js?v=7"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
 <script src="chat.js?v=95"></script>
@@ -677,6 +677,9 @@ class Component extends DCLogic {
     const winAttrs = (Z) => { const F = (c.forces || []).filter((f) => f.st !== 'standby'), sc = C.sizeClass(Z.ha, c.st);
       return { crests: JSON.stringify(F.filter((f, i) => F.findIndex((g) => g.station === f.station) === i).map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))),   /* one crest per station */ air: Z.air || c.air || (c.flags && c.flags.air) ? '1' : '0', n: String(Z.stations), fire: c.place, meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
     const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
+    /* (Oct 8, 18:50) the lieutenant (chefe de equipa) is an active member of his incident's chat: he is on the fire, so he writes and
+       reports from the field; the captains decide (no request buttons, no status chips for him) */
+    const LEAD = !!(window.__wfMine && (window.__wfMine() || {}).level === 'lead');
     const photo = (p) => (p && p.photo ? 'url("' + p.photo + '")' : 'none');
     const openPerson = (name) => () => this.go('person', { person: name });
 
@@ -699,7 +702,7 @@ class Component extends DCLogic {
         up: () => { const h = self._ppd; self._ppd = null; if (!h) return; const d = Math.abs(h.dy); if (d < 6 || d > 60) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} self.popFn()(); } else self.setState({ ppDy: 0 }); },
         cancel: () => { self._ppd = null; self.setState({ ppDy: 0 }); } };
       return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), sk, ppH, ppY: (s.ppDy || 0) + 'px', ppT: self._ppd ? '0s' : '.3s',
-        pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? L('Fire owner', 'Responsável pelo incêndio') + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
+        pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? (LEAD ? L('Crew chief', 'Chefe de equipa') : L('Fire owner', 'Responsável pelo incêndio')) + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
           // The station this person serves at: its crest and name, and a link to the station page
           ...(() => { const S = P.st || null; if (!S || !S.name) return { stD: 'none', stName: '', stSub: '', stCrest: '', stCrestD: 'none', stLinkD: 'none', goStation: null };
             const ch = S.chat ? C.get(S.chat) : null, cr = ch && C.crest ? C.crest(ch, S.short).url : '';
@@ -900,7 +903,7 @@ class Component extends DCLogic {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
         const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'] };
-        const acts = (m.actions || []).filter((a) => !m.done || m.done === a.key).map((a) => {
+        const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
             ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
@@ -936,13 +939,13 @@ class Component extends DCLogic {
       }
     });
     // The team: you, the fire owner, then the crew coordinator of each station
-    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
+    const team = [{ name: me.name, role: c.kind === 'dm' ? L('You', 'Você') : LEAD ? L('Crew chief · you', 'Chefe de equipa · você') : L('Fire owner · you', 'Responsável · você'), code: me.code, photo: photo(me), bg: '#E5E5EA', ring: ring(ME_C), roleC: '#186B2D' }]
       .concat(c.people.map((p, i) => [p, i]).filter(([p]) => !p.left).map(([p, i]) => ({ name: p.name, role: p.roleEn ? L(p.roleEn, p.rolePt) : (() => { const R = C.leadRole ? C.leadRole(c) : { en: 'Crew chief', pt: 'Chefe de equipa' }; return L(R.en, R.pt) + '. ' + p.org; })(), code: p.code, photo: pic(p.name), bg: '#FFF6D6', ring: ring(colOf(i)), roleC: '#545458' })))   // (Oct 3, 22:03) the leads of the stations in the chat, by their real title
       .map((p, i) => ({ ...p, aria: p.name + ', ' + p.role, pick: openPerson(p.name), sep: i ? '0' : '0', pickT: () => { this.setState({ team: false, tmDy: 0 }); this.go('person', { person: p.name, fromTeam: true }); } }));
     const ty = C.typing(c);
     // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)
     const nxS = C.STAGES[Math.min(c.stage + 1, C.STAGES.length - 1)], nxT = nxS ? tone(nxS) : null;
-    const acts0 = C.actions(c).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-y, #E5FF00)', chFg: '#1C1C1E' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
+    const acts0 = (LEAD ? [] : C.actions(c)).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-y, #E5FF00)', chFg: '#1C1C1E' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
     go: () => run(a.key), p1: ['next', 'closeCheck', 'confirm', 'dismiss', 'dispatch'].indexOf(a.key) >= 0 }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
     // Opened from the fire screen's People at risk card (Not evacuated): Evacuation plan leads the suggestions until it is used
     (() => { let sg = null; try { sg = JSON.parse(sessionStorage.getItem('wf-chat-sugg') || 'null'); } catch (e) {}
@@ -951,7 +954,10 @@ class Component extends DCLogic {
     // (Oct 7) the chips that change the fire's status (declare, dismiss, dispatch, next stage, close) lead the row
     (() => { const p = acts0.filter((a) => a.p1), r = acts0.filter((a) => !a.p1); acts0.length = 0; acts0.push(...p, ...r); })();
     // Quick replies fill the suggestions up to five: questions the team answers (status, safety, water, homes, wind…), by stage
-    const QR = c.police ? [['Detected by satellite', 'Detetado por satélite'], ['No one seen nearby', 'Ninguém visto por perto'], ['A vehicle was seen nearby', 'Foi vista uma viatura por perto'], ['No lightning last night', 'Sem trovoada esta noite'], ['The origin is preserved', 'O ponto de início está preservado'], ['Could it be arson?', 'Pode ser fogo posto?'], ['Thank you', 'Obrigado']] : c.kind === 'dm' && c.help ? (c.step === 1 ? [['Yes, we can send them', 'Sim, podemos enviá-los'], ['Not right now', 'Agora não']] : [['Thank you. Stay safe', 'Obrigado. Cuidem-se']]) /* (Oct 8) offering help to the station on a fire outside our area */ : c.kind === 'dm' ? (c.step === 0 ? [['Can you send a crew?', 'Podem enviar uma equipa?'], ['Who is free now?', 'Quem está livre agora?']] : c.step === 1 ? [['Main road, north side', 'Estrada principal, lado norte'], ['I will send the location', 'Envio a localização']] : [['How long until you arrive?', 'Quanto tempo até chegarem?'], ['Is the water enough?', 'A água chega?'], ['Thank you', 'Obrigado']])
+    const QR = LEAD && !c.police ? (c.stage <= 2 ? [['On our way', 'A caminho'], ['Smoke in sight', 'Fumo à vista'], ['Need directions', 'Preciso de indicações']]
+        : c.stage <= 5 ? [['All crew safe', 'Equipa toda em segurança'], ['Spot fire ahead', 'Projeção à frente'], ['Need more water', 'Precisamos de mais água'], ['Homes at risk here', 'Casas em risco aqui'], ['Wind picking up', 'O vento está a aumentar']]
+        : [['All quiet here', 'Tudo calmo aqui'], ['Mopping up', 'Em rescaldo']])
+      : c.police ? [['Detected by satellite', 'Detetado por satélite'], ['No one seen nearby', 'Ninguém visto por perto'], ['A vehicle was seen nearby', 'Foi vista uma viatura por perto'], ['No lightning last night', 'Sem trovoada esta noite'], ['The origin is preserved', 'O ponto de início está preservado'], ['Could it be arson?', 'Pode ser fogo posto?'], ['Thank you', 'Obrigado']] : c.kind === 'dm' && c.help ? (c.step === 1 ? [['Yes, we can send them', 'Sim, podemos enviá-los'], ['Not right now', 'Agora não']] : [['Thank you. Stay safe', 'Obrigado. Cuidem-se']]) /* (Oct 8) offering help to the station on a fire outside our area */ : c.kind === 'dm' ? (c.step === 0 ? [['Can you send a crew?', 'Podem enviar uma equipa?'], ['Who is free now?', 'Quem está livre agora?']] : c.step === 1 ? [['Main road, north side', 'Estrada principal, lado norte'], ['I will send the location', 'Envio a localização']] : [['How long until you arrive?', 'Quanto tempo até chegarem?'], ['Is the water enough?', 'A água chega?'], ['Thank you', 'Obrigado']])
       : c.stage <= 1 ? [['Can you see smoke?', 'Veem fumo?'], ['How long to get there?', 'Quanto tempo até lá?'], ['Crews ready?', 'Equipas prontas?']]
       : c.stage === 2 ? [['How long to arrive?', 'Quanto falta para chegar?'], ['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?']]
       : c.stage <= 5 ? [['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?'], ['Enough water?', 'A água chega?'], ['Homes at risk?', 'Há casas em risco?'], ['How is the wind?', 'Como está o vento?']]

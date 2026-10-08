@@ -135,7 +135,8 @@
   // (Oct 7, 19:40) Incident chats are between station captains, and only when two or more stations are on the fire. Team leads
   // are not in them (they get the order and confirm it). A fire worked by one station has no chat. (Supersedes "never fewer
   // than two stations": the second station is not forced.) Before any order (a candidate) the nearest stations' leads talk.
-  window.__wfChatAllowed = function (c) { var k = rid(); if (signed() && k === 'ff') return false; if (!c) return true;
+  // (Oct 8, 18:50) supersedes "team leads are not in them": the team lead on the fire is an active member (writes, reports; does not decide)
+  window.__wfChatAllowed = function (c) { if (!c) return true;
     var S = {}; (c.forces || []).forEach(function (f) { if (f.st !== 'standby' && f.st !== 'released') S[f.ck || f.station] = 1; });
     var n = Object.keys(S).length; if ((c.flags && c.flags.dispatched) || n) return n >= 2; return true; };
   window.addEventListener('wf-starea', function () { MEMO = {}; });
