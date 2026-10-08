@@ -521,11 +521,11 @@
       say(c, ltOf(c, 1), 'Perimeter held. Mop-up along the edge.', 'Perímetro dominado. Rescaldo no perímetro.', d + 3000, 5);
       /* a rekindle, now and then: the team reports it and invites a step back to Crews on scene */
       if (!c.flags.rekindleAsked && hash(c.key + 'rk') % 3 === 0) { c.flags.rekindleAsked = true;
-        say(c, ltOf(c, 0), 'Rekindle on the north flank. Flames back in the brush.', 'Reacendimento no flanco norte. Chamas de volta no mato.', d + 9000, 4);
-        if (P[0]) say(c, 0, 'I recommend we step back to Crews on scene.', 'Recomendo voltar a Equipas no local.', d + 11000, 1);
+        say(c, ltOf(c, 0), 'Rekindle on the north flank. Flames back in the brush.', 'Reacendimento no flanco norte. Chamas de volta no mato.', d + 6000, 4);
+        if (P[0]) say(c, 0, 'I recommend we step back to Crews on scene.', 'Recomendo voltar a Equipas no local.', d + 8000, 1);
         card(c, { rekindle: true, tag: { en: 'Rekindle', pt: 'Reacendimento' }, tagC: '#B3261E', title: { en: 'Step back to Crews on scene', pt: 'Voltar a Equipas no local' }, body: { en: 'Flames back on the north flank. The team recommends it.', pt: 'Chamas de volta no flanco norte. A equipa recomenda.' },
-          actions: [{ key: 'stayStage', en: 'Not now', pt: 'Agora não' }, { key: 'back', en: 'Step back', pt: 'Voltar atrás', primary: true }] }, d + 12500, 0);
-        if (isLt()) push(c, { kind: 'capt', a: 'back', ent: c.sEnt }, d + 17000, 0);   /* the lieutenant waits: the captain decides */
+          actions: [{ key: 'stayStage', en: 'Not now', pt: 'Agora não' }, { key: 'back', en: 'Step back', pt: 'Voltar atrás', primary: true }] }, d + 9500, 0);
+        if (isLt()) push(c, { kind: 'capt', a: 'back', ent: c.sEnt }, d + 13000, 0);   /* the lieutenant waits: the captain decides */
         return; }
     } else if (s === 6) {
       say(c, ltOf(c, 0), 'On watch. No hotspots on the thermal camera.', 'Em vigilância. Sem pontos quentes na câmara térmica.', d + 3000, 8);
@@ -1228,7 +1228,7 @@
       /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 3 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
-        if (!c.flags[pk] && now - c.stageAt > 20000) { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
+        if (!c.flags[pk] && now - c.stageAt > 15000)   /* (Oct 8, 21:37) 15 s at most per stage */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
       if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;

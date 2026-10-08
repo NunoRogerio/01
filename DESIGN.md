@@ -1413,3 +1413,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **One status everywhere (Oct 8, 21:21):** on the station home, an incident that has a chat shows the chat's own stage tag (a declared candidate is a fire, with the fire marker) and opens that chat; once the chat is closed or the candidate dismissed it leaves To do and the map, and the captain's Resolved lists it.
 - **Turned screens (Oct 8, 21:32, app-wide):** a screen kept upright in landscape turns against the phone, so its header always sits on the side of the camera and the clock (phone turned left: the page turns -90 deg; turned right: 90 deg). Sizes matched in code (the risk triangle beside the stage band, wrapped labels) read the layout size, not the turned on-screen box, so nothing grows when the phone turns.
 - **Call voices (Oct 8, 21:33):** the phone's most natural voices come first (Premium, Enhanced, Siri, in the user's variant en-US / pt-PT); novelty voices are never used.
+
+- **Pace 15 s (Oct 8, 21:37; was 20 s):** no stage lasts more than 15 s; the recommendation (or, for a lieutenant, the captain's move) comes at 15 s; a rekindle is reported at 6 s, its card at 9.5 s, the captain steps back at 13 s.
+- **Risk warning OK (Oct 8, 21:36):** the red is set on the button itself, so no button style can turn it grey again.
