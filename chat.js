@@ -133,6 +133,12 @@
     c.forces.push({ si: i0, ck: f0.ck, station: f0.station, full: f0.full, km: f0.km, coord: f0.coord, crew: (SF.crew2 || [SF.lead2]).slice(), veh: ['Brush ' + ((String(s0.name).match(/(\d{1,3})\b/) || [])[1] || '11')], st: on, second: true });
     c.flags.dispatched = true; return true; }
   function ensureLts(c) { if (!c || c.kind === 'dm' || !c.people) return false; var ch = soloSim(c), M = window.__wfMine ? window.__wfMine() : null;
+    /* (Oct 8, 22:43) chats saved before the reservation: Station 11's people (its captain, lieutenants and crews) are never someone else in another station's chat */
+    if (window.__wfReservedNames && !c.fixedRes) { var RS0 = window.__wfReservedNames(), own = {}; (c.stations || []).forEach(function (q) { if (staffOf(q)) own[q.short] = 1; });
+      (c.people || []).forEach(function (p, i) { if (!RS0[p.name] || own[p.org]) return; var old = p.name, nm = pickNames(c, 1, 'res' + i)[0]; if (!nm || RS0[nm]) return; p.name = nm; p.code = initials(nm);
+        (c.forces || []).forEach(function (f) { if (f.coord === old) f.coord = nm; if (f.crew) f.crew = f.crew.map(function (x) { return x === old ? nm : x; }); }); ch = true; });
+      (c.forces || []).forEach(function (f, i) { if (own[f.station] || !f.crew) return; f.crew = f.crew.map(function (x, j) { if (!RS0[x]) return x; ch = true; return pickNames(c, 1, 'resc' + i + '-' + j)[0] || x; }); });
+      c.fixedRes = true; ch = true; }
     /* chats saved before: their stations by the short names people use */
     (c.people || []).forEach(function (p) { var o = shortStation(p.org); if (p.org && o !== p.org) { p.org = o; ch = true; } }); (c.stations || []).forEach(function (q) { var o = shortStation(q.short || q.name); if (q.short !== o) { q.short = o; ch = true; } }); (c.forces || []).forEach(function (f) { var o = shortStation(f.station); if (f.station && o !== f.station) { f.station = o; ch = true; } });
     if (!c.forces || !c.forces.length) return ch;

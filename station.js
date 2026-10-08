@@ -41,15 +41,18 @@
     { f: { name: 'Loma Alta Fire', near: 'Loma Alta Drive, Altadena', lat: 34.1990, lon: -118.1580, ac: 6 }, c: { lat: 34.2100, lon: -118.1300, place: 'Altadena', near: 'Echo Mountain trail, above Altadena', conf: 76 } },
     { f: { name: 'Lake Fire', near: 'North Lake Avenue, Altadena', lat: 34.1880, lon: -118.1310, ac: 3 }, c: { lat: 34.1960, lon: -118.1620, place: 'Altadena', near: 'Arroyo Seco edge, west Altadena', conf: 84 } }];
   function rounds() { var R = []; try { R = JSON.parse(localStorage.getItem('wf-sim-rounds') || '[]') || []; } catch (e) {} return Array.isArray(R) ? R : []; }
-  function fireDef(n, R) { if (!n) return { id: SIMF.id, name: SIMF.name, near: SIMF.near, lat: SIMF.lat, lon: SIMF.lon, ac: SIMF.ac, pc: SIMF.pc, sc: 6, st: 'Active', stEn: SIMF.pc + '% contained', startMs: null, minAgo: SIMF.minAgo };
+  /* (Oct 8, 22:43) the first pair's clock is kept too (when this phone first saw it), so signing out and in again never restarts the story */
+  function t0() { var t = 0; try { t = +localStorage.getItem('wf-sim-t0') || 0; if (!t) { t = Date.now(); localStorage.setItem('wf-sim-t0', String(t)); } } catch (e) { t = Date.now(); } return t; }
+  function fireDef(n, R) { if (!n) return { id: SIMF.id, name: SIMF.name, near: SIMF.near, lat: SIMF.lat, lon: SIMF.lon, ac: SIMF.ac, pc: SIMF.pc, sc: 6, st: 'Active', stEn: SIMF.pc + '% contained', startMs: t0() - SIMF.minAgo * 6e4, minAgo: SIMF.minAgo };
     var v = VAR[(n - 1) % VAR.length].f, at = (R[n - 1] || {}).at || Date.now();
     return { id: 'SIM-ST11-F' + (n + 1), name: v.name, near: v.near, lat: v.lat, lon: v.lon, ac: v.ac, pc: 0, sc: 4, st: 'New', stEn: 'First alert', startMs: at - 6 * 6e4, at: at }; }
-  function candDef(n, R) { if (!n) return { id: 'HS-SIM-ST11', lat: SIMC.lat, lon: SIMC.lon, place: SIMC.place, near: SIMC.near, conf: SIMC.conf, t: null, minAgo: SIMC.minAgo };
+  function candDef(n, R) { if (!n) return { id: 'HS-SIM-ST11', lat: SIMC.lat, lon: SIMC.lon, place: SIMC.place, near: SIMC.near, conf: SIMC.conf, t: t0() - SIMC.minAgo * 6e4, minAgo: SIMC.minAgo };
     var v = VAR[(n - 1) % VAR.length].c, at = (R[n - 1] || {}).at || Date.now();
     return { id: 'HS-SIM-ST11-' + (n + 1), lat: v.lat, lon: v.lon, place: v.place, near: v.near, conf: v.conf, t: at - 2 * 6e4, at: at }; }
   function chatOf(kind, id) { var C = window.__wfChat; return C && C.find ? C.find({ id: id, kind: kind }) : null; }
   window.__wfSim = function () { var M = window.__wfMine ? window.__wfMine() : null; if (!M) return;
     var F = window.__wfLiveFires, C = window.__wfLiveCands, now = Date.now(), R = rounds();
+    { var Dn = fireDef(R.length, R), fn = chatOf('fire', Dn.id); if (fn && fn.closed) { R.push({ at: now }); try { localStorage.setItem('wf-sim-rounds', JSON.stringify(R)); } catch (e) {} } }   /* the newest fire was closed while no screen was listening: its next pair comes now */
     for (var n = 0; n <= R.length; n++) {
       var D = fireDef(n, R), fc = chatOf('fire', D.id);
       if (F) { var ex = F.find(function (r) { return r && r[2] === D.id; });

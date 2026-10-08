@@ -166,6 +166,7 @@ window.__wfBlink=function(path,dur){
       vp={w:Math.round(iw/s),h:Math.round(ih/s)+TOP,land:iw>ih,s:s,sl:Math.round(ins[0]/s),sr:Math.round(ins[1]/s)};
       r.setProperty('--wf-w',vp.w+'px');r.setProperty('--wf-h',vp.h+'px');
     }else{
+      if(EMB0&&!R){s=iw/W;vp={w:W,h:H,land:false,s:s,sl:0,sr:0};r.removeProperty('--wf-w');r.removeProperty('--wf-h');try{document.documentElement.style.overflowY='auto';document.body.style.overflowY='auto';}catch(e){}r.setProperty('--fit',String(s));window.__wfVP=vp;var ke=vp.w+'x'+vp.h;if(ke!==last){var f0=!last;last=ke;if(!f0)try{window.dispatchEvent(new Event('wf-vp'));}catch(e){}}return;}   /* (Oct 8, 22:43) in a blade the page fills the blade's width (its own 16px margins, edge-to-edge map) keeps its own height: the blade scrolls what does not fit, no side gaps from fitting the whole height */
       s=Math.min(iw/W,ih/(R?H:VH));   /* (Oct 8, 22:26) turned sideways the page's top lies along the side of the phone, under no browser bar or status bar: nothing of it is cut, so the header keeps the same distance from the edge as upright */
       vp={w:W,h:H,land:false,s:s,sl:0,sr:0};r.removeProperty('--wf-w');r.removeProperty('--wf-h');
     }
