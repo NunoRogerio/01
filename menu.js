@@ -110,6 +110,8 @@
     if (m === 'dlgon' || m === 'dlgoff') { if (btn) { btn.style.opacity = m === 'dlgon' ? '0' : ''; btn.style.pointerEvents = m === 'dlgon' ? 'none' : 'auto'; }
       /* (Oct 8, 14:00) a dialog in the menu while the screen rests on the icon column: the screen slides out all the way so the dialog shows whole; it comes back to the column when the dialog closes */
       if (m === 'dlgon' && mode === 'rail') { dlgRail = true; mode = 'open'; slide('open'); } else if (m === 'dlgoff' && dlgRail) { dlgRail = false; if (mode) { mode = 'rail'; slide('rail'); } }
+      /* (Oct 8, 22:28) a dialog is on top of everything: while it shows, the menu (where it lives) rises above the screen's edge and the button */
+      if (ifr) { clearTimeout(ifr.__zT); if (m === 'dlgon') ifr.style.zIndex = '300'; else ifr.__zT = setTimeout(function () { ifr.style.zIndex = '0'; }, 450); }
       return; }   // (Oct 4) a dialog in the menu: the button gives way
     if (m === 'rail' && mode) { mode = 'rail'; slide('rail'); } else if (m === 'open' && mode) { mode = 'open'; slide('open'); } else if (m === 'close' && mode) close(); });
   // keep the button on its spot while the screen is showing (the screen can re-render or resize)

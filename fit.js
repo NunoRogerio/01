@@ -153,7 +153,7 @@ window.__wfBlink=function(path,dur){
     /* (Oct 8, 21:32) the screen turns against the phone, so its top (the header) stays on the side of the camera and the clock:
        phone turned left (a 90) -> the page turns -90; phone turned right (a -90) -> the page turns 90 */
     var rd=a>0?-1:1,tf=rd>0?'translateX('+iw+'px) rotate(90deg)':'translateY('+ih+'px) rotate(-90deg)';
-    rotSty.textContent='html.wf-rot,html.wf-rot body{overflow:hidden}html.wf-rot body{position:fixed;left:0;top:0;width:'+ih+'px;height:'+iw+'px;transform-origin:0 0;transform:'+tf+'}';
+    rotSty.textContent='html.wf-rot #dc-root{top:0!important}html.wf-rot{--wf-top:0px!important}html.wf-rot,html.wf-rot body{overflow:hidden}html.wf-rot body{position:fixed;left:0;top:0;width:'+ih+'px;height:'+iw+'px;transform-origin:0 0;transform:'+tf+'}';
     document.documentElement.classList.add('wf-rot');window.__wfRotA=rd;window.__wfRotWH=[iw,ih];return [ih,iw];}
   function fit(){
     var iw=window.innerWidth,ih=window.innerHeight,r=document.documentElement.style,s,vp;
@@ -166,7 +166,7 @@ window.__wfBlink=function(path,dur){
       vp={w:Math.round(iw/s),h:Math.round(ih/s)+TOP,land:iw>ih,s:s,sl:Math.round(ins[0]/s),sr:Math.round(ins[1]/s)};
       r.setProperty('--wf-w',vp.w+'px');r.setProperty('--wf-h',vp.h+'px');
     }else{
-      s=Math.min(iw/W,ih/VH);
+      s=Math.min(iw/W,ih/(R?H:VH));   /* (Oct 8, 22:26) turned sideways the page's top lies along the side of the phone, under no browser bar or status bar: nothing of it is cut, so the header keeps the same distance from the edge as upright */
       vp={w:W,h:H,land:false,s:s,sl:0,sr:0};r.removeProperty('--wf-w');r.removeProperty('--wf-h');
     }
     r.setProperty('--fit',String(s));
@@ -638,7 +638,7 @@ window.__wfBlink=function(path,dur){
   window.__wfConfirm=function(o){
     o=o||{};var root=document.querySelector('[data-wfroot]')||document.body;
     var old=root.querySelector('.wf-cfm');if(old)old.remove();
-    var w=document.createElement('div');w.className='wf-cfm';w.style.cssText='position:absolute;inset:0;z-index:90';
+    var w=document.createElement('div');w.className='wf-cfm';w.style.cssText='position:absolute;inset:0;z-index:2147482000';   /* (Oct 8, 22:28) a dialog is on top of everything */
     var sc=document.createElement('div');sc.setAttribute('aria-hidden','true');sc.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,0.32);opacity:0;transition:opacity .35s ease';
     var p=document.createElement('section');p.className='wf-dlg';p.setAttribute('role','alertdialog');p.setAttribute('aria-modal','true');p.setAttribute('data-swipe','down');
     p.style.cssText='position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;box-sizing:border-box;padding:32px 24px 80px;border-radius:28px 28px 0 0;background:#F2F2F7;box-shadow:0 0 40px rgba(0,0,0,.14);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);font-family:inherit';
