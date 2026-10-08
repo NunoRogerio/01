@@ -978,11 +978,11 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
       }).catch(function () { MEM[id] = { sig: sig, st: 'fail' }; setTimeout(function () { if (MEM[id] && MEM[id].st === 'fail') delete MEM[id]; }, 60000); });   /* no answer, no warning: tried again a minute later */
     return null; };
   // (Oct 7) the populated areas reached by the projection up to horizon h, as one SVG path in the map's own units
-  // (residential areas, and a 40 m round per building so isolated houses show too); one path, so overlaps stay one red
+  // (residential areas, and a 24 m round per building so isolated houses show too); one path, so overlaps stay one red
   window.__wfHomesPath = function (id, h) { var res = window.__wfHomesGet(id); if (!res || !h || (!res.pts && !res.areas)) return '';
     var X = function (lo) { return (lo + 118.13) * 2345 + 518; }, Y = function (la) { return (34.19 - la) * 2829 + 662; }, d = '';
     (res.areas || []).forEach(function (a) { if (a.h <= h && a.r.length > 2) d += 'M' + a.r.map(function (q) { return X(q[1]).toFixed(1) + ' ' + Y(q[0]).toFixed(1); }).join('L') + 'Z'; });
-    (res.pts || []).forEach(function (q) { if (q[2] > h) return; var x = X(q[1]), y = Y(q[0]), r = 40 / 111320 * 2829; d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });
+    (res.pts || []).forEach(function (q) { if (q[2] > h) return; var x = X(q[1]), y = Y(q[0]), r = 24 / 111320 * 2829;   /* (Oct 8, 18:58) 40% smaller round per building (was 40 m) */ d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });
     return d; };
   window.__wfHomesGet = function (id) { var m = MEM[id]; if (m && m.st === 'done') return m.res; var c = load(id); return c || null; };
   // Understood: the floating warning goes for this incident; the tag on its page stays. It comes back if houses come into reach sooner.
