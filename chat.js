@@ -785,6 +785,24 @@
   // crews go en route (a station not yet in the chat joins with its coordinator), and the fire moves on. Works whether
   // the dispatch screen was opened from the chat or not: orders sent before the chat existed are kept (pend) and posted
   // when it is first opened, so the team has already received them there. delay: ms before the beats start.
+  /* (Oct 8, 23:25) a station captain dispatches only their own station: its crews (Engine, Brush), each under its lieutenant */
+  function ownIdx(c) { var i = (c.stations || []).findIndex(function (s) { return !!staffOf(s); }); if (i >= 0) return i;
+    var M = window.__wfMine ? window.__wfMine() : null, S = M && M.station; if (!S) return -1;
+    c.stations.push({ ck: (S.type === 'way' ? 'w' : 'n') + S.id, name: S.name, short: shortStation(S.name), km: S.lat && c.lat ? Math.round(kmBetween({ lat: S.lat, lon: S.lon }, { lat: c.lat, lon: c.lon }) * 10) / 10 : 3, min: 6 });
+    var nm = (staffOf(c.stations[c.stations.length - 1]) || {}).captain || pickNames(c, 1, 'own')[0]; c.people.push({ name: nm, code: initials(nm), org: shortStation(S.name), kind: 'lead', self: true }); return c.stations.length - 1; }
+  function ownCrews(c) { var i = ownIdx(c); if (i < 0) return []; var st = c.stations[i], SF = staffOf(st) || {}, num = (String(st.name).match(/(\d{1,3})\b/) || [])[1] || '11';
+    return [{ key: 'engine', veh: 'Engine ' + num, lt: SF.lead || '', crew: SF.onDuty && SF.onDuty.length ? SF.onDuty.slice() : [SF.lead].filter(Boolean) }, { key: 'brush', veh: 'Brush ' + num, lt: SF.lead2 || '', crew: (SF.crew2 || [SF.lead2]).filter(Boolean) }]
+      .map(function (k) { k.st = st; k.i = i; return k; }); }
+  function dispatchOwn(key, pick) { var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
+    var K = ownCrews(c).filter(function (k) { return pick[k.key]; }); if (!K.length) return; var st = K[0].st;
+    dispatched(key, [{ name: st.name, km: st.km, eta: st.min }]); c = load().chats[key]; var i = K[0].i, f0 = (c.forces || []).find(function (f) { return f.si === i && !f.second; }); if (!f0) return;
+    f0.veh = [K[0].veh]; f0.crew = K[0].crew.slice(); if (K[0].key === 'brush') f0.second = true;   /* the Brush alone: its own lieutenant leads it */
+    if (K[1]) c.forces.push({ si: i, ck: f0.ck, station: f0.station, full: f0.full, km: f0.km, coord: f0.coord, crew: K[1].crew.slice(), veh: [K[1].veh], st: f0.st, second: true });
+    /* the captain is "you": the order's confirmations come from the crews' lieutenants, not from the captain */
+    ensureLts(c); var me0 = c.people[i]; if (me0 && me0.name === ((staffOf(st) || {}).captain)) me0.self = true;
+    var ltI = function (nm) { return c.people.findIndex(function (p) { return p.kind === 'lt' && p.name === nm; }); }, l0 = ltI(K[0].lt), l1 = K[1] ? ltI(K[1].lt) : -1;
+    if (l0 >= 0) { var nth = 0; (c.queue || []).forEach(function (q) { if (q.m && q.m.from === i) { q.m.from = nth % 2 && l1 >= 0 ? l1 : l0; nth++; } }); }
+    c.solo = true; save(); emit(); }
   function dispatched(key, orders, delay) {
     var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
     c.msgs.forEach(function (m) { if (m.dispCard && !m.done) m.done = 'dispatch'; });   /* the card's Configure dispatch becomes ✓ Crews dispatched */
@@ -1538,7 +1556,7 @@
     callFace: function (key) { var c = load().chats[key]; return c ? faceOfPolice(c) : 'police-a'; },   /* the police leader's face for this report: one of three, chosen at random once, then the same in every call */
     policeChat: function (id) { return load().chats['p:' + id] || null; },
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
-    rankOf: rankOf,     helpIn: function (o) { return direct(o); }, mutualOpen: mutualOpen, markDone: markDone,   /* (Oct 8, 22:52) a help request arrives (not opened); mutual aid conversations as To do items */
+    ownCrews: ownCrews, dispatchOwn: dispatchOwn,     rankOf: rankOf,     helpIn: function (o) { return direct(o); }, mutualOpen: mutualOpen, markDone: markDone,   /* (Oct 8, 22:52) a help request arrives (not opened); mutual aid conversations as To do items */
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */
