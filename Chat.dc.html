@@ -401,7 +401,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
       </div>
     </header>
-    <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
+    <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 56px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
       <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.well}}" fire="{{sum.fire}}" meta="{{sum.meta}}" size="{{sum.size}}" crests="{{sum.crests}}" air="{{sum.air}}" n="{{sum.n}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
       <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column">
@@ -468,11 +468,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </section>
       <p class="wf-note" style="display: {{sum.noteD}}; margin: 0 4px">{{sum.note}}</p>
     </div>
-    <!-- Home: back to the home screen, fixed at the foot (Oct 4) -->
-    <div class="chdrop" style="flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; padding: 16px 16px 8px; background: #F2F2F7">
-      <span style="font-size: 16px; line-height: 20px; color: #545458; text-align: center; text-wrap: balance">{{t.homeNote}}</span>
-      <a href="Main.dc.html" class="btn primary" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; box-sizing: border-box; border-radius: 999px; font-size: 18px; font-weight: 600; text-decoration: none">{{t.home}}</a>
-    </div>
+    <!-- (Oct 8, 22:32) no closing line nor "Go to main screen" at the foot: the grabber folds the summary back into the chat -->
     <!-- (Oct 8, 22:15) the summary drops from the top as a blade: no back arrow, the grabber at its foot (tap or swipe up) folds it back into the chat -->
     <div role="button" data-grab-show="1" class="chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <!-- Cards picker for the key figures: back arrow, Reset, toggles (changes apply at once) -->
