@@ -493,7 +493,7 @@
       if (!c.acked) {   /* (Oct 5) the leads already confirmed the order on their way: no second "leaving now" */
       if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 3000, 1);
       if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000, 2); }
-      setStage(c, 3, d + 16000, Math.max(4, eta - 3));
+      setStage(c, 3, d + 12000, Math.max(4, eta - 3));   /* (Oct 8, 19:28) a demo storyline: the crews reach the fire within ~12 s of leaving (well under 30 s); the clock still advances the drive time */
     } else if (s === 3) {
       if (P[0]) say(c, 0, 'On scene. Fire in ' + (isUS(c) ? 'chaparral and dry grass' : 'pine and eucalyptus') + ', head running north-east with the wind.', 'No local. Fogo em ' + (isUS(c) ? 'chaparral e erva seca' : 'pinhal e eucaliptal') + ', cabeça a progredir para nordeste com o vento.', d + 3000, 3);
       if (P[1]) say(c, 1, 'Homes about 1 km north-east. We need air support to hold the head before it gets there.', 'Casas a cerca de 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça antes de lá chegar.', d + 8000, 6);
