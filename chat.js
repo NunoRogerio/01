@@ -127,7 +127,9 @@
     (c.people || []).forEach(function (p) { var o = shortStation(p.org); if (p.org && o !== p.org) { p.org = o; ch = true; } }); (c.stations || []).forEach(function (q) { var o = shortStation(q.short || q.name); if (q.short !== o) { q.short = o; ch = true; } }); (c.forces || []).forEach(function (f) { var o = shortStation(f.station); if (f.station && o !== f.station) { f.station = o; ch = true; } });
     if (!c.forces || !c.forces.length) return ch;
     c.forces.forEach(function (f) { var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF ? SF.lead : (f.crew && f.crew[0]); if (!nm) return;
-      var on = !(f.st === 'standby' || f.st === 'released'), ex = c.people.find(function (p) { return p.name === nm; });
+      /* (Oct 8, 21:38) a station whose captain is in the chat is on the fire: its lieutenant is in too (unless its crew was released) */
+      var capIn = c.people.some(function (p) { return p.kind === 'lead' && !p.left && p.org === (s.short || f.station); });
+      var on = f.st !== 'released' && (f.st !== 'standby' || capIn), ex = c.people.find(function (p) { return p.name === nm; });
       if (ex) { if (ex.kind === 'lt' && !!ex.left === on) { ex.left = on ? undefined : true; ch = true; } return; }   /* the lieutenant is in while the crew works the fire */
       if (!on) return; var v = (f.veh || [])[0] || '', org = s.short || f.station || '';
       c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: 'Lieutenant. ' + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && M && M.key === 'ff') || undefined }); ch = true; });

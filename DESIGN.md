@@ -1416,3 +1416,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - **Pace 15 s (Oct 8, 21:37; was 20 s):** no stage lasts more than 15 s; the recommendation (or, for a lieutenant, the captain's move) comes at 15 s; a rekindle is reported at 6 s, its card at 9.5 s, the captain steps back at 13 s.
 - **Risk warning OK (Oct 8, 21:36):** the red is set on the button itself, so no button style can turn it grey again.
+- **Lieutenants with their captains (Oct 8, 21:38):** every station whose captain is in an incident chat has its lieutenant in it too (the chief of its first crew), even before its crew is formally sent; a released crew's lieutenant leaves.
