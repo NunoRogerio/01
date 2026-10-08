@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=24"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=208"></script>
-<script src="station.js?v=5"></script>
+<script src="station.js?v=6"></script>
 <script src="menu.js?v=20"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=94"></script>
+<script src="chat.js?v=95"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -78,11 +78,11 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 16px 0">
         <!-- (Oct 8, 14:11) the captain and the lieutenant are greeted by rank and name, one of five greetings at random, by the time of day -->
-        <p style="margin: 0 0 16px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty">{{greet}}</p>
-        <h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{asg.title}}</h3>
-        <span style="display: {{asg.subD}}; margin: -4px 0 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{asg.sub}}</span>
+        <!-- (Oct 8, 17:58) the rank and name of the person signed in, in bold -->
+        <p style="margin: 0 0 16px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty">{{greet.a}}<b style="font-weight: 700">{{greet.who}}</b>{{greet.b}}</p>
+        <!-- (Oct 8, 17:58) no heading over the list: "Deployments" did not help read it (it holds incidents and the shift's duties) -->
         <!-- (Oct 8) To do | Resolved: the chats panel's value switcher; what is still to do, and what is done or closed -->
-        <div role="tablist" aria-label="{{asg.title}}" class="wf-seg" style="margin: 8px 0 8px">
+        <div role="tablist" aria-label="{{asg.title}}" class="wf-seg" style="margin: 0 0 8px">
           <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{asg.tabX}})"><span class="segblob"></span></span>
           <sc-for list="{{asg.tabs}}" as="tb" hint-placeholder-count="2">
             <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}">{{tb.label}}</button>
@@ -94,9 +94,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
-              <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
+              <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
               <span class="wf-stg" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
               <span style="grid-column: 1 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span></span>
+              <span style="display: {{f.sub2D}}; grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub2}}</span>
             </a>
             <span class="wf-simstar" aria-hidden="true" style="display: {{f.simD}}">*</span>
             </li>
@@ -345,6 +346,7 @@ class Component extends DCLogic {
     this._rMore = () => { const el = document.getElementById('wf-rmore'); if (!el || !el.offsetParent || this._rBusy) return; const r = el.getBoundingClientRect();
       if (r.top < (window.innerHeight || 844) + 240) { this._rBusy = 1; this.setState({ rLim: ((this.state || {}).rLim || 5) + 5 }); setTimeout(() => { this._rBusy = 0; }, 250); } };
     try { document.addEventListener('scroll', this._rMore, { capture: true, passive: true }); document.addEventListener('touchmove', this._rMore, { passive: true }); } catch (e) {}
+    try { if (window.__wfSimChat) window.__wfSimChat(); } catch (e) {}   /* (Oct 8, 17:55) the simulated fire's record, with Station 11 on it */
     this._sync = () => this.forceUpdate(); try { window.addEventListener('wf-sync', this._sync); } catch (e) {} this._t = setTimeout(this._sync, 1500); }
   componentWillUnmount() { try { document.removeEventListener('scroll', this._rMore, { capture: true }); document.removeEventListener('touchmove', this._rMore); } catch (e) {} try { window.removeEventListener('wf-sync', this._sync); window.removeEventListener('wf-chat', this._chatSync); } catch (e) {} clearTimeout(this._t); }
   // (Oct 7, 19:40) the station home of a captain or team lead (Station.dc.html?home=1): their own station, its area and its incidents
@@ -375,7 +377,7 @@ class Component extends DCLogic {
       [L('How are things, ' + who + '? Here’s what matters today.', 'Como vão as coisas, ' + who + '? Eis o que importa hoje.')],   /* (Oct 8, 17:40) "today" once, as the time stamp */
       [L('Hope all is well, ' + who + '. Here’s what you need to know today.', 'Espero que esteja tudo bem, ' + who + '. Eis o que precisa de saber hoje.')]];
     if (this._greetI == null) this._greetI = Math.floor(Math.random() * G.length);
-    return G[this._greetI][0]; }
+    const t = G[this._greetI][0], k = who ? t.indexOf(who) : -1; return k < 0 ? { a: t, who: '', b: '' } : { a: t.slice(0, k), who, b: t.slice(k + who.length) }; }
   wfKpiDrag(key, grp, onTap) { return window.__wfKpiDrag(this, key, grp, onTap, 'wf-order-' + grp); }   /* (Oct 8) the shared mini-card reorder (fit.js) */
   wfHidden() { const g = 'stk'; let v = null, sn = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + g) || 'null'); sn = JSON.parse(localStorage.getItem('wf-seen-' + g) || 'null'); } catch (e) {} const opt = (this._kAll || []).filter((m) => m.opt).map((m) => m.key); if (!Array.isArray(v)) return opt; return v.concat(opt.filter((k) => v.indexOf(k) < 0 && !(Array.isArray(sn) && sn.indexOf(k) >= 0))); }
   wfPicker() {
@@ -410,16 +412,25 @@ class Component extends DCLogic {
       const ST = { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };
       rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
         return { place: c.place, aria: c.place, href: c.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html', go: c.kind === 'fire' ? fireGo({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }) : candGo(c.incId),
-          _id: c.incId, simD: simOf(c.incId), tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)), sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) ? L('Confirm the order. ', 'Confirme a ordem. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
+          _id: c.incId, simD: simOf(c.incId), moonD: 'none', sub2: c.lat ? kmT(km(c.lat, c.lon)) + '. ' + drv(km(c.lat, c.lon)) + '.' : '', sub2D: c.lat ? 'block' : 'none', tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)), sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) ? L('Confirm the order. ', 'Confirme a ordem. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
         .sort((a, b) => (a._ack ? 1 : 0) - (b._ack ? 1 : 0));   /* a new deployment (not yet confirmed) goes to the top */
     }
-    const areaRow = (q) => { const r = q.r, aid = q.k === 'aid', base = { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid ? aidT.label : '', sub: kmT(q.km) + '. ' + drv(q.km) + '.', simD: simOf(r[2]) };
+    const areaRow = (q) => { const r = q.r, aid = q.k === 'aid', base = { aidD: aid ? 'inline-flex' : 'none', aidTxt: aid ? aidT.label : '', sub: kmT(q.km) + '. ' + drv(q.km) + '.', simD: simOf(r[2]), moonD: 'none', sub2: '', sub2D: 'none' };
+      /* (Oct 8, 17:58) the incident's own facts first, as on the incidents list and the fire page: a fire's place, size and time
+         on it; a candidate's source and when it was seen. Distance and drive time follow on the second line */
+      const meta = q.kind === 'fire' ? (() => { const I = r[9] || {}, ac = I.ac || (r[8] ? Math.round(r[8] / 0.4047) : 0), on = I.startMs ? (C && C.fmtDur ? C.fmtDur(Date.now() - I.startMs) : Math.round((Date.now() - I.startMs) / 6e4) + ' min') : '';
+          return [ac ? (PT ? Math.round(ac * 0.4047 * 10) / 10 + ' ha' : ac + ' ac') : '', on ? L('For ' + on, 'Há ' + on) : '', r[10] || r[1] || ''].filter(Boolean).join('. ') + '.';   /* size and time first: what is cut at the end is the place, which the name already gives */ })()
+        : (() => { const m = r[9] || {}, src = String(r[5] || '').split('|').map((p) => { const [k, ref] = p.split(':'); return (k === 'sat' ? L('Satellite', 'Satélite') : k) + (ref ? ' ' + ref : ''); }).join(', ');
+          if (window.__wfNight && window.__wfNight(m)) base.moonD = 'inline'; return [src, r[6] || ''].filter(Boolean).join('. ') + '.'; })();
+      if (meta.length > 1) { base.sub2 = base.sub; base.sub2D = 'block'; base.sub = meta; }
       if (q.kind === 'fire') return Object.assign(base, fireTag(r), { place: r[3] || r[2], aria: (r[3] || r[2]) + (aid ? ', ' + aidT.label : ''), href: 'Dispatch.dc.html', go: fireGo({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6] }) });
       const CT = window.__wfConfTag ? window.__wfConfTag(r[4]) : { fg: '#185A93', bg: '#E3EEFB' };
       return Object.assign(base, { place: r[3], aria: r[3] + ', ' + r[4] + L('% likelihood', '% de probabilidade') + (aid ? ', ' + aidT.label : ''), tagTxt: r[4] + '%', tagFg: CT.fg, tagBg: CT.bg, tagIc: '', tagIcD: 'none', href: 'Alert.dc.html', go: candGo(r[2]) }); };
     // (Oct 8, 17:45) the team lead sees the incidents first too: his deployments on top, then every incident of the station's area
     // (the captain's incident cards, the same everywhere), so what matters most is never only on the map at the end
     const nDep = lead ? rows.length : 0;
+    /* (Oct 8, 18:02) a deployment card carries the incident's own facts too (the area card's first line), then what his crew is doing */
+    if (lead) rows.forEach((x) => { const q = items.find((y) => String(y.r[2]) === String(x._id)); if (!q) return; const ar = areaRow(q); x.sub2 = x.sub; x.sub2D = 'block'; x.sub = ar.sub2D === 'block' ? ar.sub : ar.sub; x.moonD = ar.moonD; });
     if (lead) { const had = {}; rows.forEach((x) => { had[String(x._id)] = 1; }); rows = rows.concat(items.filter((q) => !had[String(q.r[2])]).map(areaRow)); }
     else rows = items.map(areaRow);
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
@@ -482,7 +493,7 @@ class Component extends DCLogic {
     const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';
     const ck0 = (S.type === 'way' ? 'w' : 'n') + S.id;
     const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (c.closed || c.dismissed) && c.kind !== 'dm' && (c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const Sg = C.stageOf(c);
-      return { simD: simOf(c.incId), place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+      return { simD: simOf(c.incId), moonD: 'none', sub2: '', sub2D: 'none', place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
         _t: c.closedVt || 0, tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.closedVt ? new Date(c.closedVt).toLocaleDateString(PT ? 'pt-PT' : 'en-US', { day: 'numeric', month: 'short' }) + '. ' : '') + L('Resolution summary in the chat.', 'Resumo da resolução na conversa.') }; });
     // (Oct 8, 17:35) Resolved loads lazily: the last 5 first (the newest closed incidents, then the latest duties done), and a swipe
     // towards the end of the list brings 5 more (no "Show more" button). Resolved items are a record: not dismissable, a duty can only be reopened.
@@ -499,7 +510,7 @@ class Component extends DCLogic {
       emptyOn: !shownRows.length && !shownDuties.length, emptyTxt: resolvedTab ? L('Nothing resolved yet this shift.', 'Nada resolvido ainda neste turno.') : L('Every duty done this shift.', 'Todas as tarefas do turno feitas.'),
       sub: lead ? (nDep ? '' : L('No deployments.', 'Sem destacamentos.')) : dutyList.length && !rows.length ? L('No incidents in the area.', 'Sem incidentes na área.') : '',   /* the counts are on the switcher */
       noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),
-      nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
+      nDep, nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
       view: { homeMapW: W, homeMapH: H, homeFx: Math.round(fx), homeFy: Math.round(fy), homeZ: +z.toFixed(3) } };
   }
   renderVals() {
@@ -575,7 +586,7 @@ class Component extends DCLogic {
     const AS = home ? this.homeAsg(S, MINE, L) : null;
     if (home) {
       kAll.splice(0, kAll.length, ...(lead ? [
-        { key: 'h-dep', l: L('Deployed', 'Destacado'), n: String(AS.rows.length), u: '', sub: '' },
+        { key: 'h-dep', l: L('Deployed', 'Destacado'), n: String(AS.nDep != null ? AS.nDep : AS.rows.length), u: '', sub: '' },   /* (Oct 8, 17:55) his deployments only, not the area's incidents */
         { key: 'h-near', l: L('Nearest active fire', 'Incêndio ativo mais próximo'), n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', sub: nf ? (nf.r[3] || '') : L('None within 60 km', 'Nenhum a 60 km') },
         { key: 'h-drive', l: L('Drive to it', 'Chegada'), n: nf ? '~' + Math.round(nf.km * 1.3 / 50 * 60) : '—', u: nf ? 'min' : '', sub: nf ? L('At 50 km/h', 'A 50 km/h') : '' },
         { key: 'risk', opt: true, sim: true, l: L('Fire danger today', 'Risco de incêndio hoje'), n: String(danger), u: '/ 5', sub: L(dW[0], dW[1]) }]
@@ -683,7 +694,7 @@ class Component extends DCLogic {
       rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No aircraft based at this station.', 'Nenhum meio aéreo sediado neste quartel.'), tabsD: 'block', sumMt: '8px' };
     /* (Oct 7) the team lead's home shows his own crew and the vehicle it rides in, no switcher */
     if (lead && crews[0]) { const c0 = crews[0], v0 = veh.find((v) => v.name === c0.veh);
-      rs.tabsD = 'none'; rs.sumMt = '-4px'; /* title + description: 4px apart */ rs.empty = false; rs.listD = 'flex'; { const nA = c0.ppl.filter((n, i) => pSt(n, i) === 'ok').length; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + nA + ' ' + L('available', nA === 1 ? 'disponível' : 'disponíveis') + '. ' + c0.veh + '.'; }   /* the crew sheet's own words */
+      rs.tabsD = 'none'; rs.sumMt = '-4px'; /* title + description: 4px apart */ rs.empty = false; rs.listD = 'flex'; { const nA = c0.ppl.filter((n, i) => pSt(n, i) === 'ok').length; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + nA + ' ' + (c0.st === 'out' ? L('on a mission', 'em missão') : L('available', nA === 1 ? 'disponível' : 'disponíveis')) + '. ' + c0.veh + '.';   /* (Oct 8, 17:55) the crew out: the ones on duty are on the mission */ }   /* the crew sheet's own words */
       /* (Oct 8, 14:00) the people show on the screen itself (the crew row that opened them is gone); the vehicle follows */
       rs.rows = v0 ? [{ name: v0.name, ic: IC[v0.ic], sub: v0.sub, ...tg(v0.st), ...mob(), aria: v0.name + ', ' + v0.sub }] : []; rs.listD = rs.rows.length ? 'flex' : 'none'; }
 
@@ -698,15 +709,15 @@ class Component extends DCLogic {
     const sqK = s0.sq || '', sqC = /^c\d+$/.test(sqK) ? crews[Number(sqK.slice(1))] : null, sqOn = sqK === 'cmd' || !!sqC;
     const sq = { y: sqOn ? '0%' : 'calc(100% + 120px)', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
       title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.ppl.filter((n, i) => pSt(n, i) === 'ok').length + ' ' + L('available', sqC.ppl.filter((n, i) => pSt(n, i) === 'ok').length === 1 ? 'disponível' : 'disponíveis') + '. ' + sqC.veh + '.' : org,
-      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, ...tg(pSt(n, i)), tagD: 'inline-flex' })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700, tag: '', tagD: 'none' }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 && !(lead && sqC === crews[0]) ? 'flex' : 'none' }))   /* the team lead does not chat with himself */, hdChatD: sqC ? 'none' : 'flex',
+      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, ...tg(pSt(n, i) === 'ok' && sqC.st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700, tag: '', tagD: 'none' }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 && !(lead && sqC === crews[0]) ? 'flex' : 'none' }))   /* the team lead does not chat with himself */, hdChatD: sqC ? 'none' : 'flex',
       chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat, ...bdg(unr(sqC ? 'crew-' + S.id + '-' + sqC.name : 'cmd-' + S.id)),
       chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
 
     return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, 
-      crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...tg(pSt(n, i)), tagD: 'inline-flex' })) : [], crewPD: lead && crews[0] ? 'flex' : 'none',
+      crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...tg(pSt(n, i) === 'ok' && crews[0].st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' }))   /* (Oct 8, 17:55) on duty in a crew that is out: on a mission */ : [], crewPD: lead && crews[0] ? 'flex' : 'none',
       none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
-      help, greet: home ? this.wfGreet(S, lead, L) : '', mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
+      help, greet: home ? this.wfGreet(S, lead, L) : { a: '', who: '', b: '' }, mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
       stCallAria: L('Call ', 'Ligar a ') + L(cmdRoles[0][0], cmdRoles[0][1]).toLowerCase() + ' ' + cmdP[0].name,
       stCall: (e) => { const F = window.__wfCamFeed; if (!F) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const c0 = cmdP[0];   /* the station's fire coordinator alone */
         F.open({ anchor: e && e.currentTarget, title: 'Call', label: L('Call', 'Chamada'), who: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + c0.name,

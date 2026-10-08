@@ -1368,6 +1368,7 @@
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
+    ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
@@ -1560,6 +1561,6 @@
     setTimeout(function () { dpBusy = false; depHide(true); emit(); setTimeout(depRender, 600); }, 1400); }
   function depBoot() { if (!role || !document.body) return; setTimeout(depRender, 1400);
     window.addEventListener('wf-chat', function () { setTimeout(depRender, 0); }); window.addEventListener('pageshow', depRender); document.addEventListener('visibilitychange', depRender); setInterval(depRender, 5000); }
-  window.__wfDeploy = { list: deployments, acked: function (k) { return !!depAcks()[k]; } };
+  window.__wfDeploy = { list: deployments, acked: function (k) { return !!depAcks()[k]; }, ack: function (k) { var A = depAcks(); if (A[k]) return; A[k] = Date.now(); try { localStorage.setItem(DAK, JSON.stringify(A)); } catch (e) {} } };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', depBoot); else depBoot();
 })();

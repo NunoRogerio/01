@@ -36,7 +36,7 @@
       r[0] = 'CA'; r[1] = 'Los Angeles'; r[2] = SIMF.id; r[3] = SIMF.name; r[4] = 'Contained ' + SIMF.pc + '% · ' + SIMF.ac + ' ac';
       r[5] = Math.round(X(SIMF.lon)); r[6] = Math.round(Y(SIMF.lat)); r[8] = ha; r[10] = SIMF.near;
       if (r[7] && typeof r[7] === 'object') ['man', 'terrain', 'aerial'].forEach(function (q) { if (typeof r[7][q] === 'number') r[7][q] = Math.max(q === 'aerial' ? 0 : 1, Math.round(r[7][q] * k)); });
-      r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: 'Active', stEn: SIMF.pc + '% contained', tone: 'red', pc: SIMF.pc, startMs: now - SIMF.minAgo * 6e4, updMs: now - 6e4 * 4, ac: SIMF.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: 'Los Angeles County · CA', url: '', sim: true, lat: SIMF.lat, lon: SIMF.lon });
+      r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: 'Active', stEn: SIMF.pc + '% contained', tone: 'red', sc: 6, pc: SIMF.pc, startMs: now - SIMF.minAgo * 6e4, updMs: now - 6e4 * 4, ac: SIMF.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: 'Los Angeles County · CA', url: '', sim: true, lat: SIMF.lat, lon: SIMF.lon });
       F.push(r); }
     if (C && !C.some(function (r) { return r && r[2] === 'HS-SIM-ST11'; })) {
       var TC = C.find(function (r) { return r && r[0] === 'CA'; }) || C[0];
@@ -44,7 +44,15 @@
       var t = new Date(now - SIMC.minAgo * 6e4).toISOString().slice(0, 16) + 'Z';
       c[0] = 'CA'; c[1] = 'Los Angeles'; c[2] = 'HS-SIM-ST11'; c[3] = SIMC.place; c[4] = SIMC.conf; c[6] = SIMC.minAgo + ' min ago'; c[7] = Math.round(X(SIMC.lon)); c[8] = Math.round(Y(SIMC.lat));
       c[9] = Object.assign({}, c[9] || {}, { lat: SIMC.lat, lon: SIMC.lon, t: t, ll: SIMC.lat.toFixed(2) + '°N ' + Math.abs(SIMC.lon).toFixed(2) + '°W', near: SIMC.near, night: window.__wfSunAlt ? window.__wfSunAlt(SIMC.lat, SIMC.lon, now) < -0.833 : false, sim: true });
-      C.push(c); } };
+      C.push(c); }
+    setTimeout(function () { try { window.__wfSimChat(); } catch (e) {} }, 0); };
+  // (Oct 8, 17:55) The simulated fire is being fought, so the story agrees everywhere: crews on scene (stage 3), Station 11 among
+  // the two stations working it (its first crew, the team lead's Engine 11 crew, on scene), its incident record made at once (not
+  // only when someone opens the fire), and the team lead's order already confirmed (he has been on scene since).
+  window.__wfSimChat = function () { var C = window.__wfChat, M = window.__wfMine ? window.__wfMine() : null; if (!C || !C.ensure || !M) return;
+    var r = (window.__wfLiveFires || []).find(function (q) { return q && q[2] === SIMF.id; }); if (!r || C.find({ id: SIMF.id, kind: 'fire' })) return;
+    var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: SIMF.id, place: SIMF.name, reg: 'Los Angeles', st: 'CA', lat: SIMF.lat, lon: SIMF.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: 6, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
+    if (c && window.__wfDeploy && window.__wfDeploy.ack) window.__wfDeploy.ack(c.key); };
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
   // ---- the station's area, kept 30 days on this phone ----
