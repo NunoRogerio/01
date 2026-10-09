@@ -969,7 +969,7 @@ class Component extends DCLogic {
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;
-        items.push({ isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: tone(St || S).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
+        items.push({ isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: m.req && !m.done ? 'transparent' : tone(St || S).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)
@@ -991,7 +991,7 @@ class Component extends DCLogic {
           /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
           cardGo: toSheet ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; openSheet(); } : false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: toSheet ? 'pointer' : 'default', cardCls: toSheet ? 'chrow' : '', chevD: toSheet ? 'block' : 'none',   /* (Oct 9) the card opens Progress and projection itself: a chevron on the title line, no button */
           hasLink: !toSheet && !!m.link && m.stage == null,   /* (Oct 7) stage cards carry no View button: the title's arrow opens the incident */ linkCls: 'wf-sec',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
-          goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
+          goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: m.req && !m.done ? tone(St || S).bg : '#FFFFFF' });   /* (Oct 9) an open request is one surface: the whole card in its header band's colour */   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }
     });
