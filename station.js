@@ -67,16 +67,29 @@
     { name: 'Mendocino Fire', near: 'Mendocino Street, Altadena', lat: 34.1930, lon: -118.1450, ac: 2 },
     { name: 'Woodbury Fire', near: 'Woodbury Road, Altadena', lat: 34.1850, lon: -118.1420, ac: 3 },
     { name: 'Allen Fire', near: 'Allen Avenue, east Altadena', lat: 34.1900, lon: -118.1130, ac: 7 },
-    { name: 'Chaney Fire', near: 'Chaney Trail, above Altadena', lat: 34.2120, lon: -118.1480, ac: 9 }];
+    { name: 'Chaney Fire', near: 'Chaney Trail, above Altadena', lat: 34.2120, lon: -118.1480, ac: 9 },
+    { name: 'Lincoln Fire', near: 'Lincoln Avenue, west Altadena', lat: 34.1880, lon: -118.1600, ac: 4 },
+    { name: 'Marengo Fire', near: 'Marengo Avenue, Altadena', lat: 34.1890, lon: -118.1470, ac: 3 },
+    { name: 'Canyon Crest Fire', near: 'Canyon Crest Road, east Altadena', lat: 34.1960, lon: -118.1150, ac: 6 },
+    { name: 'Poppy Peak Fire', near: 'Poppy Peak Drive, Altadena', lat: 34.1990, lon: -118.1410, ac: 5 },
+    { name: 'Sphinx Fire', near: 'Sphinx Rock trail, above Altadena', lat: 34.2110, lon: -118.1520, ac: 8 },
+    { name: 'Glen Canyon Fire', near: 'Glen Canyon Road, Altadena', lat: 34.1930, lon: -118.1290, ac: 4 }];
+  /* (Oct 9, 13:47) every candidate has its own place name, so no two incidents ever share a name ("Altadena" only for the first) */
   var PC = [
-    { near: 'Millard Canyon, north Altadena', lat: 34.2090, lon: -118.1600 },
-    { near: 'Echo Mountain trail, above Altadena', lat: 34.2100, lon: -118.1300 },
-    { near: 'Arroyo Seco edge, west Altadena', lat: 34.1960, lon: -118.1620 },
-    { near: 'Eaton Canyon edge, east Altadena', lat: 34.1950, lon: -118.1080 },
-    { near: 'Altadena Golf Course', lat: 34.1840, lon: -118.1270 },
-    { near: 'Zane Grey Terrace, north Altadena', lat: 34.2060, lon: -118.1440 },
-    { near: 'Altadena Drive, east Altadena', lat: 34.1870, lon: -118.1180 },
-    { near: 'Christmas Tree Lane, Altadena', lat: 34.1860, lon: -118.1530 }];
+    { name: 'Millard Canyon', near: 'Millard Canyon, north Altadena', lat: 34.2090, lon: -118.1600 },
+    { name: 'Echo Mountain', near: 'Echo Mountain trail, above Altadena', lat: 34.2100, lon: -118.1300 },
+    { name: 'Arroyo Seco', near: 'Arroyo Seco edge, west Altadena', lat: 34.1960, lon: -118.1620 },
+    { name: 'Eaton Canyon', near: 'Eaton Canyon edge, east Altadena', lat: 34.1950, lon: -118.1080 },
+    { name: 'Altadena Golf Course', near: 'Altadena Golf Course', lat: 34.1840, lon: -118.1270 },
+    { name: 'Zane Grey Terrace', near: 'Zane Grey Terrace, north Altadena', lat: 34.2060, lon: -118.1440 },
+    { name: 'Altadena Drive', near: 'Altadena Drive, east Altadena', lat: 34.1870, lon: -118.1180 },
+    { name: 'Christmas Tree Lane', near: 'Christmas Tree Lane, Altadena', lat: 34.1860, lon: -118.1530 },
+    { name: 'Rubio Canyon', near: 'Rubio Canyon trailhead, Altadena', lat: 34.2040, lon: -118.1230 },
+    { name: 'Las Flores Canyon', near: 'Las Flores Canyon, north Altadena', lat: 34.2070, lon: -118.1340 },
+    { name: 'Hahamongna', near: 'Hahamongna Watershed Park, west Altadena', lat: 34.2000, lon: -118.1700 },
+    { name: 'Sunset Ridge', near: 'Sunset Ridge trail, above Altadena', lat: 34.2150, lon: -118.1440 },
+    { name: 'Kinneloa Mesa', near: 'Kinneloa Mesa, east Altadena', lat: 34.1980, lon: -118.1040 },
+    { name: 'Mount Lowe Road', near: 'Mount Lowe Road, above Altadena', lat: 34.2130, lon: -118.1380 }];
   var LET = ['', 'b', 'c'];
   function rounds() { var R = []; try { R = JSON.parse(localStorage.getItem('wf-sim-rounds') || '[]') || []; } catch (e) {} return Array.isArray(R) ? R : []; }
   /* (Oct 8, 22:43) the first pair's clock is kept too (when this phone first saw it), so signing out and in again never restarts the story */
@@ -88,7 +101,7 @@
     return out; }
   function candDefs(R) { var out = [{ n: 0, id: 'HS-SIM-ST11', lat: SIMC.lat, lon: SIMC.lon, place: SIMC.place, near: SIMC.near, conf: SIMC.conf, t: t0() - SIMC.minAgo * 6e4, minAgo: SIMC.minAgo }];
     R.forEach(function (q, i) { var n = i + 1, at = q.at || Date.now(), K = q.c || [(n - 1) % 3];
-      K.forEach(function (ci, k) { var v = PC[ci % PC.length], a = (q.ca && q.ca[k]) || at + 10 + k; out.push({ n: n, id: 'HS-SIM-ST11-' + (n + 1) + LET[k], lat: v.lat, lon: v.lon, place: 'Altadena', near: v.near, conf: (q.conf && q.conf[k]) || [81, 76, 84][(n - 1) % 3], t: a - 2 * 6e4, at: a }); }); });
+      K.forEach(function (ci, k) { var v = PC[ci % PC.length], a = (q.ca && q.ca[k]) || at + 10 + k; out.push({ n: n, id: 'HS-SIM-ST11-' + (n + 1) + LET[k], lat: v.lat, lon: v.lon, place: v.name || 'Altadena', near: v.near, conf: (q.conf && q.conf[k]) || [81, 76, 84][(n - 1) % 3], t: a - 2 * 6e4, at: a }); }); });
     return out; }
   function chatOf(kind, id) { var C = window.__wfChat; return C && C.find ? C.find({ id: id, kind: kind }) : null; }
   window.__wfSim = function () { var M = window.__wfMine ? window.__wfMine() : null; if (!M) return;
@@ -120,15 +133,18 @@
   // only when someone opens the fire), and the team lead's order already confirmed (he has been on scene since).
   // (Oct 8, 22:21) each new round's fire gets its record too, at First alert: the captain dispatches it from there
   window.__wfSimChat = function () { var C = window.__wfChat, M = window.__wfMine ? window.__wfMine() : null; if (!C || !C.ensure || !M) return;
+    /* (Oct 9, 13:47) candidates saved under the shared name "Altadena" take their own place name */
+    if (C.rename) candDefs(rounds()).forEach(function (Q) { if (!Q.n) return; var cc = chatOf('cand', Q.id); if (cc && cc.place !== Q.place) C.rename(cc.key, Q.place); });
     fireDefs(rounds()).forEach(function (D) {
       var r = (window.__wfLiveFires || []).find(function (q) { return q && q[2] === D.id; }); if (!r || C.find({ id: D.id, kind: 'fire' })) return;
       var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: D.id, place: D.name, reg: 'Los Angeles', st: 'CA', lat: D.lat, lon: D.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: D.sc, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
       if (!D.n && c && window.__wfDeploy && window.__wfDeploy.ack) window.__wfDeploy.ack(c.key); }); };
   // A new round: 1-2 fires and 1-3 candidates at places not in use; returns what came up (for the banners)
   window.__wfSimSpawn = function (extra) { var R = rounds(), now = Date.now(), live = {}, rnd = function (n) { return Math.floor(Math.random() * n); };
-    fireDefs(R).forEach(function (d) { var c = chatOf('fire', d.id); if (!(c && c.closed)) live['f' + d.name] = 1; });
-    candDefs(R).forEach(function (d) { var c = chatOf('cand', d.id); if (!(c && (c.closed || c.dismissed))) live['c' + d.near] = 1; });
-    var pick = function (P, key, n) { var idx = P.map(function (x, i) { return i; }).filter(function (i) { return !live[key + (P[i].name || P[i].near)]; }), out = [];
+    /* (Oct 9, 13:47) a place already used (live, closed or dismissed) is never picked again, so the lists never show two incidents with one name */
+    fireDefs(R).forEach(function (d) { live['f' + d.name] = 1; });
+    candDefs(R).forEach(function (d) { live['c' + d.near] = 1; live['c' + d.place] = 1; });
+    var pick = function (P, key, n) { var idx = P.map(function (x, i) { return i; }).filter(function (i) { return !live[key + P[i].name] && !live[key + P[i].near]; }), out = [];
       while (out.length < n && idx.length) out.push(idx.splice(rnd(idx.length), 1)[0]); return out; };
     var f = pick(PF, 'f', 1 + rnd(2)), c = pick(PC, 'c', 1 + rnd(3)); if (!f.length && !c.length) return [];
     /* (Oct 9, 11:00) a round no longer lands all at once: its incidents come up one by one, the first now, each next one

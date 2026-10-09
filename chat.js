@@ -1645,6 +1645,7 @@
     direct: function (o) { var c = direct(o); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     ownCrews: ownCrews, dispatchOwn: dispatchOwn,     rankOf: rankOf,     helpIn: function (o) { return direct(o); }, mutualOpen: mutualOpen, markDone: markDone,   /* (Oct 8, 22:52) a help request arrives (not opened); mutual aid conversations as To do items */
     names: function (st) { return (NAMES[LANG[st] || 'us'] || NAMES.us).slice(); },
+    rename: function (key, place) { var c = load().chats[key]; if (!c || !place || c.place === place) return; c.place = place; save(); emit(); },   /* (Oct 9, 13:47) a simulated incident's own name */
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
