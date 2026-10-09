@@ -132,7 +132,9 @@
   // ---- storage --------------------------------------------------------------------------------------------------
   var DB = null;
   function load() { if (DB) return DB; try { DB = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
+  /* (Oct 9, 12:18) a page shown only as a backdrop under the main screen's panels (?under=1) reads the chats but never runs or writes them */
+  var UNDER = /[?&]under=1/.test(location.search);
+  function save() { if (UNDER) return; try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
   function emit() { try { var ch = false; if (DB && DB.chats) Object.keys(DB.chats).forEach(function (k) { if (ensureLts(DB.chats[k])) ch = true; }); if (ch) save(); } catch (e) {} try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} }
   // (Oct 8, 21:00) every station working the fire has its lieutenant (the crew's chief) in the chat too, with the station's real
   // people: Station 11's lieutenant is Daniel Brooks (the lieutenant profile himself when he is signed in)
@@ -1349,7 +1351,7 @@
 
   // ---- the clock: due messages arrive, on whichever screen is open --------------------------------------------------
   function tourMute() { try { return window.__wfTour && window.__wfTour.active && window.__wfTour.active() && window.__wfTour_mute ? window.__wfTour_mute() : ''; } catch (e) { return ''; } }
-  function tick() {
+  function tick() { if (UNDER) return;
     var db = load(), now = Date.now(), changed = false;
     Object.keys(db.chats).forEach(function (k) {
       var c = db.chats[k];
