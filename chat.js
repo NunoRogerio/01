@@ -650,9 +650,11 @@
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if (c.flags.air || c.flags.rec3) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
     if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Deploy another station', pt: 'Empenhar outro quartel' });
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
-    if (s === 4) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
-    if (s === 5) A.push({ key: 'next', en: 'Move to Surveillance', pt: 'Passar a Vigilância', primary: true });
-    if (s === 6) A.push({ key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true });
+    /* (Oct 9, 13:50, standing) the stage chip only ever shows together with its confirmation card in the chat (never alone) */
+    var recOn = hasOpenRec(c);
+    if (s === 4 && recOn) A.push({ key: 'next', en: 'Move to Concluding', pt: 'Passar a Em conclusão', primary: true });
+    if (s === 5 && recOn) A.push({ key: 'next', en: 'Move to Surveillance', pt: 'Passar a Vigilância', primary: true });
+    if (s === 6 && recOn) A.push({ key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true });
     return A;
   }
 
@@ -1408,7 +1410,7 @@
           actions: [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }] }, 600, 0); changed = true; }
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
-        if (!c.flags[pk] && now - c.stageAt > 8000)   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
+        if ((!c.flags[pk] || (c.stage >= 4 && !isLt() && !hasOpenRec(c) && !(c.queue || []).length && now - (c.recGone || 0) > 8000)) && now - c.stageAt > 8000)   /* a stage whose card went away (a rekindle, a reload) gets a new one: chip and card always together */   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
       if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;
