@@ -1248,7 +1248,19 @@ document.addEventListener('click', function (e) { if (Date.now() - (window.__wfK
   window.__wfMbFull = setInterval(function () { var on = false, W = innerWidth, H = innerHeight, menuOpen = !!document.querySelector('button[data-wf-x], .wf-mb[data-wf-x]');
     Array.prototype.forEach.call(document.querySelectorAll('[data-wf-maproot][data-wf-isfull="1"]'), function (m) { if (on || !m.offsetWidth) return; var r = m.getBoundingClientRect(), big = Math.max(r.width, r.height) >= Math.max(W, H) * 0.85 && Math.min(r.width, r.height) >= Math.min(W, H) * 0.9;
       if (big && r.top < H && r.bottom > 0 && getComputedStyle(m).visibility !== 'hidden') on = true; });
-    document.documentElement.classList.toggle('wf-mapfull', on && !menuOpen); }, 250); })();
+    document.documentElement.classList.toggle('wf-mapfull', on && !menuOpen);
+    /* (Oct 9, 17:55) a screen shown inside a blade (an iframe): its full-screen map tells the screen around it, which lets the frame fill the whole screen */
+    if (window.top !== window && on !== window.__wfMapFullSent) { window.__wfMapFullSent = on; try { window.parent.postMessage({ wfMapFull: on }, location.origin); } catch (x) {} } }, 250);
+  /* the other side: a frame whose map went full screen covers the whole screen (out of its blade), and goes back when the map is minimised */
+  window.addEventListener('message', function (e) { if (e.origin !== location.origin || !e.data || typeof e.data.wfMapFull !== 'boolean') return;
+    var fr = Array.prototype.find.call(document.querySelectorAll('iframe'), function (f) { return f.contentWindow === e.source; }); if (!fr) return;
+    if (e.data.wfMapFull) { if (fr.__wfFull) return; var saved = [], a = fr.parentElement;
+      for (; a && a !== document.documentElement && a.id !== 'dc-root'; a = a.parentElement) {   /* the screen's own scaling frame stays: the map fills that frame, which is the whole screen */ var cs = getComputedStyle(a); if (cs.transform !== 'none' || cs.overflow !== 'visible' || cs.clipPath !== 'none' || cs.filter !== 'none' || cs.contain !== 'none') { saved.push([a, a.style.transform, a.style.overflow, a.style.clipPath, a.style.webkitClipPath, a.style.filter, a.style.contain]); a.style.transform = 'none'; a.style.overflow = 'visible'; a.style.clipPath = 'none'; a.style.webkitClipPath = 'none'; a.style.filter = 'none'; a.style.contain = 'none'; } }
+      fr.__wfFull = { saved: saved, css: fr.getAttribute('style') || '' }; fr.style.cssText += ';position:fixed!important;left:0!important;top:0!important;width:100%!important;height:100%!important;z-index:2147483000!important;border-radius:0!important';
+      if (window.parent !== window) { try { window.parent.postMessage({ wfMapFull: true }, location.origin); } catch (x) {} } }
+    else if (fr.__wfFull) { var F = fr.__wfFull; fr.__wfFull = null; fr.setAttribute('style', F.css); F.saved.forEach(function (q) { q[0].style.transform = q[1]; q[0].style.overflow = q[2]; q[0].style.clipPath = q[3]; q[0].style.webkitClipPath = q[4]; q[0].style.filter = q[5]; q[0].style.contain = q[6]; });
+      if (window.parent !== window) { try { window.parent.postMessage({ wfMapFull: false }, location.origin); } catch (x) {} } } });
+})();
 
 // (Oct 8, 21:57) An incident page shown in a blade over the chat (?embed=1, in a frame): only its content. No back, menu, chat or
 // notifications buttons, and its title no longer leads away (the blade's own back arrow folds it back into the chat).

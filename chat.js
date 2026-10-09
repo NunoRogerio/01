@@ -606,14 +606,14 @@
     6: ['Mop-up done along the perimeter. Ready for Surveillance.', 'Rescaldo feito no perímetro. Prontos para Vigilância.'], 7: ['No hotspots left. Ready to close.', 'Sem pontos quentes. Prontos a encerrar.'] };
   // (Oct 9) one closing card: the team's recommendation carries the checklist and closes the fire itself (no second "Ready to close" card)
   function closeChecks(c) { var ev = (c.flags || {}).evac || c.evac; return [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: ev ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: ev ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }]; }
-  function closeCard(c, rec) { return { rec: true, close: true, to: 7, tag: rec ? { en: 'Team recommends', pt: 'A equipa recomenda' } : { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#3A3A3C', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, body: { en: REC[7][0], pt: REC[7][1] },
+  function closeCard(c, rec) { return { rec: true, close: true, to: 7, tag: rec ? { en: 'Recommendation', pt: 'Recomendação' } : { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#3A3A3C', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, body: { en: REC[7][0], pt: REC[7][1] },
     checks: closeChecks(c), actions: rec ? [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'close', en: 'Close fire', pt: 'Encerrar incêndio' }] : [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio' }] }; }
   /* (Oct 9, 09:03) the team's recommendation card for the next stage: one open at a time (no duplicates) */
   function hasOpenRec(c) { return (c.msgs || []).some(function (x) { return x.rec && !x.done; }) || (c.queue || []).some(function (q) { return q.m && q.m.rec; }); }
   function recCard(c, nx, delay) {
     var R = REC[nx]; if (!R || hasOpenRec(c)) return;
     if (nx === 7) { card(c, closeCard(c, true), delay, 0); return; }
-    card(c, { rec: true, to: nx, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
+    card(c, { rec: true, to: nx, tag: { en: 'Recommendation', pt: 'Recomendação' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
       actions: [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }] }, delay, 0);   /* (Oct 9, 09:05) Not yet + Move to, as buttons */
   }
   // A crew message that says the fire is ready for the next stage always comes with the confirmation card, never only the chip
@@ -1420,7 +1420,7 @@
       /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
       /* (Oct 9, 13:32) a declared fire waiting for its crews always has a card in the chat that asks for the dispatch (never only the chip) */
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage === 1 && !c.flags.dispatched && !isLt() && !(c.msgs || []).some(function (x) { return x.kind === 'card' && !x.done && (x.actions || []).some(function (a) { return a.key === 'dispatch'; }); }) && !(c.queue || []).some(function (q) { return q.m && (q.m.dispCard || q.m.kind === 'stage'); })) {
-        card(c, { rec: true, dispCard: true, to: 2, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: { en: 'Dispatch crews', pt: 'Despachar equipas' }, body: { en: 'The stations are ready. Choose who goes.', pt: 'Os quartéis estão prontos. Escolha quem vai.' },
+        card(c, { rec: true, dispCard: true, to: 2, tag: { en: 'Recommendation', pt: 'Recomendação' }, tagC: '#3A3A3C', title: { en: 'Dispatch crews', pt: 'Despachar equipas' }, body: { en: 'The stations are ready. Choose who goes.', pt: 'Os quartéis estão prontos. Escolha quem vai.' },
           actions: [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }] }, 600, 0); changed = true; }
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
