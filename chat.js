@@ -624,7 +624,8 @@
     if (name.test(t)) recCard(c, nx, 900);
   }
   function paceDue(c, s) {
-    if (s === 2) { setStage(c, 3, 300, 3); return; }   /* (Oct 8, 22:01) en route: the crews reach the fire within 15 s (field-driven, for everyone) */
+    if (s === 2) { setStage(c, 3, 300, 3); return; }
+    if (s === 3 && c.flags.air && !isLt()) return;   /* (Oct 9, 17:22) with air support approved, the air story brings the Resolving card (after the drops worked) */   /* (Oct 8, 22:01) en route: the crews reach the fire within 15 s (field-driven, for everyone) */
     var nx = s + 1, R = REC[nx]; if (!R) return;
     if (isLt()) { captMove(c, nx); return; }
     c.flags['rec' + s] = true;
@@ -729,7 +730,10 @@
       sys(c, 'Air operations assigned ' + heli + ' · about 12 min to the fire', 'As operações aéreas atribuíram o ' + heli + ' · cerca de 12 min até ao incêndio', 1200, 3);
       push(c, { kind: 'air', st: 'onscene' }, 7000, 12);
       sys(c, heli + ' on scene · first water drops on the head', heli + ' no local · primeiras descargas na cabeça', 7200, 0);
-      if (P[0]) say(c, 0, 'That did it. The head is slowing down.', 'Resultou. A cabeça está a abrandar.', 12000, 9);
+      /* (Oct 9, 17:22) the story in order: air approved, the helicopter on scene, a crew lead says the drops worked and the fire is ready for Resolving, and only then the team's card to move it */
+      if (c.stage === 3) { c.msgs = c.msgs.filter(function (x) { return !(x.kind === 'card' && x.rec && !x.done && x.to === 4); }); c.queue = c.queue.filter(function (x) { return !(x.m && x.m.rec && x.m.to === 4); }); }
+      if (P[0]) say(c, 0, c.stage === 3 ? 'The drops worked. Head held, no spread. Ready for Resolving.' : 'That did it. The head is slowing down.', c.stage === 3 ? 'As descargas resultaram. Cabeça dominada, sem progressão. Prontos para Em resolução.' : 'Resultou. A cabeça está a abrandar.', 12000, 9);
+      if (c.stage === 3 && !isLt()) recCard(c, 4, 14500);
     } else if (a === 'declineAir') {
       c.flags.airNo = true; me('Not yet. Hold with ground crews for now.', 'Ainda não. Segurem com meios terrestres por agora.');
       if (P[1]) say(c, 1, 'Understood. We will try, but it is spreading fast.', 'Compreendido. Vamos tentar, mas está a progredir rápido.', 3000, 3);
