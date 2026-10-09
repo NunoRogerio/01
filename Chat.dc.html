@@ -16,12 +16,12 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791559346"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=1791549051"></script>
+<script src="prefs.js?v=1791560685"></script>
 <script src="station.js?v=1791550416"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
 <script src="chat.js?v=1791556475"></script>
-<script src="tour.js?v=1791533202"></script>
+<script src="tour.js?v=1791560685"></script>
 <script src="feedcam.js?v=1791549296"></script>
 <script src="trophy.js?v=1791558109"></script>
 
@@ -400,7 +400,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-for list="{{ds.rows}}" as="r" hint-placeholder-count="4">
           <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 60px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
             <!-- (Oct 9, 11:09) the unit's type icon in its grey tile, as in the station's resource list (no station crest: all units are this station's; when stations mix, the crest belongs on the station header) -->
-            <span aria-hidden="true" style="grid-row: 1 / -1; grid-column: 1; align-self: center; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
+            <span aria-hidden="true" style="grid-row: 1 / -1; grid-column: 1; align-self: center; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><img src="{{r.crest}}" alt="" style="display: {{r.crestD}}; width: 36px; height: 36px; object-fit: contain"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: {{r.icD}}"><path d="{{r.ic}}"></path></svg></span>
             <span style="grid-column: 2; display: flex; align-items: center; gap: 8px; min-width: 0"><span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span><!-- (Oct 9) a unit that cannot go says why with the station resource list's tag (On a mission, Maintenance, In repair) --></span>
             <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="grid-row: 1 / -1; grid-column: 3; position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
             <span style="grid-column: 2; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.sub}}</span><span class="wf-stag" style="grid-column: 2; justify-self: start; margin-top: 4px; display: {{r.recD}}; align-items: center; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: rgba(52,199,89,0.12); color: #186B2D; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">Suggested</span>
@@ -1191,20 +1191,20 @@ class Component extends DCLogic {
               const sub = k.st0 === 'maint' || k.st0 === 'repair' ? L(k.en, k.pt) : k.busy ? L('Out on the ', 'No ') + k.busy + '. ' + who.trim() : who + (np ? np + ' ' + L(np === 1 ? 'person' : 'people', np === 1 ? 'pessoa' : 'pessoas') + '. ' : '') + L(k.en, k.pt).split('. ')[0] + '.';
               /* (Oct 9) the same tags as the station's resource list */
               const TG = k.busy ? [L('On a mission', 'Em missão'), 'rgba(184,74,0,0.14)', '#963B00'] : k.st0 === 'maint' ? [L('Maintenance', 'Em manutenção'), 'rgba(118,118,128,0.14)', '#636366'] : k.st0 === 'repair' ? [L('In repair', 'Em reparação'), 'rgba(118,118,128,0.14)', '#636366'] : null;
-              return { recD: REC[k.key] && ok ? 'inline-flex' : 'none', name: k.veh, sub, ic: (window.__wfFleetIC || {})[k.ic || 'eng'] || '', tag: TG ? TG[0] : '', tagBg: TG ? TG[1] : 'transparent', tagFg: TG ? TG[2] : '#636366', tagD: TG && !ok ? 'inline-flex' : 'none',
+              return { recD: REC[k.key] && ok ? 'inline-flex' : 'none', crest: '', crestD: 'none', icD: 'block', name: k.veh, sub, ic: (window.__wfFleetIC || {})[k.ic || 'eng'] || '', tag: TG ? TG[0] : '', tagBg: TG ? TG[1] : 'transparent', tagFg: TG ? TG[2] : '#636366', tagD: TG && !ok ? 'inline-flex' : 'none',
                 onStr: o ? 'true' : 'false', dis: last || sent || !ok ? 'true' : 'false', swOp: last || !ok ? 0.4 : 1, swBg: o ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: o ? '24px' : '0px', toggle: tog(k.key) }; }),
             btn: sent ? L('Crews dispatched', 'Equipas enviadas') : L('Dispatch crews', 'Enviar equipas'), chkD: sent ? 'block' : 'none', dis: sent ? 'true' : 'false', btnPe: sent ? 'none' : 'auto',
             note: L('Other stations come through mutual aid: ask them in a chat. Crews are simulated for this demonstration.', 'Outros quartéis chegam por auxílio: peça-lhes numa conversa. Equipas simuladas para esta demonstração.'),
             send: () => { if (sent || !n) return; try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {} this.setState({ dSent: true }); this._stick = true;
               setTimeout(() => { try { C.dispatchOwn(c.key, sel); } catch (e) {} this.setState({ dsp: false, dsDy: 0 }); }, 1100); } }; }
-        const on = !!s.dsp, ST = (c.stations || []).slice(0, 4), sel = s.dSel || ST.map((x, i) => i < 2), n = sel.filter(Boolean).length, sent = !!s.dSent;
+        const on = !!s.dsp, ST = (c.stations || []).slice(0, 4), REC = ST.map((x, i) => i < 2), sel = s.dSel || REC, n = sel.filter(Boolean).length, sent = !!s.dSent;   /* (Oct 9, 16:30) the AI recommendation: the two nearest stations (as every profile's dispatch: AI card first, Suggested on its units) */
         const tog = (i) => () => { if (sent) return; const S2 = sel.slice(); if (S2[i] && n <= 1) return; S2[i] = !S2[i]; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dSel: S2 }); };
         const close = () => { this._shd = null; this.setState({ dsp: false, dsDy: 0 }); };
         return { h: this.shHandle('dsp', 'dsDy'), close, b: 48 - (s.dsDy || 0), bT: s.dsDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none',
-          ai: { d: 'none', go: null, title: '', sub: '', aria: '', tagD: 'none' },
+          ai: (() => { const R = ST.filter((x, i) => REC[i]), same = ST.every((x, i) => !!sel[i] === !!REC[i]); return { d: R.length && !sent ? 'grid' : 'none', title: L('AI suggested pack', 'Pacote sugerido pela IA'), sub: R.map((x) => x.short || x.name).join(L(' and ', ' e ')) + L('. The nearest stations for this fire.', '. Os quartéis mais próximos deste incêndio.'), tagD: same ? 'inline-flex' : 'none', aria: L('AI suggested pack: ', 'Pacote sugerido pela IA: ') + R.map((x) => x.short || x.name).join(', ') + L('. Tap to use it', '. Toque para o usar'), go: () => { if (sent) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dSel: REC.slice() }); } }; })(),
           title: L('Configure dispatch', 'Configurar despacho'), stT: L('Stations', 'Quartéis'), stSub: L('The nearest stations. Choose who goes.', 'Os quartéis mais próximos. Escolha quem vai.'),
           rows: ST.map((st, i) => { const v = C.veh ? C.veh(c, i) : [], K = window.__wfCrest ? window.__wfCrest(st.ck || '', st.name) : { url: '' }, o = !!sel[i], last = o && n <= 1;
-            return { name: st.short || st.name, sub: (st.km < 10 ? (+st.km || 0).toFixed(1) : Math.round(st.km)) + ' km. ~' + (st.min || 0) + ' min. ' + v.join(', ') + '.', crest: K.url || '', crestD: K.url ? 'block' : 'none',
+            return { name: st.short || st.name, sub: (st.km < 10 ? (+st.km || 0).toFixed(1) : Math.round(st.km)) + ' km. ~' + (st.min || 0) + ' min. ' + v.join(', ') + '.', crest: K.url || '', crestD: K.url ? 'block' : 'none', icD: K.url ? 'none' : 'block', ic: (window.__wfFleetIC || {}).eng || '', recD: REC[i] ? 'inline-flex' : 'none', tagD: 'none', tag: '', tagBg: 'transparent', tagFg: '#636366',
               onStr: o ? 'true' : 'false', dis: last || sent ? 'true' : 'false', swOp: last ? 0.4 : 1, swBg: o ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: o ? '24px' : '0px', toggle: tog(i) }; }),
           btn: sent ? L('Crews dispatched', 'Equipas enviadas') : L('Dispatch crews', 'Enviar equipas'), chkD: sent ? 'block' : 'none', dis: sent ? 'true' : 'false', btnPe: sent ? 'none' : 'auto',
           note: L('Stations and vehicles are simulated for this demonstration.', 'Quartéis e veículos simulados para esta demonstração.'),

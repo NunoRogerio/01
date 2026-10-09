@@ -646,7 +646,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   }
   /* (Oct 9, 12:00) every blade's X sits vertically centred on the blade's title (its first line) */
   function bladeXAlign() { var B = document.querySelectorAll('.wf-bladex'); for (var i = 0; i < B.length; i++) { var b = B[i], box = b.parentElement; if (!box || !b.offsetParent) continue;
-      var h = box.querySelector('h1,h2'); if (!h || !h.offsetParent) continue; var br = box.getBoundingClientRect(), k = br.height / (box.offsetHeight || br.height) || 1, hr = h.getBoundingClientRect(), lh = parseFloat(getComputedStyle(h).lineHeight) || 32;
+      var h = Array.prototype.find.call(box.querySelectorAll('h1,h2,.wf-title-m'), function (e) { return e.offsetParent && e.offsetWidth > 2 && e.offsetHeight > 2; }); if (!h) continue;   /* (Oct 9, 16:25) the visible title: a visually hidden heading (the incidents list's) would put the X at the blade's edge */ var br = box.getBoundingClientRect(), k = br.height / (box.offsetHeight || br.height) || 1, hr = h.getBoundingClientRect(), lh = parseFloat(getComputedStyle(h).lineHeight) || 32;
       var top = Math.round((hr.top - br.top) / k + lh / 2 - 22); if (Math.abs(top - (parseFloat(b.style.top) || 0)) > 0.5 || /calc/.test(b.style.top)) b.style.top = top + 'px'; } }
   setInterval(function () { try { bladeX(); bladeXAlign(); } catch (e) {} }, 700);
   var kT = 0, kMo = null, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); try { simMark(); } catch (e) {} fitKpi(); if (kMo) kMo.takeRecords(); }, 150); };   /* our own changes are not news */

@@ -61,7 +61,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   }
   function q(sel, filter, strict) { var L = document.querySelectorAll(sel), off = null; for (var i = 0; i < L.length; i++) { if (filter && !filter(L[i])) continue; var s = shown(L[i], strict); if (s === true) return L[i]; if ((s === 'off' || s === 'part') && !off) off = L[i]; } return off; }
   var txt = function (el) { return (el.textContent || '').replace(/\s+/g, ' ').trim(); };
-  function chip(words) { return q('button.chbtn', function (b) { if (!b.parentElement || b.parentElement.style.maxHeight !== '88px') return false; var t = txt(b); return words.some(function (w) { return t.indexOf(w) >= 0; }); }); }
+  function chip(words) { return q('button.chbtn', function (b) { if (!b.parentElement || !(b.parentElement.classList.contains('wf-chips') || b.parentElement.style.maxHeight === '88px')) return false; var t = txt(b); return words.some(function (w) { return t.indexOf(w) >= 0; }); }); }   /* (Oct 9, 16:30) the suggestions row (.wf-chips) */
   var chipRow = function () { var b = q('button.chbtn', function (x) { return x.parentElement && x.parentElement.style.maxHeight === '88px'; }); return b ? b.parentElement : null; };
   var pathBtn = function (d) { return q('button.mbtn', function (b) { var p = b.querySelector('path[d^="' + d + '"]'); return !!p && getComputedStyle(p).display !== 'none'; }); };
   var hdr = function (sel) { return q('header[data-pull="down"] ' + sel); };
@@ -110,7 +110,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // the most likely candidate on the map (highest percent in its label), on screen
   // Show a blade by opening it and folding it back (Oct 3): opens once the circle has arrived, closes 0.5 s after it has opened
   // the incidents list blade is open
-  function listOpen() { var b = document.querySelector('section[data-swipe-key="li"] > div:last-child > button.opt[aria-expanded]'); return !!b && b.getAttribute('aria-expanded') === 'true'; }
+  function listOpen() { var b = document.querySelector('section[data-swipe-key="li"] button.opt[aria-haspopup="dialog"][aria-expanded]'); return !!b && b.getAttribute('aria-expanded') === 'true'; }
   function demoOf(openSel, closeSel) { return { open: openSel, close: closeSel }; }
   var demoRan = -1;
   function runDemo(i, st) {
@@ -166,7 +166,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // always sits on a button that is there (it once pointed at the folded, hidden one: a dead end); the suggestion chip is the fallback
   function moveFind() { var m = stMove(), ok = m && m.style.display !== 'none' && !/Closed|Encerrad/.test(m.textContent || '');
     if (ok && shown(m) === false) stExpand(); if (ok && shown(m)) return m; return moveOn(); }
-  function moveOn() { var c = chip(['Move to', 'Passar a']); if (c && /Closed|Encerrad/.test(txt(c))) c = null; if (c) return c; var m = stMove(); return m && !/Closed|Encerrad/.test(m.textContent || '') ? m : null; }
+  function moveOn() { var c = q('.wf-chips > button.chbtn', function (x) { return /^(Move to|To|Passar a|Para) /.test(txt(x)); });   /* (Oct 9) the chip reads To <stage> */ if (c && /Closed|Encerrad/.test(txt(c))) c = null; if (c) return c; var m = stMove(); return m && !/Closed|Encerrad/.test(m.textContent || '') ? m : null; }
   // the team's chatter is held up to and including the step that asks for the decision, and left out after it
   function holdTo() { for (var k = 0; k < S.length; k++) if (S[k].t && S[k].t[0] === 'Declare the fire') return k; return 8; }
   function fireStage() { try { var C = window.__wfChat, ok = ''; try { ok = sessionStorage.getItem('wf-chat-open') || ''; } catch (e) {} var L = C ? C.list().filter(function (c) { return c.kind !== 'dm' && !c.closed && !c.dismissed && (!ok || c.key === ok || !C.list().some(function (d) { return d.key === ok; })); }).sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); }) : []; return L[0] ? L[0].stage : -1; } catch (e) { return -1; } }
@@ -176,7 +176,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function reqApprove() { return q('article.chmsg [data-fitrow] > button.chbtn', function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }); }
   function stExpand() { var c = q('button.chrow[data-wf-stband][aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
   // the candidate was confirmed: its Confirm / Dismiss suggestions are gone (checked a moment after the step began)
-  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss fire', 'Descartar incêndio']) && !!q('button.chrow[data-wf-stband][aria-expanded]'); }
+  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss fire', 'Descartar incêndio']) && (function () { var b = q('button.chrow[data-wf-stband]'); return !!b && !/Ignition candidate|Candidato a ignição|Candidato/i.test(txt(b)); })(); }   /* (Oct 9, 16:28) the stage band no longer folds (no aria-expanded): the fire counts as declared once its band leaves Ignition candidate */
   function topMarker() {
     var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap[aria-label*="ignition candidate"]')), best = null, bp = -1;
     L.forEach(function (b) { if (shown(b) !== true) return; var m = /(\d+) percent/.exec(b.getAttribute('aria-label') || ''), v = m ? +m[1] : 0; if (v > bp) { bp = v; best = b; } });
@@ -225,7 +225,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     { page: 'Main.dc.html', mode: 'until', area: true, until: function () { return !!seen && Date.now() - seen > 600 && !areaOpen(); }, find: function () { var sec = document.querySelector('section[data-swipe-key="sc"]'); if (!sec || !areaOpen()) return null; var B = [].slice.call(sec.querySelectorAll('button,[role=button]')); for (var k = 0; k < B.length; k++) { var t = (B[k].getAttribute('aria-label') || B[k].textContent || ''); if (/^\s*Los Angeles/.test(t) && B[k].offsetHeight) return B[k]; } return null; },
       t: ['Choose Los Angeles', 'Escolha Los Angeles'],
       b: ['Tap Los Angeles. We stay here for the tour.', 'Toque em Los Angeles. Ficamos aqui durante a visita.'] },
-    { page: 'Main.dc.html', mode: 'until', until: listOpen, find: function () { return q('section[data-swipe-key="li"] > div:last-child > button.opt'); },
+    { page: 'Main.dc.html', mode: 'until', until: listOpen, find: function () { return q('section[data-swipe-key="li"] button.opt[aria-haspopup="dialog"][aria-expanded]'); },
       t: ['Open the incidents list', 'Abra a lista de incidentes'],
       b: ['Every candidate and fire in this region, the most likely first. Tap to open it.', 'Todos os candidatos e incêndios desta região, os mais prováveis primeiro. Toque para a abrir.'] },
     { page: 'Main.dc.html', mode: 'until', until: function () { return !!seen && Date.now() - seen > 600 && !listOpen(); }, find: function () { return listOpen() ? q('section[data-swipe-key="li"] .wf-grab.gt') : null; },
@@ -252,7 +252,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       b: ['The nearest station sent its drone when the ignition was detected. Its feed is evidence beside the satellite, and every coordinator has given a reading below.', 'O quartel mais próximo enviou o drone quando a ignição foi detetada. A imagem é uma evidência ao lado do satélite, e cada coordenador deu a sua leitura abaixo.'] },
     // the decision: Approve on the coordinator's request card (or, without one, the state card's Move to First alert)
     { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, before: function () { var t = 0, f = function () { var ra = reqApproveRaw(); if (ra) { try { ra.scrollIntoView({ block: 'center' }); } catch (x) {} scrolled = false; return; } if (!q('button.chrow[data-wf-stband][aria-expanded="true"]')) stExpand(); if (++t < 6 && !stMove()) setTimeout(f, 300); }; setTimeout(f, 400); },
-      find: function () { return reqApprove() || stMove() || q('button.chrow[data-wf-stband][aria-expanded]'); },
+      find: function () { return reqApprove() || stMove() || q('button.chrow[data-wf-stband]'); },
       t: ['Declare the fire', 'Declare o incêndio'],
       b: ['A coordinator asks you to declare it. Tap Approve.', 'Um coordenador pede-lhe que o declare. Toque em Aprovar.'] },
     // (Oct 5, 02:28) crews are dispatched from the chat: the cursor on the Configure dispatch button of the Ignition confirmed card
@@ -262,58 +262,38 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       t: ['Configure the dispatch', 'Configure o despacho'],
       b: ['Tap Configure dispatch on the card to choose the crews.', 'Toque em Configurar despacho no cartão para escolher as equipas.'] },
 
-    // (Oct 5, 02:01) the fire page opens on its Crews tab with nothing assigned: the AI suggestion first (or a dispatch by hand)
-    { page: 'Dispatch.dc.html', mode: 'tap', before: function () { var t = 0, f = function () {
-          var tab = q('button[role=tab].segopt', function (x) { return /^(Crews|Equipas)/.test((x.textContent || '').trim()) && x.offsetParent !== null; });
-          if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
-          var aiOn = !!q('button.mbtn.wf-reset[aria-label]', function (b) { return b.offsetParent !== null; }); if (aiOn) return;   /* (Oct 6) the AI pack is offered: done (the loop used to empty the plan the AI tap had just filled: Send order dead) */
-          if (window.__wfDispPlanReset) window.__wfDispPlanReset();
-          var g = get(); if (++t < 40 && g && S[g.i] && S[g.i].t && S[g.i].t[0] === 'Use the AI suggestion') setTimeout(f, 300); }; f(); },   /* (Oct 5, 03:17) for as long as this step lasts: nothing chosen yet, the AI suggestion showing */
-      find: function () { return q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); },
+    // (Oct 9, 16:30) Configure dispatch opens the dispatch blade in the chat (no more fire page here): the AI card first, then Dispatch crews
+    { page: 'Chat.dc.html', mode: 'tap', find: function () { return q('button.chbtn[aria-label^="AI suggested pack"],button.chbtn[aria-label^="Pacote sugerido"]', function (x) { return x.offsetParent !== null; }); },
       t: ['Use the AI suggestion', 'Use a sugestão da IA'],
-      b: ['No crews are assigned yet. Tap AI suggested pack: the nearest stations and air support. You can also build the dispatch yourself with Add resources.', 'Ainda não há equipas atribuídas. Toque no pacote sugerido pela IA: os quartéis mais próximos e meios aéreos. Também pode montar o despacho com Adicionar meios.'] },
-    // (Oct 5, 03:39) moves on as soon as the orders start going out (the sending screen shows), however the tap reached the button
-    { page: 'Dispatch.dc.html', mode: 'until', interact: true, until: function () { var d = q('section[aria-labelledby="sendTitle"]'); return !!d && d.getAttribute('aria-hidden') === 'false'; }, find: function () {
-        // Never a dead end: if the plan is still empty (Send order disabled), the tour fills it with the AI suggested pack itself
-        // the Send order button that is on screen (the Crews foot sits inside its own sheet), never the sending dialog's
-        // (Oct 5, 09:31) the one in view: the fixed foot one, not a copy further down the list (on a phone the tour pointed at
-        // a copy out of view, and blocked the foot button the person actually tapped: a dead end)
-        var isSend = function (x) { return !x.closest('section[aria-labelledby="sendTitle"]') && x.offsetParent !== null && /^(Send order|Enviar ordem)/.test(txt(x)); };
-        var inV = [].slice.call(document.querySelectorAll('button.btn.primary')).filter(function (x) { if (!isSend(x)) return false; var r = x.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= VH(); }).sort(function (a, c) { return c.getBoundingClientRect().top - a.getBoundingClientRect().top; });
-        var b = inV[0] || q('button.btn.primary', isSend, true) || q('button.btn.primary', isSend);
-        var off = b && (b.getAttribute('aria-disabled') === 'true' || +getComputedStyle(b).opacity < 0.9);   /* (Oct 6) the Crews foot copy had no aria-disabled: the plan was never filled, a dead end */
-        if (off) { var ai = q('button.mbtn.wf-reset[aria-label]', function (x) { return x.offsetParent !== null; }); if (ai && Date.now() - (window.__wfAiAuto || 0) > 1200) { window.__wfAiAuto = Date.now(); selfTap = true; try { ai.click(); } catch (e) {} selfTap = false; } }
-        return b; },
-      also: 'button.btn.primary',   /* any Send order on screen moves the dispatch on (never blocked) */
-      t: ['Send the orders', 'Envie as ordens'],
-      b: ['Tap Send order: each station and the air team get their order.', 'Toque em Enviar ordem: cada quartel e os meios aéreos recebem a sua ordem.'] },
-    { page: 'Dispatch.dc.html', mode: 'tap', find: function () { return q('section[aria-labelledby="sendTitle"] button.btn.primary'); },
-      ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['Here are the orders going out.', 'Aqui estão as ordens a sair.'],
-      t: ['Back to the team chat', 'De volta ao chat da equipa'],
-      b: ['Tap Team chat. The leads are confirming their orders there.', 'Toque em Chat da equipa. Os chefes estão a confirmar as ordens.'] },
+      b: ['Tap AI suggested pack: the nearest crews for this fire. You can also choose who goes with the switches.', 'Toque no pacote sugerido pela IA: as equipas mais próximas deste incêndio. Também pode escolher quem vai com os interruptores.'] },
+    { page: 'Chat.dc.html', mode: 'until', interact: true, until: function () { return !!q('button.btn.primary', function (x) { return /^(Crews dispatched|Equipas enviadas)/.test(txt(x)); }) || (!!seen && Date.now() - seen > 1500 && !q('button.btn.primary', function (x) { return x.offsetParent !== null && /^(Dispatch crews|Enviar equipas)/.test(txt(x)); })); },
+      find: function () { return q('button.btn.primary', function (x) { return x.offsetParent !== null && /^(Dispatch crews|Enviar equipas)/.test(txt(x)); }); },
+      t: ['Send the crews', 'Envie as equipas'],
+      b: ['Tap Dispatch crews: each station gets its order.', 'Toque em Enviar equipas: cada quartel recebe a sua ordem.'] },
 
     // (Oct 5, 03:21) the fire moves forward by itself, stage after stage (the cursor stays on its state), until it can be closed
     // (Oct 5, 12:40) three moves are yours, the rest runs by itself and quickly: the team's cards wait (holdAll) until the move is tapped
     { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
+      ach: ['Crews dispatched. Well done!', 'Equipas enviadas. Muito bem!'], then: ['The leads are confirming their orders.', 'Os chefes estão a confirmar as ordens.'],
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['Tap the Move to button to take the fire to its next stage. You move it three times; the stages between run by themselves.', 'Toque no botão Passar a para levar o incêndio à fase seguinte. Faz três passagens; as fases entre elas correm sozinhas.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 3 && !!moveOn(); },
-      find: function () { return q('button.chrow[data-wf-stband][aria-expanded]'); },
+      find: function () { return q('button.chrow[data-wf-stband]'); },
       t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
     { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['Tap Move to again: the crews are on scene and the fire is being brought under control.', 'Toque outra vez em Passar a: as equipas estão no local e o fogo está a ser dominado.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true, until: function () { return fireStage() >= 5 && !!moveOn(); },
-      find: function () { return q('button.chrow[data-wf-stband][aria-expanded]'); },
+      find: function () { return q('button.chrow[data-wf-stband]'); },
       t: ['The crews work the fire', 'As equipas combatem o fogo'], b: ['The fire moves on by itself.', 'O incêndio avança sozinho.'] },
     { page: 'Chat.dc.html', mode: 'tap', interact: true, holdAll: true, find: moveFind,
       t: ['Move the fire on', 'Faça o incêndio avançar'],
       b: ['One more move: the fire is nearly out, so take it to surveillance.', 'Mais uma passagem: o fogo está quase extinto, leve-o para vigilância.'] },
     { page: 'Chat.dc.html', mode: 'until', auto: true, quick: true, stages: true, noClose: true,
-      until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
-      find: function () { return q('button.chrow[data-wf-stband][aria-expanded]'); },
+      until: function () { var m = stMove(); return !!chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad', 'To Closed', 'Para Encerrad']) || !!(m && /Closed|Encerrad/.test(m.textContent || '')); },
+      find: function () { return q('button.chrow[data-wf-stband]'); },
       t: ['The fire holds', 'O incêndio está dominado'], b: ['Surveillance. You will close it next.', 'Vigilância. A seguir, encerra-o.'] },
-    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad']) || stMove() || q('button.chrow[data-wf-stband][aria-expanded]'); },
+    { page: 'Chat.dc.html', mode: 'tap', interact: true, find: function () { return chip(['Close fire', 'Encerrar incêndio', 'Move to Closed', 'Passar a Encerrad', 'To Closed', 'Para Encerrad']) || stMove() || q('button.chrow[data-wf-stband]'); },
       t: ['Close the fire', 'Encerre o incêndio'],
       b: ['It is under surveillance and holding. Tap Close fire.', 'Está em vigilância e dominado. Toque em Encerrar incêndio.'] },
     // the closing checks run by themselves: no cursor here (it comes back on the summary card)
@@ -838,10 +818,10 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // a chat still left as a candidate (an earlier tour) is confirmed first. Never Dismiss or anything else.
   function autoNext() {
     var g0 = get(), st1 = g0 && S[g0.i], noClose = st1 && st1.noClose;
-    var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { var t = txt(x); return !x.disabled && (/^(Approve|Aprovar)/.test(t) || (!noClose && /^(Close fire|Encerrar incêndio)/.test(t))); });
+    var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { var t = txt(x); return !x.disabled && (/^(Approve|Aprovar|Move to|Passar a)/.test(t) && !/Closed|Encerrad/.test(t) || (!noClose && /^(Close fire|Encerrar incêndio)/.test(t))); });   /* (Oct 9, 16:30) the team's recommendation card moves the fire on */
     if (b) return b;
     var W = ['Declare fire', 'Declarar incêndio', 'Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(noClose ? [] : ['Close fire', 'Encerrar incêndio']);
-    return q('button.chbtn', function (x) { if (!x.parentElement || x.parentElement.style.maxHeight !== '88px') return false; var t = txt(x); return W.some(function (w) { return t.indexOf(w) === 0; }); });
+    W = W.concat(['To ', 'Para ']); return q('button.chbtn', function (x) { if (!x.parentElement || !(x.parentElement.classList.contains('wf-chips') || x.parentElement.style.maxHeight === '88px')) return false; var t = txt(x); if (noClose && /Closed|Encerrad/.test(t)) return false; return W.some(function (w) { return t.indexOf(w) === 0; }); });
   }
   function drive() { var b = autoNext();
     // (Oct 5, 03:21) moving the fire on by itself: when no suggestion moves it, the state card's own Move to button does (never to Closed)
