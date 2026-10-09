@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791549887"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791557919"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=1791549051"></script>
 <script src="station.js?v=1791550416"></script>
@@ -376,6 +376,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
   </sc-if>
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 60">
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
+  <!-- (Oct 9, 15:54) structures at risk: its own tag above the tooltip, 8px from it and as wide as it, in the normal tag size (as the stage tag) -->
+  <span class="wf-ctag wf-risk-tag {{popCls}}" role="status" style="display: {{pop.riskD}}; position: absolute; z-index: 60; left: {{pop.left}}px; top: calc({{pop.top}}px - 36px); --wf-dy: {{pop.dy}}; width: {{pop.w}}px; gap: 8px; color: rgb(190, 0, 18); background: linear-gradient(rgba(215, 0, 21, 0.1), rgba(215, 0, 21, 0.1)) rgb(255, 255, 255); box-shadow: 0 0 24px rgba(0,0,0,0.16); pointer-events: none"><svg width="18" height="16" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span>{{pop.riskTxt}}</span></span>
   <!-- Tooltip panel: unfolds from the tapped marker, above or below it, and slides sideways to stay 16px from the screen edges -->
   <div role="dialog" data-wf-pop="1" class="{{popCls}}" aria-label="{{pop.tt}}" onPointerDown="{{stop}}" style="position: absolute; z-index: 60; left: {{pop.left}}px; top: {{pop.top}}px; --wf-dy: {{pop.dy}}; width: {{pop.w}}px; box-sizing: border-box; padding: {{pop.pad}}; border-radius: 28px; overflow: hidden; background: rgba(255,255,255,0.72); border: 1px solid rgba(60,60,67,0.1); box-shadow: 0 0 24px rgba(0,0,0,0.16); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%)">
     <!-- Map tooltip panel: one block, three variants (candidate, fire, station). Same 180px width, padding, text styles and gaps:
@@ -387,8 +389,6 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <!-- (Oct 3, 22:26) the likelihood as the shared tag (as in the lists and beside the markers) instead of the big number, its label kept above it (22:33); 16px to the place -->
         <span style="display: block; font-size: 16px; line-height: 20px; color: #6E6E73">Likelihood</span>
         <span class="wf-ctag" aria-hidden="true" style="margin-top: 4px; color: {{pop.tagFg}}; background: {{pop.tagBg}}">{{pop.pct}}</span>
-        <!-- (Oct 7) structures at risk: the marker's red triangle explained, as a small red tag (13px tag size) with the same triangle, 8px under the tag above -->
-        <span class="wf-ctag wf-risk-tag" role="status" style="display: {{pop.riskD}}; margin-top: 8px; min-height: 24px; max-width: 100%; padding: 4px 8px; gap: 4px; font-size: 13px; line-height: 16px; white-space: nowrap; text-align: left; color: rgb(190, 0, 18); background: rgba(215, 0, 21, 0.1)"><svg width="14" height="13" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span>{{pop.riskTxt}}</span></span>
         <!-- (Oct 7) mutual aid: the same tag as in the station's list, 8px under the tag above (the marker's outer ring explained) -->
         <span class="wf-ctag" role="status" style="display: {{pop.aidD}}; margin-top: 8px; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{pop.aidTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.place}}</b>
@@ -402,8 +402,6 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 16px 8px">
         <span style="display: block; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.fkStageLbl}}</span>
         <span class="wf-ctag" role="status" style="margin-top: 4px; padding-left: 12px; padding-right: 12px; color: {{pop.fkTagFg}}; background: {{pop.fkTagBg}}">{{pop.fkTag}}</span>
-        <!-- (Oct 7) structures at risk: the marker's red triangle explained, as a small red tag (13px tag size) with the same triangle, 8px under the tag above -->
-        <span class="wf-ctag wf-risk-tag" role="status" style="display: {{pop.riskD}}; margin-top: 8px; min-height: 24px; max-width: 100%; padding: 4px 8px; gap: 4px; font-size: 13px; line-height: 16px; white-space: nowrap; text-align: left; color: rgb(190, 0, 18); background: rgba(215, 0, 21, 0.1)"><svg width="14" height="13" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span>{{pop.riskTxt}}</span></span>
         <!-- (Oct 7) mutual aid: the same tag as in the station's list, 8px under the tag above (the marker's outer ring explained) -->
         <span class="wf-ctag" role="status" style="display: {{pop.aidD}}; margin-top: 8px; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{pop.aidTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.fkName}}</b>

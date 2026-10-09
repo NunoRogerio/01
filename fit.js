@@ -663,7 +663,11 @@ window.__wfBlink=function(path,dur){
 // Android, Chrome opens links into the installed app on its own, so the offer never shows there.
 /* (Oct 9, 13:42) a page shown only as a still backdrop under another screen's panel (?under=1) never moves: no transitions, no animations, no media */
 (function(){if(!/[?&]under=1/.test(location.search))return;try{var z=document.createElement('style');z.textContent='*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}video{display:none!important}';(document.head||document.documentElement).appendChild(z);
-  var stop=function(){try{document.getAnimations().forEach(function(a){a.finish&&a.finish();});}catch(e){}};setInterval(stop,250);}catch(e){}})();
+  var stop=function(){try{document.getAnimations().forEach(function(a){a.finish&&a.finish();});}catch(e){}};var iv=setInterval(stop,250);
+  /* (Oct 9, 15:48) once laid out, the backdrop is frozen for good: every timer and frame loop stops, so nothing under the panel re-renders or flickers */
+  var freeze=function(){try{stop();clearInterval(iv);var hi=setTimeout(function(){},0);for(var i=0;i<=hi;i++){clearTimeout(i);clearInterval(i);}var no=function(){return 0;};window.setTimeout=no;window.setInterval=no;window.requestAnimationFrame=no;
+    window.__wfFrozen=true;}catch(e){}};
+  var arm=function(){setTimeout(freeze,1800);};if(document.readyState==='complete')arm();else window.addEventListener('load',arm);}catch(e){}})();
 (function(){
   var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   var want=false;try{want=sessionStorage.getItem('wf-install')==='1';}catch(e){}

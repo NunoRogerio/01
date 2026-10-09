@@ -13,6 +13,7 @@
     /* (Oct 8, 17:50) folded to the icon column, the menu's button lives in the column: its empty spot in the header closes, so the
        header's other buttons (notifications) sit on the screen's right edge and the title gets the room */
     'html.wf-rail [data-wf-burger]:not(.wf-mb){margin-right:-60px!important}' +   /* (Oct 9, 15:42) folded to the column: the header button keeps its spot (under the column), nothing in the header moves */
+    '@property --wf-w{syntax:"<length>";inherits:true;initial-value:390px}' +   /* (Oct 9, 15:50) the screen width can ease, so the content reflows along with the resize */
     '.wf-mb{position:absolute;z-index:200;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,0.12);color:#3C3C43;cursor:pointer}';
   (document.head || document.documentElement).appendChild(css);
   document.documentElement.classList.add('wf-menujs');
@@ -66,17 +67,17 @@
   function hclip(on) { var h = host(); if (!h) return; clearTimeout(hcT);
     if (!on) { h.style.clipPath = h.style.webkitClipPath = ''; return; }
     var W = h.offsetWidth, H = h.offsetHeight, t = btn ? (parseFloat(btn.style.top) || 0) : 0, c = W - 60;
-    var poly = 'polygon(-24px 0px, ' + c + 'px 0px, ' + c + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t + 52) + 'px, ' + c + 'px ' + (t + 52) + 'px, ' + c + 'px ' + H + 'px, -24px ' + H + 'px)';
+    var poly = 'polygon(-24px -80px, ' + c + 'px -80px, ' + c + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t + 52) + 'px, ' + c + 'px ' + (t + 52) + 'px, ' + c + 'px ' + H + 'px, -24px ' + H + 'px)';   /* (Oct 9, 15:49) the cut reaches above the top, so the header's colour still fills the strip under the clock */
     h.style.clipPath = h.style.webkitClipPath = poly; }
   function slide(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
     var ease = DUR + 'ms ' + EASE; p.style.willChange = 'transform, clip-path';
-    if (m && !p.style.clipPath) { p.style.transition = 'none'; p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; void p.offsetWidth; }
+    if (m && !p.style.clipPath) { p.style.transition = 'none'; p.style.clipPath = p.style.webkitClipPath = 'inset(-80px 0px 0px -24px)'; void p.offsetWidth; }
     p.style.transition = 'transform ' + ease + ', clip-path ' + ease + ', -webkit-clip-path ' + ease;
     rail(m === 'rail', p);
     if (!m) hclip(false); else if (m === 'open' || p.__wfFolded) hclip(true); else hcT = setTimeout(function () { if (mode) hclip(true); }, DUR);   /* first fold from closed: the narrowing screen uncovers the column itself, then the cut holds it */
     p.__wfFolded = !!m;
     p.style.transform = D ? 'translateX(' + D + 'px)' : ''; p.style.boxShadow = m ? SH : '';
-    if (m === 'rail') p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; else if (m) p.style.clipPath = p.style.webkitClipPath = 'inset(0px ' + R + 'px 0px -24px)'; else { p.style.clipPath = p.style.webkitClipPath = 'inset(0px 0px 0px -24px)'; setTimeout(function () { if (!mode && p) { p.style.clipPath = p.style.webkitClipPath = ''; } }, DUR + 60); } }
+    if (m === 'rail') p.style.clipPath = p.style.webkitClipPath = 'inset(-80px 0px 0px -24px)'; else if (m) p.style.clipPath = p.style.webkitClipPath = 'inset(-80px ' + R + 'px 0px -24px)'; else { p.style.clipPath = p.style.webkitClipPath = 'inset(-80px 0px 0px -24px)'; setTimeout(function () { if (!mode && p) { p.style.clipPath = p.style.webkitClipPath = ''; } }, DUR + 60); } }
   // (Oct 4, 16:10) folded to the icon column, the screen is really resized to the visible 330px (not cropped): its width variable and the
   // viewport the screens read both shrink, and everything that reads them (maps, bands, rows) lays out again, as on the main screen
   var vp0 = null, dlgRail = false;
@@ -86,11 +87,13 @@
     // (the growing screen reveals it), so nothing reflows mid-motion.
     clearTimeout(rail.t); var ease = DUR + 'ms ' + EASE;
     if (on) { if (!vp0) vp0 = V; if (V.rail) return; if (!p.style.width) { p.style.width = HW + 'px'; void p.offsetWidth; } p.style.overflow = 'hidden';
-      p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease; p.style.width = (HW - 60) + 'px';
+      p.style.setProperty('--wf-w', HW + 'px'); void p.offsetWidth;
+      /* (Oct 9, 15:50) the content reflows with the resize (its width eases with the screen's), instead of waiting and jumping at the end */
+      p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease + ', --wf-w ' + ease; p.style.width = (HW - 60) + 'px'; p.style.setProperty('--wf-w', (HW - 60) + 'px');
       rail.t = setTimeout(function () { if (mode !== 'rail') return; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); document.documentElement.classList.add('wf-rail'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }, DUR); return; }
-    else if (vp0) { window.__wfVP = vp0; vp0 = null; p.style.removeProperty('--wf-w'); document.documentElement.classList.remove('wf-rail'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {}
-      p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease; p.style.width = HW + 'px';
-      rail.t = setTimeout(function () { if (mode === 'rail') return; p.style.width = ''; p.style.overflow = ''; }, DUR + 40); } }
+    else if (vp0) { window.__wfVP = vp0; vp0 = null; document.documentElement.classList.remove('wf-rail'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {}
+      p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease + ', --wf-w ' + ease; p.style.width = HW + 'px'; p.style.setProperty('--wf-w', HW + 'px');
+      rail.t = setTimeout(function () { if (mode === 'rail') return; p.style.width = ''; p.style.overflow = ''; p.style.removeProperty('--wf-w'); }, DUR + 40); } }
   function mw() { var h = host(); return Math.min(h ? h.offsetWidth : 390, MW); }
   function open() {
     frame(); if (!ready) { want = open; return; }
