@@ -199,14 +199,14 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <span style="margin: 0 16px 16px; font-size: 13px; line-height: 18px; color: #545458">{{m.evNote}}</span>
             </sc-if>
             <sc-if value="{{m.hasRows}}" hint-placeholder-val="{{ false }}">
-              <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 0">
+              <ul style="display: flex; flex-direction: column; margin: 0; padding: 0 0 {{m.rowsPb}}; list-style: none; border-top: 0">
                 <sc-for list="{{m.rows}}" as="r" hint-placeholder-count="3">
                   <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; padding: 8px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span style="min-width: 0; font-size: 16px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="justify-self: end; align-self: start; padding: 4px 8px; border-radius: 8px; background: {{r.tagBg}}; color: {{r.rc}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 16px; line-height: 20px; color: #545458">{{r.b}}</span></li>
                 </sc-for>
               </ul>
             </sc-if>
             <sc-if value="{{m.hasChecks}}" hint-placeholder-val="{{ false }}">
-              <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0 16px 16px; list-style: none">
+              <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0 16px {{m.checksPb}}; list-style: none">
                 <sc-for list="{{m.checks}}" as="k" hint-placeholder-count="3">
                   <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 16px; line-height: 20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186B2D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 4px"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>{{k.t}}</li>
                 </sc-for>
@@ -990,7 +990,8 @@ class Component extends DCLogic {
               evOpen: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const F = window.__wfCamFeed; if (F) F.open({ anchor: e && e.currentTarget, src: E.video, cross: true, title: 'Drone feed', label: live, who: E.from ? L('Sent automatically from ' + E.from, 'Enviado automaticamente de ' + E.from) : '' }); } }; })(),
           hasActions: acts.length > 0 && (!c.closed || !!m.done) && !(m.rec && !m.done), actions: acts,
           /* (Oct 9) a team recommendation moves on with a light round arrow button at the card's bottom right, not a big grey button; once chosen, the usual past-tense band */
-          hasRound: !!(m.rec && !m.done && acts.length && !c.closed), roundGo: acts.length ? acts[0].go : null, roundAria: acts.length ? acts[0].label : '',
+          hasRound: !!(m.rec && !m.done && acts.length && !c.closed),
+          /* (Oct 9) a list (stations, checklist) sits 32px above the button that follows it */ rowsPb: acts.length && (!c.closed || !!m.done) ? '24px' : '0', checksPb: acts.length && (!c.closed || !!m.done) ? '32px' : '16px', roundGo: acts.length ? acts[0].go : null, roundAria: acts.length ? acts[0].label : '',
           /* (Oct 9) closing the fire: the same round arrow, in the dark grey */ roundBg: m.close ? 'rgb(58, 58, 60)' : 'rgba(118,118,128,0.12)', roundFg: m.close ? '#FFFFFF' : '#3C3C43', actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
           cardGo: toSheet ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; openSheet(); } : false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: toSheet ? 'pointer' : 'default', cardCls: toSheet ? 'chrow' : '', chevD: toSheet ? 'block' : 'none',   /* (Oct 9) the card opens Progress and projection itself: a chevron on the title line, no button */
