@@ -12,7 +12,7 @@
   css.textContent = 'html.wf-menujs [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +   /* (Oct 9, 17:15) the floating button is the one that shows, menu open or not */   /* (Oct 9, 15:42) while the menu shows, the screen's own menu button stays put in its header and the column covers it */
     /* (Oct 8, 17:50) folded to the icon column, the menu's button lives in the column: its empty spot in the header closes, so the
        header's other buttons (notifications) sit on the screen's right edge and the title gets the room */
-    'html.wf-rail [data-wf-burger]:not(.wf-mb){margin-right:-60px!important}' +   /* (Oct 9, 15:42) folded to the column: the header button keeps its spot (under the column), nothing in the header moves */
+    'html.wf-menuopen [data-wf-burger]:not(.wf-mb){margin-right:calc(var(--wf-w, 390px) - var(--wf-w0, 390px))!important}' +   /* (Oct 9, 17:38) the header button's empty spot gives back exactly the width the screen loses, frame by frame: the notifications and the X never move */   /* (Oct 9, 15:42) folded to the column: the header button keeps its spot (under the column), nothing in the header moves */
     '@property --wf-w{syntax:"<length>";inherits:true;initial-value:390px}' +   /* (Oct 9, 15:50) the screen width can ease, so the content reflows along with the resize */
     '.wf-mb{position:absolute;z-index:200;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,0.12);color:#3C3C43;cursor:pointer}';
   (document.head || document.documentElement).appendChild(css);
@@ -87,7 +87,7 @@
     // (the growing screen reveals it), so nothing reflows mid-motion.
     clearTimeout(rail.t); var ease = DUR + 'ms ' + EASE;
     if (on) { if (!vp0) vp0 = V; if (V.rail) return; if (!p.style.width) { p.style.width = HW + 'px'; void p.offsetWidth; } p.style.overflow = 'hidden';
-      p.style.setProperty('--wf-w', HW + 'px'); void p.offsetWidth;
+      p.style.setProperty('--wf-w', HW + 'px'); p.style.setProperty('--wf-w0', HW + 'px'); void p.offsetWidth;
       /* (Oct 9, 15:50) the content reflows with the resize (its width eases with the screen's), instead of waiting and jumping at the end */
       p.style.transition = (p.style.transition ? p.style.transition + ', ' : '') + 'width ' + ease + ', --wf-w ' + ease; p.style.width = (HW - 60) + 'px'; p.style.setProperty('--wf-w', (HW - 60) + 'px');
       rail.t = setTimeout(function () { if (mode !== 'rail') return; window.__wfVP = Object.assign({}, vp0, { w: HW - 60, rail: true }); p.style.setProperty('--wf-w', (HW - 60) + 'px'); document.documentElement.classList.add('wf-rail'); try { window.dispatchEvent(new Event('wf-rail')); } catch (e) {} }, DUR); return; }

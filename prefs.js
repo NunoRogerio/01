@@ -56,9 +56,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ca: ['MR', 'Marcus Reyes', 'Deputy Director, Fire Protection', 'CAL FIRE · Sacramento', 'California region only', 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     nv: ['DW', 'Dana Whitfield', 'State Forester Firewarden', 'Nevada Division of Forestry', 'Nevada region only', 'https://images.unsplash.com/photo-1779988208387-d7be2c69194b?w=240&h=240&fit=crop&crop=faces&auto=format&q=70', 'en'],
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
-    admin: ['JW', 'James Whitmore', 'Emergency management director', 'Government overview', 'All regions', 'assets/faces/us-m1.jpg', 'en'],
+    admin: ['JW', 'James Whitmore', 'Emergency management director', 'Government overview', 'All regions', '', 'en'],
     /* (Oct 6) role profiles, signed in with the California area (wf-role ca) and known by wf-custom */
-    coord: ['EO', 'Elena Ortiz', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
+    coord: ['FO', 'Frank Ortiz', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
     ff: ['DB', 'Daniel Brooks', 'Lieutenant', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)

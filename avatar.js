@@ -200,7 +200,7 @@
   window.__wfDemoFace = function (name) { return DEMO[name] || null; };
   window.__wfFaceUrl = furl;
   var STAFF = { 'James Whitmore': 1 };   // the app's own team: a photo from DEMO below, else the illustrated portrait
-  var DEMO = { 'James Whitmore': 'us-m1', 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3', 'Elena Ortiz': 'us-f1', 'Daniel Brooks': 'us-m2' };   // the demo profiles' own photos
+  var DEMO = { 'Rita Cardoso': 'pt-f2', 'Rafael Nogueira': 'pt-m4', 'Marcus Reyes': 'us-m4', 'Dana Whitfield': 'us-f3', 'Frank Ortiz': 'us-m1'   /* (Oct 9, 17:34) the captain: an experienced officer (55+), in his captain's helmet */, 'Daniel Brooks': 'us-m2' };   // the demo profiles' own photos
   var CACHE = {};
   // kit: 'pt' | 'anepc' | 'us' | 'calfire' | 'nv' | 'br'; chief: a coordinator or commander (helmet by rank)
   window.__wfAvatar = function (name, kit, chief) {

@@ -17,9 +17,9 @@
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791560985"></script>
-<script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=1791561875"></script>
-<script src="station.js?v=1791561487"></script>
+<script src="avatar.js?v=1791564027"></script>
+<script src="prefs.js?v=1791564027"></script>
+<script src="station.js?v=1791564027"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
 <script src="chat.js?v=1791563005"></script>
@@ -807,7 +807,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 4; top: 0; bottom: 0; left: 0; width: 8px; pointer-events: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}"></span>
   <nav data-wf-rail="1" data-wf-nospace="1" aria-label="Preferences" style="z-index: 3; background: transparent; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: 0; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
     <!-- (Oct 9, 17:15) the icon column is a pill: the same 60px width, fully rounded, from 32px under the menu button to 48px above the screen's bottom; its icons spread evenly with 32px above the first and below the last -->
-    <div data-wf-pill="1" data-wf-nopb="1" style="position: absolute; right: 0; width: 60px; top: calc({{pm.bTop}}px + 76px); bottom: 48px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 8px; box-sizing: border-box; padding: 32px 0; border-radius: 30px; background: rgb(58, 58, 60); overflow-y: auto; scrollbar-width: none">
+    <div data-wf-pill="1" data-wf-nopb="1" style="position: absolute; right: 0; width: 60px; top: calc({{pm.bTop}}px + 76px); bottom: 48px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 8px; box-sizing: border-box; padding: 32px 0; border-radius: 30px 0 0 30px; background: rgb(58, 58, 60); overflow-y: auto; scrollbar-width: none">
     <sc-for list="{{pm.items}}" as="it" hint-placeholder-count="8">
         <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.dotD}}; position: absolute; top: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; background: #E6352B; pointer-events: none"></span><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
       </sc-for>

@@ -24,7 +24,7 @@
   // (Oct 8, 19:10) and the team lead's own crew, fixed, so nobody in it turns up elsewhere as another station's captain
   var CREW11B = ['Kevin Marsh', 'Ana Ruiz', 'Ben Ortega'];   /* (Oct 8, 21:54) Station 11's second crew (Brush 11), led by Lieutenant Kevin Marsh */
   var CREW11 = ['Daniel Brooks', 'Laura Chen', 'Tom Alvarez', 'Lisa Wong'], ST11P = { 'Laura Chen': 'train', 'Tom Alvarez': 'sick' };   /* the shift: Chen in training, Alvarez on sick leave */
-  window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Elena Ortiz', lead: 'Daniel Brooks', lead2: 'Kevin Marsh', crew2: CREW11B.slice(), crew: CREW11.slice(), state: Object.assign({}, ST11P),
+  window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Frank Ortiz', lead: 'Daniel Brooks', lead2: 'Kevin Marsh', crew2: CREW11B.slice(), crew: CREW11.slice(), state: Object.assign({}, ST11P),
     onDuty: CREW11.filter(function (n) { return !ST11P[n]; }) } : null; };
   /* (Oct 9, 06:52) Station 11's fleet, one list for every screen (the station's Resources, the crews, the captain's dispatch):
      a plausible LA County engine company station in the foothills (no hand crew and no aircraft of its own: hand crews live
@@ -49,7 +49,7 @@
     { id: 'squad', name: 'Squad 11', ic: 'amb', en: 'Paramedic squad. 2 seats.', pt: 'Equipa de paramédicos. 2 lugares.', crew: ['Grace Kim', 'Omar Haddad'] }];
   window.__wfFleet = function (id) { return String(id) === String(ST11.id) ? FLEET11.map(function (u) { return Object.assign({}, u, { crew: u.crew.slice() }); }) : null; };
   // Names that belong to the profile station: the incident chats never give them to anyone else
-  window.__wfReservedNames = function () { var R = { 'Elena Ortiz': 1 }; CREW11.concat(CREW11B).forEach(function (n) { R[n] = 1; }); FLEET11.forEach(function (u) { u.crew.forEach(function (n) { R[n] = 1; }); }); try { (JSON.parse(localStorage.getItem('wf-st-reserved') || '[]') || []).forEach(function (n) { R[n] = 1; }); } catch (e) {} return R; };
+  window.__wfReservedNames = function () { var R = { 'Frank Ortiz': 1 }; CREW11.concat(CREW11B).forEach(function (n) { R[n] = 1; }); FLEET11.forEach(function (u) { u.crew.forEach(function (n) { R[n] = 1; }); }); try { (JSON.parse(localStorage.getItem('wf-st-reserved') || '[]') || []).forEach(function (n) { R[n] = 1; }); } catch (e) {} return R; };
   // (Oct 8, 14:35) Simulated incidents in the station's area, so the captain and the team lead always have a story to work:
   // one fire (a copy of a real Los Angeles County fire's data, moved into the area and renamed) and one ignition candidate
   // (a copy of a real satellite detection, moved into the area). Marked sim: shown with the simulation star. Station profiles only.
