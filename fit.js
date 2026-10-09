@@ -46,7 +46,7 @@ window.__wfFrameFire=function(pts,g6,W,H){if(!pts||!pts.length)return null;var x
 (function(){
   var T=0,MIN=56;
   function fix(){T=0;try{var L=document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.chscroll,[data-wf-fadetop]');
-    for(var i=0;i<L.length;i++){var el=L[i];if(el.tagName==='TEXTAREA'||el.closest('[data-wf-maproot]')||el.hasAttribute('data-wf-nopb'))continue;var cs=getComputedStyle(el);if(!/auto|scroll/.test(cs.overflowY))continue;
+    for(var i=0;i<L.length;i++){var el=L[i];if(el.tagName==='TEXTAREA'||el.closest('[data-wf-maproot]')||el.hasAttribute('data-wf-nopb'))continue;var hb=el.parentElement,gbx=null;for(var q=0;q<2&&hb&&!gbx;q++){gbx=hb.querySelector(':scope > .wf-grab.gb');hb=hb.parentElement;}if(gbx&&(el.compareDocumentPosition(gbx)&4)){el.style.setProperty('padding-bottom','0px','important');continue;}/* (Oct 9, 12:00) a top blade's own end: 56px from its last element to its bottom edge, held by the grabber band */var cs=getComputedStyle(el);if(!/auto|scroll/.test(cs.overflowY))continue;
       if(el.style.getPropertyPriority('padding-bottom')==='important'&&parseFloat(el.style.paddingBottom)>=MIN)continue;if((parseFloat(cs.paddingBottom)||0)<MIN)el.style.setProperty('padding-bottom',MIN+'px','important');}}catch(e){}}
   function soon(){if(!T)T=setTimeout(fix,60);}
   /* map pans and zooms rewrite styles many times a second: those never schedule a pass */

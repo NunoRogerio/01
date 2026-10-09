@@ -249,7 +249,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-grab{box-sizing:border-box!important;height:53px!important;flex-shrink:0}' +
     '[style*="width: 86px; height: 3px"]{opacity:0!important}#wf-tour .tb::before{opacity:0!important}' +   /* (Oct 4) grabbers hidden everywhere; the blades keep their swipe, drag and tap behaviours */
     '.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4}' +   /* the firefighter stripes, shared by every page */
-    '.wf-grab.gb{padding:0 0 8px!important;align-items:flex-end!important}' +
+    '.wf-grab.gb{height:56px!important;padding:0 0 8px!important;align-items:flex-end!important}' +
     '.wf-grab.gt{padding:8px 0 0!important;align-items:flex-start!important}' +
     // Forest headers, one definition for the whole app: the aerial forest photos zoom in slowly as on the login screen.
     // .wf-fhost goes on the header; inside it <span class="wf-forest"><i></i><i></i><i></i><b></b></span> cycles the three photos
@@ -639,7 +639,11 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
         setTimeout(function () { grab.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); setTimeout(function () { if (sv) sv.style.transform = ''; }, 500); }, 200); }); })(g, b);
       box.appendChild(b); }
   }
-  setInterval(function () { try { bladeX(); } catch (e) {} }, 700);
+  /* (Oct 9, 12:00) every blade's X sits vertically centred on the blade's title (its first line) */
+  function bladeXAlign() { var B = document.querySelectorAll('.wf-bladex'); for (var i = 0; i < B.length; i++) { var b = B[i], box = b.parentElement; if (!box || !b.offsetParent) continue;
+      var h = box.querySelector('h1,h2'); if (!h || !h.offsetParent) continue; var br = box.getBoundingClientRect(), k = br.height / (box.offsetHeight || br.height) || 1, hr = h.getBoundingClientRect(), lh = parseFloat(getComputedStyle(h).lineHeight) || 32;
+      var top = Math.round((hr.top - br.top) / k + lh / 2 - 22); if (Math.abs(top - (parseFloat(b.style.top) || 0)) > 0.5 || /calc/.test(b.style.top)) b.style.top = top + 'px'; } }
+  setInterval(function () { try { bladeX(); bladeXAlign(); } catch (e) {} }, 700);
   var kT = 0, kMo = null, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); try { simMark(); } catch (e) {} fitKpi(); if (kMo) kMo.takeRecords(); }, 150); };   /* our own changes are not news */
   var kHit = function (ms) { for (var i = 0; i < ms.length; i++) { var m = ms[i], t = m.target && m.target.nodeType === 1 ? m.target : m.target && m.target.parentElement;
       if (!t) continue; if (t.closest && t.closest('[data-wf-kpicard]')) return true;

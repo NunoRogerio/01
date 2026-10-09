@@ -14,9 +14,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791543078"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791543705"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=1791540669"></script>
+<script src="prefs.js?v=1791543705"></script>
 <script src="station.js?v=1791540669"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
@@ -303,6 +303,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-for>
       </div>
       <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{tm.h.down}}" onPointerMove="{{tm.h.move}}" onPointerUp="{{tm.h.up}}" onPointerCancel="{{tm.h.cancel}}" onKeyDown="{{tm.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>   <!-- (Oct 9, 11:58) every top blade: the stripes along its bottom edge, over the content -->
     </section>
 
     <!-- ===== Topic picker: the incidents within 50 km of this station (fires, then ignition candidates), nearest first ===== -->
@@ -375,6 +376,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </div>
       <!-- The grabber: drag it up (the sheet's edge follows, the content stays still) or tap it to close -->
       <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{sh.h.down}}" onPointerMove="{{sh.h.move}}" onPointerUp="{{sh.h.up}}" onPointerCancel="{{sh.h.cancel}}" onKeyDown="{{sh.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>   <!-- (Oct 9, 11:58) every top blade: the stripes along its bottom edge, over the content -->
     </section>
     <!-- ===== (Oct 8, 19:15) Configure dispatch: the same blade as Progress and projection, dropping from the top over the chat. Pick
          the stations (toggles, several can go), each with its distance, drive time and the vehicles it sends; Dispatch crews turns into
@@ -403,6 +405,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <p class="wf-note" style="margin: 8px 0 0 !important">{{ds.note}}</p>
       </div>
       <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{ds.h.down}}" onPointerMove="{{ds.h.move}}" onPointerUp="{{ds.h.up}}" onPointerCancel="{{ds.h.cancel}}" onKeyDown="{{ds.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>   <!-- (Oct 9, 11:58) every top blade: the stripes along its bottom edge, over the content -->
     </section>
     <!-- ===== (Oct 8, 21:57) The incident's page in a blade over the chat (as the team, the projection and the dispatch): the marker
          button opens it; the grabber or a tap outside fold it back up into the chat ===== -->
@@ -411,6 +414,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- (Oct 8, 22:12) no back arrow on the blades from the chat: the grabber at the foot (tap or swipe up) or a tap outside closes them -->
       <iframe title="{{c.place}}" src="{{ib.src}}" style="flex: 1 1 auto; min-height: 0; width: 100%; border: 0; background: #F2F2F7"></iframe>
       <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{ib.h.down}}" onPointerMove="{{ib.h.move}}" onPointerUp="{{ib.h.up}}" onPointerCancel="{{ib.h.cancel}}" onKeyDown="{{ib.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>   <!-- (Oct 9, 11:58) every top blade: the stripes along its bottom edge, over the content -->
     </section>
   </sc-if>
 
@@ -424,8 +428,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.sumTitle}}</h1>
         <div style="font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
       </div>
-      <!-- (Oct 9, 11:57) a blade: its round X, top right -->
-      <button type="button" class="chbtn" data-round="1" onClick="{{pop}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+      <!-- (Oct 9, 11:57) a blade: its round X, top right, centred on the title -->
+      <button type="button" class="chbtn" data-round="1" onClick="{{pop}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: -2px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
     </header>
     <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 56px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
@@ -493,7 +497,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <!-- (Oct 8, 22:32) no closing line nor "Go to main screen" at the foot: the grabber folds the summary back into the chat -->
     <!-- (Oct 8, 22:15) the summary drops from the top as a blade: no back arrow, the grabber at its foot (tap or swipe up) folds it back into the chat -->
-    <div role="button" data-grab-show="1" class="chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    <div role="button" data-grab-show="1" class="wf-grab gb chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>
     </div>
     <!-- Cards picker for the key figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-hap-scrim wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
@@ -561,7 +566,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </a>
     </div>
     <!-- Grabber: a swipe up (or a tap) dismisses the profile, back to where it was opened (the team list) -->
-    <div role="button" data-grab-show="1" class="chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; height: 24px; padding-bottom: 24px; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    <div role="button" data-grab-show="1" class="wf-grab gb chdrop" tabindex="0" aria-label="{{t.back}}" onPointerDown="{{ppH.down}}" onPointerMove="{{ppH.move}}" onPointerUp="{{ppH.up}}" onPointerCancel="{{ppH.cancel}}" style="display: flex; align-items: flex-end; justify-content: center; flex-shrink: 0; cursor: grab; touch-action: none; transform: translateY({{ppY}}); transition: transform {{ppT}}"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+      <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>
     </div>
     <!-- Cards picker for this person figures: back arrow, Reset, toggles (changes apply at once) -->
     <div class="wf-hap-scrim wf-glass" onClick="{{sk.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{sk.op}}; pointer-events: {{sk.pe}}; transition: opacity .35s ease"></div>
