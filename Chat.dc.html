@@ -427,7 +427,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <table style="width: 100%; border-collapse: collapse; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <tbody>
             <sc-for list="{{sk.tbl}}" as="r" hint-placeholder-count="10">
-              <tr style="border-top: {{r.sep}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; vertical-align: top; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; vertical-align: top; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000">{{r.v}}<span style="display: {{r.cmpD}}; font-size: 16px; font-weight: 400; line-height: 20px; color: {{r.cmpC}}">{{r.cmp}}</span></td></tr>
+              <tr onClick="{{r.tog}}" aria-expanded="{{r.expStr}}" style="border-top: {{r.sep}}; cursor: {{r.cur}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; vertical-align: top; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; vertical-align: top; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000">{{r.v}}<span style="display: {{r.cmpD}}; font-size: 16px; font-weight: 400; line-height: 20px; color: {{r.cmpC}}">{{r.cmp}}</span></td></tr>
+              <tr><td colspan="2" style="padding: 0"><div style="display: grid; grid-template-rows: {{r.dr}}; transition: grid-template-rows .35s cubic-bezier(.2,.8,.2,1)"><div style="min-height: 0; overflow: hidden"><p style="margin: 0; padding: 0 16px 16px; font-size: 16px; line-height: 20px; color: #545458">{{r.dsc}}</p></div></div></td></tr>
             </sc-for>
           </tbody>
         </table>
@@ -521,7 +522,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <table style="width: 100%; border-collapse: collapse; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <tbody>
             <sc-for list="{{pp.rows}}" as="r" hint-placeholder-count="6">
-              <tr style="border-top: {{r.sep}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000">{{r.v}}</td></tr>
+              <tr onClick="{{r.tog}}" aria-expanded="{{r.expStr}}" style="border-top: {{r.sep}}; cursor: {{r.cur}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000">{{r.v}}</td></tr>
+              <tr><td colspan="2" style="padding: 0"><div style="display: grid; grid-template-rows: {{r.dr}}; transition: grid-template-rows .35s cubic-bezier(.2,.8,.2,1)"><div style="min-height: 0; overflow: hidden"><p style="margin: 0; padding: 0 16px 16px; font-size: 16px; line-height: 20px; color: #545458">{{r.dsc}}</p></div></div></td></tr>
             </sc-for>
           </tbody>
         </table>
@@ -716,6 +718,29 @@ class Component extends DCLogic {
         up: () => { const h = self._ppd; self._ppd = null; if (!h) return; const d = Math.abs(h.dy); if (d < 6 || d > 60) { try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} self.popFn()(); } else self.setState({ ppDy: 0 }); },
         cancel: () => { self._ppd = null; self.setState({ ppDy: 0 }); } }; }   /* the bottom grabber of the profile and the summary blades: a tap or a swipe up folds them back */
   go(view, extra) { const s = this.state || {}; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const sc = this.wfMainScroller(); this.setState({ stack: (s.stack || []).concat([{ view: s.view, person: s.person, team: !!(extra && extra.fromTeam), top: sc ? sc.scrollTop : 0 }]), view, sheet: false, ...(extra || {}) }); }
+  /* (Oct 9, 09:10) key figure rows open in place on a tap to say what the figure measures (one open at a time, tap again to fold) */
+  kfRow(grp, k, i) {
+    const L = (en, pt) => (window.__wfChat && window.__wfChat.L ? window.__wfChat.L(en, pt) : en);
+    const D = {
+      resp: ['From the moment the fire was declared until the first crews reached it.', 'Do momento em que o incêndio foi declarado até as primeiras equipas chegarem ao local.'],
+      ver: ['From the first detection of the ignition (satellite, camera or report) until it was confirmed as a fire or dismissed. A candidate left waiting counts all the time it waited.', 'Da primeira deteção da ignição (satélite, câmara ou alerta) até ser confirmada como incêndio ou descartada. Um candidato deixado à espera conta todo o tempo que esperou.'],
+      disp: ['From the moment the fire was declared until the crews were sent.', 'Do momento em que o incêndio foi declarado até as equipas serem enviadas.'],
+      dur: ['From the first detection until the fire was closed.', 'Da primeira deteção até o incêndio ser encerrado.'],
+      area: ['The area inside the fire\'s final perimeter.', 'A área dentro do perímetro final do incêndio.'],
+      pop: ['Residents of the homes near the fire that it never reached (evacuated, when an order was given).', 'Moradores das casas perto do incêndio que ele nunca alcançou (evacuados, quando houve ordem).'],
+      st: ['Fire stations that sent crews to this fire.', 'Quartéis que enviaram equipas para este incêndio.'],
+      ppl: ['People who worked on the fire, each counted once.', 'Pessoas que trabalharam no incêndio, cada uma contada uma vez.'],
+      veh: ['Engines, patrols and other vehicles sent to the fire.', 'Autotanques, patrulhas e outros veículos enviados para o incêndio.'],
+      air: ['Aircraft (helicopters or planes) that worked on the fire.', 'Meios aéreos (helicópteros ou aviões) que trabalharam no incêndio.'],
+      rate: ['Area burnt divided by the fire\'s duration: how fast it burned on average.', 'Área ardida a dividir pela duração do incêndio: o ritmo médio a que ardeu.'],
+      res: ['Fires this person worked on that are now closed.', 'Incêndios em que esta pessoa trabalhou e que já estão encerrados.'],
+      inc: ['Time spent on those fires, from detection to close, added up.', 'Tempo passado nesses incêndios, da deteção ao encerramento, somado.'],
+      ppop: ['Residents kept safe across those fires, added up.', 'Moradores protegidos nesses incêndios, somados.']
+    };
+    const id = grp + ':' + k.key, open = ((this.state || {}).kfOpen || '') === id, d = D[k.key] || D[grp === 'pp' && k.key === 'pop' ? 'ppop' : ''] || null;
+    return { l: k.l, v: k.v, sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', expStr: open ? 'true' : 'false', dsc: d ? L(d[0], d[1]) : '', dr: open && d ? '1fr' : '0fr', cur: d ? 'pointer' : 'default',
+      tog: () => { if (!d) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ kfOpen: open ? '' : id }); } };
+  }
   renderVals() {
     const s = this.state || {}, C = window.__wfChat;
     const L = (en, pt) => (C ? C.L(en, pt) : en);
@@ -771,7 +796,7 @@ class Component extends DCLogic {
       const self = this, ppH = this.grabUp();
       return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), sk, ppH, ppY: (s.ppDy || 0) + 'px', ppT: self._ppd ? '0s' : '.3s',
         pp: { name: P.name, code: P.code, photo: photo(P), role: (() => { const R = L(P.roleEn, P.rolePt), St = P.station && String(P.station).toLowerCase() !== R.toLowerCase() && String(P.station).toLowerCase() !== String(P.roleEn).toLowerCase() ? P.station : ''; return R + (St ? ' · ' + St : ''); })(),   /* (Oct 9) never "Captain. Captain" */
-          rows: KP.map((k, i) => ({ l: k.l, v: k.v, sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
+          rows: KP.map((k, i) => ({ ...this.kfRow('pp', k.key === 'pop' ? { ...k, key: 'ppop' } : k, i) })),
           // The station this person serves at: its crest and name, and a link to the station page
           ...(() => { const S = P.st || null; if (!S || !S.name) return { stD: 'none', stName: '', stSub: '', stCrest: '', stCrestD: 'none', stLinkD: 'none', goStation: null };
             const ch = S.chat ? C.get(S.chat) : null, cr = ch && C.crest ? C.crest(ch, S.short).url : '';
@@ -925,7 +950,7 @@ class Component extends DCLogic {
             { key: 'air', l: L('Aerial', 'Meios aéreos'), v: String(Z.air), opt: true },
             { key: 'rate', l: L('Burn rate', 'Ritmo de área ardida'), v: (Math.round(burn * 10) / 10) + ' ' + (Z.us ? 'ac/h' : 'ha/h'), opt: true }];
           /* (Oct 9) the summary's key figures as the profile's simple table: every figure, none hidden, the comparison under its value */
-          return Object.assign(this.cardSet('sum', base), { tbl: base.map((k, i) => ({ l: k.l, v: k.v, cmp: k.cmp || '', cmpD: k.cmp ? (k.cmpD || 'block') : 'none', cmpC: k.cmpC || '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })) });
+          return Object.assign(this.cardSet('sum', base), { tbl: base.map((k, i) => ({ ...this.kfRow('sum', k, i), l: k.l, v: k.v, cmp: k.cmp || '', cmpD: k.cmp ? (k.cmpD || 'block') : 'none', cmpC: k.cmpC || '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })) });
         })() };
     }
 
