@@ -510,7 +510,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </button>
         </div>
       </div>
-      <span style="display: {{cc.medD}}; align-self: stretch; align-items: baseline; justify-content: flex-end; gap: 8px; margin: 0 0 8px; text-align: left; font-size: 16px; font-weight: 400; line-height: 20px; color: #636366"><!-- (Oct 9, 10:54) no "Key figures" title --><span class="wf-hint" style="font-size: 16px; font-weight: 400; line-height: 20px; color: #636366; text-align: right">(move cards to reorder)</span></span>
+        <!-- (Oct 9, 13:07) no "(move cards to reorder)" hint -->
       <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; flex-wrap: wrap; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: stretch">
         <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="4">
           <div role="listitem" data-wf-kpi="{{m.key}}" data-g="kpi" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
