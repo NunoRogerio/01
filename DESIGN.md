@@ -1534,3 +1534,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Header bottom room (Oct 9, 14:30, app-wide):** every screen's fixed top bar (station, incident chat, fire page, ignition page, drone) leaves 24px between its last element and its bottom edge.
 
 - (Oct 9, 15:32 — supersedes "a card suggesting a stage wears that stage's colour") Every chat card (confirmation, recommendation, rekindle, dispatch, order) keeps the colour of the stage during which it was triggered, in its header band, done button and sticky pin. It never takes the colour of the stage it suggests and never changes after the fire moves on; later cards naturally take the then-current stage's colour.
+
+- (Oct 9, 15:35, trial) Station home dark header: no firefighter stripes along its bottom edge (removed). Background on trial in middle grey (#8E8E93) instead of dark grey; the strip above it under the clock matches. Title and subtitle white; the status tag keeps its tinted formula over a white base (no brightening filter), so it reads in its original colours on any header grey.
