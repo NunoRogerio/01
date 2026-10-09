@@ -165,7 +165,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.well}}" fire="{{m.fire}}" meta="{{m.meta}}" size="{{m.size}}" crests="{{m.crests}}" air="{{m.air}}" n="{{m.n}}" action="{{m.link}}" credit="1" style="margin-top: 8px; cursor: pointer"></wf-trophy>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
-          <article class="chmsg" onClick="{{m.cardGo}}" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden; cursor: {{m.cardCur}}">
+          <article class="chmsg {{m.cardCls}}" onClick="{{m.cardGo}}" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden; cursor: {{m.cardCur}}">
             <!-- (Oct 4, 23:27) update / decision cards: the top band in the colour of the fire's current stage, the title (kind and time) in dark grey, centred in it -->
             <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: {{m.bandBg}}">
               <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
@@ -173,7 +173,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </div>
             <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 8px; padding: 16px 16px">
               <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
-                <span style="font-size: 18px; font-weight: 700; line-height: 24px">{{m.title}}</span>
+                <span style="display: flex; align-items: flex-start; gap: 8px; font-size: 18px; font-weight: 700; line-height: 24px"><span style="flex: 1 1 auto; min-width: 0">{{m.title}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{m.chevD}}; flex-shrink: 0; margin-top: 2px"><path d="m9 6 6 6-6 6"></path></svg></span>
                 <span style="display: {{m.bodyD}}; font-size: 18px; line-height: 24px; color: #000000">{{m.body}}</span>
               </div>
               <sc-if value="{{m.hasKpi}}" hint-placeholder-val="{{ false }}">
@@ -342,8 +342,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; margin: 0 -16px">
             <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 16px 8px; border-bottom: 0"><h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{t.tl}}</h3><span style="font-size: 16px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums">{{tlTotal}}</span></div>
             <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
-              <div style="display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 80px; padding: 16px 16px; box-sizing: border-box; opacity: {{r.op}}">
-                <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: {{r.bg}}"><svg width="32" height="32" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+              <div style="display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 80px; margin: 0 8px; padding: 16px 8px; box-sizing: border-box; border-radius: 14px; background: {{r.rowBg}}; opacity: {{r.op}}">
+                <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: {{r.circBg}}"><svg width="32" height="32" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
                 <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
                 <span class="{{r.nowCls}}" style="font-size: 16px; font-weight: {{r.w}}; line-height: 20px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
                 <span style="grid-column: 2 / span 2; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.atTxt}}</span>
@@ -808,7 +808,8 @@ class Component extends DCLogic {
     const D = C.stageDurs(c), maxMs = Math.max(1, ...D.map((d) => d.ms));
     const tl = C.STAGES.slice(0, c.dismissed ? 1 : 8).map((St, i) => { const d = D.find((x) => x.s === i), I = iconFor(St);
       return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', atTxt: d ? L('From ', 'Desde as ') + C.hhmm(d.vt) + '.' : L('Not reached.', 'Por atingir.'), dur: d ? (d.cur ? C.clock(d.ms) : i === 7 ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d && d.cur ? '#000000' : '#6E6E73',
-        pct: d && i < 7 ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '' }; });
+        pct: d && i < 7 ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '',
+        rowBg: d && d.cur ? I.bg : 'transparent', circBg: d && d.cur ? 'transparent' : I.bg }; });   /* (Oct 9) the current stage: its colour fills the whole row, not only the icon's circle */
     const tlTotal = L('Total ', 'Total ') + C.dur(vn - t0);
 
     // Forces
@@ -988,8 +989,8 @@ class Component extends DCLogic {
               evOpen: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const F = window.__wfCamFeed; if (F) F.open({ anchor: e && e.currentTarget, src: E.video, cross: true, title: 'Drone feed', label: live, who: E.from ? L('Sent automatically from ' + E.from, 'Enviado automaticamente de ' + E.from) : '' }); } }; })(),
           hasActions: acts.length > 0 && (!c.closed || !!m.done), actions: acts, actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
-          cardGo: false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: 'default',
-          hasLink: toSheet || (!!m.link && m.stage == null),   /* (Oct 7) stage cards carry no View button: the title's arrow opens the incident */ linkCls: 'wf-sec',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
+          cardGo: toSheet ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; openSheet(); } : false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: toSheet ? 'pointer' : 'default', cardCls: toSheet ? 'chrow' : '', chevD: toSheet ? 'block' : 'none',   /* (Oct 9) the card opens Progress and projection itself: a chevron on the title line, no button */
+          hasLink: !toSheet && !!m.link && m.stage == null,   /* (Oct 7) stage cards carry no View button: the title's arrow opens the incident */ linkCls: 'wf-sec',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
           goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: m.req && !m.done ? 'linear-gradient(rgba(184,54,10,0.07), rgba(184,54,10,0.07)), #FFFFFF' : '#FFFFFF' });   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }
