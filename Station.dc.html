@@ -91,6 +91,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <sc-if value="{{asg.emptyOn}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.emptyTxt}}</p></sc-if>
         <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.noneTxt}}</p></sc-if>
+        <!-- (Oct 9, 17:46) the Resolved list says what it covers --><span style="display: {{asg.d24}}; margin: 0 0 -8px; font-size: 16px; line-height: 20px; color: #6E6E73">{{asg.t24}}</span>
         <ul data-wf-stack="1" style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
@@ -338,7 +339,7 @@ class Component extends DCLogic {
     const L = Array.from(document.querySelectorAll('ul[data-wf-stack] > li')).filter((e) => e.offsetParent);
     if (!L.length || !L[0].animate || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { if (done) done(); return; }
     const top = L[0].getBoundingClientRect().top, vh = window.innerHeight, A = [];
-    L.forEach((li, i) => { const r = li.getBoundingClientRect(); if (r.top > vh + 40) return; const k = Math.min(i, 3), dy = top + k * 6 - r.top, sc = 1 - k * 0.04, st = { transform: 'translateY(' + dy + 'px) scale(' + sc + ')', opacity: i > 3 ? 0 : 1, zIndex: 50 - i }, fl = { transform: 'none', opacity: 1, zIndex: 50 - i };
+    L.forEach((li, i) => { const r = li.getBoundingClientRect(); if (r.top > vh + 40) return; const k = Math.min(i, 3), dy = top + k * 6 - r.top, st = { transform: 'translateY(' + dy + 'px)',   /* (Oct 9, 17:46) no scaling: the cards keep their width while they stack and fan out */ opacity: i > 3 ? 0 : 1, zIndex: 50 - i }, fl = { transform: 'none', opacity: 1, zIndex: 50 - i };
       li.style.position = 'relative';
       A.push(mode === 'in' ? li.animate([st, fl], { duration: 420, delay: Math.min(i, 8) * 34, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' })
         : li.animate([fl, Object.assign({}, st, { opacity: 0 })], { duration: 220, delay: Math.min(i, 6) * 12, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'forwards' })); });
@@ -543,7 +544,7 @@ class Component extends DCLogic {
     // (Oct 8) To do | Resolved. Resolved: the duties done and the station's incidents closed or dismissed
     const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';
     const ck0 = (S.type === 'way' ? 'w' : 'n') + S.id;
-    const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (((c.closed || c.dismissed) && c.kind !== 'dm') || (c.kind === 'dm' && c.done && !c.police)) && ((c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) || !lead || c.dismissed) && (c.kind === 'dm' || !window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { if (c.kind === 'dm') { const P0 = (c.people || [])[0] || {}, OK = (window.__wfStTag || {}).ok || { bg: 'rgba(52,199,89,0.16)', fg: '#186B2D' }, ttl = c.req ? L('Help request. ', 'Pedido de ajuda. ') + (c.reg || P0.name) : c.help ? L('Help offered. ', 'Ajuda oferecida. ') + (c.reg || P0.name) : (c.reg || c.place);   /* (Oct 8, 22:52) a mutual aid conversation marked done */
+    const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (!c.updated || Date.now() - c.updated < 864e5) && (((c.closed || c.dismissed) && c.kind !== 'dm') || (c.kind === 'dm' && c.done && !c.police)) && ((c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) || !lead || c.dismissed) && (c.kind === 'dm' || !window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { if (c.kind === 'dm') { const P0 = (c.people || [])[0] || {}, OK = (window.__wfStTag || {}).ok || { bg: 'rgba(52,199,89,0.16)', fg: '#186B2D' }, ttl = c.req ? L('Help request. ', 'Pedido de ajuda. ') + (c.reg || P0.name) : c.help ? L('Help offered. ', 'Ajuda oferecida. ') + (c.reg || P0.name) : (c.reg || c.place);   /* (Oct 8, 22:52) a mutual aid conversation marked done */
         return { simD: 'block', ...MK.fire, moonD: 'none', sub2: '', sub2D: 'none', place: ttl, aria: ttl, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} }, _t: c.doneAt || 0, tagTxt: L('Done', 'Feito'), tagFg: OK.fg, tagBg: OK.bg, tagIc: 'M5 12.5l4.5 4.5L19 7.5', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.topic ? c.topic.place + '. ' : '') + L('Mutual aid.', 'Auxílio.') }; }
       const Sg = C.stageOf(c);
       return { simD: simOf(c.incId), ...((c.kind === 'fire' || (c.stage >= 1 && !c.dismissed)) ? { mkFill: '#6F2B06', mkStroke: 'none', mkSw: '0' } : MK.cand)   /* (Oct 8, 22:21) a candidate declared a fire is listed as the fire it became; a dismissed one as a candidate */, moonD: 'none', sub2: '', sub2D: 'none', place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
@@ -556,7 +557,7 @@ class Component extends DCLogic {
     const nTodo = rows.length + dutyLeft, nDone = closedRows.length + (dutyList.length - dutyLeft);
     return { title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows, none: false, listD: shownRows.length ? 'flex' : 'none',
       duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: (lead ? !nDep : dutyList.length && !rows.length) ? 'block' : 'none',
-      tabX: resolvedTab ? '100%' : '0%',
+      tabX: resolvedTab ? '100%' : '0%', d24: resolvedTab ? 'block' : 'none', t24: L('Last 24 h', 'Últimas 24 h'),
       moreD: rMore ? 'block' : 'none',
       tabs: [['todo', L('To do', 'Por fazer'), nTodo], ['done', L('Resolved', 'Resolvidos'), nDone]].map(([k, l, n]) => ({ label: l, n: n ? String(n) : '', nD: n ? 'inline-flex' : 'none', aria: l + (n ? ', ' + n : ''), sel: String(tab === k), w: tab === k ? 600 : 400,
         pick: () => { if (tab === k || this._stacking) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stacking = true; this.wfStack('out', (A) => { this.setState({ atab: k, rLim: 5 }, () => { requestAnimationFrame(() => { (A || []).forEach((a) => { try { a.cancel(); } catch (e) {} }); this.wfStack('in', () => { this._stacking = false; }); }); }); }); } })),
