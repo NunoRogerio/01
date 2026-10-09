@@ -45,7 +45,7 @@
     { id: 'engine', name: 'Engine 11', ic: 'eng', en: 'Type 1 engine. 500 gal. 4 seats.', pt: 'Autobomba tipo 1. 1 900 L. 4 lugares.', lt: 'Daniel Brooks', crew: CREW11.filter(function (n) { return !ST11P[n]; }) },
     { id: 'brush', name: 'Brush 11', ic: 'eng', en: 'Type 3 wildland engine. 500 gal. 4 seats.', pt: 'Autobomba florestal tipo 3. 1 900 L. 4 lugares.', lt: 'Kevin Marsh', crew: CREW11B.slice() },
     { id: 'patrol', name: 'Patrol 11', ic: 'pick', en: 'Type 6 engine. 300 gal. 3 seats.', pt: 'Autobomba tipo 6. 1 100 L. 3 lugares.', crew: ['Marcus Reed', 'Sofia Lin'] },
-    { id: 'tender', name: 'Water Tender 11', ic: 'tank', en: 'Water tender. 2,000 gal. 2 seats.', pt: 'Autotanque. 7 500 L. 2 lugares.', crew: [], st: 'maint' },
+    { id: 'tender', name: 'Water Tender 11', ic: 'tank', en: 'Water tender. 2,000 gal. 2 seats.', pt: 'Autotanque. 7 500 L. 2 lugares.', crew: [], st: 'maint', days: 3 },
     { id: 'squad', name: 'Squad 11', ic: 'amb', en: 'Paramedic squad. 2 seats.', pt: 'Equipa de paramédicos. 2 lugares.', crew: ['Grace Kim', 'Omar Haddad'] }];
   window.__wfFleet = function (id) { return String(id) === String(ST11.id) ? FLEET11.map(function (u) { return Object.assign({}, u, { crew: u.crew.slice() }); }) : null; };
   // Names that belong to the profile station: the incident chats never give them to anyone else

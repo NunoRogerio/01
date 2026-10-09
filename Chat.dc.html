@@ -17,10 +17,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791560985"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=1791561359"></script>
-<script src="station.js?v=1791550416"></script>
+<script src="station.js?v=1791561487"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791556475"></script>
+<script src="chat.js?v=1791561487"></script>
 <script src="tour.js?v=1791560685"></script>
 <script src="feedcam.js?v=1791549296"></script>
 <script src="trophy.js?v=1791558109"></script>
@@ -1190,7 +1190,7 @@ class Component extends DCLogic {
               const who = R ? L(R.en, R.pt) + ' ' + k.lt + '. ' : k.rank ? L(k.rank.en, k.rank.pt) + ' ' + (k.crew[0] || '') + '. ' : '';
               const sub = k.st0 === 'maint' || k.st0 === 'repair' ? L(k.en, k.pt) : k.busy ? L('Out on the ', 'No ') + k.busy + '. ' + who.trim() : who + (np ? np + ' ' + L(np === 1 ? 'person' : 'people', np === 1 ? 'pessoa' : 'pessoas') + '. ' : '') + L(k.en, k.pt).split('. ')[0] + '.';
               /* (Oct 9) the same tags as the station's resource list */
-              const TG = k.busy ? [L('On a mission', 'Em missão'), 'rgba(184,74,0,0.14)', '#963B00'] : k.st0 === 'maint' ? [L('Maintenance', 'Em manutenção'), 'rgba(118,118,128,0.14)', '#636366'] : k.st0 === 'repair' ? [L('In repair', 'Em reparação'), 'rgba(118,118,128,0.14)', '#636366'] : null;
+              const TG = k.busy ? [L('On a mission', 'Em missão'), 'rgba(184,74,0,0.14)', '#963B00'] : k.st0 === 'maint' ? [L('Maintenance', 'Em manutenção') + (k.days ? L(' for ' + k.days + (k.days === 1 ? ' day' : ' days'), ' por ' + k.days + (k.days === 1 ? ' dia' : ' dias')) : ''), 'rgba(204,153,0,0.16)', '#745200'] : k.st0 === 'repair' ? [L('In repair', 'Em reparação') + (k.days ? L(' for ' + k.days + (k.days === 1 ? ' day' : ' days'), ' por ' + k.days + (k.days === 1 ? ' dia' : ' dias')) : ''), 'rgba(204,153,0,0.16)', '#745200'] : null;
               return { recD: REC[k.key] && ok ? 'inline-flex' : 'none', crest: '', crestD: 'none', icD: 'block', name: k.veh, sub, ic: (window.__wfFleetIC || {})[k.ic || 'eng'] || '', tag: TG ? TG[0] : '', tagBg: TG ? TG[1] : 'transparent', tagFg: TG ? TG[2] : '#636366', tagD: TG && !ok ? 'inline-flex' : 'none',
                 onStr: o ? 'true' : 'false', dis: last || sent || !ok ? 'true' : 'false', swOp: last || !ok ? 0.4 : 1, swBg: o ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: o ? '24px' : '0px', toggle: tog(k.key) }; }),
             btn: sent ? L('Crews dispatched', 'Equipas enviadas') : L('Dispatch crews', 'Enviar equipas'), chkD: sent ? 'block' : 'none', dis: sent ? 'true' : 'false', btnPe: sent ? 'none' : 'auto',
