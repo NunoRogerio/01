@@ -84,7 +84,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 | Class | Look | Notes |
 |---|---|---|
-| `.wf-pri` (primary) | Dark grey #3A3A3C with a white label, whatever the palette (Oct 9, 09:05; was lime); dark theme light grey #E5E5EA with a dark label | 48px tall |
+| `.wf-pri` (primary) | Dark grey #3A3A3C with a white label, whatever the palette (Oct 9, 09:05; was lime), confirmation dialogs included (11:50); dark theme light grey #E5E5EA with a dark label | 48px tall |
 | `.wf-sec` (secondary) | Reflective mid grey (#636366) with a white label (6:1 contrast); dark theme #5A5A5E with a light label | 48px tall; quieter than the primary so the two can't be confused |
 | `.wf-ter` (subtle) | Faint lime | Full width inside its container, with 16px padding all round |
 | `.wf-cond` (condensed) | 32px tall | For compact surfaces (tooltips) |
