@@ -73,11 +73,11 @@
   // every simulated fire and candidate so far, round by round (rounds saved before 22:48 had one of each)
   function fireDefs(R) { var out = [{ n: 0, id: SIMF.id, name: SIMF.name, near: SIMF.near, lat: SIMF.lat, lon: SIMF.lon, ac: SIMF.ac, pc: SIMF.pc, sc: 6, st: 'Active', stEn: SIMF.pc + '% contained', startMs: t0() - SIMF.minAgo * 6e4, minAgo: SIMF.minAgo }];
     R.forEach(function (q, i) { var n = i + 1, at = q.at || Date.now(), F = q.f || [(n - 1) % 3];
-      F.forEach(function (fi, k) { var v = PF[fi % PF.length]; out.push({ n: n, id: 'SIM-ST11-F' + (n + 1) + LET[k], name: v.name, near: v.near, lat: v.lat, lon: v.lon, ac: v.ac, pc: 0, sc: 4, st: 'New', stEn: 'First alert', startMs: at - 6 * 6e4, at: at + k }); }); });
+      F.forEach(function (fi, k) { var v = PF[fi % PF.length], a = (q.fa && q.fa[k]) || at + k; out.push({ n: n, id: 'SIM-ST11-F' + (n + 1) + LET[k], name: v.name, near: v.near, lat: v.lat, lon: v.lon, ac: v.ac, pc: 0, sc: 4, st: 'New', stEn: 'First alert', startMs: a - 6 * 6e4, at: a }); }); });
     return out; }
   function candDefs(R) { var out = [{ n: 0, id: 'HS-SIM-ST11', lat: SIMC.lat, lon: SIMC.lon, place: SIMC.place, near: SIMC.near, conf: SIMC.conf, t: t0() - SIMC.minAgo * 6e4, minAgo: SIMC.minAgo }];
     R.forEach(function (q, i) { var n = i + 1, at = q.at || Date.now(), K = q.c || [(n - 1) % 3];
-      K.forEach(function (ci, k) { var v = PC[ci % PC.length]; out.push({ n: n, id: 'HS-SIM-ST11-' + (n + 1) + LET[k], lat: v.lat, lon: v.lon, place: 'Altadena', near: v.near, conf: (q.conf && q.conf[k]) || [81, 76, 84][(n - 1) % 3], t: at - 2 * 6e4, at: at + 10 + k }); }); });
+      K.forEach(function (ci, k) { var v = PC[ci % PC.length], a = (q.ca && q.ca[k]) || at + 10 + k; out.push({ n: n, id: 'HS-SIM-ST11-' + (n + 1) + LET[k], lat: v.lat, lon: v.lon, place: 'Altadena', near: v.near, conf: (q.conf && q.conf[k]) || [81, 76, 84][(n - 1) % 3], t: a - 2 * 6e4, at: a }); }); });
     return out; }
   function chatOf(kind, id) { var C = window.__wfChat; return C && C.find ? C.find({ id: id, kind: kind }) : null; }
   window.__wfSim = function () { var M = window.__wfMine ? window.__wfMine() : null; if (!M) return;
@@ -114,16 +114,29 @@
       var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: D.id, place: D.name, reg: 'Los Angeles', st: 'CA', lat: D.lat, lon: D.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: D.sc, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
       if (!D.n && c && window.__wfDeploy && window.__wfDeploy.ack) window.__wfDeploy.ack(c.key); }); };
   // A new round: 1-2 fires and 1-3 candidates at places not in use; returns what came up (for the banners)
-  window.__wfSimSpawn = function () { var R = rounds(), now = Date.now(), live = {}, rnd = function (n) { return Math.floor(Math.random() * n); };
+  window.__wfSimSpawn = function (extra) { var R = rounds(), now = Date.now(), live = {}, rnd = function (n) { return Math.floor(Math.random() * n); };
     fireDefs(R).forEach(function (d) { var c = chatOf('fire', d.id); if (!(c && c.closed)) live['f' + d.name] = 1; });
     candDefs(R).forEach(function (d) { var c = chatOf('cand', d.id); if (!(c && (c.closed || c.dismissed))) live['c' + d.near] = 1; });
     var pick = function (P, key, n) { var idx = P.map(function (x, i) { return i; }).filter(function (i) { return !live[key + (P[i].name || P[i].near)]; }), out = [];
       while (out.length < n && idx.length) out.push(idx.splice(rnd(idx.length), 1)[0]); return out; };
     var f = pick(PF, 'f', 1 + rnd(2)), c = pick(PC, 'c', 1 + rnd(3)); if (!f.length && !c.length) return [];
-    R.push({ at: now, f: f, c: c, conf: c.map(function () { return 62 + rnd(34); }) }); try { localStorage.setItem('wf-sim-rounds', JSON.stringify(R)); } catch (e) {}
-    try { window.__wfSim(); window.__wfWorld = null; window.__wfGeo = null; window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
-    var n = R.length; return fireDefs(R).filter(function (d) { return d.n === n; }).map(function (d) { return { kind: 'fire', d: d }; })
-      .concat(candDefs(R).filter(function (d) { return d.n === n; }).map(function (d) { return { kind: 'cand', d: d }; })); };
+    /* (Oct 9, 11:00) a round no longer lands all at once: its incidents come up one by one, the first now, each next one
+       0 to 10 s (at random) after the one before, each with its own notification; an extra (a help request) joins the queue */
+    var Q = f.map(function (i) { return { t: 'f', i: i }; }).concat(c.map(function (i) { return { t: 'c', i: i, conf: 62 + rnd(34) }; }));
+    for (var z = Q.length - 1; z > 0; z--) { var y = rnd(z + 1), tmp = Q[z]; Q[z] = Q[y]; Q[y] = tmp; }
+    if (typeof extra === 'function') Q.splice(1 + rnd(Q.length), 0, { t: 'x', fn: extra });
+    R.push({ at: now, f: [], c: [], conf: [], fa: [], ca: [] }); var ri = R.length - 1; try { localStorage.setItem('wf-sim-rounds', JSON.stringify(R)); } catch (e) {}
+    var add = function (it) {
+      if (it.t === 'x') { var x = null; try { x = it.fn(); } catch (e) {} return x ? [x] : []; }
+      var R2 = rounds(), q = R2[ri]; if (!q) return []; var t = Date.now(), n = ri + 1;
+      if (it.t === 'f') { q.f.push(it.i); (q.fa = q.fa || []).push(t); } else { q.c.push(it.i); (q.conf = q.conf || []).push(it.conf); (q.ca = q.ca || []).push(t); }
+      try { localStorage.setItem('wf-sim-rounds', JSON.stringify(R2)); } catch (e) {}
+      try { window.__wfSim(); window.__wfWorld = null; window.__wfGeo = null; window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
+      if (it.t === 'f') { var D = fireDefs(R2).filter(function (d) { return d.n === n; }).pop(); return D ? [{ kind: 'fire', d: D }] : []; }
+      var Cd = candDefs(R2).filter(function (d) { return d.n === n; }).pop(); return Cd ? [{ kind: 'cand', d: Cd }] : []; };
+    var first = add(Q.shift());
+    (function next() { if (!Q.length) return; setTimeout(function () { var it = Q.shift(); try { banners(add(it)); } catch (e) {} next(); }, rnd(10001)); })();
+    return first; };
   /* Notification banners, as the phone's own: they drop in from the top one under the other, glass, the incident's marker, what
      happened and "now"; a tap opens the incident's chat, a swipe up (or 8 s) puts them away. Their notifications stay in the bell. */
   function banners(list) { var host = document.getElementById('dc-root'); if (!host || !list.length) return; var PT = window.__wfLang === 'pt';
@@ -154,8 +167,7 @@
     ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) { window.addEventListener(ev, poke, { passive: true, capture: true }); });
     setInterval(function () { if (busy || document.visibilityState === 'hidden' || Date.now() - last < 5000) return; if (!(window.__wfMine && window.__wfMine())) return;
       if (window.__wfTodoInc == null || window.__wfTodoInc > 0) return; if (document.querySelector('.wf-cfm,[data-wf-tour-on]')) return;
-      busy = true; var L = []; try { L = window.__wfSimSpawn() || []; } catch (e) {}
-      try { if (window.__wfHelpIn && Math.random() < 0.5) { var hc = window.__wfHelpIn(); if (hc) L.push({ kind: 'help', c: hc }); } } catch (e) {}   /* (Oct 8, 22:52) sometimes the station on a fire outside our area asks us for help */
+      busy = true; var L = [], help = window.__wfHelpIn && Math.random() < 0.5 ? function () { var hc = window.__wfHelpIn(); return hc ? { kind: 'help', c: hc } : null; } : null; try { L = window.__wfSimSpawn(help) || []; } catch (e) {}   /* (Oct 8, 22:52) sometimes the station on a fire outside our area asks us for help */
       banners(L); last = Date.now(); setTimeout(function () { busy = false; }, 3000); }, 1000); })();
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
