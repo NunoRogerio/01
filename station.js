@@ -165,16 +165,21 @@
     (function next() { if (!Q.length) return; setTimeout(function () { var it = Q.shift(); try { banners(add(it)); } catch (e) {} next(); }, rnd(10001)); })();
     return first; };
   /* Notification banners, as the phone's own: they drop in from the top one under the other, glass, the incident's marker, what
-     happened and "now"; a tap opens the incident's chat, a swipe up (or 8 s) puts them away. Their notifications stay in the bell. */
+     happened and "now"; a tap opens the incident's chat, a swipe up puts them away (they never leave on their own). Their notifications stay in the bell. */
   function banners(list) { var host = document.getElementById('dc-root'); if (!host || !list.length) return; var PT = window.__wfLang === 'pt';
     var box = document.getElementById('wf-nbx'); if (!box) { box = document.createElement('div'); box.id = 'wf-nbx'; box.style.cssText = 'position:absolute;left:8px;right:8px;top:calc(var(--wf-top, 0px) + 56px);z-index:2147481000;display:flex;flex-direction:column;gap:8px;pointer-events:none'; host.appendChild(box); }
+    /* (Oct 9, 13:52) 24px under the screen's fixed header bar (never over it); many of them overlap gradually, each next one showing 24px under the one before */
+    (function place() { var H = host.querySelector('.wf-darkhdr') || host.querySelector('[data-wf-keepsp]'), k = host.getBoundingClientRect().height / (host.offsetHeight || 1) || 1;
+      if (H) box.style.top = Math.round((H.getBoundingClientRect().bottom - host.getBoundingClientRect().top) / k + 24) + 'px';
+      Array.prototype.forEach.call(box.children, function (c, j) { c.style.marginTop = j >= 3 ? (-(c.offsetHeight || 96) + 16) + 'px' : ''; c.style.zIndex = String(10 + j); c.style.position = 'relative'; });
+      if (!box.__pl) { box.__pl = setInterval(place, 500); } })();
     list.forEach(function (it, i) { setTimeout(function () { var d = it.d, fire = it.kind === 'fire', C = window.__wfChat;
       var b = document.createElement('div'); b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0'); d = d || {};
       b.style.cssText = 'pointer-events:auto;display:flex;align-items:center;gap:16px;padding:16px;border-radius:24px;background:color-mix(in srgb, var(--wf-surface, #FFFFFF) 72%, transparent);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.16);transform:translateY(-140%);opacity:0;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s ease;cursor:pointer;touch-action:none';
       var mk = fire ? '<circle cx="7" cy="7" r="4.8" fill="#E8590C"></circle>' : '<circle cx="7" cy="7" r="4.8" fill="color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)" stroke="#3A3A3C" stroke-width="1.6"></circle>';
       var hq = it.kind === 'help', hc = it.c || {}, hp = (hc.people || [])[0] || {};
       var ttl = hq ? (PT ? 'Pedido de ajuda. ' : 'Help request. ') + (hc.reg || hp.name || '') : fire ? d.name + (PT ? ': Primeiro alerta' : ': First alert') : (PT ? 'Nova deteção de ignição' : 'New ignition detection');
-      var txt = hq ? hp.name + ': ' + (PT ? 'Podem enviar um veículo e uma equipa para o ' : 'Could you send an engine and a crew to the ') + ((hc.topic || {}).place || '') + '?' : fire ? d.near + '. ' + d.ac + ' ac.' : 'Altadena. ' + d.conf + (PT ? '% de probabilidade. ' : '% likelihood. ') + d.near + '.';
+      var txt = hq ? hp.name + ': ' + (PT ? 'Podem enviar um veículo e uma equipa para o ' : 'Could you send an engine and a crew to the ') + ((hc.topic || {}).place || '') + '?' : fire ? d.near + '. ' + d.ac + ' ac.' : (d.place || 'Altadena') + '. ' + d.conf + (PT ? '% de probabilidade. ' : '% likelihood. ') + d.near + '.';
       b.innerHTML = '<span aria-hidden="true" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;border-radius:50%;background:' + (fire ? '#FCE9E1' : '#ECECEF') + '"><svg width="20" height="20" viewBox="0 0 14 14">' + mk + '</svg></span>' +
         '<span style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto"><span style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:16px;line-height:20px;font-weight:600;color:var(--wf-ink, #1C1C1E);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + ttl + '</b><span style="font-size:13px;line-height:20px;color:var(--wf-ink2, #6E6E73);flex-shrink:0">' + (PT ? 'agora' : 'now') + '</span></span>' +
         '<span style="font-size:16px;line-height:20px;color:var(--wf-ink, #3A3A3C);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden">' + txt + '</span></span>';
@@ -187,7 +192,7 @@
           if (c) { sessionStorage.setItem('wf-chat-open', c.key); location.href = 'Chat.dc.html'; } } catch (x) {} });
       box.appendChild(b); requestAnimationFrame(function () { requestAnimationFrame(function () { b.style.transform = 'none'; b.style.opacity = '1'; }); });
       try { if (navigator.vibrate) navigator.vibrate([10, 60, 10]); } catch (x) {}
-      setTimeout(out, 8000 + i * 400); }, i * 700); }); }
+      /* (Oct 9, 13:52) no auto-dismiss: a banner stays until it is put away (swipe up) or tapped to open its incident */ }, i * 700); }); }
   // Left alone 5 s on the station's home with no incident to do: the next round comes up
   (function () { if (!/Station\.dc\.html/.test(location.pathname) || !/[?&]home=1/.test(location.search)) return;
     var last = Date.now(), busy = false, poke = function () { last = Date.now(); };
