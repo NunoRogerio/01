@@ -332,7 +332,7 @@
   function push(c, m, delay, adv) { m.id = newId(); m.adv = adv == null ? 0 : adv; c.queue.push({ due: Date.now() + (delay || 0), m: m }); c.queue.sort(function (a, b) { return a.due - b.due; }); }
   function sys(c, en, pt, delay, adv) { push(c, { kind: 'sys', en: en, pt: pt }, delay, adv == null ? 1 : adv); }
   function say(c, who, en, pt, delay, adv) { var P = c.people || []; if (P[who] && (P[who].left || P[who].self)) { var j = P.findIndex(function (p) { return !p.left && !p.self; }); if (j >= 0) who = j; }
-    if (c.stage >= 3 && evacText(en) && !(c.flags || {}).evac) evacAsk(c, who);   /* (Oct 8, 22:15) anyone on the team who brings up evacuating raises the request card for the fire owner */
+    if (c.stage >= 3 && evacWants(en) && !(c.flags || {}).evac) evacAsk(c, who);   /* (Oct 8, 22:15) anyone on the team who brings up evacuating raises the request card for the fire owner */
     push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
   function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0);
@@ -1191,6 +1191,7 @@
     'Match the fire owner: a short order gets a short, crisp answer (1 sentence); a question, a worry or a chat gets a conversational answer (2 to 4 short sentences, at most 60 words) that explains what they see, what they are doing and why. ' +
     'Speak to your role: captains speak for their station (resources, priorities, decisions); lieutenants speak from the fire line (what their crew sees and does right now). ' +
     'If the fire owner jokes, vents or says something off the wall, react like a real colleague would (a bit of humour, surprise or a straight word), then bring it back to the fire. No emojis, no markdown. ' +
+    'Never contradict what you or the team said earlier in this chat (if you said there is no reason to evacuate, do not ask for an evacuation unless something changed, and say what changed). '+
     'Be consistent with the brief: the stage, the forces and where they are, the time elapsed, the burnt area, air support and evacuation. Describe fire behaviour, terrain, water, crew welfare and needs plausibly for this stage. ' +
     'Coordinators may take operational decisions themselves (deploy or recall their own crews, launch the drone, order a local evacuation) and announce them as decisions. Only the fire owner changes the incident stage: never declare the fire held, resolved or closed, and never invent new stations, aircraft or people. ' +
     'If the fire owner names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
@@ -1210,6 +1211,12 @@
       sys(c, us ? "Sheriff's deputies moving " + c.evac.people + ' residents to the evacuation center' : 'Local police (GNR) moving ' + c.evac.people + ' residents to the parish hall', us ? 'Xerifes a encaminhar ' + c.evac.people + ' moradores para o centro de evacuação' : 'GNR a encaminhar ' + c.evac.people + ' moradores para a junta de freguesia', 5000, 14);
   }
   function evacText(t) { return /evacuat|evacua[çc]/i.test(String(t || '')); }
+  /* (Oct 9, 13:17) a request only when the member actually wants an evacuation: a sentence that mentions it without denying it
+     ("I don't see a reason to evacuate", "no need to evacuate", "already evacuated" never raise the card), so what people say and
+     the cards that follow always agree */
+  function evacWants(t) { return String(t || '').split(/(?<=[.!?])\s+/).some(function (x) { if (!evacText(x)) return false;
+      if (/\b(no|not|n't|don.t|doesn.t|never|nothing|without|no need|no reason|unnecessary|already|have moved|moved|lifted|não|sem|nenhum|já)\b|n[aã]o h[aá] (raz[aã]o|necessidade)/i.test(x)) return false;
+      return /(need|must|should|would|recommend|request|ask|order|start|begin|evacuate now|let.s|we.ll have to|time to|precis|devemos|recomend|pe[cç]o|ordenar|vamos|temos de|hora de|evacuar j[aá])/i.test(x); }); }
   function aiDeliver(key, txt, fallback) {
     var c = load().chats[key]; if (!c) return; c.pending = null;
     var js = parseJSON(txt), R = js && Array.isArray(js.replies) ? js.replies : null;
