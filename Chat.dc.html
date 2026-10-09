@@ -20,7 +20,7 @@
 <script src="station.js?v=1791550416"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791550657"></script>
+<script src="chat.js?v=1791556475"></script>
 <script src="tour.js?v=1791533202"></script>
 <script src="feedcam.js?v=1791549296"></script>
 <script src="trophy.js?v=1791551595"></script>
@@ -1062,8 +1062,8 @@ class Component extends DCLogic {
       }
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
-        /* (Oct 9) a card suggesting a stage (team recommends, rekindle) already wears that stage's colour in its header band */
-        const Hd = m.to != null ? C.STAGES[m.to] : (St || S);
+        /* (Oct 9, 15:32) a card keeps the colour of the stage during which it was triggered: never the stage it suggests, never repainted when the fire moves on */
+        const Hd = C.STAGES[m.st0 != null ? m.st0 : (() => { let v = null; (c.hist || []).forEach((h) => { if (h.vt <= (m.vt || 0) + 500) v = h.s; }); return v; })()] || St || S;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
         const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], helpYes: ['Crew sent', 'Equipa enviada'], helpNo: ['Not sent', 'Não enviada'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
         /* (Oct 9, 09:08) an open recommendation always shows Not yet (secondary) + its confirming action (primary), cards saved before included */

@@ -1392,7 +1392,7 @@
           c.stage = m.stage; c.hist.push({ s: m.stage, vt: m.vt }); c.sEnt = (c.sEnt || 0) + 1; c.stageAt = q.due; c.msgs.forEach(function (x) { if ((x.rec || x.rekindle) && !x.done) x.done = 'moved'; });   /* the stage moved: an open recommendation is settled */   /* each time a stage begins (a stage can come back after a rekindle) */
           onStage(c, c.stage);
           if (c.stage === 7) c.closed = true;
-          var sc = stageCard(c, c.stage); sc.id = newId(); sc.kind = 'card'; sc.t = q.due; sc.vt = m.vt;
+          var sc = stageCard(c, c.stage); sc.id = newId(); sc.kind = 'card'; sc.t = q.due; sc.vt = m.vt; sc.st0 = c.stage;
           if (c.stage === 1 && !c.flags.dispatched) { sc.actions = [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho' }]; sc.dispCard = true; }   /* (Oct 5) the dispatch is configured from the Ignition confirmed card */
           c.msgs.push(sc);
           if (c.stage < 7) entry(c, c.stage, 0);
@@ -1406,6 +1406,7 @@
         else {
           /* (Oct 9, 11:56) a step-back card is the latest word from the field: unanswered move-forward cards (sticky ones too) go away */
           if (m.kind === 'card' && m.rekindle) { c.msgs = c.msgs.filter(function (x) { return !(x.kind === 'card' && x.rec && !x.done); }); c.queue = c.queue.filter(function (x) { return !(x.m && x.m.rec); }); }
+          if (m.kind === 'card' && m.st0 == null) m.st0 = c.stage;   /* (Oct 9, 15:32) the stage the card was triggered in fixes its colour for good */
           c.msgs.push(m); recFromMsg(c, m); }
         c.updated = q.due; changed = true;
       }
