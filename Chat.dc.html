@@ -20,7 +20,7 @@
 <script src="station.js?v=16"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791539265"></script>
+<script src="chat.js?v=1791539744"></script>
 <script src="tour.js?v=1791533202"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=37"></script>
@@ -423,7 +423,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.well}}" fire="{{sum.fire}}" meta="{{sum.meta}}" size="{{sum.size}}" crests="{{sum.crests}}" air="{{sum.air}}" n="{{sum.n}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
       <!-- (Oct 9) key figures as the profile's simple table (no cards): label left, value right-aligned, the comparison under it -->
       <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column; gap: 24px">
-        <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.kf}}</h2>
+        <!-- (Oct 9, 10:54) no "Key figures" title: the table speaks for itself -->
         <table style="width: 100%; border-collapse: collapse; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <tbody>
             <sc-for list="{{sk.tbl}}" as="r" hint-placeholder-count="10">
@@ -518,7 +518,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </section>
       <!-- (Oct 9) the person's figures as a simple table (every figure, none hidden): label left, value right-aligned -->
       <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column; gap: 24px">
-        <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.kf}}</h2>
+        <!-- (Oct 9, 10:54) no "Key figures" title: the table speaks for itself -->
         <table style="width: 100%; border-collapse: collapse; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <tbody>
             <sc-for list="{{pp.rows}}" as="r" hint-placeholder-count="6">
