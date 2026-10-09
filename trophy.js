@@ -11,7 +11,7 @@
 // - the crests of every station that collaborated and, when aircraft helped, the air team's badge (it has no crest of its own:
 //   one of five original squadron badges, picked from the fire's name): 120px, no circle, a soft drop shadow
 // - the message of well done, the fire's name, when it closed and how long it took, and its size class
-// - the hazard stripe along the bottom edge, as on the blades
+// - (Oct 9, 16:01) no hazard stripe along the bottom edge (removed)
 // - action: an optional full-width button label; a tap anywhere on the card reaches the page's own onClick
 (function () {
   if (window.customElements && customElements.get('wf-trophy')) return;
@@ -77,7 +77,7 @@
     if (!this._root) {
       this._root = this.attachShadow({ mode: 'open' });
       this._root.innerHTML = '<style>' + CSS + '</style><div class="card"><div class="sl" aria-hidden="true"><div class="tk"></div></div><span class="sh" aria-hidden="true"></span><div class="dots" aria-hidden="true"></div>' +
-        '<span class="bd"></span><span class="kicker"></span><span class="headline"></span><span class="fire"></span><span class="meta"></span><span class="size"></span><span class="act"></span><span class="credit"></span><span class="st" aria-hidden="true"></span></div>';
+        '<span class="bd"></span><span class="kicker"></span><span class="headline"></span><span class="fire"></span><span class="meta"></span><span class="size"></span><span class="act"></span><span class="credit"></span></div>';
     }
     this.fill();
   };

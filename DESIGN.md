@@ -1546,3 +1546,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 9, 15:50) The menu button rule applies to every profile: on the government main screen too, the button stays as it is in the top bar (normal press), the screen slides away with it and the column's X waits underneath.
 - (Oct 9, 15:54) Map tooltip, structures at risk: its own tag above the tooltip, 8px from it and the tooltip's width, in the normal tag size (as the stage tag), on a white base.
 - (Oct 9, 15:58) The AI suggested pack card in the chat's dispatch blade has the unit cards' structure: 44px icon tile top-left (12px corners), name, description, the Suggested tag under it. The AI icon tile is dark grey (#3A3A3C) with a white icon, everywhere (Dispatch's AI pack cards too).
+- (Oct 9, 16:01) Trophy / summary cards (chat, resolution summary, achievements): no stripe along their bottom edge (the shared trophy widget, so every use).
