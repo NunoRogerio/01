@@ -100,7 +100,9 @@
     document.documentElement.classList.add('wf-menuopen');   /* (Oct 9, 13:27) the button is in the menu's column: screens style it for the column, not their header */
     place(); mode = r ? 'rail' : 'open'; through(true); ifr.style.visibility = 'visible'; send(r ? 'openrail' : 'open');
     /* (Oct 9, 15:42) no travel, no morph on screen: the column's X waits under the screen at the button's spot and is uncovered as the screen slides away */
-    if (btn) { clearTimeout(btn.__zT); btn.style.transition = ''; btn.style.zIndex = '-1'; btn.setAttribute('data-wf-x', '1'); }
+    if (btn) { clearTimeout(btn.__zT); btn.style.transition = ''; btn.style.zIndex = '-1'; btn.setAttribute('data-wf-x', '1');
+      /* (Oct 9, 15:47) the press the person just gave carries on in the header's own button: the normal round-button pop, as on the notifications button */
+      var sp = spot(), pop = btn.__wfPop; if (sp && sp.animate && pop) { var k = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop')) || 1.3, t0 = pop.currentTime || 0; try { pop.cancel(); var a = sp.animate([{ scale: '1', easing: 'cubic-bezier(.2,.9,.3,1)' }, { scale: String(k), offset: 0.18, easing: 'cubic-bezier(.4,0,.2,1)' }, { scale: '1' }], { duration: 480 }); a.currentTime = t0; } catch (e) {} } }
     slide(mode);
   }
   function close() {
