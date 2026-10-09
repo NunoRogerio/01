@@ -17,12 +17,12 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791543705"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=1791543705"></script>
+<script src="prefs.js?v=1791544573"></script>
 <script src="station.js?v=1791540669"></script>
 <script src="menu.js?v=21"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791543388"></script>
+<script src="chat.js?v=1791544573"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -424,7 +424,8 @@ class Component extends DCLogic {
       const mineF = (c) => (c.forces || []).find((f) => (f.ck === (S.type === 'way' ? 'w' : 'n') + S.id || f.full === S.name) && f.st !== 'standby' && f.st !== 'released');
       const ST = { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };
       rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
-        return { place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+        const nm = window.__wfIncName ? window.__wfIncName(c.place, (c.kind === 'fire' || c.stage >= 1) && !c.dismissed) : c.place;
+        return { place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
           _id: c.incId, simD: simOf(c.incId), ...MK[c.kind === 'fire' ? 'fire' : 'cand'], moonD: 'none', sub2: c.lat ? kmT(km(c.lat, c.lon)) + '. ' + drv(km(c.lat, c.lon)) + '.' : '', sub2D: c.lat ? 'block' : 'none', tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: C.ICON[Sg.icon] || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)), sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) ? L('Confirm the order. ', 'Confirme a ordem. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
         .sort((a, b) => (a._ack ? 1 : 0) - (b._ack ? 1 : 0));   /* a new deployment (not yet confirmed) goes to the top */
     }

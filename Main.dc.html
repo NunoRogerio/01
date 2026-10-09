@@ -18,11 +18,11 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791543705"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=1791543705"></script>
+<script src="prefs.js?v=1791544573"></script>
 <script src="station.js?v=1791540669"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791543388"></script>
+<script src="chat.js?v=1791544573"></script>
 <script src="tour.js?v=1791533202"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791540669"></script>
@@ -1556,7 +1556,7 @@ class Component extends DCLogic {
     // 'US' = the whole United States: every state (two-letter codes other than Portugal's 'PT')
     const inA = window.__wfInArea || ((r, st, co) => r.st === st && (!co || r.co === co));
     const inScope = (r) => inA(r, sc.st, sc.co);
-    const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, det: c.live && c.live.t ? Date.parse(c.live.t) || null : null,
+    const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-' + c.id, place: window.__wfIncName ? window.__wfIncName(c.place, true) : c.place, note: 'Confirmed from ' + c.id,   /* (Oct 9, 12:11) declared: "Altadena Fire" */ x: c.x, y: c.y, det: c.live && c.live.t ? Date.parse(c.live.t) || null : null,
       /* the same facts as the fire page (status, start), so its map card reads like every other fire card */
       info: { src: 'Confirmed from ' + (c.src || c.id), st: 'Not contained', stEn: 'Not contained', tone: 'hot', startMs: c.live && c.live.t ? Date.parse(c.live.t) || cf[c.id] : cf[c.id], updMs: cf[c.id], place: c.place, lat: c.live && c.live.lat, lon: c.live && c.live.lon } }));
     const allFires = W.fires.concat(confirmedFires);
