@@ -739,13 +739,15 @@ window.__wfBlink=function(path,dur){
     sty.textContent=c?'html.wf-bar,html.wf-bar body{background-color:'+c+'!important}':'';
     var m=meta();if(m){if(c){if(tc0===null)tc0=m.getAttribute('content');m.setAttribute('content',c);}else if(tc0!==null){m.setAttribute('content',tc0);tc0=null;}}}
   function photo(){var l=document.getElementById('wf-load');if(l&&/\b(photo|hand)\b/.test(l.className)&&!/\bout\b/.test(l.className))return true;return !!document.getElementById('wf-login-bg')||/Login\.dc\.html/.test(location.pathname);}
-  function probe(){var on=window.__wfTOP!==0&&innerHeight>innerWidth;root.classList.toggle('wf-bar',on);set(on&&photo()?BAR:'');}
+  /* (Oct 9, 13:38, standing) the strip under the clock and the camera always wears the colour of the screen's fixed top bar (a dark station header makes it dark), never a band of its own */
+  function hdr(){try{var x=Math.round(innerWidth/2),e=document.elementFromPoint(x,Math.max(1,(window.__wfTOP||0)?2:60));while(e&&e!==document.documentElement){var b=getComputedStyle(e).backgroundColor;if(b&&b!=='transparent'&&!/rgba\([^)]*,\s*0\)$/.test(b)){var m=b.match(/rgba?\(([^)]+)\)/);if(m){var p=m[1].split(',').map(parseFloat);if(p.length<4||p[3]>=0.95)return 'rgb('+Math.round(p[0])+', '+Math.round(p[1])+', '+Math.round(p[2])+')';}}e=e.parentElement;}}catch(x){}return '';}
+  function probe(){var on=window.__wfTOP!==0&&innerHeight>innerWidth;root.classList.toggle('wf-bar',on);set(on&&photo()?BAR:(on?hdr():''));}
   // before the first paint: screens with a photo start black
   if(photo()){root.classList.add('wf-bar');set(BAR);}
   var T=0;function soon(){clearTimeout(T);T=setTimeout(probe,60);}
   window.addEventListener('wf-vp',soon);window.addEventListener('resize',soon);window.addEventListener('pageshow',soon);
   // the loading screen leaving is the one change to watch for
-  window.addEventListener('load',function(){probe();var iv=setInterval(function(){probe();if(!photo())clearInterval(iv);},300);});
+  window.addEventListener('load',function(){probe();var iv=setInterval(function(){probe();if(!photo())clearInterval(iv);},300);setInterval(probe,700);});   /* the top bar can change (a blade, a dark header): the strip follows */
 })();
 // Mini cards: the title sits 40% closer to its value (12px under a one-line title instead of 20px, via the 32px title box
 // in prefs.js). A title that wraps to two lines tightens its leading to fit the same 32px, so values line up across a row.
