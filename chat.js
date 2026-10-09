@@ -867,8 +867,11 @@
     K.slice(1).forEach(function (k) { c.forces.push({ si: i, ck: f0.ck, station: f0.station, full: f0.full, km: f0.km, coord: f0.coord, crew: k.crew.slice(), veh: [k.veh], st: f0.st, second: !!k.lt, nolt: !k.lt }); });
     /* the captain is "you": the order's confirmations come from the crews' lieutenants, not from the captain */
     ensureLts(c); var me0 = c.people[i]; if (me0 && me0.name === ((staffOf(st) || {}).captain)) me0.self = true;
-    var ltI = function (nm) { return c.people.findIndex(function (p) { return p.kind === 'lt' && p.name === nm; }); }, l0 = ltI(K[0].lt), l1 = K[1] ? ltI(K[1].lt) : -1;
-    if (l0 >= 0) { var nth = 0; (c.queue || []).forEach(function (q) { if (q.m && q.m.from === i) { q.m.from = nth % 2 && l1 >= 0 ? l1 : l0; nth++; } }); }
+    /* (Oct 9, 17:43) the confirmations come from the leaders of the units actually sent (their lieutenant, or the first of their crew when they have none), never from another station */
+    var org0 = st.short || st.name, lead = function (k) { var nm = k.lt || k.crew[0]; if (!nm) return -1; var x = c.people.findIndex(function (p) { return p.name === nm; });
+      if (x < 0) { c.people.push({ name: nm, code: initials(nm), org: org0, kind: 'lt', roleEn: (k.lt ? 'Lieutenant. ' : 'Crew lead. ') + k.veh + '. ' + org0, rolePt: 'Chefe de ' + (k.lt ? 'equipa. ' : 'viatura. ') + k.veh + '. ' + org0 }); x = c.people.length - 1; } else if (c.people[x].left) c.people[x].left = undefined; return x; };
+    var LD = K.map(lead).filter(function (x) { return x >= 0; });
+    if (LD.length) { var nth = 0; (c.queue || []).forEach(function (q) { if (!q.m || q.m.kind !== 'msg' || q.m.from === 'me' || typeof q.m.from !== 'number') return; var pp = c.people[q.m.from]; if (q.m.from === i || (pp && pp.org !== org0)) { q.m.from = LD[nth % LD.length]; nth++; } }); }
     /* (Oct 9, 13:56) the order, for the whole team to see: a card listing every unit sent (its type icon, who leads it, its people), with its state */
     var ppl = K.reduce(function (a, k) { return a + k.crew.length; }, 0), IC = window.__wfFleetIC || {};
     card(c, { order: true, tag: { en: 'Dispatch order', pt: 'Ordem de despacho' }, tagC: '#3A3A3C', stage: 2, title: { en: 'Crews dispatched. ' + (st.short || st.name), pt: 'Equipas enviadas. ' + (st.short || st.name) },
