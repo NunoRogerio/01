@@ -648,7 +648,9 @@
   function act(key, a, msgId) {
     var c = load().chats[key]; if (!c) return;
     var P = c.people, us = isUS(c);
-    if (msgId) { var m = c.msgs.find(function (x) { return x.id === msgId; }); if (m) m.done = a; }
+    var mC = msgId ? c.msgs.find(function (x) { return x.id === msgId; }) : null, notYet = a === 'stayStage' && !!(mC && mC.rec);
+    /* (Oct 9, 09:07) Not yet on a recommendation is no answer: the card stays open (and sticks to the top when scrolled away) */
+    if (mC && !notYet) mC.done = a;
     var me = function (en, pt) { mine(c, en, pt); };
     if (a === 'reqNo') { me('Not yet. Keep the drone on it.', 'Ainda não. Mantenham o drone no local.'); save(); emit(); return; }
     if (a === 'helpYes') { me('Yes, we can send them.', 'Sim, podemos enviá-los.'); helpSend(c);
@@ -730,8 +732,8 @@
       me('Stepping back to Crews on scene. Hit the rekindle.', 'Voltamos a Equipas no local. Ataquem o reacendimento.');
       setStage(c, 3, 800, 0);
     } else if (a === 'stayStage') {
-      /* (Oct 9, 09:05) not yet: the team asks again ~8 s later */ c.flags['pace' + c.stage + '_' + (c.sEnt || 0)] = false; c.stageAt = Date.now();
-      me('Hold the stage. Knock it down and report.', 'Mantemos a fase. Apaguem-no e informem.');
+      if (notYet) me('Not yet. Keep at it and report.', 'Ainda não. Continuem e informem.');
+      else me('Hold the stage. Knock it down and report.', 'Mantemos a fase. Apaguem-no e informem.');
       say(c, ltOf(c, 0), 'Copy. On it.', 'Entendido. Já estamos nisso.', 2200, 2);
     } else if (a === 'closeCheck' || a === 'close') {
       /* (Oct 9) the recommendation's arrow, the Close fire chip and the stage band all close the fire at once: no second card.
