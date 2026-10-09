@@ -35,6 +35,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 - **Case:** sentence case everywhere. No all caps.
 - **Middle dots:** none between topics; use a full stop ("All features. All regions."). Any " · " is turned into a full stop at display time (i18n.js).
 - **Counts in titles stay black**, even at zero ("No ignition candidates" is not green).
+- **Descriptions stay grey** (`#545458`), yours included: "Captain. Station 11. You" in the team list reads like every other member's role, not green (Oct 9). Green text is kept for status tags.
 - **Coloured numbers:** only an ignition's likelihood %. Other numbers stay dark grey. Red is kept only for alerts such as over time or casualties.
 - **Shortest wording** that keeps the meaning, in every language. Examples: "Surveillance", not "Under surveillance"; "Final duration", not "Time it took to resolve".
 - **Relative times** say "ago" ("3 min ago"). Live counters use short units ("58 min 12 s").
