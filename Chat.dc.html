@@ -424,6 +424,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <h1 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 32px">{{t.sumTitle}}</h1>
         <div style="font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sum.sub}}</div>
       </div>
+      <!-- (Oct 9, 11:57) a blade: its round X, top right -->
+      <button type="button" class="chbtn" data-round="1" onClick="{{pop}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
     </header>
     <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 56px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
@@ -515,7 +517,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- (Oct 8, 23:11) a blade from the top like the others: it ends 48px above the bottom of the screen, rounded, over the shade -->
     <div class="chshade" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(60,60,67,0.16)"></div>
     <div class="chblade" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin: -56px 0 48px; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden">
-    <header class="chdrop" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 16px; flex-shrink: 0">
+    <header class="chdrop" style="display: flex; align-items: flex-start; justify-content: flex-end; gap: 8px; padding: 4px 16px 4px 16px; flex-shrink: 0">
+      <!-- (Oct 9, 11:57) a blade: its round X, top right -->
+      <button type="button" class="chbtn" data-round="1" onClick="{{pop}}" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
     </header>
     <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 40px">
       <section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
