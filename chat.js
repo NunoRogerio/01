@@ -1372,10 +1372,13 @@
   function stats(c) {
     var H = c.hist || [], at = function (s) { var x = H.find(function (h) { return h.s === s; }); return x ? x.vt : null; };
     var t0 = since(c), end = vnow(c), h = hash(c.key);
-    var ha = c.drill && c.drill.ha ? Math.round(c.drill.ha * Math.min(2.2, Math.max(0.45, Math.pow(((at(3) != null ? at(3) - since(c) : 0) || c.drill.resp || 1) / (c.drill.resp || 1), 0.7))) * (c.flags.air ? 0.85 : c.flags.airNo ? 1.3 : 1.1) * 10) / 10
+    /* (Oct 9) dispatch and response are timed from the moment the fire is declared (First alert), not from the ignition candidate's detection:
+       response time = fire declared to crews on scene */
+    var tF = at(1) != null ? at(1) : t0;
+    var ha = c.drill && c.drill.ha ? Math.round(c.drill.ha * Math.min(2.2, Math.max(0.45, Math.pow(((at(3) != null ? at(3) - tF : 0) || c.drill.resp || 1) / (c.drill.resp || 1), 0.7))) * (c.flags.air ? 0.85 : c.flags.airNo ? 1.3 : 1.1) * 10) / 10
       : c.realHa || Math.round((2.5 + h % 23 + (c.flags.airNo ? 12 : 0) + (c.flags.evac ? 5 : 0) + (h % 10) / 10) * 10) / 10;
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
-    return { t0: t0, end: end, disp: at(2) != null ? at(2) - t0 : null, resp: at(3) != null ? at(3) - t0 : null, res: end - t0,
+    return { t0: t0, end: end, ver: at(1) != null ? at(1) - t0 : c.dismissed && c.closedVt ? c.closedVt - t0 : null, disp: at(2) != null ? at(2) - tF : null, resp: at(3) != null ? at(3) - tF : null, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
       people: (function () { var u = {}; F.forEach(function (f) { [f.coord].concat(f.crew || []).forEach(function (n) { if (n) u[n] = 1; }); }); return Object.keys(u).length; })(),   /* (Oct 8, 23:09) each person once (a captain over two crews is one person) */ veh: F.reduce(function (a, f) { return a + f.veh.reduce(function (n, x) { return n + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1); }, 0); }, 0), air: c.air || (c.flags && c.flags.air) ? 1 : 0, stations: F.filter(function (f, i) { return F.findIndex(function (g) { return g.station === f.station; }) === i; }).length, est: !!c.estF };
   }
