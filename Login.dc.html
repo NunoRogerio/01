@@ -456,12 +456,13 @@ class Component extends DCLogic {
     // no base firefighter. (Oct 6) profiles by role, top of the hierarchy first: administrator, team coordinator, firefighter (they replace the
     // regional commanders). What each role can do is still to be explored; for now every profile has all features.
     const P = [
-      ['admin', 'JW', 'james.whitmore', 'James Whitmore', 'Emergency management director', 'Government overview', 'All countries and regions',
-        'One level above the station captains: follows every fire and ignition in all countries, where forces are and where risk is rising, and calls in help across borders. Also manages user access and data feeds.', 'assets/faces/us-m1.jpg'],
+      /* (Oct 9) order: captain, lieutenant, then the government representative */
       ['coord', 'EO', 'elena.ortiz', 'Elena Ortiz', 'Captain', 'Los Angeles County Fire Department', 'Station 11. Altadena',
         "Commands Station 11 and its area. Takes every incident in the area, assigns the station's crews and vehicles, and works with the other captains when a fire needs more than one station.", '', 'ca'],
       ['ff', 'DB', 'daniel.brooks', 'Daniel Brooks', 'Lieutenant', 'Los Angeles County Fire Department', 'Station 11. Altadena',
-        "Leads the Engine 11 crew at Station 11. Gets the captain's dispatch orders, confirms them and takes the crew to the fire.", '', 'ca']
+        "Leads the Engine 11 crew at Station 11. Gets the captain's dispatch orders, confirms them and takes the crew to the fire.", '', 'ca'],
+      ['admin', 'JW', 'james.whitmore', 'James Whitmore', 'Emergency management director', 'Government overview', 'All countries and regions',
+        'One level above the station captains: follows every fire and ignition in all countries, where forces are and where risk is rising, and calls in help across borders. Also manages user access and data feeds.', 'assets/faces/us-m1.jpg']
     ];
     const RANK = { admin: [L0('Government', 'Governo'), 3]   /* (Oct 8) the level above the station captains: a government overview of every country */, coord: [L0('Captain', 'Chefe'), 2], ff: [L0('Lieutenant', 'Chefe de equipa'), 1] };
     const CU = this.customs(), AREAS = { pt: ['Portugal', '20 districts', 'Portugal only', 'Portugal region only', 'PT'], ca: ['California', '58 counties', 'California only', 'California region only', 'US'], nv: ['Nevada', '17 counties', 'Nevada only', 'Nevada region only', 'US'], amz: ['Amazônia Legal', '9 states', 'Amazônia Legal only', 'Amazônia Legal region only', 'BR'], admin: ['All regions', 'All countries and regions', 'all countries and regions', 'All regions', ''] };
