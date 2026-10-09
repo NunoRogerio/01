@@ -137,11 +137,16 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- (Oct 9, 08:58) waiting cards that scrolled away: their headers stuck to the top of the chat, above the scroll fade, stacked; tap to bring the card back -->
     <div class="chpins" data-n="{{pinN}}" aria-label="Waiting for your answer" style="position: absolute; z-index: 7; left: 0; right: 0; top: 0; display: flex; flex-direction: column; gap: 8px; padding: 8px 16px 24px; pointer-events: none">
       <sc-for list="{{pins}}" as="p" hint-placeholder-count="0">
-        <button type="button" class="chbtn" onClick="{{p.go}}" style="pointer-events: auto; display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; border: 0; border-radius: 14px; background: linear-gradient({{p.bg}}, {{p.bg}}), var(--wf-surface, #FFFFFF); box-shadow: 0 0 16px rgba(0,0,0,0.16); color: {{p.fg}}; font: inherit; text-align: left; cursor: pointer">
+        <!-- (Oct 9, 11:16) a tap opens the card right here, over the chat (a layer above it, smooth shadow): its text and its buttons, to answer
+             without leaving the latest messages; the chat neither scrolls nor moves. A tap on the header folds it again. -->
+        <div style="pointer-events: auto; display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; background: var(--wf-surface, #FFFFFF); box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 0 16px rgba(0,0,0,0.10)">
+        <button type="button" class="chbtn" onClick="{{p.go}}" aria-expanded="{{p.exp}}" style="pointer-events: auto; width: 100%; display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; border: 0; border-radius: 0; background: linear-gradient({{p.bg}}, {{p.bg}}), var(--wf-surface, #FFFFFF); box-shadow: none; color: {{p.fg}}; font: inherit; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="display: {{p.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{p.ic.d}}" fill="{{p.ic.fill}}" stroke="{{p.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
           <span style="flex-grow: 1; min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px">{{p.tag}} · {{p.time}}</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m6 9 6 6 6-6"></path></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{p.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </button>
+          <div style="display: grid; grid-template-rows: {{p.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><div style="min-height: 0; overflow: hidden"><div class="chpinbody" data-pin-body="{{p.id}}" style="display: flex; flex-direction: column; max-height: 60vh; overflow-y: auto; overscroll-behavior: contain"></div></div></div>
+        </div>
       </sc-for>
     </div>
     <div class="chscroll" data-wf-keepscroll="1" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
@@ -690,17 +695,32 @@ class Component extends DCLogic {
     const cur = ((this.state || {}).pinned || []).join('|');
     if (out.join('|') !== cur) this.setState({ pinned: out });
   }
+  /* (Oct 9, 11:16) a sticky card's header opens it in place, over the chat (no scrolling); a second tap folds it */
   pinGo(id) {
-    const el = this._sc; if (!el) return; const a = el.querySelector('article[data-pend="' + id + '"]'); if (!a) return;
-    const P = (this.state || {}).pinned || [], above = Math.max(0, P.indexOf(id)) * 64;
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-    this._pinBack = { id: String(id), t: el.scrollTop, b: el.scrollHeight - el.scrollTop - el.clientHeight < 60 };
-    this._stick = false;
-    el.scrollTo({ top: Math.max(0, el.scrollTop + a.getBoundingClientRect().top - el.getBoundingClientRect().top - 40 - above), behavior: 'smooth' });   /* lands clear of the top scroll fade */
+    const open = (this.state || {}).pinOpen === id ? null : id; this.setState({ pinOpen: open });
   }
-  pin() { setTimeout(() => this.pinCheck(), 140); const el = this._sc; if (!el || !this._stick) return; this._pinning = true; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; setTimeout(() => { this._pinning = false; }, 120); }); }
+  /* the open sticky card shows the card itself: a copy of its content under the header; a tap on a copied button presses the real one */
+  pinFill() {
+    const el = this._sc, B = document.querySelectorAll('.chpinbody'); if (!B.length) return;
+    B.forEach((b) => { const id = b.getAttribute('data-pin-body'), open = (this.state || {}).pinOpen === id, a = el && el.querySelector('article[data-pend="' + id + '"]');
+      if (!open || !a) { if (b.childNodes.length && !open) setTimeout(() => { if ((this.state || {}).pinOpen !== id) b.innerHTML = ''; }, 450); return; }
+      const sig = a.innerHTML.length + ':' + a.textContent; if (b.__sig === sig && b.childNodes.length) return; b.__sig = sig; b.innerHTML = '';
+      Array.from(a.children).slice(1).forEach((ch) => { const k = ch.cloneNode(true); k.querySelectorAll('video').forEach((v) => { try { v.muted = true; v.play(); } catch (e) {} }); b.appendChild(k); });
+      if (!b.__wired) { b.__wired = 1; b.addEventListener('click', (e) => { const art = this._sc && this._sc.querySelector('article[data-pend="' + b.getAttribute('data-pin-body') + '"]'); if (!art) return;
+        let t = e.target, path = []; while (t && t !== b) { const par = t.parentElement; path.unshift(Array.prototype.indexOf.call(par.children, t)); t = par; }
+        if (!path.length) return; path[0] += 1; let o = art; for (const ix of path) { o = o && o.children[ix]; } const hit = o && (o.closest('button,a,[role=button]') || o);
+        if (!hit || hit === art) return; e.preventDefault(); e.stopPropagation(); hit.click(); }); } });
+  }
+
+  pin() { setTimeout(() => this.pinCheck(), 140); const el = this._sc; if (!el || !this._stick) return;
+    /* (Oct 9, 11:16) keep following for a moment: a new card or bubble that grows or animates in still ends fully in view */
+    this._followTo = Date.now() + 1400; if (!this._followRaf) { const f = () => { this._followRaf = 0; const e2 = this._sc; if (!e2 || !this._stick || this._touching || Date.now() > (this._followTo || 0)) return; const gap = e2.scrollHeight - e2.scrollTop - e2.clientHeight; if (gap > 1) { this._pinning = true; e2.scrollTop = e2.scrollHeight; setTimeout(() => { this._pinning = false; }, 60); } this._followRaf = requestAnimationFrame(f); }; this._followRaf = requestAnimationFrame(f); }
+    this._pinning = true; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; setTimeout(() => { this._pinning = false; }, 120); }); }
   componentDidUpdate() {
     this.fitRows();
+    try { this.pinFill(); } catch (e) {}
+    { const so = this.state || {}; if (so.pinOpen && (so.pinned || []).indexOf(so.pinOpen) < 0) setTimeout(() => { const s2 = this.state || {}; if (s2.pinOpen && (s2.pinned || []).indexOf(s2.pinOpen) < 0) this.setState({ pinOpen: null }); }, 0); }
     const s = this.state || {}, C = window.__wfChat;
     /* (Oct 8, 23:21) a help conversation said goodbye: it is marked done and the screen goes back to the station, where the fire waits in To do */
     if (s.view === 'chat' && C && s.key && !this._leaving) { const c0 = C.get(s.key); if (c0 && c0.leaveAt && !c0.done) { this._leaving = setTimeout(() => { try { if (!c0.done && C.markDone) C.markDone(c0.key); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.location.href = window.__wfHomeUrl ? window.__wfHomeUrl() : 'Main.dc.html'; }, Math.max(300, c0.leaveAt - Date.now())); } }
@@ -1196,16 +1216,16 @@ class Component extends DCLogic {
       camGo: (e) => { const P = C.active ? C.active(c) : (c.people || []), p = P[1] || P[0], R = C.leadRole ? C.leadRole(c) : null;
         if (window.__wfCamFeed && p) window.__wfCamFeed.open({ calm: c.stage >= 5 || !!c.closed, anchor: e && e.currentTarget, who: p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org, label: L('Live. Helmet camera', 'Em direto. Câmara de capacete') }); },
       setScroll: (el) => { if (el === this._sc) return; this._sc = el; if (el && !el.__wfTouch) { el.__wfTouch = 1;
-        const down = () => { this._touching = true; }, up = () => { this._touching = false; if (this._pendPin) { this._pendPin = false; setTimeout(() => { if (this._touching || this._sc !== el) return; this._stick = true; this._pinBack = null; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); if ((this.state || {}).toEnd) this.setState({ toEnd: false }); }, 250); } };
-        el.addEventListener('touchstart', down, { passive: true }); el.addEventListener('touchend', up, { passive: true }); el.addEventListener('touchcancel', up, { passive: true }); el.addEventListener('mousedown', down); window.addEventListener('mouseup', up);
+        const down = () => { this._touching = true; }, up = () => { this._touching = false; this._touchEnd = Date.now(); if (this._pendPin) { this._pendPin = false; setTimeout(() => { if (this._touching || this._sc !== el) return; this._stick = true; this._pinBack = null; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); if ((this.state || {}).toEnd) this.setState({ toEnd: false }); }, 250); } };
+        el.addEventListener('touchstart', down, { passive: true }); el.addEventListener('touchend', up, { passive: true }); el.addEventListener('touchcancel', up, { passive: true }); el.addEventListener('mousedown', down); window.addEventListener('mouseup', up); el.addEventListener('wheel', () => { this._wheelT = Date.now(); }, { passive: true });
         /* (Oct 9, 10:46) after a pinned header brought its card back, a tap on that card's header returns the chat to where it was */
         el.addEventListener('click', (e) => { const B = this._pinBack, a = e.target && e.target.closest && e.target.closest('article[data-pend]'); if (!B || !a || a.getAttribute('data-pend') !== B.id) return; const band = a.firstElementChild; if (!band || !band.contains(e.target) || e.target.closest('button')) return; e.stopPropagation(); e.preventDefault(); this._pinBack = null; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (B.b) { this._stick = true; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); } else el.scrollTo({ top: B.t, behavior: 'smooth' }); }, true); }
         try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, toEndOp: (this.state || {}).toEnd ? 1 : 0, toEndPe: (this.state || {}).toEnd ? 'auto' : 'none', toEndY: (this.state || {}).toEnd ? '0px' : '8px',
       toEnd: () => { const el = this._sc || document.querySelector('[data-wf-keepscroll]'); if (!el) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this._stick = true; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); this.setState({ toEnd: false }); },
-      onScroll: (e) => { const el = e.currentTarget; if (!this._restoring && !this._pinning) this._touchT = Date.now(); if ((this.state || {}).avTip) this.setState({ avTip: null }); if (this._restoring) return; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; { const away = el.scrollHeight - el.scrollTop - el.clientHeight > 200; if (!!(this.state || {}).toEnd !== away) this.setState({ toEnd: away }); }   /* (Oct 8, 21:16) far from the newest message: the go-to-bottom button shows */ const k = (this.state || {}).key; if (k && (this.state || {}).view === 'chat') this.savePos(el, k); this.pinCheck(el); },
+      onScroll: (e) => { const el = e.currentTarget; if (!this._restoring && !this._pinning) this._touchT = Date.now(); if ((this.state || {}).avTip) this.setState({ avTip: null }); if (this._restoring) return; { const nearEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 60, user = this._touching || Date.now() - (this._touchEnd || 0) < 1500 || Date.now() - (this._wheelT || 0) < 500; if (nearEnd) this._stick = true; else if (user) this._stick = false; }   /* (Oct 9, 11:16) only the user's own scrolling stops the chat following new messages: layout and programmatic scrolls never do */ { const away = el.scrollHeight - el.scrollTop - el.clientHeight > 200; if (!!(this.state || {}).toEnd !== away) this.setState({ toEnd: away }); }   /* (Oct 8, 21:16) far from the newest message: the go-to-bottom button shows */ const k = (this.state || {}).key; if (k && (this.state || {}).view === 'chat') this.savePos(el, k); this.pinCheck(el); },
       /* (Oct 9, 08:58) the collapsed headers of waiting cards, stuck to the top of the chat; a tap brings the card back */
       pinN: String(pends.filter((q) => ((this.state || {}).pinned || []).indexOf(q.id) >= 0).length),
-      pins: pends.filter((q) => ((this.state || {}).pinned || []).indexOf(q.id) >= 0).map((q) => ({ ...q, icD: q.I ? 'flex' : 'none', ic: q.I || { d: '', c: 'none', bg: 'none', fill: 'none' }, go: () => this.pinGo(q.id) })),
+      pins: pends.filter((q) => ((this.state || {}).pinned || []).indexOf(q.id) >= 0).map((q) => ({ ...q, icD: q.I ? 'flex' : 'none', ic: q.I || { d: '', c: 'none', bg: 'none', fill: 'none' }, exp: String((this.state || {}).pinOpen === q.id), rot: (this.state || {}).pinOpen === q.id ? '180deg' : '0deg', gr: (this.state || {}).pinOpen === q.id ? '1fr' : '0fr', go: () => this.pinGo(q.id) })),
       /* (Oct 5) once the fire is resolved and its summary card is in the chat, the back icon is a home icon to the main screen */
       hm: !!c.closed && !c.dismissed && c.stage === 7, hmLbl: (!!c.closed && !c.dismissed && c.stage === 7) ? t.home0 : t.back, hmD: (!!c.closed && !c.dismissed && c.stage === 7) ? 'block' : 'none', bkD: (!!c.closed && !c.dismissed && c.stage === 7) ? 'none' : 'block',
       back: (e) => { if (!!c.closed && !c.dismissed && c.stage === 7) { if (e && e.preventDefault) e.preventDefault(); try { if (C.snapAssigned) C.snapAssigned(); window.location.href = 'Main.dc.html'; } catch (x) {} return; } if ((this.state || {}).fromList) { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} this.setState({ view: 'list', key: '', fromList: false, sheet: false, tab: c.closed ? 'resolved' : (this.state || {}).tab }); } }
