@@ -464,11 +464,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <ul style="display: {{nt.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 16px 0 0; list-style: none; border-top: 0">
         <sc-for list="{{nt.items}}" as="n" hint-placeholder-count="5">
           <li style="border-bottom: 0">
-            <a href="{{n.href}}" class="chrow" onPointerDown="{{n.pick}}" onClick="{{n.pick}}" aria-label="{{n.aria}}" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 84px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; color: #000000; text-decoration: none">
+            <a href="{{n.href}}" class="chrow" onPointerDown="{{n.pick}}" onClick="{{n.pick}}" aria-label="{{n.aria}}" style="position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 84px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; color: #000000; text-decoration: none">
               <!-- The update's type: candidate marker, the fire's stage icon, or the station -->
               <span aria-hidden="true" style="grid-row: 1 / span 2; align-self: start; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{n.ty.bg}}"><svg width="22" height="22" viewBox="{{n.ty.vb}}"><path d="{{n.ty.d}}" fill="{{n.ty.f}}" stroke="{{n.ty.s}}" stroke-width="{{n.ty.sw}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg></span>
               <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{n.title}}</span>
-              <span style="justify-self: end; display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap"><span aria-hidden="true" style="display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: var(--wf-y); box-shadow: 0 0 0 1px rgba(0,0,0,0.12)"></span>{{n.age}}</span>
+              <span style="justify-self: end; display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{n.age}}</span>
+              <!-- (Oct 9, 11:01) unread: a small dot in the card's top-right corner, 4px from the top and the right; it goes when the notification is tapped -->
+              <span aria-hidden="true" style="position: absolute; top: 4px; right: 4px; display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: var(--wf-y); box-shadow: 0 0 0 1px rgba(0,0,0,0.24)"></span>
               <span style="grid-column: 2 / span 2; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{n.text}}</span>
             </a>
           </li>
@@ -1644,9 +1646,13 @@ class Component extends DCLogic {
       if (MINE.level !== 'lead') { let HO = null; try { HO = JSON.parse(localStorage.getItem('wf-help-offer') || 'null'); } catch (e) {}
         if (HO && HO.rn) out.push({ t: T0 - 5 * 60000, kind: 'st', unit: 'crew', title: 'Mutual aid. ' + (HO.place || 'Fire') + ', ' + HO.km + ' km', text: 'Outside our area. Ask ' + HO.rn + ' if they need help.', href: 'Station.dc.html?home=1', pick: () => { try { sessionStorage.setItem('wf-help-go', '1'); } catch (e) {} } }); }
       out.sort((a, b) => b.t - a.t); }
-    const unread = out.filter((n) => n.t > seen).length;
+    /* (Oct 9, 11:01) read is per notification, and only when it is tapped (opening the panel reads nothing): each update is known by
+       its title and time, the ones tapped kept on this phone; the bell's count is the unread ones */
+    let RD = []; try { RD = JSON.parse(localStorage.getItem('wf-nt-read') || '[]') || []; } catch (e) {} const nid = (n) => n.title + '|' + n.t;
+    const isUn = (n) => n.t > seen && RD.indexOf(nid(n)) < 0;
+    const unread = out.filter(isUn).length;
     const items = out.map((n, i) => {
-      const un = n.t > seen;
+      const un = isUn(n);
       const ic = n.kind === 'ign' ? [CIR, 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
       // The type, as an icon in its own round (like the chat timeline): the ignition candidate's marker, the fire's stage icon (in the stage's colour), the station's house
       const CH = window.__wfChat, SG = n.kind === 'fire' && CH && CH.STAGES ? CH.STAGES.find((q) => String(n.stage || '').toLowerCase().indexOf(q.en.toLowerCase()) >= 0 || q.en.toLowerCase().indexOf(String(n.stage || '').toLowerCase()) >= 0) : null;
@@ -1660,7 +1666,7 @@ class Component extends DCLogic {
         : { vb: '0 0 14 14', d: SQ, f: 'rgba(64,156,255,0.6)', s: '#3A3A3C', sw: 1.3, bg: '#E3EEFB' };
       return { ty, title: n.title, text: n.text, age: ageTxt(n.t), href: n.href, icon: ic[0], fill: ic[1], stroke: ic[2], w: 600, dotD: un ? 'inline-block' : 'none',
         sep: i ? '0' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
-        pick: (e) => { this.wfNtSeen(now); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
+        pick: (e) => { this.wfNtRead(nid(n)); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
     });
     const where = MINE ? (String(MINE.station.name).replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || 'Station') : ((scope && scope.title) || 'All areas');
     return {
@@ -1669,9 +1675,9 @@ class Component extends DCLogic {
       note: 'Station updates are examples until a dispatch feed is connected.', noteD: out.some((n) => n.kind === 'st') ? 'block' : 'none',
       aria: (() => { try { window.sessionStorage.setItem('wf-nt-unread', String(unread)); } catch (e) {} return unread ? 'Notifications, ' + unread + ' unread' : 'Notifications'; })(), str: open ? 'true' : 'false', hidden: open ? 'false' : 'true',
       op: open ? 1 : 0, pe: open ? 'auto' : 'none', y: open ? '0%' : '-104%', dur: open ? '.55s' : '.45s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '.5s',
-      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg', dy: 0, cl: this.wfDrag('nt').y ? Math.max(0, -this.wfDrag('nt').y) : -80, sb: Math.max(0, -(this.wfDrag('nt').y || 0)), clT: this.wfDrag('nt').y ? '0s' : '.3s', h: this.wfHandle('nt', 'up', () => { this.wfNtSeen(now); this.setState({ ntOpen: false }); this.wfPanelReturn(); }),
+      inOp: open ? 1 : 0, inY: open ? '0px' : '-16px', inDelay: open ? '.18s' : '0s', xRot: s.ntSpin ? '90deg' : '0deg', dy: 0, cl: this.wfDrag('nt').y ? Math.max(0, -this.wfDrag('nt').y) : -80, sb: Math.max(0, -(this.wfDrag('nt').y || 0)), clT: this.wfDrag('nt').y ? '0s' : '.3s', h: this.wfHandle('nt', 'up', () => { this.setState({ ntOpen: false }); this.wfPanelReturn(); }),
       open: () => { this.setState({ ntOpen: true, scOpen: false }); },
-      close: () => { if (this._ntT) return; this.wfNtSeen(now); this.setState({ ntSpin: true }); this._ntT = setTimeout(() => { this._ntT = null; this.setState({ ntOpen: false, ntSpin: false }); if (this.wfPanelReturn()) return; }, 260); }
+      close: () => { if (this._ntT) return; this.setState({ ntSpin: true }); this._ntT = setTimeout(() => { this._ntT = null; this.setState({ ntOpen: false, ntSpin: false }); if (this.wfPanelReturn()) return; }, 260); }
     };
   }
   // (Oct 5, 20:45) "Assigned to me": the chats and the notifications each have the switch, on by default, kept per profile on this phone
@@ -1726,6 +1732,7 @@ class Component extends DCLogic {
       close: () => { if (this._cbT) return; this.setState({ cbSpin: true }); this._cbT = setTimeout(() => { this._cbT = null; this.setState({ cbOpen: false, cbSpin: false }); if (this.wfPanelReturn()) return; }, 260); }
     };
   }
+  wfNtRead(id) { try { const R = JSON.parse(localStorage.getItem('wf-nt-read') || '[]') || []; if (R.indexOf(id) < 0) { R.push(id); localStorage.setItem('wf-nt-read', JSON.stringify(R.slice(-300))); } } catch (e) {} this.forceUpdate && this.forceUpdate(); }
   wfNtSeen(t) { window.__wfMem = Object.assign(window.__wfMem || {}, { ntSeen: t }); try { window.sessionStorage.setItem('wf-nt-seen', String(t)); } catch (e) {} }
   wfLayout() {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
