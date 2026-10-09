@@ -219,7 +219,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
     // Big KPI numbers across the app (forces, resolution summary, profiles): dark grey, one size
     // Rows of 2 or 3 KPIs go as big as their numbers allow: each row sets --k from window.__wfKpiPx (below)
-    '[data-wf-kpicard]{padding:8px!important}' + '.wf-note.wf-simhid{display:none!important}.wf-simstar{position:absolute;bottom:4px;right:8px;z-index:2;font-size:18px;line-height:24px;font-weight:600;color:#C7C7CC!important;pointer-events:none}.wf-dark .wf-simstar{color:#636366!important}.wf-note.wf-simfoot{display:block!important;align-self:flex-start;flex-shrink:0;margin-left:16px;margin-right:16px;font-size:13px;line-height:18px;color:#6E6E73;text-align:left;writing-mode:horizontal-tb;transform:none}' + '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
+    '[data-wf-kpicard]{padding:8px!important}' + '.wf-note.wf-simhid{display:none!important}.wf-simstar{position:absolute;bottom:var(--wf-simstar-b,4px);right:var(--wf-simstar-r,8px);z-index:2;font-size:18px;line-height:24px;font-weight:600;color:#C7C7CC!important;pointer-events:none}.wf-dark .wf-simstar{color:#636366!important}.wf-note.wf-simfoot{display:block!important;align-self:flex-start;flex-shrink:0;margin-left:16px;margin-right:16px;font-size:13px;line-height:18px;color:#6E6E73;text-align:left;writing-mode:horizontal-tb;transform:none}' + '.wf-big{color:#3A3A3C!important;font-size:var(--k,44px)!important;line-height:1.05!important;font-weight:700!important;letter-spacing:-.03em}' +
     // Qualifier band (what an item is: ignition detection, active fire, fire station): not a button. Full width, square
     // corners, the map marker's colour, the marker itself before the label. One definition for the whole app.
     /* Status tags in lists: one width for every tag, set by the longest expected label (e.g. Building line), text centred; a longer translation still grows it */
@@ -566,7 +566,25 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   function star(card) { if (!card || card.querySelector(':scope > .wf-simstar')) return; if (getComputedStyle(card).position === 'static') card.style.position = 'relative'; var t = document.createElement('span'); t.className = 'wf-simstar'; t.setAttribute('aria-label', document.documentElement.lang === 'pt' || window.__wfLang === 'pt' ? 'Simulação' : 'Simulation'); t.textContent = '*'; card.appendChild(t); }
   function scroller(el) { var e = el && el.parentElement; while (e && e !== document.body) { var cs = getComputedStyle(e); if (/auto|scroll/.test(cs.overflowY) && !e.closest('[data-wf-maproot]')) return e; e = e.parentElement; } return null; }
   window.__wfSimMark = function () { try { simMark(); } catch (e) {} };   // screens that build their own markup ask for the footnote (statistics)
+  /* (Oct 9, 10:41) The * sits snug in the card's bottom-right corner, whatever the card's own padding: its visible ink is the
+     same distance from the right edge and from the bottom edge, the smaller of the two gaps it had (the right one). Measured
+     from the glyph itself in the font in use, so it holds on every device and text size. */
+  var starFix = '';
+  function simStarPos() {
+    var el = document.querySelector('.wf-simstar'); if (!el) return;
+    var cs = getComputedStyle(el), fs = parseFloat(cs.fontSize) || 18, lh = parseFloat(cs.lineHeight) || fs * 24 / 18, key = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily + '|' + lh;
+    if (key === starFix) return;
+    var c = document.createElement('canvas').getContext('2d'); if (!c) return; c.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
+    var m = c.measureText('*'); if (m.actualBoundingBoxRight == null || m.fontBoundingBoxAscent == null) return;
+    var inkR = m.width - m.actualBoundingBoxRight,                                                  // empty space right of the ink, inside the box
+        base = (lh - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent,
+        inkB = lh - (base + m.actualBoundingBoxDescent),                                            // empty space under the ink, inside the box
+        d = Math.min(8 + inkR, 4 + inkB);                                      // the smaller visible gap of the old placement
+    var r = document.documentElement.style; r.setProperty('--wf-simstar-r', (d - inkR).toFixed(2) + 'px'); r.setProperty('--wf-simstar-b', (d - inkB).toFixed(2) + 'px');
+    starFix = key;
+  }
   function simMark() {
+    try { simStarPos(); } catch (e) {}
     var N = document.querySelectorAll('.wf-note'), first = null;
     for (var i = 0; i < N.length; i++) { var nt = N[i]; if (nt.classList.contains('wf-simfoot')) continue; var tx = (nt.textContent || '').trim(); if (!SIMW.test(tx)) continue;
       if (!nt.classList.contains('wf-simhid')) nt.classList.add('wf-simhid');
