@@ -415,9 +415,7 @@
   function closePast(c) {
     var t7 = (c.hist.find(function (h) { return h.s === 7; }) || {}).vt || Date.now() - 86400000, now = Date.now(), P = c.people;
     var add = function (m, vt) { m.id = newId(); m.t = now - 1000; m.vt = vt; c.msgs.push(m); };
-    add({ kind: 'card', tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00606A', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, close: true, done: 'close',
-      checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
-      actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }, t7 - 3 * MIN);
+    var cc = closeCard(c, false); cc.kind = 'card'; cc.done = 'close'; add(cc, t7 - 3 * MIN);   /* (Oct 9) the same closing card as live fires */
     add({ kind: 'msg', from: 'me', en: 'Declaring the fire closed. Thank you all.', pt: 'Declaro o incêndio encerrado. Obrigado a todos.' }, t7 - MIN);
     c.stage = 7; c.closed = true; c.closedVt = t7; c.vNow = t7; c.vAt = now;
     (c.forces || []).forEach(function (f) { f.st = 'released'; }); if (c.air) c.air.st = 'released';
@@ -582,14 +580,19 @@
   function isLt() { try { var M = window.__wfMine ? window.__wfMine() : null; return !!(M && M.level === 'lead'); } catch (e) { return false; } }
   // the lieutenant of the station at index i (a field voice), else that station's captain
   function ltOf(c, i) { var st = (c.stations[i] || {}).short, j = (c.people || []).findIndex(function (p) { return p.kind === 'lt' && !p.left && !p.self && p.org === st; }); return j >= 0 ? j : lead(c, i); }
-  var REC = { 4: ['Head held, no spread. We recommend Resolving.', 'Cabeça dominada, sem progressão. Recomendamos Em resolução.'], 5: ['Flanks tied in, no open edge. Ready for Concluding.', 'Flancos fechados, sem frente aberta. Prontos para Em conclusão.'],
+  var REC = { 4: ['Head held, no spread. Ready for Resolving.', 'Cabeça dominada, sem progressão. Prontos para Em resolução.'], 5: ['Flanks tied in, no open edge. Ready for Concluding.', 'Flancos fechados, sem frente aberta. Prontos para Em conclusão.'],
     6: ['Mop-up done along the perimeter. Ready for Surveillance.', 'Rescaldo feito no perímetro. Prontos para Vigilância.'], 7: ['No hotspots left. Ready to close.', 'Sem pontos quentes. Prontos a encerrar.'] };
+  // (Oct 9) one closing card: the team's recommendation carries the checklist and closes the fire itself (no second "Ready to close" card)
+  function closeChecks(c) { var ev = (c.flags || {}).evac || c.evac; return [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: ev ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: ev ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }]; }
+  function closeCard(c, rec) { return { rec: true, close: true, to: 7, tag: rec ? { en: 'Team recommends', pt: 'A equipa recomenda' } : { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#3A3A3C', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, body: { en: REC[7][0], pt: REC[7][1] },
+    checks: closeChecks(c), actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }; }
   function paceDue(c, s) {
     if (s === 2) { setStage(c, 3, 300, 3); return; }   /* (Oct 8, 22:01) en route: the crews reach the fire within 15 s (field-driven, for everyone) */
     var nx = s + 1, R = REC[nx]; if (!R) return;
     if (isLt()) { captMove(c, nx); return; }
     c.flags['rec' + s] = true;
     say(c, ltOf(c, 0), R[0], R[1], 300, 1);
+    if (nx === 7) { card(c, closeCard(c, true), 1500, 0); return; }
     card(c, { rec: true, to: nx, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
       actions: [nx === 7 ? { key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true } : { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt, primary: true }] }, 1500, 0);
   }
@@ -718,11 +721,10 @@
       say(c, ltOf(c, 0), 'Copy. On it.', 'Entendido. Já estamos nisso.', 2200, 2);
     } else if (a === 'closeCheck') {
       c.flags.closeCard = true;
-      // (Oct 4) asked again while the "Ready to close" card is still waiting far up the chat: it comes down to the bottom, so closing is never out of reach
-      c.msgs = c.msgs.filter(function (m) { return !(m.kind === 'card' && m.close); }); c.queue = c.queue.filter(function (q) { return !(q.m && q.m.kind === 'card' && q.m.close); });
-      card(c, { close: true, tag: { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#00606A', title: { en: 'Close fire', pt: 'Encerrar incêndio' },
-        checks: [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: c.flags.evac ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: c.flags.evac ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }],
-        actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }, 400, 0);
+      // (Oct 4) asked again while the closing card is still waiting far up the chat: it comes down to the bottom, so closing is never out of reach
+      var wasRec = c.msgs.some(function (m) { return m.kind === 'card' && m.close && !m.done && m.tag && m.tag.en === 'Team recommends'; });
+      c.msgs = c.msgs.filter(function (m) { return !(m.kind === 'card' && m.close && !m.done); }); c.queue = c.queue.filter(function (q) { return !(q.m && q.m.kind === 'card' && q.m.close); });
+      card(c, closeCard(c, wasRec), 400, 0);
     } else if (a === 'close') {
       jump(c, stageSpan(c, 7) * MIN);
       me('Declaring the fire closed. Thank you all.', 'Declaro o incêndio encerrado. Obrigado a todos.');

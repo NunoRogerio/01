@@ -20,7 +20,7 @@
 <script src="station.js?v=16"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791525990"></script>
+<script src="chat.js?v=1791526274"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=37"></script>
@@ -221,7 +221,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </sc-if>
             <sc-if value="{{m.hasRound}}" hint-placeholder-val="{{ false }}">
               <div style="display: flex; justify-content: flex-end; padding: 0 16px 16px">
-                <button type="button" class="chbtn" data-round="1" onClick="{{m.roundGo}}" aria-label="{{m.roundAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+                <button type="button" class="chbtn" data-round="1" onClick="{{m.roundGo}}" aria-label="{{m.roundAria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{m.roundBg}}; color: {{m.roundFg}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
               </div>
             </sc-if>
             <sc-if value="{{m.hasLink}}" hint-placeholder-val="{{ false }}">
@@ -996,7 +996,8 @@ class Component extends DCLogic {
               evOpen: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const F = window.__wfCamFeed; if (F) F.open({ anchor: e && e.currentTarget, src: E.video, cross: true, title: 'Drone feed', label: live, who: E.from ? L('Sent automatically from ' + E.from, 'Enviado automaticamente de ' + E.from) : '' }); } }; })(),
           hasActions: acts.length > 0 && (!c.closed || !!m.done) && !(m.rec && !m.done), actions: acts,
           /* (Oct 9) a team recommendation moves on with a light round arrow button at the card's bottom right, not a big grey button; once chosen, the usual past-tense band */
-          hasRound: !!(m.rec && !m.done && acts.length && !c.closed), roundGo: acts.length ? acts[0].go : null, roundAria: acts.length ? acts[0].label : '', actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
+          hasRound: !!(m.rec && !m.done && acts.length && !c.closed), roundGo: acts.length ? acts[0].go : null, roundAria: acts.length ? acts[0].label : '',
+          /* (Oct 9) closing the fire: the same round arrow, in the dark grey */ roundBg: m.close ? 'rgb(58, 58, 60)' : 'rgba(118,118,128,0.12)', roundFg: m.close ? '#FFFFFF' : '#3C3C43', actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
           cardGo: toSheet ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; openSheet(); } : false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: toSheet ? 'pointer' : 'default', cardCls: toSheet ? 'chrow' : '', chevD: toSheet ? 'block' : 'none',   /* (Oct 9) the card opens Progress and projection itself: a chevron on the title line, no button */
           hasLink: !toSheet && !!m.link && m.stage == null,   /* (Oct 7) stage cards carry no View button: the title's arrow opens the incident */ linkCls: 'wf-sec',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
