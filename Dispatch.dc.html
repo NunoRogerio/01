@@ -21,8 +21,8 @@
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
 <script src="chat.js?v=1791564504"></script>
-<script src="tour.js?v=1791564504"></script>
-<script src="feedcam.js?v=1791549296"></script>
+<script src="tour.js?v=1791564887"></script>
+<script src="feedcam.js?v=1791564887"></script>
 <script src="menu.js?v=1791564027"></script>
 
 <title>Dispatch sizing</title>
@@ -729,7 +729,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <sc-for list="{{kp.rows}}" as="r" hint-placeholder-count="6">
         <div data-pk-row="{{r.key}}" data-pk-on="{{r.onStr}}" onPointerDown="{{r.down}}" onPointerMove="{{r.move}}" onPointerUp="{{r.up}}" onPointerCancel="{{r.up}}" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 52px; padding: 0 16px; border-top: {{r.sep}}; background: #FFFFFF; touch-action: pan-y; -webkit-user-select: none; user-select: none">
           <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span data-pk-grip="1" aria-hidden="true" style="visibility: {{r.gripV}}; display: flex; align-items: center; justify-content: center; width: 32px; height: 44px; margin-left: -8px; flex-shrink: 0; color: #8E8E93; touch-action: none; cursor: grab"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><span style="min-width: 0; font-size: 18px; line-height: 24px; color: #000000">{{r.name}}</span></span>
-          <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.3,1.3,.4,1)"></span></button>
+          <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.2,.8,.2,1)"></span></button>
         </div>
       </sc-for>
     </div>
@@ -861,7 +861,7 @@ class Component extends DCLogic {
   wfNudge() { try { if (sessionStorage.getItem('wf-nudge-chat') && !sessionStorage.getItem('wf-tour') && window.__wfNudge) setTimeout(() => window.__wfNudge.on('[data-wf-hdr] a[href="Chat.dc.html"]', 'wf-nudge-chat'), 700); } catch (e) {} }
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); } } catch (x) {} }
   componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); this.planFlip(); }
-  // Chosen stations: a new one comes out from under Add (newest on top) and settles with a light bounce; the ones already
+  // Chosen stations: a new one comes out from under Add (newest on top) and settles (no bounce, Oct 9); the ones already
   // there slide down to make room (FLIP on their positions in the page's own pixels)
   planFlip() {
     const els = Array.prototype.slice.call(document.querySelectorAll('[data-wf-plan]')).filter((el) => el.offsetParent);
@@ -870,10 +870,10 @@ class Component extends DCLogic {
     if (!first) els.forEach((el) => { const k = el.getAttribute('data-wf-plan'), y = next[k];
       try {
         if (!(k in prev)) { const h = el.offsetHeight + 16;
-          el.animate([{ transform: 'translateY(' + (-h) + 'px)', opacity: 0 }, { transform: 'translateY(' + (-h * 0.4) + 'px)', opacity: 1, offset: 0.35 }, { transform: 'translateY(6px)', offset: 0.78 }, { transform: 'translateY(0)' }],
+          el.animate([{ transform: 'translateY(' + (-h) + 'px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }],
             { duration: 700, delay: 220, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'backwards' }); }
         else if (Math.abs(prev[k] - y) > 1) { const d = prev[k] - y;
-          el.animate([{ transform: 'translateY(' + d + 'px)' }, { transform: 'translateY(' + d + 'px)', offset: 0.05 }, { transform: 'translateY(5px)', offset: 0.8 }, { transform: 'translateY(0)' }],
+          el.animate([{ transform: 'translateY(' + d + 'px)' }, { transform: 'translateY(0)' }],
             { duration: 700, delay: 220, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'backwards' }); }
       } catch (e) {} });
     this._planTop = els.length || !first ? next : null;

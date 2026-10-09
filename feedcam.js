@@ -262,9 +262,9 @@
       var last = 0;
       var step = function (now) { if (feeds.indexOf(f) < 0) return; var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
         var B = boundsF(f), x = st.x + vx * dt, y = st.y + vy * dt;
-        if (x < B.x0) { x = B.x0; vx = -vx * 0.3; } else if (x > B.x1) { x = B.x1; vx = -vx * 0.3; }
-        if (y < B.y0) { y = B.y0; vy = -vy * 0.3; } else if (y > B.y1) { y = B.y1; vy = -vy * 0.3; }
-        var q = put(f, x, y, false); if (q.hx) vx = -vx * 0.3; if (q.hy) vy = -vy * 0.3;   // bounces off another feed like off an edge
+        if (x < B.x0) { x = B.x0; vx = 0; } else if (x > B.x1) { x = B.x1; vx = 0; }
+        if (y < B.y0) { y = B.y0; vy = 0; } else if (y > B.y1) { y = B.y1; vy = 0; }   /* (Oct 9, 17:53) no bounce anywhere: it stops at the edge */
+        var q = put(f, x, y, false); if (q.hx) vx = 0; if (q.hy) vy = 0;   // bounces off another feed like off an edge
         if (Math.hypot(vx, vy) < 12) { st.fling = 0; settle(f); return; } st.fling = requestAnimationFrame(step); };
       st.fling = requestAnimationFrame(step); };
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);   /* a drag that loses the finger always ends (never stuck) */

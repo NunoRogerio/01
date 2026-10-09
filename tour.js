@@ -323,7 +323,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       '#wf-tour .ta{display:flex;align-items:center;gap:8px;width:100%;max-width:100%;box-sizing:border-box;margin:0 0 4px;padding:8px 16px;border-radius:999px;background:rgba(var(--wf-y-rgb,229,255,0),0.2);box-shadow:inset 0 0 0 1px rgba(var(--wf-y-rgb,229,255,0),0.55);color:var(--wf-y,#E5FF00);font-size:16px;font-weight:600;line-height:20px;position:relative;isolation:isolate;opacity:0}' +
       // the achievement shows last (Oct 3, 18:40): once the card has settled it pops in, its background swells 10% and back,
       // with the prlim sound and a haptic at that same moment
-      '#wf-tour .ta.go{animation:wfach .3s cubic-bezier(.3,1.5,.5,1) both}#wf-tour .ta::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:inherit;pointer-events:none}#wf-tour .ta.go::before{animation:wfachBg .5s cubic-bezier(.3,0,.3,1) .05s both}@keyframes wfachBg{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}' +
+      '#wf-tour .ta.go{animation:wfach .3s cubic-bezier(.2,.8,.2,1) both}#wf-tour .ta::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:inherit;pointer-events:none}#wf-tour .ta.go::before{animation:wfachBg .5s cubic-bezier(.3,0,.3,1) .05s both}@keyframes wfachBg{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}' +
       '#wf-tour .ta.still{opacity:1}' + '@keyframes wfach{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}' +
       '#wf-tour .tth{margin:0 0 16px;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86)}' +
       '#wf-tour .tt{margin:0;font-size:18px;font-weight:600;line-height:24px}' +
@@ -446,7 +446,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       var stepF = function (now) { var s0 = get(); if (!s0 || s0.i !== i || !bub || !bub.isConnected) { fling = 0; return; }
         var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now; var k = Math.exp(-dt / 0.3); vx *= k; vy *= k;
         var bx = drag.dx, by = drag.dy; drag.dx += vx * dt; drag.dy += vy * dt; place(l, t); drag.dx = parseFloat(bub.style.left) - l; drag.dy = parseFloat(bub.style.top) - t;
-        if (Math.abs(drag.dx - bx - vx * dt) > 0.5 && Math.abs(vx) > 60) vx = -vx * 0.3; else if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by - vy * dt) > 0.5 && Math.abs(vy) > 60) vy = -vy * 0.3; else if (Math.abs(drag.dy - by) < 0.01) vy = 0;   // every edge bounces the same way: the bubble stops 8px from the screen edge and bumps back at 30% of its speed, never past the margin (Oct 3, 14:19)
+        if (Math.abs(drag.dx - bx - vx * dt) > 0.5 && Math.abs(vx) > 60) vx = 0; else if (Math.abs(drag.dx - bx) < 0.01) vx = 0; if (Math.abs(drag.dy - by - vy * dt) > 0.5 && Math.abs(vy) > 60) vy = 0; else if (Math.abs(drag.dy - by) < 0.01) vy = 0;   // every edge bounces the same way: the bubble stops 8px from the screen edge and bumps back at 30% of its speed, never past the margin (Oct 3, 14:19)
         if (Math.hypot(vx, vy) < 12) { fling = 0; return; } fling = requestAnimationFrame(stepF); };
       fling = requestAnimationFrame(stepF);
     };
