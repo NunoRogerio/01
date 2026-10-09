@@ -145,7 +145,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <span style="flex-grow: 1; min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px">{{p.tag}} · {{p.time}}</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; transform: rotate({{p.rot}}); transition: transform .35s cubic-bezier(.2,.8,.2,1)"><path d="m6 9 6 6 6-6"></path></svg>
         </button>
-          <div style="display: grid; grid-template-rows: {{p.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><div style="min-height: 0; overflow: hidden"><div class="chpinbody" data-pin-body="{{p.id}}" style="display: flex; flex-direction: column; max-height: 60vh; overflow-y: auto; overscroll-behavior: contain"></div></div></div>
+          <div style="display: grid; grid-template-rows: {{p.gr}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><div style="min-height: 0; overflow: hidden"><div class="chpinbody" data-wf-nopb="1" data-pin-body="{{p.id}}" style="display: flex; flex-direction: column; max-height: 60vh; overflow-y: auto; overscroll-behavior: contain">   <!-- (Oct 9, 11:37) the open sticky card ends 16px under its buttons, as on its sides: no scrolling-panel end padding --></div></div></div>
         </div>
       </sc-for>
     </div>
@@ -713,10 +713,11 @@ class Component extends DCLogic {
         if (!hit || hit === art) return; e.preventDefault(); e.stopPropagation(); hit.click(); }); } });
   }
 
-  pin() { setTimeout(() => this.pinCheck(), 140); const el = this._sc; if (!el || !this._stick) return;
+  pin() { setTimeout(() => this.pinCheck(), 140); const el = this._sc; if (!el || !this._stick) return; const ease = !!el.__wfEase && Date.now() - el.__wfEase > 1200;   /* the first moments after opening: straight to the newest */
     /* (Oct 9, 11:16) keep following for a moment: a new card or bubble that grows or animates in still ends fully in view */
-    this._followTo = Date.now() + 1400; if (!this._followRaf) { const f = () => { this._followRaf = 0; const e2 = this._sc; if (!e2 || !this._stick || this._touching || Date.now() > (this._followTo || 0)) return; const gap = e2.scrollHeight - e2.scrollTop - e2.clientHeight; if (gap > 1) { this._pinning = true; e2.scrollTop = e2.scrollHeight; setTimeout(() => { this._pinning = false; }, 60); } this._followRaf = requestAnimationFrame(f); }; this._followRaf = requestAnimationFrame(f); }
-    this._pinning = true; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; setTimeout(() => { this._pinning = false; }, 120); }); }
+    this._followTo = Date.now() + 1400; if (!this._followRaf) { const f = () => { this._followRaf = 0; const e2 = this._sc; if (!e2 || !this._stick || this._touching || Date.now() > (this._followTo || 0)) return; const gap = e2.scrollHeight - e2.scrollTop - e2.clientHeight; if (gap > 1) { this._pinning = true; e2.scrollTop = ease ? e2.scrollTop + Math.max(1, Math.ceil(gap * 0.2)) : e2.scrollHeight; setTimeout(() => { this._pinning = false; }, 60); if (ease) this._followTo = Math.max(this._followTo || 0, Date.now() + 200); } this._followRaf = requestAnimationFrame(f); }; this._followRaf = requestAnimationFrame(f); }
+    if (ease) return;   /* (Oct 9, 11:38) once the chat is open, everything new (bubbles, cards, the resolved card) rises in from the bottom, the chat gliding up with it: one behaviour for all */
+    el.__wfEase = Date.now(); this._pinning = true; el.scrollTop = el.scrollHeight; requestAnimationFrame(() => { if (this._sc === el && this._stick) el.scrollTop = el.scrollHeight; setTimeout(() => { this._pinning = false; }, 120); }); }
   componentDidUpdate() {
     this.fitRows();
     try { this.pinFill(); } catch (e) {}
