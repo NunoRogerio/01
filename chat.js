@@ -1385,7 +1385,10 @@
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
         else if (m.kind === 'capt' && m.a === 'evac') { if (!c.closed && !c.dismissed && !c.flags.evac) { var ec = c.msgs.find(function (x) { return x.req === 'evac' && !x.done; }); if (ec) ec.done = 'evac'; evacDo(c, 0); } }
         else if (m.kind === 'capt') { if (!c.closed && !c.dismissed && c.sEnt === m.ent && !c.flags.rekindled) { var rc = c.msgs.find(function (x) { return x.rekindle && !x.done; }); if (rc) rc.done = 'back'; captMove(c, 3, true); } }
-        else { c.msgs.push(m); recFromMsg(c, m); }
+        else {
+          /* (Oct 9, 11:56) a step-back card is the latest word from the field: unanswered move-forward cards (sticky ones too) go away */
+          if (m.kind === 'card' && m.rekindle) { c.msgs = c.msgs.filter(function (x) { return !(x.kind === 'card' && x.rec && !x.done); }); c.queue = c.queue.filter(function (x) { return !(x.m && x.m.rec); }); }
+          c.msgs.push(m); recFromMsg(c, m); }
         c.updated = q.due; changed = true;
       }
       /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
