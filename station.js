@@ -29,6 +29,17 @@
   /* (Oct 9, 06:52) Station 11's fleet, one list for every screen (the station's Resources, the crews, the captain's dispatch):
      a plausible LA County engine company station in the foothills (no hand crew and no aircraft of its own: hand crews live
      at the fire camps, helicopters at the county's air operations). Who rides each unit, from the station's own roster. */
+  /* (Oct 9, 11:09) the station fleet icons (command, engine, patrol, tender, squad...): the station resource list and the dispatch blade show the same ones */
+  window.__wfFleetIC = {
+    cmd: 'M3 15.5v-3l2.2-4.5h9.6l2.7 4.5h3.5v3Z M6.5 17.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M15 17.5a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0-3.2 0 M10 5h3 M11.5 5v3',
+    eng: 'M2.5 8.5h10v8h-10Z M12.5 11h4.3l2.7 3v2.5h-7Z M3.5 6.5h8 M5.5 6.5v2 M8 6.5v2 M10.5 6.5v2 M4.5 17.8a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M14.5 17.8a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+    pick: 'M2.5 12h8.5V8.5h5l3 3.5h2.5v4h-19Z M5 16.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15 16.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M4 12V9.5h5V12',
+    tank: 'M5 8h7.5a2.5 2.5 0 0 1 2.5 2.5v5H2.5v-5A2.5 2.5 0 0 1 5 8Z M15 11h3l2.5 3v1.5H15 M5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15.5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+    bus: 'M2.5 7h15l3 4v5h-18Z M5 10h3 M10 10h3 M5.5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+    amb: 'M2.5 7h11v9h-11Z M13.5 10h4l3 3.2V16h-7 M6 11.5h4 M8 9.5v4 M5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0 M15.5 17.3a1.7 1.7 0 1 0 3.4 0a1.7 1.7 0 1 0-3.4 0',
+    heli: 'M3 5.5h14 M10 5.5v2.5 M7 8h6.5a3.5 3.5 0 0 1 0 7H10a4 4 0 0 1-3-7Z M17 11.5h4.5 M21.5 9.5v4 M7.5 18.5h8 M9.5 15v3.5 M13.5 15v3.5',
+    crew: 'M9 11a3 3 0 1 0 0-6a3 3 0 1 0 0 6Z M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5 M15.5 10.5a2.5 2.5 0 1 0 0-5 M17.5 14c2 .4 3.5 2.2 3.5 5'
+  };
   var FLEET11 = [
     { id: 'battalion', name: 'Battalion 11', ic: 'cmd', en: 'Command vehicle. Battalion chief Robert Hale.', pt: 'Veículo de comando. Chefe de batalhão Robert Hale.', crew: ['Robert Hale'], rank: { en: 'Battalion chief', pt: 'Chefe de batalhão' } },
     { id: 'engine', name: 'Engine 11', ic: 'eng', en: 'Type 1 engine. 500 gal. 4 seats.', pt: 'Autobomba tipo 1. 1 900 L. 4 lugares.', lt: 'Daniel Brooks', crew: CREW11.filter(function (n) { return !ST11P[n]; }) },
