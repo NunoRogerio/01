@@ -1330,8 +1330,10 @@ class Component extends DCLogic {
           ...(q ? { n: q[1], u: q[2], uD: 'inline' } : { n: String(m.v), u: '', uD: 'none' }), ...this.wfKpiDrag(m.key), noteD: 'block', sep: '0', basis: '0', mt: '0', k: Math.max(16, Math.min(30, Math.floor(106 / Math.max(1, (q ? q[1] : String(m.v)).length * 0.6)))) + 'px', padR: '8px', padL: '8px', ch: Object.assign({ dot: '' }, none) }; });
         if (add.length) { const med = o.cc.med.concat(add).map((m, i) => ({ m, i })).sort((x, y) => (ix(x.m.key) - ix(y.m.key)) || (x.i - y.i)).map((x) => x.m); o.cc = Object.assign({}, o.cc, { med, medD: 'flex' }); } } }
     // Crews: only the crews section (the two wear-out alerts, then adding, editing and removing stations); everything else is Situation
-    let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx ? 'res' : 'fire'; return { d, k: g || 'fire' }; }).reverse();
+    let g = null; const tagged = (o.deployed || []).slice().reverse().map((d) => { if (!d.head) g = d.fx ? 'res' : 'fire'; return { d, k: d.g === 'ord' ? 'res' : (g || 'fire') }; }).reverse();
     o.deployed = tagged.filter((t) => (t.k === 'res') === res).map((t) => t.d);
+    /* (Oct 9, 10:57) the orders sent (station, units, aircraft) are crew information: never on Situation; on Crews only when the stations' own groups are not there to show them */
+    if (res && o.deployed.some((d) => d.fx)) o.deployed = o.deployed.filter((d) => d.g !== 'ord');
     // Crews cards: one group like Key figures (order and hidden cards kept on the phone, + opens the list with toggles)
     o.deployed = o.deployed.map((d) => { if (!d.fx) return d;
       // Crews, Vehicles and People by default; the rest are optional (off until switched on in the picker). No Stations card.
@@ -1551,7 +1553,7 @@ class Component extends DCLogic {
     const ordRows = [];
     /* Confirmed here: the orders live in Resources, station by station (no separate list of orders) */
     if (!(RO && frow && /^Confirmed from/.test(frow.note || ''))) ORD.forEach((o) => {
-      ordRows.push({ head: true, item: false, title: (o.code && o.code !== '—' ? o.code + ' · ' : '') + o.name, note: (o.km != null ? o.km + (o.du || DU) + ' · ' : '') + 'order sent ' + o.at, noteD: 'block' });
+      ordRows.push({ head: true, item: false, g: 'ord', title: (o.code && o.code !== '—' ? o.code + ' · ' : '') + o.name, note: (o.km != null ? o.km + (o.du || DU) + ' · ' : '') + 'order sent ' + o.at, noteD: 'block' });
       o.n.forEach((n, i) => { if (n > 0) ordRows.push({ item: true, g: 'ord', label: meta[i].name, icon: meta[i].icon, c: '#000000', from: '', w: 0, barD: 'none', pre: '', val: String(n), post: '' }); });
     });
     if (false && !ORD.length && RO) {   /* dropped: before crews are sent the Please assign crews card at the top covers this */
