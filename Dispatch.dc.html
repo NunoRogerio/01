@@ -2237,7 +2237,7 @@ class Component extends DCLogic {
       full: !!s.full, toggleFull: () => { const st = this.state || {}; this.setState({ full: !st.full, open: false, cfg: false }); },
       tipSafe: s.full ? 70 : (sent ? 186 : 192) + HD, clipT: s.full ? 0 : (RO && sent ? (this._hdrB || 170) : 128 + HD), clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? (RO ? 844 - (this._hdrB || 170) - MAPH : Math.max(160, (this._sbMin || 250) - 28)) : 458), ctrlTop: RO && sent && !s.full && MAPH < 310 ? (this._hdrB || 170) + 16 : (sent ? 266 - 38 : 243) + HD,   /* (07:24) a shorter band: its round buttons start 16px under its top */ hzTop: s.full ? -68 : (sent ? 12 : 16),
       downPE: (s.full || sent) ? 'none' : 'auto',
-      topY: s.full ? 'calc(-100% - 24px)' : '0px', topOp: 1,   /* (Oct 3, 23:13) like the main screen: the top blade slides away whole (no fade), the map opening under it */ topPE: s.full ? 'none' : 'auto', downY: (s.full || sent) ? '560px' : '0px', navY: (s.full || sent) ? '140px' : '0px', downOp: (s.full || sent) ? 0 : 1,
+      topY: s.full ? 'calc(-100% - 120px)' : '0px',   /* (Oct 9, 18:09) far enough to clear the top whatever sits above it (inside a blade the header starts lower) */ topOp: 1,   /* (Oct 3, 23:13) like the main screen: the top blade slides away whole (no fade), the map opening under it */ topPE: s.full ? 'none' : 'auto', downY: (s.full || sent) ? '560px' : '0px', navY: (s.full || sent) ? '140px' : '0px', downOp: (s.full || sent) ? 0 : 1,
       chevRot: open ? '180deg' : '0deg', sheetOpenStr: open ? 'true' : 'false', stationAria: sel.title + ', first on the fire line in ' + sum + ' minutes. Choose stations', crewsSel: freeSel + ' free crew' + (freeSel === 1 ? '' : 's'),
     };
   }
