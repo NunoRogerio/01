@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<style id="wf-bg0">.wf-chips::-webkit-scrollbar{display:none}.wf-chips::before{content:"";flex:0 0 8px}/* (Oct 9) the chips row has no left padding (a spacer instead) so the fixed stage chip sits 16px from the edge in Safari and Chrome alike */html,body{background:#F2F2F7}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
+<style id="wf-bg0">article[data-snz="1"]:not([data-pend=""]){display:none!important}.wf-chips::-webkit-scrollbar{display:none}.wf-chips::before{content:"";flex:0 0 8px}/* (Oct 9) the chips row has no left padding (a spacer instead) so the fixed stage chip sits 16px from the edge in Safari and Chrome alike */html,body{background:#F2F2F7}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -20,7 +20,7 @@
 <script src="station.js?v=1791550091"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791550091"></script>
+<script src="chat.js?v=1791550228"></script>
 <script src="tour.js?v=1791533202"></script>
 <script src="feedcam.js?v=1791549296"></script>
 <script src="trophy.js?v=1791543767"></script>
@@ -183,7 +183,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.well}}" fire="{{m.fire}}" meta="{{m.meta}}" size="{{m.size}}" crests="{{m.crests}}" air="{{m.air}}" n="{{m.n}}" action="{{m.link}}" credit="1" style="margin-top: 8px; cursor: pointer"></wf-trophy>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
-          <article class="chmsg {{m.cardCls}}" data-pend="{{m.pend}}" onClick="{{m.cardGo}}" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden; cursor: {{m.cardCur}}">
+          <article class="chmsg {{m.cardCls}}" data-pend="{{m.pend}}" data-snz="{{m.snz}}" onClick="{{m.cardGo}}" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden; cursor: {{m.cardCur}}">
             <!-- (Oct 4, 23:27) update / decision cards: the top band in the colour of the fire's current stage, the title (kind and time) in dark grey, centred in it -->
             <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: {{m.bandBg}}">
               <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
@@ -707,7 +707,7 @@ class Component extends DCLogic {
     el = el || this._sc; if (!el) return;
     const top = el.getBoundingClientRect().top, cards = Array.from(el.querySelectorAll('article[data-pend]')).filter((a) => a.getAttribute('data-pend'));
     const out = []; let h = 8;
-    cards.forEach((a) => { const r = a.getBoundingClientRect(); if (r.top < top + h) { out.push(a.getAttribute('data-pend')); h += 64; } });
+    cards.forEach((a) => { const r = a.getBoundingClientRect(); if (a.getAttribute('data-snz') === '1' || r.top < top + h) { out.push(a.getAttribute('data-pend')); h += 64; } });   /* a card put off (Not now / Not yet) goes straight to the stack */
     const cur = ((this.state || {}).pinned || []).join('|');
     if (out.join('|') !== cur) this.setState({ pinned: out });
   }
@@ -1066,7 +1066,7 @@ class Component extends DCLogic {
         /* (Oct 9, 08:58) a card waiting for my answer (approve, move on, dispatch) never gets lost up the chat: see pinCheck */
         const pendNow = !m.done && !c.closed && acts.length > 0;
         if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', I });
-        items.push({ pend: pendNow ? String(m.id) : '', isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
+        items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)

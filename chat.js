@@ -670,7 +670,8 @@
   function act(key, a, msgId) {
     var c = load().chats[key]; if (!c) return;
     var P = c.people, us = isUS(c);
-    var mC = msgId ? c.msgs.find(function (x) { return x.id === msgId; }) : null, notYet = a === 'stayStage' && !!(mC && mC.rec);
+    var mC = msgId ? c.msgs.find(function (x) { return x.id === msgId; }) : null, notYet = !!mC && ['stayStage', 'reqNo', 'declineAir', 'evacNo', 'helpNo'].indexOf(a) >= 0;   /* (Oct 9, 13:49) Not now / Not yet on any confirmation card is no decision: the card stays open and joins the sticky stack */
+    if (notYet) mC.snooze = Date.now();
     /* (Oct 9, 09:07) Not yet on a recommendation is no answer: the card stays open (and sticks to the top when scrolled away) */
     if (mC && !notYet) mC.done = a;
     var me = function (en, pt) { mine(c, en, pt); };
