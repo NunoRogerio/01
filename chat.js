@@ -107,7 +107,8 @@
   var PHOTO_ST = { CA: 'us', PT: 'pt' };   // only Portugal and California chats show photos (a team of 8 each); the rest show initials
   function faceOfPolice(c) { if (!c.callFace) { c.callFace = ['police-a', 'police-b', 'police-c'][Math.floor(Math.random() * 3)]; try { save(); } catch (e) {} } return c.callFace; }
   function photoOf(c, name) {
-    if (c && c.police) return 'assets/faces/' + faceOfPolice(c) + '.jpg?v=1';   // the police captain: a real photo (Unsplash), not a fire service face
+    if (c && c.police) return 'assets/faces/' + faceOfPolice(c) + '.jpg?v=1';
+    var ME = window.__wfPrefs && window.__wfPrefs.person; if (ME && name && ME.name === name && ME.photo) return ME.photo;   // (Oct 9) one name, one face: the signed-in profile keeps its own photo everywhere   // the police captain: a real photo (Unsplash), not a fire service face
     var team = c && PHOTO_ST[c.st];
     if (!team || !name || !window.__wfFacePick) return '';
     // each person in this chat gets a random photo of their gender from the team, never one already used in this chat

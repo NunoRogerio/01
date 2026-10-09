@@ -20,7 +20,7 @@
 <script src="station.js?v=15"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=115"></script>
+<script src="chat.js?v=116"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=36"></script>
@@ -40,7 +40,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .chscroll{scrollbar-width:none}.chscroll>*{flex-shrink:0}.chscroll::-webkit-scrollbar{display:none}
 @keyframes chIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.chmsg{animation:chIn .35s cubic-bezier(.2,.8,.2,1)}@keyframes chFade{from{opacity:0}to{opacity:1}}.chfade{animation:chFade .4s ease-out}@keyframes chBub{from{opacity:0;transform:scale(.72)}60%{opacity:1}to{opacity:1;transform:none}}.chbubL,.chbubR{animation:chBub .55s cubic-bezier(.22,.9,.3,1) both}.chbubL{transform-origin:0 100%}.chbubR{transform-origin:100% 100%}@media (prefers-reduced-motion:reduce){.chbubL,.chbubR,.chfade{animation:none}}
 @keyframes chDot{0%,80%,100%{opacity:.25}40%{opacity:1}}.chdot{animation:chDot 1.2s infinite}
-@keyframes chDrop{from{opacity:0;transform:translateY(-48px)}to{opacity:1;transform:none}}.chdrop{animation:chDrop .55s cubic-bezier(.2,.8,.2,1)}[data-grab-show] [style*="width: 86px; height: 3px"]{opacity:1!important}
+@keyframes chDrop{from{opacity:0;transform:translateY(-48px)}to{opacity:1;transform:none}}.chdrop{animation:chDrop .55s cubic-bezier(.2,.8,.2,1)}@keyframes chBladeIn{from{transform:translateY(calc(-100% - 40px))}to{transform:none}}.chblade{animation:chBladeIn .55s cubic-bezier(.45,0,.25,1)}.chblade .chdrop{animation:none}.chshade{animation:chFade .45s ease-out}[data-grab-show] [style*="width: 86px; height: 3px"]{opacity:1!important}
 @keyframes chView{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}.chview{animation:chView .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes chGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}.chbar{transform-origin:left center;animation:chGrow .8s cubic-bezier(.2,.8,.2,1)}
 @keyframes chPulse{0%,100%{opacity:1}50%{opacity:.55}}.chnow{animation:chPulse 1.6s ease-in-out infinite}
@@ -395,7 +395,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== Resolution summary ===== -->
   <sc-if value="{{isSummary}}" hint-placeholder-val="{{ false }}">
     <!-- (Oct 8, 23:11) a blade from the top like the others: it ends 48px above the bottom of the screen, rounded, over the shade -->
-    <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(60,60,67,0.16)"></div>
+    <div class="chshade" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(60,60,67,0.16)"></div>
     <div class="chblade" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin: -56px 0 48px; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden">
     <header class="chdrop" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 40px 16px; flex-shrink: 0">
       <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; padding-top: 4px">
@@ -462,7 +462,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <sc-for list="{{extras}}" as="x" hint-placeholder-count="1">
           <div style="display: flex; align-items: center; gap: 8px; padding: 16px; border-radius: 16px; background: #FFFFFF"><img src="{{x.icon}}" alt="" style="display: {{x.iconD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 18px; font-weight: 600; line-height: 24px">{{x.name}}</span><span style="font-size: 18px; line-height: 24px; color: #000000">{{x.sub}}</span></span></div>
         </sc-for>
-        <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: flex; align-items: center; gap: 8px; padding: 16px 16px; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+        <button type="button" class="chrow" onClick="{{sum.goOwner}}" style="display: {{sum.ownD}}; align-items: center; gap: 8px; padding: 16px 16px; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; overflow: hidden">{{sum.me.code}}<span style="position: absolute; inset: 0; background-image: {{sum.me.photo}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0"><span style="font-size: 18px; font-weight: 600; line-height: 24px">{{sum.me.name}}</span><span style="font-size: 16px; line-height: 18px; color: #545458">{{sum.me.role}}</span></span>
           <svg width="17.5" height="17.5" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2.06" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
@@ -494,7 +494,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== A firefighter's profile and achievements ===== -->
   <sc-if value="{{isPerson}}" hint-placeholder-val="{{ false }}">
     <!-- (Oct 8, 23:11) a blade from the top like the others: it ends 48px above the bottom of the screen, rounded, over the shade -->
-    <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(60,60,67,0.16)"></div>
+    <div class="chshade" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(60,60,67,0.16)"></div>
     <div class="chblade" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin: -56px 0 48px; padding-top: 56px; border-radius: 0 0 28px 28px; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden">
     <header class="chdrop" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 4px 16px; flex-shrink: 0">
     </header>
@@ -504,18 +504,16 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <h1 style="margin: 8px 0 0; font-size: 26px; font-weight: 600; line-height: 32px">{{pp.name}}</h1>
         <span style="font-size: 18px; line-height: 24px; color: #000000">{{pp.role}}</span>
       </section>
-      <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column">
-        <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
-          <sc-for list="{{sk.cards}}" as="m" hint-placeholder-count="3">
-            <div role="listitem" data-wf-kpi="{{m.key}}" data-g="pp" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none">
-              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 104px; padding: 16px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); text-align: center">
-                <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 16px; line-height: 20px; color: #6E6E73">{{m.l}}</span>
-                <span style="display: flex; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 16px; line-height: 20px; color: #6E6E73">{{m.u}}</span></span>
-              </div>
-            </div>
-          </sc-for>
-          <button type="button" class="mbtn" onClick="{{sk.open}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
-        </div>
+      <!-- (Oct 9) the person's figures as a simple table (every figure, none hidden): label left, value right-aligned -->
+      <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column; gap: 24px">
+        <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.kf}}</h2>
+        <table style="width: 100%; border-collapse: collapse; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+          <tbody>
+            <sc-for list="{{pp.rows}}" as="r" hint-placeholder-count="6">
+              <tr style="border-top: {{r.sep}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000">{{r.v}}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
       </section>
       <section style="display: flex; flex-direction: column; gap: 24px">
         <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.ach}}</h2>
@@ -737,17 +735,19 @@ class Component extends DCLogic {
       const resTot = A.reduce((a, r) => a + (r.res || 0), 0), popTot = A.reduce((a, r) => a + (r.pop || 0), 0);
       // Their figures as the app's mini cards (title, value), trimmed and reordered with the + tile like every card group
       const haTot = A.reduce((a, r) => a + (r.us ? (r.acres || 0) : (r.ha || 0)), 0), usA = A.some((r) => r.us), fast = A.length ? Math.min(...A.map((r) => r.res || Infinity)) : null;
-      const sk = this.cardSet('pp', [
+      const KP = [
         { key: 'res', l: L('Fires resolved', 'Incêndios resolvidos'), v: String(A.length) },
         { key: 'inc', l: L('On incidents', 'Em incidentes'), v: A.length ? C.dur(resTot).replace(/ \d+ min$/, '') : '0' },
         { key: 'pop', l: L('People protected', 'Pessoas protegidas'), v: String(popTot) },
         { key: 'area', l: L('Area burnt', 'Área ardida'), v: (Math.round(haTot * 10) / 10) + ' ' + (usA ? 'acres' : 'ha'), opt: true },
         { key: 'fast', l: L('Fastest resolution', 'Resolução mais rápida'), v: fast && isFinite(fast) ? C.dur(fast) : '—', opt: true },
-        { key: 'sts', l: L('Stations', 'Quartéis'), v: String(new Set(A.map((r) => r.station).filter(Boolean)).size || (P.station ? 1 : 0)), opt: true }]);
+        { key: 'sts', l: L('Stations', 'Quartéis'), v: String(new Set(A.map((r) => r.station).filter(Boolean)).size || (P.station ? 1 : 0)), opt: true }];
+      const sk = this.cardSet('pp', KP);
       // A swipe up on the grabber (or a tap) dismisses the profile, as the back does
       const self = this, ppH = this.grabUp();
       return { isList: false, isChat: false, isSummary: false, isPerson: true, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), sk, ppH, ppY: (s.ppDy || 0) + 'px', ppT: self._ppd ? '0s' : '.3s',
-        pp: { name: P.name, code: P.code, photo: photo(P), role: (P.me ? L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '') : L(P.roleEn, P.rolePt) + (P.station ? ' · ' + P.station : '')),
+        pp: { name: P.name, code: P.code, photo: photo(P), role: (() => { const R = L(P.roleEn, P.rolePt), St = P.station && String(P.station).toLowerCase() !== R.toLowerCase() && String(P.station).toLowerCase() !== String(P.roleEn).toLowerCase() ? P.station : ''; return R + (St ? ' · ' + St : ''); })(),   /* (Oct 9) never "Captain. Captain" */
+          rows: KP.map((k, i) => ({ l: k.l, v: k.v, sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })),
           // The station this person serves at: its crest and name, and a link to the station page
           ...(() => { const S = P.st || null; if (!S || !S.name) return { stD: 'none', stName: '', stSub: '', stCrest: '', stCrestD: 'none', stLinkD: 'none', goStation: null };
             const ch = S.chat ? C.get(S.chat) : null, cr = ch && C.crest ? C.crest(ch, S.short).url : '';
@@ -840,7 +840,7 @@ class Component extends DCLogic {
     const ride = (V, names) => { const by = {}, cnt = V.map(() => 0); names.forEach((n, i) => { if (!V.length) return; let vi = i < V.length ? i : V.findIndex((v, j) => cnt[j] < v.seats); if (vi < 0) vi = 0; by[n] = V[vi].name; cnt[vi]++; }); return by; };   /* every vehicle gets its driver first, then the seats fill in order */
     const forces = FF.map((f) => { const x = stTxt[f.st] || stTxt.standby, colOrg = colOfOrg(f.station);
       const rk = (n) => { const R = C.rankOf ? C.rankOf(c, n) : { en: 'Firefighter', pt: 'Bombeiro' }; return L(R.en, R.pt); }, ppl = [{ name: f.coord, role: rk(f.coord), w: 600, bg: '#FFF6D6' }].concat(f.crew.map((n) => ({ name: n, role: rk(n), w: /Lieutenant|Tenente|Crew chief|Chefe/.test(rk(n)) ? 600 : 400, bg: '#E5E5EA' })));
-      const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk], V = vehOf(f), rd = (f.parts || [{ veh: f.veh, names: ppl.filter((p) => p.name).map((p) => p.name) }]).reduce((acc, pt) => Object.assign(acc, ride(vehOf(Object.assign({}, f, { veh: pt.veh })), pt.names)), {});
+      const fk = 'f:' + f.station, open = !(s.fxClosed || {})[fk], V = vehOf(f), isCapt = (n) => (n === me.name ? !LEAD : !!C.rankOf && C.rankOf(c, n).en === 'Captain'), rd = (f.parts || [{ veh: f.veh, names: ppl.filter((p) => p.name).map((p) => p.name) }]).reduce((acc, pt) => Object.assign(acc, ride(vehOf(Object.assign({}, f, { veh: pt.veh })), pt.names.filter((n) => !isCapt(n)))), {});   /* (Oct 9) a captain coordinates the station's crews: rides no vehicle, so nothing says they were on site */
       return { tog: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fxClosed: Object.assign({}, (this.state || {}).fxClosed, { [fk]: open }) }); }, exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg',
         hd: 'rgba(' + hx(colOrg) + ',' + (DK ? 0.18 : 0.1) + ')', crest: C.crest(c, f.station).url, station: f.station, veh: f.veh.join(' · ') + ' · ' + (f.crew.length + 1) + ' ' + L('people', 'pessoas'), stTxt: x[0], pillBg: x[1], pillFg: x[2],
         vicons: V.map((v) => ({ d: v.ic })), vAria: V.map((v) => v.name).join(', '), vehs: V.map((v) => ({ ...v, sub: v.type + '. ' + Object.keys(rd).filter((n) => rd[n] === v.name).length + ' ' + L('people', 'pessoas') })), vehD: V.length ? 'block' : 'none',
@@ -884,7 +884,7 @@ class Component extends DCLogic {
           kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Response time', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Final duration', 'Duração final'), c: '#186B2D', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
             { v: area.v + ' ' + area.u, l: L('Area burnt', 'Área ardida'), c: '#875800', ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) }, { v: String(Z.pop), l: Z.evac ? L('People evacuated and protected', 'Pessoas evacuadas e protegidas') : L('Residents protected nearby', 'Moradores protegidos nas imediações'), c: '#0A66CC', cmp: '', cmpD: 'none', cmpC: '#545458' }],
           forcesSub: (Z.est ? '~' : '') + (Z.est ? Z.people : FF.reduce((a, f) => a + 1 + f.crew.length, 0)) + ' ' + L('people', 'pessoas') + ' · ' + (Z.est ? '~' : '') + (Z.est ? Z.veh : FF.reduce((a, f) => a + vehN(f.veh), 0)) + ' ' + L('vehicles', 'veículos') + (Z.air ? ' · ' + Z.air + ' ' + L('aircraft', 'meio aéreo') : ''),
-          me: { name: me.name, code: me.code, photo: photo(me), role: (() => { const R = C.rankOf ? C.rankOf(c, me.name) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' }; return L(R.en, R.pt); })() }, goOwner: openPerson(me.name) },
+          me: { name: me.name, code: me.code, photo: photo(me), role: (() => { const R = C.rankOf ? C.rankOf(c, me.name) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' }; return L(R.en, R.pt); })() }, goOwner: openPerson(me.name), ownD: FF.some((f) => f.coord === me.name || (f.crew || []).indexOf(me.name) >= 0) ? 'none' : 'flex' },   /* (Oct 9) the owner once: not again under the forces */
         // Key figures as mini cards: five on by default, five more from the + tile; order and choice kept on this phone
         sk: (() => {
           const hr = Math.max(1, (Z.res || 0) / 3600000), burn = (Z.us ? Z.acres : Z.ha) / hr;
@@ -1152,8 +1152,17 @@ class Component extends DCLogic {
           return { name: m.l, onStr: String(vis), swBg: vis ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.16)', swX: vis ? '24px' : '0px', op: last ? 0.4 : 1,
             key: m.key, ...(window.__wfPickDrag ? window.__wfPickDrag(this, grp, m.key, OK) : {}), tog: () => { if (last) return; const h = hid.slice(), i = h.indexOf(m.key); if (i >= 0) h.splice(i, 1); else h.push(m.key); save(h); } }; }); })() };
   }
+  /* (Oct 9) the summary and profile blades slide back up at full opacity (ease in and out), their shade fading with them; then the
+     screen underneath dissolves in softly, never snapping */
+  _bladeOut(done) { const v = (this.state || {}).view, B = (v === 'summary' || v === 'person') && document.querySelector('.chblade');
+    if (!B || !B.animate || this._closing) return false; this._closing = true;
+    const a = B.animate([{ transform: getComputedStyle(B).transform === 'none' ? 'none' : getComputedStyle(B).transform }, { transform: 'translateY(calc(-100% - 40px))' }], { duration: 450, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards' });
+    const sh = B.previousElementSibling; if (sh && sh.animate) sh.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, easing: 'ease-out', fill: 'forwards' });
+    a.onfinish = () => { this._closing = false; done();
+      requestAnimationFrame(() => { const R = document.querySelector('[data-wfroot]'); if (R && R.animate) R.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 320, easing: 'ease-out' }); }); };
+    return true; }
   popFn() {
-    return (e) => { if (e && e.preventDefault) e.preventDefault(); const st = (this.state || {}).stack || []; const prev = st[st.length - 1] || { view: 'chat' }; this.setState({ view: prev.view, person: prev.person, stack: st.slice(0, -1), team: !!prev.team, tmDy: 0, ppDy: 0, ...(prev.tab ? { tab: prev.tab, key: prev.view === 'list' ? '' : (this.state || {}).key } : {}) }); if (prev.view === 'list') { try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} } this._n = -1;
+    return (e, now) => { if (e && e.preventDefault) e.preventDefault(); if (!now && this._bladeOut(() => this.popFn()(null, true))) return; const st = (this.state || {}).stack || []; const prev = st[st.length - 1] || { view: 'chat' }; this.setState({ view: prev.view, person: prev.person, stack: st.slice(0, -1), team: !!prev.team, tmDy: 0, ppDy: 0, ...(prev.tab ? { tab: prev.tab, key: prev.view === 'list' ? '' : (this.state || {}).key } : {}) }); if (prev.view === 'list') { try { sessionStorage.setItem('wf-chat-open', ''); } catch (x) {} } this._n = -1;
       // Back keeps the place you left (a summary, a team list…): its scroll comes back once the screen has drawn (the chat itself keeps its own place)
       if (prev.top > 0 && prev.view !== 'chat') { const t0 = Date.now(), step = () => { const sc = this.wfMainScroller(); if (sc && sc.scrollHeight - sc.clientHeight >= prev.top - 1) { sc.scrollTop = prev.top; if (Math.abs(sc.scrollTop - prev.top) < 2) return; } if (Date.now() - t0 < 1200) requestAnimationFrame(step); else if (sc) sc.scrollTop = prev.top; }; requestAnimationFrame(step); } };
   }
