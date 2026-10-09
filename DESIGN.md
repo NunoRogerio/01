@@ -1504,3 +1504,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Closed fires take no resources (Oct 9, 12:02):** Add resources disappears from the Crews tab of a closed (or dismissed) fire.
 - **Resolved card button (Oct 9, 12:02, trial):** Resolution summary on the resolved (trophy) card is the primary, dark grey with a white label.
 - **Achievements list (Oct 9, 12:06):** the achievement cards are a list, 8px apart; the trophy sits 8px from the card's top and left edges (as the resource cards' icons); the kicker ("Fire resolved. Fri 9 Oct") is mid grey annotation text, not green.
+- **Team pill (Oct 9, 12:08):** the chat's team pill shows the count in bold and the crews' people icon (no word "members"), to save space; its accessible label still says "N members".
