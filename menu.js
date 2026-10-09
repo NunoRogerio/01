@@ -13,7 +13,8 @@
     /* (Oct 8, 17:50) folded to the icon column, the menu's button lives in the column: its empty spot in the header closes, so the
        header's other buttons (notifications) sit on the screen's right edge and the title gets the room */
     'html.wf-menuopen [data-wf-burger]:not(.wf-mb){margin-right:calc(var(--wf-w, 390px) - var(--wf-w0, 390px))!important}' +   /* (Oct 9, 17:38) the header button's empty spot gives back exactly the width the screen loses, frame by frame: the notifications and the X never move */   /* (Oct 9, 15:42) folded to the column: the header button keeps its spot (under the column), nothing in the header moves */
-    '@property --wf-w{syntax:"<length>";inherits:true;initial-value:390px}' +   /* (Oct 9, 15:50) the screen width can ease, so the content reflows along with the resize */
+    '@property --wf-w{syntax:"<length>";inherits:true;initial-value:390px}' +   /* (Oct 9, 19:40) the width before the resize too: Safari treats registered lengths alike, so their difference stays exact */
+    '@property --wf-w0{syntax:"<length>";inherits:true;initial-value:390px}' +   /* (Oct 9, 15:50) the screen width can ease, so the content reflows along with the resize */
     '.wf-mb[data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!important}' +   /* (Oct 9, 18:27) with the settings open, the X is a black round button */
     '.wf-mb{position:absolute;z-index:200;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,0.12);color:#3C3C43;cursor:pointer}';
   (document.head || document.documentElement).appendChild(css);
@@ -67,7 +68,7 @@
   var hcT = 0;
   function hclip(on) { var h = host(); if (!h) return; clearTimeout(hcT);
     if (!on) { h.style.clipPath = h.style.webkitClipPath = ''; return; }
-    var W = h.offsetWidth, H = h.offsetHeight, t = btn ? (parseFloat(btn.style.top) || 0) : 0, c = W - 60;
+    var W = dw(), H = h.offsetHeight, t = btn ? (parseFloat(btn.style.top) || 0) : 0, c = W - 60;
     var poly = 'polygon(-24px -80px, ' + c + 'px -80px, ' + c + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t + 52) + 'px, ' + c + 'px ' + (t + 52) + 'px, ' + c + 'px ' + H + 'px, -24px ' + H + 'px)';   /* (Oct 9, 15:49) the cut reaches above the top, so the header's colour still fills the strip under the clock */
     h.style.clipPath = h.style.webkitClipPath = poly; }
   function slide(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
@@ -82,7 +83,10 @@
   // (Oct 4, 16:10) folded to the icon column, the screen is really resized to the visible 330px (not cropped): its width variable and the
   // viewport the screens read both shrink, and everything that reads them (maps, bands, rows) lays out again, as on the main screen
   var vp0 = null, dlgRail = false;
-  function rail(on, p) { var V = window.__wfVP; if (!V) return; var HW = host() ? host().offsetWidth : 390;
+  /* (Oct 9, 19:40) the screen's width in design pixels, as fit.js lays it out (not offsetWidth: Safari reads it through the frame's zoom,
+     which left the narrowed screen wider than the space beside the icon column, its right margin hidden under the column) */
+  function dw() { var V = vp0 || window.__wfVP; return (V && V.w) || (host() ? host().offsetWidth : 390); }
+  function rail(on, p) { var V = window.__wfVP; if (!V) return; var HW = dw();
     // (Oct 8, 14:25) the resize animates: the screen's width eases in step with the slide, uncovering the icon column as it narrows
     // (and covering it again as it widens). Shrinking, the content lays out narrow once the screen has arrived; widening, at once
     // (the growing screen reveals it), so nothing reflows mid-motion.

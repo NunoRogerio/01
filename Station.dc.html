@@ -19,7 +19,7 @@
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791564027"></script>
 <script src="station.js?v=1791564027"></script>
-<script src="menu.js?v=1791566957"></script>
+<script src="menu.js?v=1791571390"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
 <script src="chat.js?v=1791565213"></script>
@@ -40,10 +40,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;border:1px solid transparent;border-radius:999px;cursor:pointer;text-decoration:none;font:inherit;-webkit-tap-highlight-color:transparent}.btn:active,.mbtn:active{opacity:.6}
 </style>
 </helmet>
-<div style="position: relative; width: var(--wf-w, 390px); height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div style="position: relative; width: 100%; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Full screen only: the map as its own layer. On the page the map is a band that scrolls with everything else. -->
   <sc-if value="{{fullLayer}}" hint-placeholder-val="{{ false }}">
-    <div style="position: absolute; left: 0; top: 0; width: var(--wf-w, 390px); height: 844px; z-index: 7">
+    <div style="position: absolute; left: 0; top: 0; width: 100%; height: 844px; z-index: 7">
       <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{yes}}" close-x="true" mode="{{mapMode}}" area="{{areaOn}}" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{pinId}}" w="390" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{st.x}}" pin-y="{{st.y}}" pin-label="{{st.name}}" pin-crest="{{st.crest}}" pin-coords="{{st.coords}}" zoom="{{zoomFull}}" focus-x="{{st.x}}" focus-y="{{st.y}}" pin-kind="station" controls="side" radius="{{zero}}" attr-bottom="{{attrFull}}" loader="true" no-routes="true" hint-size="390px,844px"></dc-import>
     </div>
   </sc-if>
