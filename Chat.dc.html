@@ -32,6 +32,8 @@
 <x-dc>
 <helmet>
 <style>
+/* (Oct 9, 17:49) a card put off with Not yet lives in the sticky stack only (minimised there), not twice */
+article.chmsg[data-snz="1"]{display:none!important}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 .chrow{transition:background-color .15s ease,filter .15s ease}.chrow:active{filter:brightness(.94)}
 .chbtn{transition:opacity .15s ease}.chbtn:active{opacity:.68}
@@ -1028,7 +1030,15 @@ class Component extends DCLogic {
     // 'Send orders' is configured on the fire's dispatch screen; sending there brings you back here
     // (Oct 6) moving a fire to its next stage plays the tour's achievement sound (the "poomm", tour.js), from the Move to chip or the state card's button
     const moveSnd = () => { try { if (window.__wfTourPrlim) window.__wfTourPrlim(); } catch (e) {} };
-    const run = (key, id) => { if (key === 'next') moveSnd(); if (key === 'topic') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ topicPick: true }); return; } if (key === 'dispatch') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsp: true, dSel: null, dSent: false, dsDy: 0 }); return; }   /* (Oct 8, 19:15) the dispatch is configured in a blade over the chat */ this._stick = true; C.act(c.key, key, id); };
+    const run = (key, id) => { if (key === 'next') moveSnd(); if (key === 'topic') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ topicPick: true }); return; } if (key === 'dispatch') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsp: true, dSel: null, dSent: false, dsDy: 0 }); return; }   /* (Oct 8, 19:15) the dispatch is configured in a blade over the chat */ this._stick = true;
+      /* (Oct 9, 17:49) Not yet: the card folds to its header and goes back to the sticky stack, minimised (opened from the stack, it folds there) */
+      if (['stayStage', 'reqNo', 'declineAir', 'evacNo', 'helpNo'].indexOf(key) >= 0) {
+        if ((this.state || {}).pinOpen === String(id)) { C.act(c.key, key, id); this.setState({ pinOpen: null }); return; }
+        const art = this._sc && this._sc.querySelector('article[data-pend="' + id + '"]');
+        if (art && art.animate) { const h0 = art.offsetHeight, hd = (art.firstElementChild || art).offsetHeight; art.style.overflow = 'hidden';
+          const an = art.animate([{ height: h0 + 'px', opacity: 1 }, { height: hd + 'px', opacity: 1, offset: 0.6 }, { height: hd + 'px', opacity: 0 }], { duration: 420, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+          an.finished.then(() => { C.act(c.key, key, id); setTimeout(() => { try { an.cancel(); art.style.overflow = ''; } catch (e) {} }, 60); }).catch(() => C.act(c.key, key, id)); return; } }
+      C.act(c.key, key, id); };
     const openSheet = () => { if (c.stage === 7 && !c.dismissed) { openSummary(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ sheet: true }); };
     const summary = c.dismissed ? L('No fire on the ground · crews released', 'Sem incêndio no terreno · equipas libertadas')
       : c.stage === 0 ? (c.conf ? c.conf + '% ' + L('likelihood', 'de probabilidade') + ' · ' : '') + (c.src || '')
