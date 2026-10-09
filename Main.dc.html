@@ -472,8 +472,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <span aria-hidden="true" style="grid-row: 1 / span 2; align-self: start; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{n.ty.bg}}"><svg width="22" height="22" viewBox="{{n.ty.vb}}"><path d="{{n.ty.d}}" fill="{{n.ty.f}}" stroke="{{n.ty.s}}" stroke-width="{{n.ty.sw}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg></span>
               <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{n.title}}</span>
               <span style="justify-self: end; display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{n.age}}</span>
-              <!-- (Oct 9, 11:01) unread: a small dot in the card's top-right corner, 4px from the top and the right; it goes when the notification is tapped -->
-              <span aria-hidden="true" style="position: absolute; top: 4px; right: 4px; display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: var(--wf-y); box-shadow: 0 0 0 1px rgba(0,0,0,0.24)"></span>
+              <!-- (Oct 9, 11:01; 13:35) unread: an 8px dark grey dot in the card's top-right corner, 8px from the top and the right; it goes when the notification is tapped -->
+              <span aria-hidden="true" style="position: absolute; top: 8px; right: 8px; display: {{n.dotD}}; width: 8px; height: 8px; border-radius: 50%; background: var(--wf-ink, #3A3A3C)"></span>
               <span style="grid-column: 2 / span 2; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{n.text}}</span>
             </a>
           </li>
