@@ -1090,6 +1090,8 @@ class Component extends DCLogic {
   }
   /* (Oct 8, 22:59) orders made in the fire's chat (its dispatch blade or chips) read here as the page's own orders, station by
      station, so the Crews tab shows what the chat sent; orders sent from here reach the chat the other way (pend / dispatched) */
+  /* (Oct 9, 12:02) a closed (or dismissed) fire takes no more resources */
+  wfClosed(fireId) { try { const C = window.__wfChat; if (!C || !C.list) return false; const id = String(fireId || ''), raw = id.replace(/^F-/, ''), c = C.list().find((q) => q && q.kind !== 'dm' && (String(q.incId) === id || String(q.incId) === raw)); return !!(c && (c.closed || c.dismissed || c.stage === 7)); } catch (e) { return false; } }
   wfChatOrders(fv, fireId) { const C = window.__wfChat; if (!C || !C.list) return [];
     const id = String(fireId || (fv && fv.id) || ''), raw = id.replace(/^F-/, ''), c = C.list().find((q) => q && q.kind !== 'dm' && (String(q.incId) === id || String(q.incId) === raw)); if (!c || c.dismissed) return [];
     const F = (c.forces || []).filter((f) => f.st !== 'standby'); if (!F.length) return [];
@@ -1894,7 +1896,7 @@ class Component extends DCLogic {
         // Resources on a fire confirmed here: tiles only once there is a station (from the plan until the order is sent), Add always
         deployed.forEach((d) => { if (!d.fx) return; const st = plan.filter((p) => p.id !== 'air'), c = st.reduce((a, p) => a + (p.n[0] || 0), 0), t = st.reduce((a, p) => a + (p.n[1] || 0), 0);
           if (d.conf && !inlSent) d.sum = st.length ? [{ v: '0 of ' + c, l: 'Crews need relief', c: '#3A3A3C' }].concat(t ? [{ v: '0 of ' + t, l: 'Tenders low on water', c: '#3A3A3C' }] : []) : [];
-          d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf && !d.held ? 'flex' : 'none'; d.aiD = d.addD === 'flex' && !plan.length ? 'flex' : 'none'; d.addMt2 = d.aiD === 'flex' ? '8px' : d.addMt; d.addMt = d.sumD === 'flex' ? '48px' : '0';   /* 56px under the tiles (they keep 8px under them) */ d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
+          d.sumD = d.sum && d.sum.length ? 'flex' : 'none'; d.addD = d.conf && !d.held && !this.wfClosed(d.id) ? 'flex' : 'none'; d.aiD = d.addD === 'flex' && !plan.length ? 'flex' : 'none'; d.addMt2 = d.aiD === 'flex' ? '8px' : d.addMt; d.addMt = d.sumD === 'flex' ? '48px' : '0';   /* 56px under the tiles (they keep 8px under them) */ d.planD = d.conf && !inlSent && plan.length ? 'flex' : 'none'; });
         return {
           pl: { ...(() => {   // Add crews says how many stations are still free to choose (not how many are assigned)
               const n = ordered.filter((d) => d.id !== 'none' && d.eta !== null && !inPlan(d.id)).length, air = !inPlan('air');
