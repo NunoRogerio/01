@@ -989,7 +989,7 @@ class Component extends DCLogic {
         const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
-            ...(() => { const pri = a.key === 'close' && !m.rec, gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo');   /* (Oct 4, 23:27) only closing the fire is primary (Oct 9: not on the team's closing card, secondary like Move to); every other card button is secondary grey */
+            ...(() => { const neg = a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo', pri = !neg, gh = false;   /* (Oct 9, 09:07) confirmation cards: the confirming action is the primary (dark grey, white label), Not yet / Not now the secondary (mid grey) */   /* (Oct 4, 23:27) only closing the fire is primary (Oct 9: not on the team's closing card, secondary like Move to); every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
               /* (Oct 8, 22:39) decided: the button is no longer a button (no action, no press) and wears the card's header band colour, its text the header's ink */
               if (done) return { cls: '', bg: tone(Hd).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', w: 600, pe: 'none' };
