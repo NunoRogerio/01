@@ -1471,7 +1471,7 @@ class Component extends DCLogic {
         const GRID = [0, 20, 38, 52, 64, 85, 130, 165, 195, 215, 250, 290, 330].map((h) => { let l = 20; while (l < 95 && cr(hsl(h, 100, l)) < 4.6) l += 0.5; return [0, 1, 2, 3, 4, 5].map((i) => hsl(h, 100, l + (93 - l) * i / 6)); })
           .concat([(() => { let l = 20; while (cr(hsl(0, 0, l)) < 4.6) l += 0.5; return [0, 1, 2, 3, 4, 5].map((i) => hsl(0, 0, l + (93 - l) * i / 6)); })()]);
         const gOpen = !!s.colPick, gClose = () => this.setState({ colPick: false });
-        return { d: pmSec === 'look' ? 'flex' : 'none', colL: T('Primary colour', 'Cor principal'), palL: T('Palette', 'Paleta'), pickL: T('More colours', 'Mais cores'),
+        return { d: pmSec === 'look' ? 'flex' : 'none', colL: T('Decorative elements', 'Elementos decorativos'),   /* (Oct 9, 14:29) it no longer colours the primary buttons (dark grey now): only stripes, counters, thumbs and other accents */ palL: T('Palette', 'Paleta'), pickL: T('More colours', 'Mais cores'),
           cols: SUG.map(([h, name]) => ({ name, bg: h, on: h === cur ? 'true' : 'false', tick: h === cur ? 1 : 0, ring: ring(h === cur), pick: () => { if (h === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} setC(h); } })),
           own: cur, ownDot: known ? '#FFFFFF' : cur, ownRing: ring(!known),
           openPick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ colPick: true }); },
