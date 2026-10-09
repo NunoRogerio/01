@@ -1401,6 +1401,10 @@
         c.updated = q.due; changed = true;
       }
       /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
+      /* (Oct 9, 13:32) a declared fire waiting for its crews always has a card in the chat that asks for the dispatch (never only the chip) */
+      if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage === 1 && !c.flags.dispatched && !isLt() && !(c.msgs || []).some(function (x) { return x.kind === 'card' && !x.done && (x.actions || []).some(function (a) { return a.key === 'dispatch'; }); }) && !(c.queue || []).some(function (q) { return q.m && (q.m.dispCard || q.m.kind === 'stage'); })) {
+        card(c, { rec: true, dispCard: true, to: 2, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: { en: 'Dispatch crews', pt: 'Despachar equipas' }, body: { en: 'The stations are ready. Choose who goes.', pt: 'Os quartéis estão prontos. Escolha quem vai.' },
+          actions: [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }] }, 600, 0); changed = true; }
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
         if (!c.flags[pk] && now - c.stageAt > 8000)   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
