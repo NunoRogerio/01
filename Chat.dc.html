@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<style id="wf-bg0">.wf-chips::-webkit-scrollbar{display:none}html,body{background:#F2F2F7}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
+<style id="wf-bg0">.wf-chips::-webkit-scrollbar{display:none}.wf-chips::before{content:"";flex:0 0 8px}/* (Oct 9) the chips row has no left padding (a spacer instead) so the fixed stage chip sits 16px from the edge in Safari and Chrome alike */html,body{background:#F2F2F7}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -268,7 +268,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <button type="button" class="chbtn" onClick="{{sendNow}}" aria-label="{{t.send}}" aria-disabled="{{sendDis}}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #3A3A3C; color: #FFFFFF; opacity: {{sendOp}}; transition: opacity .2s ease; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button></label>
       </div>
       <!-- (Oct 7) Suggestions: one line only, scrolling sideways (no scrollbar); the chips that change the fire's status come first -->
-      <div class="wf-chips" style="display: {{actD}}; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 0 16px; scroll-padding: 0 16px; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none">
+      <div class="wf-chips" style="display: {{actD}}; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 0 16px 0 0; scroll-padding: 0 16px; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
           <button type="button" class="chbtn" onClick="{{a.go}}" style="position: {{a.pos}}; left: {{a.left}}; z-index: {{a.z}}; box-shadow: {{a.mask}}; display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.chBg}}; color: {{a.chFg}}; font: inherit; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true" style="display: {{a.stD}}; flex-shrink: 0"><circle cx="4" cy="7" r="3.5" fill="currentColor"></circle><path d="M9 7h11M15.5 2.5 20 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{a.label}}</button>
         </sc-for>
@@ -986,7 +986,9 @@ class Component extends DCLogic {
         const Hd = m.to != null ? C.STAGES[m.to] : (St || S);
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
         const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], helpYes: ['Crew sent', 'Equipa enviada'], helpNo: ['Not sent', 'Não enviada'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
-        const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
+        /* (Oct 9, 09:08) an open recommendation always shows Not yet (secondary) + its confirming action (primary), cards saved before included */
+        const mActs = m.rec && !m.done && !(m.actions || []).some((a) => a.key === 'stayStage') ? [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }].concat(m.actions || []) : (m.actions || []);
+        const acts = mActs.filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
             ...(() => { const neg = a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo', pri = !neg, gh = false;   /* (Oct 9, 09:07) confirmation cards: the confirming action is the primary (dark grey, white label), Not yet / Not now the secondary (mid grey) */   /* (Oct 4, 23:27) only closing the fire is primary (Oct 9: not on the team's closing card, secondary like Move to); every other card button is secondary grey */
