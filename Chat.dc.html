@@ -411,20 +411,16 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 56px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
       <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.well}}" fire="{{sum.fire}}" meta="{{sum.meta}}" size="{{sum.size}}" crests="{{sum.crests}}" air="{{sum.air}}" n="{{sum.n}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
-      <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column">
-        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px; font-size: 16px; line-height: 20px; color: #6E6E73"><span style="font-weight: 600">{{t.kf}}</span><span>{{t.kfHint}}</span></span>
-        <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
-          <sc-for list="{{sk.cards}}" as="m" hint-placeholder-count="5">
-            <div role="listitem" data-wf-kpi="{{m.key}}" data-g="sum" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
-              <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 16px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); text-align: center; transition: box-shadow .2s ease">
-                <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 16px; line-height: 20px; color: #6E6E73">{{m.l}}</span>
-                <span style="display: flex; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 16px; line-height: 20px; color: #6E6E73">{{m.u}}</span></span>
-                <span style="display: {{m.cmpD}}; margin-top: auto; padding-top: 8px; font-size: 13px; font-weight: 600; line-height: 18px; color: {{m.cmpC}}">{{m.cmp}}</span>
-              </div>
-            </div>
-          </sc-for>
-          <button type="button" class="mbtn" onClick="{{sk.open}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
-        </div>
+      <!-- (Oct 9) key figures as the profile's simple table (no cards): label left, value right-aligned, the comparison under it -->
+      <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column; gap: 24px">
+        <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.kf}}</h2>
+        <table style="width: 100%; border-collapse: collapse; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+          <tbody>
+            <sc-for list="{{sk.tbl}}" as="r" hint-placeholder-count="10">
+              <tr style="border-top: {{r.sep}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; vertical-align: top; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; vertical-align: top; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000">{{r.v}}<span style="display: {{r.cmpD}}; font-size: 16px; font-weight: 400; line-height: 20px; color: {{r.cmpC}}">{{r.cmp}}</span></td></tr>
+            </sc-for>
+          </tbody>
+        </table>
       </section>
       <section aria-label="{{t.tl}}" style="display: flex; flex-direction: column; gap: 0; padding: 16px 16px 4px; border-radius: 16px; background: #FFFFFF">
         <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 16px"><h2 style="margin: 0; font-size: 18px; font-weight: 600; line-height: 24px; white-space: nowrap">{{t.timeline}}</h2><span style="font-size: 16px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap">{{tlTotal}}</span></div>
@@ -900,7 +896,8 @@ class Component extends DCLogic {
             { key: 'veh', l: L('Vehicles', 'Veículos'), v: (Z.est ? '~' : '') + Z.veh, opt: true },
             { key: 'air', l: L('Aerial', 'Meios aéreos'), v: String(Z.air), opt: true },
             { key: 'rate', l: L('Burn rate', 'Ritmo de área ardida'), v: (Math.round(burn * 10) / 10) + ' ' + (Z.us ? 'ac/h' : 'ha/h'), opt: true }];
-          return this.cardSet('sum', base);
+          /* (Oct 9) the summary's key figures as the profile's simple table: every figure, none hidden, the comparison under its value */
+          return Object.assign(this.cardSet('sum', base), { tbl: base.map((k, i) => ({ l: k.l, v: k.v, cmp: k.cmp || '', cmpD: k.cmp ? (k.cmpD || 'block') : 'none', cmpC: k.cmpC || '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })) });
         })() };
     }
 
