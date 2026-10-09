@@ -926,7 +926,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
 // the app's projection. A horizon that reaches houses gets a red dot on the projection switcher; the fire's screen shows a
 // pulsing red warning that opens the earliest one. Results are kept for 6 hours per fire on this phone.
 (function () {
-  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes4-', MIN_B = 3;
+  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes5-', MIN_B = 3;
   var NOT = '^(garage|garages|shed|barn|farm_auxiliary|greenhouse|industrial|warehouse|roof|carport|hangar|silo|storage_tank|construction|ruins|service|transformer_tower|bunker|kiosk|toilets|cowshed|stable|sty|bridge)$';
   function toLL(x, y) { return [34.19 - (y - 662) / 2829, (x - 518) / 2345 - 118.13]; }
   function rings(id, ll, px) {
@@ -954,16 +954,22 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     var q = '[out:json][timeout:25];' + [0].concat(HZ).map(function (h) { return 'way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[h]) + '");out count;'; }).join('') +
       'node["place"~"^(city|town|village|hamlet|suburb|neighbourhood|quarter)$"](poly:"' + poly(R[6]) + '");out body 40;' +
       /* (Oct 7) where they are: residential areas and the buildings themselves, drawn in red under the projection */
-      'way["landuse"="residential"](poly:"' + poly(R[6]) + '");out geom 40;way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[6]) + '");out center 600;';
+      'way["landuse"="residential"](poly:"' + poly(R[6]) + '");out geom 40;' +
+      /* (Oct 9) the buildings per horizon, the earliest first, so a dense area never leaves the nearest ones out of the red (one
+         capped list for +6 h could miss every building of +1 h) */
+      HZ.map(function (h) { return 'way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[h]) + '");out center ' + (h === 1 ? 500 : 400) + ';'; }).join('');
     fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: 'data=' + encodeURIComponent(q), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (js) {
         var E = js.elements || [], cnt = E.filter(function (e) { return e.type === 'count'; }).map(function (e) { return +((e.tags || {}).ways || (e.tags || {}).total || 0); });
         var pl = E.filter(function (e) { return e.type === 'node' && e.tags && e.tags.name; });
         var res = { sig: sig, t: Date.now(), n: {}, b: {}, place: {}, at: {}, first: null };
         HZ.forEach(function (h, i) { var nb = Math.max(0, (cnt[i + 1] || 0) - (cnt[0] || 0)), p = pl.filter(function (e) { var P = [e.lat, e.lon]; return inside(P, R[h]) && !inside(P, R[0]); });
-          res.b[h] = nb; res.place[h] = p.length ? p[0].tags.name : ''; res.at[h] = nb >= MIN_B || p.length > 0; if (res.at[h] && res.first == null) res.first = h; });
+          res.b[h] = nb; res.place[h] = p.length ? p[0].tags.name : ''; res.at[h] = nb >= MIN_B || p.length > 0;
+          /* (Oct 9) the projection only grows: what is at risk at a horizon stays at risk at the later ones (never fewer structures) */
+          if (i > 0) { var hp = HZ[i - 1]; res.b[h] = Math.max(res.b[h], res.b[hp]); res.at[h] = res.at[h] || res.at[hp]; if (!res.place[h]) res.place[h] = res.place[hp]; }
+          if (res.at[h] && res.first == null) res.first = h; });
         var hOf = function (P) { if (inside(P, R[0])) return 0; for (var k = 0; k < HZ.length; k++) if (inside(P, R[HZ[k]])) return HZ[k]; return 0; }, r5 = function (v) { return Math.round(v * 1e5) / 1e5; };
-        res.pts = E.filter(function (e) { return e.type === 'way' && e.center && e.tags && e.tags.building; }).map(function (e) { var P = [e.center.lat, e.center.lon]; return [r5(P[0]), r5(P[1]), hOf(P)]; }).filter(function (q) { return q[2]; });
+        var seen = {}; res.pts = E.filter(function (e) { if (e.type !== 'way' || !e.center || !e.tags || !e.tags.building || seen[e.id]) return false; seen[e.id] = 1; return true; }).map(function (e) { var P = [e.center.lat, e.center.lon]; return [r5(P[0]), r5(P[1]), hOf(P)]; }).filter(function (q) { return q[2]; });
         res.areas = E.filter(function (e) { return e.type === 'way' && e.geometry && e.tags && e.tags.landuse === 'residential'; }).map(function (e) { var g = thin(e.geometry.map(function (q) { return [r5(q.lat), r5(q.lon)]; }), 32), hs = g.map(hOf).filter(Boolean);
           return { h: hs.length ? Math.min.apply(null, hs) : 0, r: g }; }).filter(function (a) { return a.h; });
         /* (Oct 7) a precise time, not the horizon: each structure's arrival is read between the two projected shapes around it
@@ -977,7 +983,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
             var rp = reach(R[hp], ux, uy), rh = reach(R[h], ux, uy), fr = rh > rp ? Math.min(1, Math.max(0, (d - rp) / (rh - rp))) : 1; return hp + (h - hp) * fr; };
           var T = (res.pts || []).map(function (q) { return eta([q[0], q[1]], q[2]); });
           pl.forEach(function (e) { var P = [e.lat, e.lon], h = 0; if (inside(P, R[0])) return; for (var z = 0; z < HZ.length; z++) if (inside(P, R[HZ[z]])) { h = HZ[z]; break; } if (h) T.push(eta(P, h)); });
-          if (T.length && res.first != null) { res.eta = Math.min.apply(null, T); res.nAt = (res.pts || []).filter(function (q) { return q[2] && q[2] <= res.first; }).length || res.b[res.first] || 0; } })();
+          if (T.length && res.first != null) { res.eta = Math.min.apply(null, T); res.nAt = Math.max((res.pts || []).filter(function (q) { return q[2] && q[2] <= res.first; }).length, res.b[res.first] || 0);   /* (Oct 9) the drawn list is capped: never fewer than the count */ } })();
         MEM[id] = { sig: sig, st: 'done', res: res }; try { localStorage.setItem(LK + id, JSON.stringify(res)); } catch (e) {} emit();
       }).catch(function () { MEM[id] = { sig: sig, st: 'fail' }; setTimeout(function () { if (MEM[id] && MEM[id].st === 'fail') delete MEM[id]; }, 60000); });   /* no answer, no warning: tried again a minute later */
     return null; };
