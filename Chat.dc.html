@@ -739,14 +739,10 @@ class Component extends DCLogic {
       const P = C.person(s.person), A = P.ach || [];
       const resTot = A.reduce((a, r) => a + (r.res || 0), 0), popTot = A.reduce((a, r) => a + (r.pop || 0), 0);
       // Their figures as the app's mini cards (title, value), trimmed and reordered with the + tile like every card group
-      const haTot = A.reduce((a, r) => a + (r.us ? (r.acres || 0) : (r.ha || 0)), 0), usA = A.some((r) => r.us), fast = A.length ? Math.min(...A.map((r) => r.res || Infinity)) : null;
       const KP = [
         { key: 'res', l: L('Fires resolved', 'Incêndios resolvidos'), v: String(A.length) },
         { key: 'inc', l: L('On incidents', 'Em incidentes'), v: A.length ? C.dur(resTot).replace(/ \d+ min$/, '') : '0' },
-        { key: 'pop', l: L('People protected', 'Pessoas protegidas'), v: String(popTot) },
-        { key: 'area', l: L('Area burnt', 'Área ardida'), v: (Math.round(haTot * 10) / 10) + ' ' + (usA ? 'acres' : 'ha'), opt: true },
-        { key: 'fast', l: L('Fastest resolution', 'Resolução mais rápida'), v: fast && isFinite(fast) ? C.dur(fast) : '—', opt: true },
-        { key: 'sts', l: L('Stations', 'Quartéis'), v: String(new Set(A.map((r) => r.station).filter(Boolean)).size || (P.station ? 1 : 0)), opt: true }];
+        { key: 'pop', l: L('People protected', 'Pessoas protegidas'), v: String(popTot) }];   /* (Oct 9) a person's figures: no area burnt, stations or fastest resolution (not an individual's measures) */
       const sk = this.cardSet('pp', KP);
       // A swipe up on the grabber (or a tap) dismisses the profile, as the back does
       const self = this, ppH = this.grabUp();
