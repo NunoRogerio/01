@@ -16,8 +16,8 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=214"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=211"></script>
-<script src="station.js?v=15"></script>
+<script src="prefs.js?v=212"></script>
+<script src="station.js?v=16"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
 <script src="chat.js?v=116"></script>
@@ -1388,8 +1388,8 @@ class Component extends DCLogic {
     const DUR = window.__wfDur || ((ms) => Math.round(ms / 60000) + ' min');
     const resView = fres ? (() => {
       const OPT = { Boats: 1, 'Management teams': 1, 'Structure protection': 1 };
-      const items = [['Personnel', fres.man], ['Crews', fres.crews], ['Ground vehicles', fres.terrain], ['Heavy equipment', fres.heavy], ['Aircraft', fres.aerial], ['Boats', fres.water], ['Management teams', fres.imt], ['Structure protection', fres.structure]]
-        .filter(([k, v]) => v != null && (!OPT[k] || v > 0)).map(([k, v]) => ({ k, v: (fres.estF && fres.estF[{ Personnel: 'man', 'Ground vehicles': 'terrain', Aircraft: 'aerial' }[k]] ? '~' : '') + Number(v).toLocaleString() }));
+      const items = [['Personnel', fres.man], ['Crews', fres.crews], ['Ground vehicles', fres.terrain], ['Heavy equipment', fres.heavy], ['Aerial', fres.aerial], ['Boats', fres.water], ['Management teams', fres.imt], ['Structure protection', fres.structure]]
+        .filter(([k, v]) => v != null && (!OPT[k] || v > 0)).map(([k, v]) => ({ k, v: (fres.estF && fres.estF[{ Personnel: 'man', 'Ground vehicles': 'terrain', Aircraft: 'aerial', Aerial: 'aerial' }[k]] ? '~' : '') + Number(v).toLocaleString() }));
       return { tag: fres.est ? 'Estimate' : fres.estF ? 'Partly estimated' : 'Real data', tagBg: fres.estF ? 'rgba(135,88,0,0.12)' : 'rgba(52,199,89,0.12)', tagFg: fres.estF ? '#875800' : '#186B2D', src: fres.src || '', cols: Math.max(1, Math.min(4, items.length)), items, foot: [fres.status, fres.start ? 'Started ' + fres.start : '', fres.updated ? 'Updated ' + fres.updated : ''].filter(Boolean).join(' · ') };
     })() : { src: '', cols: 1, items: [], foot: '' };
     const actMin = (() => {
@@ -1524,7 +1524,7 @@ class Component extends DCLogic {
       { o: [1480, 760], d: [626, 248], air: true, from: 'From San Bernardino air base' },
       { o: [stX - 10, stY - 14], d: [652, 302], air: true, from: 'From the ' + chosen.code + ' swarm unit' }
     ];
-    const deployedRaw = RU ? RU.filter((r) => Number(r[1]) > 0).map(([name, n, icon]) => ({ label: name, valTxt: Number(n).toLocaleString(), eta: 0, icon, from: 'On scene', air: name === 'Aircraft', n: Number(n), o: mv([610, 290], true), d: mv([610, 290], true) })) : meta.map((m, i) => ({ m, i, n: counts[i] })).filter((r) => r.n > 0 && !(r.i === 0 && multi)).map(({ m, i, n }) => ({
+    const deployedRaw = RU ? RU.filter((r) => Number(r[1]) > 0).map(([name, n, icon]) => ({ label: name === 'Aircraft' ? 'Aerial' : name, valTxt: Number(n).toLocaleString(), eta: 0, icon, from: 'On scene', air: name === 'Aircraft', n: Number(n), o: mv([610, 290], true), d: mv([610, 290], true) })) : meta.map((m, i) => ({ m, i, n: counts[i] })).filter((r) => r.n > 0 && !(r.i === 0 && multi)).map(({ m, i, n }) => ({
       label: n + ' × ' + m.name, eta: m.eta, icon: m.icon, from: GEO[i].from, air: GEO[i].air, n, o: (i === 0 || i === 1 || i === 5) ? GEO[i].o : mv(GEO[i].o, false), d: mv(GEO[i].d, true)
     }));
     if (!RU && multi && counts[0] > 0) {
@@ -2174,7 +2174,7 @@ class Component extends DCLogic {
           const Mm = FMOD && FMOD.model && !FMOD.model.failed ? FMOD.model : null, ring = Mm && Mm.snaps && Mm.snaps[0] && Mm.snaps[0].ring;
           const per = ring && ring.length > 2 ? ring.reduce((a, q, i) => { const n = ring[(i + 1) % ring.length], dy = (n[0] - q[0]) * 111, dx = (n[1] - q[1]) * 111 * Math.cos(q[0] * Math.PI / 180); return a + Math.hypot(dx, dy); }, 0) : null;
           const air = rv('Aircraft'), veh = rv('Ground vehicles');
-          med0.push({ key: 'air', l: 'Aircraft', v: String(air != null ? air : Math.floor(R(1) * 5)), ch: none, opt: true, note: air != null ? '' : SIM },
+          med0.push({ key: 'air', l: 'Aerial', v: String(air != null ? air : Math.floor(R(1) * 5)), ch: none, opt: true, note: air != null ? '' : SIM },
             { key: 'veh', l: 'Vehicles', v: String(veh != null ? veh : Math.max(1, Math.round((Number(String(pers).replace(/\D/g, '')) || 10) / 4))), ch: none, opt: true, note: veh != null ? '' : SIM },
             { key: 'perim', l: 'Perimeter', v: (per != null ? (per < 10 ? per.toFixed(1) : Math.round(per)) : (Math.round((1 + R(2) * 12) * 10) / 10)) + ' km', ch: none, opt: true, note: per != null ? 'Estimate' : SIM },
             { key: 'struct', l: 'Structures', v: String(Math.floor(R(3) * 40)), ch: none, opt: true, note: SIM },

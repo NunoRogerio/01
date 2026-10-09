@@ -88,7 +88,9 @@
     var me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null;
     if (name && me.name && name === me.name) return M ? (M.level === 'lead' ? LT : { en: 'Captain', pt: 'Capitão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
     var P = c && (c.people || []).find(function (p) { return p.name === name; }); if (P && P.kind === 'lt') return LT; if (P && P.kind === 'air') return { en: P.roleEn || 'Air coordinator', pt: P.rolePt || 'Coordenador de meios aéreos' };
-    var SF = window.__wfStaffOf ? window.__wfStaffOf('1353638773') : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT; if (SF && name === SF.captain) return { en: 'Captain', pt: 'Capitão' };
+    var SF = window.__wfStaffOf ? window.__wfStaffOf('1353638773') : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT;
+    var FL = window.__wfFleet ? window.__wfFleet('1353638773') : null, U = FL && FL.find(function (u) { return u.crew.indexOf(name) >= 0 && u.lt !== name; });
+    if (U && U.rank) return U.rank; if (U && U.id === 'squad') return { en: 'Firefighter paramedic', pt: 'Bombeiro paramédico' }; if (SF && name === SF.captain) return { en: 'Captain', pt: 'Capitão' };
     if (c && (c.forces || []).some(function (f) { return f.coord === name; })) return leadRole(c);
     if (P && P.kind === 'lead') return leadRole(c);
     return { en: 'Firefighter', pt: 'Bombeiro' }; }
@@ -154,7 +156,7 @@
     /* chats saved before: their stations by the short names people use */
     (c.people || []).forEach(function (p) { var o = shortStation(p.org); if (p.org && o !== p.org) { p.org = o; ch = true; } }); (c.stations || []).forEach(function (q) { var o = shortStation(q.short || q.name); if (q.short !== o) { q.short = o; ch = true; } }); (c.forces || []).forEach(function (f) { var o = shortStation(f.station); if (f.station && o !== f.station) { f.station = o; ch = true; } });
     if (!c.forces || !c.forces.length) return ltsOfLeads(c) || ch;
-    c.forces.forEach(function (f) { var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF && !f.second ? SF.lead : (f.crew && f.crew[0]); if (!nm) return;
+    c.forces.forEach(function (f) { if (f.nolt) return; var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF && !f.second ? SF.lead : (f.crew && f.crew[0]); if (!nm) return;
       /* (Oct 8, 21:38) a station whose captain is in the chat is on the fire: its lieutenant is in too (unless its crew was released) */
       var capIn = c.people.some(function (p) { return p.kind === 'lead' && !p.left && p.org === (s.short || f.station); });
       var on = f.st !== 'released' && (f.st !== 'standby' || capIn), ex = c.people.find(function (p) { return p.name === nm; });
@@ -803,14 +805,19 @@
     var M = window.__wfMine ? window.__wfMine() : null, S = M && M.station; if (!S) return -1;
     c.stations.push({ ck: (S.type === 'way' ? 'w' : 'n') + S.id, name: S.name, short: shortStation(S.name), km: S.lat && c.lat ? Math.round(kmBetween({ lat: S.lat, lon: S.lon }, { lat: c.lat, lon: c.lon }) * 10) / 10 : 3, min: 6 });
     var nm = (staffOf(c.stations[c.stations.length - 1]) || {}).captain || pickNames(c, 1, 'own')[0]; c.people.push({ name: nm, code: initials(nm), org: shortStation(S.name), kind: 'lead', self: true }); return c.stations.length - 1; }
-  function ownCrews(c) { var i = ownIdx(c); if (i < 0) return []; var st = c.stations[i], SF = staffOf(st) || {}, num = (String(st.name).match(/(\d{1,3})\b/) || [])[1] || '11';
-    return [{ key: 'engine', veh: 'Engine ' + num, lt: SF.lead || '', crew: SF.onDuty && SF.onDuty.length ? SF.onDuty.slice() : [SF.lead].filter(Boolean) }, { key: 'brush', veh: 'Brush ' + num, lt: SF.lead2 || '', crew: (SF.crew2 || [SF.lead2]).filter(Boolean) }]
-      .map(function (k) { k.st = st; k.i = i; return k; }); }
+  /* (Oct 9, 06:52) every unit of the station's fleet (station.js), with who rides it; a unit out on another fire or in the shop
+     cannot be picked */
+  function ownCrews(c) { var i = ownIdx(c); if (i < 0) return []; var st = c.stations[i], ck = st.ck || '', id = String(ck).replace(/^[nw]/, ''), FL = window.__wfFleet ? window.__wfFleet(id) : null;
+    if (!FL) { var SF = staffOf(st) || {}, num = (String(st.name).match(/(\d{1,3})\b/) || [])[1] || '11';
+      FL = [{ id: 'engine', name: 'Engine ' + num, lt: SF.lead || '', crew: SF.onDuty || [] }, { id: 'brush', name: 'Brush ' + num, lt: SF.lead2 || '', crew: SF.crew2 || [] }]; }
+    var busy = {}; Object.keys(load().chats).forEach(function (k) { var o = load().chats[k]; if (!o || o === c || o.key === c.key || o.closed || o.dismissed || o.kind === 'dm') return;
+      (o.forces || []).forEach(function (f) { if (f.st === 'standby' || f.st === 'released') return; (f.veh || []).forEach(function (v) { busy[v] = o.place; }); }); });
+    return FL.map(function (u) { return { key: u.id, veh: u.name, lt: u.lt || '', crew: (u.crew || []).slice(), en: u.en || '', pt: u.pt || '', rank: u.rank || null, st0: u.st || '', busy: busy[u.name] || '', st: st, i: i }; }); }
   function dispatchOwn(key, pick) { var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
-    var K = ownCrews(c).filter(function (k) { return pick[k.key]; }); if (!K.length) return; var st = K[0].st;
+    var K = ownCrews(c).filter(function (k) { return pick[k.key] && !k.busy && k.st0 !== 'maint' && k.crew.length; }); if (!K.length) return; var st = K[0].st;
     dispatched(key, [{ name: st.name, km: st.km, eta: st.min }]); c = load().chats[key]; var i = K[0].i, f0 = (c.forces || []).find(function (f) { return f.si === i && !f.second; }); if (!f0) return;
-    f0.veh = [K[0].veh]; f0.crew = K[0].crew.slice(); if (K[0].key === 'brush') f0.second = true;   /* the Brush alone: its own lieutenant leads it */
-    if (K[1]) c.forces.push({ si: i, ck: f0.ck, station: f0.station, full: f0.full, km: f0.km, coord: f0.coord, crew: K[1].crew.slice(), veh: [K[1].veh], st: f0.st, second: true });
+    f0.veh = [K[0].veh]; f0.crew = K[0].crew.slice(); if (K[0].key !== 'engine') { f0.second = !!K[0].lt; f0.nolt = !K[0].lt; }   /* a unit without a lieutenant brings none into the chat */
+    K.slice(1).forEach(function (k) { c.forces.push({ si: i, ck: f0.ck, station: f0.station, full: f0.full, km: f0.km, coord: f0.coord, crew: k.crew.slice(), veh: [k.veh], st: f0.st, second: !!k.lt, nolt: !k.lt }); });
     /* the captain is "you": the order's confirmations come from the crews' lieutenants, not from the captain */
     ensureLts(c); var me0 = c.people[i]; if (me0 && me0.name === ((staffOf(st) || {}).captain)) me0.self = true;
     var ltI = function (nm) { return c.people.findIndex(function (p) { return p.kind === 'lt' && p.name === nm; }); }, l0 = ltI(K[0].lt), l1 = K[1] ? ltI(K[1].lt) : -1;
