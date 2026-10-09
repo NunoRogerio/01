@@ -23,7 +23,7 @@
 <script src="chat.js?v=1791550657"></script>
 <script src="tour.js?v=1791533202"></script>
 <script src="feedcam.js?v=1791549296"></script>
-<script src="trophy.js?v=1791543767"></script>
+<script src="trophy.js?v=1791551595"></script>
 
 <title>Chats</title>
 <script src="./support.js"></script>
@@ -180,7 +180,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isWin}}" hint-placeholder-val="{{ false }}">
           <!-- The trophy card: one widget for every resolved card (trophy.js) -->
-          <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.well}}" fire="{{m.fire}}" meta="{{m.meta}}" size="{{m.size}}" crests="{{m.crests}}" air="{{m.air}}" n="{{m.n}}" action="{{m.link}}" credit="1" style="margin-top: 8px; cursor: pointer"></wf-trophy>
+          <wf-trophy class="chmsg chrow" role="button" tabindex="0" onClick="{{m.go}}" kicker="{{m.kick}}" headline="{{m.well}}" fire="{{m.fire}}" meta="{{m.meta}}" size="" crests="{{m.crests}}" air="{{m.air}}" n="{{m.n}}" action="{{m.link}}" credit="1" style="margin-top: 8px; cursor: pointer"></wf-trophy>
         </sc-if>
         <sc-if value="{{m.isCard}}" hint-placeholder-val="{{ false }}">
           <article class="chmsg {{m.cardCls}}" data-pend="{{m.pend}}" data-snz="{{m.snz}}" onClick="{{m.cardGo}}" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden; cursor: {{m.cardCur}}">
@@ -438,14 +438,14 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </header>
     <div class="chscroll chdrop" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px 56px">
       <!-- The trophy card: one widget for every resolved card (trophy.js) -->
-      <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.well}}" fire="{{sum.fire}}" meta="{{sum.meta}}" size="{{sum.size}}" crests="{{sum.crests}}" air="{{sum.air}}" n="{{sum.n}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
+      <wf-trophy kicker="{{sum.kicker}}" headline="{{sum.well}}" fire="{{sum.fire}}" meta="{{sum.meta}}" size="" crests="{{sum.crests}}" air="{{sum.air}}" n="{{sum.n}}" action="" credit="1" style="flex-shrink: 0"></wf-trophy>
       <!-- (Oct 9) key figures as the profile's simple table (no cards): label left, value right-aligned, the comparison under it -->
       <section aria-label="{{t.kf}}" style="display: flex; flex-direction: column; gap: 24px">
         <!-- (Oct 9, 10:54) no "Key figures" title: the table speaks for itself -->
         <table style="width: 100%; border-collapse: collapse; border-radius: 16px; background: #FFFFFF; overflow: hidden">
           <tbody>
             <sc-for list="{{sk.tbl}}" as="r" hint-placeholder-count="10">
-              <tr onClick="{{r.tog}}" aria-expanded="{{r.expStr}}" style="border-top: {{r.sep}}; cursor: {{r.cur}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; vertical-align: top; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; vertical-align: top; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000">{{r.v}}<span style="display: {{r.cmpD}}; font-size: 16px; font-weight: 400; line-height: 20px; color: {{r.cmpC}}">{{r.cmp}}</span></td></tr>
+              <tr onClick="{{r.tog}}" aria-expanded="{{r.expStr}}" style="border-top: {{r.sep}}; cursor: {{r.cur}}"><th scope="row" style="padding: 16px; font-size: 18px; font-weight: 400; line-height: 24px; text-align: left; vertical-align: top; color: #000000">{{r.l}}</th><td style="padding: 16px; font-size: 18px; font-weight: 600; line-height: 24px; text-align: right; vertical-align: top; white-space: nowrap; font-variant-numeric: tabular-nums; color: #000000"><span class="wf-stag" style="display: {{r.szD}}; align-items: center; min-height: 24px; margin-right: 8px; padding: 2px 8px; box-sizing: border-box; border-radius: 8px; background: rgba(118,118,128,0.14); color: #3A3A3C; font-size: 16px; line-height: 20px; font-weight: 600; vertical-align: top">{{r.sz}}</span><button type="button" onClick="{{r.dotGo}}" aria-label="{{r.diff}}" style="display: {{r.dotD}}; width: 28px; height: 24px; margin: 0 0 0 0; padding: 0; border: 0; background: transparent; vertical-align: top; cursor: pointer"><span aria-hidden="true" style="display: block; width: 12px; height: 12px; margin: 6px 8px 6px 8px; border-radius: 50%; background: {{r.dot}}"></span></button>{{r.v}}<span style="display: {{r.diffD}}; font-size: 16px; font-weight: 400; line-height: 20px; color: #545458">{{r.diff}}</span><span style="display: {{r.cmpD}}; font-size: 16px; font-weight: 400; line-height: 20px; color: {{r.cmpC}}">{{r.cmp}}</span></td></tr>
               <tr><td colspan="2" style="padding: 0"><div style="display: grid; grid-template-rows: {{r.dr}}; transition: grid-template-rows .35s cubic-bezier(.2,.8,.2,1)"><div style="min-height: 0; overflow: hidden"><p style="margin: 0; padding: 0 16px 16px; font-size: 16px; line-height: 20px; color: #545458">{{r.dsc}}</p></div></div></td></tr>
             </sc-for>
           </tbody>
@@ -775,12 +775,15 @@ class Component extends DCLogic {
       veh: ['Engines, patrols and other vehicles sent to the fire.', 'Autotanques, patrulhas e outros veículos enviados para o incêndio.'],
       air: ['Aircraft (helicopters or planes) that worked on the fire.', 'Meios aéreos (helicópteros ou aviões) que trabalharam no incêndio.'],
       rate: ['Area burnt divided by the fire\'s duration: how fast it burned on average.', 'Área ardida a dividir pela duração do incêndio: o ritmo médio a que ardeu.'],
+      size: ['The area inside the final perimeter, with the fire\'s size class from it (US: NWCG classes A to G; elsewhere spot fire, fire or large fire).', 'A classe de dimensão do incêndio pela área final (EUA: classes NWCG de A a G; noutros países fogacho, incêndio ou grande incêndio).'],
+      trav: ['From the dispatch order until the first crews reached the fire: the drive.', 'Da ordem de despacho até as primeiras equipas chegarem ao incêndio: a viagem.'],
+      dist: ['The distance from the first station sent to the fire.', 'A distância do primeiro quartel enviado ao incêndio.'],
       res: ['Fires this person worked on that are now closed.', 'Incêndios em que esta pessoa trabalhou e que já estão encerrados.'],
       inc: ['Time spent on those fires, from detection to close, added up.', 'Tempo passado nesses incêndios, da deteção ao encerramento, somado.'],
       ppop: ['Residents kept safe across those fires, added up.', 'Moradores protegidos nesses incêndios, somados.']
     };
     const id = grp + ':' + k.key, open = ((this.state || {}).kfOpen || '') === id, d = D[k.key] || D[grp === 'pp' && k.key === 'pop' ? 'ppop' : ''] || null;
-    return { l: k.l, v: k.v, sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', expStr: open ? 'true' : 'false', dsc: d ? L(d[0], d[1]) : '', dr: open && d ? '1fr' : '0fr', cur: d ? 'pointer' : 'default',
+    return { l: k.l, v: k.v, sep: i ? '1px solid rgba(60,60,67,0.12)' : '0', expStr: open ? 'true' : 'false', dsc: d ? L(d[0], d[1]) + (k.why ? ' ' + k.why : '') : '', dr: open && d ? '1fr' : '0fr', cur: d ? 'pointer' : 'default',
       tog: () => { if (!d) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ kfOpen: open ? '' : id }); } };
   }
   renderVals() {
@@ -816,7 +819,7 @@ class Component extends DCLogic {
     const whenTxt = (tm) => dayTxt(tm) + ', ' + C.hhmm(tm);
     // the resolution card's facts (trophy.js): the stations that took part with their crests, air support, the fire, when it closed and how long it took, its size class
     const winAttrs = (Z) => { const PO2 = new Set((c.people || []).filter((p) => p.kind !== 'air' && !p.left).map((p) => p.org)), air2 = (c.people || []).some((p) => p.kind === 'air' && !p.left) || !!c.air, F = (c.forces || []).filter((f) => f.st !== 'standby' && (!(c.people || []).length || ((f.veh || []).length && (f.veh || []).every((v) => /heli|Helic|tanker|plane|avião|air/i.test(v)) ? air2 : PO2.has(f.station)))),   /* (Oct 8, 22:18) the trophy's crests: the stations on the fire's team */ sc = C.sizeClass(Z.ha, c.st);
-      return { crests: JSON.stringify(F.filter((f, i) => F.findIndex((g) => g.station === f.station) === i).map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))),   /* one crest per station */ air: Z.air || c.air || (c.flags && c.flags.air) ? '1' : '0', n: String(Z.stations), fire: c.place, meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
+      return { crests: JSON.stringify(F.filter((f, i) => F.findIndex((g) => g.station === f.station) === i).map((f) => ({ u: C.crest(c, f.station).url, n: f.station }))),   /* one crest per station */ air: Z.air || c.air || (c.flags && c.flags.air) ? '1' : '0', n: String(Z.stations), fire: (window.__wfIncName ? window.__wfIncName(c.place, true) : c.place), meta: L('Closed ', 'Encerrado ') + whenTxt(Z.end) + '. ' + C.fmtDur(Z.res), size: L(sc.en, sc.pt), well: L('Well done', 'Parabéns') }; };
     const me = (window.__wfPrefs && window.__wfPrefs.person) || { code: 'YOU', name: L('You', 'Você'), photo: '' };
     /* (Oct 8, 18:50) the lieutenant (chefe de equipa) is an active member of his incident's chat: he is on the fire, so he writes and
        reports from the field; the captains decide (no request buttons, no status chips for him) */
@@ -969,7 +972,7 @@ class Component extends DCLogic {
       const Z = c.sum || C.stats(c);
       const area = Z.us ? { v: String(Z.acres), u: 'acres' } : { v: String(Z.ha).replace('.', PTL ? ',' : '.'), u: 'ha' };
       return { isList: false, isChat: false, isSummary: true, isPerson: false, t, ic, winBg, heroBg, heroImg, heroCredit, pop: this.popFn(), ppH: this.grabUp(), ppY: (s.ppDy || 0) + 'px', ppT: this._ppd ? '0s' : '.3s', tl, tlTotal, forces, extras, sim,
-        sum: { sub: c.place + (c.reg ? ' · ' + c.reg : ''), kicker: B ? L('Drill complete', 'Simulação concluída') : L('Fire resolved', 'Incêndio resolvido'), headline: c.place, ...winAttrs(Z), meta: B ? benchTxt : winAttrs(Z).meta, closedAt: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + (Z.est ? '~' : '') + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
+        sum: { sub: (window.__wfIncName ? window.__wfIncName(c.place, true) : c.place) + (c.reg ? ' · ' + c.reg : ''), kicker: B ? L('Drill complete', 'Simulação concluída') : L('Resolved', 'Resolvido'),   /* (Oct 9, 14:11) the place and Fire are right under it */ headline: (window.__wfIncName ? window.__wfIncName(c.place, true) : c.place), ...winAttrs(Z), meta: B ? benchTxt : winAttrs(Z).meta, closedAt: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + (Z.est ? '~' : '') + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'),
           note: B ? L('Training drill against the real fire of ', 'Simulação contra o incêndio real de ') + dayTxt(B.t) + L('. Crew replies are role-played, and drills do not go into firefighters’ profiles.', '. As respostas das equipas são encenadas e as simulações não entram nos perfis dos bombeiros.') : '', noteD: B ? 'block' : 'none',
           get kPx() { return window.__wfKpiPx ? window.__wfKpiPx(this.kpis.map((k) => k.v), 2, 318) : '44px'; },
           kpis: [{ v: Z.resp != null ? C.dur(Z.resp) : '—', l: L('Response time', 'Tempo de resposta'), c: '#B3141B', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) }, { v: C.dur(Z.res), l: L('Final duration', 'Duração final'), c: '#186B2D', ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
@@ -979,19 +982,30 @@ class Component extends DCLogic {
         // Key figures as mini cards: five on by default, five more from the + tile; order and choice kept on this phone
         sk: (() => {
           const hr = Math.max(1, (Z.res || 0) / 3600000), burn = (Z.us ? Z.acres : Z.ha) / hr;
+          /* (Oct 9, 14:09) targets: each timing is judged against its criterion: a green, yellow or red dot before its value; a tap on the dot
+             shows how far from the target it landed, and the row's description says the criterion and why the colour */
+          const MN = 60000, ST0 = (c.stations || [])[0] || {}, km = +ST0.km || 0, drive = Math.max(1, +ST0.min || Math.round(km * 1.3 / 40 * 60) || 1) * MN, trav = Z.resp != null && Z.disp != null ? Math.max(0, Z.resp - Z.disp) : null;
+          const judge = (v, green, yellow) => v == null ? null : v <= green ? 'g' : v <= yellow ? 'y' : 'r';
+          const DOT = { g: '#248A3D', y: '#C79A00', r: '#D70015' }, WORD = { g: L('on target', 'dentro do objetivo'), y: L('just over the target', 'ligeiramente acima do objetivo'), r: L('over the target', 'acima do objetivo') };
+          const diffTxt = (v, t) => { const d = v - t; return (d > 0 ? '+' : d < 0 ? '−' : '±') + C.dur(Math.abs(d) || 0).replace(/^0 min$/, '0 min') + L(' vs target ', ' face ao objetivo de ') + C.dur(t); };
+          const tgt = (v, t, ytol, crit, show) => { const j = judge(v, t, t + ytol), T0 = show || t; return j ? { dot: DOT[j], diff: diffTxt(v, T0), why: crit + ' ' + L('This one is ', 'Este está ') + WORD[j] + ' (' + diffTxt(v, T0) + ').' } : {}; };
+          const SC = C.sizeClass ? C.sizeClass(Z.ha, c.st) : null;
           const base = [
-            { key: 'ver', l: L('Verification time', 'Tempo de verificação'), v: Z.ver != null ? C.dur(Z.ver) : '—' },   /* (Oct 9, 10:55) life-cycle order: verification, dispatch, response, duration */ /* (Oct 9) ignition detected to confirmed or dismissed */
-            { key: 'disp', l: L('Time to dispatch', 'Tempo até ao despacho'), v: Z.disp != null ? C.dur(Z.disp) : '—' },
-            { key: 'resp', l: L('Response time', 'Tempo de resposta'), v: Z.resp != null ? C.dur(Z.resp) : '—', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) },
+            /* (Oct 9, 14:09) the fire's size class first, then the timings with their targets, the station's distance after the response */
+            { key: 'size', l: L('Size', 'Dimensão'), tag: SC ? (SC.code ? L('Class ', 'Classe ') + SC.code : L(SC.en, SC.pt).split('.')[0]) : '', v: area.v + ' ' + area.u, ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) },   /* (Oct 9, 14:11) its class tag before the area, the area right-aligned like every value */
+            { key: 'ver', ...tgt(Z.ver, 10 * MN - 1000, MN, L('Target: verified in under 10 minutes (green), at 10 minutes yellow, over 10 red.', 'Objetivo: verificado em menos de 10 minutos (verde); 10 minutos amarelo; mais de 10 vermelho.'), 10 * MN), l: L('Verification time', 'Tempo de verificação'), v: Z.ver != null ? C.dur(Z.ver) : '—' },   /* (Oct 9, 10:55) life-cycle order: verification, dispatch, response, duration */ /* (Oct 9) ignition detected to confirmed or dismissed */
+            { key: 'disp', ...tgt(Z.disp, 3 * MN, 2 * MN, L('Target: crews sent within 3 minutes of the declaration (green), up to 5 minutes yellow, more red.', 'Objetivo: equipas enviadas até 3 minutos após a declaração (verde); até 5 minutos amarelo; mais vermelho.')), l: L('Time to dispatch', 'Tempo até ao despacho'), v: Z.disp != null ? C.dur(Z.disp) : '—' },
+            { key: 'trav', ...tgt(trav, drive, Math.max(MN, drive * 0.2), L('Target: the estimated drive from the station to the fire, ', 'Objetivo: a viagem estimada do quartel ao incêndio, ') + C.dur(drive) + L(' for ', ' para ') + km.toFixed(1) + L(' km by road. At or under it green, up to 20% over yellow, more red.', ' km por estrada. Igual ou abaixo verde; até 20% acima amarelo; mais vermelho.')), l: L('Travel time', 'Tempo de viagem'), v: trav != null ? C.dur(trav) : '—' },
+            { key: 'resp', ...tgt(Z.resp, 3 * MN + drive, 2 * MN, L('Target: the dispatch target (3 min) plus the estimated drive (', 'Objetivo: o objetivo de despacho (3 min) mais a viagem estimada (') + C.dur(drive) + L('). Up to 2 minutes over yellow, more red.', '). Até 2 minutos acima amarelo; mais vermelho.')), l: L('Response time', 'Tempo de resposta'), v: Z.resp != null ? C.dur(Z.resp) : '—', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) },
+            { key: 'dist', l: L('Distance to the station', 'Distância ao quartel'), v: km ? km.toFixed(1) + ' km' : '—' },
             { key: 'dur', l: L('Final duration', 'Duração final'), v: C.dur(Z.res), ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
-            { key: 'area', l: L('Area burnt', 'Área ardida'), v: area.v + ' ' + area.u, ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) },
             { key: 'pop', l: Z.evac ? L('People protected', 'Pessoas protegidas') : L('Residents protected', 'Moradores protegidos'), v: String(Z.pop) },
             { key: 'st', l: L('Stations', 'Quartéis'), v: (Z.est ? '~' : '') + Z.stations },
             { key: 'ppl', l: L('Personnel', 'Pessoal'), v: (Z.est ? '~' : '') + Z.people, opt: true },
             { key: 'veh', l: L('Vehicles', 'Veículos'), v: (Z.est ? '~' : '') + Z.veh, opt: true },
             { key: 'air', l: L('Aerial', 'Meios aéreos'), v: String(Z.air), opt: true }];   /* (Oct 9, 10:55) no burn rate */
           /* (Oct 9) the summary's key figures as the profile's simple table: every figure, none hidden, the comparison under its value */
-          return Object.assign(this.cardSet('sum', base), { tbl: base.map((k, i) => ({ ...this.kfRow('sum', k, i), l: k.l, v: k.v, cmp: k.cmp || '', cmpD: k.cmp ? (k.cmpD || 'block') : 'none', cmpC: k.cmpC || '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })) });
+          return Object.assign(this.cardSet('sum', base), { tbl: base.map((k, i) => ({ ...this.kfRow('sum', k, i), dotD: k.dot ? 'inline-block' : 'none', dot: k.dot || 'transparent', szD: k.tag ? 'inline-flex' : 'none', sz: k.tag || '', diff: k.diff || '', diffD: k.dot && (this.state || {}).kfDiff === k.key ? 'block' : 'none', dotGo: (e) => { if (e && e.stopPropagation) e.stopPropagation(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ kfDiff: (this.state || {}).kfDiff === k.key ? '' : k.key }); }, l: k.l, v: k.v, cmp: k.cmp || '', cmpD: k.cmp ? (k.cmpD || 'block') : 'none', cmpC: k.cmpC || '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })) });
         })() };
     }
 
@@ -1042,7 +1056,7 @@ class Component extends DCLogic {
         prevFrom = m.from; return; }
       if (m.kind === 'card' && m.summary) {
         const Z = c.sum || C.stats(c);
-        items.push({ isWin: true, time, kick: B ? L('Drill complete', 'Simulação concluída') : T(m.tag), tag: B ? L('Drill complete', 'Simulação concluída') : T(m.tag), title: c.place, credit: '1', ...winAttrs(Z), meta: B ? benchTxt : winAttrs(Z).meta,   /* the same trophy card as the summary's header, with its action */
+        items.push({ isWin: true, time, kick: B ? L('Drill complete', 'Simulação concluída') : L('Resolved', 'Resolvido'), tag: B ? L('Drill complete', 'Simulação concluída') : T(m.tag), title: (window.__wfIncName ? window.__wfIncName(c.place, true) : c.place), credit: '1', ...winAttrs(Z), meta: B ? benchTxt : winAttrs(Z).meta,   /* the same trophy card as the summary's header, with its action */
           body: B ? benchTxt : L('Closed ', 'Encerrado ') + whenTxt(Z.end) + ' · ' + (Z.est ? '~' : '') + Z.stations + ' ' + L(Z.stations === 1 ? 'station' : 'stations', Z.stations === 1 ? 'quartel' : 'quartéis'), link: L('Resolution summary', 'Resumo da resolução'), go: openSummary });
         prevFrom = null; return;
       }

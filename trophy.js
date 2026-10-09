@@ -43,7 +43,7 @@
     '.dots{position:absolute;left:0;right:0;top:12px;display:flex;justify-content:center;align-items:center;gap:8px;pointer-events:none}.dots i{display:block;width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.5);transition:width .4s cubic-bezier(.2,.8,.2,1),background-color .4s ease}.dots i.on{width:20px;background:#FFFFFF}';
   var CSS = SLCSS +
     ':host{display:block}' +
-    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:4px;min-height:320px;touch-action:pan-y;padding:16px 16px 24px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
+    '.card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:8px;min-height:320px;touch-action:pan-y;padding:16px 16px 24px;border-radius:20px;background:#1E2B22;color:#FFFFFF;text-align:left;font:inherit;cursor:inherit}' +
     /* (Oct 5, 16:51) the bottom half darker so the text reads on any photo; the top as before */
     '.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.32) 0%,rgba(0,0,0,.05) 28%,rgba(0,0,0,.34) 44%,rgba(0,0,0,.72) 60%,rgba(0,0,0,.84) 80%,rgba(0,0,0,.88) 100%)}' +
     /* (Oct 5, 03:34) the pagination as Apple draws it now: plain white shapes, no shadow; the pages not shown are 8px circles, the one
