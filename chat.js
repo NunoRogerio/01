@@ -865,6 +865,12 @@
     ensureLts(c); var me0 = c.people[i]; if (me0 && me0.name === ((staffOf(st) || {}).captain)) me0.self = true;
     var ltI = function (nm) { return c.people.findIndex(function (p) { return p.kind === 'lt' && p.name === nm; }); }, l0 = ltI(K[0].lt), l1 = K[1] ? ltI(K[1].lt) : -1;
     if (l0 >= 0) { var nth = 0; (c.queue || []).forEach(function (q) { if (q.m && q.m.from === i) { q.m.from = nth % 2 && l1 >= 0 ? l1 : l0; nth++; } }); }
+    /* (Oct 9, 13:56) the order, for the whole team to see: a card listing every unit sent (its type icon, who leads it, its people), with its state */
+    var ppl = K.reduce(function (a, k) { return a + k.crew.length; }, 0), IC = window.__wfFleetIC || {};
+    card(c, { order: true, tag: { en: 'Dispatch order', pt: 'Ordem de despacho' }, tagC: '#3A3A3C', stage: 2, title: { en: 'Crews dispatched. ' + (st.short || st.name), pt: 'Equipas enviadas. ' + (st.short || st.name) },
+      body: { en: K.length + (K.length === 1 ? ' unit. ' : ' units. ') + ppl + (ppl === 1 ? ' person. ' : ' people. ') + '~' + (st.min || 0) + ' min to the fire.', pt: K.length + (K.length === 1 ? ' unidade. ' : ' unidades. ') + ppl + (ppl === 1 ? ' pessoa. ' : ' pessoas. ') + '~' + (st.min || 0) + ' min até ao incêndio.' },
+      rows: K.map(function (k) { var R = k.lt ? rankOf(c, k.lt) : null, who = R ? R.en + ' ' + k.lt : (k.crew[0] || ''), whoP = R ? R.pt + ' ' + k.lt : (k.crew[0] || '');
+        return { a: k.veh, ic: IC[k.ic || 'eng'] || '', b: { en: who + (who ? '. ' : '') + k.crew.length + (k.crew.length === 1 ? ' person' : ' people'), pt: whoP + (whoP ? '. ' : '') + k.crew.length + (k.crew.length === 1 ? ' pessoa' : ' pessoas') }, r: { en: 'En route', pt: 'A caminho' }, rc: '#B8360A' }; }) }, 900, 0);
     c.solo = true; save(); emit(); }
   function dispatched(key, orders, delay) {
     var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;

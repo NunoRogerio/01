@@ -20,7 +20,7 @@
 <script src="station.js?v=1791550416"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791550293"></script>
+<script src="chat.js?v=1791550657"></script>
 <script src="tour.js?v=1791533202"></script>
 <script src="feedcam.js?v=1791549296"></script>
 <script src="trophy.js?v=1791543767"></script>
@@ -219,7 +219,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-if value="{{m.hasRows}}" hint-placeholder-val="{{ false }}">
               <ul style="display: flex; flex-direction: column; margin: 0; padding: 0 0 {{m.rowsPb}}; list-style: none; border-top: 0">
                 <sc-for list="{{m.rows}}" as="r" hint-placeholder-count="3">
-                  <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; padding: 8px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span style="min-width: 0; font-size: 16px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="justify-self: end; align-self: start; padding: 4px 8px; border-radius: 8px; background: {{r.tagBg}}; color: {{r.rc}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 16px; line-height: 20px; color: #545458">{{r.b}}</span></li>
+                  <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; padding: 8px 16px; border-top: {{r.sep}}"><img src="{{r.crest}}" data-crest="{{r.a}}" alt="" style="display: {{r.crD}}; grid-row: 1 / span 2; width: 28px; height: 28px; object-fit: contain"><span aria-hidden="true" style="display: {{r.icD}}; grid-row: 1 / span 2; grid-column: 1; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span><span style="min-width: 0; font-size: 16px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="justify-self: end; align-self: start; padding: 4px 8px; border-radius: 8px; background: {{r.tagBg}}; color: {{r.rc}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{r.r}}</span><span style="grid-column: 2 / span 2; font-size: 16px; line-height: 20px; color: #545458">{{r.b}}</span></li>
                 </sc-for>
               </ul>
             </sc-if>
@@ -1077,8 +1077,8 @@ class Component extends DCLogic {
             : (m.rows || [])).map((r0, i) => {
             // A station row always says what that station is doing now (the same state as Forces and the stage), never a stale snapshot
             const FS = { standby: [{ en: 'Standby', pt: 'Prevenção' }, '#875800'], enroute: [{ en: 'En route', pt: 'A caminho' }, '#B8360A'], onscene: [{ en: 'On scene', pt: 'No local' }, '#B3141B'], watch: [{ en: 'On watch', pt: 'Em vigilância' }, '#14532D'], released: [{ en: 'Released', pt: 'Libertado' }, '#48484A'] };
-            const fo = m.stage === 1 && (c.forces || []).find((x) => x.si === (r0.i != null ? r0.i : i)), fx = fo && FS[fo.st];
-            return fx ? Object.assign({}, r0, { r: fx[0], rc: fx[1] }) : r0; }).map((r, i) => ({ a: r.a, b: r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: C.crest(c, r.a).url, sep: i ? '0' : '0' })),
+            const fo = (m.stage === 1 && (c.forces || []).find((x) => x.si === (r0.i != null ? r0.i : i))) || (m.order && (c.forces || []).find((x) => (x.veh || []).indexOf(r0.a) >= 0)), fx = fo && FS[fo.st];   /* a dispatch order's units follow their live state too */
+            return fx ? Object.assign({}, r0, { r: fx[0], rc: fx[1] }) : r0; }).map((r, i) => ({ a: r.a, b: r.b && typeof r.b === 'object' ? T(r.b) : r.b, r: T(r.r), rc: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? '#3A3A3C' : r.rc, tagBg: /545458|6E6E73|8E8E93/i.test(r.rc || '') || !r.rc ? 'rgba(118,118,128,0.14)' : (/^#[0-9a-f]{6}$/i.test(r.rc) ? 'rgba(' + [1, 3, 5].map((k) => parseInt(r.rc.slice(k, k + 2), 16)).join(',') + ',0.12)' : 'rgba(118,118,128,0.14)'), crest: r.ic ? '' : C.crest(c, r.a).url, crD: r.ic ? 'none' : 'block', icD: r.ic ? 'flex' : 'none', ic: r.ic || '', sep: i ? '0' : '0' })),   /* (Oct 9, 13:56) a unit row shows its type icon instead of a crest */
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           ...(() => { const ev = m.stage === 0 && c.kind === 'cand' && C.evid, E = ev ? C.evid(c) : null;   /* every candidate's first card is its evidence (older chats too) */
             if (!E) return { hasEv: false, evRows: [] };
