@@ -1081,7 +1081,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   function drag(p) {
     var st = null, fl = 0, dx = 0, dy = 0;
     var clamp = function () { p.style.translate = '0px 0px'; var r = p.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
-      dx = Math.min(W - 8 - r.right, Math.max(8 - r.left, dx)); dy = Math.min(H - 8 - r.bottom, Math.max(8 - r.top, dy)); p.style.translate = dx + 'px ' + dy + 'px'; };
+      dx = Math.min(W - 8 - r.right, Math.max(8 - r.left, dx)); dy = Math.min(H - 8 - r.bottom, Math.max(window.__wfTopLim() - r.top, dy)); p.style.translate = dx + 'px ' + dy + 'px'; };
     p.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fl); st = { x: e.clientX, y: e.clientY, dx: dx, dy: dy, moved: false, tr: [] }; try { p.setPointerCapture(e.pointerId); } catch (x) {} });
     p.__to = function (x, y) { p.style.translate = '0px 0px'; var r = p.getBoundingClientRect(); dx = x - (r.left + 34); dy = y - (r.top + r.height / 2); clamp(); };   /* the triangle under the finger */
     p.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return;
@@ -1116,10 +1116,12 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
      button), throw them and they glide to a stop, kept 8px inside the screen; they never dock */
   /* (Oct 9, 13:19) every floating notification (houses at risk, houses safe, someone joined, dispatch) sits at the top of the screen,
      8px under the status bar, 80px tall at least; several stack downwards, 8px apart, and they drop in from the top */
+  /* (Oct 9, 13:34) floating panels stop (and bounce) at the fixed status-bar strip, never under it */
+  window.__wfTopLim = function () { var v = window.__wfTopLimV; if (v == null || Date.now() - (window.__wfTopLimT || 0) > 2000) { try { var pr = document.createElement('div'); pr.style.cssText = 'position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)'; document.body.appendChild(pr); v = parseFloat(getComputedStyle(pr).paddingTop) || 0; pr.remove(); } catch (e) { v = 0; } window.__wfTopLimV = v; window.__wfTopLimT = Date.now(); } return v + 8; };
   function TOPOFF(me) { var h = 0; ['wf-homes', 'wf-homes-safe'].forEach(function (id) { var e = document.getElementById(id); if (e && e !== me && e.offsetHeight) h += e.offsetHeight + 8; }); return h; }
   function floaty(p, onHold) { var st = null, fl = 0, dx = 0, dy = 0;
     var clamp = function () { p.style.translate = '0px 0px'; var r = p.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
-      dx = Math.min(W - 8 - r.right, Math.max(8 - r.left, dx)); dy = Math.min(H - 8 - r.bottom, Math.max(8 - r.top, dy)); p.style.translate = dx + 'px ' + dy + 'px'; };
+      dx = Math.min(W - 8 - r.right, Math.max(8 - r.left, dx)); dy = Math.min(H - 8 - r.bottom, Math.max(window.__wfTopLim() - r.top, dy)); p.style.translate = dx + 'px ' + dy + 'px'; };
     p.style.touchAction = 'none'; p.style.cursor = 'grab';
     p.addEventListener('pointerdown', function (e) { if (e.target.closest('button')) return; cancelAnimationFrame(fl); st = { x: e.clientX, y: e.clientY, dx: dx, dy: dy, moved: false, tr: [] }; if (onHold) onHold(true); try { p.setPointerCapture(e.pointerId); } catch (x) {} });
     p.addEventListener('pointermove', function (e) { if (!st) return; var mx = e.clientX - st.x, my = e.clientY - st.y; if (!st.moved && Math.hypot(mx, my) < 6) return;

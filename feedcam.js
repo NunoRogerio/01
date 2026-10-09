@@ -44,7 +44,7 @@
       return '<div class="gt" style="--d:' + (i * 260) + 'ms;grid-column:span ' + span + '">' + (g.photo ? '<img alt="' + esc(g.name) + '" src="' + esc(g.photo) + '">' : '<i aria-hidden="true">' + esc(g.code || (g.name || '?').charAt(0)) + '</i>') + '<b>' + esc((g.name || '').split(' ')[0]) + '</b></div>'; }).join('') + '</div>'; }
   function size() { var w = Math.min(358, innerWidth - 32); return { w: w, h: Math.round(w * 202 / 358) }; }
   function dims(f) { var s = size(), k = f && f.st ? f.st.sc : 1; return { w: s.w * k, h: s.h * k }; }
-  function boundsF(f, k) { var s = size(), kk = k == null ? (f && f.st ? f.st.sc : 1) : k; return { x0: 8, x1: innerWidth - s.w * kk - 8, y0: 8, y1: innerHeight - s.h * kk - 8 }; }
+  function boundsF(f, k) { var s = size(), kk = k == null ? (f && f.st ? f.st.sc : 1) : k; return { x0: 8, x1: innerWidth - s.w * kk - 8, y0: window.__wfTopLim ? window.__wfTopLim() : 8, y1: innerHeight - s.h * kk - 8 }; }   /* (Oct 9, 13:34) the top limit is the status-bar strip, not the screen's edge */
   function others(f) { return feeds.filter(function (g) { return g !== f && !g.el.classList.contains('max'); }); }
   function clampB(f, x, y, k) { var B = boundsF(f, k); return { x: Math.max(B.x0, Math.min(B.x1, x)), y: Math.max(B.y0, Math.min(B.y1, y)) }; }
   // does a w x h feed at (x, y) come within gap of feed g?
