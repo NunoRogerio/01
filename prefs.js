@@ -253,6 +253,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '[style*="width: 86px; height: 3px"]{opacity:0!important}#wf-tour .tb::before{opacity:0!important}' +   /* (Oct 4) grabbers hidden everywhere; the blades keep their swipe, drag and tap behaviours */
     '.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4}' +   /* the firefighter stripes, shared by every page */
     'html.wf-embed [data-wf-ttl2]{grid-row:1!important;grid-column:1 / 3!important}' +   /* (Oct 9, 12:11) in a blade the back is hidden: the title moves up */
+    '*:has(> [data-wf-burger]:not(.wf-mb)),*:has(> [data-wf-burger-spot]){margin-right:-8px!important}' +   /* (Oct 9, 13:29, app-wide) the header buttons row ends 8px from the screen edge: the menu button rests where the menu column's X is, so it never moves; the notifications keep their 16px gap to it */
     '.wf-grab.gb{height:56px!important;padding:0 0 8px!important;align-items:flex-end!important}' +
     '.wf-grab.gt{padding:8px 0 0!important;align-items:flex-start!important}' +
     // Forest headers, one definition for the whole app: the aerial forest photos zoom in slowly as on the login screen.

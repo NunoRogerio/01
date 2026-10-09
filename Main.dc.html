@@ -18,7 +18,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791548424"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=1791544573"></script>
+<script src="prefs.js?v=1791549051"></script>
 <script src="station.js?v=1791540669"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
@@ -937,7 +937,7 @@ class Component extends DCLogic {
   // A panel opened from an incident screen's header (bell or profile): once it has folded away, back to that screen
   /* (Oct 9, 12:18) captain and lieutenant: their main screen is their station, so the government map is never drawn under the
      panels opened from it (notifications, chats, profile); their station page lies under the panel instead */
-  wfUnder() { if (this._under !== undefined) return this._under; let u = ''; try { const H = typeof wfHomeUrl === 'function' ? wfHomeUrl() : 'Main.dc.html'; if (H !== 'Main.dc.html') { const r = window.sessionStorage.getItem('wf-panel-return') || ''; u = (r && !/Main\.dc\.html/.test(r) ? r : H); u += (u.indexOf('?') >= 0 ? '&' : '?') + 'under=1'; } } catch (e) {} this._under = u; return u; }
+  wfUnder() { if (this._under !== undefined) return this._under; let u = ''; try { const H = typeof wfHomeUrl === 'function' ? wfHomeUrl() : 'Main.dc.html'; if (H !== 'Main.dc.html' && !/[?&]menu=1/.test(window.location.search) && window.top === window) { const r = window.sessionStorage.getItem('wf-panel-return') || ''; u = (r && !/Main\.dc\.html/.test(r) ? r : H);   /* (Oct 9, 13:27) never inside the settings menu (it would load a second, dark-headed station under the menu) */ u += (u.indexOf('?') >= 0 ? '&' : '?') + 'under=1'; } } catch (e) {} this._under = u; return u; }
   wfPanelReturn() { let r = ''; try { r = window.sessionStorage.getItem('wf-panel-return') || ''; window.sessionStorage.removeItem('wf-panel-return'); } catch (e) {} if (!r) return false;
     setTimeout(() => { try { if (window.history.length > 1) window.history.back(); else window.location.href = r; } catch (e) {} }, 420); return true; }
   wfSlide(dir, apply) {
@@ -1234,7 +1234,7 @@ class Component extends DCLogic {
           cw: mw - 60, title: TT[pmSec], items,
           desc: (({ profile: 'Who you are signed in as and what you can see. Sign out here.', lang: 'Choose the language of every screen.', look: 'Set the text size and spacing. Choices other than the defaults are not fully tested yet, so you may find visual inconsistencies.', maps: 'Select one map engine from the list and choose how it looks.', share: 'Share the app with other people.', chat: 'Turn on role-play with Claude in the assignments, using your Anthropic key.', ds: 'The open data the app uses, and what each source shows.', about: 'How the app works, where it stands and how it started.' })[pmSec] || '').replace(/ (\S+)$/, '\u00A0$1'), dsCntD: pmSec === 'ds' ? 'inline' : 'none', op: 1, opDelay: '0s', vis: 'visible', visDelay: '0s', pe: open ? 'auto' : 'none',   // always there underneath, fully opaque: the screen sliding away just reveals it (Oct 3, 17:36)
           railVis: 'visible', railVisDelay: '0s',
-          burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(16, L0.vw - (L0.colL + L0.colW) + 16) : 16; })(),   // (Oct 3, 21:41) at rest 16px from the edge, like every round button   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
+          burger: () => (pmMode ? this.closePrefsFn() : this.openPrefsFn()), bRight: pmMode ? 8 : (() => { const L0 = this.wfLayout(); return L0.side ? Math.max(8, L0.vw - (L0.colL + L0.colW) + 8) : 8; })()   /* (Oct 9, 13:29) the menu button rests where the menu's X is (8px from the edge): it no longer travels */,   // (Oct 3, 21:41) at rest 16px from the edge, like every round button   // (Oct 3, 19:36) its place is set by layout, 8px from the edge with the menu showing; the move is only an animation on top
           bX: 0,   // at rest in the top bar (20px from the edge); with the menu showing it locks 8px from the edge, in line with the icon column
           slVis: MENU ? 'hidden' : 'visible', bTop: s.bTop != null ? s.bTop : 68, tTop: (s.bTop != null ? s.bTop : 68) - 56 + 6, tMin: 32,   /* (Oct 4, 22:30) every section has a description now: the title keeps its own 32px line, as data sources did */   /* (Oct 4) data sources: the title keeps its own 32px line, so the count sits 8px under it, one line or two */   /* the section title stays level with the button */   // level with the top bar's buttons, measured from its spot (Oct 3, 20:08)
           bDur: boot ? '0s' : '.25s',   // (Oct 3, 21:36) 50% faster   // (Oct 3, 20:54) twice as fast as the screen   // (Oct 3, 20:29) the same motion as the screen's slide: same ease, same time

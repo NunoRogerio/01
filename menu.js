@@ -97,11 +97,13 @@
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     // (Oct 8, 08:40) captain and team lead: the menu opens on its icon column only, no section pulled open; a tap on an icon opens it
     var r = false; try { r = !!(window.__wfMine && window.__wfMine()); } catch (e) {}
+    document.documentElement.classList.add('wf-menuopen');   /* (Oct 9, 13:27) the button is in the menu's column: screens style it for the column, not their header */
     place(); mode = r ? 'rail' : 'open'; through(true); ifr.style.visibility = 'visible'; send(r ? 'openrail' : 'open'); slide(mode); clack(true);
   }
   function close() {
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(''); clack(false); through(false);
+    setTimeout(function () { if (!mode) document.documentElement.classList.remove('wf-menuopen'); }, back() + BD);
     setTimeout(function () { if (!mode && ifr) ifr.style.visibility = 'hidden'; var p = page(); if (p && !mode) { p.style.boxShadow = ''; p.style.willChange = ''; } }, DUR + 50);
   }
   function toggle() { if (mode) close(); else open(); }
