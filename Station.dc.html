@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<style id="wf-bg0">html,body{background:#F2F2F7}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
+<style id="wf-bg0">html,body{background:#F2F2F7}.wf-darkhdr,.wf-darkhdr h1{color:#FFFFFF!important}.wf-darkhdr h1{-webkit-text-fill-color:#FFFFFF}.wf-darkhdr h1+span,.wf-darkhdr [style*="color: #000000"],.wf-darkhdr [style*="color: rgb(0, 0, 0)"]{color:#E5E5EA!important;-webkit-text-fill-color:#E5E5EA}.wf-darkhdr .mbtn,.wf-darkhdr .opt,.wf-darkhdr [data-wf-burger]{background:rgba(255,255,255,0.16)!important;color:#FFFFFF!important}.wf-darkhdr [data-wf-burger] *{stroke:#FFFFFF}html:not(.wf-rail) .wf-mb{background:rgba(255,255,255,0.16)!important;color:#FFFFFF!important}.wf-darkhdr .wf-ctag{position:relative;isolation:isolate}.wf-darkhdr .wf-ctag::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:#FFFFFF}.wf-darkhdr .mbtn svg,.wf-darkhdr .opt svg{color:#FFFFFF;stroke:currentColor}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -49,8 +49,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   </sc-if>
 
   <!-- Same fixed header as a fire or an ignition: the station, the level above, the kind band with its state tag -->
-  <div data-wf-keepsp="1" style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 16px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08)">
-    <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
+  <!-- (Oct 9, 13:11, trial) the station header on the app's dark grey, its text and round buttons inverted -->
+  <div data-wf-keepsp="1" class="wf-darkhdr" style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 16px; background: rgb(58, 58, 60); box-shadow: 0 0 16px rgba(0,0,0,0.08)">
+    <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: rgb(58, 58, 60)"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
     <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
@@ -60,7 +61,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- (Oct 5, 07:03) in the title column, the row after the description: (06:57) only the station's status tag and, on the right, the green call button: a call with this
          station's fire coordinator alone (rings, connects, then shows them in the floating panel, as the police call does) -->
 <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 4px">
-      <span role="status" class="wf-ctag" style="color: var(--wf-pri-fg, #FFFFFF); background: var(--wf-pri-bg, #3A3A3C)">{{st.tag}}</span><!-- (Oct 9, 13:09, trial) the station's status in dark grey, white label -->
+      <span role="status" class="wf-ctag" style="color: {{st.tagFg}}; background: {{st.tagBg}}">{{st.tag}}</span>
       <button type="button" class="chbtn" data-round="1" onClick="{{stCall}}" data-call="1" aria-label="{{stCallAria}}" style="display: {{callD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #34C759; color: #fff; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
     </span>
 </span></span>
