@@ -513,7 +513,7 @@
       title: E.strong ? { en: 'Declare fire', pt: 'Declarar incêndio' } : { en: 'Dismiss fire', pt: 'Descartar incêndio' },
       body: E.strong ? { en: 'The drone feed and the satellite pass agree: smoke and a hot spot.', pt: 'A imagem do drone e a passagem do satélite coincidem: fumo e um ponto quente.' }
         : { en: 'No smoke or flame on the drone feed.', pt: 'Sem fumo nem chama na imagem do drone.' },
-      actions: [{ key: 'reqNo', en: 'Not now', pt: 'Agora não' }, { key: E.strong ? 'reqConfirm' : 'reqDismiss', en: 'Approve', pt: 'Aprovar', primary: true }] };
+      actions: [{ key: 'reqNo', en: 'Not yet', pt: 'Ainda não' }, { key: E.strong ? 'reqConfirm' : 'reqDismiss', en: 'Approve', pt: 'Aprovar', primary: true }] };
   }
   // a decision taken another way (a chip, the state card) answers the open request too
   function settleReq(c, declared) {
@@ -579,7 +579,7 @@
       if (P[1]) say(c, 1, 'Homes 1 km north-east. We need air support to hold the head.', 'Casas a 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça.', d + 7000, 6);
       card(c, { req: 'air', by: lead(c, 1), tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Crew coordinator'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Coordenador de equipa') }, tagC: '#B8360A',
         title: { en: 'Air support', pt: 'Meio aéreo' }, body: { en: 'One helicopter to hold the head before it reaches the homes', pt: 'Um helicóptero para segurar a cabeça antes de chegar às casas' },
-        actions: [{ key: 'declineAir', en: 'Not now', pt: 'Agora não' }, { key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + 8500, 0);
+        actions: [{ key: 'declineAir', en: 'Not yet', pt: 'Ainda não' }, { key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + 8500, 0);
     } else if (s === 4) {
       say(c, ltOf(c, 0), 'Head held. Working both flanks.', 'Cabeça dominada. A trabalhar os dois flancos.', d + 3000, 4);
     } else if (s === 5) {
@@ -589,7 +589,7 @@
         say(c, ltOf(c, 0), 'Rekindle on the north flank. Flames back in the brush.', 'Reacendimento no flanco norte. Chamas de volta no mato.', d + 6000, 4);
         if (P[0]) say(c, 0, 'I recommend we step back to Crews on scene.', 'Recomendo voltar a Equipas no local.', d + 8000, 1);
         card(c, { rekindle: true, to: 3, tag: { en: 'Rekindle', pt: 'Reacendimento' }, tagC: '#B3261E', title: { en: 'Step back to Crews on scene', pt: 'Voltar a Equipas no local' }, body: { en: 'Flames back on the north flank. The team recommends it.', pt: 'Chamas de volta no flanco norte. A equipa recomenda.' },
-          actions: [{ key: 'stayStage', en: 'Not now', pt: 'Agora não' }, { key: 'back', en: 'Step back', pt: 'Voltar atrás', primary: true }] }, d + 9500, 0);
+          actions: [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'back', en: 'Step back', pt: 'Voltar atrás', primary: true }] }, d + 9500, 0);
         if (isLt()) push(c, { kind: 'capt', a: 'back', ent: c.sEnt }, d + 13000, 0);   /* the lieutenant waits: the captain decides */
         return; }
     } else if (s === 6) {
@@ -1074,7 +1074,7 @@
   function helpCard(ch, delay) { var P = ch.people[0] || {}, h = ch.help || {};
     card(ch, { req: 'help', by: 0, tag: { en: 'Request · ' + (P.name || ''), pt: 'Pedido · ' + (P.name || '') }, tagC: '#B8360A', title: { en: 'Help on the ' + h.place, pt: 'Ajuda no ' + h.place },
       body: { en: 'An engine and a crew on the flank. ' + Math.round(h.km || 0) + ' km from our station', pt: 'Um veículo e uma equipa no flanco. ' + Math.round(h.km || 0) + ' km do nosso quartel' },
-      actions: [{ key: 'helpNo', en: 'Not now', pt: 'Agora não' }, { key: 'helpYes', en: 'Send a crew', pt: 'Enviar equipa' }] }, delay, 0); }
+      actions: [{ key: 'helpNo', en: 'Not yet', pt: 'Ainda não' }, { key: 'helpYes', en: 'Send a crew', pt: 'Enviar equipa' }] }, delay, 0); }
   // We send a crew: the fire goes into our To do as a mutual aid assignment (kept on this phone)
   function helpSend(c) { var h = c.help || {}; c.step = 2;
     try { var A = JSON.parse(localStorage.getItem('wf-aid-assign') || '{}') || {}; A[h.id] = { id: h.id, place: h.place, reg: h.reg || '', km: h.km, x: h.x, y: h.y, lat: h.lat, lon: h.lon, station: c.reg || '', chat: c.key, at: Date.now() }; localStorage.setItem('wf-aid-assign', JSON.stringify(A)); } catch (e) {} }
@@ -1217,7 +1217,7 @@
   // declines; a lieutenant sees it and the captain decides it in the chat a few seconds later
   function evacAsk(c, who) { if (!c || c.kind === 'dm' || c.flags.evac || c.flags.evacAsked || c.closed || c.dismissed) return; c.flags.evacAsked = true; var P = c.people[who] || {};
     card(c, { req: 'evac', by: who, tag: { en: 'Request · ' + (P.name || 'Captain'), pt: 'Pedido · ' + (P.name || 'Chefe') }, tagC: '#B3001B', title: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, body: { en: 'Homes north-east of the fire, in the path of the head', pt: 'Casas a nordeste do incêndio, no caminho da cabeça' },
-      actions: [{ key: 'evacNo', en: 'Not now', pt: 'Agora não' }, { key: 'evac', en: 'Approve', pt: 'Aprovar', primary: true }] }, 1800, 0);
+      actions: [{ key: 'evacNo', en: 'Not yet', pt: 'Ainda não' }, { key: 'evac', en: 'Approve', pt: 'Aprovar', primary: true }] }, 1800, 0);
     if (isLt()) push(c, { kind: 'capt', a: 'evac', ent: c.sEnt }, 6500, 0); }
   function evacDo(c, by) { var us = isUS(c);
       c.flags.evac = true; if (by < 0) mine(c, 'Evacuation order for the homes north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.'); else say(c, by, 'Approved. Evacuation order for the homes north-east of the fire.', 'Aprovado. Ordem de evacuação para as casas a nordeste do incêndio.', 300, 0);
@@ -1324,8 +1324,8 @@
     // (Oct 5, 09:53) the button to tap is the request's primary one (Approve), whatever its place on the card
     var who = m.by != null ? m.by : lead(c, 1), yes = m.actions.filter(function (a) { return a.primary; })[0] || m.actions[0], no = m.actions.filter(function (a) { return a !== yes; })[0], T = m.title || { en: 'this request', pt: 'este pedido' };
     if (m.reqDecl) { var dz = yes.key === 'reqDismiss';
-      if (!n) say(c, who, 'We still need your call. Tap Approve on my request above to ' + (dz ? 'dismiss it' : 'declare the fire') + ', or Not now to keep watching.', 'Ainda precisamos da sua decisão. Toque em Aprovar no meu pedido acima para ' + (dz ? 'o descartar' : 'declarar o incêndio') + ', ou em Agora não para continuar a vigiar.', 800, 2);
-      else say(c, who, 'The drone is still over the point. Your decision, please: Approve or Not now, on the request card above.', 'O drone continua sobre o ponto. A sua decisão, por favor: Aprovar ou Agora não, no cartão do pedido acima.', 800, 3);
+      if (!n) say(c, who, 'We still need your call. Tap Approve on my request above to ' + (dz ? 'dismiss it' : 'declare the fire') + ', or Not yet to keep watching.', 'Ainda precisamos da sua decisão. Toque em Aprovar no meu pedido acima para ' + (dz ? 'o descartar' : 'declarar o incêndio') + ', ou em Ainda não para continuar a vigiar.', 800, 2);
+      else say(c, who, 'The drone is still over the point. Your decision, please: Approve or Not yet, on the request card above.', 'O drone continua sobre o ponto. A sua decisão, por favor: Aprovar ou Ainda não, no cartão do pedido acima.', 800, 3);
       return true; }
     var te = String(T.en).toLowerCase(), tp = String(T.pt).toLowerCase();
     if (!n) say(c, who, 'I still need your approval for ' + te + '. Tap ' + yes.en + ' on my request above' + (no ? ', or ' + no.en + ' if we hold without it.' : '.'),
