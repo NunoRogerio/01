@@ -5,7 +5,7 @@
 // The main screen has its own copy of this behaviour built in; this file is for the other screens.
 (function () {
   if (window.top !== window || /Main\.dc\.html/.test(location.pathname)) return;
-  var DUR = 530, BD = 247,   // the screen's slide, 40% faster (Oct 3, 21:44); the button's move stays as locked
+  var DUR = 350,   /* (Oct 9, 18:27) as quick as the other sliding panels (was 530) */ BD = 247,   // the screen's slide, 40% faster (Oct 3, 21:44); the button's move stays as locked
       EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
   var mode = '', ifr = null, ready = false, btn = null, want = null;
   var css = document.createElement('style');
@@ -14,6 +14,7 @@
        header's other buttons (notifications) sit on the screen's right edge and the title gets the room */
     'html.wf-menuopen [data-wf-burger]:not(.wf-mb){margin-right:calc(var(--wf-w, 390px) - var(--wf-w0, 390px))!important}' +   /* (Oct 9, 17:38) the header button's empty spot gives back exactly the width the screen loses, frame by frame: the notifications and the X never move */   /* (Oct 9, 15:42) folded to the column: the header button keeps its spot (under the column), nothing in the header moves */
     '@property --wf-w{syntax:"<length>";inherits:true;initial-value:390px}' +   /* (Oct 9, 15:50) the screen width can ease, so the content reflows along with the resize */
+    '.wf-mb[data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!important}' +   /* (Oct 9, 18:27) with the settings open, the X is a black round button */
     '.wf-mb{position:absolute;z-index:200;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,0.12);color:#3C3C43;cursor:pointer}';
   (document.head || document.documentElement).appendChild(css);
   document.documentElement.classList.add('wf-menujs');
@@ -104,9 +105,15 @@
     place(); mode = r ? 'rail' : 'open'; through(true); ifr.style.visibility = 'visible'; send(r ? 'openrail' : 'open');
     /* (Oct 9, 17:15) the button stays on top, where it is, and turns into the X as the column comes in; the pill-shaped column starts 32px under it */
     if (btn) { clearTimeout(btn.__zT); btn.style.transition = ''; btn.style.zIndex = ''; btn.setAttribute('data-wf-x', '1'); try { ifr.contentWindow.postMessage({ wfMenu: 'btop', t: Math.round(parseFloat(btn.style.top) || 0) }, location.origin); } catch (e) {} }
-    slide(mode);
+    holdCtl(); slide(mode);
   }
-  function close() {
+  /* (Oct 9, 18:27) the header's other round buttons (notifications) never move while the screen narrows or widens: each frame they are held at the
+     place they had on screen when the motion began (any drift from the reflow is cancelled), until the motion has ended */
+  var holdT = 0; function holdCtl() { var sp = spot(), row = sp && sp.parentElement; if (!row) return; cancelAnimationFrame(holdT);
+    var B = Array.prototype.filter.call(row.querySelectorAll('button, a'), function (b) { return b !== sp && b.offsetWidth; }), x0 = B.map(function (b) { b.style.translate = ''; return b.getBoundingClientRect().left; }), t0 = performance.now();
+    (function f() { B.forEach(function (b, i) { var cur = parseFloat((b.style.translate || '0').split(' ')[0]) || 0, d = x0[i] - (b.getBoundingClientRect().left - cur); b.style.translate = Math.abs(d) < 0.25 ? '' : d.toFixed(2) + 'px 0px'; });
+      if (performance.now() - t0 < DUR + 260) holdT = requestAnimationFrame(f); else B.forEach(function (b) { b.style.translate = ''; }); })(); }
+  function close() { holdCtl();
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(''); through(false);
     /* (Oct 9, 15:42) the screen slides back over the column's X; once it has covered it, the button is the header's menu button again */

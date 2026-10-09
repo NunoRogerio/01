@@ -194,6 +194,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 @media (prefers-reduced-motion: reduce){.wf-tdot,.wf-heli,.wf-heli-t,.wf-rot,.wf-rot2{animation:none}}
 </style>
 <style>
+button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!important}   /* (Oct 9, 18:27) with the settings open, the X is a black round button */
 /* (Oct 9, 17:16) the settings pill is dark grey: its round buttons turn light on dark, the selected one white with a dark icon */
 [data-wf-pill] .opt{background:rgba(255,255,255,0.16)!important;color:#FFFFFF!important;box-shadow:none!important}[data-wf-pill] .opt svg{stroke:currentColor}[data-wf-pill] .opt[aria-current="true"]{background:#FFFFFF!important;color:#1C1C1E!important}
 /* About inside the menu (Oct 3, 22:13): its own header, title, frame size and containers give way to the menu's section structure */
@@ -910,7 +911,7 @@ class Component extends DCLogic {
   // (Oct 4) a panel covers the top bar: notifications, chats (also when they open on arrival from another screen), the list or the full map
   wfTopPanel() { const s = this.state || {}; return (s.ntOpen === undefined ? !!this._ntBoot : !!s.ntOpen) || (s.cbOpen === undefined ? !!this._cbBoot : !!s.cbOpen) || !!s.list || !!s.full; }
   wfBurgerBack() { const vw = (window.__wfVP || {}).w || 390, travel = Math.min(vw, 564) + 32, f = Math.max(0, Math.min(1, (travel - 60) / travel));
-    return Math.round(Math.acos(1 - 2 * f) / Math.PI * 530); }   // the screen's slide (Oct 3, 21:44: 0.53s)
+    return Math.round(Math.acos(1 - 2 * f) / Math.PI * 350); }   // the screen's slide (Oct 3, 21:44: 0.53s)
   /* (Oct 9, 15:50, every profile) the menu button stays as it is in the screen's top bar: the press is the normal round-button pop,
      the screen slides away with its own copy of the button, and the column's X waits underneath at the same spot. No travel, no clack, no morph on screen. */
   wfBurgerClack(to) { try { const b = document.querySelector('button[data-wf-burger]'); if (!b) return; clearTimeout(this._clackT);
@@ -1213,14 +1214,14 @@ class Component extends DCLogic {
               cl.style.pointerEvents = 'none'; cl.style.zIndex = '1'; cl.style.transition = 'none';
               sec.parentNode.insertBefore(cl, sec); if (csc && sc0) csc.scrollTop = sc0.scrollTop;
               // (Oct 3, 20:32) the section being covered darkens 24% (10% + 14%, Oct 3, 21:14), gradually, as the new one slides over it
-              const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .53s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
+              const dim = document.createElement('div'); dim.setAttribute('aria-hidden', 'true'); dim.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s cubic-bezier(.37,0,.63,1)'; cl.appendChild(dim);
               // (Oct 4, 00:01) a push along the icon column: an icon below the open one pushes the new section up from below, one above
               // pushes it down from above; the old section moves out the other way, darkening as it goes
               const ORD = ['profile', 'about', 'share', 'lang', 'look', 'maps', 'chat', 'ds'], dir = ORD.indexOf(k) > ORD.indexOf(pmSec) ? 1 : -1, hh = sec.offsetHeight;
               sec.style.zIndex = '2'; sec.style.transition = 'none'; sec.style.transform = 'translateY(' + (dir * hh) + 'px)';
               // (Oct 3, 21:27) no jump: the slide (and the darkening) start only once the new section has rendered, off to the
               // right, so it never changes or settles while it is moving in
-              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; Promise.all(waits).then(() => { /* (Oct 4, 00:08) no darkening of the previous section */ sec.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateY(0)'; cl.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; cl.style.transform = 'translateY(' + (-dir * hh) + 'px)';
+              go = () => { if (sc0) sc0.scrollTop = 0; void sec.offsetWidth; Promise.all(waits).then(() => { /* (Oct 4, 00:08) no darkening of the previous section */ sec.style.transition = 'transform .35s cubic-bezier(.37,0,.63,1)'; sec.style.transform = 'translateY(0)'; cl.style.transition = 'transform .53s cubic-bezier(.37,0,.63,1)'; cl.style.transform = 'translateY(' + (-dir * hh) + 'px)';
                 setTimeout(() => { try { cl.remove(); sec.style.transition = ''; sec.style.transform = ''; } catch (e) {} }, 590); }); }; } } catch (e) {} }
           this.setState(Object.assign({ pf: true, pm: 'open', pmSec: k }, k === 'chat' ? { chatSet: true, dsOpen: false } : k === 'ds' ? { dsOpen: true, chatSet: false } : {}), () => { if (go) go(); }); };
         const items = ['profile', 'about', 'share', 'lang', 'look', 'maps', 'chat', 'ds'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
@@ -1228,8 +1229,8 @@ class Component extends DCLogic {
           return { gapT: k === 'lang' || k === 'chat' ? '24px' : '0px',   /* (06:38) 40px from button to button between groups (half the earlier space, on the 8 scale) */   /* (Oct 5, 06:31) three groups (profile, about, share | language, appearance, maps | chat, data sources), an empty button's space between them */ dotD: kf ? 'block' : 'none', label: TT[k] + (kf ? (lang === 'pt' ? '. A chave falhou' : '. Key failed') : ''), cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? 'var(--wf-pri-bg, #3A3A3C)' : 'rgba(118,118,128,0.12)', fg: on ? 'var(--wf-pri-fg, #FFFFFF)' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
-        return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.53s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? vw - 60 : rail && this.wfLayout().side ? -60 : 0, cr: open ? 60 : 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
-          dur: boot ? '0s' : (() => { if (pmMode === '' && this._pmPrevMode === 'rail') this._pmSlowUntil = Date.now() + 900; this._pmPrevMode = pmMode; return Date.now() < (this._pmSlowUntil || 0) ? '.74s' : '.53s'; })(),   /* (Oct 4) the screen widening back to full width after the icon column closes: 40% slower (.74s) */   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in
+        return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.35s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? vw - 60 : rail && this.wfLayout().side ? -60 : 0, cr: open ? 60 : 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
+          dur: boot ? '0s' : (() => { if (pmMode === '' && this._pmPrevMode === 'rail') this._pmSlowUntil = Date.now() + 900; this._pmPrevMode = pmMode; return '.35s'; })(),   /* (Oct 9, 18:27) as quick as the other sliding panels */   /* (Oct 4) the screen widening back to full width after the icon column closes: 40% slower (.74s) */   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
           cw: mw - 60, title: TT[pmSec], items,
