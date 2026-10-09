@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791559346"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791560985"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=1791560685"></script>
 <script src="station.js?v=1791550416"></script>
@@ -273,7 +273,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
     <div class="wf-page {{mo.pageCls}}" style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 0 0 48px; background: #F2F2F7; transform: translateY({{downY}}); pointer-events: {{downPE}}; opacity: {{downOp}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
       <!-- The map band: only this candidate, framed on it; a tap or the button opens it full screen -->
-      <div style="position: relative; flex-shrink: 0; height: {{cp.bandH}}px; overflow: hidden">
+      <div data-wf-mapband="1" style="position: relative; flex-shrink: 0; height: {{cp.bandH}}px; overflow: hidden">
         <dc-import name="TerrainMap" on-drone="{{goDrone}}" on-full="{{openMap}}" pin-grow="{{cp.h}}" mode="pin" pin-close="16" start-zoom="3" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{cur.st}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" pin-id="{{cur.id}}" w="390" h="{{cp.bandH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-lift="{{cp.lift}}" pin-x="{{cur.px}}" pin-y="{{cur.py}}" pin-label="{{pinLabel}}" pin-coords="{{cur.coords}}" cams="{{cur.cams}}" zoom="{{cur.zoom}}" focus-x="{{cur.fx}}" focus-y="{{cur.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{cp.attrB}}" hint-size="390px,310px"></dc-import>
         <!-- The projection over the map's foot (Oct 4, 15:20, as on a fire's page): Now (the marker) / +1 h / +3 h / +6 h, the shape it would burn as a fire; dark map-control style, 16px from the map's left, right and bottom edges -->
         <div role="tablist" aria-label="Projection" class="wf-seg" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; display: {{cp.d}}; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
