@@ -121,7 +121,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     /* One dark palette: page #1E1E20, surface #262629, raised #333336, band/fill #3A3A3C; text #E8E8ED, secondary #AEAEB2, tertiary #8E8E93, controls #D1D1D6 */
     // The screens' own style sheets
     o.push('html,body{background:#1E1E20!important;color:#E8E8ED}a{color:#409CFF}');
-    o.push('.segblob{background:var(--wf-y)!important}.segopt[aria-checked=true],.segopt[aria-selected=true]{color:#1C1C1E!important}.segopt[aria-checked=false],.segopt[aria-selected=false]{color:#D1D1D6!important}');   // the accent is the same hi-vis yellow in both themes
+    o.push('.segblob{background:var(--wf-pri-bg)!important}.segopt[aria-checked=true],.segopt[aria-selected=true]{color:var(--wf-pri-fg)!important}.segopt[aria-checked=false],.segopt[aria-selected=false]{color:#D1D1D6!important}');   // the accent is the same hi-vis yellow in both themes
     o.push('.wf-qual{background:#3A3A3C!important;color:#E8E8ED!important}');
     o.push('[role=meter] span[style*="background: #3A3A3C"],.bar[style*="background: #3A3A3C"],.chbar[style*="background: #3A3A3C"]{background:#D1D1D6!important}');   // thin bars read light at night
     o.push('[data-wf-kpicard] path[fill="#3A3A3C"]{fill:#D1D1D6}[data-wf-kpicard] path[stroke="#3A3A3C"],[data-wf-kpicard] svg[stroke="#3A3A3C"]{stroke:#D1D1D6}[data-wf-kpicard] path[stroke="#FFFFFF"]{stroke:#333336}');   // KPI micro charts: the dark grey reads light at night
@@ -184,7 +184,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   '.wf-tabs>.tabbar{position:absolute;z-index:2;bottom:2px;height:8px;min-height:8px;border-radius:4px;background:var(--wf-y,#E5FF00);box-shadow:0 0 0 0.5px rgba(0,0,0,0.12);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform;pointer-events:none}' +
   '.wf-seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:52px;padding:8px;box-sizing:border-box;border-radius:999px;background:rgba(118,118,128,0.12)}' +
   '.wf-seg>.segthumb{position:absolute;top:8px;bottom:8px;left:8px;transition:transform .42s cubic-bezier(.4,0,.2,1) .14s;will-change:transform}' +
-  '.wf-seg>.segthumb>.segblob{position:absolute;inset:0;border-radius:999px;background:var(--wf-y)}' +
+  '.wf-seg>.segthumb>.segblob{position:absolute;inset:0;border-radius:999px;background:var(--wf-y)}.segblob{background:var(--wf-pri-bg)!important}.segopt[aria-checked=true],.segopt[aria-selected=true]{color:var(--wf-pri-fg)!important;-webkit-text-fill-color:var(--wf-pri-fg)}.segopt[aria-checked=true] .wf-segn,.segopt[aria-selected=true] .wf-segn{background:color-mix(in srgb,var(--wf-pri-fg) 22%,transparent)!important}' +
   '.wf-seg .segopt{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;min-width:0;padding:0 4px;border:0;border-radius:999px;background:transparent;font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:#3C3C43;font-weight:400;transition:color .3s ease}' +
   '.wf-seg .segopt[aria-checked=true],.wf-seg .segopt[aria-selected=true]{color:#1C1C1E;font-weight:600}' +   // the switcher of the user preferences, shared by every segmented control in the app
   '*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}input,textarea,select,[contenteditable],[contenteditable] *{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}img,svg{-webkit-user-drag:none}::selection{background:transparent}input::selection,textarea::selection{background:rgba(var(--wf-y-rgb),0.45)}' +   // nothing selects on a long press or drag (map, texts); only text fields do
@@ -213,7 +213,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-title-xs{font-size:16px!important;font-weight:600!important;line-height:20px!important;color:#000000}' +
     // Condensed buttons (compact surfaces such as map tooltips): 32px tall, 16px semibold, same pill and roles
     ':root .wf-b.wf-cond{height:32px!important;min-height:32px!important;font-size:16px!important;line-height:20px!important;padding:0 16px!important}' +
-    /* (Oct 9, 09:05) primary text buttons: dark grey with a white label, whatever the palette (light grey with a dark label in the dark theme) */ ':root .wf-pri,:root .btn.primary,:root .primary,:root .primary.green{background:var(--wf-pri-bg)!important;color:var(--wf-pri-fg)!important;-webkit-text-fill-color:var(--wf-pri-fg);border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
+    /* (Oct 9, 10:50) the selected option of every segmented control (multi-button) wears the primary button: dark grey, white label (light grey, dark label at night); its count circle is its label colour at 22% */ /* (Oct 9, 09:05) primary text buttons: dark grey with a white label, whatever the palette (light grey with a dark label in the dark theme) */ ':root .wf-pri,:root .btn.primary,:root .primary,:root .primary.green{background:var(--wf-pri-bg)!important;color:var(--wf-pri-fg)!important;-webkit-text-fill-color:var(--wf-pri-fg);border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
     ':root .wf-danger{background:rgba(255,59,48,0.09)!important;color:#B0001A!important;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)
@@ -275,7 +275,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     ':root{--wf-mid-grey:#6E6E73;--wf-mid-grey-tint:#636366}' +   // mid grey on white (5.07:1); on grey, tinted or frosted surfaces the darker one (4.5:1 or more)
     '[data-wf-kpicard] [style*="color: #6e6e73" i],[data-wf-kpicard] [style*="color: rgb(110, 110, 115)"],[data-wf-kpicard] .wf-note,.wf-note.wf-note-t{color:var(--wf-mid-grey-tint)!important}' +   // KPI cards can be tinted (grey, orange): their labels, units and notes take the darker grey
     '.wf-tog{box-shadow:inset 0 0 0 1px #8A8A8E!important}' +   // switch tracks, on and off, keep a 3:1 edge
-    '.segblob,.wf-langthumb{box-shadow:inset 0 0 0 1px #3A3A3C}.wf-tabs>.tabbar{box-shadow:inset 0 0 0 1px #3A3A3C}' +   // the selected option is marked by more than the lime
+    '.wf-langthumb{box-shadow:inset 0 0 0 1px #3A3A3C}.wf-tabs>.tabbar{box-shadow:inset 0 0 0 1px #3A3A3C}' +   // the selected option is marked by more than the lime
     '@media (prefers-reduced-motion: reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}.wf-credit>span{animation:none!important}.wf-credit>span:first-child{opacity:1}}';
 
   // ---- Spacing (Oct 3, 18:10): condensed, comfortable (as designed) or spacious ----
