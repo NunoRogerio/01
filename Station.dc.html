@@ -650,7 +650,7 @@ class Component extends DCLogic {
         { key: 'turn', opt: true, sim: true, l: L('Turnout time', 'Tempo de saída'), n: String(2 + H0 % 3), u: 'min', sub: L('Average', 'Média') },
         { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' }])); }
     /* (Oct 8, 22:24) the station badge is a mini card, on by default and first */
-    { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '' }; if (K.url) kAll.unshift({ key: 'crest', l: L('Station badge', 'Emblema do quartel'), img: K.url, n: '', u: '', sub: '' }); }
+    /* (Oct 9, 16:52) no Station badge mini card: the crest is already in the header (removed from the grid and from the cards to add) */
     this._kAll = kAll.map((m) => ({ key: m.key, l: m.l, opt: !!m.opt }));
     const Hk = this.wfHidden();
     /* (Oct 8, 14:04) the nearest fire outside this station's area (not ours, not mutual aid): the captain can ask the station working
