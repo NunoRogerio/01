@@ -585,16 +585,29 @@
   // (Oct 9) one closing card: the team's recommendation carries the checklist and closes the fire itself (no second "Ready to close" card)
   function closeChecks(c) { var ev = (c.flags || {}).evac || c.evac; return [{ en: 'No active edge or hotspots', pt: 'Sem frente ativa nem pontos quentes' }, { en: ev ? 'Evacuation order lifted' : 'No evacuation orders in force', pt: ev ? 'Ordem de evacuação levantada' : 'Sem ordens de evacuação em vigor' }, { en: 'All crews accounted for', pt: 'Todas as equipas contabilizadas' }]; }
   function closeCard(c, rec) { return { rec: true, close: true, to: 7, tag: rec ? { en: 'Team recommends', pt: 'A equipa recomenda' } : { en: 'Ready to close', pt: 'Pronto a encerrar' }, tagC: '#3A3A3C', title: { en: 'Close fire', pt: 'Encerrar incêndio' }, body: { en: REC[7][0], pt: REC[7][1] },
-    checks: closeChecks(c), actions: [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio', primary: true }] }; }
+    checks: closeChecks(c), actions: rec ? [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'close', en: 'Close fire', pt: 'Encerrar incêndio' }] : [{ key: 'close', en: 'Close fire', pt: 'Encerrar incêndio' }] }; }
+  /* (Oct 9, 09:03) the team's recommendation card for the next stage: one open at a time (no duplicates) */
+  function hasOpenRec(c) { return (c.msgs || []).some(function (x) { return x.rec && !x.done; }) || (c.queue || []).some(function (q) { return q.m && q.m.rec; }); }
+  function recCard(c, nx, delay) {
+    var R = REC[nx]; if (!R || hasOpenRec(c)) return;
+    if (nx === 7) { card(c, closeCard(c, true), delay, 0); return; }
+    card(c, { rec: true, to: nx, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
+      actions: [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }] }, delay, 0);   /* (Oct 9, 09:05) Not yet + Move to, as buttons */
+  }
+  // A crew message that says the fire is ready for the next stage always comes with the confirmation card, never only the chip
+  function recFromMsg(c, m) {
+    if (!m || m.kind !== 'msg' || m.from === 'me' || c.closed || c.dismissed || c.kind === 'dm' || isLt()) return;
+    var s = c.stage, nx = s + 1; if (s < 3 || s > 6 || !REC[nx]) return;
+    var t = String(m.en || '') + ' ' + String(m.pt || ''), name = nx === 7 ? /(ready to close|close the fire|prontos a encerrar|encerrar)/i : new RegExp('(ready for|move (it )?to|recommend[a-z]*|prontos para|passar a)[^.]*(' + STAGES[nx].en + '|' + STAGES[nx].pt + ')', 'i');
+    if (name.test(t)) recCard(c, nx, 900);
+  }
   function paceDue(c, s) {
     if (s === 2) { setStage(c, 3, 300, 3); return; }   /* (Oct 8, 22:01) en route: the crews reach the fire within 15 s (field-driven, for everyone) */
     var nx = s + 1, R = REC[nx]; if (!R) return;
     if (isLt()) { captMove(c, nx); return; }
     c.flags['rec' + s] = true;
     say(c, ltOf(c, 0), R[0], R[1], 300, 1);
-    if (nx === 7) { card(c, closeCard(c, true), 1500, 0); return; }
-    card(c, { rec: true, to: nx, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
-      actions: [nx === 7 ? { key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true } : { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt, primary: true }] }, 1500, 0);
+    recCard(c, nx, 1500);
   }
   // the lieutenant's view: the captain (the first station's lead) moves the fire on, or back after a rekindle
   function captMove(c, nx, back) {
@@ -717,6 +730,7 @@
       me('Stepping back to Crews on scene. Hit the rekindle.', 'Voltamos a Equipas no local. Ataquem o reacendimento.');
       setStage(c, 3, 800, 0);
     } else if (a === 'stayStage') {
+      /* (Oct 9, 09:05) not yet: the team asks again ~8 s later */ c.flags['pace' + c.stage + '_' + (c.sEnt || 0)] = false; c.stageAt = Date.now();
       me('Hold the stage. Knock it down and report.', 'Mantemos a fase. Apaguem-no e informem.');
       say(c, ltOf(c, 0), 'Copy. On it.', 'Entendido. Já estamos nisso.', 2200, 2);
     } else if (a === 'closeCheck' || a === 'close') {
@@ -1349,13 +1363,13 @@
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
         else if (m.kind === 'capt' && m.a === 'evac') { if (!c.closed && !c.dismissed && !c.flags.evac) { var ec = c.msgs.find(function (x) { return x.req === 'evac' && !x.done; }); if (ec) ec.done = 'evac'; evacDo(c, 0); } }
         else if (m.kind === 'capt') { if (!c.closed && !c.dismissed && c.sEnt === m.ent && !c.flags.rekindled) { var rc = c.msgs.find(function (x) { return x.rekindle && !x.done; }); if (rc) rc.done = 'back'; captMove(c, 3, true); } }
-        else c.msgs.push(m);
+        else { c.msgs.push(m); recFromMsg(c, m); }
         c.updated = q.due; changed = true;
       }
       /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
-        if (!c.flags[pk] && now - c.stageAt > 15000)   /* (Oct 8, 21:37) 15 s at most per stage */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
+        if (!c.flags[pk] && now - c.stageAt > 8000)   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
       if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;

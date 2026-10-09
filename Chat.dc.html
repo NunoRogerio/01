@@ -16,12 +16,12 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=214"></script>
 <script src="avatar.js?v=12"></script>
-<script src="prefs.js?v=212"></script>
+<script src="prefs.js?v=1791533202"></script>
 <script src="station.js?v=16"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791530186"></script>
-<script src="tour.js?v=117"></script>
+<script src="chat.js?v=1791533202"></script>
+<script src="tour.js?v=1791533202"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=37"></script>
 
@@ -109,16 +109,16 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
         <!-- (Oct 8, 21:45) the incident itself: a round button in the pill's colour with the incident's map marker (a candidate's ring, a fire's orange dot once declared); it opens the incident's page -->
-        <a href="{{hdInc.href}}" class="chbtn" data-round="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: {{hdInc.d}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); text-decoration: none"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="{{hdInc.r}}" fill="{{hdInc.fill}}" stroke="{{hdInc.stroke}}" stroke-width="{{hdInc.sw}}"></circle></svg></a>
+        <!-- (Oct 9, 09:03) removed: the stage band now opens the incident --><a href="{{hdInc.href}}" class="chbtn" data-round="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); text-decoration: none"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="{{hdInc.r}}" fill="{{hdInc.fill}}" stroke="{{hdInc.stroke}}" stroke-width="{{hdInc.sw}}"></circle></svg></a>
         <button type="button" class="chbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 18px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span>{{tm.word}}</button>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <!-- (Oct 4, 23:15) the stage as the fire page's stage tag (icon, stage, time in it on the right); a tap unfolds the times and the next step -->
-      <div style="display: {{c.stateD}}; align-items: stretch; gap: 8px; margin: 0 16px 8px; min-width: 0"><!-- (Oct 7) the structures-at-risk badge anchored to the right of the stage band, as tall as it --><button type="button" class="chrow" data-wf-stband="1" onClick="{{c.tog}}" aria-expanded="{{c.expStr}}" aria-label="{{c.pinAria}}" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: 8px; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
-        <span style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 8px; background: {{c.bg}}; color: {{c.stC}}; font-size: 18px; line-height: 24px; white-space: nowrap; transition: background-color .6s ease">
+      <div style="display: {{c.stateD}}; align-items: stretch; gap: 8px; margin: 0 16px 8px; min-width: 0"><!-- (Oct 7) the structures-at-risk badge anchored to the right of the stage band, as tall as it --><!-- (Oct 9, 09:03) the stage band is the way into the incident's page (a blade over the chat); stages move from the chat's cards and chips --><button type="button" class="chrow" data-wf-stband="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: 8px; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+        <span style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 52px; padding: 0 16px; box-sizing: border-box; border-radius: 8px; background: {{c.bg}}; color: {{c.stC}}; font-size: 18px; line-height: 24px; white-space: nowrap; transition: background-color .6s ease">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{c.ic.d}}"></path></svg>
           <span style="min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 600">{{c.st}}</span>
-          <span style="display: {{c.forD}}; flex-shrink: 0; margin-left: auto; font-weight: 400; font-variant-numeric: tabular-nums">{{c.forT}}</span>
+          <span style="display: {{c.forD}}; flex-shrink: 0; margin-left: auto; font-weight: 400; font-variant-numeric: tabular-nums">{{c.forT}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-left: {{c.arML}}"><path d="m9 6 6 6-6 6"></path></svg>
         </span>
         <span style="display: grid; grid-template-rows: {{c.tmRows}}; width: 100%; margin-top: {{c.tmMt}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), margin-top .4s cubic-bezier(.2,.8,.2,1)"><span style="min-height: 0; overflow: hidden; border-radius: 8px; background: {{c.bg}}">
         <span style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; padding: 16px 16px {{c.tmPb}}; box-sizing: border-box">
@@ -270,7 +270,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- (Oct 7) Suggestions: one line only, scrolling sideways (no scrollbar); the chips that change the fire's status come first -->
       <div class="wf-chips" style="display: {{actD}}; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 0 16px; scroll-padding: 0 16px; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none">
         <sc-for list="{{acts}}" as="a" hint-placeholder-count="3">
-          <button type="button" class="chbtn" onClick="{{a.go}}" style="display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.chBg}}; color: {{a.chFg}}; font: inherit; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true" style="display: {{a.stD}}; flex-shrink: 0"><circle cx="4" cy="7" r="3.5" fill="currentColor"></circle><path d="M9 7h11M15.5 2.5 20 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{a.label}}</button>
+          <button type="button" class="chbtn" onClick="{{a.go}}" style="position: {{a.pos}}; left: {{a.left}}; z-index: {{a.z}}; box-shadow: {{a.mask}}; display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: {{a.chBg}}; color: {{a.chFg}}; font: inherit; font-size: 16px; font-weight: 600; white-space: nowrap; cursor: pointer"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true" style="display: {{a.stD}}; flex-shrink: 0"><circle cx="4" cy="7" r="3.5" fill="currentColor"></circle><path d="M9 7h11M15.5 2.5 20 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{a.label}}</button>
         </sc-for>
       </div>
     </div>
@@ -989,11 +989,11 @@ class Component extends DCLogic {
         const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
           const done = !!m.done, P = PAST[a.key];
           return { label: done && P ? L(P[0], P[1]) : L(a.en, a.pt), dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
-            ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
+            ...(() => { const pri = a.key === 'close' && !m.rec, gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo');   /* (Oct 4, 23:27) only closing the fire is primary (Oct 9: not on the team's closing card, secondary like Move to); every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
               /* (Oct 8, 22:39) decided: the button is no longer a button (no action, no press) and wears the card's header band colour, its text the header's ink */
               if (done) return { cls: '', bg: tone(Hd).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', w: 600, pe: 'none' };
-              return { cls: pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? (window.__wfY || '#E5FF00') : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? '#1C1C1E' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600, pe: 'auto' }; })(),
+              return { cls: pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? 'var(--wf-pri-bg, #3A3A3C)' : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? 'var(--wf-pri-fg, #FFFFFF)' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600, pe: 'auto' }; })(),
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;
@@ -1018,9 +1018,9 @@ class Component extends DCLogic {
             return { hasEv: true, title: L('Evidence', 'Evidências'), bodyD: 'none', evSrc: E.video, evLive: live, evAria: L('Drone feed. Open', 'Imagem do drone. Abrir'), evNote: L('* Simulation', '* Simulação'),
               evRows: E.rows.map((r) => ({ a: T(r.a), b: T(r.b) + (r.sim ? ' *' : '') })),
               evOpen: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const F = window.__wfCamFeed; if (F) F.open({ anchor: e && e.currentTarget, src: E.video, cross: true, title: 'Drone feed', label: live, who: E.from ? L('Sent automatically from ' + E.from, 'Enviado automaticamente de ' + E.from) : '' }); } }; })(),
-          hasActions: acts.length > 0 && (!c.closed || !!m.done) && !(m.rec && !m.done), actions: acts,
+          hasActions: acts.length > 0 && (!c.closed || !!m.done) && true, actions: acts,
           /* (Oct 9) a team recommendation moves on with a light round arrow button at the card's bottom right, not a big grey button; once chosen, the usual past-tense band */
-          hasRound: !!(m.rec && !m.done && acts.length && !c.closed),
+          hasRound: false,   /* (Oct 9, 09:05) the round arrow is back to Not yet + Move to buttons */
           /* (Oct 9) a list (stations, checklist) sits 32px above the button that follows it */ rowsPb: acts.length && (!c.closed || !!m.done) ? '24px' : '0', checksPb: acts.length && (!c.closed || !!m.done) ? '32px' : '16px', roundGo: acts.length ? acts[0].go : null, roundAria: acts.length ? acts[0].label : '',
           /* (Oct 9) closing the fire: the same round arrow, in the dark grey */ roundBg: m.close ? 'rgb(58, 58, 60)' : 'rgba(118,118,128,0.12)', roundFg: m.close ? '#FFFFFF' : '#3C3C43', actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
@@ -1037,7 +1037,7 @@ class Component extends DCLogic {
     const ty = C.typing(c);
     // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)
     const nxS = C.STAGES[Math.min(c.stage + 1, C.STAGES.length - 1)], nxT = nxS ? tone(nxS) : null;
-    const acts0 = (LEAD ? [] : C.actions(c)).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-y, #E5FF00)', chFg: '#1C1C1E' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
+    const acts0 = (LEAD ? [] : C.actions(c)).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-pri-bg, #3A3A3C)', chFg: 'var(--wf-pri-fg, #FFFFFF)' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
     go: () => run(a.key), p1: ['next', 'closeCheck', 'confirm', 'dismiss', 'dispatch'].indexOf(a.key) >= 0 }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
     /* (Oct 8, 22:52) a conversation with another station is a To do item: Mark as done (asks first) moves it to Resolved */
     if (C.mutualOpen && C.mutualOpen(c)) acts0.unshift({ label: L('Mark as done', 'Marcar como feito'), go: () => { if (!window.__wfConfirm) { C.markDone(c.key); return; }
@@ -1132,8 +1132,8 @@ class Component extends DCLogic {
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + c.place, sub: c.kind === 'dm' ? c.reg : B ? benchTxt : [c.reg, c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')].filter(Boolean).join(' · '),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
-          return { forT: d ? L('for ', 'há ') + d : '', forD: d ? 'inline' : 'none', ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
-        ...(() => { const ex = !!s.stEx; return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-8px', tmPb: '16px',
+          return { forT: d ? L('for ', 'há ') + d : '', forD: d ? 'inline' : 'none', arML: d ? '0' : 'auto', ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
+        ...(() => { const ex = false;   /* (Oct 9, 09:03) the band no longer unfolds: it opens the incident */ return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-8px', tmPb: '16px',
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
           /* (Oct 8, 19:10, app-wide) the stages the field drives are never moved by hand: Ongoing starts when the crews leave on the
              order, Crews on scene when they arrive and say so; the captain moves only the stages he decides. The lieutenant moves none. */
@@ -1148,7 +1148,10 @@ class Component extends DCLogic {
         ttlGo: (e) => { if (e && e.preventDefault) e.preventDefault(); try { if (!!c.closed && !c.dismissed && c.stage === 7 && C.snapAssigned) C.snapAssigned(); } catch (x) {} if (window.__wfHome) window.__wfHome(); else window.location.href = 'Main.dc.html'; } },
       typing: !!ty, typingTxt: ty ? ty.name + L(' is typing…', ' está a escrever…') : '',
       avt: (() => { const P0 = s.avPos || { x: 16, y: 0, below: false }, on = !!s.avTip; return { x: P0.x, y: P0.y, dy: (P0.below ? '0%' : '-100%') + (on ? '' : ''), op: on ? 1 : 0, name: s.avName || '', role: s.avRole || '' }; })(),
-      acts: acts.map((a) => ({ ...a, stD: a.stD || 'none', chBg: a.chBg || 'rgba(255,255,255,0.7)', chFg: a.chFg || '#1C1C1E' })), actD: acts.length ? 'flex' : 'none', 
+      /* (Oct 9, 09:03) the stage chip (moves the fire on) stays fixed on the left; the other chips scroll under it */
+      acts: acts.map((a) => { const st = a.stD === 'inline', pg = DK ? '#1C1C1E' : 'var(--wf-page, #F2F2F7)';
+        return { ...a, stD: a.stD || 'none', chFg: a.chFg || '#1C1C1E', pos: st ? 'sticky' : 'relative', left: st ? '16px' : '0', z: st ? 2 : 1, mask: st ? '-16px 0 0 0 ' + pg + ', 8px 0 0 0 ' + pg : 'none',
+          chBg: st ? 'linear-gradient(' + (a.chBg || 'rgba(255,255,255,0.7)') + ', ' + (a.chBg || 'rgba(255,255,255,0.7)') + '), ' + pg : (a.chBg || 'rgba(255,255,255,0.7)') }; }), actD: acts.length ? 'flex' : 'none', 
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? (window.__wfY || '#E5FF00') : '#E5E5EA', sendOp: (s.draft || '').trim() ? 1 : 0.3, sendDis: (s.draft || '').trim() ? 'false' : 'true',
       onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }, sendNow: send,
       // (Oct 3, 22:51) pull a coordinator's live helmet camera from the chat, like the fire screen's camera button: from another

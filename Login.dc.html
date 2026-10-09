@@ -34,7 +34,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
 .opt:active{background-color:#E5E5EA}
 @media (hover:hover){.opt:hover{background-color:#F2F2F7}}
 .go{transition:background-color .15s ease}
-@media (hover:hover){.go:hover{background:#E2F74D}}
+@media (hover:hover){.go:hover{background:#2C2C2E}}
 .go:active{background:#C3DE12}
 .pw::placeholder{color:#3A3A3C}
 .pw:disabled::placeholder,.pw.off::placeholder{color:#77777C;-webkit-text-fill-color:#77777C}
@@ -87,7 +87,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
 
     <!-- Log in has a fixed place: 24px under the chosen profile card (or under the hint before one is chosen), 48px above the text block -->
     <div aria-hidden="true" style="flex: 0 0 auto; height: 24px"></div>
-    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 18px; font-weight: 600; text-decoration: none">Log in</a>
+    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font-size: 18px; font-weight: 600; text-decoration: none">Log in</a>
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 18px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 0 0 auto; height: 48px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">
@@ -184,7 +184,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
             <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 16px; border-radius: 12px; background: rgba(var(--wf-y-rgb), 0.16)">
               <span style="flex-grow: 1; min-width: 0; font-size: 16px; line-height: 20px; color: #1C1C1E">{{f.askTxt}}</span>
               <button type="button" onClick="{{f.no}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.14); color: #1C1C1E; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">{{f.noLbl}}</button>
-              <button type="button" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
+              <button type="button" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
             </div>
           </div>
         </sc-for>

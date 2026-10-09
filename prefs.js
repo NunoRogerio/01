@@ -133,7 +133,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     o.push('html:root .wf-note{color:#AEAEB2!important}');
     o.push('.wf-rm{background:rgba(255,69,58,0.10)!important;color:#FF8A80!important;-webkit-text-fill-color:#FF8A80!important}');   // Remove: red tint with red text, 5:1 at night too
     o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-tabs::before{background:#3A3A3C}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
-    o.push('html:root{--wf-band-solid:#3A3A3C;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.15)!important;color:#FF8A80!important}');
+    o.push('html:root{--wf-pri-bg:#E5E5EA;--wf-pri-fg:#1C1C1E;--wf-band-solid:#3A3A3C;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.15)!important;color:#FF8A80!important}');
     o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
@@ -201,7 +201,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}.wf-dlg-acts.wf-stack{grid-template-columns:1fr}.wf-dlg-acts.wf-stack>*:last-child{order:-1}' +
     // dialogs: 24px around the content, plus 48px clear of the home indicator
     '.seg{transition:left .42s cubic-bezier(.4,0,.2,1) .14s,width .42s cubic-bezier(.4,0,.2,1) .14s!important}' +
-    ':root{--wf-sec-bg:#737376;--wf-sec-fg:#FFFFFF;--wf-dis-bg:rgba(115,115,118,0.5);--wf-dis-fg:rgba(255,255,255,0.9);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#3A3A3C}' +
+    ':root{--wf-pri-bg:#3A3A3C;--wf-pri-fg:#FFFFFF;--wf-sec-bg:#737376;--wf-sec-fg:#FFFFFF;--wf-dis-bg:rgba(115,115,118,0.5);--wf-dis-fg:rgba(255,255,255,0.9);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#3A3A3C}' +
     ':root .wf-sec,:root .ghost:not(.round){background:var(--wf-sec-bg)!important;color:var(--wf-sec-fg)!important;border-color:transparent!important}' +
     /* Disabled buttons: the secondary formula, faded (grey and its white label both see-through), so nothing disabled looks like a lime action */ ':root .wf-dis,:root .wf-sec:disabled,:root .wf-sec[aria-disabled="true"],:root .wf-pri:disabled,:root .wf-pri[aria-disabled="true"],:root .btn.primary:disabled,:root .btn.primary[aria-disabled="true"],:root .wf-b:disabled,:root button[aria-disabled="true"][style*="background: var(--wf-y)"]{background:var(--wf-dis-bg)!important;color:var(--wf-dis-fg)!important;-webkit-text-fill-color:var(--wf-dis-fg)!important;box-shadow:none!important;opacity:1!important;cursor:default!important;pointer-events:none}' +
     /* Subtle button (.wf-ter, formerly tertiary): full width inside its container with 16px padding all round */ ':root .wf-ter{background:var(--wf-ter-bg)!important;color:var(--wf-ter-fg)!important;-webkit-text-fill-color:var(--wf-ter-fg);text-shadow:none;border-color:transparent!important}' +
@@ -213,7 +213,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     '.wf-title-xs{font-size:16px!important;font-weight:600!important;line-height:20px!important;color:#000000}' +
     // Condensed buttons (compact surfaces such as map tooltips): 32px tall, 16px semibold, same pill and roles
     ':root .wf-b.wf-cond{height:32px!important;min-height:32px!important;font-size:16px!important;line-height:20px!important;padding:0 16px!important}' +
-    ':root .wf-pri,:root .btn.primary{background:var(--wf-y)!important;color:#1C1C1E!important;-webkit-text-fill-color:#1C1C1E;border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
+    /* (Oct 9, 09:05) primary text buttons: dark grey with a white label, whatever the palette (light grey with a dark label in the dark theme) */ ':root .wf-pri,:root .btn.primary,:root .primary,:root .primary.green{background:var(--wf-pri-bg)!important;color:var(--wf-pri-fg)!important;-webkit-text-fill-color:var(--wf-pri-fg);border-color:transparent!important;box-shadow:none!important;animation:none!important}' +
     ':root .wf-danger{background:rgba(255,59,48,0.09)!important;color:#B0001A!important;border-color:transparent!important}' +
     ':root .wf-thumb{background:#FFFFFF!important}' +
     // A likelihood KPI: very big, dark grey (fixed size, whatever the text-size setting)

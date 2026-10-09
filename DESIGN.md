@@ -71,7 +71,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 ## 3. Colour and themes
 
-- **Accent:** the primary lime (`--wf-y`), used for the primary button, the switcher thumb and selection.
+- **Accent:** the primary lime (`--wf-y`), used for the switcher thumb, selection and round icon buttons such as Send (no longer for primary text buttons, which are dark grey since Oct 9).
 - **Dark theme:**
   - balanced contrast, never pure white on near-black;
   - every inline colour has a dark mapping in `prefs.js` (`darkCss`), and a new colour needs one too;
@@ -84,7 +84,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 | Class | Look | Notes |
 |---|---|---|
-| `.wf-pri` (primary) | Lime, no outline | 48px tall |
+| `.wf-pri` (primary) | Dark grey #3A3A3C with a white label, whatever the palette (Oct 9, 09:05; was lime); dark theme light grey #E5E5EA with a dark label | 48px tall |
 | `.wf-sec` (secondary) | Reflective mid grey (#636366) with a white label (6:1 contrast); dark theme #5A5A5E with a light label | 48px tall; quieter than the primary so the two can't be confused |
 | `.wf-ter` (subtle) | Faint lime | Full width inside its container, with 16px padding all round |
 | `.wf-cond` (condensed) | 32px tall | For compact surfaces (tooltips) |
@@ -1475,3 +1475,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Map likelihood % only close up (Oct 9, supersedes the 300%/24-markers threshold):** the % tags beside candidate markers show only when the map is zoomed 400% or more of its region's view AND shows at most about 70 km across (0.75° of longitude), the same real distance in every region; a country-wide base (United States) zoomed in to state level never shows them. Decided by zoom alone, so panning never makes them blink.
 - **List to button in chat cards (Oct 9):** a list inside a card (the stations of a First alert card, the closing checklist) sits 32px above the button that follows it.
 - **Waiting cards never get lost (Oct 9, 08:58):** a chat card waiting for my answer (a request to approve, a recommendation, a dispatch to configure) that scrolls up past the top of the chat collapses to its header and sticks to the top of the chat, on the chat surface (above the scroll fade, nothing peeking between), with a down chevron. Several stack in order, oldest on top, 8px apart, as many as there are. Scrolling back down to a card, or tapping its header, brings the whole card back with its options; once answered it no longer sticks.
+- **Chat stage flow (Oct 9, 09:05):** whenever the crew says the fire is ready for the next stage, a Team recommends card comes with it (never only the chip), with Not yet (ghost) and Move to / Close fire (secondary); Not yet asks again ~8 s later. The demo offers a new stage card every ~8 s. The stage chip stays fixed on the left of the suggestions row and the others scroll under it. The stage band at the top (52px tall, a right chevron) opens the incident's page in a blade over the chat; it no longer moves the stage, and the round incident-marker button beside the team pill is gone.
