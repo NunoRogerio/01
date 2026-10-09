@@ -1095,11 +1095,11 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   }
   window.__wfHomesAlert = function (o) {
     if (docking) return;
-    if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
+    if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(-16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
     css(); tap = o.go; ack = o.ack; var PT = window.__wfLang === 'pt';
-    var off = document.getElementById('wf-offer'), bot = 32 + (off && off.offsetHeight ? off.offsetHeight + 16 : 0);
+    var off = null, bot = 0;
     if (!el) { el = document.createElement('div'); el.id = 'wf-homes'; el.className = 'wf-glass'; el.setAttribute('role', 'alert');
-      el.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), bottom .4s ease; -webkit-user-select: none; user-select: none';
+      el.style.cssText = 'position: fixed; left: 16px; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 8px); z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 80px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(-16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), top .4s ease; -webkit-user-select: none; user-select: none';
       el.style.touchAction = 'none'; el.style.cursor = 'grab'; drag(el);
       el.addEventListener('click', function (e) { if (el && el.__moved) { el.__moved = false; return; } try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
         if (e.target.closest('[data-hm-ack]')) { dock(); return; }   /* OK: into the badge's place too */
@@ -1107,13 +1107,16 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
       document.body.appendChild(el);
       if (pull && pull.on) { var e1 = el; e1.style.transition = 'none'; e1.style.opacity = '1'; e1.style.transform = 'scale(.4)'; e1.style.transformOrigin = '34px 50%'; requestAnimationFrame(function () { e1.style.transition = 'opacity .4s ease, transform .35s cubic-bezier(.2,.8,.2,1), bottom .4s ease'; e1.style.transform = 'none'; }); }
       else requestAnimationFrame(function () { requestAnimationFrame(function () { if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0px)'; } }); }); }
-    el.style.bottom = bot + 'px';
+
     var s = o.title + '|' + o.sub; if (s !== sig0) { sig0 = s;
       el.innerHTML = '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span role="button" tabindex="0" aria-label="' + (o.title + '. ' + o.sub).replace(/"/g, '&quot;') + '" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; cursor: pointer"><span style="font-size: 18px; font-weight: 600; line-height: 24px">' + o.title + '</span>' + (o.sub ? '<span style="font-size: 16px; font-weight: 400; line-height: 20px; color: var(--wf-ink2, rgb(84, 84, 88))">' + o.sub + '</span>' : '') + '</span>' +
         '<button type="button" class="btn wf-hmok" data-hm-ack style="flex-shrink: 0; padding: 0 16px; border: 0; font: inherit; cursor: pointer; background: rgb(215, 0, 21) !important; color: rgb(255, 255, 255) !important; -webkit-text-fill-color: rgb(255, 255, 255)">' + 'OK' + '</button>'; }
     if (pull && pull.on && pull.cx != null && el.__to) el.__to(pull.cx, pull.cy); };
   /* (Oct 8, 23:32) the all-clear and the floating notes float like the structures warning: drag them anywhere (not by a
      button), throw them and they glide to a stop, kept 8px inside the screen; they never dock */
+  /* (Oct 9, 13:19) every floating notification (houses at risk, houses safe, someone joined, dispatch) sits at the top of the screen,
+     8px under the status bar, 80px tall at least; several stack downwards, 8px apart, and they drop in from the top */
+  function TOPOFF(me) { var h = 0; ['wf-homes', 'wf-homes-safe'].forEach(function (id) { var e = document.getElementById(id); if (e && e !== me && e.offsetHeight) h += e.offsetHeight + 8; }); return h; }
   function floaty(p, onHold) { var st = null, fl = 0, dx = 0, dy = 0;
     var clamp = function () { p.style.translate = '0px 0px'; var r = p.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
       dx = Math.min(W - 8 - r.right, Math.max(8 - r.left, dx)); dy = Math.min(H - 8 - r.bottom, Math.max(8 - r.top, dy)); p.style.translate = dx + 'px ' + dy + 'px'; };
@@ -1127,23 +1130,22 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     p.addEventListener('pointerup', up); p.addEventListener('pointercancel', up); }
   /* (Oct 8, 23:30) a floating note, the same glass card as the structures warning, that goes by itself after 3 s (someone joined) */
   window.__wfFloatNote = function (o) { if (!o) return; var w = document.createElement('div'); w.className = 'wf-glass wf-fnote'; w.setAttribute('role', 'status');
-    var low = document.getElementById('wf-homes') || document.getElementById('wf-homes-safe'), bot = 32 + (low ? low.offsetHeight + 8 : 0);
-    w.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: ' + bot + 'px; z-index: 411; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1); -webkit-user-select: none; user-select: none';
+    w.style.cssText = 'position: fixed; left: 16px; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 8px + ' + TOPOFF() + 'px); z-index: 411; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 80px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(-16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1); -webkit-user-select: none; user-select: none';
     var esc = function (t) { return String(t || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
     w.innerHTML = '<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true" style="flex-shrink: 0"><circle cx="18" cy="18" r="16" fill="rgb(28, 28, 30)"></circle><path d="M15 17a3.6 3.6 0 1 0 0-7.2a3.6 3.6 0 0 0 0 7.2Z M8.5 26a6.5 6.5 0 0 1 13 0 M25 12v7 M21.5 15.5h7" fill="none" stroke="rgb(255, 255, 255)" stroke-width="2" stroke-linecap="round"></path></svg>' +
       '<span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0"><b style="font-size: 18px; line-height: 24px; font-weight: 600">' + esc(o.title) + '</b>' + (o.sub ? '<span style="font-size: 16px; line-height: 20px">' + esc(o.sub) + '</span>' : '') + '</span>';
     document.body.appendChild(w); requestAnimationFrame(function () { requestAnimationFrame(function () { w.style.opacity = '1'; w.style.transform = 'translateY(0px)'; }); });
     try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) {}
-    var held = false, due = Date.now() + 3000, go = function () { if (held || Date.now() < due) return; clearInterval(tk); w.style.opacity = '0'; w.style.transform = 'translateY(16px)'; setTimeout(function () { w.remove(); }, 450); }, tk = setInterval(go, 200);
+    var held = false, due = Date.now() + 3000, go = function () { if (held || Date.now() < due) return; clearInterval(tk); w.style.opacity = '0'; w.style.transform = 'translateY(-16px)'; setTimeout(function () { w.remove(); }, 450); }, tk = setInterval(go, 200);
     floaty(w, function (h) { held = h; if (!h) due = Math.max(due, Date.now() + 1200); }); };   /* held, it waits; let go, it leaves a moment later */
   /* (Oct 8, 23:04) the all-clear: once the fire is being controlled, the same floating card in green, a round check instead of
      the triangle, "Structures are now safe" and a green OK; shown once per fire (kept on this phone) */
   var safeEl = null, safeId = '';
   window.__wfHomesSafe = function (o) { var seen = {}; try { seen = JSON.parse(localStorage.getItem('wf-homes-safe') || '{}') || {}; } catch (x) {}
-    if (!o || seen[o.id]) { if (safeEl) { var e0 = safeEl; safeEl = null; safeId = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
+    if (!o || seen[o.id]) { if (safeEl) { var e0 = safeEl; safeEl = null; safeId = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(-16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
     if (safeEl && safeId === o.id) return; if (safeEl) safeEl.remove(); safeId = o.id;
     var w = safeEl = document.createElement('div'); w.id = 'wf-homes-safe'; w.className = 'wf-glass'; w.setAttribute('role', 'status');
-    w.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: 32px; z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 64px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1); -webkit-user-select: none; user-select: none';
+    w.style.cssText = 'position: fixed; left: 16px; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 8px + ' + TOPOFF() + 'px); z-index: 410; max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 16px; box-sizing: border-box; min-height: 80px; padding: 16px; border-radius: 16px; color: var(--wf-ink, rgb(28, 28, 30)); opacity: 0; transform: translateY(-16px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1); -webkit-user-select: none; user-select: none';
     var esc = function (t) { return String(t || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
     w.innerHTML = '<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true" style="flex-shrink: 0"><circle cx="18" cy="18" r="16" fill="rgb(36, 138, 61)"></circle><path d="M10.5 18.5l5 5L26 13" fill="none" stroke="rgb(255, 255, 255)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>' +
       '<span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0"><b style="font-size: 18px; line-height: 24px; font-weight: 600">' + esc(o.title) + '</b>' + (o.sub ? '<span style="font-size: 16px; line-height: 20px">' + esc(o.sub) + '</span>' : '') + '</span>' +

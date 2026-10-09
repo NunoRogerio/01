@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791543705"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791548424"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=1791544573"></script>
 <script src="station.js?v=1791540669"></script>
@@ -1103,7 +1103,7 @@ class Component extends DCLogic {
     const ty = C.typing(c);
     // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)
     const nxS = C.STAGES[Math.min(c.stage + 1, C.STAGES.length - 1)], nxT = nxS ? tone(nxS) : null;
-    const acts0 = (LEAD ? [] : C.actions(c)).map((a) => ({ label: L(a.en, a.pt), stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-pri-bg, #3A3A3C)', chFg: 'var(--wf-pri-fg, #FFFFFF)' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
+    const acts0 = (LEAD ? [] : C.actions(c)).map((a) => ({ label: a.key === 'next' ? L(String(a.en).replace(/^Move to /, 'To '), String(a.pt).replace(/^Passar a /, 'Para ')) : L(a.en, a.pt),   /* (Oct 9, 13:20) the stage chip drops "Move": its arrow icon says it ("•→ To Concluding") */ stD: a.key === 'next' || a.key === 'closeCheck' ? 'inline' : 'none', ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-pri-bg, #3A3A3C)', chFg: 'var(--wf-pri-fg, #FFFFFF)' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
     go: () => run(a.key), p1: ['next', 'closeCheck', 'confirm', 'dismiss', 'dispatch'].indexOf(a.key) >= 0 }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
     /* (Oct 8, 22:52) a conversation with another station is a To do item: Mark as done (asks first) moves it to Resolved */
     if (C.mutualOpen && C.mutualOpen(c)) acts0.unshift({ label: L('Mark as done', 'Marcar como feito'), go: () => { if (!window.__wfConfirm) { C.markDone(c.key); return; }
