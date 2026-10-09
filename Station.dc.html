@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<style id="wf-bg0">html,body{background:#F2F2F7}.wf-darkhdr,.wf-darkhdr h1{color:#FFFFFF!important}.wf-darkhdr h1{-webkit-text-fill-color:#FFFFFF}.wf-darkhdr h1+span,.wf-darkhdr [style*="color: #000000"],.wf-darkhdr [style*="color: rgb(0, 0, 0)"]{color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF}.wf-darkhdr .mbtn,.wf-darkhdr .opt,.wf-darkhdr [data-wf-burger]{background:rgba(255,255,255,0.16)!important;color:#FFFFFF!important}.wf-darkhdr [data-wf-burger] *{stroke:#FFFFFF}html:not(.wf-rail):not(.wf-menuopen) .wf-mb{background:rgba(255,255,255,0.16)!important;color:#FFFFFF!important}.wf-darkhdr .wf-nbadge{background:#FFFFFF!important;color:#1C1C1E!important}.wf-darkhdr .mbtn svg,.wf-darkhdr .opt svg{color:#FFFFFF;stroke:currentColor}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
+<style id="wf-bg0">html,body{background:#F2F2F7}.wf-darkhdr,.wf-darkhdr h1{color:#FFFFFF!important}.wf-darkhdr h1{-webkit-text-fill-color:#FFFFFF}.wf-darkhdr h1+span,.wf-darkhdr [style*="color: #000000"],.wf-darkhdr [style*="color: rgb(0, 0, 0)"]{color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF}.wf-darkhdr .mbtn,.wf-darkhdr .opt,.wf-darkhdr [data-wf-burger]{background:rgba(255,255,255,0.16)!important;color:#FFFFFF!important}.wf-darkhdr [data-wf-burger] *{stroke:#FFFFFF}.wf-darkhdr .wf-nbadge{background:#FFFFFF!important;color:#1C1C1E!important}.wf-darkhdr .mbtn svg,.wf-darkhdr .opt svg{color:#FFFFFF;stroke:currentColor}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -50,8 +50,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- Same fixed header as a fire or an ignition: the station, the level above, the kind band with its state tag -->
   <!-- (Oct 9, 13:11, trial) the station header on the app's dark grey, its text and round buttons inverted -->
-  <div data-wf-keepsp="1" class="wf-darkhdr" style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 24px; background: rgb(142, 142, 147); box-shadow: 0 0 16px rgba(0,0,0,0.08)">
-    <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: rgb(142, 142, 147)"></span>
+  <div data-wf-keepsp="1" style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 24px; background: rgb(242, 242, 247); border-bottom: 1px solid rgb(209, 209, 214)">
+    <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: rgb(242, 242, 247)"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
     <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
