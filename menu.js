@@ -9,7 +9,7 @@
       EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
   var mode = '', ifr = null, ready = false, btn = null, want = null;
   var css = document.createElement('style');
-  css.textContent = 'html.wf-menujs:not(.wf-menuopen) [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +   /* (Oct 9, 15:42) while the menu shows, the screen's own menu button stays put in its header and the column covers it */
+  css.textContent = 'html.wf-menujs [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +   /* (Oct 9, 17:15) the floating button is the one that shows, menu open or not */   /* (Oct 9, 15:42) while the menu shows, the screen's own menu button stays put in its header and the column covers it */
     /* (Oct 8, 17:50) folded to the icon column, the menu's button lives in the column: its empty spot in the header closes, so the
        header's other buttons (notifications) sit on the screen's right edge and the title gets the room */
     'html.wf-rail [data-wf-burger]:not(.wf-mb){margin-right:-60px!important}' +   /* (Oct 9, 15:42) folded to the column: the header button keeps its spot (under the column), nothing in the header moves */
@@ -102,17 +102,15 @@
     var r = false; try { r = !!(window.__wfMine && window.__wfMine()); } catch (e) {}
     document.documentElement.classList.add('wf-menuopen');   /* (Oct 9, 13:27) the button is in the menu's column: screens style it for the column, not their header */
     place(); mode = r ? 'rail' : 'open'; through(true); ifr.style.visibility = 'visible'; send(r ? 'openrail' : 'open');
-    /* (Oct 9, 15:42) no travel, no morph on screen: the column's X waits under the screen at the button's spot and is uncovered as the screen slides away */
-    if (btn) { clearTimeout(btn.__zT); btn.style.transition = ''; btn.style.zIndex = '-1'; btn.setAttribute('data-wf-x', '1');
-      /* (Oct 9, 15:47) the press the person just gave carries on in the header's own button: the normal round-button pop, as on the notifications button */
-      var sp = spot(), pop = btn.__wfPop; if (sp && sp.animate && pop) { var k = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop')) || 1.3, t0 = pop.currentTime || 0; try { pop.cancel(); var a = sp.animate([{ scale: '1', easing: 'cubic-bezier(.2,.9,.3,1)' }, { scale: String(k), offset: 0.18, easing: 'cubic-bezier(.4,0,.2,1)' }, { scale: '1' }], { duration: 480 }); a.currentTime = t0; } catch (e) {} } }
+    /* (Oct 9, 17:15) the button stays on top, where it is, and turns into the X as the column comes in; the pill-shaped column starts 32px under it */
+    if (btn) { clearTimeout(btn.__zT); btn.style.transition = ''; btn.style.zIndex = ''; btn.setAttribute('data-wf-x', '1'); try { ifr.contentWindow.postMessage({ wfMenu: 'btop', t: Math.round(parseFloat(btn.style.top) || 0) }, location.origin); } catch (e) {} }
     slide(mode);
   }
   function close() {
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(''); through(false);
     /* (Oct 9, 15:42) the screen slides back over the column's X; once it has covered it, the button is the header's menu button again */
-    if (btn) { clearTimeout(btn.__zT); btn.__zT = setTimeout(function () { if (mode) return; btn.removeAttribute('data-wf-x'); btn.__zT = setTimeout(function () { if (mode) return; btn.style.zIndex = ''; document.documentElement.classList.remove('wf-menuopen'); place(); }, 450); }, DUR + 20); }   /* the X turns back to lines while still under the screen, unseen */
+    if (btn) { clearTimeout(btn.__zT); btn.removeAttribute('data-wf-x'); btn.__zT = setTimeout(function () { if (mode) return; document.documentElement.classList.remove('wf-menuopen'); place(); }, DUR + 20); }   /* (Oct 9, 17:15) back to three lines at once, in place */
     else setTimeout(function () { if (!mode) document.documentElement.classList.remove('wf-menuopen'); }, DUR + 20);
     setTimeout(function () { if (!mode && ifr) ifr.style.visibility = 'hidden'; var p = page(); if (p && !mode) { p.style.boxShadow = ''; p.style.willChange = ''; } }, DUR + 50);
   }
