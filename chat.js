@@ -131,7 +131,7 @@
 
   // ---- storage --------------------------------------------------------------------------------------------------
   var DB = null;
-  function load() { if (DB) return DB; try { DB = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
+  function load() { if (DB) return DB; try { DB = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
   function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
   function emit() { try { var ch = false; if (DB && DB.chats) Object.keys(DB.chats).forEach(function (k) { if (ensureLts(DB.chats[k])) ch = true; }); if (ch) save(); } catch (e) {} try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} }
   // (Oct 8, 21:00) every station working the fire has its lieutenant (the crew's chief) in the chat too, with the station's real
@@ -182,7 +182,13 @@
 
   // ---- the fire's clock -----------------------------------------------------------------------------------------
   function vnow(c) { return c.closedVt || (c.vNow + (Date.now() - c.vAt)); }
-  function jump(c, ms) { c.vNow = vnow(c) + (ms || 0); c.vAt = Date.now(); }
+  /* (Oct 9, 10:46) The fire clock is the user's own clock: every time shown is his local time and never in the future. Time
+     that passes in the story (a stage that took hours) moves everything already said back into the past, so durations stay true
+     and the newest event is now. */
+  function shiftBack(c, ms) { if (!ms) return; var f = function (o) { if (o && typeof o.vt === 'number') o.vt -= ms; };
+    (c.hist || []).forEach(f); (c.msgs || []).forEach(f); (c.queue || []).forEach(function (q) { f(q && q.m); }); if (c.closedVt) c.closedVt -= ms; }
+  function jump(c, ms) { shiftBack(c, (vnow(c) + (ms || 0)) - Date.now()); c.vNow = Date.now(); c.vAt = Date.now(); }
+  function noFuture(c) { if (!c || !c.vAt) return; var ahead = vnow(c) - Date.now(); if (ahead > MIN) { shiftBack(c, ahead); if (!c.closedVt) { c.vNow = Date.now(); c.vAt = Date.now(); } } }
   function since(c) { return c.hist && c.hist.length ? c.hist[0].vt : c.vNow; }
   function vary(c, a, b, salt) { return a + hash(c.key + (salt || '')) % Math.max(1, b - a + 1); }   // minutes, stable per chat
 

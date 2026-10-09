@@ -20,7 +20,7 @@
 <script src="station.js?v=16"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791533305"></script>
+<script src="chat.js?v=1791539265"></script>
 <script src="tour.js?v=1791533202"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=37"></script>
@@ -692,6 +692,7 @@ class Component extends DCLogic {
     const el = this._sc; if (!el) return; const a = el.querySelector('article[data-pend="' + id + '"]'); if (!a) return;
     const P = (this.state || {}).pinned || [], above = Math.max(0, P.indexOf(id)) * 64;
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+    this._pinBack = { id: String(id), t: el.scrollTop, b: el.scrollHeight - el.scrollTop - el.clientHeight < 60 };
     this._stick = false;
     el.scrollTo({ top: Math.max(0, el.scrollTop + a.getBoundingClientRect().top - el.getBoundingClientRect().top - 40 - above), behavior: 'smooth' });   /* lands clear of the top scroll fade */
   }
@@ -707,7 +708,7 @@ class Component extends DCLogic {
       // Declared resolved: the chat stays; the resolution summary opens only from the trophy card or the state card
       const el = this._sc, n = c ? c.msgs.length : 0;
       if (el && (el !== this._posEl || s.key !== this._posKey)) { this._posEl = el; this._posKey = s.key; this._n = n; this._typ = !!(c && C.typing(c)); this.restorePos(el, s.key); }
-      else if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { { const last = n > this._n && c.msgs[n - 1]; let call = false; try { call = window.__wfVoiceKey === s.key || !!document.querySelector('.wf-cf.call, .wf-cf.on'); } catch (x) {} const reading = Date.now() - (this._touchT || 0) < 4000; if (last && (last.from === 'me' || call || !reading)) { this._stick = true; if (s.toEnd) this.setState({ toEnd: false }); } }   /* (Oct 8, 23:01) every new message comes into view (as in any chat app), unless the user is scrolling back through the chat right now */   /* (Oct 8, 22:12) my own message (typed, chip or mic) and every line said during a call bring the chat to the newest message */ this.pin(); this._n = n; this._typ = !!(c && C.typing(c)); }
+      else if (el && (n !== this._n || this._typ !== !!(c && C.typing(c)))) { { const last = (n > this._n && c.msgs[n - 1]) || (!this._typ && !!(c && C.typing(c))); if (last) { if (this._touching) this._pendPin = true; else { this._stick = true; this._pinBack = null; if (s.toEnd) this.setState({ toEnd: false }); } } }   /* (Oct 9, 10:46) everything new (a message, a card, someone typing) comes into view and pushes the chat up, in every situation; only while a finger is on the chat it waits, and follows on release */   /* (Oct 8, 23:01) every new message comes into view (as in any chat app), unless the user is scrolling back through the chat right now */   /* (Oct 8, 22:12) my own message (typed, chip or mic) and every line said during a call bring the chat to the newest message */ this.pin(); this._n = n; this._typ = !!(c && C.typing(c)); }
     } else { this._posEl = null; }
   }
   // Views inside this screen stack up, so every back returns to the one you came from
@@ -1193,7 +1194,12 @@ class Component extends DCLogic {
       callGo: (e) => this.wfCall(c, e && e.currentTarget),
       camGo: (e) => { const P = C.active ? C.active(c) : (c.people || []), p = P[1] || P[0], R = C.leadRole ? C.leadRole(c) : null;
         if (window.__wfCamFeed && p) window.__wfCamFeed.open({ calm: c.stage >= 5 || !!c.closed, anchor: e && e.currentTarget, who: p.name + '. ' + (R ? L(R.en, R.pt) + '. ' : '') + p.org, label: L('Live. Helmet camera', 'Em direto. Câmara de capacete') }); },
-      setScroll: (el) => { if (el === this._sc) return; this._sc = el; try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, toEndOp: (this.state || {}).toEnd ? 1 : 0, toEndPe: (this.state || {}).toEnd ? 'auto' : 'none', toEndY: (this.state || {}).toEnd ? '0px' : '8px',
+      setScroll: (el) => { if (el === this._sc) return; this._sc = el; if (el && !el.__wfTouch) { el.__wfTouch = 1;
+        const down = () => { this._touching = true; }, up = () => { this._touching = false; if (this._pendPin) { this._pendPin = false; setTimeout(() => { if (this._touching || this._sc !== el) return; this._stick = true; this._pinBack = null; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); if ((this.state || {}).toEnd) this.setState({ toEnd: false }); }, 250); } };
+        el.addEventListener('touchstart', down, { passive: true }); el.addEventListener('touchend', up, { passive: true }); el.addEventListener('touchcancel', up, { passive: true }); el.addEventListener('mousedown', down); window.addEventListener('mouseup', up);
+        /* (Oct 9, 10:46) after a pinned header brought its card back, a tap on that card's header returns the chat to where it was */
+        el.addEventListener('click', (e) => { const B = this._pinBack, a = e.target && e.target.closest && e.target.closest('article[data-pend]'); if (!B || !a || a.getAttribute('data-pend') !== B.id) return; const band = a.firstElementChild; if (!band || !band.contains(e.target) || e.target.closest('button')) return; e.stopPropagation(); e.preventDefault(); this._pinBack = null; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (B.b) { this._stick = true; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); } else el.scrollTo({ top: B.t, behavior: 'smooth' }); }, true); }
+        try { if (this._ro) this._ro.disconnect(); if (el && window.ResizeObserver) { this._ro = new ResizeObserver(() => this.pin()); this._ro.observe(el); if (el.firstElementChild) this._ro.observe(el.firstElementChild); } } catch (e) {} }, toEndOp: (this.state || {}).toEnd ? 1 : 0, toEndPe: (this.state || {}).toEnd ? 'auto' : 'none', toEndY: (this.state || {}).toEnd ? '0px' : '8px',
       toEnd: () => { const el = this._sc || document.querySelector('[data-wf-keepscroll]'); if (!el) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this._stick = true; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); this.setState({ toEnd: false }); },
       onScroll: (e) => { const el = e.currentTarget; if (!this._restoring && !this._pinning) this._touchT = Date.now(); if ((this.state || {}).avTip) this.setState({ avTip: null }); if (this._restoring) return; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; { const away = el.scrollHeight - el.scrollTop - el.clientHeight > 200; if (!!(this.state || {}).toEnd !== away) this.setState({ toEnd: away }); }   /* (Oct 8, 21:16) far from the newest message: the go-to-bottom button shows */ const k = (this.state || {}).key; if (k && (this.state || {}).view === 'chat') this.savePos(el, k); this.pinCheck(el); },
       /* (Oct 9, 08:58) the collapsed headers of waiting cards, stuck to the top of the chat; a tap brings the card back */
