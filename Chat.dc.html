@@ -186,7 +186,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <article class="chmsg {{m.cardCls}}" data-pend="{{m.pend}}" data-snz="{{m.snz}}" onClick="{{m.cardGo}}" style="display: flex; flex-direction: column; margin-top: 4px; border-radius: 14px; background: {{m.cardBg}}; overflow: hidden; cursor: {{m.cardCur}}">
             <!-- (Oct 4, 23:27) update / decision cards: the top band in the colour of the fire's current stage, the title (kind and time) in dark grey, centred in it -->
             <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: {{m.bandBg}}">
-              <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="18" height="18" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+              <span aria-hidden="true" style="display: {{m.icD}}; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: {{m.ic.bg}}"><svg width="24" height="24" viewBox="0 0 24 24"><path d="{{m.ic.d}}" fill="{{m.ic.fill}}" stroke="{{m.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
               <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; color: {{m.tagC}}">{{m.tag}} · {{m.time}}</span>
             </div>
             <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 8px; padding: 16px 16px">
@@ -1063,7 +1063,10 @@ class Component extends DCLogic {
         prevFrom = null; return;
       }
       if (m.kind === 'card') {
-        const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
+        const St = m.stage != null ? C.STAGES[m.stage] : null, I = (() => {   /* (Oct 9, 17:26) every confirmation, request and recommendation card carries its icon too: the stage it confirms or suggests, or what it asks for; the icon in dark grey */
+          const FI = window.__wfFleetIC || {}, R = { air: FI.heli, help: FI.crew, evac: 'M4 11 12 4l8 7M6 9.5V19h12V9.5M10 19v-5h4v5' }, S2 = St || (m.to != null ? C.STAGES[m.to] : m.req === 'decl' ? C.STAGES[1] : null);
+          if (S2) { const b = iconFor(S2); return b.d ? Object.assign({}, b, { c: '#3A3A3C', bg: 'rgba(255,255,255,0.5)' }) : null; }   /* the same light disc on every band, whatever stage the icon names */
+          return m.req && R[m.req] ? { d: R[m.req], c: '#3A3A3C', bg: 'rgba(255,255,255,0.5)', fill: 'none' } : null; })();
         /* (Oct 9, 15:32) a card keeps the colour of the stage during which it was triggered: never the stage it suggests, never repainted when the fire moves on */
         const Hd = C.STAGES[m.st0 != null ? m.st0 : (() => { let v = null; (c.hist || []).forEach((h) => { if (h.vt <= (m.vt || 0) + 500) v = h.s; }); return v; })()] || St || S;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
