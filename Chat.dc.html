@@ -939,17 +939,16 @@ class Component extends DCLogic {
         sk: (() => {
           const hr = Math.max(1, (Z.res || 0) / 3600000), burn = (Z.us ? Z.acres : Z.ha) / hr;
           const base = [
-            { key: 'resp', l: L('Response time', 'Tempo de resposta'), v: Z.resp != null ? C.dur(Z.resp) : '—', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) },
-            { key: 'ver', l: L('Verification time', 'Tempo de verificação'), v: Z.ver != null ? C.dur(Z.ver) : '—' },   /* (Oct 9) ignition detected to confirmed or dismissed */
+            { key: 'ver', l: L('Verification time', 'Tempo de verificação'), v: Z.ver != null ? C.dur(Z.ver) : '—' },   /* (Oct 9, 10:55) life-cycle order: verification, dispatch, response, duration */ /* (Oct 9) ignition detected to confirmed or dismissed */
             { key: 'disp', l: L('Time to dispatch', 'Tempo até ao despacho'), v: Z.disp != null ? C.dur(Z.disp) : '—' },
+            { key: 'resp', l: L('Response time', 'Tempo de resposta'), v: Z.resp != null ? C.dur(Z.resp) : '—', ...cmp(Z.resp, B && B.resp, 'less', C.dur, true) },
             { key: 'dur', l: L('Final duration', 'Duração final'), v: C.dur(Z.res), ...cmp(Z.res, B && B.res, 'less', C.dur, true) },
             { key: 'area', l: L('Area burnt', 'Área ardida'), v: area.v + ' ' + area.u, ...cmp(Z.us ? Z.acres : Z.ha, B && (B.us ? B.acres : B.ha), 'less', (x) => (Z.us ? Math.round(x) + ' acres' : (Math.round(x * 10) / 10) + ' ha')) },
             { key: 'pop', l: Z.evac ? L('People protected', 'Pessoas protegidas') : L('Residents protected', 'Moradores protegidos'), v: String(Z.pop) },
             { key: 'st', l: L('Stations', 'Quartéis'), v: (Z.est ? '~' : '') + Z.stations },
             { key: 'ppl', l: L('Personnel', 'Pessoal'), v: (Z.est ? '~' : '') + Z.people, opt: true },
             { key: 'veh', l: L('Vehicles', 'Veículos'), v: (Z.est ? '~' : '') + Z.veh, opt: true },
-            { key: 'air', l: L('Aerial', 'Meios aéreos'), v: String(Z.air), opt: true },
-            { key: 'rate', l: L('Burn rate', 'Ritmo de área ardida'), v: (Math.round(burn * 10) / 10) + ' ' + (Z.us ? 'ac/h' : 'ha/h'), opt: true }];
+            { key: 'air', l: L('Aerial', 'Meios aéreos'), v: String(Z.air), opt: true }];   /* (Oct 9, 10:55) no burn rate */
           /* (Oct 9) the summary's key figures as the profile's simple table: every figure, none hidden, the comparison under its value */
           return Object.assign(this.cardSet('sum', base), { tbl: base.map((k, i) => ({ ...this.kfRow('sum', k, i), l: k.l, v: k.v, cmp: k.cmp || '', cmpD: k.cmp ? (k.cmpD || 'block') : 'none', cmpC: k.cmpC || '#545458', sep: i ? '1px solid rgba(60,60,67,0.12)' : '0' })) });
         })() };
