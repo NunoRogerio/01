@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791549548"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791549887"></script>
 <script src="feedcam.js?v=1791549296"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=1791549051"></script>
@@ -91,7 +91,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <sc-if value="{{asg.emptyOn}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.emptyTxt}}</p></sc-if>
         <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.noneTxt}}</p></sc-if>
-        <ul style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
+        <ul data-wf-stack="1" style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
@@ -107,7 +107,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
         </ul>
         <!-- (Oct 8) the day's station duties, under the incidents (08:40: always, not only without incidents), as the same list cards; a tap marks one done (or undoes it) -->
-        <ul style="display: {{asg.dutyD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
+        <ul data-wf-stack="1" style="display: {{asg.dutyD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.duties}}" as="d" hint-placeholder-count="3">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <button type="button" class="sqrow stfire" data-wf-keepsp="1" onClick="{{d.go}}" aria-pressed="{{d.doneStr}}" aria-label="{{d.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; width: 100%; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; cursor: pointer">
@@ -331,7 +331,22 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  /* (Oct 9, 13:40) the To do / Resolved list as an accordion: entering the screen, the cards arrive stacked on the first one and
+     fan out to their places; switching, the shown list folds into a stack and fades quickly, then the other list fans out the same way */
+  wfStack(mode, done) {   /* Web Animations, so the screen's own re-renders (which rewrite inline styles) never cut them short */
+    const L = Array.from(document.querySelectorAll('ul[data-wf-stack] > li')).filter((e) => e.offsetParent);
+    if (!L.length || !L[0].animate || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { if (done) done(); return; }
+    const top = L[0].getBoundingClientRect().top, vh = window.innerHeight, A = [];
+    L.forEach((li, i) => { const r = li.getBoundingClientRect(); if (r.top > vh + 40) return; const k = Math.min(i, 3), dy = top + k * 6 - r.top, sc = 1 - k * 0.04, st = { transform: 'translateY(' + dy + 'px) scale(' + sc + ')', opacity: i > 3 ? 0 : 1, zIndex: 50 - i }, fl = { transform: 'none', opacity: 1, zIndex: 50 - i };
+      li.style.position = 'relative';
+      A.push(mode === 'in' ? li.animate([st, fl], { duration: 420, delay: Math.min(i, 8) * 34, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' })
+        : li.animate([fl, Object.assign({}, st, { opacity: 0 })], { duration: 220, delay: Math.min(i, 6) * 12, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'forwards' })); });
+    Promise.all(A.map((a) => a.finished.catch(() => {}))).then(() => { if (done) done(A); });
+  }
+  /* the page shows once loaded: the cards fan out just after, where they are seen */
+  wfStackIn() { if (/[?&]under=1/.test(location.search)) return; if (!window.__wfLoadT) { if (document.readyState === 'complete') window.__wfLoadT = Date.now(); else window.addEventListener('load', () => { window.__wfLoadT = Date.now(); }); } let n = 0; const go = () => { const ld = document.getElementById('wf-load'), busy = ld && !/\bout\b/.test(ld.className) && ld.offsetParent !== null; if ((document.querySelector('ul[data-wf-stack] > li') && !busy && document.readyState === 'complete' && Date.now() - (window.__wfLoadT || 0) > 200) || n++ > 120) {   /* after the loading screen, so it is seen */ requestAnimationFrame(() => this.wfStack('in')); return; } setTimeout(go, 50); }; go(); }
   componentDidMount() {
+    try { this.wfStackIn(); } catch (e) {}
     // (Oct 5, 07:58) coming back to this screen from the phone's page cache: its sheets (Key figures, a crew) start closed
     try { window.addEventListener('pageshow', (ev) => { if (ev.persisted && ((this.state || {}).pick || (this.state || {}).sq)) this.setState({ pick: false, sq: null }); }); } catch (e) {}
     try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {}   // chat counts follow new messages
@@ -543,7 +558,7 @@ class Component extends DCLogic {
       tabX: resolvedTab ? '100%' : '0%',
       moreD: rMore ? 'block' : 'none',
       tabs: [['todo', L('To do', 'Por fazer'), nTodo], ['done', L('Resolved', 'Resolvidos'), nDone]].map(([k, l, n]) => ({ label: l, n: n ? String(n) : '', nD: n ? 'inline-flex' : 'none', aria: l + (n ? ', ' + n : ''), sel: String(tab === k), w: tab === k ? 600 : 400,
-        pick: () => { if (tab === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ atab: k, rLim: 5 }); } })),
+        pick: () => { if (tab === k || this._stacking) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stacking = true; this.wfStack('out', (A) => { this.setState({ atab: k, rLim: 5 }, () => { requestAnimationFrame(() => { (A || []).forEach((a) => { try { a.cancel(); } catch (e) {} }); this.wfStack('in', () => { this._stacking = false; }); }); }); }); } })),
       emptyOn: !shownRows.length && !shownDuties.length, emptyTxt: resolvedTab ? L('Nothing resolved yet this shift.', 'Nada resolvido ainda neste turno.') : L('Every duty done this shift.', 'Todas as tarefas do turno feitas.'),
       sub: lead ? (nDep ? '' : L('No deployments.', 'Sem destacamentos.')) : dutyList.length && !rows.length ? L('No incidents in the area.', 'Sem incidentes na área.') : '',   /* the counts are on the switcher */
       noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),

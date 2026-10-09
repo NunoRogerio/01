@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791549548"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791549887"></script>
 <script src="avatar.js?v=12"></script>
 <script src="prefs.js?v=1791549051"></script>
 <script src="station.js?v=1791540669"></script>
@@ -1225,7 +1225,7 @@ class Component extends DCLogic {
         const items = ['profile', 'about', 'share', 'lang', 'look', 'maps', 'chat', 'ds'].map((k) => { const on = sel(k), ph = false, hasPh = false;   // the profile is an icon like the others (Oct 3, 17:59); the photo shows in the profile itself
           const kf = (() => { try { if (k === 'maps') { const q = window.__wfTiles && window.__wfTiles.status(); return !!(q && !q.ok); } if (k === 'chat') { const A = window.__wfChat && window.__wfChat.ai, q = A && A.key() ? A.status() : null; return !!(q && !q.ok); } } catch (e) {} return false; })();   /* (Oct 5) a key that failed to load */
           return { gapT: k === 'lang' || k === 'chat' ? '24px' : '0px',   /* (06:38) 40px from button to button between groups (half the earlier space, on the 8 scale) */   /* (Oct 5, 06:31) three groups (profile, about, share | language, appearance, maps | chat, data sources), an empty button's space between them */ dotD: kf ? 'block' : 'none', label: TT[k] + (kf ? (lang === 'pt' ? '. A chave falhou' : '. Key failed') : ''), cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
-            bg: ph ? '#E5E5EA' : on ? Y : 'rgba(118,118,128,0.12)', fg: on ? '#1C1C1E' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
+            bg: ph ? '#E5E5EA' : on ? 'var(--wf-pri-bg, #3A3A3C)' : 'rgba(118,118,128,0.12)', fg: on ? 'var(--wf-pri-fg, #FFFFFF)' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
         return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.53s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? vw - 60 : rail && this.wfLayout().side ? -60 : 0, cr: open ? 60 : 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
           dur: boot ? '0s' : (() => { if (pmMode === '' && this._pmPrevMode === 'rail') this._pmSlowUntil = Date.now() + 900; this._pmPrevMode = pmMode; return Date.now() < (this._pmSlowUntil || 0) ? '.74s' : '.53s'; })(),   /* (Oct 4) the screen widening back to full width after the icon column closes: 40% slower (.74s) */   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in

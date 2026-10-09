@@ -661,6 +661,9 @@ window.__wfBlink=function(path,dur){
 // prompt behind an Install button (Not now | Install). iPhone and iPad (Safari, Chrome): no page can install there, so a
 // one-button dialog says where Add to Home Screen is. Shown once per opened link, never inside the installed app; on
 // Android, Chrome opens links into the installed app on its own, so the offer never shows there.
+/* (Oct 9, 13:42) a page shown only as a still backdrop under another screen's panel (?under=1) never moves: no transitions, no animations, no media */
+(function(){if(!/[?&]under=1/.test(location.search))return;try{var z=document.createElement('style');z.textContent='*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}video{display:none!important}';(document.head||document.documentElement).appendChild(z);
+  var stop=function(){try{document.getAnimations().forEach(function(a){a.finish&&a.finish();});}catch(e){}};setInterval(stop,250);}catch(e){}})();
 (function(){
   var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   var want=false;try{want=sessionStorage.getItem('wf-install')==='1';}catch(e){}
