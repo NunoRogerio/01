@@ -188,16 +188,16 @@
   function shiftBack(c, ms) { if (!ms) return; var f = function (o) { if (o && typeof o.vt === 'number') o.vt -= ms; };
     (c.hist || []).forEach(f); (c.msgs || []).forEach(f); (c.queue || []).forEach(function (q) { f(q && q.m); }); if (c.closedVt) c.closedVt -= ms; }
   function jump(c, ms) { shiftBack(c, (vnow(c) + (ms || 0)) - Date.now()); c.vNow = Date.now(); c.vAt = Date.now(); }
-  /* (Oct 9, 10:54) the first minutes of a fire are always minutes, as in the field: detection to declared ~8-11 min, declared to
+  /* (Oct 9, 10:54) the first minutes of a fire are always minutes, as in the field: detection to declared 5-12 min (Oct 9, 11:21), declared to
      dispatch ~3-6 min, dispatch to crews on scene ~18-21 min, however long ago the fire started. Older histories are repaired
      by moving those early steps up to the crews' arrival (or to the current stage when the crews are not there yet). */
   function plausibleEarly(c) { var H = c && c.hist; if (!H || H.length < 2) return; var k = c.key || '', fixed = [8, 3, 18];
     var ix = function (st) { for (var i = 0; i < H.length; i++) if (H[i].s === st) return i; return -1; };
     var anchor = -1; for (var i = 0; i < H.length; i++) if (H[i].s >= 3) { anchor = i; break; } if (anchor < 0) anchor = H.length - 1;
     var t = H[anchor].vt, bad = false;
-    for (var j = anchor - 1; j >= 0; j--) { var st = H[j].s; if (st > 2) continue; var want = (fixed[st] + hash(k + st) % 4) * MIN; if (Math.abs((H[j + 1].vt - H[j].vt) - want) > want) bad = true; }
+    for (var j = anchor - 1; j >= 0; j--) { var st = H[j].s; if (st > 2) continue; var want = (st === 0 ? 5 + hash(k + st) % 8 : fixed[st] + hash(k + st) % 4) * MIN;   /* (Oct 9, 11:21) verification 5 to 12 min */ if (Math.abs((H[j + 1].vt - H[j].vt) - want) > want) bad = true; }
     if (!bad) return;
-    for (var q = anchor - 1; q >= 0; q--) { var s0 = H[q].s; t -= (s0 <= 2 ? fixed[s0] + hash(k + s0) % 4 : 5) * MIN; H[q].vt = t; }
+    for (var q = anchor - 1; q >= 0; q--) { var s0 = H[q].s; t -= (s0 === 0 ? 5 + hash(k + s0) % 8 : s0 <= 2 ? fixed[s0] + hash(k + s0) % 4 : 5) * MIN; H[q].vt = t; }
     var first = H[0].vt; (c.msgs || []).forEach(function (m) { if (typeof m.vt === 'number' && m.vt < first && m.topic) m.vt = first; });
     if (c.sum) { try { var S2 = stats(c); ["ver", "disp", "resp", "t0", "res"].forEach(function (f) { c.sum[f] = S2[f]; }); } catch (e) {} }
   }
