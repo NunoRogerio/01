@@ -20,7 +20,7 @@
 <script src="station.js?v=16"></script>
 <script src="i18n.js?v=174"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=116"></script>
+<script src="chat.js?v=1791525990"></script>
 <script src="tour.js?v=117"></script>
 <script src="feedcam.js?v=31"></script>
 <script src="trophy.js?v=37"></script>
@@ -956,6 +956,8 @@ class Component extends DCLogic {
       }
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = St ? iconFor(St) : null;
+        /* (Oct 9) a card suggesting a stage (team recommends, rekindle) already wears that stage's colour in its header band */
+        const Hd = m.to != null ? C.STAGES[m.to] : (St || S);
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
         const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], helpYes: ['Crew sent', 'Equipa enviada'], helpNo: ['Not sent', 'Não enviada'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
         const acts = (m.actions || []).filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
@@ -964,12 +966,12 @@ class Component extends DCLogic {
             ...(() => { const pri = a.key === 'close', gh = !done && (a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo');   /* (Oct 4, 23:27) only closing the fire is primary; every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
               /* (Oct 8, 22:39) decided: the button is no longer a button (no action, no press) and wears the card's header band colour, its text the header's ink */
-              if (done) return { cls: '', bg: tone(St || S).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', w: 600, pe: 'none' };
+              if (done) return { cls: '', bg: tone(Hd).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', w: 600, pe: 'none' };
               return { cls: pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? (window.__wfY || '#E5FF00') : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? '#1C1C1E' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600, pe: 'auto' }; })(),
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;
-        items.push({ isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: m.req && !m.done ? 'transparent' : tone(St || S).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
+        items.push({ isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: m.req && !m.done ? 'transparent' : tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)

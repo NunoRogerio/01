@@ -568,7 +568,7 @@
       if (!c.flags.rekindleAsked && hash(c.key + 'rk') % 3 === 0) { c.flags.rekindleAsked = true;
         say(c, ltOf(c, 0), 'Rekindle on the north flank. Flames back in the brush.', 'Reacendimento no flanco norte. Chamas de volta no mato.', d + 6000, 4);
         if (P[0]) say(c, 0, 'I recommend we step back to Crews on scene.', 'Recomendo voltar a Equipas no local.', d + 8000, 1);
-        card(c, { rekindle: true, tag: { en: 'Rekindle', pt: 'Reacendimento' }, tagC: '#B3261E', title: { en: 'Step back to Crews on scene', pt: 'Voltar a Equipas no local' }, body: { en: 'Flames back on the north flank. The team recommends it.', pt: 'Chamas de volta no flanco norte. A equipa recomenda.' },
+        card(c, { rekindle: true, to: 3, tag: { en: 'Rekindle', pt: 'Reacendimento' }, tagC: '#B3261E', title: { en: 'Step back to Crews on scene', pt: 'Voltar a Equipas no local' }, body: { en: 'Flames back on the north flank. The team recommends it.', pt: 'Chamas de volta no flanco norte. A equipa recomenda.' },
           actions: [{ key: 'stayStage', en: 'Not now', pt: 'Agora não' }, { key: 'back', en: 'Step back', pt: 'Voltar atrás', primary: true }] }, d + 9500, 0);
         if (isLt()) push(c, { kind: 'capt', a: 'back', ent: c.sEnt }, d + 13000, 0);   /* the lieutenant waits: the captain decides */
         return; }
@@ -590,7 +590,7 @@
     if (isLt()) { captMove(c, nx); return; }
     c.flags['rec' + s] = true;
     say(c, ltOf(c, 0), R[0], R[1], 300, 1);
-    card(c, { rec: true, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
+    card(c, { rec: true, to: nx, tag: { en: 'Team recommends', pt: 'A equipa recomenda' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
       actions: [nx === 7 ? { key: 'closeCheck', en: 'Close fire', pt: 'Encerrar incêndio', primary: true } : { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt, primary: true }] }, 1500, 0);
   }
   // the lieutenant's view: the captain (the first station's lead) moves the fire on, or back after a rekindle
