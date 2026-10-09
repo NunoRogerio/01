@@ -719,16 +719,16 @@
     } else if (a === 'stayStage') {
       me('Hold the stage. Knock it down and report.', 'Mantemos a fase. Apaguem-no e informem.');
       say(c, ltOf(c, 0), 'Copy. On it.', 'Entendido. Já estamos nisso.', 2200, 2);
-    } else if (a === 'closeCheck') {
-      c.flags.closeCard = true;
-      // (Oct 4) asked again while the closing card is still waiting far up the chat: it comes down to the bottom, so closing is never out of reach
-      var wasRec = c.msgs.some(function (m) { return m.kind === 'card' && m.close && !m.done && m.tag && m.tag.en === 'Team recommends'; });
-      c.msgs = c.msgs.filter(function (m) { return !(m.kind === 'card' && m.close && !m.done); }); c.queue = c.queue.filter(function (q) { return !(q.m && q.m.kind === 'card' && q.m.close); });
-      card(c, closeCard(c, wasRec), 400, 0);
-    } else if (a === 'close') {
+    } else if (a === 'closeCheck' || a === 'close') {
+      /* (Oct 9) the recommendation's arrow, the Close fire chip and the stage band all close the fire at once: no second card.
+         Once closed it stays closed; the summary follows 2 s later */
+      if (c.closed || c.flags.closing) return;
+      c.flags.closing = true;
+      c.msgs.forEach(function (m) { if (m.kind === 'card' && (m.close || m.rec) && !m.done) m.done = m.close ? 'close' : 'moved'; });
+      c.queue = c.queue.filter(function (q) { return !(q.m && q.m.kind === 'card' && q.m.close); });
       jump(c, stageSpan(c, 7) * MIN);
       me('Declaring the fire closed. Thank you all.', 'Declaro o incêndio encerrado. Obrigado a todos.');
-      setStage(c, 7, 800, 0);
+      setStage(c, 7, 400, 0);
     }
     c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); tick();
   }
@@ -1343,8 +1343,8 @@
           c.msgs.push(sc);
           if (c.stage < 7) entry(c, c.stage, 0);
           else {
-            if (c.people[0]) say(c, 0, 'Thanks everyone. Good work.', 'Obrigado a todos. Bom trabalho.', 2500, 1);
-            push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#186B2D' }, 4000, 0);
+            if (c.people[0]) say(c, 0, 'Thanks everyone. Good work.', 'Obrigado a todos. Bom trabalho.', 800, 1);
+            push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#186B2D' }, 1600, 0);   /* (Oct 9) the summary 2 s after closing */
           }
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
         else if (m.kind === 'capt' && m.a === 'evac') { if (!c.closed && !c.dismissed && !c.flags.evac) { var ec = c.msgs.find(function (x) { return x.req === 'evac' && !x.done; }); if (ec) ec.done = 'evac'; evacDo(c, 0); } }
