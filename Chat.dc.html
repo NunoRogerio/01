@@ -547,16 +547,19 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <section style="display: flex; flex-direction: column; gap: 24px">
         <h2 style="margin: 0; padding: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px">{{t.ach}}</h2>
         <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 16px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
+        <!-- (Oct 9, 12:06) a list: its cards 8px apart; the trophy 8px from the card's top and left edges, as the resource cards' icons -->
+        <div role="list" style="display: flex; flex-direction: column; gap: 8px">
         <sc-for list="{{pp.ach}}" as="a" hint-placeholder-count="2">
-          <article style="display: flex; align-items: flex-start; gap: 8px; padding: 16px 16px; border-radius: 16px; background: #FFFFFF">
+          <article role="listitem" style="display: flex; align-items: flex-start; gap: 8px; padding: 8px 16px 16px 8px; border-radius: 16px; background: #FFFFFF">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
             <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-              <span style="font-size: 16px; line-height: 20px; color: #186B2D">{{a.kicker}}</span>
+              <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{a.kicker}}</span>
               <span style="font-size: 18px; font-weight: 600; line-height: 24px">{{a.place}}</span>
               <span style="font-size: 18px; line-height: 24px; color: #000000">{{a.line}}</span>
             </span>
           </article>
         </sc-for>
+        </div>
       </section>
       <!-- The station this person serves at, with a link to its page -->
       <a href="Station.dc.html" class="chrow" onClick="{{pp.goStation}}" aria-label="{{pp.stName}}. Open the station" style="display: {{pp.stD}}; align-items: center; gap: 8px; padding: 16px 16px; border-radius: 16px; background: #FFFFFF; color: #000000; text-decoration: none">
