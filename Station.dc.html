@@ -201,7 +201,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
       <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
       <div style="display: flex; flex-direction: column">
-        <span style="margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{resT}}</span>
+        <!-- (Oct 9, 13:07) no "Resources" label: the switcher says it -->
         <div style="display: {{rs.tabsD}}; padding: 0 16px 8px">
           <div role="tablist" aria-label="{{tx.res}}" class="wf-seg">
             <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 3); transform: translateX({{rs.x}})"><span class="segblob"></span></span>
@@ -245,7 +245,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
            the area and of mutual aid on it (mutual aid with a thin outer ring) -->
       <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
         <div style="display: flex; flex-direction: column; padding: 0 16px">
-          <span style="margin: 0 0 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{tx.area}}</span>
+          <!-- (Oct 9, 13:07) no "Station area" label: the map says it -->
           <div style="position: relative; flex-shrink: 0; height: {{homeMapH}}px; border-radius: 16px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
             <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" locked="true" mode="risk" area="true" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" w="{{homeMapW}}" h="{{homeMapH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" zoom="{{zoom}}" focus-x="{{homeFx}}" focus-y="{{homeFy}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" loader="true" hint-size="358px,280px"></dc-import>
           </div>
