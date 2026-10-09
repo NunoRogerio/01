@@ -1758,7 +1758,10 @@ class Component extends DCLogic {
   // or tag. (Oct 3, 21:12) No tag is ever hidden, the selected one included: when neither side is clear they may overlap.
   wfTagPlace(m, k, all, sc, MW) {
     const zf = sc / ((this.base() || {}).s || 1), hide = { tagD: 'none', tagL: 'auto', tagR: 'auto' };
-    if (zf < 4) return { ...m, ...hide };   // (Oct 4) percentages from a close zoom only; decided by the zoom alone (not by how many are in view), so panning never makes them blink
+    /* (Oct 9) the % only at a truly close zoom: besides 400% of the region's view, the map must show at most ~0.75° of longitude
+       across (about 70 km, a county) — the same real distance in every region, so a whole-country base (US) zoomed 630% shows no % */
+    const degW = (MW || 390) / (Math.max(1e-6, sc) * 2345);
+    if (zf < 4 || degW > 0.75) return { ...m, ...hide };   // (Oct 4) percentages from a close zoom only; decided by the zoom alone (not by how many are in view), so panning never makes them blink
     if (!all.__placed) { const occ = all.map((q) => ({ l: q.left - 14, r: q.left + 14, t: q.top - 14, b: q.top + 14, x: q.left, y: q.top })), res = {}, done = [];
       const order = all.map((q, i) => i).sort((a, b) => (all[b].conf || 0) - (all[a].conf || 0));
       const hit = (R) => occ.some((o) => R.l < o.r && R.r > o.l && R.t < o.b && R.b > o.t);
