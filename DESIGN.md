@@ -1675,3 +1675,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Stage chips (Oct 11):** every suggestion chip that changes the fire's stage (Dispatch, To Concluding, Close fire…) is dark grey with white text, whatever the stage.
 - **My messages (Oct 11):** carry "You" on top, as the others carry their name; the bubble is 10% white.
 - **Structures are now safe (Oct 11):** that notification is left out of the story for now.
+- **Sticky card header (Oct 11):** the card's tag in bold on the left, its time stamp in normal text (16px regular) on the right, as on the card band.
