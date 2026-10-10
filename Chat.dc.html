@@ -920,7 +920,7 @@ class Component extends DCLogic {
     const isAirF = (f) => (f.veh || []).length && (f.veh || []).every((v) => /heli|Helic|tanker|plane|avião|air/i.test(v));
     const onTeam = (f) => !(c.people || []).length || (isAirF(f) ? hasAir : PO.has(f.station));
     const FF = (c.forces || []).filter((f) => (s.view !== 'summary' || f.st !== 'standby') && onTeam(f)).reduce((A, f) => { const g = A.find((x) => x.station === f.station);
-      if (!g) { A.push(Object.assign({}, f, { veh: (f.veh || []).slice(), crew: (f.crew || []).slice(), parts: [{ veh: (f.veh || []).slice(), names: [f.coord].concat(f.crew || []).filter(Boolean) }] })); return A; }
+      if (!g) { A.push(Object.assign({}, f, { veh: (f.veh || []).slice(), crew: (f.crew || []).slice(), parts: [{ veh: (f.veh || []).slice(), names: (f.crew || []).filter((n) => n && n !== f.coord).length ? (f.crew || []).filter((n) => n && n !== f.coord) : [f.coord].filter(Boolean) }] })); return A; }   /* (Oct 10, 20:19) the coordinating captain rides no vehicle (only a unit with no crew shows its coordinator) */
       g.parts.push({ veh: (f.veh || []).slice(), names: (f.coord && f.coord !== g.coord ? [f.coord] : []).concat(f.crew || []) });   /* (Oct 8, 23:09) each crew keeps its own vehicle (Brush 11 with its lieutenant) */
       const R = { onscene: 4, enroute: 3, released: 2, standby: 1 }; g.veh = g.veh.concat(f.veh || []); g.crew = g.crew.concat(f.coord && f.coord !== g.coord ? [f.coord] : [], f.crew || []);
       if ((R[f.st] || 0) > (R[g.st] || 0)) g.st = f.st; return A; }, []);

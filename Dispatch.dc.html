@@ -1242,7 +1242,8 @@ class Component extends DCLogic {
     const seats = (v) => (/VFCI|CCF|BRP|ABTF/.test(v) ? 5 : /VLCI|VLHR|BFP|UR-/.test(v) ? 3 : /VTTF|Nodriza|CCGC|AT-|Tender/.test(v) ? 2 : /Brush Patrol/.test(v) ? 2 : /^Engine/.test(v) ? 3 : 3);
     const F = ((c && c.forces) || []).filter((f) => f.st !== 'standby');
     // each force's vehicles with the people riding in them: the coordinator in the first, then the seats fill in order
-    const units = []; F.forEach((f, fi) => { const P = [f.coord].concat(f.crew || []).filter(Boolean); let k = 0;
+    /* (Oct 10, 20:19, fix) one person rides one vehicle: the coordinating captain stays off the vehicles (she coordinates; every extra unit of the station used to list her again), and nobody is listed twice; only a unit with no crew at all shows its coordinator */
+    const units = [], seen = {}; F.forEach((f, fi) => { const cr = (f.crew || []).filter((n) => n && n !== f.coord), P = (cr.length ? cr : [f.coord]).filter((n) => n && !seen[n] && (seen[n] = 1)); let k = 0;
       (f.veh || []).forEach((v, vi) => { const n = vi === (f.veh.length - 1) ? P.length - k : Math.min(seats(v), P.length - k); const ppl = P.slice(k, k + Math.max(0, n)); k += ppl.length;
         units.push({ id: f.station + '|' + v, fi, vi, name: v, st: f.station, ic: IC[kindOf(v)] || IC.engine || '', ppl, small: /Patrol|VLCI|VLHR|BFP|UR-/.test(v) }); }); });
     const air = c && c.flags && c.flags.air && c.air ? (() => { const lead = (c.people || []).find((p) => p.kind === 'air');
