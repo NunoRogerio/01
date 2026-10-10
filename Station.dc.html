@@ -43,6 +43,17 @@
     H.querySelectorAll('img[data-crest]').forEach(function (im) {
       if (im.__wfSp !== P) { im.style.backgroundColor = P; im.style.borderRadius = '50%'; im.__wfSp = P; }
     });
+    /* (Oct 10, 20:21) up to the camera: in the installed app the strip under the clock is the page body, outside the screen's frame;
+       the same stripes are drawn there, in one box with the header's (from the body's top to the header's foot), so they run on unbroken */
+    var sp = H.querySelector('[data-wf-sp]'), B = document.body;
+    if (sp && B) { var r = sp.getBoundingClientRect(), br = B.getBoundingClientRect(), k = sp.offsetWidth ? r.width / sp.offsetWidth : 1, gap = r.top - br.top;
+      var key = [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.bottom), k.toFixed(3), P].join('|');
+      if (sp.__wfSpK !== key) { sp.__wfSpK = key;
+        if (gap > 0.5) { var hb = (r.bottom - br.top) / k;
+          sp.style.backgroundSize = sp.offsetWidth + 'px ' + hb + 'px'; sp.style.backgroundPosition = '0px ' + (-gap / k) + 'px'; sp.style.backgroundRepeat = 'no-repeat';
+          var G = 'repeating-linear-gradient(-30deg, rgba(0, 0, 0, 0.044) 0 ' + (8.485 * k) + 'px, transparent ' + (8.485 * k) + 'px ' + (16.97 * k) + 'px)';
+          [document.documentElement, B].forEach(function (E) { var er = E.getBoundingClientRect(); E.style.backgroundImage = G; E.style.backgroundSize = r.width + 'px ' + (r.bottom - br.top) + 'px'; E.style.backgroundPosition = (r.left - er.left) + 'px ' + (br.top - er.top) + 'px'; E.style.backgroundRepeat = 'no-repeat'; });
+        } else { sp.style.backgroundSize = sp.style.backgroundPosition = sp.style.backgroundRepeat = ''; document.documentElement.style.backgroundImage = B.style.backgroundImage = ''; } } }
   }
   setInterval(tick, 500); document.addEventListener('DOMContentLoaded', tick); window.addEventListener('load', tick);
 })();
@@ -75,7 +86,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- (Oct 10, 20:02, trial) 16px under the header (was 24px); the shared firefighter stripes (.wf-stripes, as on the confirmation dialogs and blades) run over the whole header background, the strip under the clock too, in a grey a very slightly darker than the page (black at 16% x the stripes' 40% = about 6%); (20:12) here the bands are half as wide (8.5px, gaps the same) at 30 degrees instead of 45 -->
   <div data-wf-keepsp="1" data-wf-sthdr="1" style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 16px; background: rgb(242, 242, 247); border-bottom: 1px solid rgb(209, 209, 214)">
     <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; z-index: -2; background: rgb(242, 242, 247)"></span>
-    <span aria-hidden="true" class="wf-stripes" style="--wf-y: rgba(0, 0, 0, 0.16); background: repeating-linear-gradient(-30deg, var(--wf-y) 0 8.49px, transparent 8.49px 16.97px); position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; pointer-events: none"></span>
+    <span aria-hidden="true" class="wf-stripes" data-wf-sp="1" style="--wf-y: rgba(0, 0, 0, 0.11); background: repeating-linear-gradient(-30deg, var(--wf-y) 0 8.49px, transparent 8.49px 16.97px); position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; pointer-events: none"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
     <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
@@ -509,7 +520,7 @@ class Component extends DCLogic {
           tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '' }); }); } catch (e) {}
     rows = MA.concat(rows);
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
-    const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min(window.innerWidth || 390, 600) - 32, H = 280;
+    const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min((window.__wfVP && window.__wfVP.w) || 390, 600) - 32, H = 280;   /* (Oct 10, 20:20, fix) the card's width in the page's own frame (fit.js), not the phone's: on a wider phone the map overflowed the card and cut the full-screen button */
     let fx = S.x, fy = S.y, z = 1.4;
     if (A && A.rings && A.rings.length) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; A.rings.forEach((rg) => rg.forEach((q) => { const x = (q[1] + 118.13) * 2345 + 518, y = (34.19 - q[0]) * 2829 + 662; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }));
       items.forEach((q) => { const x = q.kind === 'fire' ? q.r[5] : q.r[7], y = q.kind === 'fire' ? q.r[6] : q.r[8]; if (x == null) return; x0 = Math.min(x0, x - 12); x1 = Math.max(x1, x + 12); y0 = Math.min(y0, y - 12); y1 = Math.max(y1, y + 12); });   /* the incidents too, so mutual aid is in view */
