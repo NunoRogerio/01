@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791665418"></script>
 <script src="feedcam.js?v=1791564887"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791666106"></script>
+<script src="prefs.js?v=1791666505"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="menu.js?v=1791627250"></script>
 <script src="i18n.js?v=1791665418"></script>
@@ -269,13 +269,19 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
             <!-- each vehicle, crew or aircraft is its own white card, 8px apart -->
             <li style="border-radius: 16px; background: #FFFFFF; box-shadow: {{r.liSh}}; overflow: hidden">
-              <button type="button" class="strow2" data-wf-keepsp="1" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: {{r.cols}}; gap: 4px 8px; align-items: start; width: 100%; min-height: 60px; padding: {{r.padR}} {{r.padR}} 16px {{r.padR}}; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
-                <!-- (Oct 9, 11:49) the icon sits in the top-left corner, as far from the top and left edges as the tag is from the top and right edges (the card's smallest padding) --><span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
-                <span style="min-width: 0; margin-top: 2px; font-size: 18px; font-weight: 700; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+              <!-- (Oct 10, 22:08) the unit's icon on a full-height strip in its tag's colour, the icon centred; the details as bullet points, one per line -->
+              <button type="button" class="strow2" data-wf-keepsp="1" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: flex; align-items: stretch; width: 100%; min-height: 60px; padding: 0; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
+                <span aria-hidden="true" style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 56px; background: {{r.icBg}}; color: #3A3A3C"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
+                <span style="display: grid; grid-template-columns: {{r.cols}}; gap: 4px 8px; align-items: start; align-content: start; flex: 1 1 auto; min-width: 0; padding: 8px 8px 16px 16px; box-sizing: border-box">
+                <span style="min-width: 0; margin-top: 2px; font-size: 18px; font-weight: 700; line-height: 24px; overflow-wrap: anywhere">{{r.name}}</span>
                 <span class="wf-stag" data-wf-eqw="res-tags" style="justify-self: end; display: {{r.tagTopD}}; align-items: center; justify-content: center; min-height: 28px; padding: 4px 8px; box-sizing: border-box; border-radius: 8px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap">{{r.tag}}</span>
-                <span aria-hidden="true" style="grid-row: 1; grid-column: 4; display: {{r.chevD}}; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
-                <span style="grid-column: 2 / -1; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.sub}}</span><span style="grid-column: 2 / -1; min-width: 0; display: {{r.misD}}; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.mis}}</span>
-                <!-- (Oct 10, 19:58) off the road: the tag stays in its usual place; how long is a normal second line, the days in bold --><span style="grid-column: 2 / -1; min-width: 0; display: {{r.tagLowD}}; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.offA}}<b style="font-weight: 700">{{r.offB}}</b>{{r.offC}}</span>
+                <span aria-hidden="true" style="grid-row: 1; grid-column: 3; display: {{r.chevD}}; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+                <span role="list" style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; min-width: 0; margin-top: 4px; font-size: 16px; line-height: 20px; color: #6E6E73">
+                  <span role="listitem" class="wf-bul">{{r.sub}}</span>
+                  <!-- (Oct 10, 22:08) on a mission: the fire, in its tag's colour, and for how long, on one line --><span role="listitem" class="wf-bul" style="display: {{r.misD}}"><span style="color: {{r.tagFg}}">{{r.mis}}</span> {{r.offA}}<b style="font-weight: 700">{{r.offB}}</b>{{r.offC}}</span>
+                  <!-- (Oct 10, 19:58) off the road: how long, the days in bold --><span role="listitem" class="wf-bul" style="display: {{r.offD}}">{{r.offA}}<b style="font-weight: 700">{{r.offB}}</b>{{r.offC}}</span>
+                </span>
+                </span>
               </button>
             </li>
           </sc-for>
@@ -790,12 +796,12 @@ class Component extends DCLogic {
     const IC = window.__wfFleetIC || {};   /* (Oct 9, 11:09) the station fleet icons, in station.js (shared with the dispatch blade) */
     const tg = (k, d, M) => { const off = (k === 'maint' || k === 'repair') && d;
       /* (Oct 10, 22:00) on a mission: the fire it is on, then how long, each on its own line, the time in bold */
-      if (k === 'out' && M && M.place) { const fd = window.__wfChat && window.__wfChat.fmtDur ? window.__wfChat.fmtDur(M.ms) : Math.round(M.ms / 6e4) + ' min'; return { tagTopD: 'inline-flex', tagLowD: M.ms ? 'block' : 'none', misD: 'block', mis: M.place + '.', tag: L(TAG[k][0], TAG[k][1]), offA: L('For ', 'Há '), offB: fd, offC: '.', tagBg: TAG[k][2], tagFg: TAG[k][3] }; }
-      return { misD: 'none', mis: '', tagTopD: 'inline-flex', tagLowD: off ? 'block' : 'none', tag: L(TAG[k][0], TAG[k][1]), offA: off ? L(k === 'maint' ? 'Maintenance for ' : 'In repair for ', k === 'maint' ? 'Em manutenção por ' : 'Em reparação por ') : '', offB: off ? L(d + (d === 1 ? ' day' : ' days'), d + (d === 1 ? ' dia' : ' dias')) : '', offC: off ? '.' : '', tagBg: TAG[k][2], tagFg: TAG[k][3] }; };
+      if (k === 'out' && M && M.place) { const fd = window.__wfChat && window.__wfChat.fmtDur ? window.__wfChat.fmtDur(M.ms) : Math.round(M.ms / 6e4) + ' min'; return { icBg: TAG[k][2], offD: 'none', tagTopD: 'inline-flex', tagLowD: 'none', misD: 'list-item', mis: M.place + '.', tag: L(TAG[k][0], TAG[k][1]), offA: M.ms ? L('For ', 'Há ') : '', offB: M.ms ? fd : '', offC: M.ms ? '.' : '', tagBg: TAG[k][2], tagFg: TAG[k][3] }; }
+      return { icBg: TAG[k][2], offD: off ? 'list-item' : 'none', misD: 'none', mis: '', tagTopD: 'inline-flex', tagLowD: off ? 'block' : 'none', tag: L(TAG[k][0], TAG[k][1]), offA: off ? L(k === 'maint' ? 'Maintenance for ' : 'In repair for ', k === 'maint' ? 'Em manutenção por ' : 'Em reparação por ') : '', offB: off ? L(d + (d === 1 ? ' day' : ' days'), d + (d === 1 ? ' dia' : ' dias')) : '', offC: off ? '.' : '', tagBg: TAG[k][2], tagFg: TAG[k][3] }; };
     const s0 = this.state || {}, tab = s0.rtab || 'veh';
-    const mob = (k) => ({ cols: '44px minmax(0, 1fr) auto', padR: '8px', chevD: 'none', dis: true, cur: 'default', go: () => {} });
+    const mob = (k) => ({ cols: 'minmax(0, 1fr) auto', padR: '8px', chevD: 'none', dis: true, cur: 'default', go: () => {} });
     const rowsFor = tab === 'crew'
-      ? crews.map((c, i) => ({ name: c.name, ic: IC.crew, sub: c.ppl.length + ' ' + (c.ppl.length === 1 ? L('firefighter', 'bombeiro') : L('firefighters', 'bombeiros')) + '. ' + c.veh + '. ' + L('Chief ', 'Chefe ') + c.chief + '.', ...tg(c.st, 0, c.mis), liSh: 'none', cols: '44px minmax(0, 1fr) auto 20px', padR: '8px', chevD: 'flex', dis: false, cur: 'pointer', aria: c.name + ', ' + L(TAG[c.st][0], TAG[c.st][1]), go: () => this.setState({ sq: 'c' + i }) }))
+      ? crews.map((c, i) => ({ name: c.name, ic: IC.crew, sub: c.ppl.length + ' ' + (c.ppl.length === 1 ? L('firefighter', 'bombeiro') : L('firefighters', 'bombeiros')) + '. ' + c.veh + '. ' + L('Chief ', 'Chefe ') + c.chief + '.', ...tg(c.st, 0, c.mis), liSh: 'none', cols: 'minmax(0, 1fr) auto 20px', padR: '8px', chevD: 'flex', dis: false, cur: 'pointer', aria: c.name + ', ' + L(TAG[c.st][0], TAG[c.st][1]), go: () => this.setState({ sq: 'c' + i }) }))
       : (tab === 'air' ? air : veh).map((v, i) => ({ v, i })).sort((A, B) => ((A.v.st === 'maint' || A.v.st === 'repair') - (B.v.st === 'maint' || B.v.st === 'repair')) || A.i - B.i).map(({ v }) => ({ name: v.name, ic: IC[v.ic], sub: v.sub, ...tg(v.st, v.days, v.mis), ...mob(), liSh: v.st === 'maint' || v.st === 'repair' ? 'inset 0 0 0 2000px rgba(0, 0, 0, 0.04)' : 'none', aria: v.name + ', ' + v.sub }));   /* (Oct 10, 20:07) off the road: at the foot of the list, the card a very slightly darker grey */
     const list = tab === 'crew' ? crews : tab === 'air' ? air : veh, free = list.filter((x) => x.st === 'ok').length;
     const rs = { x: tab === 'crew' ? '100%' : tab === 'air' ? '200%' : '0',
