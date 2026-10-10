@@ -264,9 +264,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <span style="margin: {{rs.sumMt}} 16px 8px; font-size: 16px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
         <!-- (Oct 8, 14:00) the team lead's home: his team's people, with their photos, as on the crew sheet (the same person cards), then the vehicle it rides in -->
-        <ul style="display: {{crewPD}}; flex-direction: column; gap: 0; margin: 0 16px 8px; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <ul style="display: {{crewPD}}; flex-direction: column; gap: 8px; margin: 0 16px 8px; padding: 0; list-style: none">
           <sc-for list="{{crewP}}" as="p" hint-placeholder-count="4">
-            <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; flex-shrink: 0">
+            <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
               <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
                 <span style="font-size: 18px; font-weight: 700; line-height: 24px; overflow-wrap: anywhere">{{p.name}}</span>
@@ -277,10 +277,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
         </ul>
         <sc-if value="{{rs.empty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0 16px; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 18px; line-height: 24px; color: #000000; text-align: center">{{rs.emptyTxt}}</p></sc-if>
-        <ul style="display: {{rs.listD}}; flex-direction: column; gap: 0; margin: 0 16px; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <ul style="display: {{rs.listD}}; flex-direction: column; gap: 8px; margin: 0 16px; padding: 0; list-style: none">
           <sc-for list="{{rs.rows}}" as="r" hint-placeholder-count="4">
-            <!-- (Oct 10, 22:59) the summary's list format: the units are rows of one white card; a 48px round icon (in the status tag's colour), the name in bold, the status tag on the right, the details on their own lines under the name -->
-            <li style="box-shadow: {{r.liSh}}">
+            <!-- (Oct 10, 23:16) each unit its own white card, 8px apart; inside, the summary's row format (22:59): a 48px round icon (in the status tag's colour), the name in bold, the status tag on the right, the details on their own lines under the name -->
+            <li style="border-radius: 16px; background: #FFFFFF; box-shadow: {{r.liSh}}; overflow: hidden">
               <button type="button" class="strow2" data-wf-keepsp="1" onClick="{{r.go}}" disabled="{{r.dis}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: 48px {{r.cols}}; gap: 4px 16px; align-items: start; width: 100%; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: {{r.cur}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: {{r.icBg}}; color: #3A3A3C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.ic}}"></path></svg></span>
                 <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; overflow-wrap: anywhere">{{r.name}}</span>
@@ -337,9 +337,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- No X: the grabber closes the dialog. The command team's group chat (the primary action) sits here as a round primary button -->
       <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{sq.hdChatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center">{{sq.bN}}</span></button>
     </div>
-    <ul style="display: flex; flex-direction: column; gap: 0; min-height: 0; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden; overflow-y: auto">
+    <ul style="display: flex; flex-direction: column; gap: 8px; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto">
       <sc-for list="{{sq.people}}" as="p" hint-placeholder-count="5">
-        <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; flex-shrink: 0">
+        <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
             <span style="font-size: 18px; font-weight: 700; line-height: 24px; overflow-wrap: anywhere">{{p.name}}</span>
