@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791565213"></script>
 <script src="feedcam.js?v=1791564887"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791627525"></script>
+<script src="prefs.js?v=1791664980"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="menu.js?v=1791627250"></script>
 <script src="i18n.js?v=1791530542"></script>
@@ -98,7 +98,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- (Oct 5, 07:03) in the title column, the row after the description: (06:57) only the station's status tag and, on the right, the green call button: a call with this
          station's fire coordinator alone (rings, connects, then shows them in the floating panel, as the police call does) -->
 <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 4px">
-      <span role="status" class="wf-ctag" style="color: {{st.tagFg}}; background: linear-gradient({{st.tagBg}}, {{st.tagBg}}) rgb(255, 255, 255)">{{st.tag}}</span>
+      <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0"><!-- (Oct 10, 21:45) the fire danger in the station's area, a tag left of the station's status --><span role="status" class="wf-ctag" aria-label="{{risk.aria}}" style="display: {{risk.d}}; color: {{risk.fg}}; background: linear-gradient({{risk.bg}}, {{risk.bg}}) rgb(255, 255, 255)">{{risk.txt}}</span><span role="status" class="wf-ctag" style="color: {{st.tagFg}}; background: linear-gradient({{st.tagBg}}, {{st.tagBg}}) rgb(255, 255, 255)">{{st.tag}}</span></span>
       <button type="button" class="chbtn" data-round="1" onClick="{{stCall}}" data-call="1" aria-label="{{stCallAria}}" style="display: {{callD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #34C759; color: #fff; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
     </span>
 </span></span>
@@ -136,10 +136,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <!-- (Oct 8, 18:55) the incident's map marker, the same as its map and legend marker -->
               <svg width="20" height="20" viewBox="0 0 14 14" aria-hidden="true" style="grid-row: 1; align-self: center"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{f.mkFill}}" stroke="{{f.mkStroke}}" stroke-width="{{f.mkSw}}"></path></svg>
-              <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
+              <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
               <span class="wf-stg" data-wf-eqw="asg-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
-              <span style="grid-column: 2 / -1; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span></span>
-              <span style="display: {{f.sub2D}}; grid-column: 2 / -1; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub2}}</span>
+              <span style="grid-column: 2 / -1; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s1.a0}}<b style="font-weight: 700">{{f.s1.b0}}</b>{{f.s1.a1}}<b style="font-weight: 700">{{f.s1.b1}}</b>{{f.s1.a2}}<b style="font-weight: 700">{{f.s1.b2}}</b>{{f.s1.a3}}</span></span>
+              <span style="display: {{f.sub2D}}; grid-column: 2 / -1; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s2.a0}}<b style="font-weight: 700">{{f.s2.b0}}</b>{{f.s2.a1}}<b style="font-weight: 700">{{f.s2.b1}}</b>{{f.s2.a2}}<b style="font-weight: 700">{{f.s2.b2}}</b>{{f.s2.a3}}</span>
             </a>
             <span class="wf-simstar" aria-hidden="true" style="display: {{f.simD}}">*</span>
             </li>
@@ -204,9 +204,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <!-- (Oct 5, 07:46) the incident card of the incidents list (Main): place and stage tag, then distance and drive time -->
             <li style="border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <a href="Dispatch.dc.html" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
-              <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.place}}</span>
+              <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{f.place}}</span>
               <span class="wf-stg" data-wf-eqw="near-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{f.tagBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{f.tagFg}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f.tagTxt}}</span>
-              <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.sub}}</span>
+              <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s1.a0}}<b style="font-weight: 700">{{f.s1.b0}}</b>{{f.s1.a1}}<b style="font-weight: 700">{{f.s1.b1}}</b>{{f.s1.a2}}<b style="font-weight: 700">{{f.s1.b2}}</b>{{f.s1.a3}}</span>
             </a>
             </li>
           </sc-for>
@@ -424,19 +424,25 @@ class Component extends DCLogic {
   }
   // Key figures can be trimmed: the + tile opens the list with toggles; the extra cards start hidden (kept on this phone)
   // (Oct 8, 14:11) Hello [rank] [name]: five greetings, one picked at random when the screen opens; the time of day at the station
-  wfGreet(S, lead, L) {
+  wfGreet(S, lead, L, nInc, dng) {
     const staff = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null, full = staff ? (lead ? staff.lead : staff.captain) : '', last = full ? full.split(' ').slice(-1)[0] : '';
     const rk = lead ? L('Lieutenant', 'Chefe de equipa') : L('Captain', 'Chefe'), who = (rk + (last ? ' ' + last : '')).trim();
     const h = new Date().getHours();   /* (Oct 8, 17:45) the user's own time of day, like the shift's duties */
     const tod = h >= 5 && h < 12 ? L('Good morning', 'Bom dia') : h >= 12 && h < 18 ? L('Good afternoon', 'Boa tarde') : h >= 18 && h < 22 ? L('Good evening', 'Boa noite') : null;   /* at night "good night" reads as a goodbye: a late-shift line instead */
-    const G = [
-      [L('Hello ' + who + ', here’s what you need to know today.', 'Olá ' + who + ', eis o que precisa de saber hoje.')],
-      [L('Howdy ' + who + ', here’s your day at a glance.', 'Viva ' + who + ', eis o seu dia num relance.')],
-      [tod ? tod + ', ' + who + L('. Here’s what you need to know.', '. Eis o que precisa de saber.') : L('Working late, ' + who + '? Here’s what you need to know.', 'A trabalhar até tarde, ' + who + '? Eis o que precisa de saber.')],
-      [L('How are things, ' + who + '? Here’s what matters today.', 'Como vão as coisas, ' + who + '? Eis o que importa hoje.')],   /* (Oct 8, 17:40) "today" once, as the time stamp */
-      [L('Hope all is well, ' + who + '. Here’s what you need to know today.', 'Espero que esteja tudo bem, ' + who + '. Eis o que precisa de saber hoje.')]];
-    if (this._greetI == null) this._greetI = Math.floor(Math.random() * G.length);
-    const t = G[this._greetI][0], k = who ? t.indexOf(who) : -1; return k < 0 ? { a: t, who: '', b: '' } : { a: t.slice(0, k), who, b: t.slice(k + who.length) }; }
+    /* (Oct 10, 21:45) the greeting speaks of the cards under it: with incidents, they are the ones the station has to resolve (five
+       wordings, one picked at random); with none, all is calm and it gives the fire danger in the area, to set the station's alert level */
+    const n = Math.max(0, +nInc || 0), one = n === 1, dz = dng ? L(dng.w[0], dng.w[1]).toLowerCase() : '', dn = dng ? dng.n : 0;
+    const G = n ? [
+      [L('Hello ' + who + (one ? ', this is the incident we have to resolve.' : ', these are the incidents we have to resolve.'), 'Olá ' + who + (one ? ', este é o incidente que temos para resolver.' : ', estes são os incidentes que temos para resolver.'))],
+      [(tod ? tod + ', ' + who + '. ' : L('Working late, ' + who + '? ', 'A trabalhar até tarde, ' + who + '? ')) + L(one ? 'One incident needs the station.' : n + ' incidents need the station.', one ? 'Um incidente precisa do quartel.' : n + ' incidentes precisam do quartel.')],
+      [L('How are things, ' + who + '? ' + (one ? 'This incident needs our crews.' : 'These incidents need our crews.'), 'Como vão as coisas, ' + who + '? ' + (one ? 'Este incidente precisa das nossas equipas.' : 'Estes incidentes precisam das nossas equipas.'))],
+      [L('Hope all is well, ' + who + '. Here’s what we have to resolve.', 'Espero que esteja tudo bem, ' + who + '. Eis o que temos para resolver.')],
+      [L('Howdy ' + who + ', here’s what’s waiting for the station.', 'Viva ' + who + ', eis o que espera pelo quartel.')]
+    ] : [
+      [L('All calm, ' + who + '. Fire danger in our area is ' + dz + ', ' + dn + ' of 5. Set the station’s alert to match.', 'Está tudo calmo, ' + who + '. O risco de incêndio na nossa área é ' + dz + ', ' + dn + ' em 5. Ajuste o nível de alerta do quartel.')],
+      [L('Nothing to report today, ' + who + '. Fire danger in our area: ' + dz + ', ' + dn + ' of 5. Set the station’s alert to match.', 'Nada a assinalar hoje, ' + who + '. Risco de incêndio na nossa área: ' + dz + ', ' + dn + ' em 5. Ajuste o nível de alerta do quartel.')]];
+    if (this._greetI == null) this._greetI = Math.floor(Math.random() * 60);
+    const t = G[this._greetI % G.length][0], k = who ? t.indexOf(who) : -1; return k < 0 ? { a: t, who: '', b: '' } : { a: t.slice(0, k), who, b: t.slice(k + who.length) }; }
   wfKpiDrag(key, grp, onTap) { return window.__wfKpiDrag(this, key, grp, onTap, 'wf-order-' + grp); }   /* (Oct 8) the shared mini-card reorder (fit.js) */
   wfHidden() { const g = 'stk'; let v = null, sn = null; try { v = JSON.parse(localStorage.getItem('wf-hide-' + g) || 'null'); sn = JSON.parse(localStorage.getItem('wf-seen-' + g) || 'null'); } catch (e) {} const opt = (this._kAll || []).filter((m) => m.opt).map((m) => m.key); if (!Array.isArray(v)) return opt; return v.concat(opt.filter((k) => v.indexOf(k) < 0 && !(Array.isArray(sn) && sn.indexOf(k) >= 0))); }
   wfPicker() {
@@ -594,7 +600,7 @@ class Component extends DCLogic {
     const shownRows = resolvedTab ? closedNew.slice(0, rLim) : rows, shownDuties = [];
     const rMore = resolvedTab && closedNew.length + doneNew.length > rLim;
     const nTodo = rows.length, nDone = closedRows.length;
-    return { title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows, none: false, listD: shownRows.length ? 'flex' : 'none',
+    return { title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows.map((x) => Object.assign({}, x, { s1: window.__wfSegs(x.sub), s2: window.__wfSegs(x.sub2) })), none: false, listD: shownRows.length ? 'flex' : 'none',
       duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: (lead ? !nDep : !rows.length) ? 'block' : 'none',
       tabX: resolvedTab ? '100%' : '0%', d24: resolvedTab ? 'block' : 'none', t24: L('Last 7 days', 'Últimos 7 dias'),
       moreD: rMore ? 'block' : 'none',
@@ -670,7 +676,6 @@ class Component extends DCLogic {
       { key: 'n25', l: L('Active fires within 25 km', 'Incêndios ativos a 25 km'), n: String(n25), u: '', sub: '' },
       { key: 'near', l: L('Nearest active fire', 'Incêndio ativo mais próximo'), n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', sub: nf ? (nf.r[3] || '') : L('None within 60 km', 'Nenhum a 60 km') },
       { key: 'drive', l: L('Drive to it', 'Chegada'), n: nf ? '~' + Math.round(nf.km * 1.3 / 50 * 60) : '—', u: nf ? 'min' : '', sub: nf ? L('At 50 km/h', 'A 50 km/h') : '' },
-      { key: 'risk', opt: true, sim: true, l: L('Fire danger today', 'Risco de incêndio hoje'), n: String(danger), u: '/ 5', sub: L(dW[0], dW[1]) },
       { key: 'turn', opt: true, sim: true, l: L('Turnout time', 'Tempo de saída'), n: String(2 + H0 % 3), u: 'min', sub: L('Average', 'Média') },
       { key: 'calls', opt: true, sim: true, l: L('Calls this year', 'Ocorrências este ano'), n: nf2(600 + H0 % 1400), u: '', sub: nf2(30 + H0 % 70) + L(' wildfires', ' incêndios rurais') },
       { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' },
@@ -681,13 +686,11 @@ class Component extends DCLogic {
       kAll.splice(0, kAll.length, ...(lead ? [
         { key: 'h-dep', l: L('Deployed', 'Destacado'), n: String(AS.nDep != null ? AS.nDep : AS.rows.length), u: '', sub: '' },   /* (Oct 8, 17:55) his deployments only, not the area's incidents */
         { key: 'h-near', l: L('Nearest active fire', 'Incêndio ativo mais próximo'), n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', sub: nf ? (nf.r[3] || '') : L('None within 60 km', 'Nenhum a 60 km') },
-        { key: 'h-drive', l: L('Drive to it', 'Chegada'), n: nf ? '~' + Math.round(nf.km * 1.3 / 50 * 60) : '—', u: nf ? 'min' : '', sub: nf ? L('At 50 km/h', 'A 50 km/h') : '' },
-        { key: 'risk', opt: true, sim: true, l: L('Fire danger today', 'Risco de incêndio hoje'), n: String(danger), u: '/ 5', sub: L(dW[0], dW[1]) }]
+        { key: 'h-drive', l: L('Drive to it', 'Chegada'), n: nf ? '~' + Math.round(nf.km * 1.3 / 50 * 60) : '—', u: nf ? 'min' : '', sub: nf ? L('At 50 km/h', 'A 50 km/h') : '' }]
       : [
         { key: 'h-zone', l: L('In the area', 'Na área'), n: String(AS.nZone), u: '', sub: '' },
         { key: 'h-aid', l: L('Mutual aid', 'Auxílio'), n: String(AS.nAid), u: '', sub: '' },
         { key: 'h-near', l: L('Nearest active fire', 'Incêndio ativo mais próximo'), n: nf ? kmF(nf.km) : '—', u: nf ? 'km' : '', sub: nf ? (nf.r[3] || '') : L('None within 60 km', 'Nenhum a 60 km') },
-        { key: 'risk', opt: true, sim: true, l: L('Fire danger today', 'Risco de incêndio hoje'), n: String(danger), u: '/ 5', sub: L(dW[0], dW[1]) },
         { key: 'turn', opt: true, sim: true, l: L('Turnout time', 'Tempo de saída'), n: String(2 + H0 % 3), u: 'min', sub: L('Average', 'Média') },
         { key: 'water', opt: true, sim: true, l: L('Water points within 10 km', 'Pontos de água a 10 km'), n: String(6 + H0 % 15), u: '', sub: '' }])); }
     /* (Oct 8, 22:24) the station badge is a mini card, on by default and first */
@@ -820,7 +823,9 @@ class Component extends DCLogic {
       crewP: lead && crews[0] ? crews[0].ppl.map((n, i) => ({ name: n, role: (() => { const CR = window.__wfChat && window.__wfChat.rankOf ? window.__wfChat.rankOf(null, n) : null; return CR ? L(CR.en, CR.pt) : i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'); })(), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...tg(pSt(n, i) === 'ok' && crews[0].st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' }))   /* (Oct 8, 17:55) on duty in a crew that is out: on a mission */ : [], crewPD: lead && crews[0] ? 'flex' : 'none',
       none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
-      help, greet: home ? this.wfGreet(S, lead, L) : { a: '', who: '', b: '' }, mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
+      help, risk: (() => { const RK = [[L('Low risk', 'Risco reduzido'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], [L('Moderate risk', 'Risco moderado'), 'rgba(204,153,0,0.16)', '#745200'], [L('High risk', 'Risco elevado'), 'rgba(184,74,0,0.14)', '#963B00'], [L('Very high risk', 'Risco muito elevado'), '#FBE1DC', '#B3261E'], [L('Maximum risk', 'Risco máximo'), '#B3261E', '#FFFFFF']][danger - 1] || [];
+        return { d: home && RK[0] ? 'inline-flex' : 'none', txt: RK[0] || '', bg: RK[1] || 'transparent', fg: RK[2] || '#3A3A3C', aria: L('Fire danger today: ', 'Risco de incêndio hoje: ') + danger + L(' of 5', ' em 5') }; })(),   /* (Oct 10, 21:45) the fire danger is a tag now, no longer a key figure (simulated) */
+      greet: home ? this.wfGreet(S, lead, L, AS && AS.rows ? AS.rows.length : 0, { n: danger, w: dW }) : { a: '', who: '', b: '' }, mapIgn: home ? AS.ign : [], ...(home ? AS.view : { homeMapW: 358, homeMapH: 280, homeFx: S.x, homeFy: S.y }), zero: 0, no: false, yes: true, noList: [], pinId: 'station-' + S.id, kpis, kp: this.wfPicker(),
       stCallAria: L('Call ', 'Ligar a ') + L(cmdRoles[0][0], cmdRoles[0][1]).toLowerCase() + ' ' + cmdP[0].name,
       stCall: (e) => { const F = window.__wfCamFeed; if (!F) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} const c0 = cmdP[0];   /* the station's fire coordinator alone */
         F.open({ anchor: e && e.currentTarget, title: 'Call', label: L('Call', 'Chamada'), who: L(cmdRoles[0][0], cmdRoles[0][1]) + ' ' + c0.name,
@@ -836,7 +841,7 @@ class Component extends DCLogic {
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
         ...(() => { const r0 = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : '', A = home && window.__wfStationArea ? window.__wfStationArea(S) : null, r = A && A.name ? A.name + '. ' + r0 : r0, stN = lead ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : ''; if (stN) return { region: stN + '. ' + (A && A.name ? A.name : r0), regD: 'block' }; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
-      rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length && !home ? 'flex' : 'none', loc: lc, fires, firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
+      rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length && !home ? 'flex' : 'none', loc: lc, fires: fires.map((x) => Object.assign({}, x, { s1: window.__wfSegs(x.sub) })), firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'
     };
   }

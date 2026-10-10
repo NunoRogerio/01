@@ -721,3 +721,9 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
       .observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-hidden'] }); }
   if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);
 })();
+/* (Oct 10, 21:42) incident card lines: one topic per line, never cut (they wrap), the values in bold. A line is split into
+   regular text and up to three bold values (sizes, durations, distances, drive times: "8 ac", "1 d 5 h", "3.0 km", "~5 min") */
+if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var re = /~?\d[\d.,]*\s?(?:ac|ha|km|mi|min|h|d|s|%)(?![a-zA-Z\u00C0-\u017F])(?:\s\d+\s?(?:h|min|s)(?![a-zA-Z]))*/g, o = { a0: '', b0: '', a1: '', b1: '', a2: '', b2: '', a3: '' }, i = 0, last = 0, m;
+  while ((m = re.exec(t)) && i < 3) { o['a' + i] = t.slice(last, m.index); o['b' + i] = m[0]; last = m.index + m[0].length; i++; }
+  o['a' + i] = t.slice(last); return o; };
+

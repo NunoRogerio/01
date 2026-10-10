@@ -18,7 +18,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791565213"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791627525"></script>
+<script src="prefs.js?v=1791664980"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
@@ -291,9 +291,9 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
         <sc-if value="{{noCands}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 18px; color: #000000; line-height: 24px">None in this area</span></sc-if>
         <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin: 0 16px 8px; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; text-decoration: none">
-            <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{it.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
+            <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{it.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{it.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
             <span class="wf-ctag" data-wf-eqw="cand-tags" style="justify-self: end; background: {{it.valBg}}; color: {{it.valC}}">{{it.val}}</span>
-            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
+            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{it.s1.a0}}<b style="font-weight: 700">{{it.s1.b0}}</b>{{it.s1.a1}}<b style="font-weight: 700">{{it.s1.b1}}</b>{{it.s1.a2}}<b style="font-weight: 700">{{it.s1.b2}}</b>{{it.s1.a3}}</span>
           </a>
         </sc-for>
         <div role="row" style="display: {{li.fireD}}; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; flex-shrink: 0; margin-top: {{li.fireMt}}; padding: 0 16px 16px; border-bottom: 0; font-size: 16px; font-weight: 400; line-height: 20px; color: #545458">
@@ -303,10 +303,10 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
         <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 18px; color: #000000; line-height: 24px">None in this area</span></sc-if>
         <sc-for list="{{fireShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin: 0 16px 8px; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; text-decoration: none">
-            <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.place}}</span>
+            <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{it.place}}</span>
             <span class="wf-stg" data-wf-eqw="fire-tags" style="justify-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{it.valBg}}; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: {{it.valC}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="display: {{it.tagIcD}}; flex-shrink: 0"><path d="{{it.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{it.val}}</span>
-            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub}}</span>
-            <span style="display: {{it.sub2D}}; grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.sub2}}</span>
+            <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{it.s1.a0}}<b style="font-weight: 700">{{it.s1.b0}}</b>{{it.s1.a1}}<b style="font-weight: 700">{{it.s1.b1}}</b>{{it.s1.a2}}<b style="font-weight: 700">{{it.s1.b2}}</b>{{it.s1.a3}}</span>
+            <span style="display: {{it.sub2D}}; grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{it.s2.a0}}<b style="font-weight: 700">{{it.s2.b0}}</b>{{it.s2.a1}}<b style="font-weight: 700">{{it.s2.b1}}</b>{{it.s2.a2}}<b style="font-weight: 700">{{it.s2.b2}}</b>{{it.s2.a3}}</span>
           </a>
         </sc-for>
         <div aria-hidden="true" style="flex-shrink: 0; height: 32px"></div>
@@ -1939,7 +1939,8 @@ class Component extends DCLogic {
         const ignList = K1 === 'fire' ? [] : ignListAll.filter(hit1).slice().sort((a, b) => LS.d * ((a.conf || 0) - (b.conf || 0))), fireList = K1 === 'ign' ? [] : fireListAll.filter(hit1).slice().sort((a, b) => FS.d * ((a.stRank || 0) - (b.stRank || 0)));
         const col = (S, key, def) => ({ aria: S.d > 0 ? 'ascending' : 'descending', op: 1, rot: S.d > 0 ? (def > 0 ? '0deg' : '180deg') : (def > 0 ? '180deg' : '0deg'), pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ [key]: { k: S.k, d: -S.d } }); } });
         const lsort = { lik: col(LS, 'liSort', -1), st: col(FS, 'fiSort', 1) };
-        return { lsort, ignShown: ignList, fireShown: fireList, noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' ignition candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' fire' + (fireListAll.length === 1 ? '' : 's'),
+        const SGx = (L0) => L0.map((x) => Object.assign({}, x, { s1: window.__wfSegs ? window.__wfSegs(x.sub) : { a0: x.sub || '' }, s2: window.__wfSegs ? window.__wfSegs(x.sub2) : { a0: x.sub2 || '' } }));   /* (Oct 10, 21:42) never cut, values in bold */
+        return { lsort, ignShown: SGx(ignList), fireShown: SGx(fireList), noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' ignition candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' fire' + (fireListAll.length === 1 ? '' : 's'),
         /* the counts in bold: number, words, number, words */ incN1: String(ignListAll.length), incW1: ignListAll.length === 1 ? 'ignition candidate.' : 'ignition candidates.', incN2: String(fireListAll.length), incW2: fireListAll.length === 1 ? 'fire' : 'fires' }; })(ignList, fireList),
       ff,
       listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
