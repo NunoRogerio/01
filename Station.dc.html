@@ -120,7 +120,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <p style="margin: 0 0 16px; font-size: 18px; line-height: 24px; color: #000000; text-wrap: pretty">{{greet.a}}<b style="font-weight: 700">{{greet.who}}</b>{{greet.b}}</p>
         <!-- (Oct 8, 17:58) no heading over the list: "Deployments" did not help read it (it holds incidents and the shift's duties) -->
         <!-- (Oct 8) To do | Resolved: the chats panel's value switcher; what is still to do, and what is done or closed -->
-        <div role="tablist" aria-label="{{asg.title}}" class="wf-seg" style="margin: 0 0 8px">
+        <!-- (Oct 10, 21:02, for now) the switcher is hidden: only the active incidents show; Resolved will get its own menu entry -->
+        <div role="tablist" aria-label="{{asg.title}}" class="wf-seg" style="display: none; margin: 0 0 8px">
           <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{asg.tabX}})"><span class="segblob"></span></span>
           <sc-for list="{{asg.tabs}}" as="tb" hint-placeholder-count="2">
             <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="font-size: 18px; font-weight: {{tb.w}}">{{tb.label}}<span class="wf-segn" style="display: {{tb.nD}}">{{tb.n}}</span></button>
@@ -580,7 +581,7 @@ class Component extends DCLogic {
             window.__wfConfirm({ title: L('Mark as done?', 'Marcar como feito?'), body: L(ti[0] + ' moves to Resolved.', ti[1] + ' passa para Resolvidos.'), cancel: L('Cancel', 'Cancelar'), ok: L('Mark done', 'Marcar feito'), onOk: set }); } }; }); })();
     const dutyLeft = dutyList.filter((d) => d.doneStr === 'false').length;
     // (Oct 8) To do | Resolved. Resolved: the duties done and the station's incidents closed or dismissed
-    const tab = (this.state || {}).atab || 'todo', resolvedTab = tab === 'done';
+    const tab = 'todo', resolvedTab = false;   /* (Oct 10, 21:02) Resolved hidden for now (its own menu entry later) */
     const ck0 = (S.type === 'way' ? 'w' : 'n') + S.id;
     const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (!c.updated || Date.now() - c.updated < 7 * 864e5) && (((c.closed || c.dismissed) && c.kind !== 'dm') || (c.kind === 'dm' && c.done && !c.police)) && ((c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) || !lead || c.dismissed) && (c.kind === 'dm' || !window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { if (c.kind === 'dm') { const P0 = (c.people || [])[0] || {}, OK = (window.__wfStTag || {}).ok || { bg: 'rgba(52,199,89,0.16)', fg: '#186B2D' }, ttl = c.req ? L('Help request. ', 'Pedido de ajuda. ') + (c.reg || P0.name) : c.help ? L('Help offered. ', 'Ajuda oferecida. ') + (c.reg || P0.name) : (c.reg || c.place);   /* (Oct 8, 22:52) a mutual aid conversation marked done */
         return { simD: 'block', ...MK.fire, moonD: 'none', sub2: '', sub2D: 'none', place: ttl, aria: ttl, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} }, _t: c.doneAt || 0, tagTxt: L('Done', 'Feito'), tagFg: OK.fg, tagBg: OK.bg, tagIc: 'M5 12.5l4.5 4.5L19 7.5', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.topic ? c.topic.place + '. ' : '') + L('Mutual aid.', 'Auxílio.') }; }
