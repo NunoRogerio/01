@@ -23,7 +23,7 @@
   // (Oct 5) the aerial team's own people with their aircraft: pilots in front of their helicopters, ground crews at work
   var UX = function (id) { return 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop'; }, PX = function (id) { return 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=900'; };
   var AIRPEOPLE = [[UX('photo-1761357294320-af17a49848d4'), 'Photo: luke fancher / Unsplash'], [UX('photo-1761357294010-062e0df6d3a0'), 'Photo: luke fancher / Unsplash'], [UX('photo-1780768160920-fcca9193b7bc'), 'Photo: Niklas Jonasson / Unsplash'],
-    [UX('photo-1772140994501-a12bbc57a1e5'), 'Photo: Navy Medicine / Unsplash'], [PX(15974654), 'Photo: Toulouse / Pexels'], [PX(33954113), 'Photo: sametkarakocofficial / Pexels'], [PX(9691823), 'Photo: mutecevvil / Pexels']];
+    [UX('photo-1772140994501-a12bbc57a1e5'), 'Photo: Navy Medicine / Unsplash'], [PX(15974654), 'Photo: Toulouse / Pexels'], [PX(9691823), 'Photo: mutecevvil / Pexels']];
   var AIRP = [['assets/air/air-h1.jpg?v=1', 'Photo: Alan Radecki. CC BY 2.5'], ['assets/air/air-h2.jpg?v=1', 'Photo: Jim Bahn. CC BY 2.0'], ['assets/air/air-h3.jpg?v=1', 'Photo: U.S. Forest Service'],
     ['assets/air/air-p1.jpg?v=1', 'Photo: Lisa Cox / U.S. Forest Service'], ['assets/air/air-p2.jpg?v=1', 'Photo: Michael Rieger / FEMA'], ['assets/air/air-p3.jpg?v=1', 'Photo: Adam Dubrowa / FEMA']];
   var hash = function (t) { var h = 7; t = String(t || ''); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; };
@@ -54,7 +54,7 @@
     
     '.bd img{display:block;box-sizing:border-box;width:min(48px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:48px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
     '.kicker{font-size:16px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
-    '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:var(--wf-y);text-shadow:0 0 12px rgba(0,0,0,.45)}' +
+    '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:#FFFFFF;text-shadow:0 0 12px rgba(0,0,0,.45)}' +
     '.fire{font-size:20px;font-weight:700;line-height:24px;color:#FFFFFF;text-wrap:balance;text-shadow:0 0 10px rgba(0,0,0,.5)}' +
     '.meta{font-size:16px;line-height:20px;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}' +
     '.size{align-self:flex-start;padding:4px 16px;border-radius:8px;background:rgba(242,242,247,.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#1C1C1E;font-size:16px;line-height:20px;font-weight:600}' +

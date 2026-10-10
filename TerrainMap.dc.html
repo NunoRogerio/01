@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791665418"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791667104"></script>
+<script src="prefs.js?v=1791668035"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
@@ -1887,9 +1887,9 @@ class Component extends DCLogic {
     /* (Oct 7) structures at risk (the incident's projection reaches houses, as checked on its page): the red sub icon at the marker's top right, 2px off its edge */
     const atRisk = (id) => { try { const r = id != null && window.__wfHomesGet ? window.__wfHomesGet(String(id)) : null; return !!(r && r.first != null); } catch (e) { return false; } };
     const riskAt = (R) => +((R + 4.5) * 0.7071).toFixed(1);
-    (OUT.fireMarks || []).forEach((m) => { const on1 = m.flameD === 'block' && m._g && atRisk(m._g.id), c = riskAt(m.bdW ? 14.25 : 10.25); m.riskD = on1 ? 'block' : 'none'; m.riskL = +(c - 3).toFixed(1); m.riskT = +(14 - c - 2.5).toFixed(1); });
+    (OUT.fireMarks || []).forEach((m) => { const on1 = m.flameD === 'block' && m._g && atRisk(m._g.id), c = riskAt(m.bdW ? 14.25 : 10.25); m.riskD = 'none';   /* (Oct 10, 22:30) no risk triangle */ m.riskL = +(c - 3).toFixed(1); m.riskT = +(14 - c - 2.5).toFixed(1); });
     (OUT.ignMarks || []).forEach((m, i) => { const k = m._id || i, o = on('ign', k); m.sel = sel('ign', k); m.bdC = '#3A3A3C'; m.bdW = o ? 10.4 : 5.2; m.bdW2 = o ? 10.4 : 5.2;   /* the candidate's outline: 2px, 4px when selected, outside the circle */ m.po = o ? 'stroke' : 'normal'; });
-    (OUT.ignMarks || []).forEach((m) => { const c = riskAt(8.47 + (m.bdW || 5.2) * 0.77 / 2); m.riskD = atRisk(m._id) ? 'block' : 'none'; m.riskL = +(22 + c - 3).toFixed(1); m.riskT = +(22 - c - 2.5).toFixed(1); });
+    (OUT.ignMarks || []).forEach((m) => { const c = riskAt(8.47 + (m.bdW || 5.2) * 0.77 / 2); m.riskD = 'none'; m.riskL = +(22 + c - 3).toFixed(1); m.riskT = +(22 - c - 2.5).toFixed(1); });
     /* (Oct 7) mutual aid: on a captain's or team lead's maps, incidents outside the station's area that the station answers carry a thin outer ring */
     { const mine = window.__wfMine ? window.__wfMine() : null, aidAt = (x, y) => { if (!mine || x == null || y == null || !window.__wfIncidentFor) return false; const ll = window.__wfIncLatLon(x, y); return window.__wfIncidentFor(ll[0], ll[1]) === 'aid'; };
       const P0 = this.props || {}, IX = {}; (Array.isArray(P0.ignitions) ? P0.ignitions : []).forEach((g) => { IX[g.id] = g; });

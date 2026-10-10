@@ -361,7 +361,7 @@
     if (c.stage >= 3 && evacWants(en) && !(c.flags || {}).evac) evacAsk(c, who);   /* (Oct 8, 22:15) anyone on the team who brings up evacuating raises the request card for the fire owner */
     push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
-  function setStage(c, s, delay, adv) { push(c, { kind: 'stage', stage: s }, delay, adv || 0);
+  function setStage(c, s, delay, adv, back) { push(c, back ? { kind: 'stage', stage: s, back: true } : { kind: 'stage', stage: s }, delay, adv || 0);
     // (Oct 4) crews on the fire line: the air lead joins the chat
     if (s >= 3 && wantsAir(c) && !(c.people || []).some(function (p) { return p.kind === 'air'; })) {   /* (Oct 8, 23:09) only when air was ordered */ var a = airLead(c); c.people.push(a); sys(c, a.name + ', ' + a.roleEn.toLowerCase() + ', joined', a.name + ', ' + a.rolePt.toLowerCase() + ', entrou na conversa', (delay || 0) + 500, 0); } }
   function lead(c, i) { return Math.min(i, Math.max(0, c.people.length - 1)); }
@@ -661,7 +661,7 @@
   // the lieutenant's view: the captain (the first station's lead) moves the fire on, or back after a rekindle
   function captMove(c, nx, back) {
     var cap = 0; jump(c, (back ? 20 : stageSpan(c, nx)) * MIN);
-    if (back) { c.flags.rekindled = true; say(c, cap, 'Stepping back to Crews on scene. Hit the rekindle.', 'Voltamos a Equipas no local. Ataquem o reacendimento.', 200, 0); setStage(c, 3, 1500, 0); return; }
+    if (back) { c.flags.rekindled = true; say(c, cap, 'Stepping back to Crews on scene. Hit the rekindle.', 'Voltamos a Equipas no local. Ataquem o reacendimento.', 200, 0); setStage(c, 3, 1500, 0, true); return; }
     say(c, cap, nx === 7 ? 'Closing the fire. Thank you all.' : 'Moving the fire to ' + STAGES[nx].en + '.', nx === 7 ? 'Encerro o incêndio. Obrigado a todos.' : 'Passo o incêndio a ' + STAGES[nx].pt + '.', 200, 0);
     setStage(c, nx, 1500, 0);
   }
@@ -778,14 +778,14 @@
       c.flags.drone3 = true; me('Send a drone over the head to read the fire behaviour.', 'Enviem um drone sobre a cabeça para ler o comportamento do fogo.');
       card(c, { tag: { en: 'Drone D-5 · over the head', pt: 'Drone D-5 · sobre a cabeça' }, tagC: '#0A66CC', title: { en: 'Running upslope', pt: 'A subir a encosta' }, body: { en: 'Spotting up to 50 m ahead of the head', pt: 'Projeções até 50 m à frente da cabeça' }, fire: true }, 6000, 8);
     } else if (a === 'next') {
-      var nx = c.stage + 1;
+      var nx = c.stage + 1; if (!STAGES[nx] || c.closed) return;   /* (Oct 10, 22:31) nothing after Closed */
       jump(c, stageSpan(c, nx) * MIN);   // the hours this stage took, before you move it on
       me('Moving the fire to ' + STAGES[nx].en + '.', 'Passo o incêndio a ' + STAGES[nx].pt + '.');
       setStage(c, nx, 800, 0);
     } else if (a === 'back') {   /* (Oct 8, 21:06) a rekindle: the fire steps back to Crews on scene */
       c.flags.rekindled = true; jump(c, 20 * MIN);
       me('Stepping back to Crews on scene. Hit the rekindle.', 'Voltamos a Equipas no local. Ataquem o reacendimento.');
-      setStage(c, 3, 800, 0);
+      setStage(c, 3, 800, 0, true);
     } else if (a === 'stayStage') {
       if (notYet) me('Not yet. Keep at it and report.', 'Ainda não. Continuem e informem.');
       else me('Hold the stage. Knock it down and report.', 'Mantemos a fase. Apaguem-no e informem.');
@@ -1422,6 +1422,8 @@
         m.t = q.due; m.vt = vnow(c); delete m.adv;
         if (m.kind === 'stage') {
           if (c.dismissed) continue;
+          /* (Oct 10, 22:27) a fire never slips back on its own: a stage queued earlier (the crews reaching the fire, say) that lands after the owner moved the fire on is dropped; only a rekindle steps back */
+          if (!m.back && m.stage <= c.stage) continue;
           c.stage = m.stage; c.hist.push({ s: m.stage, vt: m.vt }); c.sEnt = (c.sEnt || 0) + 1; c.stageAt = q.due; c.msgs.forEach(function (x) { if ((x.rec || x.rekindle) && !x.done) x.done = 'moved'; });   /* the stage moved: an open recommendation is settled */   /* each time a stage begins (a stage can come back after a rekindle) */
           onStage(c, c.stage);
           if (c.stage === 7) c.closed = true;
