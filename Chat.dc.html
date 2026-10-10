@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791668895"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791668253"></script>
+<script src="prefs.js?v=1791669230"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
@@ -1091,14 +1091,14 @@ class Component extends DCLogic {
             ...(() => { const neg = a.key === 'reqNo' || a.key === 'declineAir' || a.key === 'stayStage' || a.key === 'evacNo' || a.key === 'helpNo', pri = !neg, gh = false;   /* (Oct 9, 09:07) confirmation cards: the confirming action is the primary (dark grey, white label), Not yet / Not now the secondary (mid grey) */   /* (Oct 4, 23:27) only closing the fire is primary (Oct 9: not on the team's closing card, secondary like Move to); every other card button is secondary grey */
               /* (Oct 7) Not now is a ghost button (text only), so the real choice stands out */
               /* (Oct 8, 22:39) decided: the button is no longer a button (no action, no press) and wears the card's header band colour, its text the header's ink */
-              if (done) return { cls: '', bg: tone(Hd).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', w: 600, pe: 'none' };
+              if (done) return { cls: '', bg: tone(Hd).bg, fg: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', w: 600, pe: 'none' };   /* (Oct 10, 22:53) white on the strong stage colours */
               return { cls: pri ? 'chbtn' : gh ? 'chbtn wf-rpill' : 'chbtn wf-sec', bg: pri ? 'var(--wf-pri-bg, #3A3A3C)' : gh ? 'transparent' : 'var(--wf-sec-bg, #737376)', fg: pri ? 'var(--wf-pri-fg, #FFFFFF)' : gh ? 'var(--wf-ink, #3A3A3C)' : 'var(--wf-sec-fg, #FFFFFF)', w: 600, pe: 'auto' }; })(),
             go: () => { if (m.done) return; run(a.key, m.id); } };
         });
         const toSheet = !!m.fire && !c.closed;
         /* (Oct 9, 08:58) a card waiting for my answer (approve, move on, dispatch) never gets lost up the chat: see pinCheck */
         const pendNow = !m.done && !c.closed && acts.length > 0;
-        if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', I });
+        if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', I });
         items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: T(m.tag), tagC: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', bandBg: tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
