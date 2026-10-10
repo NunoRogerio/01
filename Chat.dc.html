@@ -106,7 +106,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <!-- (Oct 7) no round back: a tap on the incident name returns to the main screen -->
 
         <!-- (Oct 7) the title on the top row beside the team pill, as on the fire page; long titles wrap to two lines -->
-        <div data-wf-ttlc="1" style="grid-column: 2; grid-row: 1; display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 0; padding-top: 0; text-align: center">
+        <div data-wf-ttlc="1" style="grid-column: 2; grid-row: 1; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; min-width: 0; min-height: 44px; margin-top: 4px; padding-top: 0; text-align: center"><!-- (Oct 10, 23:37) the name centred on the round buttons' line -->
           <!-- (Oct 7) the incident's name returns to the main screen (replaces the round back) -->
           <div style="display: flex; align-items: flex-start; justify-content: center; gap: 8px; min-width: 0; max-width: 100%"><a data-wf-firettl="1" style="flex: 0 1 auto; min-width: 0; max-width: 100%; color: inherit; text-decoration: none; cursor: default"><span style="position: relative; display: block"><h1 style="margin: 0; min-width: 0; padding-right: 0px; font-size: 26px; font-weight: 600; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; text-align: center">{{c.place}}</h1><svg data-wf-ttlarr="1" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{c.ttlArrD}}; position: absolute; left: 0px; top: 4px; visibility: hidden"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a></div>
           <!-- (Oct 6) (Oct 7) after Understood, houses in reach: the people-and-houses warning sign (a badge, traffic-sign style) sits on the title line, at its right end -->
@@ -1101,9 +1101,9 @@ class Component extends DCLogic {
         const toSheet = !!m.fire && !c.closed;
         /* (Oct 9, 08:58) a card waiting for my answer (approve, move on, dispatch) never gets lost up the chat: see pinCheck */
         const pendNow = !m.done && !c.closed && acts.length > 0;
-        if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', I });
+        if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', I: m.rec ? null : I });
         items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: T(m.tag), tagC: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', bandBg: tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
-          icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
+          icD: I && !m.rec ? 'flex' : 'none'   /* (Oct 10, 23:38) recommendation cards carry no icon */, ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)
             // a station that joined through a dispatch order is listed too, so every crew sent appears on the card
