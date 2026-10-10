@@ -366,7 +366,10 @@
   function sys(c, en, pt, delay, adv) { push(c, { kind: 'sys', en: en, pt: pt }, delay, adv == null ? 1 : adv); }
   function say(c, who, en, pt, delay, adv) { var P = c.people || []; if (P[who] && (P[who].left || P[who].self)) { var j = P.findIndex(function (p) { return !p.left && !p.self; }); if (j >= 0) who = j; }
     if (c.stage >= 3 && evacWants(en) && !(c.flags || {}).evac) evacAsk(c, who);   /* (Oct 8, 22:15) anyone on the team who brings up evacuating raises the request card for the fire owner */
-    push(c, { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
+    /* (Oct 10, 23:11) two ways in: typed, or by radio. A lieutenant or the air lead on the fire line (crews en route or later, the fire not
+       closed) speaks on the coordination channel; the radio comms reach the chat as voice to text */
+    var sp = (c.people || [])[who], radio = !!(sp && (sp.kind === 'lt' || sp.kind === 'air') && c.stage >= 2 && c.stage < 7);
+    push(c, radio ? { kind: 'msg', from: who, en: en, pt: pt, radio: true } : { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
   function setStage(c, s, delay, adv, back) { push(c, back ? { kind: 'stage', stage: s, back: true } : { kind: 'stage', stage: s }, delay, adv || 0);
     // (Oct 4) crews on the fire line: the air lead joins the chat
@@ -1556,6 +1559,7 @@
   function unread(c) { var open0 = c.stage === 0 && !c.dismissed && !c.closed;   /* (Oct 5) an undecided candidate keeps its count however often the chat is opened: only declaring or dismissing clears it */
     return c.msgs.filter(function (m) { return m.t > (open0 ? 0 : (c.seenAt || 0)) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
+  function typingRadio(c) { var q = c.queue && c.queue[0]; return !!(q && q.m && q.m.radio && !(c.pending && Date.now() - c.pending.at < 45000)); }
   function typing(c) { if (tourMute()) return null; if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
 
   // ---- reporting a night ignition to the local police -------------------------------------------------------------------
@@ -1668,7 +1672,7 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
+    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return chatFor(inc); },
