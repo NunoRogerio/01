@@ -50,9 +50,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
   <!-- Same fixed header as a fire or an ignition: the station, the level above, the kind band with its state tag -->
   <!-- (Oct 9, 13:11, trial) the station header on the app's dark grey, its text and round buttons inverted -->
-  <!-- (Oct 10, 19:55, trial) 16px under the header (was 24px); no divider: the header is a full-height band a very slightly darker grey than the page (a 4% shade over the palette page colour, so every palette and theme follows), the strip under the clock too -->
-  <div data-wf-keepsp="1" data-wf-sthdr="1" style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 16px; background: rgb(242, 242, 247); box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.04)">
-    <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: rgb(242, 242, 247); box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.04)"></span>
+  <!-- (Oct 10, 20:02, trial) 16px under the header (was 24px); the firefighter stripes run over the whole header background (the strip under the clock too), in a grey a very slightly darker than the page (a 4% shade, so every palette and theme follows) -->
+  <div data-wf-keepsp="1" data-wf-sthdr="1" style="position: relative; z-index: 6; flex-shrink: 0; padding: 8px 16px 16px; background: rgb(242, 242, 247); border-bottom: 1px solid rgb(209, 209, 214)">
+    <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; z-index: -2; background: rgb(242, 242, 247)"></span>
+    <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; pointer-events: none; background: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.04) 0 16.97px, transparent 16.97px 33.94px)"></span>
     <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
     <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="Back" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
