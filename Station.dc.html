@@ -45,15 +45,15 @@
     });
     /* (Oct 10, 20:21) up to the camera: in the installed app the strip under the clock is the page body, outside the screen's frame;
        the same stripes are drawn there, in one box with the header's (from the body's top to the header's foot), so they run on unbroken */
+    /* (Oct 10, 20:51) the stripes fade in: 0% over the top 30% of the header (the strip under the clock included), rising evenly to 100% at its foot.
+       The strip under the clock lies wholly in the clear part, so the stripes are no longer drawn on the page body there. */
     var sp = H.querySelector('[data-wf-sp]'), B = document.body;
-    if (sp && B) { var r = sp.getBoundingClientRect(), br = B.getBoundingClientRect(), k = sp.offsetWidth ? r.width / sp.offsetWidth : 1, gap = r.top - br.top;
-      var key = [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.bottom), k.toFixed(3), P].join('|');
-      if (sp.__wfSpK !== key) { sp.__wfSpK = key;
-        if (gap > 0.5) { var hb = (r.bottom - br.top) / k;
-          sp.style.backgroundSize = sp.offsetWidth + 'px ' + hb + 'px'; sp.style.backgroundPosition = '0px ' + (-gap / k) + 'px'; sp.style.backgroundRepeat = 'no-repeat';
-          var G = 'repeating-linear-gradient(-60deg, rgba(0, 0, 0, 0.03) 0 ' + (8.485 * k) + 'px, transparent ' + (8.485 * k) + 'px ' + (16.97 * k) + 'px)';
-          [document.documentElement, B].forEach(function (E) { var er = E.getBoundingClientRect(); E.style.backgroundImage = G; E.style.backgroundSize = r.width + 'px ' + (r.bottom - br.top) + 'px'; E.style.backgroundPosition = (r.left - er.left) + 'px ' + (br.top - er.top) + 'px'; E.style.backgroundRepeat = 'no-repeat'; });
-        } else { sp.style.backgroundSize = sp.style.backgroundPosition = sp.style.backgroundRepeat = ''; document.documentElement.style.backgroundImage = B.style.backgroundImage = ''; } } }
+    if (sp && B) { var r = sp.getBoundingClientRect(), br = B.getBoundingClientRect(), k = sp.offsetWidth ? r.width / sp.offsetWidth : 1, gap = Math.max(0, r.top - br.top);
+      var tot = r.bottom - r.top + gap, x0 = (0.3 * tot - gap) / k, M;
+      if (x0 >= 0) M = 'linear-gradient(to bottom, transparent ' + x0.toFixed(1) + 'px, #000 100%)';
+      else M = 'linear-gradient(to bottom, rgba(0,0,0,' + ((gap - 0.3 * tot) / (0.7 * tot)).toFixed(3) + ') 0, #000 100%)';
+      if (sp.__wfSpM !== M) { sp.__wfSpM = M; sp.style.webkitMaskImage = sp.style.maskImage = M;
+        sp.style.backgroundSize = sp.style.backgroundPosition = sp.style.backgroundRepeat = ''; document.documentElement.style.backgroundImage = B.style.backgroundImage = ''; } }
   }
   setInterval(tick, 500); document.addEventListener('DOMContentLoaded', tick); window.addEventListener('load', tick);
 })();
