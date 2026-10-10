@@ -20,7 +20,7 @@
 <script src="station.js?v=1791564027"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791627525"></script>
+<script src="chat.js?v=1791662291"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="feedcam.js?v=1791564887"></script>
 <script src="trophy.js?v=1791558109"></script>
@@ -85,7 +85,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 <!-- (Oct 3, 21:19) the stage as the shared stage tag (as in the incident list), on the first row; the last message under it (full width), then the unread line with the time and unread count on its right -->
                 <span style="grid-column: 1 / span 2; min-width: 0; font-size: 16px; line-height: 20px; color: #6E6E73; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{r.pre}}{{r.last}}</span>
                 <!-- Open chats: how many messages wait for you, in bold, a little apart -->
-                <span style="grid-column: 1 / span 2; display: flex; align-items: center; gap: 8px; margin-top: 8px"><span style="display: {{r.unrD}}; min-width: 0; font-size: 16px; font-weight: 700; line-height: 20px; color: #3A3A3C">{{r.unrTxt}}</span><span style="margin-left: auto; display: flex; align-items: center; gap: 8px"><span style="font-size: 16px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.time}}</span><span aria-hidden="true" style="display: {{r.badgeD}}; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border-radius: 999px; background: var(--wf-y); color: #1C1C1E; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{r.unread}}</span></span></span>
+                <span style="grid-column: 1 / span 2; display: flex; align-items: center; gap: 8px; margin-top: 8px"><span style="display: {{r.unrD}}; min-width: 0; font-size: 16px; font-weight: 700; line-height: 20px; color: #3A3A3C">{{r.unrTxt}}</span><span style="margin-left: auto; display: flex; align-items: center; gap: 8px"><span style="font-size: 16px; line-height: 20px; color: #6E6E73; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.time}}</span><span aria-hidden="true" style="display: {{r.badgeD}}; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border-radius: 999px; background: #3A3A3C; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{r.unread}}</span></span></span>
               </a>
             </li>
           </sc-for>

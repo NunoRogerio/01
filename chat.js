@@ -179,6 +179,11 @@
       c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: (us ? 'Lieutenant. ' : 'Crew chief. ') + org, rolePt: 'Chefe de equipa. ' + org, self: (SF && M && M.key === 'ff') || undefined }); ch = true; });
     return ch; }
   window.addEventListener('storage', function (e) { if (e.key === KEY) { DB = null; emit(); } });
+  /* (Oct 10, 20:58) a page brought back from the browser's back-forward cache (or the app returning to the foreground) missed the
+     storage events of the chats changed meanwhile on another screen: re-read them, so every list shows the chat's own stage */
+  function resync() { try { if (!DB) return; var raw = localStorage.getItem(KEY); if (raw && raw !== JSON.stringify(DB)) { DB = null; emit(); } } catch (e) {} }
+  window.addEventListener('pageshow', function (e) { if (e.persisted) resync(); });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') resync(); });
 
   function keyOf(inc) { var id = String(inc.id || ''); if (/^F-/.test(id)) return 'c:' + id.slice(2); return (inc.kind === 'cand' ? 'c:' : 'f:') + id; }
 
