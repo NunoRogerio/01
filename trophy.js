@@ -53,7 +53,7 @@
     '.dots{display:none!important}' +   /* (Oct 9) no pagination dots on the trophy: the photos still cycle and swipe */
     
     '.bd img{display:block;box-sizing:border-box;width:min(48px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:48px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
-    '.kicker{font-size:16px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
+    '.kicker:empty{display:none}.kicker{font-size:16px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
     '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:#FFFFFF;text-shadow:0 0 12px rgba(0,0,0,.45)}' +
     '.fire{font-size:20px;font-weight:700;line-height:24px;color:#FFFFFF;text-wrap:balance;text-shadow:0 0 10px rgba(0,0,0,.5)}' +
     '.meta{font-size:16px;line-height:20px;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}' +
