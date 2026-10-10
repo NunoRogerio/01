@@ -937,7 +937,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
 // the app's projection. A horizon that reaches houses gets a red dot on the projection switcher; the fire's screen shows a
 // pulsing red warning that opens the earliest one. Results are kept for 6 hours per fire on this phone.
 (function () {
-  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes5-', MIN_B = 3;
+  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes6-', MIN_B = 3;
   var NOT = '^(garage|garages|shed|barn|farm_auxiliary|greenhouse|industrial|warehouse|roof|carport|hangar|silo|storage_tank|construction|ruins|service|transformer_tower|bunker|kiosk|toilets|cowshed|stable|sty|bridge)$';
   function toLL(x, y) { return [34.19 - (y - 662) / 2829, (x - 518) / 2345 - 118.13]; }
   function rings(id, ll, px) {
@@ -968,7 +968,10 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
       'way["landuse"="residential"](poly:"' + poly(R[6]) + '");out geom 40;' +
       /* (Oct 9) the buildings per horizon, the earliest first, so a dense area never leaves the nearest ones out of the red (one
          capped list for +6 h could miss every building of +1 h) */
-      HZ.map(function (h) { return 'way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[h]) + '");out center ' + (h === 1 ? 500 : 400) + ';'; }).join('');
+      HZ.map(function (h) { return 'way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[h]) + '");out geom ' + (h === 1 ? 500 : 400) + ';'; }).join('') +
+      /* (Oct 10, 21:50) water to refill from, within 3 km of the fire: hydrants, tanks, ponds, reservoirs, lakes */
+      (function () { var c = R[0].reduce(function (a, q) { return [a[0] + q[0] / R[0].length, a[1] + q[1] / R[0].length]; }, [0, 0]), A = '(around:3000,' + c[0].toFixed(5) + ',' + c[1].toFixed(5) + ')';
+        return '(node["emergency"~"^(fire_hydrant|water_tank|fire_water_pond|suction_point)$"]' + A + ';node["man_made"="water_tank"]' + A + ';way["man_made"~"^(water_tank|reservoir_covered)$"]' + A + ';way["natural"="water"]' + A + ';way["landuse"="reservoir"]' + A + ';way["leisure"="swimming_pool"]["access"!="private"]' + A + ';);out center 80;'; })();
     fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: 'data=' + encodeURIComponent(q), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (js) {
         var E = js.elements || [], cnt = E.filter(function (e) { return e.type === 'count'; }).map(function (e) { return +((e.tags || {}).ways || (e.tags || {}).total || 0); });
@@ -980,7 +983,9 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
           if (i > 0) { var hp = HZ[i - 1]; res.b[h] = Math.max(res.b[h], res.b[hp]); res.at[h] = res.at[h] || res.at[hp]; if (!res.place[h]) res.place[h] = res.place[hp]; }
           if (res.at[h] && res.first == null) res.first = h; });
         var hOf = function (P) { if (inside(P, R[0])) return 0; for (var k = 0; k < HZ.length; k++) if (inside(P, R[HZ[k]])) return HZ[k]; return 0; }, r5 = function (v) { return Math.round(v * 1e5) / 1e5; };
-        var seen = {}; res.pts = E.filter(function (e) { if (e.type !== 'way' || !e.center || !e.tags || !e.tags.building || seen[e.id]) return false; seen[e.id] = 1; return true; }).map(function (e) { var P = [e.center.lat, e.center.lon]; return [r5(P[0]), r5(P[1]), hOf(P)]; }).filter(function (q) { return q[2]; });
+        var seen = {}; res.pts = E.filter(function (e) { if (e.type !== 'way' || !(e.center || e.geometry) || !e.tags || !e.tags.building || seen[e.id]) return false; seen[e.id] = 1; return true; }).map(function (e) { var G0 = e.geometry && e.geometry.length > 2 ? e.geometry : null, P = e.center ? [e.center.lat, e.center.lon] : [G0.reduce(function (a, q) { return a + q.lat; }, 0) / G0.length, G0.reduce(function (a, q) { return a + q.lon; }, 0) / G0.length];
+          /* (Oct 10, 21:50) each building's own footprint, painted red (no longer a round) */ return [r5(P[0]), r5(P[1]), hOf(P), G0 ? thin(G0.map(function (q) { return [r5(q.lat), r5(q.lon)]; }), 8) : null]; }).filter(function (q) { return q[2]; });
+        res.water = E.filter(function (e) { return e.tags && (e.lat != null || e.center) && (e.tags.emergency || e.tags.man_made || e.tags.natural === 'water' || e.tags.landuse === 'reservoir' || e.tags.leisure === 'swimming_pool'); }).map(function (e) { var P = e.center ? [e.center.lat, e.center.lon] : [e.lat, e.lon]; return [r5(P[0]), r5(P[1]), e.tags.emergency || e.tags.man_made || e.tags.natural || e.tags.landuse || e.tags.leisure]; }).slice(0, 80);
         res.areas = E.filter(function (e) { return e.type === 'way' && e.geometry && e.tags && e.tags.landuse === 'residential'; }).map(function (e) { var g = thin(e.geometry.map(function (q) { return [r5(q.lat), r5(q.lon)]; }), 32), hs = g.map(hOf).filter(Boolean);
           return { h: hs.length ? Math.min.apply(null, hs) : 0, r: g }; }).filter(function (a) { return a.h; });
         /* (Oct 7) a precise time, not the horizon: each structure's arrival is read between the two projected shapes around it
@@ -1002,8 +1007,13 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   // (residential areas, and a 24 m round per building so isolated houses show too); one path, so overlaps stay one red
   window.__wfHomesPath = function (id, h) { var res = window.__wfHomesGet(id); if (!res || !h || (!res.pts && !res.areas)) return '';
     var X = function (lo) { return (lo + 118.13) * 2345 + 518; }, Y = function (la) { return (34.19 - la) * 2829 + 662; }, d = '';
-    (res.areas || []).forEach(function (a) { if (a.h <= h && a.r.length > 2) d += 'M' + a.r.map(function (q) { return X(q[1]).toFixed(1) + ' ' + Y(q[0]).toFixed(1); }).join('L') + 'Z'; });
-    (res.pts || []).forEach(function (q) { if (q[2] > h) return; var x = X(q[1]), y = Y(q[0]), r = 24 / 111320 * 2829;   /* (Oct 8, 18:58) 40% smaller round per building (was 40 m) */ d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });
+    /* (Oct 10, 21:50) the buildings at risk themselves, each footprint in red (residential areas and rounds no longer drawn) */
+    (res.pts || []).forEach(function (q) { if (q[2] > h) return; if (q[3] && q[3].length > 2) { d += 'M' + q[3].map(function (v) { return X(v[1]).toFixed(2) + ' ' + Y(v[0]).toFixed(2); }).join('L') + 'Z'; return; } var x = X(q[1]), y = Y(q[0]), r = 8 / 111320 * 2829;   /* (Oct 8, 18:58) 40% smaller round per building (was 40 m) */ d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });
+    return d; };
+  /* (Oct 10, 21:50) the water points around the fire a crew can refill from, as small blue rounds in the map's own units */
+  window.__wfWaterPath = function (id) { var res = window.__wfHomesGet(id); if (!res || !res.water || !res.water.length) return '';
+    var X = function (lo) { return (lo + 118.13) * 2345 + 518; }, Y = function (la) { return (34.19 - la) * 2829 + 662; }, d = '', r = 22 / 111320 * 2829;
+    res.water.forEach(function (q) { var x = X(q[1]), y = Y(q[0]); d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });
     return d; };
   window.__wfHomesGet = function (id) { var m = MEM[id]; if (m && m.st === 'done') return m.res; var c = load(id); return c || null; };
   // Understood: the floating warning goes for this incident; the tag on its page stays. It comes back if houses come into reach sooner.

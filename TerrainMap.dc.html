@@ -14,11 +14,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791565213"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791665418"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791664980"></script>
 <script src="station.js?v=1791663010"></script>
-<script src="i18n.js?v=1791530542"></script>
+<script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
 
 <title>Terrain map</title>
@@ -107,7 +107,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
         <path d="{{pgD}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-dasharray="{{pgDash}}" stroke-width="{{pgW}}" stroke-linejoin="round"></path>
         <!-- (Oct 7) structures threatened: the populated areas the projection reaches, in red on its fill (under the lime they read orange) -->
-        <path d="{{hmD}}" fill="rgb(215, 0, 21)" fill-opacity="0.7" stroke="none" pointer-events="none"></path>
+        <path d="{{hmD}}" fill="rgb(215, 0, 21)" fill-opacity="0.85" stroke="none" pointer-events="none"></path><path d="{{wtD}}" fill="#0A6CD6" stroke="#FFFFFF" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="none"></path>
       </sc-if>
       <sc-if value="{{isSpread}}" hint-placeholder-val="{{ false }}">
         <path d="{{unitRoutes}}" fill="none" stroke="#3C3C43" stroke-opacity="0.45" stroke-width="{{lw.w12}}" stroke-linecap="round" stroke-dasharray="{{lw.d36}}"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="1.2s" repeatCount="indefinite"></animate></path>
@@ -128,7 +128,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         </sc-if>
         <sc-if value="{{hasModel}}" hint-placeholder-val="{{ false }}">
           <path d="{{mGrow}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}" stroke-linejoin="round"></path>
-          <path d="{{hmD}}" fill="rgb(215, 0, 21)" fill-opacity="0.7" stroke="none" pointer-events="none"></path>
+          <path d="{{hmD}}" fill="rgb(215, 0, 21)" fill-opacity="0.85" stroke="none" pointer-events="none"></path><path d="{{wtD}}" fill="#0A6CD6" stroke="#FFFFFF" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="none"></path>
           <path d="{{mFut}}" fill="#E86A00" fill-opacity="0.14" stroke="#E86A00" stroke-opacity="0.7" stroke-width="{{mSw.thin}}" stroke-dasharray="{{mSw.dash}}"></path>
           <path d="{{mNow}}" fill="#3A3A3C" fill-opacity="0.32" stroke="#1C1C1E" stroke-opacity="0.6" stroke-width="{{mSw.one}}" stroke-linejoin="round"></path>
           <path d="{{mFront}}" fill="#E8590C" fill-opacity="0.6" stroke="#C2410C" stroke-width="{{mSw.thin}}" stroke-linejoin="round"></path>
@@ -1017,7 +1017,7 @@ class Component extends DCLogic {
   }
   // Map legend: which layers are shown (shared by every map while the app is open).
   layers() {
-    const d = { fires: true, resolved: true, cands: true, stations: true, burn: true, grow: true, active: true, held: true };
+    const d = { fires: true, resolved: true, cands: true, stations: true, burn: true, grow: true, active: true, held: true, homes: true, water: true };
     let v = window.__wfLayers;
     if (!v) { try { v = JSON.parse(window.sessionStorage.getItem('wf-layers') || 'null'); } catch (e) {} }
     const out = Object.assign(d, v || {});
@@ -1219,6 +1219,8 @@ class Component extends DCLogic {
       ['grow', this.props.legGrowLabel || 'Projected', 'M2 4.5 7 1.8l5 2.7-.8 6.2L7 12.4 2.6 10.6Z', Y10.replace(',0.2)', ',0.5)'), '#E8590C'],
       ['active', 'Burning edge', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#E8590C'],
       ['held', 'Held line', 'M1.5 9.5C4 4 9 11 12.5 4.5', 'none', '#186B2D'],
+      ['homes', 'Buildings at risk', 'M3 12V6.2L7 2.6l4 3.6V12Z', 'rgb(215, 0, 21)', 'none'],   /* (Oct 10, 21:50) */
+      ['water', 'Water points', CIR, '#0A6CD6', '#FFFFFF'],
       ['fires', 'Active fires', CIR, '#E8590C', 'none'],
       ['resolved', 'Resolved fires', CIR, '#6F2B06', 'none'],
       ['stations', this.recMode() ? 'Suggested stations' : 'Fire stations', 'M2.7 12.2H11.3V7.2L7 2.1 2.7 7.2Z', 'rgba(64,156,255,0.6)', '#3A3A3C']
@@ -1699,10 +1701,12 @@ class Component extends DCLogic {
       }) : [],
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
-      hmD: (() => { const id = isPin ? p.pinId : p.fireId, h = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0); return id && h && window.__wfHomesPath ? window.__wfHomesPath(String(id), h) : ''; })(),   /* (Oct 7) populated areas reached by the projection, in red */
+      wtD: (() => { const id = isPin ? p.pinId : p.fireId; return id && window.__wfWaterPath && this.layers().water !== false ? window.__wfWaterPath(String(id)) : ''; })(),   /* (Oct 10, 21:50) water points to refill from, in blue */
+      hmD: (() => { const id = isPin ? p.pinId : p.fireId, h = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0); return id && h && window.__wfHomesPath && this.layers().homes !== false ? window.__wfHomesPath(String(id), h) : ''; })(),   /* (Oct 7) populated areas reached by the projection, in red */
       ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow && !modelVals.hasModel ? this.morphD('fake', grownXY(fakeRing), fakeRing) : '' }, gNowD: LY.burn ? 'inline' : 'none', fakeNowD: window.__wfRingD(fakeRing), r1D: window.__wfRingD(fakeRing), r2D: window.__wfRingD(window.__wfFireRing(p.fireX, p.fireY, { origin: true, cx: 576, cy: 314, rx: 62, ry: 30 })), r3D: window.__wfRingD(window.__wfFireRing(p.fireX, p.fireY, { origin: true, cx: 540, cy: 340, rx: 112, ry: 52 })), ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
-        const has = { burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
+        const hwId = isPin ? p.pinId : p.fireId, hwH = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0);
+        const has = { homes: !!(hwId && hwH && window.__wfHomesPath && window.__wfHomesPath(String(hwId), hwH)), water: !!(hwId && window.__wfWaterPath && window.__wfWaterPath(String(hwId))), burn: !!mdl || !!p.legNow, grow: !!p.legGrow && Number(p.grow) > 0, active: !!mdl, held: !!mdl, fires: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.length > 0, resolved: (isRisk || (isPin && p.pinKind !== 'station')) && Array.isArray(p.fires) && p.fires.some((g) => g.info && g.info.resolved), cands: isRisk && on(p.linkCandidate) && Array.isArray(p.ignitions) && p.ignitions.length > 0, stations: !(p.fireOnly === true || p.fireOnly === 'true') && !!(this.stationFile() || (stKey && ((window.__wfStations || {})[stKey] || []).length)) };
         /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */
         let NC = isRisk ? (() => { const F = Array.isArray(p.fires) ? p.fires : [], nRes = F.filter((g) => g.info && g.info.resolved).length;
           const sk = (p.scopeSt || '') + '|' + (p.scopeCo || ''), SFc = this.stationFile(); let nSt = this._stCnt && this._stCnt.k === sk ? this._stCnt.n : null;
