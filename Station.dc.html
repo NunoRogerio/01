@@ -17,12 +17,12 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791668895"></script>
 <script src="feedcam.js?v=1791564887"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791670671"></script>
+<script src="prefs.js?v=1791671474"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="menu.js?v=1791627250"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791670877"></script>
+<script src="chat.js?v=1791671474"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -139,7 +139,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
                             <span style="grid-column: 2 / -1; display: flex; align-items: center; gap: 8px; min-width: 0"><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s1.a0}}<b style="font-weight: 700">{{f.s1.b0}}</b>{{f.s1.a1}}<b style="font-weight: 700">{{f.s1.b1}}</b>{{f.s1.a2}}<b style="font-weight: 700">{{f.s1.b2}}</b>{{f.s1.a3}}</span></span>
               <span style="display: {{f.sub2D}}; grid-column: 2 / -1; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s2.a0}}<b style="font-weight: 700">{{f.s2.b0}}</b>{{f.s2.a1}}<b style="font-weight: 700">{{f.s2.b1}}</b>{{f.s2.a2}}<b style="font-weight: 700">{{f.s2.b2}}</b>{{f.s2.a3}}</span>
-              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; font-weight: 600; overflow-wrap: anywhere">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px">{{f.vw}}</span></span>
+              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; font-weight: 600; overflow-wrap: anywhere">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{f.tagR}}</span></span>
             </a>
             <span class="wf-simstar" aria-hidden="true" style="display: {{f.simD}}">*</span>
             </li>
@@ -206,7 +206,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <a href="Dispatch.dc.html" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{f.place}}</span>
                             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s1.a0}}<b style="font-weight: 700">{{f.s1.b0}}</b>{{f.s1.a1}}<b style="font-weight: 700">{{f.s1.b1}}</b>{{f.s1.a2}}<b style="font-weight: 700">{{f.s1.b2}}</b>{{f.s1.a3}}</span>
-              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; font-weight: 600; overflow-wrap: anywhere">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px">{{f.vw}}</span></span>
+              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; font-weight: 600; overflow-wrap: anywhere">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{f.tagR}}</span></span>
             </a>
             </li>
           </sc-for>
@@ -501,7 +501,8 @@ class Component extends DCLogic {
       /* (Oct 8, 17:58) the incident's own facts first, as on the incidents list and the fire page: a fire's place, size and time
          on it; a candidate's source and when it was seen. Distance and drive time follow on the second line */
       const meta = q.kind === 'fire' ? (() => { const I = r[9] || {}, ac = I.ac || (r[8] ? Math.round(r[8] / 0.4047) : 0), on = I.startMs ? (C && C.fmtDur ? C.fmtDur(Date.now() - I.startMs) : Math.round((Date.now() - I.startMs) / 6e4) + ' min') : '';
-          return [ac ? (PT ? Math.round(ac * 0.4047 * 10) / 10 + ' ha' : ac + ' ac') : '', on ? L('For ' + on, 'Há ' + on) : '', r[10] || r[1] || ''].filter(Boolean).join('. ') + '.';   /* size and time first: what is cut at the end is the place, which the name already gives */ })()
+          base.tagR = [ac ? (PT ? Math.round(ac * 0.4047 * 10) / 10 + ' ha' : ac + ' ac') : '', on || ''].filter(Boolean).join('. ');   /* (Oct 10, 23:24) size and time active ride in the stage band; the text keeps the place */
+          return (r[10] || r[1] || '') + '.';   /* size and time first: what is cut at the end is the place, which the name already gives */ })()
         : (() => { const m = r[9] || {}, src = String(r[5] || '').split('|').map((p) => { const [k, ref] = p.split(':'); return (k === 'sat' ? L('Satellite', 'Satélite') : k) + (ref ? ' ' + ref : ''); }).join(', ');
           if (window.__wfNight && window.__wfNight(m)) base.moonD = 'inline'; return [src, r[6] || ''].filter(Boolean).join('. ') + '.'; })();
       if (meta.length > 1) { base.sub2 = base.sub; base.sub2D = 'block'; base.sub = meta; }
@@ -605,7 +606,7 @@ class Component extends DCLogic {
     const shownRows = resolvedTab ? closedNew.slice(0, rLim) : rows, shownDuties = [];
     const rMore = resolvedTab && closedNew.length + doneNew.length > rLim;
     const nTodo = rows.length, nDone = closedRows.length;
-    return { title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows.map((x) => Object.assign({}, x, { s1: window.__wfSegs(x.sub), s2: window.__wfSegs(x.sub2), vw: L('View', 'Ver') })), none: false, listD: shownRows.length ? 'flex' : 'none',
+    return { title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows.map((x) => Object.assign({}, x, { s1: window.__wfSegs(x.sub), s2: window.__wfSegs(x.sub2), tagR: x.tagR || '' })), none: false, listD: shownRows.length ? 'flex' : 'none',
       duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: (lead ? !nDep : !rows.length) ? 'block' : 'none',
       tabX: resolvedTab ? '100%' : '0%', d24: resolvedTab ? 'block' : 'none', t24: L('Last 7 days', 'Últimos 7 dias'),
       moreD: rMore ? 'block' : 'none',
@@ -850,7 +851,7 @@ class Component extends DCLogic {
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
         ...(() => { const r0 = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : '', A = home && window.__wfStationArea ? window.__wfStationArea(S) : null, r = A && A.name ? A.name + '. ' + r0 : r0, stN = lead ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : ''; if (stN) return { region: stN + '. ' + (A && A.name ? A.name : r0), regD: 'block' }; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
-      rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length && !home ? 'flex' : 'none', loc: lc, fires: fires.map((x) => Object.assign({}, x, { s1: window.__wfSegs(x.sub), vw: window.__wfLang === 'pt' ? 'Ver' : 'View' })), firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
+      rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length && !home ? 'flex' : 'none', loc: lc, fires: fires.map((x) => Object.assign({}, x, { s1: window.__wfSegs(x.sub), tagR: x.tagR || '' })), firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'
     };
   }

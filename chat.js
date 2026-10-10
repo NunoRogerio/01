@@ -131,7 +131,7 @@
 
   // ---- storage --------------------------------------------------------------------------------------------------
   var DB = null;
-  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); snap(); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
+  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
   /* (Oct 9, 12:18) a page shown only as a backdrop under the main screen's panels (?under=1) reads the chats but never runs or writes them */
   var UNDER = /[?&]under=1/.test(location.search);
   /* (Oct 10, 21:08) a page holding an older copy of the chats (back from the back-forward cache, the app back from the background, another
@@ -148,8 +148,17 @@
         Object.keys(OC).forEach(function (k) { var o = OC[k], m = DB.chats[k]; if (!o) return; var mine = m ? JSON.stringify(m) : null;
           if (!m || mine === BASE[k] || ahead(o, m)) DB.chats[k] = o; });
         Object.keys(O).forEach(function (k) { if (k !== 'chats' && DB[k] == null) DB[k] = O[k]; }); }
-      LASTRAW = JSON.stringify(DB); localStorage.setItem(KEY, LASTRAW); snap(); } catch (e) {} }
+      fin(); LASTRAW = JSON.stringify(DB); localStorage.setItem(KEY, LASTRAW); snap(); } catch (e) {} }
   var BASE = {};   /* each chat as this page last read or wrote it */
+  /* (Oct 10, 23:25) a fire closed or dismissed stays so, whatever copy any page holds: the outcome is kept on its own (wf-fin-<role>)
+     and every read and write of the chats honours it */
+  var FINK = 'wf-fin-' + (role || 'anon');
+  function fin() { try { var F = JSON.parse(localStorage.getItem(FINK) || '{}') || {}, ch = false; if (!DB || !DB.chats) return;
+      Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (!c || c.kind === 'dm') return;
+        if (c.closed && F[k] !== 'c') { F[k] = 'c'; ch = true; } else if (c.dismissed && !c.closed && !F[k]) { F[k] = 'd'; ch = true; }
+        if (F[k] === 'c' && !c.closed) { c.closed = true; c.stage = 7; c.queue = []; if (!c.hist || !c.hist.some(function (h) { return h.s === 7; })) (c.hist = c.hist || []).push({ s: 7, vt: c.closedVt || Date.now() }); c.closedVt = c.closedVt || Date.now(); }
+        else if (F[k] === 'd' && !c.dismissed && !c.closed) { c.dismissed = true; c.queue = []; } });
+      if (ch) localStorage.setItem(FINK, JSON.stringify(F)); } catch (e) {} }
   function snap() { BASE = {}; try { Object.keys((DB && DB.chats) || {}).forEach(function (k) { BASE[k] = JSON.stringify(DB.chats[k]); }); } catch (e) {} }
   function emit() { try { var ch = false; if (DB && DB.chats) Object.keys(DB.chats).forEach(function (k) { if (ensureLts(DB.chats[k])) ch = true; }); if (ch) save(); } catch (e) {} try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} }
   // (Oct 8, 21:00) every station working the fire has its lieutenant (the crew's chief) in the chat too, with the station's real
@@ -1581,7 +1590,7 @@
     return { org: 'Police' + (r ? '. ' + r : ''), roleEn: 'Captain', rolePt: 'Capitão', name: 'Jordan Reyes' }; }
   function police(inc) {
     var db = load(), k = 'p:' + inc.id;
-    if (db.chats[k] && !db.chats[k].v2) delete db.chats[k];   // a report made before the captain's investigation: started again
+    if (db.chats[k] && !db.chats[k].v2) { delete db.chats[k]; try { var F0 = JSON.parse(localStorage.getItem(FINK) || '{}') || {}; delete F0[k]; localStorage.setItem(FINK, JSON.stringify(F0)); } catch (e) {} }   // a report made before the captain's investigation: started again
     if (db.chats[k]) { var o = db.chats[k], P0 = policeOf(o.st, inc.reg); o.dismissed = false; o.place = inc.night ? 'Night ignition report' : 'Ignition report';   /* reported again: a chat that was put away comes back */ o.reg = inc.place || o.reg; if (o.people[0]) { o.people[0].roleEn = P0.roleEn; o.people[0].rolePt = P0.rolePt; o.people[0].org = P0.org; } save(); return o; }
     var now = Date.now(), P = policeOf(inc.st, inc.reg);
     var ch = { key: k, kind: 'dm', police: true, v2: true, incId: inc.id, place: inc.night ? 'Night ignition report' : 'Ignition report', reg: inc.place, st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0, x: inc.x, y: inc.y, note: '', eta: 20 + hash(inc.id) % 25,
@@ -1708,7 +1717,7 @@
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
     seen: function (k) { var c = load().chats[k]; if (c) { if (!c.closed && mineKeys().indexOf(k) >= 0) assign(k);   /* (Oct 6) opening an incident never takes a place: only Enroll does */ if (!c.seenAt) (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.nagAt = Date.now(); }); c.seenAt = Date.now(); save(); emit(); } },   /* (Oct 5, 10:19) a request written before you came waits 45 s from your first look before the reminder */
-    forget: function (k) { var db = load(); if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
+    forget: function (k) { var db = load(); try { var F = JSON.parse(localStorage.getItem(FINK) || '{}') || {}; if (F[k]) { delete F[k]; localStorage.setItem(FINK, JSON.stringify(F)); } } catch (e) {} if (db.chats[k]) { delete db.chats[k]; save(); emit(); } },   // the tour starts its demo ignition's chat afresh
     /* (Oct 8, 19:20) a video call starts like a real one: each member on the line greets you by rank and name, then the first gives
        where things stand. Said as chat messages, so the bubbles and the voices are the same words. */
     callStart: function (key) { var d = load(), c = d.chats[key]; if (!c || c.closed || c.dismissed) return;
