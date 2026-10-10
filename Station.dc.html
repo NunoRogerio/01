@@ -91,7 +91,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <sc-if value="{{asg.emptyOn}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.emptyTxt}}</p></sc-if>
         <sc-if value="{{asg.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); font-size: 18px; line-height: 24px; color: #000000">{{asg.noneTxt}}</p></sc-if>
-        <!-- (Oct 9, 17:46) the Resolved list says what it covers --><span style="display: {{asg.d24}}; margin: 0 0 -8px; font-size: 16px; line-height: 20px; color: #6E6E73">{{asg.t24}}</span>
+        <!-- (Oct 9, 17:46) the Resolved list says what it covers --><span style="display: {{asg.d24}}; margin: 0; padding: 0 16px; text-align: right; font-size: 16px; line-height: 20px; color: #6E6E73">{{asg.t24}}</span>
         <ul data-wf-stack="1" style="display: {{asg.listD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
             <li style="position: relative; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
