@@ -21,7 +21,7 @@ window.__wfTiles = { list: [['maptiler', 'MapTiler'], ['osm', 'OpenStreetMap']],
   credit: function () { return this.get() === 'osm' ? 'Map © OpenStreetMap' : 'Map © MapTiler © OpenStreetMap'; } };
 /* (Oct 5, 08:15) one status tag for a fire station and its units, everywhere (map tooltip, station header, vehicles, crews):
    Available in the blue tones; busy with fires in orange; the shared tag shape (.wf-ctag: centred, no icon, 4px 16px) */
-window.__wfStTag = { ok: { bg: 'rgba(31,111,178,0.14)', fg: '#185A93' }, busy: { bg: 'rgba(232,106,0,0.14)', fg: '#A34800' } };
+window.__wfStTag = { ok: { bg: 'rgba(31,111,178,0.22)', fg: '#185A93' }   /* (Oct 10, 11:14) 22% (was 14%): on the Glacier palette's bluish page the 14% tint matched the page and the tag lost its background */, busy: { bg: 'rgba(232,106,0,0.14)', fg: '#A34800' } };
 window.__wfNight = function (L) { if (!L) return false; if (L.night != null) return !!L.night; return !!(window.__wfSunAlt && L.lat != null && L.t && window.__wfSunAlt(L.lat, L.lon, Date.parse(L.t)) < -0.833); };   /* a detection made with the sun below the horizon (see live.js) */
 /* The clock at the incident's own place, with AM / PM (e.g. "4:05 AM"); the zone is added when it differs from the phone's ("4:05 AM PDT") */
 window.__wfTzOf = function (st, lon) { var Z = { PT: 'Europe/Lisbon', BRA: 'America/Sao_Paulo', AMZ: 'America/Manaus', ESP: 'Europe/Madrid', FRA: 'Europe/Paris', ITA: 'Europe/Rome', GRC: 'Europe/Athens', CAN: 'America/Toronto', MEX: 'America/Mexico_City', CHL: 'America/Santiago', ARG: 'America/Argentina/Buenos_Aires',

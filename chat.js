@@ -270,9 +270,21 @@
   function setForces(c, from, to) { (c.forces || []).forEach(function (f) { if (!from || from.indexOf(f.st) >= 0) f.st = to; }); }
 
   // ---- creating a chat --------------------------------------------------------------------------------------------
+  /* (Oct 10, 11:16) one lookup for "this incident's chat", used by every screen (find, the shared stage, the station lists): the same fire can
+     reach a screen with its id in another form (F-… once declared from a candidate, or not), so every form of the id is tried, then the
+     open chat for the same fire by name within 3 km. One fire, one chat, one stage everywhere */
+  function chatFor(inc) { try { if (!inc) return null; var D = load().chats, id = String(inc.id || ''), raw = id.replace(/^F-/, ''), K = [keyOf(inc), 'f:' + id, 'c:' + raw, 'f:' + raw, 'f:F-' + raw];
+      for (var i = 0; i < K.length; i++) if (id && D[K[i]]) return D[K[i]];
+      var nm = String((window.__wfFireName ? window.__wfFireName(inc.place || '') : inc.place) || '').toLowerCase().trim(); if (!nm) return null;
+      var la = +inc.lat, lo = +inc.lon, best = null;
+      Object.keys(D).forEach(function (k) { var c = D[k]; if (!c || c.kind === 'dm' || String(c.place || '').toLowerCase().trim() !== nm) return; if (inc.kind === 'cand' ? c.kind !== 'cand' : (c.kind === 'cand' && !(c.stage >= 1))) return;
+        if (isFinite(la) && isFinite(lo) && la && c.lat) { var dy = (c.lat - la) * 111, dx = (c.lon - lo) * 111 * Math.cos(la * Math.PI / 180); if (dx * dx + dy * dy > 9) return; }
+        if (!best || (best.closed && !c.closed) || (c.updated || 0) > (best.updated || 0)) best = c; });
+      return best; } catch (e) { return null; } }
   function create(inc) {
     var db = load(), k = keyOf(inc);
     if (db.chats[k]) return db.chats[k];
+    { var ex = chatFor(inc); if (ex) return ex; }   /* (Oct 10) never a second chat for the same fire */
     var now = Date.now();
     var stage = inc.kind === 'cand' ? 0 : stageFromCode(inc.sc);
     var ch = { key: k, kind: inc.kind, incId: inc.id, place: (window.__wfFireName ? window.__wfFireName(inc.place || '') : inc.place || ''), reg: inc.reg || '', st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0,
@@ -1613,7 +1625,7 @@
   // The fire's stage as one shared component (tags in lists, bands, map tooltips, headers): its stage on the chat's
   // spectrum (ANEPC code, else the feed's tone), the label the source gives (e.g. "45% contained"), and the stage's colours and icon
   /* (Oct 8, 23:09) one status everywhere: a fire with a chat is at the chat's stage (incident page, map, lists, notifications) */
-  function chatStage(f) { try { var id = String((f && f.id) || ''); if (!id) return null; var D = load().chats, raw = id.replace(/^F-/, ''), c = D['f:' + id] || D['c:' + raw] || D['f:' + raw];
+  function chatStage(f) { try { var id = String((f && f.id) || ''); if (!id) return null; var c = chatFor(f.kind ? f : Object.assign({ kind: 'fire' }, f));
       return c && !c.dismissed && c.stage >= 1 ? Math.min(7, c.stage) : null; } catch (e) { return null; } }
   function stageIdx(f) { var cs = chatStage(f); if (cs != null) return cs; var I = (f && f.info) || {}, sc = /^F-/.test((f && f.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
     if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6; return stageFromCode(sc); }
@@ -1636,7 +1648,7 @@
     }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
-    find: function (inc) { return load().chats[keyOf(inc)] || null; },
+    find: function (inc) { return chatFor(inc); },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },
     badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
     // The chat badge counts what the chats list shows: open chats in the selected area (and direct messages), never chats
