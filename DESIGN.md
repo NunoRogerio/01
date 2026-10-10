@@ -1645,3 +1645,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 10, 23:02) A fire with a chat has no stand-alone page with chat and header buttons: reached from a station card, a map tooltip or a list, its page hands over to its chat with the fire's page already open in the chat's blade (closing the blade shows the chat). Fires without a chat keep their page.
 - (Oct 10, 23:03) Report incident: its icon is a whistle (was a document).
 - (Oct 10, 23:03, app-wide) Stage bands are 48px tall, the height of the text buttons (were 52px): the chat's band, the station's incident cards, the stage history cards, the incident page's stage tag.
+- (Oct 10, 23:05) Incident page: the stage band keeps its full width at all times (it kept 60px free for the removed structures-at-risk badge, so it shrank when houses came into reach).
