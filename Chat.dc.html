@@ -172,13 +172,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </div>
             <span style="font-size: 18px; line-height: 24px">{{m.text}}</span>
             <!-- (Oct 10, 23:11) a radio message (voice to text from the coordination channel): the walkie-talkie and "Radio" before its time -->
-            <span style="align-self: flex-end; display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums"><span style="display: {{m.radioD}}; align-items: center; gap: 4px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M7 8h8v13H7Z M9.5 8V3 M9.5 12h3 M9.5 15h3"></path><path class="wf-wv1" d="M17.5 5.2a3.6 3.6 0 0 1 0 4.6"></path><path class="wf-wv2" d="M19.8 3a6.8 6.8 0 0 1 0 9"></path></svg>{{m.radioL}}</span>{{m.time}}</span>
+            <span style="align-self: flex-end; display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums"><span style="display: {{m.radioD}}; align-items: center; gap: 4px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M7 8h8v13H7Z M9.5 8V3 M9.5 12h3 M9.5 15h3"></path><path class="wf-wv1" d="M17.5 5.2a3.6 3.6 0 0 1 0 4.6"></path><path class="wf-wv2" d="M19.8 3a6.8 6.8 0 0 1 0 9"></path></svg>{{m.radioL}}</span>{{m.time}}</span>
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
           <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: transparent; color: #000000; text-align: left">
             <span style="font-size: 18px; line-height: 24px">{{m.text}}</span>
-            <span style="align-self: flex-end; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span>
+            <span style="align-self: flex-end; margin-top: 12px; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span><!-- (Oct 11, 00:27) 16px under the last line of text -->
           </div>
         </sc-if>
         <sc-if value="{{m.isWin}}" hint-placeholder-val="{{ false }}">
