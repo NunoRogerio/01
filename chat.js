@@ -368,7 +368,7 @@
     if (c.stage >= 3 && evacWants(en) && !(c.flags || {}).evac) evacAsk(c, who);   /* (Oct 8, 22:15) anyone on the team who brings up evacuating raises the request card for the fire owner */
     /* (Oct 10, 23:11) two ways in: typed, or by radio. A lieutenant or the air lead on the fire line (crews en route or later, the fire not
        closed) speaks on the coordination channel; the radio comms reach the chat as voice to text */
-    var sp = (c.people || [])[who], radio = !!(sp && (sp.kind === 'lt' || sp.kind === 'air') && c.stage >= 2 && c.stage < 7);
+    var sp = (c.people || [])[who], radio = !!(sp && !sp.self && !c.police && c.kind !== 'dm' && !c._typed && c.stage >= 2 && c.stage < 7 && Math.random() < 0.5);   /* (Oct 10, 23:21) typed or by radio, at random, for anyone on the team once crews are out; decided once, so the indicator and the bubble always agree */
     push(c, radio ? { kind: 'msg', from: who, en: en, pt: pt, radio: true } : { kind: 'msg', from: who, en: en, pt: pt }, delay, adv == null ? vary(c, 2, 7, en.length) : adv); }
   function card(c, obj, delay, adv) { obj.kind = 'card'; push(c, obj, delay, adv == null ? 1 : adv); }
   function setStage(c, s, delay, adv, back) { push(c, back ? { kind: 'stage', stage: s, back: true } : { kind: 'stage', stage: s }, delay, adv || 0);
@@ -1276,7 +1276,7 @@
     R.slice(0, 2).forEach(function (r, i) {
       var who = Math.max(0, Math.min(c.people.length - 1, parseInt(r.who, 10) || 0)), t = String(r.text || '').trim().slice(0, 720);
       if (!t) return;
-      say(c, who, t, t, 400 + i * 2600, Math.max(1, Math.min(15, parseInt(r.minutes, 10) || 3)));;
+      c._typed = 1; say(c, who, t, t, 400 + i * 2600, Math.max(1, Math.min(15, parseInt(r.minutes, 10) || 3))); delete c._typed;   /* the reply the typing indicator announced comes in typed */
     });
     c.updated = Date.now(); save(); emit();
   }
@@ -1559,7 +1559,7 @@
   function unread(c) { var open0 = c.stage === 0 && !c.dismissed && !c.closed;   /* (Oct 5) an undecided candidate keeps its count however often the chat is opened: only declaring or dismissing clears it */
     return c.msgs.filter(function (m) { return m.t > (open0 ? 0 : (c.seenAt || 0)) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
-  function typingRadio(c) { var q = c.queue && c.queue[0]; return !!(q && q.m && q.m.radio && !(c.pending && Date.now() - c.pending.at < 45000)); }
+  function typingRadio(c) { if (c.pending && Date.now() - c.pending.at < 45000) return false; var q = c.queue && c.queue[0]; return !!(q && q.m && q.m.kind === 'msg' && q.m.radio); }
   function typing(c) { if (tourMute()) return null; if (c.pending && Date.now() - c.pending.at < 45000) return c.people[c.pending.who] || c.people[0]; var q = c.queue[0]; return q && q.m.kind === 'msg' && q.due - Date.now() < 2600 ? c.people[q.m.from] : null; }
 
   // ---- reporting a night ignition to the local police -------------------------------------------------------------------
