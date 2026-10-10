@@ -6,6 +6,14 @@
 //  - Mutual aid on top: an incident outside the area for which this station is one of the two closest units responds
 //    across the border (the closest unit answers when the incident sits on the border or the home station lacks forces).
 (function () {
+  /* (Oct 11, 00:21) A fresh start for the incidents: every chat, outcome, dispatch, order and simulated round kept on this phone is
+     cleared once (settings, profiles and keys stay), so the story starts again and the new incidents arrive one at a time. */
+  (function () { var RV = '2026-10-11a'; try { if (localStorage.getItem('wf-sim-reset') === RV) return;
+    var K = [], i, ONE = { 'wf-sim-rounds': 1, 'wf-sim-t0': 1, 'wf-sim-last': 1, 'wf-evac': 1, 'wf-aid-assign': 1, 'wf-help-offer': 1, 'wf-deploy-ack': 1, 'wf-crew': 1, 'wf-orders': 1, 'wf-nt-read': 1, 'wf-homes-safe': 1 };
+    for (i = 0; i < localStorage.length; i++) K.push(localStorage.key(i));
+    K.forEach(function (k) { if (ONE[k] || /^wf-(chats3-|fin-|assigned-|offer-snooze-)/.test(k || '')) localStorage.removeItem(k); });
+    ['wf-confirmed', 'wf-dismissed', 'wf-assign-snap', 'wf-chat-open', 'wf-offer', 'wf-offer-shown'].forEach(function (k) { sessionStorage.removeItem(k); });
+    localStorage.setItem('wf-sim-reset', RV); } catch (e) {} })();
   // [id, type, name, lat, lon, operator] of each role profile's station; both profiles share Station 11 (Altadena)
   var ST11 = { id: 1353638773, type: 'way', name: 'Los Angeles County Fire Department Station 11', lat: 34.18855, lon: -118.13296,
     tags: { operator: 'Los Angeles County Fire Department' }, cc: 'us', st: 'CA' };
@@ -106,6 +114,9 @@
   function chatOf(kind, id) { var C = window.__wfChat; return C && C.find ? C.find({ id: id, kind: kind }) : null; }
   window.__wfSim = function () { var M = window.__wfMine ? window.__wfMine() : null; if (!M) return;
     var F = window.__wfLiveFires, C = window.__wfLiveCands, now = Date.now(), R = rounds();
+    /* (Oct 11) after a reset, simulated incidents of the old story leave the feed */
+    (function () { var fk = {}, ck = {}; fireDefs(R).forEach(function (d) { fk[d.id] = 1; }); candDefs(R).forEach(function (d) { ck[d.id] = 1; });
+      [[F, /^SIM-ST11-F/, fk], [C, /^HS-SIM-ST11/, ck]].forEach(function (z) { var A = z[0]; if (!A) return; for (var j = A.length - 1; j >= 0; j--) { var id = A[j] && A[j][2] || ''; if (z[1].test(id) && !z[2][id]) A.splice(j, 1); } }); })();
     fireDefs(R).forEach(function (D) { var n = D.n, fc = chatOf('fire', D.id);
       if (F) { var ex = F.find(function (r) { return r && r[2] === D.id; });
         if (!ex) {
@@ -142,13 +153,16 @@
       var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: D.id, place: D.name, reg: 'Los Angeles', st: 'CA', lat: D.lat, lon: D.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: D.sc, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
       if (!D.n && c && window.__wfDeploy && window.__wfDeploy.ack) window.__wfDeploy.ack(c.key); }); };
   // A new round: 1-2 fires and 1-3 candidates at places not in use; returns what came up (for the banners)
-  window.__wfSimSpawn = function (extra) { var R = rounds(), now = Date.now(), live = {}, rnd = function (n) { return Math.floor(Math.random() * n); };
+  window.__wfSimSpawn = function (extra, one) { var R = rounds(), now = Date.now(), live = {}, rnd = function (n) { return Math.floor(Math.random() * n); };
     /* (Oct 9, 13:47) a place already used (live, closed or dismissed) is never picked again, so the lists never show two incidents with one name */
     fireDefs(R).forEach(function (d) { live['f' + d.name] = 1; });
     candDefs(R).forEach(function (d) { live['c' + d.near] = 1; live['c' + d.place] = 1; });
     var pick = function (P, key, n) { var idx = P.map(function (x, i) { return i; }).filter(function (i) { return !live[key + P[i].name] && !live[key + P[i].near]; }), out = [];
       while (out.length < n && idx.length) out.push(idx.splice(rnd(idx.length), 1)[0]); return out; };
-    var f = pick(PF, 'f', 1 + rnd(2)), c = pick(PC, 'c', 1 + rnd(3)); if (!f.length && !c.length) return [];
+    /* (Oct 11, 00:21) one: a single incident (a candidate more often than a fire), the station's trickle */
+    var asF = Math.random() < 0.4, f = one ? pick(PF, 'f', asF ? 1 : 0) : pick(PF, 'f', 1 + rnd(2)), c = one ? pick(PC, 'c', asF ? 0 : 1) : pick(PC, 'c', 1 + rnd(3));
+    if (one && !f.length && !c.length) { f = pick(PF, 'f', 1); if (!f.length) c = pick(PC, 'c', 1); }
+    if (!f.length && !c.length) return [];
     /* (Oct 9, 11:00) a round no longer lands all at once: its incidents come up one by one, the first now, each next one
        0 to 10 s (at random) after the one before, each with its own notification; an extra (a help request) joins the queue */
     var Q = f.map(function (i) { return { t: 'f', i: i }; }).concat(c.map(function (i) { return { t: 'c', i: i, conf: 62 + rnd(34) }; }));
@@ -199,9 +213,16 @@
   (function () { if (!/Station\.dc\.html/.test(location.pathname) || !/[?&]home=1/.test(location.search)) return;
     var last = Date.now(), busy = false, poke = function () { last = Date.now(); };
     ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) { window.addEventListener(ev, poke, { passive: true, capture: true }); });
+    /* (Oct 11, 00:21) a trickle, never a wave: while the station has fewer than 5 open incidents, a single new one (candidate, fire
+       or, now and then, a help request from a station outside the area) comes up after 5 s left alone, at least 25 to 60 s
+       (at random) after the one before; the gap is kept on this phone, so moving between screens never brings two at once */
+    var MAXINC = 5, lastAt = function () { try { return +localStorage.getItem('wf-sim-last') || 0; } catch (e) { return 0; } }, gap = 25000 + Math.random() * 35000;
     setInterval(function () { if (busy || document.visibilityState === 'hidden' || Date.now() - last < 5000) return; if (!(window.__wfMine && window.__wfMine())) return;
-      if (window.__wfTodoInc == null || window.__wfTodoInc > 0) return; if (document.querySelector('.wf-cfm,[data-wf-tour-on]')) return;
-      busy = true; var L = [], help = window.__wfHelpIn && Math.random() < 0.5 ? function () { var hc = window.__wfHelpIn(); return hc ? { kind: 'help', c: hc } : null; } : null; try { L = window.__wfSimSpawn(help) || []; } catch (e) {}   /* (Oct 8, 22:52) sometimes the station on a fire outside our area asks us for help */
+      if (window.__wfTodoInc == null || window.__wfTodoInc >= MAXINC) return; if (document.querySelector('.wf-cfm,[data-wf-tour-on]')) return;
+      if (Date.now() - lastAt() < gap) return;
+      busy = true; var L = [];
+      try { if (window.__wfHelpIn && Math.random() < 0.15) { var hc = window.__wfHelpIn(); if (hc) L = [{ kind: 'help', c: hc }]; } if (!L.length) L = window.__wfSimSpawn(null, true) || []; } catch (e) {}
+      try { localStorage.setItem('wf-sim-last', String(Date.now())); } catch (e) {} gap = 25000 + Math.random() * 35000;
       banners(L); last = Date.now(); setTimeout(function () { busy = false; }, 3000); }, 1000); })();
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
