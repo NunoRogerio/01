@@ -117,7 +117,9 @@
           if (r[7] && typeof r[7] === 'object') ['man', 'terrain', 'aerial'].forEach(function (q) { if (typeof r[7][q] === 'number') r[7][q] = Math.max(q === 'aerial' ? 0 : 1, Math.round(r[7][q] * k)); });
           r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: D.st, stEn: D.stEn, tone: 'red', sc: D.sc, pc: D.pc, startMs: D.startMs || now - D.minAgo * 6e4, updMs: D.at || now - 6e4 * 4, ac: D.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: 'Los Angeles County · CA', url: '', sim: true, simAt: D.at || 0, lat: D.lat, lon: D.lon });
           F.push(r); ex = r; }
-        if (ex[9]) ex[9].resolved = !!(fc && fc.closed); } });   /* a closed simulated fire leaves the lists; its chat keeps the record */
+        if (ex[9]) { ex[9].resolved = !!(fc && fc.closed); if (fc && fc.closed) { ex[9].heldMs = ex[9].heldMs || fc.updated || now; ex[9].heldSrc = 'chat'; } }   /* a closed simulated fire leaves the lists; its chat keeps the record */
+        /* (Oct 10, 21:09) resolved, it stays on the map as a resolved fire for 7 days, then leaves it */
+        if (fc && fc.closed && now - (fc.updated || now) > 7 * 864e5) { var ix2 = F.indexOf(ex); if (ix2 >= 0) F.splice(ix2, 1); } } });
     candDefs(R).forEach(function (Q) { var cc = chatOf('cand', Q.id);
       if (C && !(cc && (cc.closed || cc.dismissed)) && !C.some(function (r) { return r && r[2] === Q.id; })) {
         var TC = C.find(function (r) { return r && r[0] === 'CA' && !/^HS-SIM-/.test(r[2] || ''); }) || C[0];

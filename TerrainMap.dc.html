@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791565213"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791627525"></script>
-<script src="station.js?v=1791564027"></script>
+<script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791530542"></script>
 <script src="live.js?v=44"></script>
 
@@ -1367,7 +1367,7 @@ class Component extends DCLogic {
     const FK = Array.isArray(p.fires) ? this.thinKeep('fires', p.fires, (g) => [g.x, g.y], (i, j) => { const A = p.fires[i], B = p.fires[j], a1 = A.info && !A.info.resolved ? 1 : 0, b1 = B.info && !B.info.resolved ? 1 : 0; return a1 !== b1 ? a1 > b1 : (A.ha || 0) > (B.ha || 0); }, 30 * SP, s) : null;
     // A fire stays drawn while any part of its shape is on screen (not only its centre), and a shape big enough
     // to read is never thinned away: once the polygon shows, it keeps showing at every zoom.
-    const visF = (g) => vis(g.x, g.y), bigF = () => false;   /* (Oct 4) no burn shapes on the map: a fire is its marker */
+    const visF = (g) => vis(g.x, g.y) && !(g.info && g.info.resolved && g.info.heldMs && Date.now() - (+new Date(g.info.heldMs) || 0) > 7 * 864e5), bigF = () => false;   /* (Oct 10, 21:09) a resolved fire stays on the map for 7 days after it was held, then leaves it */   /* (Oct 4) no burn shapes on the map: a fire is its marker */
     const FIRES_V = Array.isArray(p.fires) ? p.fires.map((g, i) => [g, i]).filter(([g, i]) => visF(g) && (FK.has(i) || bigF(g))).sort((a, b) => ((b[0].info && !b[0].info.resolved ? 1 : 0) - (a[0].info && !a[0].info.resolved ? 1 : 0)) || (a[1] - b[1])).map((q) => q[0]) : [];   /* (Oct 4) stable order and no cap tied to the view: panning never reshuffles or drops markers */
     const IGN_ALL = Array.isArray(p.ignitions) ? p.ignitions : null;
     const IK = IGN_ALL ? this.thinKeep('ign', IGN_ALL, (g) => [g.x, g.y], (i, j) => IGN_ALL[i].conf > IGN_ALL[j].conf, 44 * SP, s) : null;   /* (Oct 4) fewer markers: one per 44px cell, the likeliest */

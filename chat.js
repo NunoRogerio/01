@@ -131,10 +131,19 @@
 
   // ---- storage --------------------------------------------------------------------------------------------------
   var DB = null;
-  function load() { if (DB) return DB; try { DB = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
+  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
   /* (Oct 9, 12:18) a page shown only as a backdrop under the main screen's panels (?under=1) reads the chats but never runs or writes them */
   var UNDER = /[?&]under=1/.test(location.search);
-  function save() { if (UNDER) return; try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
+  /* (Oct 10, 21:08) a page holding an older copy of the chats (back from the back-forward cache, the app back from the background, another
+     screen still open) never writes it over newer ones: before saving, what another screen saved meanwhile is merged in, chat by chat,
+     the most recently updated copy winning. A fire closed on one screen stays closed on every other. */
+  var LASTRAW = null;
+  function save() { if (UNDER) return; try {
+      var raw = localStorage.getItem(KEY);
+      if (raw && raw !== LASTRAW && DB && DB.chats) { var O = JSON.parse(raw) || {}, OC = O.chats || {};
+        Object.keys(OC).forEach(function (k) { var o = OC[k], m = DB.chats[k]; if (!o) return; if (!m || (o.updated || 0) > (m.updated || 0) || (o.closed && !m.closed) || (o.dismissed && !m.dismissed)) DB.chats[k] = o; });
+        Object.keys(O).forEach(function (k) { if (k !== 'chats' && DB[k] == null) DB[k] = O[k]; }); }
+      LASTRAW = JSON.stringify(DB); localStorage.setItem(KEY, LASTRAW); } catch (e) {} }
   function emit() { try { var ch = false; if (DB && DB.chats) Object.keys(DB.chats).forEach(function (k) { if (ensureLts(DB.chats[k])) ch = true; }); if (ch) save(); } catch (e) {} try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} }
   // (Oct 8, 21:00) every station working the fire has its lieutenant (the crew's chief) in the chat too, with the station's real
   // people: Station 11's lieutenant is Daniel Brooks (the lieutenant profile himself when he is signed in)
