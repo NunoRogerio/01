@@ -20,7 +20,7 @@
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791671474"></script>
+<script src="chat.js?v=1791672172"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="feedcam.js?v=1791671663"></script>
 <script src="trophy.js?v=1791669288"></script>
@@ -156,7 +156,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <div class="chscroll" data-wf-keepscroll="1" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
       <sc-for list="{{items}}" as="m" hint-placeholder-count="4">
-        <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #545458">{{m.day}}</div></sc-if>
+        <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 26px; font-weight: 600; line-height: 32px; color: #000000; text-align: center">{{m.day}}</div></sc-if>
         <sc-if value="{{m.isSys}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="align-self: center; max-width: 300px; font-size: 16px; line-height: 20px; color: #545458; text-align: center">{{m.text}} · {{m.time}}</div>
         </sc-if>
@@ -1057,9 +1057,10 @@ class Component extends DCLogic {
     const items = [], pends = [];
     const onlyDec = c.closed && s.hTab === 'dec';
     c.msgs.forEach((m) => {
+      if (m.kind === 'card' && m.tag && m.tag.en === 'Fire reported') return; if (m.kind === 'sys' && /^Called you \(fire owner\) and the crew coordinators of /.test(m.en || '')) { m = Object.assign({}, m, { en: 'Called you (fire owner) and the nearest stations\' crew coordinators', pt: 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa dos quartéis mais próximos' }); } if (m.kind === 'card' && m.title && /^Active fire · /.test(m.title.en || '')) { m = Object.assign({}, m, { title: { en: 'Active fire', pt: 'Incêndio ativo' } }); }   /* (Oct 10, 23:41) saved chats too: no opening card repeating the fire */
       if (onlyDec && m.kind !== 'card') return;   /* (Oct 8, 22:15) Decisions: the cards only, no chat text (mine included) */
       const vt = m.vt || m.t, d = new Date(vt).toDateString();
-      if (d !== prevDay) { items.push({ isDay: true, day: d === today ? L('Today', 'Hoje') : dayTxt(vt) }); prevDay = d; prevFrom = null; }
+      if (d !== prevDay) { items.push({ isDay: true, day: (() => { const D0 = new Date(vt), w = D0.toLocaleDateString(L('en-GB', 'pt-PT'), { weekday: 'long', day: 'numeric', month: 'long' }); return w.charAt(0).toUpperCase() + w.slice(1) + ', ' + C.hhmm(vt); })() }); prevDay = d; prevFrom = null; }   /* (Oct 10, 23:41) the day as a title M: weekday, day, month and the time it begins */
       const time = C.hhmm(vt);
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: '0' }); prevFrom = 'me'; return; }

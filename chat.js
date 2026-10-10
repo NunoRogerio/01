@@ -393,7 +393,7 @@
     if (s === 0) return Object.assign(base, { tag: { en: 'Ignition detected', pt: 'Ignição detetada' }, title: { en: 'Heat anomaly', pt: 'Anomalia térmica' },
       body: { en: (c.src || 'Satellite') + (c.det ? ' · ' + hhmm(c.det) : ''), pt: (c.src || 'Satélite').replace('Satellite', 'Satélite') + (c.det ? ' · ' + hhmm(c.det) : '') },
       kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#3A3A3C' } : null });
-    if (s === 1) return Object.assign(base, { tag: { en: 'Ignition confirmed', pt: 'Ignição confirmada' }, title: { en: 'Active fire · ' + c.place, pt: 'Incêndio ativo · ' + c.place },
+    if (s === 1) return Object.assign(base, { tag: { en: 'Ignition confirmed', pt: 'Ignição confirmada' }, title: { en: 'Active fire', pt: 'Incêndio ativo' },   /* (Oct 10, 23:42) the name is in the header */
       body: { en: 'Nearest stations, by straight-line distance and estimated drive time', pt: 'Quartéis mais próximos, por distância em linha reta e tempo estimado' },
       rows: st.map(function (x, i) { return { a: x.short, b: kmTxt(x.km) + ' · ~' + x.min + ' min', r: { en: 'Awaiting', pt: 'A aguardar' }, rc: '#545458', i: i }; }).map(function (r, i, R) { if (c.sentIdx && i === R.length - 1) sentRows(c, R); return r; }) });
     if (s === 2) return Object.assign(base, { title: { en: 'Crews en route', pt: 'Meios a caminho' },
@@ -429,8 +429,8 @@
     var names = P.map(function (p) { return p.org; }).join(', ');
     // Detection
     var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Fire reported', pt: 'Incêndio reportado' }; c0.title = { en: c.place, pt: c.place };
-    c0.body = { en: c.note || 'Reported to the command centre', pt: c.note || 'Reportado ao comando' }; c0.kpi = null; delete c0.link; add(c0, at(0));
-    add({ kind: 'sys', en: 'Called you (fire owner) and the crew coordinators of ' + names, pt: 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa de ' + names }, at(0) + MIN);
+    /* (Oct 10, 23:41) no opening card repeating the fire's name and source: the header and stage band say it */
+    add({ kind: 'sys', en: 'Called you (fire owner) and the nearest stations\' crew coordinators', pt: 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa dos quartéis mais próximos' }, at(0) + MIN);   /* (Oct 10, 23:42) the stations are named on the card that follows: not repeated here */
     msg(0, 'Seen. Crew of 5 and ' + (us ? 'an engine' : 'one fire engine') + ' ready at ' + (P[0] || {}).org + '.', 'Visto. Equipa de 5 e um veículo prontos em ' + (P[0] || {}).org + '.', at(0) + 3 * MIN);
     if (P[2]) msg(2, 'Smoke visible from the station, looks like it is growing.', 'Fumo visível do quartel, parece estar a crescer.', at(0) + 5 * MIN);
     if (s >= 1) {
