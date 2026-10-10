@@ -430,6 +430,7 @@
     // Detection
     var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Fire reported', pt: 'Incêndio reportado' }; c0.title = { en: c.place, pt: c.place };
     /* (Oct 10, 23:41) no opening card repeating the fire's name and source: the header and stage band say it */
+    { var cc0 = stageCard(c, 0); cc0.kind = 'card'; cc0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' }; add(cc0, at(0)); }   /* (Oct 11, 00:20) the story starts with the ignition candidate */
     add({ kind: 'sys', en: 'Called you (fire owner) and the nearest stations\' crew coordinators', pt: 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa dos quartéis mais próximos' }, at(0) + MIN);   /* (Oct 10, 23:42) the stations are named on the card that follows: not repeated here */
     msg(0, 'Seen. Crew of 5 and ' + (us ? 'an engine' : 'one fire engine') + ' ready at ' + (P[0] || {}).org + '.', 'Visto. Equipa de 5 e um veículo prontos em ' + (P[0] || {}).org + '.', at(0) + 3 * MIN);
     if (P[2]) msg(2, 'Smoke visible from the station, looks like it is growing.', 'Fumo visível do quartel, parece estar a crescer.', at(0) + 5 * MIN);
@@ -594,7 +595,9 @@
       Q.forEach(function (q) { var m = q.m; delete m.adv; m.t = m.vt = Math.round(base + MIN / 2 + (q.due - first) / Math.max(1, last - first) * (span - MIN / 2)); if (m.req) m.nagAt = now0; c.msgs.push(m); });
     } else {
       var s = c.stage;
-      sys(c, 'Chat opened for this fire · you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Conversa aberta para este incêndio · você (responsável) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 300, 0);
+      /* (Oct 11, 00:19) the story from its start: the ignition candidate (the detection), then the call, then the fire's stage */
+      if (s >= 1) { var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' }; card(c, c0, 200, 0); }
+      sys(c, 'Called you (fire owner) and the nearest stations\' crew coordinators', 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa dos quartéis mais próximos', 500, 0);
       card(c, stageCard(c, s), 900, 0);
       entry(c, s, 2500);
     }
@@ -1466,7 +1469,7 @@
       }
       /* (Oct 8, 21:06) demo pace: 20 s into a stage (Crews on scene to Surveillance) the captain is invited to move on, or (lieutenant) the captain moves it */
       /* (Oct 9, 13:32) a declared fire waiting for its crews always has a card in the chat that asks for the dispatch (never only the chip) */
-      if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage === 1 && !c.flags.dispatched && !isLt() && !(c.msgs || []).some(function (x) { return x.kind === 'card' && !x.done && (x.actions || []).some(function (a) { return a.key === 'dispatch'; }); }) && !(c.queue || []).some(function (q) { return q.m && (q.m.dispCard || q.m.kind === 'stage'); })) {
+      if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage === 1 && !c.flags.dispatched && !isLt() && (c.msgs || []).some(function (x) { return x.kind === 'card' && x.stage === 1; }) &&   /* (Oct 11, 00:19) never before the Ignition confirmed card */ !(c.msgs || []).some(function (x) { return x.kind === 'card' && !x.done && (x.actions || []).some(function (a) { return a.key === 'dispatch'; }); }) && !(c.queue || []).some(function (q) { return q.m && (q.m.dispCard || q.m.kind === 'stage'); })) {
         card(c, { rec: true, dispCard: true, to: 2, tag: { en: 'Recommendation', pt: 'Recomendação' }, tagC: '#3A3A3C', title: { en: 'Dispatch crews', pt: 'Despachar equipas' }, body: { en: 'The stations are ready. Choose who goes.', pt: 'Os quartéis estão prontos. Escolha quem vai.' },
           actions: [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }] }, 600, 0); changed = true; }
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
