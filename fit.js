@@ -841,7 +841,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
       window.location.href=href;};
     setTimeout(function(){   /* after the card's own handlers have set the destination up */
       try{snap={};for(var q=0;q<sessionStorage.length;q++){var kk=sessionStorage.key(q);snap[kk]=sessionStorage.getItem(kk);}}catch(x){}   /* now, after the card's handlers */
-      try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.__wfLb=lb;a.textContent=L[lb]||'…';a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads */
+      try{var lb=(a.textContent||'').trim(),L={'View':'Loading…','Ver':'A carregar…'};if(lb){a.__wfLb=lb;a.textContent=L[lb]||(window.__wfLang==='pt'?'A carregar…':'Loading…');a.setAttribute('aria-busy','true');}   /* the label says so while the next screen loads */
         var w=document.createElement('div'),f=document.createElement('iframe'),dim=document.createElement('div'),T0=Date.now(),loaded=false,rose=false,lift=false;
         w.setAttribute('aria-hidden','true');w.setAttribute('data-wf-pushup','1');w.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;z-index:300;overflow:hidden;pointer-events:none;background:'+puGrey()+';transform:translateY(100%);box-shadow:0 0 28px rgba(0,0,0,.25)';
         f.setAttribute('tabindex','-1');f.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;border:0;opacity:0;background:transparent';w.appendChild(f);window.__wfPuFrame=f;
