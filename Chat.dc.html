@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791668895"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791669853"></script>
+<script src="prefs.js?v=1791670671"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
@@ -119,8 +119,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <!-- (Oct 4, 23:15) the stage as the fire page's stage tag (icon, stage, time in it on the right); a tap unfolds the times and the next step -->
-      <div style="display: {{c.stateD}}; align-items: stretch; gap: 8px; margin: 0 16px 24px; min-width: 0"><!-- (Oct 7) the structures-at-risk badge anchored to the right of the stage band, as tall as it --><!-- (Oct 9, 09:03) the stage band is the way into the incident's page (a blade over the chat); stages move from the chat's cards and chips --><button type="button" class="chrow" data-wf-stband="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: 8px; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
-        <span style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 8px; background: {{c.bg}}; color: {{c.stC}}; font-size: 18px; line-height: 24px; white-space: nowrap; transition: background-color .6s ease">
+      <div style="display: {{c.stateD}}; align-items: stretch; gap: 8px; margin: 0 16px 24px; min-width: 0"><!-- (Oct 7) the structures-at-risk badge anchored to the right of the stage band, as tall as it --><!-- (Oct 9, 09:03) the stage band is the way into the incident's page (a blade over the chat); stages move from the chat's cards and chips --><button type="button" class="chrow" data-wf-stband="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: 24px; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
+        <span style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{c.bg}}; color: {{c.stC}}; font-size: 18px; line-height: 24px; white-space: nowrap; transition: background-color .6s ease">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{c.ic.d}}"></path></svg>
           <span style="flex-shrink: 0; font-weight: 600">{{c.st}}</span>
           <span style="display: {{c.forD}}; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin-left: auto; font-size: 16px; line-height: 20px; font-weight: 400; font-variant-numeric: tabular-nums">{{c.forT}}</span><!-- (Oct 9, 16:06) "Visit fire" in annotation size, 16px before a 20% larger chevron --><span style="flex-shrink: 0; margin-left: {{c.arML}}; font-size: 16px; line-height: 20px; font-weight: 400">{{c.visit}}</span>
