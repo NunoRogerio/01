@@ -244,7 +244,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <!-- (Oct 9, 13:07) no "Resources" label: the switcher says it -->
         <div style="display: {{rs.tabsD}}; padding: 0 16px 8px">
           <div role="tablist" aria-label="{{tx.res}}" class="wf-seg">
-            <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 3); transform: translateX({{rs.x}})"><span class="segblob"></span></span>
+            <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / {{rs.nT}}); transform: translateX({{rs.x}})"><span class="segblob"></span></span>
             <sc-for list="{{rs.tabs}}" as="tb" hint-placeholder-count="3">
               <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 18px; font-weight: {{tb.w}}">{{tb.label}}</button>
             </sc-for>
@@ -798,14 +798,14 @@ class Component extends DCLogic {
       /* (Oct 10, 22:00) on a mission: the fire it is on, then how long, each on its own line, the time in bold */
       if (k === 'out' && M && M.place) { const fd = window.__wfChat && window.__wfChat.fmtDur ? window.__wfChat.fmtDur(M.ms) : Math.round(M.ms / 6e4) + ' min'; return { icBg: TAG[k][2], offD: 'none', tagTopD: 'inline-flex', tagLowD: 'none', misD: 'list-item', mis: M.place + '.', tag: L(TAG[k][0], TAG[k][1]), offA: M.ms ? L('For ', 'Há ') : '', offB: M.ms ? fd : '', offC: M.ms ? '.' : '', tagBg: TAG[k][2], tagFg: TAG[k][3] }; }
       return { icBg: TAG[k][2], offD: off ? 'list-item' : 'none', misD: 'none', mis: '', tagTopD: 'inline-flex', tagLowD: off ? 'block' : 'none', tag: L(TAG[k][0], TAG[k][1]), offA: off ? L(k === 'maint' ? 'Maintenance for ' : 'In repair for ', k === 'maint' ? 'Em manutenção por ' : 'Em reparação por ') : '', offB: off ? L(d + (d === 1 ? ' day' : ' days'), d + (d === 1 ? ' dia' : ' dias')) : '', offC: off ? '.' : '', tagBg: TAG[k][2], tagFg: TAG[k][3] }; };
-    const s0 = this.state || {}, tab = s0.rtab || 'veh';
+    const s0 = this.state || {}, hasAir = air.length > 0, tab = !hasAir && s0.rtab === 'air' ? 'veh' : (s0.rtab || 'veh');   /* (Oct 10, 22:09) no aerial units at the station: no Aerial tab */
     const mob = (k) => ({ cols: 'minmax(0, 1fr) auto', padR: '8px', chevD: 'none', dis: true, cur: 'default', go: () => {} });
     const rowsFor = tab === 'crew'
       ? crews.map((c, i) => ({ name: c.name, ic: IC.crew, sub: c.ppl.length + ' ' + (c.ppl.length === 1 ? L('firefighter', 'bombeiro') : L('firefighters', 'bombeiros')) + '. ' + c.veh + '. ' + L('Chief ', 'Chefe ') + c.chief + '.', ...tg(c.st, 0, c.mis), liSh: 'none', cols: 'minmax(0, 1fr) auto 20px', padR: '8px', chevD: 'flex', dis: false, cur: 'pointer', aria: c.name + ', ' + L(TAG[c.st][0], TAG[c.st][1]), go: () => this.setState({ sq: 'c' + i }) }))
       : (tab === 'air' ? air : veh).map((v, i) => ({ v, i })).sort((A, B) => ((A.v.st === 'maint' || A.v.st === 'repair') - (B.v.st === 'maint' || B.v.st === 'repair')) || A.i - B.i).map(({ v }) => ({ name: v.name, ic: IC[v.ic], sub: v.sub, ...tg(v.st, v.days, v.mis), ...mob(), liSh: v.st === 'maint' || v.st === 'repair' ? 'inset 0 0 0 2000px rgba(0, 0, 0, 0.04)' : 'none', aria: v.name + ', ' + v.sub }));   /* (Oct 10, 20:07) off the road: at the foot of the list, the card a very slightly darker grey */
     const list = tab === 'crew' ? crews : tab === 'air' ? air : veh, free = list.filter((x) => x.st === 'ok').length;
     const rs = { x: tab === 'crew' ? '100%' : tab === 'air' ? '200%' : '0',
-      tabs: [['veh', L('Vehicles', 'Veículos')], ['crew', L('Crews', 'Equipas')], ['air', L('Aerial', 'Meios aéreos')]].map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ rtab: k }); } })),
+      nT: hasAir ? 3 : 2, tabs: [['veh', L('Vehicles', 'Veículos')], ['crew', L('Crews', 'Equipas')], ['air', L('Aerial', 'Meios aéreos')]].filter(([k]) => hasAir || k !== 'air').map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ rtab: k }); } })),
       sum: !list.length ? '' : list.length + ' ' + (tab === 'crew' ? L(list.length === 1 ? 'crew' : 'crews', list.length === 1 ? 'equipa' : 'equipas') : tab === 'air' ? L(list.length === 1 ? 'aerial unit' : 'aerial units', list.length === 1 ? 'meio aéreo' : 'meios aéreos') : L(list.length === 1 ? 'vehicle' : 'vehicles', list.length === 1 ? 'veículo' : 'veículos')) + '. ' + free + ' ' + L('available', free === 1 ? 'disponível' : 'disponíveis') + '.',
       rows: rowsFor, empty: !list.length, listD: list.length ? 'flex' : 'none', emptyTxt: L('No helicopters, planes or jets based at this station. Aerial support comes from the county on a fire request.', 'Nenhum helicóptero, avião ou jato sediado neste quartel. Os meios aéreos vêm do distrito, a pedido, num incêndio.'), tabsD: 'block', sumMt: '8px' };
     /* (Oct 7) the team lead's home shows his own crew and the vehicle it rides in, no switcher */

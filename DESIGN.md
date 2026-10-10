@@ -1615,3 +1615,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 10, 22:02) Station home header: the fire danger tag and the station's status tag share one line (both 8px side padding).
 - (Oct 10, 22:04) Incident chat, stage band: the link to the fire page reads "View" (Ver), no chevron.
 - (Oct 10, 22:08) Station resource cards (vehicles, crews, aerial): the unit's icon sits centred on a full-height strip on the card's left, in its status tag's background colour; the details are bullet points, one per line (shared .wf-bul in prefs.js). On a mission, the fire and the time share one bullet ("Rubio Fire. For 39 min."), the fire's name in the tag's text colour, the time in bold.
+- (Oct 10, 22:09) Station resources: a station with no aerial units shows no Aerial tab (the switcher has only Vehicles and Crews).
