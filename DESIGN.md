@@ -1593,3 +1593,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 10, 20:23) Stripe Pattern: the lines run at 60 degrees from the horizontal (was 30), the same width and gaps.
 - (Oct 10, 20:50) Stripe Pattern: the line grey lighter again, less contrast with the page (about 3% black, was 4.4%), on the header and the strip under the clock alike.
 - (Oct 10, 20:51) Stripe Pattern fades in: 0% opacity over the top 30% of the header (the strip under the clock included), rising evenly to 100% at the header's foot. The strip under the clock lies wholly in the clear part, so the page body there no longer draws the stripes.
+- (Oct 10, 20:53, for now) Station home: the station duties are off the lists (To do and Resolved alike). The To do tab is now "Incidents" (Incidentes); Resolved stays and keeps the station's fires closed or dismissed in the last 7 days (was 24 h), its label "Last 7 days" (Últimos 7 dias).
