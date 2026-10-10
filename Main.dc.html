@@ -18,7 +18,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791665418"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791668035"></script>
+<script src="prefs.js?v=1791668253"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
@@ -826,7 +826,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{ap.gClose}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 40px; padding: 0 32px">
       <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="gpTitle" style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000">{{ap.gTitle}}</h2><span style="font-size: 18px; line-height: 24px; color: #000000">{{ap.gSub}}</span></span>
-      <button type="button" class="mbtn" onClick="{{ap.gClose}}" aria-label="{{ap.gDone}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -6px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+      <button type="button" class="mbtn" onClick="{{ap.gClose}}" aria-label="{{ap.gDone}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -6px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
     </div>
     <div role="radiogroup" aria-label="{{ap.gTitle}}" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); justify-items: center; row-gap: 8px; min-height: 0; overflow-y: auto; padding: 8px 16px calc(56px + var(--wf-safe-b, 0px))">
       <sc-for list="{{ap.grid}}" as="c" hint-placeholder-count="12">
@@ -1478,7 +1478,7 @@ class Component extends DCLogic {
           own: cur, ownDot: known ? '#FFFFFF' : cur, ownRing: ring(!known),
           openPick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ colPick: true }); },
           // the sheet: choosing a colour applies it at once and the sheet stays open (closed by its X, the grabber, a swipe down or a tap outside)
-          gTitle: T('More colours', 'Mais cores'), gSub: T('All keep labels readable.', 'Todas mantêm o texto legível.'), gDone: T('Done', 'Concluído'),
+          gTitle: T('More colours', 'Mais cores'), gSub: T('All keep labels readable.', 'Todas mantêm o texto legível.'), gDone: T('Close', 'Fechar'),
           gHidden: gOpen ? 'false' : 'true', gPe: gOpen ? 'auto' : 'none', gOp: gOpen ? 1 : 0, gY: gOpen ? '0%' : 'calc(100% + 120px)', gDur: gOpen ? '.5s' : '.4s', gEase: gOpen ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', gClose,
           grid: [].concat(...GRID).map((h) => ({ bg: h, name: h, on: h === cur ? 'true' : 'false', tick: h === cur ? 1 : 0, ring: ring(h === cur), pick: () => { if (h === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} setC(h); } })),
           colName: known ? known[1] : T('Your colour', 'A sua cor') + ' ' + cur,

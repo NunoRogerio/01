@@ -1629,3 +1629,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 10, 22:30, app-wide) The structures-at-risk triangle is removed everywhere (beside the stage bands, on map markers, in tooltips) until a simpler, clearer way to signal it is found.
 - (Oct 10, 22:32) Trophy and summary cards: the fire's name is white (was the accent colour); the dark photo (sametkarakocofficial / Pexels) left the aerial pool. Photos must show clear information, never a nearly black frame.
 - (Oct 10, 22:35) Station resource cards: the icon sits on a 44px square tile with 12px corners, in the status tag's background colour, in the card's top-left corner (inside its 8px padding); no longer a full-height strip.
+- (Oct 10, 22:37, app-wide) Bottom sheets' "Done" check buttons are now the round X (Close / Fechar): the shared blade X used to be added on top of them, showing two overlapping dark buttons. One X per blade.
+- (Oct 10, 22:37) The floating menu button hides while any blade's overlay is open (it showed over the blur). The glass overlay is darker: rgba(28,28,30,0.42) (was rgba(60,60,67,0.24)).
