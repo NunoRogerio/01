@@ -113,11 +113,17 @@
   }
   /* (Oct 9, 18:27) the header's other round buttons (notifications) never move while the screen narrows or widens: each frame they are held at the
      place they had on screen when the motion began (any drift from the reflow is cancelled), until the motion has ended */
-  var holdT = 0; function holdCtl() { var sp = spot(), row = sp && sp.parentElement; if (!row) return; cancelAnimationFrame(holdT);
-    var B = Array.prototype.filter.call(row.querySelectorAll('button, a'), function (b) { return b !== sp && b.offsetWidth; }), x0 = B.map(function (b) { b.style.translate = ''; return b.getBoundingClientRect().left; }), t0 = performance.now();
-    (function f() { B.forEach(function (b, i) { var cur = parseFloat((b.style.translate || '0').split(' ')[0]) || 0, d = x0[i] - (b.getBoundingClientRect().left - cur); b.style.translate = Math.abs(d) < 0.25 ? '' : d.toFixed(2) + 'px 0px'; });
-      if (performance.now() - t0 < DUR + 260) holdT = requestAnimationFrame(f); else B.forEach(function (b) { b.style.translate = ''; }); })(); }
-  function close() { holdCtl();
+  /* (Oct 10, 11:09) fixed for good: the hold no longer lets go when the motion ends (the reflowed spot sat a few px off, so the bell
+     drifted once open and jumped back on close). The buttons stay pinned to where they were with the menu closed for as long as the
+     menu is open and until it has fully closed; the row is looked up every frame, so a re-render keeps the pin too */
+  var holdT = 0, pinX = null, pinEnd = 0;
+  function ctlB() { var sp = spot(), row = sp && sp.parentElement; if (!row) return []; return Array.prototype.filter.call(row.querySelectorAll('button, a'), function (b) { return b !== sp && b.offsetWidth; }); }
+  function holdCtl(closing) { cancelAnimationFrame(holdT); pinEnd = closing ? performance.now() + DUR + 260 : 0;
+    if (!pinX) { pinX = ctlB().map(function (b) { b.style.translate = ''; return b.getBoundingClientRect().left; }); }
+    (function f() { var B = ctlB(), z = k() || 1;
+      if (B.length === pinX.length) B.forEach(function (b, i) { var cur = parseFloat((b.style.translate || '0').split(' ')[0]) || 0, d = (pinX[i] - (b.getBoundingClientRect().left - cur * z)) / z; b.style.translate = Math.abs(d) < 0.1 ? '' : d.toFixed(2) + 'px 0px'; });
+      if (mode || performance.now() < pinEnd) holdT = requestAnimationFrame(f); else { B.forEach(function (b) { b.style.translate = ''; }); pinX = null; } })(); }
+  function close() { holdCtl(true);
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(''); through(false);
     /* (Oct 9, 15:42) the screen slides back over the column's X; once it has covered it, the button is the header's menu button again */
