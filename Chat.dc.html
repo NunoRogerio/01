@@ -14,13 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791672366"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791675609"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791673005"></script>
 <script src="station.js?v=1791674600"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791674450"></script>
+<script src="chat.js?v=1791675609"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="feedcam.js?v=1791671663"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -176,7 +176,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </div>
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
-          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: transparent; color: #000000; text-align: left">
+          <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: rgba(255, 255, 255, 0.1); color: #000000; text-align: left"><!-- (Oct 11, 00:36) my messages: "You" on top, as the others carry their name; the bubble 10% white -->
+            <span style="align-self: flex-start; font-size: 16px; line-height: 20px; font-weight: 600; color: #1C1C1E">{{t.you}}</span>
             <span style="font-size: 18px; line-height: 24px">{{m.text}}</span>
             <span style="align-self: flex-end; margin-top: 12px; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span><!-- (Oct 11, 00:27) 16px under the last line of text -->
           </div>
@@ -802,7 +803,7 @@ class Component extends DCLogic {
       msg: L('Write a message…', 'Escrever mensagem…'), send: L('Send', 'Enviar'), cam: L('Helmet camera', 'Câmara de capacete'), call: L('Video call with the police captain', 'Videochamada com o capitão da polícia'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
       fireCard: L('Fire card', 'Cartão do incêndio'), details: L('Details', 'Detalhes'), fireCardSub: L('Progress and projection', 'Progresso e projeção'),
-      reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
+      you: L('You', 'Você'), reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
       proj: L('Spread projection', 'Projeção da propagação'), projSub: L('Where the fire can be in 1, 3 and 6 hours, on its map.', 'Onde o fogo pode estar dentro de 1, 3 e 6 horas, no mapa.'), openFire: L('View projection', 'Ver projeção'),
       forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
       won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), home: L('Go to main screen', 'Ir para o ecrã principal'), home0: L('Main screen', 'Ecrã principal'), homeNote: L('Do not rest on your laurels. There are more fires where you are needed.', 'Não fiques à sombra dos louros, há mais incêndios onde és preciso.'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), histDrill: L('Drill finished · your movements and decisions', 'Simulação terminada · os seus movimentos e decisões'), wonBy: L('Crews', 'Equipas'), owner: L('Fire owner', 'Responsável pelo incêndio'),
@@ -1196,8 +1197,16 @@ class Component extends DCLogic {
       /* (Oct 8, 19:15) Configure dispatch: the stations of the chat, the first two on by default (the nearest); one at least */
       ds: (() => { const MN = window.__wfMine ? window.__wfMine() : null, OWN = MN && MN.level !== 'lead' && C.ownCrews ? C.ownCrews(c) : null;
         /* (Oct 8, 23:25) a station captain configures the dispatch of their own station only: its crews, each with its lieutenant */
-        if (OWN && OWN.length) { const on = !!s.dsp, okU = (k) => !k.busy && k.st0 !== 'maint' && k.st0 !== 'repair' && k.crew.length, REC = (() => { const d = {}; OWN.filter((k) => okU(k) && ['engine', 'brush', 'patrol'].indexOf(k.key) >= 0).slice(0, 2).forEach((k) => { d[k.key] = true; }); if (!Object.keys(d).length) { const f = OWN.find(okU); if (f) d[f.key] = true; } return d; })(), sel = s.dOwn || REC,   /* (Oct 9, 13:54) the AI recommendation: the nearest free engines */   /* (Oct 9) the engines free go by default */ n = OWN.filter((k) => sel[k.key] && okU(k)).length, sent = !!s.dSent;
-          const tog = (k) => () => { if (sent) return; const u = OWN.find((q) => q.key === k); if (!u || !okU(u)) return; if (sel[k] && n <= 1) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dOwn: Object.assign({}, sel, { [k]: !sel[k] }) }); };
+        if (OWN && OWN.length) { const on = !!s.dsp, RD = s.dRedir || {}, okU = (k) => (!k.busy || RD[k.key]) && k.st0 !== 'maint' && k.st0 !== 'repair' && k.crew.length, REC = (() => { const d = {}; OWN.filter((k) => !k.busy && okU(k) && ['engine', 'brush', 'patrol'].indexOf(k.key) >= 0).slice(0, 2).forEach((k) => { d[k.key] = true; }); if (!Object.keys(d).length) { const f = OWN.find((k) => !k.busy && okU(k)); if (f) d[f.key] = true; } return d; })(), sel = s.dOwn || REC,   /* (Oct 9, 13:54) the AI recommendation: the nearest free engines */   /* (Oct 9) the engines free go by default */ n = OWN.filter((k) => sel[k.key] && okU(k)).length, sent = !!s.dSent;
+          const tog = (k) => () => { if (sent) return; const u = OWN.find((q) => q.key === k); if (!u || u.st0 === 'maint' || u.st0 === 'repair' || !u.crew.length) return;
+            /* (Oct 11, 00:33) a unit on a mission can be chosen too: a confirmation rising from the bottom asks whether to redirect it (crew or vehicle) to this fire */
+            if (u.busy && !RD[k]) { const crew = u.ic === 'crew', fn = c.place || '';
+              if (window.__wfConfirm) window.__wfConfirm({ title: L(crew ? 'Redirect crew?' : 'Redirect vehicle?', crew ? 'Redirecionar equipa?' : 'Redirecionar veículo?'), body: L(u.veh + ' is out on the ' + u.busy + '. It leaves it for the ' + fn + '.', u.veh + ' está no ' + u.busy + '. Sai de lá para o ' + fn + '.'),
+                cancel: L('Cancel', 'Cancelar'), ok: L('Redirect', 'Redirecionar'), onOk: () => { const S0 = this.state.dOwn || sel; this.setState({ dRedir: Object.assign({}, this.state.dRedir || {}, { [k]: true }), dOwn: Object.assign({}, S0, { [k]: true }) }); } });
+              return; }
+            if (sel[k] && n <= 1) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+            const R2 = Object.assign({}, RD); if (sel[k] && u.busy) delete R2[k];   /* turned off again: a new redirect asks again */
+            this.setState({ dOwn: Object.assign({}, sel, { [k]: !sel[k] }), dRedir: R2 }); };
           const close = () => { this._shd = null; this.setState({ dsp: false, dsDy: 0 }); }, st0 = OWN[0].st, K = { url: C.crest ? C.crest(c, st0.short || st0.name).url : '' };
           return { h: this.shHandle('dsp', 'dsDy'), close, b: 48 - (s.dsDy || 0), bT: s.dsDy ? '0s' : '.35s', y: on ? '0' : 'calc(-100% - 40px)', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.55s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none',
             /* (Oct 9, 13:54) the AI recommendation first, as on the fire page: tap it to choose exactly its units; the recommended units carry Suggested */
@@ -1205,20 +1214,20 @@ class Component extends DCLogic {
               return { d: R.length && !sent ? 'grid' : 'none', title: L('AI suggested pack', 'Pacote sugerido pela IA'), sub: R.map((k) => k.veh).join(L(' and ', ' e ')) + '. ' + ppl + ' ' + L(ppl === 1 ? 'person' : 'people', ppl === 1 ? 'pessoa' : 'pessoas') + L('. The nearest free units for this fire.', '. As unidades livres mais próximas para este incêndio.'), tagD: same ? 'inline-flex' : 'none',
                 aria: L('AI suggested pack: ', 'Pacote sugerido pela IA: ') + R.map((k) => k.veh).join(', ') + L('. Tap to use it', '. Toque para o usar'), go: () => { if (sent) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dOwn: Object.assign({}, REC) }); } }; })(),
             title: L('Configure dispatch', 'Configurar despacho'), stT: (st0.short || st0.name) + L('. Resources', '. Recursos'), stSub: (+st0.km || 0).toFixed(1) + ' km. ~' + (st0.min || 0) + L(' min. Choose who goes.', ' min. Escolha quem vai.'),
-            rows: OWN.filter((k) => k.st0 !== 'maint' && k.st0 !== 'repair').map((k) => { const ok = okU(k), o = ok && !!sel[k.key], last = o && n <= 1, R = k.lt && C.rankOf ? C.rankOf(c, k.lt) : null, np = k.crew.length;
+            rows: OWN.filter((k) => k.st0 !== 'maint' && k.st0 !== 'repair').sort((a, b) => (a.busy ? 1 : 0) - (b.busy ? 1 : 0)).map((k) => {   /* (Oct 11, 00:33) units on a mission at the end of the list */ const ok = okU(k), o = ok && !!sel[k.key], last = o && n <= 1, R = k.lt && C.rankOf ? C.rankOf(c, k.lt) : null, np = k.crew.length;
               /* (Oct 9, 06:52) every unit of the station: who rides it, or why it cannot go (in the shop, out on another fire) */
               const who = R ? L(R.en, R.pt) + ' ' + k.lt + '. ' : k.rank ? L(k.rank.en, k.rank.pt) + ' ' + (k.crew[0] || '') + '. ' : '';
-              const sub = k.st0 === 'maint' || k.st0 === 'repair' ? L(k.en, k.pt) : k.busy ? L('Out on the ', 'No ') + k.busy + '. ' + who.trim() : who + (np ? np + ' ' + L(np === 1 ? 'person' : 'people', np === 1 ? 'pessoa' : 'pessoas') + '. ' : '') + L(k.en, k.pt).split('. ')[0] + '.';
+              const sub = k.st0 === 'maint' || k.st0 === 'repair' ? L(k.en, k.pt) : k.busy ? (RD[k.key] ? L('Redirected from the ', 'Redirecionado do ') : L('Out on the ', 'No ')) + k.busy + '. ' + who.trim() : who + (np ? np + ' ' + L(np === 1 ? 'person' : 'people', np === 1 ? 'pessoa' : 'pessoas') + '. ' : '') + L(k.en, k.pt).split('. ')[0] + '.';
               /* (Oct 9) the same tags as the station's resource list */
               const MG = ['rgba(106, 106, 110, 0.3)', 'rgba(58, 58, 60, 0.8)'], offN = (k.st0 === 'maint' || k.st0 === 'repair') && k.days;   /* (Oct 10, 19:58) off the road: mid grey, dark grey text at 80%, almost disabled; how long is a normal line with the days in bold */
               const TG = k.busy ? [L('On a mission', 'Em missão'), 'rgba(184,74,0,0.14)', '#963B00'] : k.st0 === 'maint' ? [L('Maintenance', 'Em manutenção'), MG[0], MG[1]] : k.st0 === 'repair' ? [L('In repair', 'Em reparação'), MG[0], MG[1]] : null;
               const offA = offN ? L(k.st0 === 'maint' ? 'Maintenance for ' : 'In repair for ', k.st0 === 'maint' ? 'Em manutenção por ' : 'Em reparação por ') : '', offB = offN ? L(k.days + (k.days === 1 ? ' day' : ' days'), k.days + (k.days === 1 ? ' dia' : ' dias')) : '';
-              return { recD: REC[k.key] && ok ? 'inline-flex' : 'none', crest: '', crestD: 'none', icD: 'block', name: k.veh, sub, ic: (window.__wfFleetIC || {})[k.ic || 'eng'] || '', tag: TG ? TG[0] : '', tagBg: TG ? TG[1] : 'transparent', tagFg: TG ? TG[2] : '#636366', tagD: TG && !ok ? 'inline-flex' : 'none', offD: offN ? 'block' : 'none', offA, offB,
-                onStr: o ? 'true' : 'false', dis: last || sent || !ok ? 'true' : 'false', swOp: last || !ok ? 0.4 : 1, swBg: o ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: o ? '24px' : '0px', toggle: tog(k.key) }; }),
+              return { recD: REC[k.key] && ok ? 'inline-flex' : 'none', crest: '', crestD: 'none', icD: 'block', name: k.veh, sub, ic: (window.__wfFleetIC || {})[k.ic || 'eng'] || '', tag: TG ? TG[0] : '', tagBg: TG ? TG[1] : 'transparent', tagFg: TG ? TG[2] : '#636366', tagD: TG && (!ok || k.busy) ? 'inline-flex' : 'none', offD: offN ? 'block' : 'none', offA, offB,
+                onStr: o ? 'true' : 'false', dis: last || sent || (!ok && !k.busy) ? 'true' : 'false', swOp: !ok && !k.busy ? 0.4 : 1,   /* (Oct 11) the one unit left on keeps the normal on toggle */ swBg: o ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: o ? '24px' : '0px', toggle: tog(k.key) }; }),
             btn: sent ? L('Crews dispatched', 'Equipas enviadas') : L('Dispatch crews', 'Enviar equipas'), chkD: sent ? 'block' : 'none', dis: sent ? 'true' : 'false', btnPe: sent ? 'none' : 'auto',
             note: L('Other stations come through mutual aid: ask them in a chat. Crews are simulated for this demonstration.', 'Outros quartéis chegam por auxílio: peça-lhes numa conversa. Equipas simuladas para esta demonstração.'),
             send: () => { if (sent || !n) return; try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {} this.setState({ dSent: true }); this._stick = true;
-              setTimeout(() => { try { C.dispatchOwn(c.key, sel); } catch (e) {} this.setState({ dsp: false, dsDy: 0 }); }, 1100); } }; }
+              setTimeout(() => { try { C.dispatchOwn(c.key, sel, RD); } catch (e) {} this.setState({ dsp: false, dsDy: 0 }); }, 1100); } }; }
         const on = !!s.dsp, ST = (c.stations || []).slice(0, 4), REC = ST.map((x, i) => i < 2), sel = s.dSel || REC, n = sel.filter(Boolean).length, sent = !!s.dSent;   /* (Oct 9, 16:30) the AI recommendation: the two nearest stations (as every profile's dispatch: AI card first, Suggested on its units) */
         const tog = (i) => () => { if (sent) return; const S2 = sel.slice(); if (S2[i] && n <= 1) return; S2[i] = !S2[i]; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dSel: S2 }); };
         const close = () => { this._shd = null; this.setState({ dsp: false, dsDy: 0 }); };
@@ -1227,7 +1236,7 @@ class Component extends DCLogic {
           title: L('Configure dispatch', 'Configurar despacho'), stT: L('Stations', 'Quartéis'), stSub: L('The nearest stations. Choose who goes.', 'Os quartéis mais próximos. Escolha quem vai.'),
           rows: ST.map((st, i) => { const v = C.veh ? C.veh(c, i) : [], K = C.crest ? C.crest(c, st.short || st.name) : { url: '' }, o = !!sel[i]   /* the same crest as the chat's station cards */, last = o && n <= 1;
             return { name: st.short || st.name, sub: (st.km < 10 ? (+st.km || 0).toFixed(1) : Math.round(st.km)) + ' km. ~' + (st.min || 0) + ' min. ' + v.join(', ') + '.', crest: K.url || '', crestD: K.url ? 'block' : 'none', icD: K.url ? 'none' : 'block', ic: (window.__wfFleetIC || {}).eng || '', recD: REC[i] ? 'inline-flex' : 'none', tagD: 'none', tag: '', tagBg: 'transparent', tagFg: '#636366',
-              onStr: o ? 'true' : 'false', dis: last || sent ? 'true' : 'false', swOp: last ? 0.4 : 1, swBg: o ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: o ? '24px' : '0px', toggle: tog(i) }; }),
+              onStr: o ? 'true' : 'false', dis: last || sent ? 'true' : 'false', swOp: 1, swBg: o ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: o ? '24px' : '0px', toggle: tog(i) }; }),
           btn: sent ? L('Crews dispatched', 'Equipas enviadas') : L('Dispatch crews', 'Enviar equipas'), chkD: sent ? 'block' : 'none', dis: sent ? 'true' : 'false', btnPe: sent ? 'none' : 'auto',
           note: L('Stations and vehicles are simulated for this demonstration.', 'Quartéis e veículos simulados para esta demonstração.'),
           send: () => { if (sent) return; const O = ST.map((st, i) => sel[i] ? { name: st.name, km: st.km, eta: st.min } : null).filter(Boolean); if (!O.length) return;
@@ -1260,7 +1269,7 @@ class Component extends DCLogic {
       typing: !!ty, typingTxt: ty ? ty.name + (C.typingRadio && C.typingRadio(c) ? L(' is transmitting…', ' está a transmitir…') : L(' is typing…', ' está a escrever…')) : '', radioOnD: ty && C.typingRadio && C.typingRadio(c) ? 'inline-flex' : 'none', dotsD: ty && C.typingRadio && C.typingRadio(c) ? 'none' : 'flex',   /* (Oct 10, 23:11) by radio: the walkie-talkie, its waves animated, instead of the three dots */
       avt: (() => { const P0 = s.avPos || { x: 16, y: 0, below: false }, on = !!s.avTip; return { x: P0.x, y: P0.y, dy: (P0.below ? '0%' : '-100%') + (on ? '' : ''), op: on ? 1 : 0, name: s.avName || '', role: s.avRole || '' }; })(),
       /* (Oct 9, 09:03) the stage chip (moves the fire on) stays fixed on the left; the other chips scroll under it */
-      acts: acts.map((a) => { const st = a.stD === 'inline', pg = DK ? '#1C1C1E' : 'var(--wf-page, #F2F2F7)';
+      acts: acts.map((a0) => { const st = a0.stD === 'inline', pg = DK ? '#1C1C1E' : 'var(--wf-page, #F2F2F7)', a = st ? Object.assign({}, a0, { chBg: 'var(--wf-pri-bg, #3A3A3C)', chFg: 'var(--wf-pri-fg, #FFFFFF)' }) : a0;   /* (Oct 11, 00:35) every stage-change chip is dark grey with white text, whatever the stage */
         return { ...a, stD: a.stD || 'none', chFg: a.chFg || '#1C1C1E', pos: st ? 'sticky' : 'relative', left: st ? '16px' : '0', z: st ? 2 : 1, mask: st ? '-16px 0 0 0 ' + pg + ', 8px 0 0 0 ' + pg : 'none',
           chBg: st ? 'linear-gradient(' + (a.chBg || 'rgba(255,255,255,0.7)') + ', ' + (a.chBg || 'rgba(255,255,255,0.7)') + '), ' + pg : (a.chBg || 'rgba(255,255,255,0.7)') }; }), actD: acts.length ? 'flex' : 'none', 
       draft: s.draft || '', sendBg: (s.draft || '').trim() ? (window.__wfY || '#E5FF00') : '#E5E5EA', sendOp: 1, sendDis: (s.draft || '').trim() ? 'false' : 'true',

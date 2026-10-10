@@ -908,8 +908,13 @@
     var busy = {}; Object.keys(load().chats).forEach(function (k) { var o = load().chats[k]; if (!o || o === c || o.key === c.key || o.closed || o.dismissed || o.kind === 'dm') return;
       (o.forces || []).forEach(function (f) { if (f.st === 'standby' || f.st === 'released') return; (f.veh || []).forEach(function (v) { busy[v] = o.place; }); }); });
     return FL.map(function (u) { return { key: u.id, ic: u.ic || (/^brush|^engine/.test(u.id) ? 'eng' : ''), veh: u.name, lt: u.lt || '', crew: (u.crew || []).slice(), en: u.en || '', pt: u.pt || '', rank: u.rank || null, st0: u.st || '', days: u.days || 0, busy: busy[u.name] || '', st: st, i: i }; }); }
-  function dispatchOwn(key, pick) { var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
-    var K = ownCrews(c).filter(function (k) { return pick[k.key] && !k.busy && k.st0 !== 'maint' && k.crew.length; }); if (!K.length) return; var st = K[0].st;
+  function dispatchOwn(key, pick, redir) { redir = redir || {}; var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
+    var K = ownCrews(c).filter(function (k) { return pick[k.key] && (!k.busy || redir[k.key]) && k.st0 !== 'maint' && k.crew.length; }); if (!K.length) return; var st = K[0].st;
+    /* (Oct 11, 00:33) a unit redirected from another fire leaves it: off that fire's forces, with a line in its chat */
+    K.forEach(function (k) { if (!k.busy) return; Object.keys(load().chats).forEach(function (ok2) { var o = load().chats[ok2]; if (!o || o.key === key || o.closed || o.dismissed) return; var hit = false;
+      (o.forces || []).forEach(function (f) { var ix = (f.veh || []).indexOf(k.veh); if (ix < 0) return; hit = true; f.veh.splice(ix, 1); if (!f.veh.length) f.st = 'released'; });
+      if (hit) sys(o, k.veh + ' redirected to the ' + (c.place || 'new fire'), k.veh + ' redirecionado para o ' + (c.place || 'novo incêndio'), 0, 0); }); });
+    c = load().chats[key];
     dispatched(key, [{ name: st.name, km: st.km, eta: st.min }]); c = load().chats[key]; var i = K[0].i, f0 = (c.forces || []).find(function (f) { return f.si === i && !f.second; }); if (!f0) return;
     f0.veh = [K[0].veh]; f0.crew = K[0].crew.slice(); if (K[0].key !== 'engine') { f0.second = !!K[0].lt; f0.nolt = !K[0].lt; }   /* a unit without a lieutenant brings none into the chat */
     K.slice(1).forEach(function (k) { c.forces.push({ si: i, ck: f0.ck, station: f0.station, full: f0.full, km: f0.km, coord: f0.coord, crew: k.crew.slice(), veh: [k.veh], st: f0.st, second: !!k.lt, nolt: !k.lt }); });

@@ -1168,7 +1168,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   /* (Oct 8, 23:04) the all-clear: once the fire is being controlled, the same floating card in green, a round check instead of
      the triangle, "Structures are now safe" and a green OK; shown once per fire (kept on this phone) */
   var safeEl = null, safeId = '';
-  window.__wfHomesSafe = function (o) { var seen = {}; try { seen = JSON.parse(localStorage.getItem('wf-homes-safe') || '{}') || {}; } catch (x) {}
+  window.__wfHomesSafe = function (o) { o = null;   /* (Oct 11, 00:35) the "Structures are now safe" notification is left out of the story for now */ var seen = {}; try { seen = JSON.parse(localStorage.getItem('wf-homes-safe') || '{}') || {}; } catch (x) {}
     if (!o || seen[o.id]) { if (safeEl) { var e0 = safeEl; safeEl = null; safeId = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(-16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
     if (safeEl && safeId === o.id) return; if (safeEl) safeEl.remove(); safeId = o.id;
     var w = safeEl = document.createElement('div'); w.id = 'wf-homes-safe'; w.className = 'wf-glass'; w.setAttribute('role', 'status');
