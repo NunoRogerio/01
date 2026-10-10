@@ -400,8 +400,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
          16px to the place (Title XS) and its region, then one supporting line; View 16px below -->
     <sc-if value="{{pop.isFire}}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 16px 8px">
-        <span style="display: block; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.fkStageLbl}}</span>
-        <span class="wf-ctag" role="status" style="margin-top: 4px; padding-left: 12px; padding-right: 12px; color: {{pop.fkTagFg}}; background: {{pop.fkTagBg}}">{{pop.fkTag}}</span>
+        <!-- (Oct 10, 23:01) no "Stage" label: the stage tag says it, full width of the tooltip --><span class="wf-ctag" role="status" style="align-self: stretch; margin-top: 8px; padding-left: 12px; padding-right: 12px; color: {{pop.fkTagFg}}; background: {{pop.fkTagBg}}">{{pop.fkTag}}</span>
         <!-- (Oct 7) mutual aid: the same tag as in the station's list, 8px under the tag above (the marker's outer ring explained) -->
         <span class="wf-ctag" role="status" style="display: {{pop.aidD}}; margin-top: 8px; min-height: 24px; padding: 4px 8px; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{pop.aidTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 16px">{{pop.fkName}}</b>
@@ -411,8 +410,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-if>
     <sc-if value="{{pop.notIgn}}" hint-placeholder-val="{{ true }}">
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 16px calc({{pop.stPadB}} + 8px)">
-        <span style="display: {{pop.stLblD}}; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.stLbl}}</span>
-        <span class="wf-ctag" role="status" style="display: {{pop.stLblD}}; margin-top: 4px; color: {{pop.tagFg}}; background: {{pop.tagBg}}">{{pop.tagTxt}}</span>
+        <span class="wf-ctag" role="status" style="display: {{pop.stLblD}}; align-self: stretch; margin-top: 8px; color: {{pop.tagFg}}; background: {{pop.tagBg}}">{{pop.tagTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: {{pop.stTtMt}}">{{pop.tt}}</b>
         <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
         <span style="display: {{pop.stKD}}; align-items: center; gap: 4px; margin-top: 8px; font-size: 16px; line-height: 20px; color: #3A3A3C">{{pop.stDistLbl}}<b style="margin-left: 4px; font-weight: 600; font-variant-numeric: tabular-nums">{{pop.stKm}}</b></span>
