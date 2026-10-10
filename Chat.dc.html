@@ -20,7 +20,7 @@
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791666948"></script>
+<script src="chat.js?v=1791667586"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="feedcam.js?v=1791564887"></script>
 <script src="trophy.js?v=1791558109"></script>
@@ -370,9 +370,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
               <div style="display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; min-height: 80px; margin: 0 8px; padding: 16px 8px; box-sizing: border-box; border-radius: 14px; background: {{r.rowBg}}; opacity: {{r.op}}">
                 <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: {{r.circBg}}"><svg width="32" height="32" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
-                <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+                <span style="min-width: 0; font-size: 18px; font-weight: 700; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{r.nameC}}">{{r.name}}</span>
                 <span class="{{r.nowCls}}" style="font-size: 16px; font-weight: {{r.w}}; line-height: 20px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
-                <span style="grid-column: 2 / span 2; font-size: 16px; line-height: 20px; color: #6E6E73">{{r.atTxt}}</span>
+                <span style="grid-column: 2 / span 2; font-size: 16px; line-height: 20px; color: {{r.atC}}">{{r.atTxt}}</span>
               </div>
             </sc-for>
           </section>
@@ -905,7 +905,7 @@ class Component extends DCLogic {
     // Time in each stage (also the timeline of the resolution summary)
     const D = C.stageDurs(c), maxMs = Math.max(1, ...D.map((d) => d.ms));
     const tl = C.STAGES.slice(0, c.dismissed ? 1 : 8).map((St, i) => { const d = D.find((x) => x.s === i), I = iconFor(St);
-      return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', atTxt: d ? L('From ', 'Desde as ') + C.hhmm(d.vt) + '.' : L('Not reached.', 'Por atingir.'), dur: d ? (d.cur ? C.clock(d.ms) : i === 7 ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d && d.cur ? '#000000' : '#6E6E73',
+      return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', atTxt: d ? L('From ', 'Desde as ') + C.hhmm(d.vt) + '.' : L('Not reached.', 'Por atingir.'), dur: d ? (d.cur ? C.clock(d.ms) : i === 7 ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d && d.cur ? (St.icon === 'cand' ? '#000000' : '#FFFFFF') : '#6E6E73', nameC: d && d.cur && St.icon !== 'cand' ? '#FFFFFF' : '#000000', atC: d && d.cur && St.icon !== 'cand' ? 'rgba(255,255,255,0.9)' : '#6E6E73',
         pct: d && i < 7 ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '',
         rowBg: d && d.cur ? I.bg : 'transparent', circBg: d && d.cur ? 'transparent' : I.bg }; });   /* (Oct 9) the current stage: its colour fills the whole row, not only the icon's circle */
     const tlTotal = L('Total ', 'Total ') + C.dur(vn - t0);
@@ -1076,8 +1076,8 @@ class Component extends DCLogic {
       if (m.kind === 'card') {
         const St = m.stage != null ? C.STAGES[m.stage] : null, I = (() => {   /* (Oct 9, 17:26) every confirmation, request and recommendation card carries its icon too: the stage it confirms or suggests, or what it asks for; the icon in dark grey */
           const FI = window.__wfFleetIC || {}, R = { air: FI.heli, help: FI.crew, evac: 'M4 11 12 4l8 7M6 9.5V19h12V9.5M10 19v-5h4v5' }, S2 = St || (m.to != null ? C.STAGES[m.to] : m.req === 'decl' ? C.STAGES[1] : null);
-          if (S2) { const b = iconFor(S2); return b.d ? Object.assign({}, b, { c: '#3A3A3C', bg: 'rgba(255,255,255,0.5)' }) : null; }   /* the same light disc on every band, whatever stage the icon names */
-          return m.req && R[m.req] ? { d: R[m.req], c: '#3A3A3C', bg: 'rgba(255,255,255,0.5)', fill: 'none' } : null; })();
+          if (S2) { const b = iconFor(S2); return b.d ? Object.assign({}, b, { c: '#FFFFFF', bg: 'rgba(255,255,255,0.2)' }) : null; }   /* (Oct 10, 22:25) white on the strong band */   /* the same light disc on every band, whatever stage the icon names */
+          return m.req && R[m.req] ? { d: R[m.req], c: '#FFFFFF', bg: 'rgba(255,255,255,0.2)', fill: 'none' } : null; })();
         /* (Oct 9, 15:32) a card keeps the colour of the stage during which it was triggered: never the stage it suggests, never repainted when the fire moves on */
         const Hd = C.STAGES[m.st0 != null ? m.st0 : (() => { let v = null; (c.hist || []).forEach((h) => { if (h.vt <= (m.vt || 0) + 500) v = h.s; }); return v; })()] || St || S;
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
@@ -1099,7 +1099,7 @@ class Component extends DCLogic {
         /* (Oct 9, 08:58) a card waiting for my answer (approve, move on, dispatch) never gets lost up the chat: see pinCheck */
         const pendNow = !m.done && !c.closed && acts.length > 0;
         if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: DK ? '#E8E8ED' : '#3A3A3C', I });
-        items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: T(m.tag), tagC: DK ? '#E8E8ED' : '#3A3A3C', bandBg: tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
+        items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: T(m.tag), tagC: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', bandBg: tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
           icD: I ? 'flex' : 'none', ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)

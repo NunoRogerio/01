@@ -23,15 +23,15 @@
   var STAGES = [
     { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#3A3A3C', bg: '#F7FCDC', icon: 'cand' },   // the dark outline circle as on the map, on the spectrum's lightest lime (lighter than First alert, which is a true yellow)
     // The stages run along one spectrum: yellow (first alert), orange, red-orange, blue, light green, dark green, grey (closed)
-    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#6B5200', bg: '#FFF1A0', icon: 'alert' },
-    { en: 'Ongoing', pt: 'Em curso', c: '#8A4B00', bg: '#FDE7C4', icon: 'route' },
-    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3261E', bg: '#FBE1DC', icon: 'flame' },
-    { en: 'Resolving', pt: 'Em resolução', c: '#1F64A6', bg: '#E3EEFB', icon: 'shield' },
-    { en: 'Concluding', pt: 'Em conclusão', c: '#0B6672', bg: '#DBF0F1', icon: 'drop' },
-    { en: 'Surveillance', pt: 'Vigilância', c: '#1D6B4F', bg: '#DDF2E8', icon: 'eye' },
-    { en: 'Closed', pt: 'Encerrada', c: '#1E6B2A', bg: '#D9F0DC', icon: 'done' }   /* (Oct 10, 22:15, trial palette) yellow to red for the serious stages; blue to green as the fire is contained, to the green of resolved */
+    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#FFFFFF', bg: '#946C00', ink: '#946C00', icon: 'alert' },
+    { en: 'Ongoing', pt: 'Em curso', c: '#FFFFFF', bg: '#B54A00', ink: '#B54A00', icon: 'route' },
+    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#FFFFFF', bg: '#C4261D', ink: '#C4261D', icon: 'flame' },
+    { en: 'Resolving', pt: 'Em resolução', c: '#FFFFFF', bg: '#1F64A6', ink: '#1F64A6', icon: 'shield' },
+    { en: 'Concluding', pt: 'Em conclusão', c: '#FFFFFF', bg: '#0B6672', ink: '#0B6672', icon: 'drop' },
+    { en: 'Surveillance', pt: 'Vigilância', c: '#FFFFFF', bg: '#1D6B4F', ink: '#1D6B4F', icon: 'eye' },
+    { en: 'Closed', pt: 'Encerrada', c: '#FFFFFF', bg: '#2E7D32', ink: '#2E7D32', icon: 'done' }   /* (Oct 10, 22:25) strong colours with white text (was light tints with coloured text); the same logic: yellow to red for the serious stages; blue to green as the fire is contained, to the green of resolved */
   ];
-  var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#545458', bg: '#ECECEF', icon: 'x' };
+  var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#FFFFFF', bg: '#636366', ink: '#636366', icon: 'x' };
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
   var ICON = {
     cand: 'M12 5.5a6.5 6.5 0 1 1 0 13a6.5 6.5 0 1 1 0-13Z',
@@ -370,7 +370,7 @@
   // Scripted beats ---------------------------------------------------------------------------------------------------
   function stageCard(c, s) {
     var S = STAGES[s], st = c.stations;
-    var base = { tag: { en: S.en, pt: S.pt }, tagC: S.c, stage: s };
+    var base = { tag: { en: S.en, pt: S.pt }, tagC: S.ink || S.c, stage: s };
     if (s === 0) return Object.assign(base, { tag: { en: 'Ignition detected', pt: 'Ignição detetada' }, title: { en: 'Heat anomaly', pt: 'Anomalia térmica' },
       body: { en: (c.src || 'Satellite') + (c.det ? ' · ' + hhmm(c.det) : ''), pt: (c.src || 'Satélite').replace('Satellite', 'Satélite') + (c.det ? ' · ' + hhmm(c.det) : '') },
       kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#3A3A3C' } : null });
