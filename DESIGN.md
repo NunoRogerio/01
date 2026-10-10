@@ -1623,3 +1623,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 10, 22:18) Station resource cards: the icon tile (44px wide, 12px corners, in the status tag's background colour) sits inside the card's 8px padding and grows from the top padding to the bottom padding, the icon centred (no longer a strip to the card's edges).
 - (Oct 10, 22:19) The dark round-button rule covers round pills only (fully rounded, like the members pill), not the square + tiles, which stay light grey.
 - (Oct 10, 22:19, app-wide) The notifications counter (on the bell) is red (rgb(215, 0, 21)) with a white number; other counters stay dark grey.
+- (Oct 10, 22:21) Station home incident cards (assigned incidents and incidents nearby): the stage tag moves under the texts as the chat's stage band, full width of the card (52px, icon, stage name, "View" on the right, 8px corners). An ignition candidate's band keeps its likelihood (e.g. "88%").
