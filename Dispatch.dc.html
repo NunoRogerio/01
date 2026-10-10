@@ -20,7 +20,7 @@
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791672172"></script>
+<script src="chat.js?v=1791672732"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
    Reached from anywhere else (a station card, a map tooltip, a list), this page hands over to the chat with the fire's blade open. */
@@ -1207,7 +1207,7 @@ class Component extends DCLogic {
     // the stages still to come, at most four, above it in greys: the nearest the darkest, each further one lighter
     const GR = [['#DADADF', '#2C2C2E'], ['#E4E4E8', '#48484A']];   /* light: they have not happened yet */
     const next = []; for (let i = stg + 1; i < C.STAGES.length && next.length < 1; i++) { const Sd = C.STAGES[i], g = GR[next.length]; next.push({ l: Sd.en, c: g[1], bg: g[0], ic: C.ICON[Sd.icon], t: 'Next', note: true }); }   /* the next stage only; no duration yet: "Next" in the annotation style */
-    const SC = C.STAGES[stg], cur = { l: label, t: cur0(dur(ms[stg])), ic: C.ICON[SC.icon] };
+    const SC = C.STAGES[stg], cur = { l: label, t: (C.fireMeta ? C.fireMeta(S.frow.id, ch) : '') || cur0(dur(ms[stg])), ic: C.ICON[SC.icon] };   /* (Oct 10, 23:50) the same stage button as everywhere: burned area and time active */
     function cur0(t) { return t ? (window.__wfLang === 'pt' ? 'há ' : 'for ') + t : ''; }   // (Oct 3, 23:30) in Portuguese "há 4 h"
     // One width, set by the widest, within what the band leaves beside its kind. Open, the current chip grows 8px each side
     // and every chip above and below is 2px narrower each side than its neighbour nearer the current one.

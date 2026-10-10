@@ -20,7 +20,7 @@
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791672172"></script>
+<script src="chat.js?v=1791672732"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="feedcam.js?v=1791671663"></script>
 <script src="trophy.js?v=1791669288"></script>
@@ -1242,7 +1242,7 @@ class Component extends DCLogic {
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + (window.__wfIncName ? window.__wfIncName(c.place, c.kind !== 'dm' && !c.police && (c.stage >= 1 || c.kind === 'fire') && !c.dismissed) : c.place), sub: c.kind === 'dm' ? c.reg : B ? benchTxt : (c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')), subD: c.kind === 'dm' || B || !c.people.length ? 'flex' : 'none',   /* (Oct 10, 23:29) no region under an incident's name in the chat header */
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
-          return { forT: d || '', forD: 'none', arML: 'auto', visit: L('View', 'Ver'), ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
+          return { forT: d || '', forD: 'none', arML: 'auto', visit: (c.kind === 'fire' || c.stage >= 1) && !c.dismissed && C.fireMeta ? (C.fireMeta(c.incId || c.id, c) || L('View', 'Ver')) : L('View', 'Ver'), ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
         ...(() => { const ex = false;   /* (Oct 9, 09:03) the band no longer unfolds: it opens the incident */ return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-8px', tmPb: '16px',
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
           /* (Oct 8, 19:10, app-wide) the stages the field drives are never moved by hand: Ongoing starts when the crews leave on the

@@ -1681,7 +1681,13 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
+    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: function (id, c) {   /* (Oct 10, 23:52) one stage button everywhere, the chat as the reference: the fire's burned area and time active as its chat has them ("8 ac. 1 d 7 h"); the live feed only for a fire with no chat */
+      try { var PT = window.__wfLang === 'pt', raw = String(id || '').replace(/^f:/, ''); if (!c && raw) c = chatFor({ kind: 'fire', id: raw });
+        if (c && c.kind !== 'dm' && !c.dismissed && (c.kind === 'fire' || c.stage >= 1)) { var Z = stats(c) || {}, ha = Z.ha || c.ha || 0, us = isUS(c), end = c.closed ? (c.closedVt || vnow(c)) : vnow(c), t0 = since(c);
+          var size = ha ? (us && !PT ? Math.round(ha * 2.471) + ' ac' : (Math.round(ha * 10) / 10) + ' ha') : '', on = t0 ? fmtDur(Math.max(0, end - t0)) : ''; return [size, on].filter(Boolean).join('. '); }
+        var F = window.__wfLiveFires || [], r = F.find(function (q) { return q && (q[2] === raw || q[2] === 'F-' + raw || ('F-' + q[2]) === raw); }), I = (r && r[9]) || {};
+        var ha2 = I.ha || (r && r[8]) || 0, ac2 = I.ac || (ha2 ? Math.round(ha2 * 2.471) : 0), t2 = I.startMs || 0, usr = !(r && r[0] === 'PT');
+        return [ac2 ? (usr && !PT ? ac2 + ' ac' : (Math.round((ha2 || ac2 / 2.471) * 10) / 10) + ' ha') : '', t2 ? fmtDur(Math.max(0, Date.now() - t2)) : ''].filter(Boolean).join('. '); } catch (e) { return ''; } }, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return chatFor(inc); },
