@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791665418"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791666618"></script>
+<script src="prefs.js?v=1791666948"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
@@ -1831,7 +1831,7 @@ class Component extends DCLogic {
     // The one number that leads: the burned area (real data only; '–' when the source gives none), with the time active as its annotation
     const kpiNum = held ? (held.took != null ? D(held.took) : '–') : I.startMs ? D(now - I.startMs) : '–', kpiUnit = '', kpiLbl = held ? 'Final duration' : 'Time active';   // no time published: the KPI group becomes one annotation line
     const noT = kpiNum === '–', kpiSub = '', kpiTT = '';
-    const TN = { hot: ['#8A4B00', '#FDE7C4'], warn: ['#8A4B00', '#FDE7C4'], amber: ['#6B5300', '#FFF1B8'], blue: ['#1F64A6', '#E3EEFB'], ok: ['#2F6B12', '#E2F2D2'], watch: ['#14532D', '#CFE5D6'], off: ['#48484A', '#E0E0E5'] };   /* (Oct 3, 21:07) opaque, the stage tags' pairs: 5:1 or more in both themes */ let tn = TN[I.tone] || (held ? TN.ok : TN.hot); { const T = window.__wfStageTag && g ? window.__wfStageTag(g) : null; if (T) tn = [T.fg, T.bg]; }   /* the shared stage tag colours */;
+    const TN = { hot: ['#8A4B00', '#FDE7C4'], warn: ['#8A4B00', '#FDE7C4'], amber: ['#6B5300', '#FFF1B8'], blue: ['#1F64A6', '#E3EEFB'], ok: ['#0B6672', '#DBF0F1'], watch: ['#1D6B4F', '#DDF2E8'], off: ['#1E6B2A', '#D9F0DC'] };   /* (Oct 3, 21:07) opaque, the stage tags' pairs: 5:1 or more in both themes */ let tn = TN[I.tone] || (held ? TN.ok : TN.hot); { const T = window.__wfStageTag && g ? window.__wfStageTag(g) : null; if (T) tn = [T.fg, T.bg]; }   /* the shared stage tag colours */;
     const hEst = 250 + time.length * 26 + (held ? 60 : 0) + (fz.length ? 58 : 20) + (I.ha != null ? 26 : 0);
     const win = this.win(), H = this.H(), top0 = Math.max(win.t, 8) + 8, bot0 = Math.min(win.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 8;
     const above = (y - top0) > (bot0 - y);

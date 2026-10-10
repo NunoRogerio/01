@@ -18,11 +18,11 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791665418"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791666618"></script>
+<script src="prefs.js?v=1791666948"></script>
 <script src="station.js?v=1791663010"></script>
 <script src="i18n.js?v=1791665418"></script>
 <script src="live.js?v=44"></script>
-<script src="chat.js?v=1791663010"></script>
+<script src="chat.js?v=1791666948"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791540669"></script>
@@ -271,7 +271,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
       <div style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding: 0 16px 56px">
         <!-- Each option is as wide as its label plus an equal share of the spare room (same padding on every option); the yellow follows the chosen one's measured box. The label reserves its semibold width so choosing never shifts it -->
         <div role="tablist" aria-label="Show" class="wf-seg" data-wf-liseg="1" style="display: flex">
-          <span class="segthumb" aria-hidden="true" style="left: 0; width: {{li.tw}}; transform: translateX({{li.tx}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s, width .42s cubic-bezier(.4,0,.2,1) .14s"><span class="segblob"></span></span>
+          <span class="segthumb" aria-hidden="true" style="left: 0; width: {{li.tw}}; transform: translateX({{li.tx}}); transition: transform .29s cubic-bezier(.4,0,.2,1) .1s, width .42s cubic-bezier(.4,0,.2,1) .14s"><span class="segblob"></span></span>
           <sc-for list="{{li.tabs}}" as="tb" hint-placeholder-count="3">
             <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" aria-label="{{tb.aria}}" style="flex: 1 1 auto; padding: 0; font-size: 18px; font-weight: {{tb.w}}; white-space: nowrap"><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{tb.label}}</span><span aria-hidden="true" style="grid-area: 1 / 1; visibility: hidden; font-weight: 600">{{tb.label}}</span></span><span class="wf-segn">{{tb.n}}</span></button>
           </sc-for>
@@ -581,7 +581,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
           <span class="wf-label" aria-hidden="true" style="display: {{g.ld}}; margin-left: 0; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{g.label}}</span>
           <div style="position: relative; display: grid; grid-template-columns: {{g.cols}}; height: 52px; padding: 8px; box-sizing: border-box; border-radius: 999px; background: rgba(118,118,128,0.12)">
             <!-- Shared switcher motion (prefs.js): grows 6px above and below, glides to the option, snaps back on arrival -->
-            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .42s cubic-bezier(.4,0,.2,1) .14s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
+            <span class="segthumb" aria-hidden="true" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: {{g.thumbW}}; transform: translateX({{g.thumbX}}); transition: transform .29s cubic-bezier(.4,0,.2,1) .1s; will-change: transform"><span class="segblob" style="position: absolute; inset: 0; border-radius: 999px; background: var(--wf-y)"></span></span>
             <sc-for list="{{g.opts}}" as="o" hint-placeholder-count="2">
               <button type="button" role="radio" class="segopt" aria-checked="{{o.on}}" aria-label="{{o.aria}}" onClick="{{o.pick}}" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: {{o.fg}}; transition: color .3s ease; font: inherit; font-size: {{g.fs}}; font-weight: {{o.w}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer"><svg width="34" height="29" viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" aria-hidden="true" style="display: {{o.icD}}; flex-shrink: 0"><path d="{{o.ic}}" vector-effect="non-scaling-stroke"></path></svg><span style="display: {{o.lbD}}"><span style="grid-area: 1 / 1">{{o.label}}</span><span aria-hidden="true" style="grid-area: 1 / 1; font-weight: 600; visibility: hidden">{{o.label}}</span></span></button>
             </sc-for>

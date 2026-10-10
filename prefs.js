@@ -194,7 +194,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   '.wf-tabs::before{content:"";position:absolute;z-index:1;left:0;right:0;bottom:0;height:12px;border-radius:6px;background:rgba(118,118,128,0.12);pointer-events:none}' +   /* the track: full width of the tabs, the band's grey, under the lime bar */
   '.wf-tabs>.tabbar{position:absolute;z-index:2;bottom:2px;height:8px;min-height:8px;border-radius:4px;background:var(--wf-y,#E5FF00);box-shadow:0 0 0 0.5px rgba(0,0,0,0.12);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform;pointer-events:none}' +
   '.wf-seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);height:52px;padding:8px;box-sizing:border-box;border-radius:999px;background:rgba(118,118,128,0.12)}' +
-  '.wf-seg>.segthumb{position:absolute;top:8px;bottom:8px;left:8px;transition:transform .42s cubic-bezier(.4,0,.2,1) .14s;will-change:transform}' +
+  '.wf-seg>.segthumb{position:absolute;top:8px;bottom:8px;left:8px;transition:transform .29s cubic-bezier(.4,0,.2,1) .1s;will-change:transform}' +
   '.wf-seg>.segthumb>.segblob{position:absolute;inset:0;border-radius:999px;background:var(--wf-y)}.segblob{background:var(--wf-pri-bg)!important}.segopt[aria-checked=true],.segopt[aria-selected=true]{color:var(--wf-pri-fg)!important;-webkit-text-fill-color:var(--wf-pri-fg)}.segopt[aria-checked=true] .wf-segn,.segopt[aria-selected=true] .wf-segn{background:color-mix(in srgb,var(--wf-pri-fg) 22%,transparent)!important}' +
   '.wf-seg .segopt{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;min-width:0;padding:0 4px;border:0;border-radius:999px;background:transparent;font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:#3C3C43;font-weight:400;transition:color .3s ease}.wf-seg .segopt:has(>.wf-segn:not([style*="display: none"])){display:grid!important;grid-template-columns:minmax(0,1fr) auto;justify-items:center;align-items:center;padding:0 4px 0 12px!important}.wf-seg .segopt>.wf-segn{justify-self:end;margin-left:8px;background:transparent!important}' +
   '.wf-seg .segopt[aria-checked=true],.wf-seg .segopt[aria-selected=true]{color:#1C1C1E;font-weight:600}' +   // the switcher of the user preferences, shared by every segmented control in the app
@@ -401,7 +401,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   // ---- Switchers (segmented multi-buttons): one shared motion for every one in the app ----
   // On a new choice the yellow first grows 6px above and below, then glides to the option, and snaps back to its height
   // on arrival. Any thumb with class .seg or .segthumb gets it (for .segthumb the yellow is its .segblob child).
-  var SEG = { grow: 6, lead: 140, total: 620 };
+  var SEG = { grow: 6, lead: 98, total: 434 };   /* (Oct 10, 22:15) 30% faster (was 140 / 620 ms) */
   window.__wfSeg = SEG;
   // Header actions on incident screens (chat, notifications, profile), the same three round buttons as the main screen.
   // Notifications and the profile open the main screen's panels; closing the panel comes straight back here.
@@ -416,7 +416,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
         return { badgeD: u ? 'block' : 'none', n: C && C.badge ? C.badge(u) : String(u), aria: u ? 'Assignments, ' + u + ' unread' : 'Assignments', open: function (e) { if (e && e.preventDefault) e.preventDefault(); go('wf-ch-open')(); } }; })() };   /* the chats blade on the main screen, as the notifications and the profile */
   };
   function segGrow(th) {
-    var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 60 / SEG.total;
+    var el = th.querySelector('.segblob') || th, h = el.offsetHeight, t = el.offsetTop, g = SEG.grow, k = SEG.lead / SEG.total, e = 1 - 42 / SEG.total;
     if (!h || !el.animate) return;
     try { if (el.__wfSegA) el.__wfSegA.cancel(); } catch (x) {}
     el.__wfSegA = el.animate([

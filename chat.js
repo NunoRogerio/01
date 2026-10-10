@@ -27,9 +27,9 @@
     { en: 'Ongoing', pt: 'Em curso', c: '#8A4B00', bg: '#FDE7C4', icon: 'route' },
     { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#B3261E', bg: '#FBE1DC', icon: 'flame' },
     { en: 'Resolving', pt: 'Em resolução', c: '#1F64A6', bg: '#E3EEFB', icon: 'shield' },
-    { en: 'Concluding', pt: 'Em conclusão', c: '#2F6B12', bg: '#E2F2D2', icon: 'drop' },
-    { en: 'Surveillance', pt: 'Vigilância', c: '#14532D', bg: '#CFE5D6', icon: 'eye' },
-    { en: 'Closed', pt: 'Encerrada', c: '#48484A', bg: '#E0E0E5', icon: 'done' }
+    { en: 'Concluding', pt: 'Em conclusão', c: '#0B6672', bg: '#DBF0F1', icon: 'drop' },
+    { en: 'Surveillance', pt: 'Vigilância', c: '#1D6B4F', bg: '#DDF2E8', icon: 'eye' },
+    { en: 'Closed', pt: 'Encerrada', c: '#1E6B2A', bg: '#D9F0DC', icon: 'done' }   /* (Oct 10, 22:15, trial palette) yellow to red for the serious stages; blue to green as the fire is contained, to the green of resolved */
   ];
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#545458', bg: '#ECECEF', icon: 'x' };
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
