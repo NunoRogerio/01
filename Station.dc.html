@@ -26,6 +26,28 @@
 
 <title>Fire station</title>
 <script src="./support.js"></script>
+<script>
+/* (Oct 10, 20:14) Stripe Pattern: the header's stripes show only on its background, never through an element on it.
+   Translucent round buttons get their own tint laid over an opaque layer of the header colour; the crest gets a header-coloured round underlay.
+   The menu's floating round button, over the header, too. Re-checked twice a second, so a palette, theme or re-render is followed. */
+(function () {
+  function rgba(c) { var m = /rgba?\(([^)]+)\)/.exec(c || ''); if (!m) return null; var p = m[1].split(',').map(parseFloat); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+  function tick() {
+    var H = document.querySelector('[data-wf-sthdr]'); if (!H) return;
+    var P = getComputedStyle(H).backgroundColor, pc = rgba(P); if (!pc || pc.a < 1) return;
+    Array.prototype.slice.call(H.querySelectorAll('a, button, [role="button"], .opt, .mbtn, .chbtn')).concat(Array.prototype.slice.call(document.querySelectorAll('.wf-mb'))).forEach(function (el) {
+      var T = getComputedStyle(el).backgroundColor, t = rgba(T); if (!t || t.a <= 0 || t.a >= 1) return;
+      var want = 'linear-gradient(' + T + ', ' + T + '), linear-gradient(' + P + ', ' + P + ')';
+      if (el.__wfSp !== want) { el.style.backgroundImage = want; el.__wfSp = want; }
+    });
+    H.querySelectorAll('img[data-crest]').forEach(function (im) {
+      if (im.__wfSp !== P) { im.style.backgroundColor = P; im.style.borderRadius = '50%'; im.__wfSp = P; }
+    });
+  }
+  setInterval(tick, 500); document.addEventListener('DOMContentLoaded', tick); window.addEventListener('load', tick);
+})();
+</script>
+
 </head>
 <body>
 <x-dc>
