@@ -218,8 +218,20 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <p style="margin: 56px 16px 0; font-size: 18px; line-height: 24px; color: #000000; text-align: center">No station selected. Open a fire station from the map.</p>
     </sc-if>
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
+      <!-- (Oct 10, 22:45) in the mini KPIs' place, under the incidents. (Oct 7, 19:40) Station home: the area map as a card, maximisable; the area as a thin outline, every incident of
+           the area and of mutual aid on it (mutual aid with a thin outer ring) -->
+      <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; padding: 0 16px">
+          <!-- (Oct 9, 13:07) no "Station area" label: the map says it -->
+          <div style="position: relative; flex-shrink: 0; height: {{homeMapH}}px; border-radius: 16px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+            <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" locked="true" mode="risk" area="true" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" w="{{homeMapW}}" h="{{homeMapH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" zoom="{{zoom}}" focus-x="{{homeFx}}" focus-y="{{homeFy}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" inset="8" loader="true" hint-size="358px,280px"></dc-import>
+          </div>
+        </div>
+      </sc-if>
+
       <!-- Key figures: three per row, a grey + tile at the end adds or removes cards; simulated figures say so along the right edge -->
-      <div style="display: flex; flex-direction: column; padding: 0 16px">
+      <!-- (Oct 10, 22:45) the mini KPIs are removed (kept in the code, hidden) -->
+      <div style="display: none; flex-direction: column; padding: 0 16px">
         <!-- (Oct 8, 22:24) no "Key figures" title: the cards speak for themselves; the hint stays on the right -->
         <!-- (Oct 9, 13:07) no "(move cards to reorder)" hint -->
         <div role="list" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
@@ -288,16 +300,6 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </ul>
       </div>
 
-      <!-- (Oct 7, 19:40) Station home: the area map as a card at the end, maximisable; the area as a thin outline, every incident of
-           the area and of mutual aid on it (mutual aid with a thin outer ring) -->
-      <sc-if value="{{home}}" hint-placeholder-val="{{ false }}">
-        <div style="display: flex; flex-direction: column; padding: 0 16px">
-          <!-- (Oct 9, 13:07) no "Station area" label: the map says it -->
-          <div style="position: relative; flex-shrink: 0; height: {{homeMapH}}px; border-radius: 16px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
-            <dc-import name="TerrainMap" on-full="{{toggleFull}}" is-full="{{no}}" locked="true" mode="risk" area="true" link-candidate="{{yes}}" ignitions="{{mapIgn}}" fires="{{mapFires}}" w="{{homeMapW}}" h="{{homeMapH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" zoom="{{zoom}}" focus-x="{{homeFx}}" focus-y="{{homeFy}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" radius="{{zero}}" attr-bottom="{{zero}}" inset="8" loader="true" hint-size="358px,280px"></dc-import>
-          </div>
-        </div>
-      </sc-if>
 
       <!-- The station's other details (operator, address, phone...), only when it has any; the crest, name, type and location are already above -->
       <div style="display: flex; flex-direction: column">
