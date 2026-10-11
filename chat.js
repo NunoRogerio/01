@@ -828,6 +828,52 @@
     return A;
   }
 
+  /* (Oct 11, 20:10) A government body (Cal OES in California, ANEPC in Portugal) does not command a fire: the incident commander (IC / COS)
+     decides on the field's requests and the stages. Signed in as one, the chats are watched, not run: the commander's decisions are taken
+     by the simulation (a pending request card or stage chip is decided by the commander 20 s later), and what reaches the government is what
+     climbs the mutual aid chain: a request from the county's Operational Area through its Cal OES region (or, in Portugal, the sub-regional
+     command CSREPC asking the national command CNEPC for a national reinforcement group, GRIR), to fill or hold; in California the state can
+     also ask FEMA for a Fire Management Assistance Grant (FMAG). */
+  function isGov() { try { return /^(ca|pt|nv|amz)$/.test(localStorage.getItem('wf-role') || '') && !localStorage.getItem('wf-custom'); } catch (e) { return false; } }
+  var govQ = [], AUTO_NO = ['stayStage', 'reqNo', 'declineAir', 'evacNo', 'helpNo', 'sreqNo', 'cmdNo', 'maHold'];
+  /* who the commander is in this chat: the profile who ran it (its own "me"), else the commander by the chain (Battalion Chief or the first engine's officer) */
+  function icOf(c) { var j = (c.people || []).findIndex(function (p) { return p.self && !p.left; }); return j >= 0 ? j : icIdx(c); }
+  var OAREG = { 'Riverside': 'VI', 'San Bernardino': 'VI', 'San Diego': 'VI', 'Imperial': 'VI', 'Inyo': 'VI', 'Mono': 'VI', 'Los Angeles': 'I', 'Orange': 'I', 'Ventura': 'I', 'Santa Barbara': 'I', 'San Luis Obispo': 'I',
+    'Fresno': 'V', 'Kern': 'V', 'Kings': 'V', 'Madera': 'V', 'Mariposa': 'V', 'Merced': 'V', 'Tulare': 'V', 'Butte': 'III', 'Shasta': 'III', 'Tehama': 'III', 'Glenn': 'III', 'Colusa': 'III', 'Plumas': 'III', 'Lassen': 'III', 'Modoc': 'III', 'Siskiyou': 'III', 'Trinity': 'III',
+    'Humboldt': 'II', 'Mendocino': 'II', 'Sonoma': 'II', 'Napa': 'II', 'Lake': 'II', 'Marin': 'II', 'Alameda': 'II', 'Contra Costa': 'II', 'Santa Clara': 'II', 'San Mateo': 'II', 'Monterey': 'II', 'Del Norte': 'II', 'Santa Cruz': 'II', 'San Benito': 'II', 'Solano': 'II', 'San Francisco': 'II',
+    'Sacramento': 'IV', 'Placer': 'IV', 'El Dorado': 'IV', 'Nevada': 'IV', 'Yolo': 'IV', 'Sutter': 'IV', 'Yuba': 'IV', 'San Joaquin': 'IV', 'Stanislaus': 'IV', 'Tuolumne': 'IV', 'Calaveras': 'IV', 'Amador': 'IV', 'Alpine': 'IV', 'Sierra': 'IV' };
+  function govTick(c, now) { if (!isGov() || c.kind === 'dm' || c.closed || c.dismissed || c.police) return false; var ch = false, us = isUS(c);
+    /* the commander answers what waits for an answer (never the government's own cards) */
+    var pend = (c.msgs || []).filter(function (m) { return m.kind === 'card' && (m.actions || []).length && !m.done && !m.govOnly && !m.summary; }).pop();
+    if (pend) { if (!pend.govSeen) { pend.govSeen = now; ch = true; } else if (now - pend.govSeen > 20000 && !c._govBusy) { var A = pend.actions, pick = A.find(function (a) { return a.primary && AUTO_NO.indexOf(a.key) < 0; }) || A.find(function (a) { return AUTO_NO.indexOf(a.key) < 0; }) || A[0];
+        if (pick && pick.key !== 'dispatch' && pick.key !== 'topic') { c._govBusy = 1; govQ.push([c.key, pick.key, pend.id]); setTimeout(function () { c._govBusy = 0; }, 3000); } } }
+    else { var X = actions(c).filter(function (a) { return a.primary && (a.key === 'next' || a.key === 'closeCheck' || a.key === 'confirm'); })[0];
+      if (X) { if (!c.flags.govChip || c.flags.govChip.k !== X.key + c.stage) { c.flags.govChip = { k: X.key + c.stage, at: now }; ch = true; } else if (now - c.flags.govChip.at > 20000 && !c._govBusy) { c._govBusy = 1; govQ.push([c.key, X.key, null]); setTimeout(function () { c._govBusy = 0; }, 3000); } } }
+    /* the request that climbs the chain, once a fire is on the line and growing */
+    if (c.stage >= 3 && c.stage <= 4 && !c.flags.ma && now - (c.stageAt || now) > 15000) { c.flags.ma = 1; ch = true;
+      var co = String(c.reg || c.co || '').replace(/\s+County$/i, ''), rg = OAREG[co], ic = (c.people[icOf(c)] || {}).name || '';
+      if (us) card(c, { govOnly: true, ma: true, tag: { en: 'Mutual aid request · ' + (co ? co + ' Operational Area' : 'Operational Area'), pt: 'Pedido de ajuda mútua · ' + (co ? 'Área Operacional de ' + co : 'Área Operacional') }, tagC: '#0A66CC',
+          title: { en: '2 strike teams, Type 3 engines', pt: '2 strike teams de autobombas tipo 3' }, body: { en: (rg ? 'Through Cal OES Region ' + rg + '. ' : '') + 'Ordered by ' + (ic || 'the incident commander') + ' for the ' + fireNm(c) + ': the local resources are committed and the fire is still growing.', pt: (rg ? 'Pela Região ' + rg + ' do Cal OES. ' : '') + 'Pedido por ' + (ic || 'o comandante do incidente') + ' para ' + fireNm(c) + ': os meios locais estão empenhados e o incêndio continua a crescer.' },
+          actions: [{ key: 'maHold', en: 'Not now', pt: 'Agora não' }, { key: 'maFill', en: 'Fill request', pt: 'Satisfazer pedido', primary: true }] }, 600, 0);
+      else card(c, { govOnly: true, ma: true, tag: { en: 'Reinforcement request · CSREPC', pt: 'Pedido de reforço · CSREPC' }, tagC: '#0A66CC',
+          title: { en: '1 national reinforcement group (GRIR)', pt: '1 Grupo de Reforço para Incêndios Rurais (GRIR)' }, body: { en: 'The sub-regional command asks the national command (CNEPC) for a GRIR for ' + fireNm(c) + (ic ? ', requested by the COS, ' + ic : '') + '.', pt: 'O comando sub-regional pede ao comando nacional (CNEPC) um GRIR para ' + fireNm(c) + (ic ? ', a pedido do COS, ' + ic : '') + '.' },
+          actions: [{ key: 'maHold', en: 'Not now', pt: 'Agora não' }, { key: 'maFill', en: 'Send GRIR', pt: 'Empenhar GRIR', primary: true }] }, 600, 0); }
+    return ch; }
+  /* the government's own actions in a chat: none of the commander's chips; in California, the FMAG request once the fire is on the line */
+  function govActions(c) { if (c.kind === 'dm' || c.closed || c.dismissed || !isUS(c)) return []; return c.stage >= 3 && c.stage <= 5 && !c.flags.fmag ? [{ key: 'fmag', en: 'Request FMAG', pt: 'Pedir FMAG', primary: true }] : []; }
+  function govAct(c, a, mC) { var us = isUS(c), ic = icOf(c), co = String(c.reg || c.co || '').replace(/\s+County$/i, ''), rg = OAREG[co];
+    if (a === 'maFill') { c.flags.maFilled = 1; var eta = vary(c, 90, 180, 'maEta');
+      card(c, { tag: us ? { en: 'Cal OES · Mutual aid', pt: 'Cal OES · Ajuda mútua' } : { en: 'CNEPC · Reinforcement', pt: 'CNEPC · Reforço' }, tagC: '#0A66CC', title: us ? { en: 'Strike teams ordered', pt: 'Strike teams mobilizadas' } : { en: 'GRIR committed', pt: 'GRIR empenhado' },
+        body: us ? { en: '2 strike teams of Type 3 engines from ' + (rg ? 'the other operational areas of Region ' + rg : 'neighbouring operational areas') + '. ETA ' + fmtMin(eta) + ' to the staging area.', pt: '2 strike teams de autobombas tipo 3 ' + (rg ? 'das outras áreas operacionais da Região ' + rg : 'de áreas operacionais vizinhas') + '. Chegada à zona de concentração em ' + fmtMin(eta) + '.' }
+          : { en: 'A national reinforcement group, by the national command. Expected at the reception and sector point in ' + fmtMin(eta) + '.', pt: 'Um grupo de reforço nacional, por ordem do comando nacional. Chegada prevista ao ponto de receção em ' + fmtMin(eta) + '.' } }, 900, 0);
+      say(c, ic, us ? 'Copy, Cal OES. Strike teams to staging, we will place them on arrival.' : 'Entendido, CNEPC. O GRIR vai para o ponto de receção e coloco-o à chegada.', us ? 'Entendido, Cal OES. Strike teams para a zona de concentração; colocamo-las à chegada.' : 'Entendido, CNEPC. O GRIR vai para o ponto de receção e coloco-o à chegada.', 2600, 0); }
+    if (a === 'maHold') sys(c, us ? 'Mutual aid request held by Cal OES' : 'Pedido de reforço em espera no CNEPC', us ? 'Pedido de ajuda mútua em espera no Cal OES' : 'Pedido de reforço em espera no CNEPC', 400, 0);
+    if (a === 'fmag') { c.flags.fmag = 1;
+      card(c, { tag: { en: 'Cal OES · FMAG', pt: 'Cal OES · FMAG' }, tagC: '#0A66CC', title: { en: 'FMAG requested from FEMA', pt: 'FMAG pedido à FEMA' }, body: { en: 'Fire Management Assistance Grant for the ' + fireNm(c) + ', sent to the FEMA Regional Administrator: the fire threatens such destruction as would constitute a major disaster.', pt: 'Fire Management Assistance Grant para ' + fireNm(c) + ', enviado ao Administrador Regional da FEMA: o incêndio ameaça uma destruição equivalente a uma catástrofe.' } }, 400, 0);
+      card(c, { tag: { en: 'FEMA · FMAG', pt: 'FEMA · FMAG' }, tagC: '#0A66CC', title: { en: 'FMAG approved', pt: 'FMAG aprovado' }, body: { en: '75% federal cost share for eligible firefighting costs (camps, equipment, supplies, mobilization).', pt: 'Comparticipação federal de 75% nos custos elegíveis do combate (acampamentos, equipamento, abastecimentos, mobilização).' } }, 9000, 0); }
+    c.updated = Date.now(); save(); emit(); }
+  function fmtMin(m) { m = Math.round(m); return m >= 60 ? Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min'; }
+
   // How long each stage plausibly lasts before the fire owner moves it on (minutes)
   function drillF(c) {   // a training drill: your decisions speed the fire up or slow it down
     if (!c.drill) return 1;
@@ -844,6 +890,7 @@
     var P = c.people, us = isUS(c);
     var mC = msgId ? c.msgs.find(function (x) { return x.id === msgId; }) : null, notYet = !!mC && ['stayStage', 'reqNo', 'declineAir', 'evacNo', 'helpNo', 'sreqNo'].indexOf(a) >= 0;   /* (Oct 9, 13:49) Not now / Not yet on any confirmation card is no decision: the card stays open and joins the sticky stack */
     if (notYet) mC.snooze = Date.now();
+    if (a === 'maFill' || a === 'maHold' || a === 'fmag') { if (mC) mC.done = a; govAct(c, a, mC); return; }   /* (Oct 11, 20:10) the government's own decisions */
     /* (Oct 9, 09:07) Not yet on a recommendation is no answer: the card stays open (and sticks to the top when scrolled away) */
     if (mC && !notYet) mC.done = a;
     var me = function (en, pt) { mine(c, en, pt); };
@@ -1146,7 +1193,7 @@
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
     if (c.kind !== 'dm' && c.stage >= 3 && evacText(text) && !(c.flags || {}).evac) evacAsk(c, Math.max(0, (c.people || []).findIndex(function (p) { return !p.self && !p.left && p.kind !== 'air'; })));   /* I bring it up: the request card comes up for the incident commander */
-    if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
+    if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); if (/obrigad|thank|valeu|cheers/i.test(String(text)) || (c.step || 0) >= 5 || (c.msgs || []).filter(function (m) { return m.kind === 'msg' && m.from === 'me'; }).length >= 6) policeReport(c); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm' && c.help && c.step === 2 && /obrigad|thank|valeu|cheers|stay safe|cuid/i.test(text)) { helpEnd(c); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm' && c.help) { if (aiKey()) helpAi(c, text); else helpReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm') { dmReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
@@ -1638,8 +1685,10 @@
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
       if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;
+      if (govTick(c, now)) changed = true;
     });
     if (changed) { save(); emit(); }
+    var GA = govQ.splice(0); GA.forEach(function (g) { act(g[0], g[1], g[2]); });   /* the incident commander's own decisions, taken while a government body watches */
   }
   setInterval(tick, 700);
 
@@ -1775,6 +1824,15 @@
       'Obrigado pela participação. Abri um processo para a ignição ' + (inc.night ? 'noturna ' : '') + 'em ' + inc.place + (inc.startTxt ? ', com início às ' + inc.startTxt : '') + '. Algumas perguntas para começar: como foi detetada, e as equipas viram alguém ou alguma viatura perto do ponto de início?', 2600, 2);
     db.chats[k] = ch; save(); emit(); return ch;
   }
+  /* (Oct 11, 20:20) once the conversation with the police is done (thanked, or every question answered): a confirmation card with the
+     report's summary, the place and what you told them; under it, the way back to the incident's page */
+  function policeReport(c) { if (!c || c.flags.report) return; c.flags.report = 1; var T = c.topic || {}, first = true;
+    var told = (c.msgs || []).filter(function (m) { if (m.kind !== 'msg' || m.from !== 'me') return false; if (first) { first = false; return false; } return !/^(obrigad|thank|valeu|cheers)/i.test(String(m.en || '').trim()); }).map(function (m) { return { en: m.en, pt: m.pt || m.en }; });
+    var gps = isFinite(+c.lat) && +c.lat ? (+c.lat).toFixed(4) + ', ' + (+c.lon).toFixed(4) : '', inv = (c.people || []).find(function (p) { return p.kind === 'invest'; });
+    var loc = [T.place, T.reg || c.reg].filter(function (v, i, A) { return v && A.indexOf(v) === i; }).join(', ');
+    card(c, { report: true, backInc: true, tag: { en: 'Origin investigation · Case open', pt: 'Investigação da origem · Processo aberto' }, tagC: '#3A3A3C', title: { en: 'Report sent', pt: 'Participação enviada' },
+      body: { en: 'Location: ' + loc + (gps ? '. GPS ' + gps : '') + '.' + (inv ? ' Investigator ' + inv.name + ' on the way.' : '') + (told.length ? ' What you reported:' : ''), pt: 'Local: ' + loc + (gps ? '. GPS ' + gps : '') + '.' + (inv ? ' Investigador ' + inv.name + ' a caminho.' : '') + (told.length ? ' O que reportou:' : '') },
+      checks: told.length ? told : null }, 4200, 0); }
   function policeReply(c, text) {
     var t = String(text).toLowerCase(), q = c.step || 0;
     if (/obrigad|thank|valeu|cheers/.test(t)) { say(c, 0, 'Thank you. I will keep you posted on the case, and please send anything new that your crews find.', 'Obrigado. Vou dando notícias do processo, e envie-me qualquer novidade que as equipas encontrem.', 1800, 1); return; }
@@ -1914,7 +1972,7 @@
       if (P.length && c.stage >= 1 && c.stage <= 6) { var a = reply(c, P[0][1], 'status', '').map(function (t) { return String(t).replace(/^(Copy|Copiado|Recebido|Entendido)[.,!]\s*/i, ''); }); a = a.map(function (t) { return t.charAt(0).toUpperCase() + t.slice(1); }); say(c, P[0][1], (PT ? 'Ponto de situação: ' : 'Where we are: ') + a[0], a[1], 1200 + P.length * 600 + 400, 1); }
       c.updated = Date.now(); save(); emit(); },
     veh: function (c, i) { return c && c.stations && c.stations[i] ? vehiclesFor(c, c.stations[i], i) : []; },
-    send: send, act: act, dispatched: dispatched, pend: pend, simulate: simulate,
+    send: send, act: act, isGov: isGov, icOf: icOf, govActions: govActions, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
       setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
       set: function (k, cb) { k = String(k || '').trim(); try { if (k) localStorage.setItem(AIK, k); else { localStorage.removeItem(AIK); localStorage.removeItem(AIS); } } catch (e) {} emit();

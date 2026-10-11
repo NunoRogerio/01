@@ -14,13 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791748600"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791750500"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791748600"></script>
-<script src="station.js?v=1791748600"></script>
+<script src="prefs.js?v=1791750500"></script>
+<script src="station.js?v=1791750500"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791748600"></script>
+<script src="chat.js?v=1791750500"></script>
 <script src="tour.js?v=1791734035"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -157,6 +157,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="chscroll" data-wf-keepscroll="1" ref="{{setScroll}}" onScroll="{{onScroll}}" style="display: flex; flex-direction: column; gap: 24px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 8px">
       <sc-for list="{{items}}" as="m" hint-placeholder-count="4">
         <sc-if value="{{m.isDay}}" hint-placeholder-val="{{ false }}"><div style="align-self: center; margin: 8px 0 0; font-size: 18px; font-weight: 700; line-height: 24px; color: rgb(110, 110, 115); text-align: center">{{m.day}}</div><!-- (Oct 11, 00:19) the day-and-time stamp in title S, mid grey --></sc-if>
+        <sc-if value="{{m.isBack}}" hint-placeholder-val="{{ false }}">
+          <a href="Dispatch.dc.html" class="chbtn wf-b wf-sec" onClick="{{m.backGo}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin-top: 0; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>{{m.backLbl}}</a>
+        </sc-if>
         <sc-if value="{{m.isSys}}" hint-placeholder-val="{{ false }}">
           <div class="chmsg" style="align-self: center; max-width: 300px; font-size: 16px; line-height: 20px; color: #545458; text-align: center">{{m.text}} · {{m.time}}</div>
         </sc-if>
@@ -277,7 +280,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <span role="tooltip" aria-hidden="true" style="position: absolute; left: {{avt.x}}px; top: {{avt.y}}px; z-index: 25; display: flex; flex-direction: column; width: max-content; max-width: 300px; transform: translateY({{avt.dy}}); opacity: {{avt.op}}; padding: 8px 16px; border-radius: 12px; background: #3A3A3C; color: #FFFFFF; font-size: 16px; line-height: 20px; pointer-events: none; transition: opacity .2s ease, transform .2s ease"><span style="font-weight: 600">{{avt.name}}</span><span>{{avt.role}}</span></span>
     <sc-if value="{{isLive}}" hint-placeholder-val="{{ true }}">
     <div data-wf-composer="1" style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 16px 0 32px; background: #F2F2F7; border-top: 0">
-      <div style="display: flex; align-items: center; gap: 8px; padding: 0 16px">
+      <!-- (Oct 11, 20:10) a government body watches: no messages to the line, a note says who decides -->
+      <p style="display: {{govNoteD}}; margin: 0 16px; font-size: 16px; line-height: 20px; color: var(--wf-sec, #6E6E73)">{{govNote}}</p>
+      <div style="display: {{inRowD}}; align-items: center; gap: 8px; padding: 0 16px">
         <button type="button" class="chbtn" data-round="1" onClick="{{camGo}}" aria-label="{{t.cam}}" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16a7.5 7.5 0 0 1 15 0M2 16h18.5c.8 0 1.5.7 1.5 1.5V19H6M10.2 9.6h3.6v3.4L12 14.2 10.2 13Z M12 8.5v-3"></path></svg></button>
         <button type="button" class="chbtn" data-round="1" onClick="{{callGo}}" data-call="1" aria-label="{{callAria}}" style="display: {{callD}}; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: #34C759; color: #fff; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
         <label style="display: flex; align-items: center; gap: 8px; flex-grow: 1; min-width: 0; height: 48px; padding: 4px 4px 4px 16px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); color: #545458"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{t.msg}}</span><input type="text" value="{{draft}}" onInput="{{onDraft}}" onKeyDown="{{onKey}}" class="sqsearch" placeholder="{{t.msg}}" style="flex-grow: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 18px; color: #000000"><!-- Send sits inside the field: a small dark grey round button with a white arrow, faint until there is something to send -->
@@ -841,6 +846,7 @@ class Component extends DCLogic {
     /* (Oct 8, 18:50) the lieutenant (chefe de equipa) is an active member of his incident's chat: he is on the fire, so he writes and
        reports from the field; the captains decide (no request buttons, no status chips for him) */
     const LEAD = !!(window.__wfMine && (window.__wfMine() || {}).level === 'lead');
+    const GOVV = !!(C.isGov && C.isGov());   /* (Oct 11, 20:10) a government body watches the incident chats: the commander decides, the government fills what climbs the chain */
     const photo = (p) => (p && p.photo ? 'url("' + p.photo + '")' : 'none');
     const openPerson = (name) => () => this.go('person', { person: name });
 
@@ -1075,6 +1081,7 @@ class Component extends DCLogic {
       if (d !== prevDay) { items.push({ isDay: true, day: (() => { const D0 = new Date(vt), w = D0.toLocaleDateString(L('en-GB', 'pt-PT'), { weekday: 'long', day: 'numeric', month: 'long' }); return w.charAt(0).toUpperCase() + w.slice(1) + ', ' + C.hhmm(vt); })() }); prevDay = d; prevFrom = null; }   /* (Oct 10, 23:41) the day as a title M: weekday, day, month and the time it begins */
       const time = new Date(vt).toLocaleDateString(L('en-GB', 'pt-PT'), { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + C.hhmm(vt);   /* (Oct 11, 00:19) every time stamp carries its date */
       if (m.kind === 'sys') { items.push({ isSys: true, text: L(m.en, m.pt), time }); prevFrom = null; return; }
+      if (m.kind === 'msg' && m.from === 'me' && GOVV && c.kind !== 'dm') m = Object.assign({}, m, { from: C.icOf(c) });   /* (Oct 11, 20:10) watched by the government: the commander's own words, by name */
       if (m.kind === 'msg' && m.from === 'me') { items.push({ isMe: true, text: L(m.en, m.pt), time, gap: '0' }); prevFrom = 'me'; return; }
       if (m.kind === 'msg') { const p = c.people[m.from] || { name: '', code: '?', org: '' }, same = prevFrom === m.from;
         items.push({ isThem: true, radioD: m.radio ? 'inline-flex' : 'none', radioL: L('Radio.', 'Rádio.'), text: L(m.en, m.pt), time, name: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name + (p.org ? ' · ' + p.org : ''), nameD: same ? 'none' : 'block', hdD: same ? 'none' : 'flex', tmD: same ? 'flex' : 'none', who: (c.police && p.roleEn ? L(p.roleEn, p.rolePt) + ' ' : '') + p.name, whoOrg: (() => { /* (Oct 8, 22:02) name, rank, station */ const R = c.police ? '' : p.kind === 'lt' ? (C.rankOf ? L(C.rankOf(c, p.name).en, C.rankOf(c, p.name).pt) : L('Captain', 'Chefe de equipa')) : p.kind === 'air' ? L(p.roleEn || '', p.rolePt || '') : p.roleEn && c.kind === 'dm' ? L(String(p.roleEn).split(' · ')[0], String(p.rolePt || p.roleEn).split(' · ')[0]) : C.rankOf ? L(C.rankOf(c, p.name).en, C.rankOf(c, p.name).pt) : (C.leadRole ? L(C.leadRole(c).en, C.leadRole(c).pt) : ''); return (R ? '. ' + R : '') + (p.org ? '. ' + p.org : ''); })(), code: p.code, photo: pic(p.name), ring: ring(colOf(m.from)), bub: 'var(--wf-surface, #FFFFFF)',   /* (Oct 8, 21:45) the team's bubbles are white; yours have no background */ bubLine: line(colOf(m.from)), avVis: 'visible', gap: '0',   /* 8px between every bubble (related cards) */ ...(() => { const on = s.avTip === m.id, role = p.roleEn ? L(p.roleEn, p.rolePt) + (p.org ? '. ' + p.org : '') : L('Coordinator. ', 'Coordenador. ') + (p.org || ''); return { tipName: p.name, tipRole: role, tipAria: p.name + ', ' + role, tipOp: on ? 1 : 0, tipY: on ? '0' : '4px',
@@ -1100,7 +1107,7 @@ class Component extends DCLogic {
         const PAST = { sreqYes: ['Approved', 'Aprovado'], sreqNo: ['Not approved', 'Não aprovado'], reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], helpYes: ['Crew sent', 'Equipa enviada'], helpNo: ['Not sent', 'Não enviada'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
         /* (Oct 9, 09:08) an open recommendation always shows Not yet (secondary) + its confirming action (primary), cards saved before included */
         const mActs = m.rec && !m.done && !(m.actions || []).some((a) => a.key === 'stayStage') ? [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }].concat(m.actions || []) : (m.actions || []);
-        const acts = mActs.filter((a) => (!m.done && !LEAD) || m.done === a.key).map((a) => {
+        const acts = mActs.filter((a) => (!m.done && (GOVV ? !!m.govOnly : (!LEAD && !m.govOnly))) || m.done === a.key).map((a) => {   /* (Oct 11, 20:10) the government answers only its own cards; the commander's cards are not the government's */
           const done = !!m.done, P = PAST[a.key];
           const mv = a.key === 'next' && !done;   /* (Oct 10, 10:55) the card's stage button reads like its chip: the •→ icon replaces "Move" ("•→ To Surveillance") */
           return { label: done && P ? L(P[0], P[1]) : mv ? L(String(a.en).replace(/^Move to /, 'To '), String(a.pt).replace(/^Passar a /, 'Para ')) : L(a.en, a.pt), stD: mv ? 'inline' : 'none', dis: done || c.closed, op: 1, cur: done ? 'default' : 'pointer', chk: done ? 'block' : 'none',
@@ -1157,6 +1164,8 @@ class Component extends DCLogic {
           cardGo: toSheet ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; openSheet(); } : false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? 'Dispatch.dc.html' : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: toSheet ? 'pointer' : 'default', cardCls: toSheet ? 'chrow' : '', chevD: toSheet ? 'block' : 'none',   /* (Oct 9) the card opens Progress and projection itself: a chevron on the title line, no button */
           hasLink: !toSheet && !!m.link && m.stage == null,   /* (Oct 7) stage cards carry no View button: the title's arrow opens the incident */ linkCls: 'wf-sec',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? 'Dispatch.dc.html' : inc.href,
           goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: '#FFFFFF' });   /* (Oct 9, 08:55) every card follows the norm: header band in the fire's stage colour, body white (open requests included) */   // an open request: no outline, tinted at the tertiary button's 7%
+        /* (Oct 11, 20:20) the report's confirmation: right under it, the way back to the incident's page */
+        if (m.backInc) items.push({ isBack: true, backLbl: L('Back to incident page', 'Voltar à página do incidente'), backGo: (e) => { if (e && e.preventDefault) e.preventDefault(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (c.topic) topicGo(c.topic)(); window.location.href = 'Dispatch.dc.html'; } });
         prevFrom = null;
       }
     });
@@ -1167,7 +1176,7 @@ class Component extends DCLogic {
     const ty = C.typing(c);
     // (Oct 5, 10:13) a chip that moves the fire to a stage wears that stage's tag colours (the same background and ink as the stage tag)
     const nxS = C.STAGES[Math.min(c.stage + 1, C.STAGES.length - 1)], nxT = nxS ? tone(nxS) : null;
-    const acts0 = (LEAD ? [] : C.actions(c)).map((a) => ({ label: a.key === 'next' ? L(String(a.en).replace(/^Move to /, 'To '), String(a.pt).replace(/^Passar a /, 'Para ')) : a.key === 'dispatch' ? L('Dispatch', 'Despacho') : L(a.en, a.pt),   /* (Oct 9, 13:20) the stage chip drops "Move": its arrow icon says it ("•→ To Concluding") */ stD: a.key === 'next' || a.key === 'closeCheck' || a.key === 'dispatch' ? 'inline' : 'none', ...(a.key === 'dispatch' ? (() => { const D = tone(C.STAGES[2]); return { chBg: D.bg, chFg: D.c }; })() : {}),   /* (Oct 9, 13:32) the dispatch chip moves the fire on: the stage icon, "Dispatch", in the Ongoing tint, fixed on the left */ ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-pri-bg, #3A3A3C)', chFg: 'var(--wf-pri-fg, #FFFFFF)' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
+    const acts0 = (GOVV ? (C.govActions ? C.govActions(c) : []) : LEAD ? [] : C.actions(c)).map((a) => ({ label: a.key === 'next' ? L(String(a.en).replace(/^Move to /, 'To '), String(a.pt).replace(/^Passar a /, 'Para ')) : a.key === 'dispatch' ? L('Dispatch', 'Despacho') : L(a.en, a.pt),   /* (Oct 9, 13:20) the stage chip drops "Move": its arrow icon says it ("•→ To Concluding") */ stD: a.key === 'next' || a.key === 'closeCheck' || a.key === 'dispatch' ? 'inline' : 'none', ...(a.key === 'dispatch' ? (() => { const D = tone(C.STAGES[2]); return { chBg: D.bg, chFg: D.c }; })() : {}),   /* (Oct 9, 13:32) the dispatch chip moves the fire on: the stage icon, "Dispatch", in the Ongoing tint, fixed on the left */ ...(a.key === 'next' && nxT ? { chBg: nxT.bg, chFg: nxT.c } : {}), ...(a.key === 'closeCheck' ? { chBg: 'var(--wf-pri-bg, #3A3A3C)', chFg: 'var(--wf-pri-fg, #FFFFFF)' } : {}),   /* (Oct 5) Close fire is the end goal: a move-on chip in the full lime */
     go: () => run(a.key), p1: ['next', 'closeCheck', 'confirm', 'dismiss', 'dispatch'].indexOf(a.key) >= 0 }))   /* stD: the chip moves the fire to its next stage (•→ icon) */;
     /* (Oct 8, 22:52) a conversation with another station is a To do item: Mark as done (asks first) moves it to Resolved */
     if (C.mutualOpen && C.mutualOpen(c)) acts0.unshift({ label: L('Mark as done', 'Marcar como feito'), go: () => { if (!window.__wfConfirm) { C.markDone(c.key); return; }
@@ -1191,7 +1200,7 @@ class Component extends DCLogic {
       : c.stage === 2 ? [['How long to arrive?', 'Quanto falta para chegar?'], ['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?']]
       : c.stage <= 5 ? [['Status update?', 'Ponto de situação?'], ['Everyone safe?', 'Todos em segurança?'], ['Enough water?', 'A água chega?'], ['Homes at risk?', 'Há casas em risco?'], ['How is the wind?', 'Como está o vento?']]
       : [['Status update?', 'Ponto de situação?'], ['Thanks, good work', 'Obrigado, bom trabalho']];
-    const acts = c.closed || c.dismissed ? acts0 : acts0.concat(QR.filter((q) => !(c.msgs || []).some((m) => m.from === 'me' && (m.en === q[0] || m.pt === q[1]))).slice(0, Math.max(0, 5 - acts0.length)).map((q) =>   /* a question already asked is not offered again */ ({ label: L(q[0], q[1]), go: () => { this._stick = true; C.send(c.key, L(q[0], q[1])); } })));
+    const acts = c.closed || c.dismissed || GOVV ? acts0 : acts0.concat(QR.filter((q) => !(c.msgs || []).some((m) => m.from === 'me' && (m.en === q[0] || m.pt === q[1]))).slice(0, Math.max(0, 5 - acts0.length)).map((q) =>   /* a question already asked is not offered again */ ({ label: L(q[0], q[1]), go: () => { this._stick = true; C.send(c.key, L(q[0], q[1])); } })));
     const send = () => { const v = (this.state || {}).draft || ''; if (!v.trim()) return; this._stick = true; C.send(c.key, v); this.setState({ draft: '' }); };
     const endT = c.closed ? (c.closedVt || vn) : vn;
     const sh = !!s.sheet;
@@ -1303,6 +1312,7 @@ class Component extends DCLogic {
       // station lead than the first (the second in the chat when there is one); only for fires with crews out
       camD: (() => { const P = C.active ? C.active(c) : (c.people || []); return c.kind !== 'dm' && c.stage >= 2 && c.stage < 7 && !c.dismissed && P.length ? 'flex' : 'none'; })(),
       /* (Oct 8, 22:49) every chat has the video call: a direct message calls that person, a group or an incident chat calls its members (not once it is closed) */
+      inRowD: GOVV && c.kind !== 'dm' ? 'none' : 'flex', govNoteD: GOVV && c.kind !== 'dm' ? 'block' : 'none', govNote: c.closed ? L('Closed by the incident commander.', 'Encerrado pelo comandante do incidente.') : C.isUS(c) ? L('Watching. The incident commander decides on the fire; mutual aid requests come to you here.', 'A acompanhar. O comandante do incidente decide no incêndio; os pedidos de ajuda mútua chegam-lhe aqui.') : L('Watching. The COS decides on the fire; reinforcement requests come to you here.', 'A acompanhar. O COS decide no incêndio; os pedidos de reforço chegam-lhe aqui.'),
       callD: (() => { if (c.kind === 'dm' && !c.police) return (c.people || []).length ? 'flex' : 'none';
         if (!c.police) { const P = C.active ? C.active(c) : (c.people || []); return !c.dismissed && !c.closed && P.length ? 'flex' : 'none'; }
         try { if (sessionStorage.getItem('wf-call-auto') === c.key && !this._autoCall) { this._autoCall = 1; sessionStorage.removeItem('wf-call-auto'); this.wfAutoCall(c.key); } } catch (e) {}
