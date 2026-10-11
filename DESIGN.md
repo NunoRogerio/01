@@ -1704,3 +1704,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Station greeting with incidents (Oct 11):** never says incidents are "waiting": the five lines say they are in progress, need the captain's attention, or show where each one stands.
 - **Candidate label and icon (Oct 11, 08:37; supersedes the dot with strokes):** the likelihood comes first ("94% candidate", "94% candidato"); the candidate's icon is an asterisk (three crossing strokes), on every button, tag, round, marker and legend.
 - **Stage names never wrap (Oct 11, 08:39):** on every stage button and tag, a name that does not fit is cut with an ellipsis (one line), the area and time on the right keep their full width.
+- **Elapsed time (Oct 11, 08:50, app-wide):** in days, hours and minutes, never hundreds of minutes: "12 min ago", "8 h 7 min ago", "1 d 3 h ago" (live.js `__wfAgoTxt`).

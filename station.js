@@ -136,7 +136,7 @@
         var TC = C.find(function (r) { return r && r[0] === 'CA' && !/^HS-SIM-/.test(r[2] || ''); }) || C[0];
         var c = TC ? JSON.parse(JSON.stringify(TC)) : ['CA', 'Los Angeles', '', '', 0, 'sat:VIIRS NOAA-20', '', 0, 0, {}];
         var tms = Q.t || now - Q.minAgo * 6e4, t = new Date(tms).toISOString().slice(0, 16) + 'Z', ago = Math.max(1, Math.round((now - tms) / 6e4));
-        c[0] = 'CA'; c[1] = 'Los Angeles'; c[2] = Q.id; c[3] = Q.place; c[4] = Q.conf; c[6] = ago + ' min ago'; c[7] = Math.round(X(Q.lon)); c[8] = Math.round(Y(Q.lat));
+        c[0] = 'CA'; c[1] = 'Los Angeles'; c[2] = Q.id; c[3] = Q.place; c[4] = Q.conf; c[6] = window.__wfAgoTxt ? window.__wfAgoTxt(ago) : ago + ' min ago'; c[7] = Math.round(X(Q.lon)); c[8] = Math.round(Y(Q.lat));
         c[9] = Object.assign({}, c[9] || {}, { lat: Q.lat, lon: Q.lon, t: t, ll: Q.lat.toFixed(2) + '°N ' + Math.abs(Q.lon).toFixed(2) + '°W', near: Q.near, night: window.__wfSunAlt ? window.__wfSunAlt(Q.lat, Q.lon, now) < -0.833 : false, sim: true, simAt: Q.at || 0 });
         C.push(c); }
       else if (C && cc && (cc.closed || cc.dismissed)) { var ix = C.findIndex(function (r) { return r && r[2] === Q.id; }); if (ix >= 0) C.splice(ix, 1); } });   /* dismissed or closed: Resolved lists it from its chat */

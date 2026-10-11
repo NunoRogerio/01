@@ -45,7 +45,9 @@ window.__wfRegionUp = function (st, co) {
   var KEY='wf-live-fires-v15', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
-  function ago(ms){var m=Math.max(0,Math.round((Date.now()-ms)/60000));if(m<60)return m+' min ago';var h=Math.round(m/60);return h<48?h+' h ago':Math.round(h/24)+' d ago';}
+  /* (Oct 11, 08:50, app-wide) elapsed time in days, hours and minutes, never hundreds of minutes: "12 min ago", "8 h 7 min ago", "1 d 3 h ago" */
+  window.__wfAgoTxt=function(m){m=Math.max(0,Math.round(+m||0));if(m<60)return m+' min ago';if(m<1440){var h=Math.floor(m/60),r=m%60;return h+' h'+(r?' '+r+' min':'')+' ago';}var d=Math.floor(m/1440),hh=Math.floor((m%1440)/60);return d+' d'+(hh?' '+hh+' h':'')+' ago';};
+  function ago(ms){return window.__wfAgoTxt((Date.now()-ms)/60000);}
   function title(s){return String(s||'').toLowerCase().replace(/(^|[\s\-\/(])(\S)/g,function(_,a,c){return a+c.toUpperCase();}).replace(/\b(Do|Da|Dos|Das|De|E)\b/g,function(w){return w.toLowerCase();});}
   function plain(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();}
   var DIST={};PT_DISTRICTS.forEach(function(d){DIST[plain(d)]=d;});
