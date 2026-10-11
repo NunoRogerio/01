@@ -14,14 +14,14 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791722181"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791734035"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791727476"></script>
+<script src="prefs.js?v=1791734035"></script>
 <script src="station.js?v=1791726806"></script>
 <script src="i18n.js?v=1791720865"></script>
-<script src="live.js?v=1791726270"></script>
-<script src="chat.js?v=1791726270"></script>
-<script src="tour.js?v=1791719825"></script>
+<script src="live.js?v=1791734035"></script>
+<script src="chat.js?v=1791734035"></script>
+<script src="tour.js?v=1791734035"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
 
@@ -1030,7 +1030,7 @@ class Component extends DCLogic {
 
     // ----- one chat -----
     const inc = (() => {
-      if (c.kind === 'cand' && c.stage === 0 || c.dismissed) return { href: 'Alert.dc.html', go: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: c.incId }); try { sessionStorage.setItem('wf-focus', c.incId); } catch (e) {} } };
+      if (c.kind === 'cand' && c.stage === 0 || c.dismissed) return { href: 'Dispatch.dc.html', go: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: c.incId }); try { sessionStorage.setItem('wf-focus', c.incId); } catch (e) {} } };
       const id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, note = c.kind === 'cand' ? 'Confirmed from ' + c.incId : c.note;
       return { href: 'Dispatch.dc.html', go: () => { const v = { id, place: c.place, note, x: c.x, y: c.y, det: c.det || null, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} } };
     })();
@@ -1153,8 +1153,8 @@ class Component extends DCLogic {
           /* (Oct 9) a list (stations, checklist) sits 32px above the button that follows it */ rowsPb: acts.length && (!c.closed || !!m.done) ? '24px' : '0', checksPb: acts.length && (!c.closed || !!m.done) ? '32px' : '16px', roundGo: acts.length ? acts[0].go : null, roundAria: acts.length ? acts[0].label : '',
           /* (Oct 9) closing the fire: the same round arrow, in the dark grey */ roundBg: m.close ? 'rgb(58, 58, 60)' : 'rgba(118,118,128,0.12)', roundFg: m.close ? '#FFFFFF' : '#3C3C43', actCols: 'repeat(' + Math.max(1, acts.length) + ', minmax(0, 1fr))',
           /* no View button on cards (Oct 1): a card that pointed to its incident opens it when tapped */
-          cardGo: toSheet ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; openSheet(); } : false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: toSheet ? 'pointer' : 'default', cardCls: toSheet ? 'chrow' : '', chevD: toSheet ? 'block' : 'none',   /* (Oct 9) the card opens Progress and projection itself: a chevron on the title line, no button */
-          hasLink: !toSheet && !!m.link && m.stage == null,   /* (Oct 7) stage cards carry no View button: the title's arrow opens the incident */ linkCls: 'wf-sec',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? (m.inc.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html') : inc.href,
+          cardGo: toSheet ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; openSheet(); } : false ? (e) => { if (e && e.target && e.target.closest && e.target.closest('button,a')) return; const g = m.inc ? topicGo(m.inc) : inc.go; const h = m.inc ? 'Dispatch.dc.html' : inc.href; if (!h) return; if (g) g(e); window.location.href = h; } : null, cardCur: toSheet ? 'pointer' : 'default', cardCls: toSheet ? 'chrow' : '', chevD: toSheet ? 'block' : 'none',   /* (Oct 9) the card opens Progress and projection itself: a chevron on the title line, no button */
+          hasLink: !toSheet && !!m.link && m.stage == null,   /* (Oct 7) stage cards carry no View button: the title's arrow opens the incident */ linkCls: 'wf-sec',   /* a card's action is its main one: primary lime (projection, View candidate, View fire) */ link: toSheet ? L('Progress and projection', 'Progresso e projeção') : T(m.link), href: toSheet ? '#' : m.inc ? 'Dispatch.dc.html' : inc.href,
           goInc: toSheet ? (e) => { if (e && e.preventDefault) e.preventDefault(); openSheet(); } : m.inc ? topicGo(m.inc) : inc.go, cardBg: '#FFFFFF' });   /* (Oct 9, 08:55) every card follows the norm: header band in the fire's stage colour, body white (open requests included) */   // an open request: no outline, tinted at the tertiary button's 7%
         prevFrom = null;
       }

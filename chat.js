@@ -34,7 +34,7 @@
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#FFFFFF', bg: '#636366', ink: '#636366', icon: 'x' };
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
   var ICON = {
-    cand: 'M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5',
+    cand: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z',   /* (Oct 11, 16:55, app-wide) every candidate wears the filled moon, day or night (one icon, set apart from the fires' flame); the asterisk is gone */
     candN: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z',   /* (Oct 11, 12:52) a night candidate: the moon */   /* (Oct 11, 08:37) the ignition candidate: an asterisk */
     alert: 'M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z M10 20.5a2 2 0 0 0 4 0',
     route: 'M2.5 7h11v9.5h-11Z M13.5 10h4l3 3.2v3.3h-7 M5.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0 M15.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
@@ -1744,7 +1744,9 @@
         var F = window.__wfLiveFires || [], r = F.find(function (q) { return q && (q[2] === raw || q[2] === 'F-' + raw || ('F-' + q[2]) === raw); }), I = (r && r[9]) || {};
         var ha2 = I.ha || (r && r[8]) || 0, ac2 = I.ac || (ha2 ? Math.round(ha2 * 2.471) : 0), t2 = I.startMs || 0, usr = !(r && r[0] === 'PT');
         return [ac2 ? (usr && !PT ? ac2 + ' ac' : (Math.round((ha2 || ac2 / 2.471) * 10) / 10) + ' ha') : '', t2 ? fmtDur(Math.max(0, Date.now() - t2)) : ''].filter(Boolean).join('. '); } catch (e) { return ''; } }
-  function stageTag(f) { var i = stageIdx(f), S = STAGES[i] || STAGES[2], I = (f && f.info) || {}, conf = /^Confirmed from /.test((f && f.note) || '');
+  function stageTag(f) { if (f && f.cand) { var Cs = candStage(f.info && f.info.conf, f.cand.live || f.cand), t0 = f.info && f.info.startMs, dd = t0 ? new Date(t0) : null;   /* (Oct 11, 16:50) a candidate viewed on the incident page: its own stage */
+      return { i: 0, label: PT() ? Cs.pt : Cs.en, src: 'Candidate', fg: Cs.c, bg: Cs.bg, ic: Cs.icD, en: Cs.en, cand: true, meta: dd ? dd.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t0) : '' }; }
+    var i = stageIdx(f), S = STAGES[i] || STAGES[2], I = (f && f.info) || {}, conf = /^Confirmed from /.test((f && f.note) || '');
     // (Oct 3, 22:23) the label is the stage's own name, so words, colour and icon always agree (the feed's wording, e.g. "Not contained", spans several stages)
     return { i: i, label: PT() ? S.pt : S.en, src: I.stEn || I.st || (conf ? 'Confirmed' : 'Active'), fg: S.c, bg: S.bg, ic: ICON[S.icon], en: S.en, meta: f && f.id != null ? fireMeta(f.id) : '' }; }   /* (Oct 11) every stage tag carries the burned area and time active */
   window.__wfStageTag = stageTag;
@@ -1900,7 +1902,7 @@
       .sort(function (a, b) { return (unread(b) ? 1 : 0) - (unread(a) ? 1 : 0) || (b.updated || 0) - (a.updated || 0); });
     return C[0] ? C[0].key : null; }
   function incPage(c) {   /* the incident's own page, as the chat's "view" button opens it */
-    if (c.kind === 'cand' && c.stage === 0) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: c.incId }); try { sessionStorage.setItem('wf-focus', c.incId); } catch (e) {} return 'Alert.dc.html'; }
+    if (c.kind === 'cand' && c.stage === 0) { window.__wfMem = Object.assign(window.__wfMem || {}, { focus: c.incId }); try { sessionStorage.setItem('wf-focus', c.incId); } catch (e) {} return 'Dispatch.dc.html'; }
     var id = c.kind === 'cand' ? 'F-' + c.incId : c.incId, v = { id: id, place: c.place, note: c.kind === 'cand' ? 'Confirmed from ' + c.incId : c.note, x: c.x, y: c.y, det: c.det || null, t: Date.now() };
     window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} return 'Dispatch.dc.html'; }
   function onPage(c) { var p = location.pathname; return c.kind === 'cand' && c.stage === 0 ? /Alert\.dc\.html$/.test(p) : /Dispatch\.dc\.html$/.test(p); }

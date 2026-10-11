@@ -103,7 +103,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function listRow() {
     var sec = document.querySelector('section[data-swipe-key="li"]'); if (!sec) return null;
     var cp = getComputedStyle(sec).clipPath || ''; if (!/^inset\(0px/.test(cp) && cp !== 'none') return null;
-    var r0 = sec.querySelector('a.sqrow[href="Alert.dc.html"]'); return r0 && shown(r0) ? r0 : null;
+    var r0 = sec.querySelector('a.sqrow[href="Dispatch.dc.html"]'); return r0 && shown(r0) ? r0 : null;
   }
   // The map step points at a circle whose summary panel has room to open whole: away from the screen sides and from
   // the top and bottom bands, closest to the upper middle of the map (the bubble then sits clear of the panel)
@@ -236,11 +236,11 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
     // (Oct 5) the preferences step (it opened the settings menu) was removed
     // (Oct 5, 09:31) one step to open the candidate (it was two: tap the marker, then View): the cursor moves from the marker to
     // View on its summary; the tour carries on on the next screen
-    { page: 'Main.dc.html', mode: 'until', until: function () { return false; }, find: function () { return q('[data-wf-pop] a[href="Alert.dc.html"]') || topMarker(); }, also: '[data-wf-pop] a[href="Alert.dc.html"]',
+    { page: 'Main.dc.html', mode: 'until', until: function () { return false; }, find: function () { return q('[data-wf-pop] a[href="Dispatch.dc.html"]') || topMarker(); }, also: '[data-wf-pop] a[href="Dispatch.dc.html"]',
       t: ['Open the most likely candidate', 'Abra o candidato mais provável'],
       b: ['We marked it on the map. Tap it, then View.', 'Marcámo-lo no mapa. Toque nele e depois em Ver.'] },
 
-    { page: 'Alert.dc.html', mode: 'tap', before: freshDemo, find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
+    { page: 'Dispatch.dc.html', mode: 'tap', before: freshDemo, find: function () { return q('[data-wf-ighdr] a[href="Chat.dc.html"]'); },
       // (Oct 5, 09:31) the Key figures step was folded in here: the achievement lands on this screen, then straight to the chat
       ach: ['You found your first ignition', 'Encontrou a sua primeira ignição'], then: ['Its key figures are below.', 'Os números principais estão abaixo.'],
       t: ['Confirm the ignition in the team chat', 'Confirme a ignição na conversa da equipa'],
@@ -654,7 +654,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // Instead of an arrow, the Tour button's helicopter takes off (growing 20%) and flies to each control to tap, hovering
   // over it with its water bucket pointing at it (the cable a damped pendulum). It flies from one focus to the next;
   // when the tour changes screen it slides out to one side and comes back in from the opposite side on the next screen.
-  var HK = 'wf-heli', ORDER = { 'Main.dc.html': 0, 'Alert.dc.html': 1, 'Chat.dc.html': 2, 'Dispatch.dc.html': 3 };
+  var HK = 'wf-heli', ORDER = { 'Main.dc.html': 0, 'Chat.dc.html': 2, 'Dispatch.dc.html': 3 };
   var H = null, NSV = 'http://www.w3.org/2000/svg', SC = 1.4, HOOKU = [11.5, 15], BUCK = 8;   // 28px icon at 120%: 1.4px per unit
   var heliPaths = '<path class="wf-rot" d="M2.5 5h15"></path><path class="wf-rot2" d="M9.79 5h0.42"></path><path d="M10 5v3M5 8h8a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2H8a3 3 0 0 1-3-3Z M13 8.2V12h3.9M17 11.5h4.5M21.5 9.5v4M7 19h9.5M9 15v4M14 15v4"></path>';
   function tourBtnIcon() { return document.querySelector('[data-wf-tourbtn] .wf-heli'); }
@@ -755,7 +755,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       if (!jumped) { jumped = true; var k = i + 1, grp = 0, pg = st.page; while (k < S.length && grp < 2) { if (S[k].page !== pg) { pg = S[k].page; grp++; if (pg === PAGE) break; } k++; } if (S[k] && S[k].page === PAGE && grp <= 2) { put({ i: k, max: Math.max(k, s.max || 0) }); seen = 0; scrolled = false; ran = false; return tick(); } }   /* (Oct 6) up to two screens ahead: e.g. the fire declared straight from the candidate page lands on the fire page, skipping the chat's steps */
       // (Oct 6) never a silent dead end: the tour is waiting on another screen, so the card says where and takes you back there
       if (INFRAME) { if (root) { root.remove(); root = null; lastKey = ''; } return; }
-      var NM = { 'Main.dc.html': ['the main screen', 'o ecrã principal'], 'Alert.dc.html': ['the ignition candidate', 'o candidato a ignição'], 'Chat.dc.html': ['the team chat', 'o chat da equipa'], 'Dispatch.dc.html': ['the fire page', 'a página do incêndio'] }[st.page] || ['the previous screen', 'o ecrã anterior'];
+      var NM = { 'Main.dc.html': ['the main screen', 'o ecrã principal'], 'Dispatch.dc.html': ['the ignition candidate', 'o candidato a ignição'], 'Chat.dc.html': ['the team chat', 'o chat da equipa'], 'Dispatch.dc.html': ['the fire page', 'a página do incêndio'] }[st.page] || ['the previous screen', 'o ecrã anterior'];
       var LOST = { page: PAGE, mode: 'next', next: ['Continue', 'Continuar'], t: ['The tour is waiting', 'A visita está à espera'],
         b: ['This step happens in ' + NM[0] + '. Tap Continue to go back there.', 'Este passo acontece n' + (NM[1].charAt(0) === 'a' ? 'a ' + NM[1].slice(2) : 'o ' + NM[1].slice(2)) + '. Toque em Continuar para voltar lá.'] };
       curEl = null; draw(i, LOST, null, false, true);
