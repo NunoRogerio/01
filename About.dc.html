@@ -61,7 +61,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
       <h2 style="margin: 0; font-size: 20px; font-weight: 600; line-height: 24px; color: #000000">{{tx.idea}}</h2>
       <div data-wf-card="1" style="display: flex; flex-direction: column; gap: 24px; padding: 16px; border-radius: 16px; background: #FFFFFF">
-        <p style="font-size: 18px; line-height: 24px">{{tx.goal}}<br><b style="font-weight: 700">{{tx.goalQ}}</b></p>
+        <p style="font-size: 18px; line-height: 24px">{{tx.goal}}<b style="display: block; margin-top: 8px; font-weight: 700">{{tx.goalQ}}</b><b style="display: block; margin-top: 8px; font-weight: 700">{{tx.goalQ2}}</b></p>
         <ol aria-label="{{tx.idea}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
             <li style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 16px">
@@ -139,8 +139,8 @@ class Component extends DCLogic {
     };
     const steps = [
       [IC.detect, L('Detect', 'Detetar', '検知'), L('Exploring which sources can trigger a faster, more accurate detection.', 'Explorar que fontes permitem uma deteção mais rápida e precisa.', 'より速く正確な検知につながる情報源を探ります。')],
-      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Checked by drone or on the ground, and by easing communication between team coordinators.', 'Verificada por drone ou no terreno, e facilitando a comunicação entre os coordenadores das equipas.', 'ドローンや現場で確認し、チームの調整担当どうしの連絡を円滑にします。')],
-      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('Centralised team dispatch plans, carried out by the coordination teams.', 'Planos de despacho de equipas centralizados, executados pelas equipas de coordenação.', '調整チームが一元的に出動計画を立て、実行します。')]
+      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Checked on the ground by the first engine or by drone, with everyone on the incident in one chat.', 'Confirmada no terreno pelo primeiro veículo ou por drone, com todos os envolvidos numa só conversa.', '最初に到着した消防車やドローンが現場で確認し、関係者全員がひとつのチャットでつながります。')],
+      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('Dispatch sends the closest units; command asks for more and places the crews, everyone seeing the same picture.', 'A central despacha os meios mais próximos; o comando pede reforços e coloca as equipas, todos a ver o mesmo.', '指令センターが最寄りの部隊を出動させ、指揮者が増援を要請して部隊を配置します。全員が同じ状況を見ながら。')]
     ].map(([ic, t, dd], i, a) => ({ ic, t, d: dd, n: i + 1, lineD: i < a.length - 1 ? 'block' : 'none', pb: i < a.length - 1 ? 16 : 0 }));
     const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M13.3 12a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0Z';
     const stages = [
@@ -167,9 +167,13 @@ class Component extends DCLogic {
         usa: L('USA', 'EUA', '米国'), pt: L('Portugal', 'Portugal', 'ポルトガル'),
         desc: L('How the app works, where it stands and how it started.', 'Como a app funciona, em que fase está e como começou.', 'アプリの仕組み、現在の段階、そして始まり。'),
         idea: L('Goal', 'Objetivo', '目標'),
-        goal: L('In a wildfire, every first second counts. Our question is:',
-          'Num incêndio rural, cada primeiro segundo conta. A nossa pergunta é:',
-          '山火事では、最初の一秒一秒が重要です。私たちの問いは:'),
+        /* (Oct 11, 19:10) the goal is no longer only speed: one central, simple tool where everyone on a fire sees the same picture */
+        goal: L('In a wildfire, every first second counts, and so does everyone seeing the same picture. Our questions are:',
+          'Num incêndio rural, cada primeiro segundo conta, e conta que todos vejam o mesmo. As nossas perguntas são:',
+          '山火事では、最初の一秒一秒が重要です。そして全員が同じ状況を見ていることも。私たちの問いは:'),
+        goalQ2: L('Can one simple, central tool give everyone on a fire the same picture?',
+          'Pode uma ferramenta central e simples dar a todos num incêndio a mesma imagem da situação?',
+          'ひとつのシンプルな共通ツールで、火災に関わる全員が同じ状況を共有できるでしょうか。'),
         goalQ: L('Is it possible to reduce the time between ignition and action?',
           'É possível reduzir o tempo entre a ignição e a ação?',
           '発火から行動までの時間を短くすることはできるでしょうか。'),
