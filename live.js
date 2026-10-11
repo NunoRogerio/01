@@ -453,7 +453,13 @@ window.__wfRegionUp = function (st, co) {
   window.__wfConfTxt=function(c){return c>75?'#7A3FE0':c>=50?'#0A66CC':'#48484A';};
   window.__wfAMZ=['Acre','Amapá','Amazonas','Maranhão','Mato Grosso','Pará','Rondônia','Roraima','Tocantins'];
   // Row filter for an area: a state id, or 'US' (all states) or 'AMZ' (the Legal Amazon states of Brazil).
-  window.__wfInArea=function(r,st,co){if(st==='US')return /^[A-Z]{2}$/.test(r.st)&&r.st!=='PT';if(st==='AMZ')return r.st==='BRA'&&window.__wfAMZ.indexOf(r.co)>=0&&(!co||r.co===co);return r.st===st&&(!co||r.co===co);};
+  /* (Oct 11, 21:00) Cal OES fire and rescue mutual aid regions, by county (Cal OES regional operations). An area code 'rg:VI' stands for a
+     whole region wherever a county name can go */
+  window.__wfRegions={CA:[{id:'I',co:['Los Angeles','Orange','San Luis Obispo','Santa Barbara','Ventura']},{id:'II',co:['Alameda','Contra Costa','Del Norte','Humboldt','Lake','Marin','Mendocino','Monterey','Napa','San Benito','San Francisco','San Mateo','Santa Clara','Santa Cruz','Solano','Sonoma']},
+    {id:'III',co:['Butte','Colusa','Glenn','Lassen','Modoc','Plumas','Shasta','Sierra','Siskiyou','Sutter','Tehama','Trinity','Yuba']},{id:'IV',co:['Alpine','Amador','Calaveras','El Dorado','Nevada','Placer','Sacramento','San Joaquin','Stanislaus','Tuolumne','Yolo']},
+    {id:'V',co:['Fresno','Kern','Kings','Madera','Mariposa','Merced','Tulare']},{id:'VI',co:['Imperial','Inyo','Mono','Riverside','San Bernardino','San Diego']}]};
+  window.__wfRegionCo=function(st,co){if(!co||String(co).indexOf('rg:')!==0)return null;var R=(window.__wfRegions[st]||[]).find(function(g){return g.id===String(co).slice(3);});return R?R.co:[];};
+  window.__wfInArea=function(r,st,co){var RC=window.__wfRegionCo(st,co);if(RC)return r.st===st&&RC.indexOf(String(r.co||r.reg||'').replace(/\s+County$/i,''))>=0;if(st==='US')return /^[A-Z]{2}$/.test(r.st)&&r.st!=='PT';if(st==='AMZ')return r.st==='BRA'&&window.__wfAMZ.indexOf(r.co)>=0&&(!co||r.co===co);return r.st===st&&(!co||r.co===co);};
   window.__wfDur=function(ms){if(ms==null||!isFinite(ms)||ms<0)return '';var m=Math.round(ms/60000),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+' d'+(h?' '+h+' h':''):h?h+' h'+(mm?' '+mm+' min':''):mm+' min';   /* (Oct 11) d / h / min, as everywhere */};
   window.__wfHeld=function(info,model){
     if(info&&info.resolved)return {official:true,st:info.st,label:info.stEn,took:(info.heldMs&&info.startMs&&info.heldMs>info.startMs)?info.heldMs-info.startMs:null,at:info.heldMs||null,src:info.heldSrc||''};

@@ -839,9 +839,9 @@
   /* who the commander is in this chat: the profile who ran it (its own "me"), else the commander by the chain (Battalion Chief or the first engine's officer) */
   function icOf(c) { var j = (c.people || []).findIndex(function (p) { return p.self && !p.left; }); return j >= 0 ? j : icIdx(c); }
   var OAREG = { 'Riverside': 'VI', 'San Bernardino': 'VI', 'San Diego': 'VI', 'Imperial': 'VI', 'Inyo': 'VI', 'Mono': 'VI', 'Los Angeles': 'I', 'Orange': 'I', 'Ventura': 'I', 'Santa Barbara': 'I', 'San Luis Obispo': 'I',
-    'Fresno': 'V', 'Kern': 'V', 'Kings': 'V', 'Madera': 'V', 'Mariposa': 'V', 'Merced': 'V', 'Tulare': 'V', 'Butte': 'III', 'Shasta': 'III', 'Tehama': 'III', 'Glenn': 'III', 'Colusa': 'III', 'Plumas': 'III', 'Lassen': 'III', 'Modoc': 'III', 'Siskiyou': 'III', 'Trinity': 'III',
+    'Fresno': 'V', 'Kern': 'V', 'Kings': 'V', 'Madera': 'V', 'Mariposa': 'V', 'Merced': 'V', 'Tulare': 'V', 'Butte': 'III', 'Sutter': 'III', 'Yuba': 'III', 'Shasta': 'III', 'Tehama': 'III', 'Glenn': 'III', 'Colusa': 'III', 'Plumas': 'III', 'Lassen': 'III', 'Modoc': 'III', 'Siskiyou': 'III', 'Trinity': 'III',
     'Humboldt': 'II', 'Mendocino': 'II', 'Sonoma': 'II', 'Napa': 'II', 'Lake': 'II', 'Marin': 'II', 'Alameda': 'II', 'Contra Costa': 'II', 'Santa Clara': 'II', 'San Mateo': 'II', 'Monterey': 'II', 'Del Norte': 'II', 'Santa Cruz': 'II', 'San Benito': 'II', 'Solano': 'II', 'San Francisco': 'II',
-    'Sacramento': 'IV', 'Placer': 'IV', 'El Dorado': 'IV', 'Nevada': 'IV', 'Yolo': 'IV', 'Sutter': 'IV', 'Yuba': 'IV', 'San Joaquin': 'IV', 'Stanislaus': 'IV', 'Tuolumne': 'IV', 'Calaveras': 'IV', 'Amador': 'IV', 'Alpine': 'IV', 'Sierra': 'IV' };
+    'Sacramento': 'IV', 'Placer': 'IV', 'El Dorado': 'IV', 'Nevada': 'IV', 'Yolo': 'IV', 'San Joaquin': 'IV', 'Stanislaus': 'IV', 'Tuolumne': 'IV', 'Calaveras': 'IV', 'Amador': 'IV', 'Alpine': 'IV', 'Sierra': 'IV' };
   function govTick(c, now) { if (!isGov() || c.kind === 'dm' || c.closed || c.dismissed || c.police) return false; var ch = false, us = isUS(c);
     /* the commander answers what waits for an answer (never the government's own cards) */
     var pend = (c.msgs || []).filter(function (m) { return m.kind === 'card' && (m.actions || []).length && !m.done && !m.govOnly && !m.summary; }).pop();

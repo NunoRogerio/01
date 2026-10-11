@@ -14,12 +14,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791753000"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791754000"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791753000"></script>
-<script src="station.js?v=1791753000"></script>
+<script src="prefs.js?v=1791754000"></script>
+<script src="station.js?v=1791754000"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791735387"></script>
+<script src="live.js?v=1791754000"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -812,7 +812,9 @@ class Component extends DCLogic {
     const bb = (a) => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; a.forEach(([x, y]) => { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }); return [x0, y0, x1, y1]; };
     // Frame the incidents themselves (ignitions + fires) in every state and county; fall back to the area outline when there are none.
     let box = p.scopeSt === 'US' ? G.states.US.box : (pts.length ? bb(pts) : null), minSpan = p.scopeSt === 'US' ? 1 : 220;
-    if (!box) { const c = (p.scopeCo && G.counties[p.scopeSt + '|' + p.scopeCo]) || G.states[p.scopeSt]; box = c ? c.box : null; minSpan = 1; }
+    if (!box) { const RC = window.__wfRegionCo ? window.__wfRegionCo(p.scopeSt, p.scopeCo) : null, RB = RC ? RC.map((n) => G.counties[p.scopeSt + '|' + n]).filter((c) => c && c.box) : [];
+      if (RB.length) box = [Math.min(...RB.map((c) => c.box[0])), Math.min(...RB.map((c) => c.box[1])), Math.max(...RB.map((c) => c.box[2])), Math.max(...RB.map((c) => c.box[3]))];
+      else { const c = (p.scopeCo && G.counties[p.scopeSt + '|' + p.scopeCo]) || G.states[p.scopeSt]; box = c ? c.box : null; } minSpan = 1; }
     if (!box) return null;
     const W = this.W(), fw = this.fitWin();
     const bw = Math.max(minSpan, box[2] - box[0]), bh = Math.max(minSpan, box[3] - box[1]);
@@ -945,7 +947,11 @@ class Component extends DCLogic {
   inScopeFn() {
     const p = this.props; if (!p.scopeSt || p.scopeSt === 'US' || p.mode === 'pin' || p.mode === 'spread') return null;
     const key = p.scopeSt + '|' + (p.scopeCo || ''); if (this._scK === key) return this._scF;
-    const G = this.geo(), reg = p.scopeCo ? G.counties[p.scopeSt + '|' + p.scopeCo] : G.states[p.scopeSt];
+    const G = this.geo(), RC = window.__wfRegionCo ? window.__wfRegionCo(p.scopeSt, p.scopeCo) : null;
+    /* (Oct 11, 21:00) a Cal OES region: in scope when inside any of its counties */
+    if (RC) { const F = RC.map((n) => { const save = this.props; this.props = Object.assign({}, save, { scopeCo: n }); this._scK = null; let g = null; try { g = this.inScopeFn(); } finally { this.props = save; } return g; }).filter(Boolean);
+      const f2 = F.length ? (x, y) => F.some((g) => g(x, y)) : null; this._scK = key; this._scF = f2; return f2; }
+    const reg = p.scopeCo ? G.counties[p.scopeSt + '|' + p.scopeCo] : G.states[p.scopeSt];
     let f = null;
     if (reg) {
       const c0 = reg.c || [(reg.box[0] + reg.box[2]) / 2, (reg.box[1] + reg.box[3]) / 2];
@@ -1639,7 +1645,7 @@ class Component extends DCLogic {
         const sea = G.P(33.35, -119.1), seaFar = G.P(36.2, -125.2);
         const seaPt = s < 0.06 ? seaFar : sea;
         const laScope = !p.scopeSt || (p.scopeSt === 'CA' && (!p.scopeCo || p.scopeCo === 'Los Angeles'));
-        const inScope = (c) => p.scopeSt ? (c.st === p.scopeSt && (!p.scopeCo || c.co === p.scopeCo)) : c.co === 'Los Angeles';
+        const RCm = window.__wfRegionCo ? window.__wfRegionCo(p.scopeSt, p.scopeCo) : null, inScope = (c) => p.scopeSt ? (c.st === p.scopeSt && (!p.scopeCo || (RCm ? RCm.indexOf(c.co) >= 0 : c.co === p.scopeCo))) : c.co === 'Los Angeles';
         return {
           geo: { ocean: G.ocean, lakes: G.lakes, coast: G.coast, stateLines: G.stateLines, countyLines: G.countyLines, roads: G.roads, forest: G.forest,
             roadW: near ? 3 : 1.8, roadCaseW: near ? 5 : 3.4 },
