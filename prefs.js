@@ -778,6 +778,7 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
        action bar) and at the bottom of every panel; strongest at the band's top, clearing towards the bottom edge */
     '.wf-spb{position:absolute;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;border-bottom-left-radius:inherit;border-bottom-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +
     '.wf-spb-host{isolation:isolate}' +
+    '.wf-spb.wf-spb-edge{z-index:4;-webkit-mask-image:' + MASK + ';mask-image:' + MASK + '}' +   /* (Oct 11, 13:13) a blade dropping from the top: its foot is its outer edge, the band lies over the content, strongest at the edge */
     'html.wf-dark .wf-spb{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}';
   (document.head || document.documentElement).appendChild(css);
   function blade(el) { for (var p = el.parentElement; p && p !== document.body; p = p.parentElement) { if (p.getAttribute('role') === 'dialog' || p.tagName === 'SECTION' || /\b(sheet|blade)\b/.test(p.className || '')) return p; } return null; }
@@ -790,9 +791,9 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       if (x.__h !== hh) { x.__h = hh; x.style.height = hh + 'px'; } } } catch (e) {} }
   /* foot bands: fixed bars (the element right after a scrolling panel, at the foot of the screen or blade, holding controls) take a band
      their own height; panels (blades, sheets) without such a bar take a 96px band at their bottom */
-  function addB(host, hh) { var x = host.querySelector(':scope > .wf-spb'); if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+  function addB(host, hh, edge) { var x = host.querySelector(':scope > .wf-spb'); if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
     if (!x) { x = document.createElement('span'); x.className = 'wf-spb'; x.setAttribute('aria-hidden', 'true'); host.insertBefore(x, host.firstChild); host.classList.add('wf-spb-host'); }
-    var v = hh + 'px'; if (x.style.height !== v) x.style.height = v; }
+    x.classList.toggle('wf-spb-edge', !!edge); var v = hh + 'px'; if (x.style.height !== v) x.style.height = v; }
   function runB() { try {
     var H = window.innerHeight, bars = [];
     document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.chscroll,.wf-snap').forEach(function (sc) {
@@ -801,7 +802,9 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       if (!n) return; var r = n.getBoundingClientRect(), pr = (n.parentElement || n).getBoundingClientRect();
       if (r.height < 48 || r.height > 280 || r.top < H * 0.45 || Math.abs(r.bottom - pr.bottom) > 2 || r.width < pr.width - 2) return;
       if (!n.querySelector('button, a, input, textarea, [role=button]')) return; bars.push(n); addB(n, Math.round(n.offsetHeight)); });
-    document.querySelectorAll('.wf-spx').forEach(function (t) { var b = t.parentElement; if (!b || !b.offsetHeight) return;
+    var tops = [];
+    document.querySelectorAll('.wf-stripes:not([data-wf-sp])').forEach(function (t) { if (!/bottom:\s*0(px)?;/.test(t.getAttribute('style') || '')) return; var b = t.parentElement; if (!b) return; tops.push(b); addB(b, 64, true); });
+    document.querySelectorAll('.wf-spx').forEach(function (t) { var b = t.parentElement; if (!b || !b.offsetHeight || tops.indexOf(b) >= 0) return;
       if (bars.some(function (x) { return b.contains(x); })) return; addB(b, 96); });
     document.querySelectorAll('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]').forEach(function (d) { if (d.offsetHeight > 200) addB(d, 96); });
   } catch (e) {} }
