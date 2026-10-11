@@ -1810,3 +1810,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Candidate markers are one design on every map and icon: the round in the likelihood yellow (3 levels) with the dot and strokes, the moon at night, no outline, fully opaque. Applies to the candidate's own pin (incident page map), the other candidates in view, the tooltip icon, the notification icons and the alert cards.
 - A candidate's page has no record line (ID. Source.) under its cards: Evidences already gives both.
 - Profile: the "Demo profile" tag sits on its own last row under the description. Sign out is a primary button (dark grey), its bottom level with the bottom of the menu's icon pill.
+- Menu icon pill: 8px above the first icon and below the last, the same as at its sides (60px pill, 44px icons); the icons between are spread evenly over the pill's height, which stays as before.
