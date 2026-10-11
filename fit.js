@@ -263,16 +263,16 @@ window.__wfBlink=function(path,dur){
     '#wf-load .bg.on{opacity:1;transform:scale(1)}'+
     '#wf-load .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.25) 60%,rgba(0,0,0,.62) 100%);opacity:0;transition:opacity .7s ease}'+
     '#wf-load.photo .shade{opacity:1}#wf-load .in{position:relative}'+
-    '#wf-load.photo .name{background:none;color:var(--wf-y);animation:none;text-shadow:0 0 12px rgba(0,0,0,.45)}'+
+    '#wf-load.photo .name{background:none;color:#FFFFFF;animation:none;text-shadow:0 0 12px rgba(0,0,0,.45)}'+
     '#wf-load.photo .sub{color:rgba(255,255,255,.85);text-shadow:0 0 8px rgba(0,0,0,.5)}'+
     '#wf-load.photo .base{fill:var(--wf-y)}#wf-load.photo .ground{stroke:var(--wf-y)}#wf-load.photo svg{filter:drop-shadow(0 0 10px rgba(0,0,0,.35))}'+
     '#wf-load .cap{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));text-align:center;font:400 14px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:rgba(255,255,255,.8);opacity:0;transition:opacity .7s ease .3s}'+
     '#wf-load.photo .cap{opacity:1}'+
     /* (Oct 5, 02:40) the firefighter stripes along the bottom edge, as on the login */
-    '#wf-load .stp{display:none}#wf-load.photo .stp{display:block;position:absolute;left:0;right:0;bottom:0;height:8px;z-index:2;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4}'+
+    '#wf-load .stp{display:none}#wf-load.photo .stp{display:block;position:absolute;left:0;right:0;bottom:0;height:96px;z-index:2;background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.08) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%)}'+
     /* the loading counter, 0% to 100% */
     '#wf-load .pct{margin-top:-6px;font:600 51px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#8E8E93}'+
-    '#wf-load.photo .pct{color:var(--wf-y);text-shadow:0 0 8px rgba(0,0,0,.5)}'+
+    '#wf-load.photo .pct{color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}'+
     /* after log in (hand): the sign-in screen's own layout carries on. Logo, name and line of text stay exactly where and
        as big as they were, the line changes to 'Loading live data', the counter takes the fields' place at the centre */
     '#wf-load.hand{display:block}#wf-load.hand .in{position:absolute;inset:0;display:block;opacity:1;animation:none}'+
@@ -892,7 +892,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
 // its own time, e.g. "7:53 AM"); PT "Última atualização: 2 out 2026, às 15:53".
 window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';lang=lang||window.__wfLang||'en';
   var M={en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],pt:['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']};
-  var hm;try{hm=new Intl.DateTimeFormat(lang==='pt'?'pt-PT':lang==='ja'?'ja-JP':undefined,{hour:'numeric',minute:'2-digit'}).format(d);}catch(e){hm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+  var hm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);   /* (Oct 11) 24-hour clock everywhere */
   if(lang==='ja')return '最終更新: '+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+hm;
   return (lang==='pt'?'Última atualização: ':'Last update: ')+d.getDate()+' '+M[lang==='pt'?'pt':'en'][d.getMonth()]+' '+d.getFullYear()+(lang==='pt'?', às ':', at ')+hm;};
 // (Oct 5) Tap the status bar to scroll to the top, as in iOS apps: in the installed app (the page runs under the status bar),

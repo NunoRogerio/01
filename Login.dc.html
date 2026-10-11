@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791719825"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791722181"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="i18n.js?v=1791720865"></script>
 
@@ -47,7 +47,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
   <div style="flex: 0 0 auto; display: flex; justify-content: center; padding-top: 24px">
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 16px">
     <svg width="37" height="45" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="display: block; overflow: visible; filter: drop-shadow(0 0 8px rgba(0,0,0,0.35))"><path data-wf-eye="1" style="fill: var(--wf-y)" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" style="stroke: var(--wf-y)" stroke-width="1.1" stroke-linecap="round"></path></svg>
-    <h1 style="margin: 32px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: var(--wf-y); text-shadow: 0 0 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
+    <h1 style="margin: 32px 0 0; font-size: 20px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; text-align: center; color: #FFFFFF; text-shadow: 0 0 10px rgba(0,0,0,0.45)">Forest Fire Watch</h1>
     <p style="margin: 0; font-size: 16px; line-height: 20px; color: #FFFFFF; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.5)">Log in to your account</p>
   </div>
   </div>
@@ -88,14 +88,14 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
     <!-- Log in has a fixed place: 24px under the chosen profile card (or under the hint before one is chosen), 48px above the text block -->
     <div aria-hidden="true" style="flex: 0 0 auto; height: 24px"></div>
     <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font-size: 18px; font-weight: 600; text-decoration: none">Log in</a>
-    <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border: 1px solid rgba(var(--wf-y-rgb), 0.14); border-radius: 999px; background: rgba(var(--wf-y-rgb), 0.06); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(var(--wf-y-rgb), 0.38); -webkit-text-fill-color: rgba(var(--wf-y-rgb), 0.38); font-family: inherit; font-size: 18px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
+    <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border: 0; border-radius: 999px; background: rgba(58, 58, 60, 0.5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(255, 255, 255, 0.45); -webkit-text-fill-color: rgba(255, 255, 255, 0.45); font-family: inherit; font-size: 18px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 0 0 auto; height: 48px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">
     <!-- The build stage on two lines, above the note: "Alpha version." in bold hi-vis yellow, then the last update (date and time, in the viewer's own time zone) in white (15px) -->
-    <p style="margin: 0; font-size: 16px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: var(--wf-y)">Alpha version.</span><br><span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>
+    <p style="margin: 0; font-size: 16px; line-height: 20px; color: #FFFFFF"><span style="font-weight: 700; color: #FFFFFF">Alpha version.</span><br><span data-wf-verdate="1">Last update: 2 Oct 2026</span></p>
     <p style="margin: 0; font-size: 16px; line-height: 18px; color: #FFFFFF">Limited audience. Demo login to show user roles: each profile limits which areas a user can see and which features they can use.</p>
     <!-- About: text only, in the hi-vis colour (no container), with a 48px touch area -->
-    <a href="About.dc.html?v=14" onClick="{{goAbout}}" style="align-self: center; display: flex; align-items: center; justify-content: center; height: 48px; margin: 16px 0; padding: 0 16px; color: var(--wf-y); font-size: 18px; font-weight: 600; text-decoration: none; text-shadow: 0 0 8px rgba(0,0,0,0.6)">About</a>
+    <a href="About.dc.html?v=14" onClick="{{goAbout}}" style="align-self: center; display: flex; align-items: center; justify-content: center; height: 48px; margin: 16px 0; padding: 0 16px; color: #FFFFFF; font-size: 18px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-shadow: 0 0 8px rgba(0,0,0,0.6)">About</a>
     <p style="margin: 0; font-size: 16px; line-height: 20px; color: rgba(255,255,255,0.72)">{{credit}}</p>
     </div>
   </div>
@@ -181,7 +181,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
             <sc-if value="{{f.line}}" hint-placeholder-val="{{ true }}"><input type="text" value="{{f.v}}" onInput="{{f.onInput}}" onKeyDown="{{f.onKey}}" onBlur="{{f.onBlur}}" placeholder="{{f.ph}}" enterkeyhint="done" autocomplete="off" aria-label="{{f.label}}" style="min-width: 0; height: 30px; padding: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 18px; color: #000000"></sc-if>
             <sc-if value="{{f.area}}" hint-placeholder-val="{{ false }}"><textarea rows="4" onInput="{{f.onInput}}" onKeyDown="{{f.onKey}}" onBlur="{{f.onBlur}}" placeholder="{{f.ph}}" enterkeyhint="done" aria-label="{{f.label}}" value="{{f.v}}" style="min-width: 0; padding: 4px 0 0; border: 0; outline: 0; background: transparent; resize: none; font: inherit; font-size: 18px; line-height: 24px; color: #000000"></textarea></sc-if>
             <!-- The offer: polish this text? Yes rewrites it (Claude with a key saved in Chat settings, else a tidy of spelling and punctuation); Undo brings yours back -->
-            <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 16px; border-radius: 12px; background: rgba(var(--wf-y-rgb), 0.16)">
+            <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 16px; border-radius: 12px; background: rgba(118, 118, 128, 0.14)">
               <span style="flex-grow: 1; min-width: 0; font-size: 16px; line-height: 20px; color: #1C1C1E">{{f.askTxt}}</span>
               <button type="button" onClick="{{f.no}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.14); color: #1C1C1E; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">{{f.noLbl}}</button>
               <button type="button" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
@@ -335,7 +335,7 @@ class Component extends DCLogic {
       B.forEach(() => { const d = document.createElement('div'); d.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1);transition:opacity 1.6s ease'; h.appendChild(d); });
       const sh = document.createElement('div'); sh.style.cssText = 'position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,0.30) 0%,rgba(0,0,0,0.12) 30%,rgba(0,0,0,0.28) 62%,rgba(0,0,0,0.62) 100%)'; h.appendChild(sh);
       // (Oct 5, 02:36) the firefighter stripes along the very bottom edge of the screen, as on the other screens (the shared .wf-stripes)
-      const sp = document.createElement('div'); sp.style.cssText = 'position:absolute;left:0;right:0;bottom:0;height:8px;z-index:4;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4'; h.appendChild(sp);
+      const sp = document.createElement('div'); sp.style.cssText = 'position:absolute;left:0;right:0;bottom:0;height:96px;z-index:4;pointer-events:none;background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.08) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%)';   /* (Oct 11, 13:34) the stripe pattern at the foot, on the photo in white, strongest at the edge */ h.appendChild(sp);
       document.body.appendChild(h);
       const r = document.getElementById('dc-root'); if (r) { r.style.position = r.style.position || 'relative'; r.style.zIndex = '1'; }
     }
