@@ -624,14 +624,13 @@
     } else if (s === 3) {
       /* (Oct 8, 21:06) lines by role: lieutenants report from the fire line, captains speak for resources and decisions */
       say(c, ltOf(c, 0), 'On scene. ' + (isUS(c) ? 'Chaparral and dry grass' : 'Pine and eucalyptus') + ', head running north-east.', 'No local. ' + (isUS(c) ? 'Chaparral e erva seca' : 'Pinhal e eucaliptal') + ', cabeça a progredir para nordeste.', d + 3000, 3);
-      if (P[1]) say(c, 1, 'Homes 1 km north-east. We need air support to hold the head.', 'Casas a 1 km para nordeste. Precisamos de meio aéreo para segurar a cabeça.', d + 7000, 6);
-      card(c, { req: 'air', by: lead(c, 1), tag: { en: 'Request · ' + (P[1] ? P[1].name : 'Crew coordinator'), pt: 'Pedido · ' + (P[1] ? P[1].name : 'Coordenador de equipa') }, tagC: '#B8360A',
-        title: { en: 'Air support', pt: 'Meio aéreo' }, body: { en: 'One helicopter to hold the head before it reaches the homes', pt: 'Um helicóptero para segurar a cabeça antes de chegar às casas' },
-        actions: [{ key: 'declineAir', en: 'Not yet', pt: 'Ainda não' }, { key: 'approveAir', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + 8500, 0);
+      stageReqs(c, 3, d + 7000);
     } else if (s === 4) {
       say(c, ltOf(c, 0), 'Head held. Working both flanks.', 'Cabeça dominada. A trabalhar os dois flancos.', d + 3000, 4);
+      stageReqs(c, 4, d + 6000);
     } else if (s === 5) {
       say(c, ltOf(c, 1), 'Perimeter held. Mop-up along the edge.', 'Perímetro dominado. Rescaldo no perímetro.', d + 3000, 5);
+      stageReqs(c, 5, d + 6000);
       /* a rekindle, now and then: the team reports it and invites a step back to Crews on scene */
       if (!c.flags.rekindleAsked && hash(c.key + 'rk') % 3 === 0) { c.flags.rekindleAsked = true;
         say(c, ltOf(c, 0), 'Rekindle on the north flank. Flames back in the brush.', 'Reacendimento no flanco norte. Chamas de volta no mato.', d + 6000, 4);
@@ -643,10 +642,38 @@
     } else if (s === 6) {
       say(c, ltOf(c, 0), 'On watch. No hotspots on the thermal camera.', 'Em vigilância. Sem pontos quentes na câmara térmica.', d + 3000, 8);
       say(c, ltOf(c, 1), 'Released. Heading back to the station.', 'Libertados. A regressar ao quartel.', d + 6000, 3);
+      stageReqs(c, 6, d + 8000);
     }
     /* (Oct 8, 21:06) demo pace: no stage lasts more than 20 s. Then the captain is invited to move on, as the team recommends;
        a lieutenant waits for the captain, who moves it */
   }
+  /* (Oct 11, 07:04) requests from the field, random and varied: before a stage moves on, 0 to 2 requests that make sense in that stage
+     (air support, a drone pass over a named area, a crew that needs rest, a water tender that needs to refill, a dozer line, supplies, a
+     crew to release), each from someone on the fire. The team's recommendation for the next stage waits until each request has an answer
+     (Approve or Not yet) and a few seconds have passed. A request never repeats on the same fire. */
+  var SREQ = {
+    air: { st: [3, 4], t: ['Air support', 'Meio aéreo'], b: function (c) { return ['One helicopter to hold the head before it reaches the homes', 'Um helicóptero para segurar a cabeça antes de chegar às casas']; }, yes: 'approveAir', no: 'declineAir' },
+    drone: { st: [3, 4, 5, 6], t: ['Drone pass', 'Passagem de drone'], b: function (c, z) { return ['A thermal pass over the ' + z[0] + ' to map hotspots', 'Uma passagem térmica sobre ' + z[1] + ' para mapear pontos quentes']; } },
+    rest: { st: [4, 5], t: ['Crew rest', 'Descanso da equipa'], b: function (c, z, u) { return [u + ' crew has been on the line for 12 h and needs relief', 'A equipa do ' + u + ' está na linha há 12 h e precisa de ser rendida']; } },
+    tender: { st: [3, 4, 5], t: ['Water refill', 'Reabastecer água'], b: function (c, z, u, w) { return [w + ' is low on water. 20 min round trip to the nearest hydrant', 'O ' + w + ' está com pouca água. 20 min ida e volta até ao hidrante mais próximo']; } },
+    dozer: { st: [3, 4], t: ['Dozer line', 'Linha de bulldozer'], b: function (c, z) { return ['Cut a dozer line along the ' + z[0] + ' to hold it', 'Abrir uma linha de bulldozer ao longo d' + z[2] + ' para a segurar']; } },
+    supply: { st: [5, 6], t: ['Supplies', 'Abastecimento'], b: function () { return ['Water and food for the crews on the line', 'Água e comida para as equipas na linha']; } },
+    release: { st: [5, 6], t: ['Release a crew', 'Libertar uma equipa'], b: function (c, z, u) { return [u + ' crew is no longer needed on the line. Release them to the station?', 'A equipa do ' + u + ' já não é precisa na linha. Libertá-la para o quartel?']; } }
+  };
+  var ZONES = [['north flank', 'o flanco norte', 'o flanco norte'], ['east ridge', 'a cumeeira a leste', 'a cumeeira a leste'], ['head of the fire', 'a cabeça do incêndio', 'a cabeça do incêndio'], ['south-west edge', 'o limite sudoeste', 'o limite sudoeste'], ['canyon floor', 'o fundo do vale', 'o fundo do vale']];
+  function openReq(c) { return (c.msgs || []).some(function (x) { return x.sreq && !x.done && !x.snooze; }) || (c.queue || []).some(function (q) { return q.m && q.m.sreq; }); }
+  function stageReqs(c, s, d) {
+    if (isLt() || c.drill) return; c.flags.sreqs = c.flags.sreqs || {};
+    var used = c.flags.sreqs, pool = Object.keys(SREQ).filter(function (k) { return SREQ[k].st.indexOf(s) >= 0 && !used[k] && !(k === 'air' && c.flags.air); });
+    var r = Math.random(), n = Math.min(pool.length, r < 0.3 ? 0 : r < 0.75 ? 1 : 2), P = c.people || [];
+    for (var i = 0; i < n; i++) { var k = pool.splice(Math.floor(Math.random() * pool.length), 1)[0], D = SREQ[k]; used[k] = s;
+      var who = (function () { var ok = P.map(function (p, j) { return j; }).filter(function (j) { var p = P[j]; return p && !p.self && !p.left && p.kind !== 'air' && p.kind !== 'police'; }); return ok.length ? ok[Math.floor(Math.random() * ok.length)] : 0; })();
+      var z = ZONES[Math.floor(Math.random() * ZONES.length)], F = (c.forces || []).filter(function (f) { return f.st === 'onscene' && f.veh && f.veh.length; }), fu = F.length ? F[Math.floor(Math.random() * F.length)] : null;
+      var unit = fu ? String(fu.veh[0]).replace(/^\d+\s*×\s*/, '') : 'Engine ' + ((String((c.stations[0] || {}).short || '').match(/\d+/) || ['11'])[0]), wt = 'Water Tender ' + ((String((c.stations[0] || {}).short || '').match(/\d+/) || ['11'])[0]);
+      var B = D.b(c, z, unit, wt), nm = (P[who] || {}).name || 'Crew coordinator';
+      card(c, { sreq: k, req: k === 'air' ? 'air' : undefined, by: who, z: z, unit: unit, tag: { en: 'Request · ' + nm, pt: 'Pedido · ' + nm }, tagC: '#B8360A', title: { en: D.t[0], pt: D.t[1] }, body: { en: B[0], pt: B[1] },
+        actions: [{ key: D.no || 'sreqNo', en: 'Not yet', pt: 'Ainda não' }, { key: D.yes || 'sreqYes', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + i * (7000 + Math.floor(Math.random() * 5000)), 0);
+    } }
   function isLt() { try { var M = window.__wfMine ? window.__wfMine() : null; return !!(M && M.level === 'lead'); } catch (e) { return false; } }
   // the lieutenant of the station at index i (a field voice), else that station's captain
   function ltOf(c, i) { var st = (c.stations[i] || {}).short, j = (c.people || []).findIndex(function (p) { return p.kind === 'lt' && !p.left && !p.self && p.org === st; }); return j >= 0 ? j : lead(c, i); }
@@ -659,7 +686,7 @@
   /* (Oct 9, 09:03) the team's recommendation card for the next stage: one open at a time (no duplicates) */
   function hasOpenRec(c) { return (c.msgs || []).some(function (x) { return x.rec && !x.done; }) || (c.queue || []).some(function (q) { return q.m && q.m.rec; }); }
   function recCard(c, nx, delay) {
-    var R = REC[nx]; if (!R || hasOpenRec(c)) return;
+    var R = REC[nx]; if (!R || hasOpenRec(c) || openReq(c)) return;   /* (Oct 11, 07:04) never while a request waits for an answer: the pace brings it later */
     if (nx === 7) { card(c, closeCard(c, true), delay, 0); return; }
     card(c, { rec: true, to: nx, tag: { en: 'Recommendation', pt: 'Recomendação' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
       actions: [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }] }, delay, 0);   /* (Oct 9, 09:05) Not yet + Move to, as buttons */
@@ -673,7 +700,7 @@
   }
   function paceDue(c, s) {
     if (s === 2) { setStage(c, 3, 300, 3); return; }
-    if (s === 3 && c.flags.air && !isLt()) return;   /* (Oct 9, 17:22) with air support approved, the air story brings the Resolving card (after the drops worked) */   /* (Oct 8, 22:01) en route: the crews reach the fire within 15 s (field-driven, for everyone) */
+    if (s === 3 && c.flags.air && !isLt()) { if (!hasOpenRec(c)) recCard(c, 4, 600); return; }   /* (Oct 11) the drops' message already said it; the card follows once the requests are answered */   /* (Oct 9, 17:22) with air support approved, the air story brings the Resolving card (after the drops worked) */   /* (Oct 8, 22:01) en route: the crews reach the fire within 15 s (field-driven, for everyone) */
     var nx = s + 1, R = REC[nx]; if (!R) return;
     if (isLt()) { captMove(c, nx); return; }
     c.flags['rec' + s] = true;
@@ -721,11 +748,22 @@
   function act(key, a, msgId) {
     var c = load().chats[key]; if (!c) return;
     var P = c.people, us = isUS(c);
-    var mC = msgId ? c.msgs.find(function (x) { return x.id === msgId; }) : null, notYet = !!mC && ['stayStage', 'reqNo', 'declineAir', 'evacNo', 'helpNo'].indexOf(a) >= 0;   /* (Oct 9, 13:49) Not now / Not yet on any confirmation card is no decision: the card stays open and joins the sticky stack */
+    var mC = msgId ? c.msgs.find(function (x) { return x.id === msgId; }) : null, notYet = !!mC && ['stayStage', 'reqNo', 'declineAir', 'evacNo', 'helpNo', 'sreqNo'].indexOf(a) >= 0;   /* (Oct 9, 13:49) Not now / Not yet on any confirmation card is no decision: the card stays open and joins the sticky stack */
     if (notYet) mC.snooze = Date.now();
     /* (Oct 9, 09:07) Not yet on a recommendation is no answer: the card stays open (and sticks to the top when scrolled away) */
     if (mC && !notYet) mC.done = a;
     var me = function (en, pt) { mine(c, en, pt); };
+    if ((a === 'sreqYes' || a === 'sreqNo') && mC && mC.sreq) { c.reqAt = Date.now(); var k0 = mC.sreq, z0 = mC.z || ZONES[0], u0 = mC.unit || 'Engine 11', by = typeof mC.by === 'number' ? mC.by : 0, yes = a === 'sreqYes';
+      var T = { drone: yes ? [['Approved. Fly the ' + z0[0] + '.', 'Aprovado. Sobrevoem ' + z0[1] + '.'], ['Drone D-5 up. Thermal pass on the ' + z0[0] + ' in 5 min.', 'Drone D-5 no ar. Passagem térmica sobre ' + z0[1] + ' em 5 min.']] : [['Not yet. Eyes on the ground for now.', 'Ainda não. Por agora, observação no terreno.'], ['Copy. We keep watching it from the line.', 'Entendido. Continuamos a vigiar da linha.']],
+        rest: yes ? [['Approved. ' + u0 + ' crew, stand down and rest.', 'Aprovado. Equipa do ' + u0 + ', saiam e descansem.'], ['Thanks. Handing over the line and resting at the command post.', 'Obrigado. Passamos a linha e descansamos no posto de comando.']] : [['Not yet. One more hour, then relief.', 'Ainda não. Mais uma hora e depois são rendidos.'], ['Understood. We hold one more hour.', 'Entendido. Aguentamos mais uma hora.']],
+        tender: yes ? [['Go refill. Keep one engine on the edge.', 'Vão reabastecer. Fica um veículo no limite.'], ['Copy. Back with a full tank in 20 min.', 'Entendido. De volta com o tanque cheio em 20 min.']] : [['Not yet. Use what is left on the hot spots.', 'Ainda não. Usem o que resta nos pontos quentes.'], ['Understood. Saving water for the hot spots.', 'Entendido. Guardamos a água para os pontos quentes.']],
+        dozer: yes ? [['Approved. Cut it along the ' + z0[0] + '.', 'Aprovado. Abram-na ao longo d' + z0[2] + '.'], ['Dozer on its way. Line started in 10 min.', 'Bulldozer a caminho. Linha começada em 10 min.']] : [['Not yet. Hand line for now.', 'Ainda não. Linha manual por agora.'], ['Copy. Hand tools on it.', 'Entendido. Ferramentas manuais.']],
+        supply: yes ? [['Approved. Supplies to the command post.', 'Aprovado. Abastecimento para o posto de comando.'], ['Thanks. The crews needed it.', 'Obrigado. As equipas precisavam.']] : [['Not yet. Next round.', 'Ainda não. Na próxima ronda.'], ['Understood.', 'Entendido.']],
+        release: yes ? [['Approved. ' + u0 + ' crew, you are released.', 'Aprovado. Equipa do ' + u0 + ', estão libertados.'], ['Copy. Packing up and heading back.', 'Entendido. A arrumar e a regressar.']] : [['Not yet. Stay on the line a bit longer.', 'Ainda não. Fiquem na linha mais um pouco.'], ['Understood. We stay.', 'Entendido. Ficamos.']] }[k0] || [['OK.', 'OK.'], ['Copy.', 'Entendido.']];
+      me(T[0][0], T[0][1]); say(c, by, T[1][0], T[1][1], 2400, 1);
+      if (yes && k0 === 'drone') card(c, { tag: { en: 'Drone D-5 · ' + z0[0], pt: 'Drone D-5 · ' + z0[1] }, tagC: '#0A66CC', title: { en: 'Thermal pass done', pt: 'Passagem térmica feita' }, body: { en: (1 + Math.floor(Math.random() * 4)) + ' hot spots marked on the ' + z0[0], pt: (1 + Math.floor(Math.random() * 4)) + ' pontos quentes marcados n' + z0[2].replace(/^o /, 'o ').replace(/^a /, 'a ') }, fire: true }, 9000, 5);
+      if (yes && k0 === 'release') { var rf0 = (c.forces || []).find(function (f) { return f.st === 'onscene' && (f.veh || []).some(function (v) { return String(v).indexOf(u0) >= 0; }); }); if (rf0 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) rf0.st = 'released'; }
+      c.updated = Date.now(); save(); emit(); return; }
     if (a === 'reqNo') { me('Not yet. Keep the drone on it.', 'Ainda não. Mantenham o drone no local.'); save(); emit(); return; }
     if (a === 'helpYes') { me('Yes, we can send them.', 'Sim, podemos enviá-los.'); helpSend(c);
       say(c, 0, 'Great, thank you. Report to the command post at ' + c.help.place + ' and I will put your crew on the flank. Call me when you are 10 min out.', 'Ótimo, obrigado. Apresentem-se no posto de comando do ' + c.help.place + ' e ponho a vossa equipa no flanco. Liguem-me a 10 min de chegar.', 2200, 2); c.updated = Date.now(); save(); emit(); return; }
@@ -771,7 +809,7 @@
       me('Update, please.', 'Ponto de situação, por favor.');
       if (P[0]) say(c, 0, 'Almost there, smoke column clearly visible.', 'Quase a chegar, coluna de fumo bem visível.', 2500, 2);
     } else if (a === 'approveAir') {
-      if (c.flags.air) return; c.flags.air = true;
+      if (c.flags.air) return; c.flags.air = true; c.reqAt = Date.now() + 12000;   /* the air story brings its own Ready for Resolving */ c.msgs.forEach(function (x) { if (x.sreq === 'air' && !x.done) x.done = 'approveAir'; });
       me('Air support approved.', 'Meio aéreo aprovado.');
       var heli = us ? 'Helicopter 15' : 'Helicóptero H-21';
       c.air = { name: heli, kind: us ? 'Firefighting helicopter · LAFD Air Operations' : 'Helicóptero de ataque inicial · Força Aérea', st: 'assigned' };
@@ -783,7 +821,7 @@
       if (P[0]) say(c, 0, c.stage === 3 ? 'The drops worked. Head held, no spread. Ready for Resolving.' : 'That did it. The head is slowing down.', c.stage === 3 ? 'As descargas resultaram. Cabeça dominada, sem progressão. Prontos para Em resolução.' : 'Resultou. A cabeça está a abrandar.', 12000, 9);
       if (c.stage === 3 && !isLt()) recCard(c, 4, 14500);
     } else if (a === 'declineAir') {
-      c.flags.airNo = true; me('Not yet. Hold with ground crews for now.', 'Ainda não. Segurem com meios terrestres por agora.');
+      c.flags.airNo = true; c.reqAt = Date.now(); c.msgs.forEach(function (x) { if (x.sreq === 'air' && !x.done && !x.snooze) x.snooze = Date.now(); }); me('Not yet. Hold with ground crews for now.', 'Ainda não. Segurem com meios terrestres por agora.');
       if (P[1]) say(c, 1, 'Understood. We will try, but it is spreading fast.', 'Compreendido. Vamos tentar, mas está a progredir rápido.', 3000, 3);
     } else if (a === 'evacPlan') {
       // From the fire screen's People at risk card: ask the team for an evacuation plan; the nearest coordinator takes it on
@@ -1481,7 +1519,7 @@
           actions: [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }] }, 600, 0); changed = true; }
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
-        if ((!c.flags[pk] || (c.stage >= 4 && !isLt() && !hasOpenRec(c) && !(c.queue || []).length && now - (c.recGone || 0) > 8000)) && now - c.stageAt > 8000)   /* a stage whose card went away (a rekindle, a reload) gets a new one: chip and card always together */   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
+        if (!openReq(c) && now - (c.reqAt || 0) > 9000 && (!c.flags[pk] || (c.stage >= 4 && !isLt() && !hasOpenRec(c) && !(c.queue || []).length && now - (c.recGone || 0) > 8000)) && now - c.stageAt > 8000)   /* (Oct 11, 07:04) never while a request waits for an answer; 9 s after the last answer */   /* a stage whose card went away (a rekindle, a reload) gets a new one: chip and card always together */   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
       if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;
