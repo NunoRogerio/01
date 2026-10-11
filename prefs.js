@@ -770,6 +770,8 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
 (function () {
   var MASK = 'linear-gradient(to bottom, transparent 0, transparent 30%, rgba(0,0,0,0.016) 38.75%, rgba(0,0,0,0.0625) 47.5%, rgba(0,0,0,0.14) 56.25%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.39) 73.75%, rgba(0,0,0,0.56) 82.5%, rgba(0,0,0,0.77) 91.25%, #000 100%)';
   var MASKB = MASK.replace('to bottom', 'to top');
+  /* (Oct 11, 13:23) the end of a screen's scroll: a shorter clear part (10%), then from 20% rising to full at the foot */
+  var MASKE = 'linear-gradient(to bottom, transparent 0, transparent 10%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 70%, rgba(0,0,0,0.85) 85%, #000 100%)';
   var css = document.createElement('style');
   css.textContent = '.wf-stripes:not([data-wf-sp]){display:none!important}' +
     '.wf-spx{position:absolute;left:0;right:0;top:0;z-index:-1;pointer-events:none;border-top-left-radius:inherit;border-top-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +
@@ -778,6 +780,8 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
        action bar) and at the bottom of every panel; strongest at the band's top, clearing towards the bottom edge */
     '.wf-spb{position:absolute;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;border-bottom-left-radius:inherit;border-bottom-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASK + ';mask-image:' + MASK + '}' +
     '.wf-spb-host{isolation:isolate}' +
+    '.wf-spe{display:block;flex:none;position:relative;z-index:-1;height:96px;pointer-events:none;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKE + ';mask-image:' + MASKE + '}.wf-spe-host{isolation:isolate}' +
+    'html.wf-dark .wf-spe{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}' +
     '.wf-spb.wf-spb-edge{z-index:4}' +   /* (Oct 11, 13:13) a blade dropping from the top: its foot is its outer edge, the band lies over the content, strongest at the edge */
     'html.wf-dark .wf-spb{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}';
   (document.head || document.documentElement).appendChild(css);
@@ -807,6 +811,14 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
     document.querySelectorAll('.wf-spx').forEach(function (t) { var b = t.parentElement; if (!b || !b.offsetHeight || tops.indexOf(b) >= 0) return;
       if (bars.some(function (x) { return b.contains(x); })) return; addB(b, 96); });
     document.querySelectorAll('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]').forEach(function (d) { if (d.offsetHeight > 200) addB(d, 96); });
+    /* the end of each screen's scroll (screens that scroll; not the chat, not blades or dialogs): the band over the last 96px of the content */
+    document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap').forEach(function (sc) {
+      var e = sc.querySelector(':scope > .wf-spe'), ok = sc.offsetHeight > H * 0.5 && sc.scrollHeight > sc.clientHeight + 1 && !sc.classList.contains('chscroll') && !sc.closest('[role=dialog], [role=alertdialog], .wf-dlg, .sheet, .blade, .chblade');
+      if (!ok) { if (e) e.remove(); return; }
+      if (!e) { e = document.createElement('span'); e.className = 'wf-spe'; e.setAttribute('aria-hidden', 'true'); sc.classList.add('wf-spe-host'); }
+      if (sc.lastElementChild !== e) sc.appendChild(e);
+      var cs = getComputedStyle(sc), pb = parseFloat(cs.paddingBottom) || 0, gap = /flex|grid/.test(cs.display) ? (parseFloat(cs.rowGap) || 0) : 0;
+      var mt = '-' + Math.max(0, 96 - pb + gap) + 'px', mb = '-' + pb + 'px'; if (e.style.marginTop !== mt) e.style.marginTop = mt; if (e.style.marginBottom !== mb) e.style.marginBottom = mb; });
   } catch (e) {} }
   setInterval(function () { run(); runB(); }, 700); if (document.readyState !== 'loading') { run(); runB(); } else document.addEventListener('DOMContentLoaded', function () { run(); runB(); });
 })();
