@@ -650,9 +650,14 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
       sc.setAttribute('data-wf-nopb', '1'); sc.style.setProperty('padding-bottom', '8px', 'important');
       // 56px between the last content and the footnote, whatever gap the screen's own layout adds
       var prev = f.previousElementSibling; while (prev && (!prev.offsetHeight || getComputedStyle(prev).position === 'absolute')) prev = prev.previousElementSibling;
-      if (prev) { f.style.marginTop = '0px'; var gap = f.getBoundingClientRect().top - prev.getBoundingClientRect().bottom, z = sc.getBoundingClientRect().width / (sc.offsetWidth || 1); f.style.marginTop = Math.round(56 - gap / (z || 1)) + 'px'; }
+      /* (Oct 11, 15:00) measured without ever zeroing the margin: setting it to 0 for a moment shortened the page, so at the very
+         bottom the browser pulled the scroll up and the footnote slipped out of view (the page seemed to scroll up on its own).
+         The margin is written only when it really changes. */
+      var m0 = parseFloat(f.style.marginTop) || 0, want = m0;
+      if (prev) { var z = sc.getBoundingClientRect().width / (sc.offsetWidth || 1) || 1, gap = (f.getBoundingClientRect().top - prev.getBoundingClientRect().bottom) / z - m0; want = Math.round(56 - gap); }
       // (Oct 5, 20:04) short content: the footnote still sits at the bottom of the screen, 8px from the edge
-      var room = sc.clientHeight - sc.scrollHeight; if (room > 0) f.style.marginTop = ((parseFloat(f.style.marginTop) || 0) + room) + 'px'; }
+      var room = sc.clientHeight - (sc.scrollHeight - m0 + want); if (room > 0) want += room;
+      if (Math.abs(want - m0) >= 1) f.style.marginTop = want + 'px'; }
   }
   /* Touch screens keep :hover on the last tapped element (iOS): no hover fill or glow there, only the tap feedback */
   var HS = window.WeakSet ? new WeakSet() : null, touchOnly = window.matchMedia && matchMedia('(hover: none)').matches;
@@ -820,7 +825,7 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
     document.querySelectorAll('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]').forEach(function (d) { if (d.offsetHeight > 200) addB(d, 96); });
     /* the end of each screen's scroll (screens that scroll; not the chat, not blades or dialogs): the band over the last 96px of the content */
     document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap').forEach(function (sc) {
-      var ok = sc.offsetHeight > H * 0.5 && sc.scrollHeight > sc.clientHeight + 1 && !sc.classList.contains('chscroll') && !sc.closest('[role=dialog], [role=alertdialog], .wf-dlg, .sheet, .blade, .chblade');
+      var bl = sc.closest('.sheet, .blade'), pgB = !!(bl && bl.hasAttribute('data-sb') && bl.offsetHeight > H * 0.6), dl = sc.closest('[role=dialog], [role=alertdialog], .wf-dlg, .chblade'), ok = sc.offsetHeight > H * 0.5 && sc.scrollHeight > sc.clientHeight + 1 && !sc.classList.contains('chscroll') && (!dl || pgB && dl === bl) && (!bl || pgB);   /* (Oct 11, 15:00) the fire page's tall page blade counts as a screen */
       var old = sc.querySelector(':scope > .wf-spe'); if (old) old.remove();
       if (!ok) { if (sc.hasAttribute('data-wf-se')) sc.removeAttribute('data-wf-se'); return; }
       var cs = getComputedStyle(sc), pb = parseFloat(cs.paddingBottom) || 0, gap = /flex|grid/.test(cs.display) ? (parseFloat(cs.rowGap) || 0) : 0;
@@ -856,4 +861,17 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
   function later() { if (!q) { q = true; requestAnimationFrame(run); } }
   function go() { later(); try { new MutationObserver(later).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['d', 'style', 'class'] }); } catch (e) {} }
   if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+/* (Oct 11, 15:00, app-wide) Header stripe pattern on every screen header that carries it (incident pages, as on the station home): the
+   stripes run up to the camera and fade in, 0% over the top 30% (the strip under the clock included), rising as t squared to 100% at
+   the header's foot. The station page measures its own; this covers the others. */
+(function () {
+  function tick() { try { document.querySelectorAll('[data-wf-sp]').forEach(function (sp) { if (sp.closest('[data-wf-sthdr]')) return;
+    var r = sp.getBoundingClientRect(); if (!r.height) return; var B = document.body, br = B.getBoundingClientRect(), k = sp.offsetWidth ? r.width / sp.offsetWidth : 1, gap = Math.max(0, r.top - br.top);
+    var tot = r.bottom - r.top + gap, x0 = (0.3 * tot - gap) / k, hpx = r.height / k, x1 = Math.max(0, x0), st = [];
+    for (var q = 0; q <= 8; q++) { var t = q / 8, y = x0 + (hpx - x0) * t; if (y < 0) continue; st.push('rgba(0,0,0,' + (t * t).toFixed(3) + ') ' + y.toFixed(1) + 'px'); }
+    var M = 'linear-gradient(to bottom, ' + (x1 > 0 ? 'transparent 0, ' : '') + st.join(', ') + ')';
+    if (sp.__wfSpM !== M) { sp.__wfSpM = M; sp.style.webkitMaskImage = sp.style.maskImage = M; } }); } catch (e) {} }
+  setInterval(tick, 500); document.addEventListener('DOMContentLoaded', tick); window.addEventListener('load', tick);
 })();

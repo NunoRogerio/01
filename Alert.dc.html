@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791722181"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791726806"></script>
+<script src="prefs.js?v=1791727476"></script>
 <script src="station.js?v=1791726806"></script>
 <script src="i18n.js?v=1791720865"></script>
 <script src="live.js?v=1791726270"></script>
@@ -265,6 +265,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
          four actions fixed at the foot, 2 x 2 -->
     <div data-wf-ighdr="1" data-wf-keepsp="1" style="position: relative; z-index: 4; flex-shrink: 0; padding: 4px 16px 24px; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.08); transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
       <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -56px; height: 56px; background: #F2F2F7"></span>
+      <!-- (Oct 11, 15:00) the stripe pattern on the header, as on the station home --><span aria-hidden="true" class="wf-stripes" data-wf-sp="1" style="--wf-y: rgba(0, 0, 0, 0.075); background: repeating-linear-gradient(-60deg, var(--wf-y) 0 8.49px, transparent 8.49px 16.97px); position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; pointer-events: none"></span>
       <!-- Large-title layout (as iOS): back and the header buttons on the top row, the title under them across the full width, up to two lines -->
       <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 8px; row-gap: 8px; min-width: 0">
         <!-- (Oct 7) no round back: a tap on the incident name (the title) returns to the main screen -->
