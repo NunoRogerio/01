@@ -814,7 +814,11 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
     var S = document.querySelectorAll('.wf-stripes:not([data-wf-sp])');
     for (var i = 0; i < S.length; i++) { var b = blade(S[i]); if (!b || b.matches('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]')) continue;   /* dialogs carry the pattern through their own ::before */ var x = b.querySelector(':scope > .wf-spx');
       if (!x) { x = document.createElement('span'); x.className = 'wf-spx'; x.setAttribute('aria-hidden', 'true'); b.insertBefore(x, b.firstChild); }
+      /* (Oct 11, 19:50) a blade that rises from below and rides its own top edge (the main screen's bottom blade): the pattern sits on that
+         edge and moves with it, as the old strip did; its header is the edge down to the summary, so a fixed 96px band */
+      var tp = S[i].style.top; if (tp && tp !== '0px' && tp !== '0') { if (x.style.top !== tp) { x.style.transition = S[i].style.transition; x.style.top = tp; } if (x.__h !== 96) { x.__h = 96; x.style.height = '96px'; } continue; }
       var h = b.querySelector('h1, h2'), bh = b.getBoundingClientRect(); if (!h || !bh.height) continue; var k = b.offsetHeight ? bh.height / b.offsetHeight : 1;
+      if (h.offsetHeight <= 1) { if (x.__h !== 96) { x.__h = 96; x.style.height = '96px'; } continue; }   /* a hidden heading (screen readers only): the 96px band */
       var blk = h.parentElement && h.parentElement !== b ? h.parentElement : h, hh = Math.max(56, Math.round((blk.getBoundingClientRect().bottom - bh.top) / k) + 16);
       if (x.__h !== hh) { x.__h = hh; x.style.height = hh + 'px'; } } } catch (e) {} }
   /* foot bands: fixed bars (the element right after a scrolling panel, at the foot of the screen or blade, holding controls) take a band
