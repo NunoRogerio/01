@@ -43,7 +43,10 @@
     /* (Oct 11, 00:55) the menu and its settings no longer push or resize the screen: they lie over it. The menu's frame sits inside the
        screen's frame, above the screen and under the menu button, and is uncovered from the right (the icon column, then the section) */
     ifr.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;border:0;z-index:150;visibility:hidden;background:transparent;clip-path:inset(0px 0px 0px 100%);-webkit-clip-path:inset(0px 0px 0px 100%);transition:clip-path ' + DUR + 'ms ' + EASE + ', -webkit-clip-path ' + DUR + 'ms ' + EASE;
-    ifr.addEventListener('load', function () { ready = true; if (want) { var w = want; want = null; w(); } });
+    ifr.addEventListener('load', function () { ready = true;
+      /* (Oct 11, 08:33) lying over the screen, the menu's page is see-through: only the icon column and the open section paint, never a light strip beside them */
+      try { var d = ifr.contentDocument, st = d.createElement('style'); st.textContent = 'html.wf-see,html.wf-see body{background:transparent!important}'; d.documentElement.classList.add('wf-see'); d.head.appendChild(st); } catch (e) {}
+      if (want) { var w = want; want = null; w(); } });
     var h = host(); if (h) { h.style.position = 'relative'; h.appendChild(ifr); } else document.body.appendChild(ifr);
     return ifr;
   }
@@ -73,7 +76,7 @@
     var poly = 'polygon(-24px -80px, ' + c + 'px -80px, ' + c + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t + 52) + 'px, ' + c + 'px ' + (t + 52) + 'px, ' + c + 'px ' + H + 'px, -24px ' + H + 'px)';   /* (Oct 9, 15:49) the cut reaches above the top, so the header's colour still fills the strip under the clock */
     h.style.clipPath = h.style.webkitClipPath = poly; }
   function slide(m) { if (!ifr) return; var cp = m === 'open' ? 'inset(0px 0px 0px 0px)' : m === 'rail' ? 'inset(0px 0px 0px calc(100% - 60px))' : 'inset(0px 0px 0px 100%)';
-    ifr.style.clipPath = ifr.style.webkitClipPath = cp; return; }
+    ifr.style.clipPath = ifr.style.webkitClipPath = cp; try { var de = ifr.contentDocument.documentElement; if (m === 'open') de.classList.remove('wf-see'); else setTimeout(function () { if (mode !== 'open') de.classList.add('wf-see'); }, m ? 0 : DUR); } catch (e) {} return; }   /* the open section keeps its page; the icon column alone is see-through around it */
   function slideOld(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
     var ease = DUR + 'ms ' + EASE; p.style.willChange = 'transform, clip-path';
     if (m && !p.style.clipPath) { p.style.transition = 'none'; p.style.clipPath = p.style.webkitClipPath = 'inset(-80px 0px 0px -24px)'; void p.offsetWidth; }
