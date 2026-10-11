@@ -439,7 +439,7 @@ window.__wfRegionUp = function (st, co) {
   // Likelihood tags (Oct 3, 20:47): the stage tags' formula without the icon: an opaque light background with its own deep
   // text colour (4.5:1 or more). 60% is already a high risk, so blue is only for under 45%; from 45% warm tones rise:
   // 45-59 yellow, 60-74 orange, 75-89 deep orange-red, 90-100 purple
-  window.__wfConfTag=function(c){c=+c||0;return c>=90?{fg:'#6B2FA3',bg:'#EADCF8'}:c>=75?{fg:'#A8300F',bg:'#FCD9C9'}:c>=60?{fg:'#8A4B00',bg:'#FDE1B8'}:c>=45?{fg:'#6B5300',bg:'#FFF1B8'}:{fg:'#1F64A6',bg:'#E3EEFB'};};
+  /* (Oct 11, 00:53) likelihood as a heat scale of three yellows: light (under 60%), yellow (60 to 79%), strong (80% and over); one colour for the label and the figure */window.__wfConfTag=function(c){c=+c||0;return c>=80?{fg:'#4A3600',bg:'#FFC93C'}:c>=60?{fg:'#574200',bg:'#FFE680'}:{fg:'#5E4B00',bg:'#FFF5C7'};};
   window.__wfConfTxt=function(c){return c>75?'#7A3FE0':c>=50?'#0A66CC':'#48484A';};
   window.__wfAMZ=['Acre','Amapá','Amazonas','Maranhão','Mato Grosso','Pará','Rondônia','Roraima','Tocantins'];
   // Row filter for an area: a state id, or 'US' (all states) or 'AMZ' (the Legal Amazon states of Brazil).

@@ -40,10 +40,11 @@
   function frame() {
     if (ifr) return ifr;
     ifr = document.createElement('iframe'); ifr.src = 'Main.dc.html?menu=1'; ifr.title = 'Menu'; ifr.setAttribute('allow', 'web-share; clipboard-write');
-    ifr.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;border:0;z-index:0;visibility:hidden;background:#F2F2F7';
+    /* (Oct 11, 00:55) the menu and its settings no longer push or resize the screen: they lie over it. The menu's frame sits inside the
+       screen's frame, above the screen and under the menu button, and is uncovered from the right (the icon column, then the section) */
+    ifr.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;border:0;z-index:150;visibility:hidden;background:transparent;clip-path:inset(0px 0px 0px 100%);-webkit-clip-path:inset(0px 0px 0px 100%);transition:clip-path ' + DUR + 'ms ' + EASE + ', -webkit-clip-path ' + DUR + 'ms ' + EASE;
     ifr.addEventListener('load', function () { ready = true; if (want) { var w = want; want = null; w(); } });
-    document.body.insertBefore(ifr, document.body.firstChild);
-    var h = host(); if (h) { h.style.position = 'relative'; h.style.zIndex = '1'; }
+    var h = host(); if (h) { h.style.position = 'relative'; h.appendChild(ifr); } else document.body.appendChild(ifr);
     return ifr;
   }
   function send(m) { try { ifr.contentWindow.postMessage({ wfMenu: m }, location.origin); } catch (e) {} }
@@ -59,7 +60,7 @@
     btn.style.left = (to ? (h.offsetWidth - 8 - 44) : restL) + 'px';
     clearTimeout(ct); ct = setTimeout(function () { btn.style.transition = ''; if (!to) btn.__restL = null; try { if (btn.animate) btn.animate([{ translate: '0px 0' }, { translate: (2 * d) + 'px 0', offset: 0.4 }, { translate: (-d) + 'px 0', offset: 0.75 }, { translate: '0px 0' }], { duration: 200, easing: 'ease-out' }); if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} if (to && mode) btn.setAttribute('data-wf-x', '1'); }, (to ? 0 : back()) + BD - 40); }
   // while the menu shows, touches go through the screen's frame to the menu underneath (the screen itself and the button keep theirs)
-  function through(on) { var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
+  function through(on) { on = false;   /* (Oct 11) the menu lies over the screen: nothing passes through */ var h = host(), p = page(); if (h) h.style.pointerEvents = on ? 'none' : ''; if (p) p.style.pointerEvents = on ? 'auto' : ''; if (btn) btn.style.pointerEvents = 'auto'; }
   // (Oct 4, 15:56) as on the main screen: the screen slides to the RIGHT and rests under the icon column (cut at the column's edge,
   // wiping the column in as it goes); folded to the column it stays in place, cut at the column; closing, it slides back from the right
   // (Oct 8, 14:30) the icon column stays on top and still: while a section is open or the menu is folded to its icons, the screen's
@@ -71,7 +72,9 @@
     var W = dw(), H = h.offsetHeight, t = btn ? (parseFloat(btn.style.top) || 0) : 0, c = W - 60;
     var poly = 'polygon(-24px -80px, ' + c + 'px -80px, ' + c + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t + 52) + 'px, ' + c + 'px ' + (t + 52) + 'px, ' + c + 'px ' + H + 'px, -24px ' + H + 'px)';   /* (Oct 9, 15:49) the cut reaches above the top, so the header's colour still fills the strip under the clock */
     h.style.clipPath = h.style.webkitClipPath = poly; }
-  function slide(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
+  function slide(m) { if (!ifr) return; var cp = m === 'open' ? 'inset(0px 0px 0px 0px)' : m === 'rail' ? 'inset(0px 0px 0px calc(100% - 60px))' : 'inset(0px 0px 0px 100%)';
+    ifr.style.clipPath = ifr.style.webkitClipPath = cp; return; }
+  function slideOld(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
     var ease = DUR + 'ms ' + EASE; p.style.willChange = 'transform, clip-path';
     if (m && !p.style.clipPath) { p.style.transition = 'none'; p.style.clipPath = p.style.webkitClipPath = 'inset(-80px 0px 0px -24px)'; void p.offsetWidth; }
     p.style.transition = 'transform ' + ease + ', clip-path ' + ease + ', -webkit-clip-path ' + ease;
@@ -109,7 +112,7 @@
     place(); mode = r ? 'rail' : 'open'; through(true); ifr.style.visibility = 'visible'; send(r ? 'openrail' : 'open');
     /* (Oct 9, 17:15) the button stays on top, where it is, and turns into the X as the column comes in; the pill-shaped column starts 32px under it */
     if (btn) { clearTimeout(btn.__zT); btn.style.transition = ''; btn.style.zIndex = ''; btn.setAttribute('data-wf-x', '1'); try { ifr.contentWindow.postMessage({ wfMenu: 'btop', t: Math.round(parseFloat(btn.style.top) || 0) }, location.origin); } catch (e) {} }
-    holdCtl(); slide(mode);
+    slide(mode);
   }
   /* (Oct 9, 18:27) the header's other round buttons (notifications) never move while the screen narrows or widens: each frame they are held at the
      place they had on screen when the motion began (any drift from the reflow is cancelled), until the motion has ended */
@@ -123,7 +126,7 @@
     (function f() { var B = ctlB(), z = k() || 1;
       if (B.length === pinX.length) B.forEach(function (b, i) { var cur = parseFloat((b.style.translate || '0').split(' ')[0]) || 0, d = (pinX[i] - (b.getBoundingClientRect().left - cur * z)) / z; b.style.translate = Math.abs(d) < 0.1 ? '' : d.toFixed(2) + 'px 0px'; });
       if (mode || performance.now() < pinEnd) holdT = requestAnimationFrame(f); else { B.forEach(function (b) { b.style.translate = ''; }); pinX = null; } })(); }
-  function close() { holdCtl(true);
+  function close() {
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     mode = ''; moving = Date.now() + DUR + 100; send('close'); slide(''); through(false);
     /* (Oct 9, 15:42) the screen slides back over the column's X; once it has covered it, the button is the header's menu button again */
@@ -138,7 +141,7 @@
       /* (Oct 8, 14:00) a dialog in the menu while the screen rests on the icon column: the screen slides out all the way so the dialog shows whole; it comes back to the column when the dialog closes */
       if (m === 'dlgon' && mode === 'rail') { dlgRail = true; mode = 'open'; slide('open'); } else if (m === 'dlgoff' && dlgRail) { dlgRail = false; if (mode) { mode = 'rail'; slide('rail'); } }
       /* (Oct 8, 22:28) a dialog is on top of everything: while it shows, the menu (where it lives) rises above the screen's edge and the button */
-      if (ifr) { clearTimeout(ifr.__zT); if (m === 'dlgon') ifr.style.zIndex = '300'; else ifr.__zT = setTimeout(function () { ifr.style.zIndex = '0'; }, 450); }
+      if (ifr) { clearTimeout(ifr.__zT); if (m === 'dlgon') ifr.style.zIndex = '300'; else ifr.__zT = setTimeout(function () { ifr.style.zIndex = '150'; }, 450); }
       return; }   // (Oct 4) a dialog in the menu: the button gives way
     if (m === 'rail' && mode) { mode = 'rail'; slide('rail'); } else if (m === 'open' && mode) { mode = 'open'; slide('open'); } else if (m === 'close' && mode) close(); });
   // keep the button on its spot while the screen is showing (the screen can re-render or resize)

@@ -847,9 +847,11 @@
   ];
   function intentOf(t) { for (var i = 0; i < INTENTS.length; i++) if (INTENTS[i][1].test(t)) return INTENTS[i][0]; return 'other'; }
   function areaNow(c) {   // hectares burning, growing until the head is held
-    if (c.realHa) return c.realHa;   // the published burnt area
-    var S = stats(c), H = c.hist || [], on = H.find(function (h) { return h.s === 3; }), held = H.find(function (h) { return h.s === 4; });
-    if (c.stage < 3 || !on) return Math.max(0.3, Math.round(S.ha * 0.08 * 10) / 10);
+    if (c.realHa && !/SIM-/.test(String(c.incId || c.id || c.key || ''))) return c.realHa;   // the published burnt area (a simulated fire grows towards its own)
+    var S = stats(c), H = c.hist || [], on = H.find(function (h) { return h.s === 3; }), held = H.find(function (h) { return h.s === 4; }), a1 = H.find(function (h) { return h.s === 1; });
+    if (c.closed || c.stage >= 4) return S.ha;
+    /* (Oct 11, 00:46) the burned area keeps growing as the fire goes on: from First alert it spreads until crews are on scene, then slower until the head is held */
+    if (c.stage < 3 || !on) return Math.max(0.3, Math.round(S.ha * Math.min(0.25, 0.08 + (a1 ? (vnow(c) - a1.vt) / (60 * MIN) * 0.17 : 0)) * 10) / 10);
     if (held) return S.ha;
     var f = Math.min(0.95, 0.25 + (vnow(c) - on.vt) / (150 * MIN));
     return Math.round(S.ha * f * 10) / 10;
@@ -1673,10 +1675,29 @@
       return c && !c.dismissed && c.stage >= 1 ? Math.min(7, c.stage) : null; } catch (e) { return null; } }
   function stageIdx(f) { var cs = chatStage(f); if (cs != null) return cs; var I = (f && f.info) || {}, sc = /^F-/.test((f && f.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
     if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6; return stageFromCode(sc); }
+  function fireMeta(id, c) {   /* (Oct 10, 23:52) one stage button everywhere, the chat as the reference: the fire's burned area and time active as its chat has them ("8 ac. 1 d 7 h"); the live feed only for a fire with no chat */
+      try { var PT = window.__wfLang === 'pt', raw = String(id || '').replace(/^f:/, ''); if (!c && raw) c = chatFor({ kind: 'fire', id: raw });
+        if (c && c.kind !== 'dm' && !c.dismissed && (c.kind === 'fire' || c.stage >= 1)) { var ha = areaNow(c) || c.ha || 0, us = isUS(c), end = c.closed ? (c.closedVt || vnow(c)) : vnow(c), t0 = since(c);
+          var size = ha ? (us && !PT ? Math.round(ha * 2.471) + ' ac' : (Math.round(ha * 10) / 10) + ' ha') : '', on = t0 ? fmtDur(Math.max(0, end - t0)) : ''; return [size, on].filter(Boolean).join('. '); }
+        var F = window.__wfLiveFires || [], r = F.find(function (q) { return q && (q[2] === raw || q[2] === 'F-' + raw || ('F-' + q[2]) === raw); }), I = (r && r[9]) || {};
+        var ha2 = I.ha || (r && r[8]) || 0, ac2 = I.ac || (ha2 ? Math.round(ha2 * 2.471) : 0), t2 = I.startMs || 0, usr = !(r && r[0] === 'PT');
+        return [ac2 ? (usr && !PT ? ac2 + ' ac' : (Math.round((ha2 || ac2 / 2.471) * 10) / 10) + ' ha') : '', t2 ? fmtDur(Math.max(0, Date.now() - t2)) : ''].filter(Boolean).join('. '); } catch (e) { return ''; } }
   function stageTag(f) { var i = stageIdx(f), S = STAGES[i] || STAGES[2], I = (f && f.info) || {}, conf = /^Confirmed from /.test((f && f.note) || '');
     // (Oct 3, 22:23) the label is the stage's own name, so words, colour and icon always agree (the feed's wording, e.g. "Not contained", spans several stages)
-    return { i: i, label: PT() ? S.pt : S.en, src: I.stEn || I.st || (conf ? 'Confirmed' : 'Active'), fg: S.c, bg: S.bg, ic: ICON[S.icon], en: S.en }; }
+    return { i: i, label: PT() ? S.pt : S.en, src: I.stEn || I.st || (conf ? 'Confirmed' : 'Active'), fg: S.c, bg: S.bg, ic: ICON[S.icon], en: S.en, meta: f && f.id != null ? fireMeta(f.id) : '' }; }   /* (Oct 11) every stage tag carries the burned area and time active */
   window.__wfStageTag = stageTag;
+  /* (Oct 11, 00:46) a stage icon sits 8px from its label as drawn: each stage icon's box is cropped to the glyph's own width (the
+     icons are drawn narrower than their 24px square, which left 15px or more between the glyph and the label) */
+  (function () { var D = {}, busy = false; Object.keys(ICON).forEach(function (k) { if (ICON[k]) D[ICON[k]] = 1; });
+    var crop = function () { busy = false; try { var L0 = document.querySelectorAll('svg > path[d]');
+      for (var i = 0; i < L0.length; i++) { var pa = L0[i], d = pa.getAttribute('d'); if (!D[d]) continue; var sv = pa.parentNode; if (!sv || sv.children.length !== 1 || !sv.getBBox) continue;
+        if (sv.getAttribute('data-wfc') === d && sv.getAttribute('viewBox') !== '0 0 24 24' && sv.style.width) continue;
+        var bb; try { bb = pa.getBBox(); } catch (e) { continue; } if (!bb || !bb.width) continue;
+        var h = sv.getBoundingClientRect().height || +sv.getAttribute('height') || 24, k = h / 24, x0 = Math.max(0, bb.x - 1.2), w = Math.min(24, bb.width + 2.4);
+        sv.setAttribute('data-wfc', d); sv.setAttribute('viewBox', x0.toFixed(2) + ' 0 ' + w.toFixed(2) + ' 24'); sv.style.setProperty('width', (w * k).toFixed(1) + 'px', 'important'); } } catch (e) {} };
+    var go = function () { if (busy) return; busy = true; requestAnimationFrame(crop); };
+    var start = function () { try { new MutationObserver(go).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['d', 'viewBox', 'style'] }); } catch (e) {} go(); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start(); })();
   // Chats and their counts follow the selected region: an incident chat belongs to its place; a direct message to its
   // country or state (Portugal never shows Brazil's or the US's messages)
   function inScope(c, SC) { if (!SC || !SC.st || !c || !c.st) return true;
@@ -1689,13 +1710,7 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: function (id, c) {   /* (Oct 10, 23:52) one stage button everywhere, the chat as the reference: the fire's burned area and time active as its chat has them ("8 ac. 1 d 7 h"); the live feed only for a fire with no chat */
-      try { var PT = window.__wfLang === 'pt', raw = String(id || '').replace(/^f:/, ''); if (!c && raw) c = chatFor({ kind: 'fire', id: raw });
-        if (c && c.kind !== 'dm' && !c.dismissed && (c.kind === 'fire' || c.stage >= 1)) { var Z = stats(c) || {}, ha = Z.ha || c.ha || 0, us = isUS(c), end = c.closed ? (c.closedVt || vnow(c)) : vnow(c), t0 = since(c);
-          var size = ha ? (us && !PT ? Math.round(ha * 2.471) + ' ac' : (Math.round(ha * 10) / 10) + ' ha') : '', on = t0 ? fmtDur(Math.max(0, end - t0)) : ''; return [size, on].filter(Boolean).join('. '); }
-        var F = window.__wfLiveFires || [], r = F.find(function (q) { return q && (q[2] === raw || q[2] === 'F-' + raw || ('F-' + q[2]) === raw); }), I = (r && r[9]) || {};
-        var ha2 = I.ha || (r && r[8]) || 0, ac2 = I.ac || (ha2 ? Math.round(ha2 * 2.471) : 0), t2 = I.startMs || 0, usr = !(r && r[0] === 'PT');
-        return [ac2 ? (usr && !PT ? ac2 + ' ac' : (Math.round((ha2 || ac2 / 2.471) * 10) / 10) + ' ha') : '', t2 ? fmtDur(Math.max(0, Date.now() - t2)) : ''].filter(Boolean).join('. '); } catch (e) { return ''; } }, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
+    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: fireMeta, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return chatFor(inc); },

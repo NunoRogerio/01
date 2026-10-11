@@ -1676,3 +1676,11 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **My messages (Oct 11):** carry "You" on top, as the others carry their name; the bubble is 10% white.
 - **Structures are now safe (Oct 11):** that notification is left out of the story for now.
 - **Sticky card header (Oct 11):** the card's tag in bold on the left, its time stamp in normal text (16px regular) on the right, as on the card band.
+- **Likelihood heat scale (Oct 11):** three yellows: light (under 60%), yellow (60 to 79%), strong (80% and over); the label and the figure share one colour (live.js `__wfConfTag`).
+- **Stage meta everywhere (Oct 11):** every stage button and band carries the burned area and the time active (a declared candidate's card too); the burned area grows as the fire goes on (from First alert until crews are on scene, then slower until held; final from Resolving).
+- **Stage icon gap (Oct 11):** the stage icon's box is cropped to the drawn glyph, so the label sits 8px from the icon as seen (chat.js).
+- **Incident page stage tag (Oct 11):** 16px under the title block, in three parts 4px apart: the stage (icon and name), the burned area, the time active; the name wraps, never cut.
+- **Candidate page hands over to its chat (Oct 11):** as a fire's, a candidate with a chat opens as the blade over its chat.
+- **Menu and settings lie over the screen (Oct 11):** they no longer push or resize it; the icon column and the section are uncovered from the right over the screen, which stays still.
+- **Mutual aid tag (Oct 11):** on the incident card's title line, at the right.
+- **Resource rows (Oct 11):** the status tag and the chevron are centred on the title's first line.
