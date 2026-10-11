@@ -872,6 +872,13 @@
       card(c, { tag: { en: 'Cal OES · FMAG', pt: 'Cal OES · FMAG' }, tagC: '#0A66CC', title: { en: 'FMAG requested from FEMA', pt: 'FMAG pedido à FEMA' }, body: { en: 'Fire Management Assistance Grant for the ' + fireNm(c) + ', sent to the FEMA Regional Administrator: the fire threatens such destruction as would constitute a major disaster.', pt: 'Fire Management Assistance Grant para ' + fireNm(c) + ', enviado ao Administrador Regional da FEMA: o incêndio ameaça uma destruição equivalente a uma catástrofe.' } }, 400, 0);
       card(c, { tag: { en: 'FEMA · FMAG', pt: 'FEMA · FMAG' }, tagC: '#0A66CC', title: { en: 'FMAG approved', pt: 'FMAG aprovado' }, body: { en: '75% federal cost share for eligible firefighting costs (camps, equipment, supplies, mobilization).', pt: 'Comparticipação federal de 75% nos custos elegíveis do combate (acampamentos, equipamento, abastecimentos, mobilização).' } }, 9000, 0); }
     c.updated = Date.now(); save(); emit(); }
+  /* (Oct 11, 20:50) the government's own view, on the main screen: what waits for it and what is out, across the area's incident chats */
+  function govSummary(inSc) { var L = Object.keys(load().chats).map(function (k) { return load().chats[k]; }).filter(function (c) { return c && c.kind !== 'dm' && !c.dismissed && (!inSc || inSc(c)); });
+    var pend = L.filter(function (c) { return !c.closed && (c.msgs || []).some(function (m) { return m.govOnly && (m.actions || []).length && !m.done; }); });
+    var ordered = L.filter(function (c) { return !c.closed && c.flags && c.flags.maFilled; }).length;
+    var units = L.filter(function (c) { return !c.closed; }).reduce(function (a, c) { return a + (c.forces || []).filter(function (f) { return f.st === 'enroute' || f.st === 'onscene'; }).length; }, 0);
+    var R = {}; pend.forEach(function (c) { if (c.incId) R[String(c.incId)] = 1; }); window.__wfGovReq = R;
+    return { pend: pend, ordered: ordered, units: units }; }
   function fmtMin(m) { m = Math.round(m); return m >= 60 ? Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min'; }
 
   // How long each stage plausibly lasts before the fire owner moves it on (minutes)
@@ -1972,7 +1979,7 @@
       if (P.length && c.stage >= 1 && c.stage <= 6) { var a = reply(c, P[0][1], 'status', '').map(function (t) { return String(t).replace(/^(Copy|Copiado|Recebido|Entendido)[.,!]\s*/i, ''); }); a = a.map(function (t) { return t.charAt(0).toUpperCase() + t.slice(1); }); say(c, P[0][1], (PT ? 'Ponto de situação: ' : 'Where we are: ') + a[0], a[1], 1200 + P.length * 600 + 400, 1); }
       c.updated = Date.now(); save(); emit(); },
     veh: function (c, i) { return c && c.stations && c.stations[i] ? vehiclesFor(c, c.stations[i], i) : []; },
-    send: send, act: act, isGov: isGov, icOf: icOf, govActions: govActions, dispatched: dispatched, pend: pend, simulate: simulate,
+    send: send, act: act, isGov: isGov, icOf: icOf, govActions: govActions, govSummary: govSummary, dispatched: dispatched, pend: pend, simulate: simulate,
     ai: { key: rawKey, on: function () { return !!rawKey() && !aiOff(); }, status: function () { return aiStatus(); },
       setOn: function (v) { try { if (v) localStorage.removeItem('wf-ai-off'); else localStorage.setItem('wf-ai-off', '1'); } catch (e) {} emit(); },
       set: function (k, cb) { k = String(k || '').trim(); try { if (k) localStorage.setItem(AIK, k); else { localStorage.removeItem(AIK); localStorage.removeItem(AIS); } } catch (e) {} emit();

@@ -16,16 +16,16 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791752000"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791753000"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791752000"></script>
-<script src="station.js?v=1791752000"></script>
+<script src="prefs.js?v=1791753000"></script>
+<script src="station.js?v=1791753000"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791752000"></script>
+<script src="chat.js?v=1791753000"></script>
 <script src="tour.js?v=1791734035"></script>
 <script src="mapsearch.js?v=5"></script>
-<script src="stats.js?v=1791752000"></script>
+<script src="stats.js?v=1791753000"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -245,6 +245,13 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <span aria-hidden="true" data-wf-burger-spot="1" class="opt" style="visibility: {{pm.spotVis}}; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 8px 0 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></span>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-label="Open the area menu" data-pull-go="1" style="position: absolute; left: 50%; bottom: 0; width: 120px; height: 29px; margin-left: -60px; display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; padding: 0 0 8px; border: 0; border-radius: 12px; background: transparent; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></button>
   </header>
+  <!-- (Oct 11, 20:50) a government body's own line under the area: the requests that climbed the chain and wait for it (red), the strike
+       teams or reinforcement groups it sent, the units out on the area's fires; a tap opens the incident chats -->
+  <div data-wf-govtags="1" style="position: relative; display: {{gv.d}}; flex-wrap: wrap; gap: 8px; margin-top: -8px; padding: 0 16px 16px">
+    <sc-for list="{{gv.tags}}" as="t" hint-placeholder-count="2">
+      <button type="button" class="opt" onClick="{{gv.open}}" style="display: inline-flex; align-items: center; height: 28px; padding: 4px 8px; box-sizing: border-box; border: 0; border-radius: 8px; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap; cursor: pointer">{{t.txt}}</button>
+    </sc-for>
+  </div>
   </div>
 
   <div style="position: relative; z-index: 2; flex-grow: 1; pointer-events: none"></div>
@@ -1908,6 +1915,12 @@ class Component extends DCLogic {
     }));
     return {
       ...(() => { const ntV = this.wfNotes(CANDS, FIRES, scope, listFocus); return { nt: ntV, cb: this.wfChats(ntV.title) }; })(),
+      gv: (() => { const C = window.__wfChat, off = { d: 'none', tags: [], open: null }; if (!C || !C.isGov || !C.isGov() || !C.govSummary) return off;
+        const SC = this.wfScope(), G = C.govSummary((c) => (C.inScope ? C.inScope(c, SC) : true)), PTL = window.__wfLang === 'pt', L = (en, pt) => (PTL ? pt : en), us = SC.st !== 'PT', T = [];
+        const n = G.pend.length; if (n) T.push({ txt: n + ' ' + (us ? L(n === 1 ? 'mutual aid request' : 'mutual aid requests', n === 1 ? 'pedido de ajuda mútua' : 'pedidos de ajuda mútua') : L(n === 1 ? 'reinforcement request' : 'reinforcement requests', n === 1 ? 'pedido de reforço' : 'pedidos de reforço')), bg: 'rgba(179,0,27,0.12)', fg: '#B3001B' });
+        if (G.ordered) T.push({ txt: G.ordered + ' ' + (us ? L(G.ordered === 1 ? 'strike team order' : 'strike team orders', 'ordens de strike teams') : L('GRIR committed', G.ordered === 1 ? 'GRIR empenhado' : 'GRIR empenhados')), bg: 'rgba(118,118,128,0.14)', fg: 'var(--wf-ink2, #3A3A3C)' });
+        if (G.units) T.push({ txt: G.units + ' ' + L(G.units === 1 ? 'unit on the fires' : 'units on the fires', G.units === 1 ? 'meio nos incêndios' : 'meios nos incêndios'), bg: 'rgba(118,118,128,0.14)', fg: 'var(--wf-ink2, #3A3A3C)' });
+        return { d: T.length ? 'flex' : 'none', tags: T, open: (e) => { if (e && e.preventDefault) e.preventDefault(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ cbOpen: true, ntOpen: false, scOpen: false }); } }; })(),
       ch: (() => { const C = window.__wfChat; if (!C) return { badgeD: 'none', n: '', aria: 'Assignments', open: null };
         // The system calls the coordinator when a candidate appears in the area: a chat starts for the most likely one
         const top = CANDS.slice().sort((a, b) => b.conf - a.conf)[0]; if (top && window.__wfLiveMap) C.autoStart(C.incCand(top));

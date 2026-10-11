@@ -14,10 +14,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791752000"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791753000"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791752000"></script>
-<script src="station.js?v=1791752000"></script>
+<script src="prefs.js?v=1791753000"></script>
+<script src="station.js?v=1791753000"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
 
@@ -1898,8 +1898,8 @@ class Component extends DCLogic {
     /* (Oct 7) mutual aid: on a captain's or team lead's maps, incidents outside the station's area that the station answers carry a thin outer ring */
     { const mine = window.__wfMine ? window.__wfMine() : null, aidAt = (x, y) => { if (!mine || x == null || y == null || !window.__wfIncidentFor) return false; const ll = window.__wfIncLatLon(x, y); return window.__wfIncidentFor(ll[0], ll[1]) === 'aid'; };
       const P0 = this.props || {}, IX = {}; (Array.isArray(P0.ignitions) ? P0.ignitions : []).forEach((g) => { IX[g.id] = g; });
-      (OUT.fireMarks || []).forEach((m) => { m.aidD = m.flameD === 'block' && m._g && aidAt(m._g.x, m._g.y) ? 'block' : 'none'; });
-      (OUT.ignMarks || []).forEach((m) => { const g = IX[m._id]; m.aidD = g && aidAt(g.x, g.y) ? 'block' : 'none'; m.aidR = +(8.47 + (m.bdW || 5.2) * 0.77 / 2 + 4).toFixed(1); });
+      const GR = window.__wfGovReq || {}; (OUT.fireMarks || []).forEach((m) => { m.aidD = m.flameD === 'block' && m._g && (aidAt(m._g.x, m._g.y) || GR[String(m._g.id)]) ? 'block' : 'none'; });   /* (Oct 11, 20:50) the government's map: a fire whose request waits for it carries the outer ring */
+      (OUT.ignMarks || []).forEach((m) => { const g = IX[m._id]; m.aidD = g && (aidAt(g.x, g.y) || GR[String(m._id)]) ? 'block' : 'none'; m.aidR = +(8.47 + (m.bdW || 5.2) * 0.77 / 2 + 4).toFixed(1); });
       /* (Oct 11, 19:40) a crew's map (Captain, Engineer, Firefighter): its own station's area, and the battalion around it as a fainter dashed outline */
       OUT.batAreaD = (P0.area === true || P0.area === 'true') && mine && mine.rank !== 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : '';
       OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && mine.rank === 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }   /* (Oct 11, 19:10) the Battalion Chief's map: his battalion's area (the Comandante's: the brigade's municipality) */
