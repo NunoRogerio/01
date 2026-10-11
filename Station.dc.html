@@ -14,15 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791741600"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791742800"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791741600"></script>
-<script src="station.js?v=1791741600"></script>
+<script src="prefs.js?v=1791742800"></script>
+<script src="station.js?v=1791742800"></script>
 <script src="menu.js?v=1791716515"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791741600"></script>
+<script src="chat.js?v=1791742800"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -600,7 +600,10 @@ class Component extends DCLogic {
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min((window.__wfVP && window.__wfVP.w) || 390, 600) - 32, H = 280;   /* (Oct 10, 20:20, fix) the card's width in the page's own frame (fit.js), not the phone's: on a wider phone the map overflowed the card and cut the full-screen button */
     let fx = S.x, fy = S.y, z = 1.4;
-    if (A && A.rings && A.rings.length) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; A.rings.forEach((rg) => rg.forEach((q) => { const x = (q[1] + 118.13) * 2345 + 518, y = (34.19 - q[0]) * 2829 + 662; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }));
+    /* (Oct 11, 19:40) the Battalion Chief's map frames the whole battalion: every station's area and every station, so none is off the map */
+    const BAx = MINE && MINE.rank === 'bc' && window.__wfBattalion ? (window.__wfBattalion(S) || []) : [], BAr = BAx.map((b) => window.__wfStationArea(b)).filter((a) => a && a.rings && a.rings.length);
+    if ((A && A.rings && A.rings.length) || BAr.length) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; const add = (la, lo) => { const x = (lo + 118.13) * 2345 + 518, y = (34.19 - la) * 2829 + 662; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); };
+      (BAr.length ? BAr : [A]).forEach((a) => a.rings.forEach((rg) => rg.forEach((q) => add(q[0], q[1])))); BAx.forEach((b) => add(b.lat, b.lon));
       items.forEach((q) => { const x = q.kind === 'fire' ? q.r[5] : q.r[7], y = q.kind === 'fire' ? q.r[6] : q.r[8]; if (x == null) return; x0 = Math.min(x0, x - 12); x1 = Math.max(x1, x + 12); y0 = Math.min(y0, y - 12); y1 = Math.max(y1, y + 12); });   /* the incidents too, so mutual aid is in view */
       z = Math.max(0.3, Math.min((W - 32 - 92) / Math.max(1, x1 - x0), (H - 96) / Math.max(1, y1 - y0))); fx = (x0 + x1) / 2 + 30 / z; fy = (y0 + y1) / 2 - 16 / z; }   /* clear of the map controls on the right and the legend at the top */
     /* (Oct 11, 09:04) the map shows what the list shows: a candidate its chat declared a fire is a fire on the map (its stage round), never a candidate */

@@ -14,10 +14,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791741600"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791742800"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791741600"></script>
-<script src="station.js?v=1791741600"></script>
+<script src="prefs.js?v=1791742800"></script>
+<script src="station.js?v=1791742800"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
 
@@ -101,7 +101,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </svg>
     <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
       <!-- (Oct 7) the station's area (captain and team lead maps): a subtle thin outline, no fill -->
-      <path d="{{stAreaD}}" fill="none" stroke="#3A3A3C" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+<path d="{{batAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+            <path d="{{stAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
            wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
@@ -1408,7 +1409,7 @@ class Component extends DCLogic {
     const ownSt = (() => { const mine = (p.area === true || p.area === 'true') && window.__wfMine ? window.__wfMine() : null; if (!mine) return []; const st = mine.station, _st = { id: st.id, type: st.type, name: st.name, lat: st.lat, lon: st.lon, tags: st.tags || {}, x: st.x, y: st.y };
       const PTL = window.__wfLang === 'pt', BS = window.__wfBatStat || {};
       /* (Oct 11, 19:10) the Battalion Chief's map: every station of his battalion always shows, its state in the tooltip (as on the home's list) */
-      const bat = mine.rank === 'bc' && window.__wfBattalion && window.__wfLLXY ? (window.__wfBattalion(st) || []).filter((b) => String(b.id) !== String(st.id)).map((b) => { const xy = window.__wfLLXY(b.lat, b.lon), k = String(b.id), S0 = BS[k];
+      const bat = window.__wfBattalion && window.__wfLLXY ?   /* (Oct 11, 19:40) every station profile sees its battalion's stations */ (window.__wfBattalion(st) || []).filter((b) => String(b.id) !== String(st.id)).map((b) => { const xy = window.__wfLLXY(b.lat, b.lon), k = String(b.id), S0 = BS[k];
         return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: { id: b.id, type: b.type, name: b.name, lat: b.lat, lon: b.lon, tags: b.tags || {}, x: xy[0], y: xy[1] } }), b.name, S0 ? S0.tag + '. ' + S0.sub : (PTL ? 'Batalhão ' : 'Battalion ') + (mine.batt || '') + '.'); }) : [];
       return [withTip(at(st.x, st.y + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st }), st.name, (BS[String(st.id)] ? BS[String(st.id)].tag + '. ' : '') + (PTL ? 'O seu quartel.' : 'Your station.'))].concat(bat); })();
     const fileStations = SF ? (() => {
@@ -1898,6 +1899,8 @@ class Component extends DCLogic {
       const P0 = this.props || {}, IX = {}; (Array.isArray(P0.ignitions) ? P0.ignitions : []).forEach((g) => { IX[g.id] = g; });
       (OUT.fireMarks || []).forEach((m) => { m.aidD = m.flameD === 'block' && m._g && aidAt(m._g.x, m._g.y) ? 'block' : 'none'; });
       (OUT.ignMarks || []).forEach((m) => { const g = IX[m._id]; m.aidD = g && aidAt(g.x, g.y) ? 'block' : 'none'; m.aidR = +(8.47 + (m.bdW || 5.2) * 0.77 / 2 + 4).toFixed(1); });
+      /* (Oct 11, 19:40) a crew's map (Captain, Engineer, Firefighter): its own station's area, and the battalion around it as a fainter dashed outline */
+      OUT.batAreaD = (P0.area === true || P0.area === 'true') && mine && mine.rank !== 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : '';
       OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && mine.rank === 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }   /* (Oct 11, 19:10) the Battalion Chief's map: his battalion's area (the Comandante's: the brigade's municipality) */
     (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? '#3A3A3C' : 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
