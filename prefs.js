@@ -65,10 +65,10 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
     admin: ['JW', 'James Whitmore', 'Emergency management director', 'Government overview', 'All regions', '', 'en'],
     /* (Oct 6) role profiles, signed in with the California area (wf-role ca) and known by wf-custom */
-    coord: ['FO', 'Frank Ortiz', 'Battalion Chief', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
-    ff: ['DB', 'Daniel Brooks', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
-    eng: ['LW', 'Lisa Wong', 'Engineer', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
-    fft: ['BO', 'Ben Ortega', 'Firefighter', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
+    coord: ['FO', 'Frank Ortiz', 'Battalion Chief', 'CAL FIRE/Riverside County Fire', 'Temecula', '', 'en'],
+    ff: ['DB', 'Daniel Brooks', 'Captain', 'CAL FIRE/Riverside County Fire', 'Temecula', '', 'en'],
+    eng: ['LW', 'Lisa Wong', 'Engineer', 'CAL FIRE/Riverside County Fire', 'Temecula', '', 'en'],
+    fft: ['BO', 'Ben Ortega', 'Firefighter', 'CAL FIRE/Riverside County Fire', 'Temecula', '', 'en']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)
   var SUMS = {
@@ -77,10 +77,10 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     nv: 'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.',
     amz: 'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.',
     admin: 'One level above the station captains: follows every fire and ignition in all countries, where forces are and where risk is rising, and calls in help across borders. Also manages user access and data feeds.',
-    coord: "Commands Battalion 11: the stations of the battalion and their area. Takes command of a fire when it grows past the first engine, places the crews, asks dispatch for more and asks the sheriff for evacuations.",
-    ff: "Commands Engine 11 and its crew. Often first on scene: confirms the fire, declares it and commands it until the battalion chief takes over.",
-    eng: "Drives and pumps Engine 11. Goes where dispatch sends the engine, keeps the water flowing on the line and keeps the crew informed in the incident chat.",
-    fft: "Works the line on Brush 11. Goes where dispatch sends the engine, follows the captain's orders and reports from the line in the incident chat."
+    coord: "Commands Battalion 15 (Temecula): the battalion's stations and their area. Takes command of a fire when it grows past the first engine, places the crews, asks dispatch for more and asks the sheriff for evacuations.",
+    ff: "Commands Engine 12 and its crew. Often first on scene: confirms the fire, declares it and commands it until the battalion chief takes over.",
+    eng: "Drives and pumps Engine 12. Goes where dispatch sends the engine, keeps the water flowing on the line and keeps the crew informed in the incident chat.",
+    fft: "Works the line on Engine 3167, a CAL FIRE Type 3 wildland engine. Goes where dispatch sends the engine, follows the captain's orders and reports from the line in the incident chat."
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----

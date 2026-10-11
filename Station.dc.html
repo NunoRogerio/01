@@ -14,15 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791735642"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791736227"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791735807"></script>
-<script src="station.js?v=1791735642"></script>
+<script src="prefs.js?v=1791736227"></script>
+<script src="station.js?v=1791736227"></script>
 <script src="menu.js?v=1791716515"></script>
-<script src="i18n.js?v=1791734176"></script>
+<script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791735846"></script>
+<script src="chat.js?v=1791736227"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -593,7 +593,7 @@ class Component extends DCLogic {
         [480, 30, ['Shift briefing', 'Briefing de turno'], ['Roll call, fire danger for today, units in service and anything carried over from the last shift.', 'Chamada, perigo de incêndio do dia, meios operacionais e pendentes do turno anterior.']],
         [510, 40, ['Staffing and daily log', 'Escala e livro de ocorrências'], ['Confirm the roster for every unit and open the station log.', 'Confirmar a escala de cada meio e abrir o livro do quartel.']],
         [600, 60, ['Review brush clearance', 'Rever a limpeza de mato'], ['Sign off the inspections from last week and send notices for the homes that failed.', 'Validar as inspeções da semana passada e enviar avisos às casas que falharam.']],
-        [690, 90, ['Pre-fire plan walk-through', 'Visita de planeamento pré-incêndio'], ['The wildland edge above Altadena: access roads, water and safety zones, with the team leads.', 'A orla florestal acima de Altadena: acessos, água e zonas de segurança, com os chefes de equipa.']],
+        [690, 90, ['Pre-fire plan walk-through', 'Visita de planeamento pré-incêndio'], ['The wildland edge on the Santa Rosa Plateau side: access roads, water and safety zones, with the engine captains.', 'A orla florestal acima de Altadena: acessos, água e zonas de segurança, com os chefes de equipa.']],
         [840, 60, ['Community preparedness talk', 'Sessão de preparação com a comunidade'], ['Ready, Set, Go! with local residents: evacuation routes and defensible space.', 'Ready, Set, Go! com os moradores: rotas de evacuação e faixas de gestão de combustível.']],
         [930, 45, ['Approve the training plan', 'Aprovar o plano de formação'], ['Next week\'s drills for each crew, with the team leads\' notes.', 'Os exercícios da próxima semana para cada equipa, com as notas dos chefes de equipa.']],
         [990, 30, ['Red flag readiness', 'Prontidão para alerta vermelho'], ['Check units, water and staffing against the fire weather forecast.', 'Verificar meios, água e efetivos face à previsão meteorológica de incêndio.']],
@@ -661,7 +661,8 @@ class Component extends DCLogic {
       if (/career|professional|full/.test(t) || /sapadores|municipal fire|career/.test(blob)) return 'Professional';
       if (/municipal/.test(t) || /municipal/.test(blob)) return 'Municipal';
       if (/airport/.test(t) || /aeroporto|airport/.test(blob)) return 'Airport';
-      if (/forest|florest|cal fire|forestry/.test(blob)) return 'Forestry';
+      if (/cal fire|california department of forestry/.test(blob)) return '';   /* (Oct 11, 17:40) a CAL FIRE station is a fire station like any other (CAL FIRE is in its operator) */
+      if (/forest|florest|forestry/.test(blob)) return 'Forestry';
       if (o === 'private') return 'Private';
       if (o === 'government' || o === 'public') return 'Public service';
       return '';
@@ -875,10 +876,10 @@ class Component extends DCLogic {
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestD: K.url ? 'block' : 'none', crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
         /* (Oct 8, 08:40) the team lead's home: his team is the protagonist (its name, its state); the station goes in the description */
-        title: lead && crews[MC] ? crews[MC].name : home && MINE && MINE.rank === 'bc' ? L('Battalion ', 'Batalhão ') + num : home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
+        title: lead && crews[MC] ? crews[MC].name : home && MINE && MINE.rank === 'bc' ? L('Battalion ', 'Batalhão ') + (MINE.batt || num) : home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
         ...(lead && crews[MC] ? tg(crews[MC].st) : (nOn || (!(window.__wfStaffOf && window.__wfStaffOf(S.id)) && n25)) ? { tag: (nOn || n25) + ((nOn || n25) === 1 ? ' fire' : ' fires'),   /* a profile station's tag counts only the fires it is working (the same as Deployed) */ tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
-        ...(() => { const r0 = window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : '', A = home && window.__wfStationArea ? window.__wfStationArea(S) : null, r = A && A.name ? A.name + '. ' + r0 : r0, stN = lead ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : ''; if (stN) return { region: stN + '. ' + (A && A.name ? A.name : r0), regD: 'block' }; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
+        ...(() => { const r0 = S.co || (window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''), A0 = home && window.__wfStationArea ? window.__wfStationArea(S) : null, A = A0 && A0.name ? A0 : (S.place ? { name: S.place } : A0), r = A && A.name ? A.name + '. ' + r0 : r0,   /* (Oct 11, 17:40) a profile station names its own place and county (bounding boxes overlap at county lines) */ stN = lead ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : ''; if (stN) return { region: stN + '. ' + (A && A.name ? A.name : r0), regD: 'block' }; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,
         osm: 'https://www.openstreetmap.org/' + (S.type || 'node') + '/' + S.id, osmLbl: (S.type || 'node') + ' ' + S.id },
       rows: rows.map((r, i) => ({ ...r, bd: i ? '1px solid rgba(60,60,67,0.22)' : '0' })), rowsD: rows.length && !home ? 'flex' : 'none', loc: lc, fires: fires.map((x) => Object.assign({}, x, { s1: window.__wfSegs(x.sub), tagR: x.tagR || '' })), firesD: fires.length ? 'flex' : 'none', noFires: !fires.length, nearT: L('Incidents nearby', 'Incidentes próximos'), noFiresTxt: live.length ? 'No fires within 60 km.' : 'Loading live fires…',
       firesNote: 'Straight-line distance. Drive time at 50 km/h.'

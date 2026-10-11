@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791735642"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791736227"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="i18n.js?v=1791734176"></script>
+<script src="i18n.js?v=1791736227"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -452,17 +452,17 @@ class Component extends DCLogic {
     // Demo personas: senior operational deciders, with each country's real command title.
     // [id, initials, username, name, title, organisation, area, summary, photo]
     // Photos: firefighter portraits (Pexels, Unsplash; assets/faces/CREDITS.txt) standing in for fictional personas; initials show if a photo cannot load.
-    // (Oct 7, 19:40) station profiles: the captain (pt Chefe) and the lieutenant, a team lead (pt Chefe de equipa), both of LACoFD Station 11;
+    // (Oct 7, 19:40) station profiles: the captain (pt Chefe) and the lieutenant, a team lead (pt Chefe de equipa), both of CAL FIRE/Riverside County Fire Station 12, Temecula;
     // no base firefighter. (Oct 6) profiles by role, top of the hierarchy first: administrator, team coordinator, firefighter (they replace the
     // regional commanders). What each role can do is still to be explored; for now every profile has all features.
     const P = [
       /* (Oct 9) order: captain, lieutenant, then the government representative */
-      ['coord', 'FO', 'frank.ortiz', 'Frank Ortiz', 'Battalion Chief', 'Los Angeles County Fire Department', 'Battalion 11. Altadena',
+      ['coord', 'FO', 'frank.ortiz', 'Frank Ortiz', 'Battalion Chief', 'CAL FIRE/Riverside County Fire', 'Battalion 15. Temecula',
         "Commands the battalion's stations and their area. Takes command of a fire when it grows past the first engine, places the crews and asks dispatch for more, and works with the sheriff on evacuations.", '', 'ca'],
-      ['ff', 'DB', 'daniel.brooks', 'Daniel Brooks', 'Captain', 'Los Angeles County Fire Department', 'Station 11. Altadena',
-        "Commands Engine 11 and its crew. Often first on scene: confirms the fire, declares it and commands it until the battalion chief takes over.", '', 'ca'],
-      ['fft', 'BO', 'ben.ortega', 'Ben Ortega', 'Firefighter', 'Los Angeles County Fire Department', 'Station 11. Altadena',
-        "Works the line on Brush 11. Goes where dispatch sends the engine, follows the captain's orders and reports from the line in the incident chat.", '', 'ca'],
+      ['ff', 'DB', 'daniel.brooks', 'Daniel Brooks', 'Fire Captain', 'CAL FIRE/Riverside County Fire', 'Station 12. Temecula',
+        "Commands Engine 12 and its crew. Often first on scene: confirms the fire, declares it and commands it until the battalion chief takes over.", '', 'ca'],
+      ['fft', 'BO', 'ben.ortega', 'Ben Ortega', 'Firefighter', 'CAL FIRE/Riverside County Fire', 'Station 12. Temecula',
+        "Works the line on Engine 3167, a CAL FIRE Type 3 wildland engine. Goes where dispatch sends the engine, follows the captain's orders and reports from the line in the incident chat.", '', 'ca'],
       /* (Oct 11, 17:30) the top of the chain, one per region (nobody sees several countries): California's state fire mutual aid (Cal OES) and Portugal's national command (ANEPC) */
       ['ca', 'MR', 'marcus.reyes', 'Marcus Reyes', 'Chief, Fire and Rescue Division', 'Cal OES', 'California',
         "Runs California's fire mutual aid. Moves strike teams and engines between counties and fires, activates the state mutual aid plan and works with CAL FIRE and the counties when local resources run out.", 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
