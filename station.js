@@ -8,7 +8,7 @@
 (function () {
   /* (Oct 11, 00:21) A fresh start for the incidents: every chat, outcome, dispatch, order and simulated round kept on this phone is
      cleared once (settings, profiles and keys stay), so the story starts again and the new incidents arrive one at a time. */
-  (function () { var RV = '2026-10-11f';   /* (Oct 11, 17:40) b: the profiles moved to CAL FIRE Temecula: the Altadena story starts again there */ try { if (localStorage.getItem('wf-sim-reset') === RV) return;
+  (function () { var RV = '2026-10-11g';   /* (Oct 11, 17:40) b: the profiles moved to CAL FIRE Temecula: the Altadena story starts again there */ try { if (localStorage.getItem('wf-sim-reset') === RV) return;
     var K = [], i, ONE = { 'wf-sim-rounds': 1, 'wf-sim-t0': 1, 'wf-sim-last': 1, 'wf-evac': 1, 'wf-aid-assign': 1, 'wf-help-offer': 1, 'wf-deploy-ack': 1, 'wf-crew': 1, 'wf-orders': 1, 'wf-nt-read': 1, 'wf-homes-safe': 1 };
     for (i = 0; i < localStorage.length; i++) K.push(localStorage.key(i));
     K.forEach(function (k) { if (ONE[k] || /^wf-(chats3-|fin-|assigned-|offer-snooze-)/.test(k || '')) localStorage.removeItem(k); });
@@ -17,24 +17,31 @@
   // [id, type, name, lat, lon, operator] of each role profile's station; both profiles share Station 11 (Altadena)
   var ST11 = { id: 157035089, type: 'way', name: 'Temecula Fire Station #12', lat: 33.49712, lon: -117.15072,   /* (Oct 11, 17:40) the profiles work in a CAL FIRE area: CAL FIRE/Riverside County Fire Station 12, Temecula (Battalion 15) */
     tags: { operator: 'California Department of Forestry and Fire Protection' }, cc: 'us', st: 'CA', co: 'Riverside', place: 'Temecula' };
+  var STPT = { id: 933923861, type: 'way', name: 'Bombeiros Voluntários de Mação', lat: 39.55274, lon: -7.98876, tags: { operator: 'Associação Humanitária dos Bombeiros Voluntários de Mação' }, cc: 'pt', st: 'PT', co: 'Santarém', place: 'Mação' };
   var ME = {
     coord: { level: 'captain', rank: 'bc', name: 'Frank Ortiz', batt: 15, station: ST11, crew: null },   // (Oct 11, 17:40) the Battalion Chief of Battalion 15 (Temecula); his command vehicle is based at Station 84
     ff: { level: 'lead', rank: 'cap', name: 'Daniel Brooks', station: ST11, crew: 0, unit: 'Engine 12' },   // the Captain of Engine 12
     eng: { level: 'lead', rank: 'eng', name: 'Lisa Wong', station: ST11, crew: 0, unit: 'Engine 12' },   // (Oct 11, 17:25) the Engineer of Engine 12: the crew's view, no command
-    fft: { level: 'lead', rank: 'ff', name: 'Ben Ortega', station: ST11, crew: 1, unit: 'Engine 3167' }   // a Firefighter on Engine 3167, the station's CAL FIRE Type 3 wildland engine: the crew's view, no command
+    fft: { level: 'lead', rank: 'ff', name: 'Ben Ortega', station: ST11, crew: 1, unit: 'Engine 3167' },
+    /* (Oct 11, 18:05) Portugal's counterparts, at the Bombeiros Voluntários de Mação (Médio Tejo, a fire-prone area): the brigade's
+       commander (he takes over as COS when a fire grows), a crew chief (first COS on arrival) and a firefighter */
+    ptco: { level: 'captain', rank: 'bc', name: 'Rui Gaspar', batt: 'Mação', station: STPT, crew: null },
+    ptce: { level: 'lead', rank: 'cap', name: 'Sofia Antunes', station: STPT, crew: 0, unit: 'VFCI 01' },
+    ptbo: { level: 'lead', rank: 'ff', name: 'Tiago Martins', station: STPT, crew: 1, unit: 'VFCI 02' }   // a Bombeiro on VFCI 02: the crew's view, no command
   };
   var X = function (lon) { return (lon + 118.13) * 2345 + 518; }, Y = function (lat) { return (34.19 - lat) * 2829 + 662; };
   var LON = function (x) { return (x - 518) / 2345 - 118.13; }, LAT = function (y) { return 34.19 - (y - 662) / 2829; };
+  var BASE = { ptco: 'coord', ptce: 'ff', ptbo: 'fft' };   /* (Oct 11, 18:20) each Portuguese profile plays the role of its California counterpart */
   function rid() { var c = ''; try { c = localStorage.getItem('wf-custom') || ''; } catch (e) {} return c; }
   function signed() { var r = ''; try { r = localStorage.getItem('wf-role') || ''; } catch (e) {} return r; }
   // The station profile signed in on this phone, or null (administrator and regional profiles)
-  window.__wfMine = function () { var k = rid(); if (!signed() || !ME[k]) return null; var m = ME[k], s = m.station;
-    return { key: k, level: m.level, rank: m.rank, name: m.name, unit: m.unit, batt: m.batt, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
+  window.__wfMine = function () { var k = rid(); if (!signed() || !ME[k]) return null; var m = ME[k], s = m.station; useSet(s.cc === 'pt' ? 'pt' : 'ca');
+    return { key: BASE[k] || k, pid: k, level: m.level, rank: m.rank, name: m.name, unit: m.unit, batt: m.batt, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
   // Who leads the profile stations, so every screen tells the same story (the captain commands, the team lead leads the first crew)
   // (Oct 8, 19:10) and the team lead's own crew, fixed, so nobody in it turns up elsewhere as another station's captain
   var CREW11B = ['Kevin Marsh', 'Ana Ruiz', 'Ben Ortega'];   /* (Oct 11, 17:40) Station 12's second crew: Engine 3167 (Type 3), Captain Kevin Marsh */
   var CREW11 = ['Daniel Brooks', 'Laura Chen', 'Tom Alvarez', 'Lisa Wong'], ST11P = { 'Laura Chen': 'train', 'Tom Alvarez': 'sick' };   /* the shift: Chen in training, Alvarez on sick leave */
-  window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Frank Ortiz', lead: 'Daniel Brooks', lead2: 'Kevin Marsh', batt: 'Battalion 15', crew2: CREW11B.slice(), crew: CREW11.slice(), state: Object.assign({}, ST11P),
+  window.__wfStaffOf = function (id) { if (String(id) === String(STPT.id)) return SETS.pt.staff(); return String(id) === String(ST11.id) ? { captain: 'Frank Ortiz', lead: 'Daniel Brooks', lead2: 'Kevin Marsh', batt: 'Battalion 15', crew2: CREW11B.slice(), crew: CREW11.slice(), state: Object.assign({}, ST11P),
     onDuty: CREW11.filter(function (n) { return !ST11P[n]; }) } : null; };
   /* (Oct 9, 06:52) Station 11's fleet, one list for every screen (the station's Resources, the crews, the captain's dispatch):
      a plausible LA County engine company station in the foothills (no hand crew and no aircraft of its own: hand crews live
@@ -55,7 +62,7 @@
     { id: 'brush', name: 'Engine 3167', ic: 'eng', en: 'Type 3 wildland engine. 500 gal. 3 seats.', pt: 'Autobomba florestal tipo 3. 1 900 L. 3 lugares.', lt: 'Kevin Marsh', eng: 'Ana Ruiz', crew: CREW11B.slice() },
     { id: 'patrol', name: 'Engine 3171', ic: 'eng', en: 'Type 3 wildland engine. 500 gal. 3 seats.', pt: 'Autobomba florestal tipo 3. 1 900 L. 3 lugares.', eng: 'Marcus Reed', crew: ['Marcus Reed', 'Sofia Lin'] },
     { id: 'tender', name: 'Engine 212', ic: 'eng', en: 'Reserve Type 1 engine. 500 gal. 4 seats.', pt: 'Autobomba tipo 1 de reserva. 1 900 L. 4 lugares.', crew: [], st: 'maint', days: 3 }];
-  window.__wfFleet = function (id) { return String(id) === String(ST11.id) ? FLEET11.map(function (u) { return Object.assign({}, u, { crew: u.crew.slice() }); }) : null; };
+  window.__wfFleet = function (id) { if (String(id) === String(STPT.id)) return SETS.pt.fleet.map(function (u) { return Object.assign({}, u, { crew: u.crew.slice() }); }); return String(id) === String(ST11.id) ? SETS.ca.fleet.map(function (u) { return Object.assign({}, u, { crew: u.crew.slice() }); }) : null; };
   // Names that belong to the profile station: the incident chats never give them to anyone else
   window.__wfReservedNames = function () { var R = { 'Frank Ortiz': 1 }; CREW11.concat(CREW11B).forEach(function (n) { R[n] = 1; }); FLEET11.forEach(function (u) { u.crew.forEach(function (n) { R[n] = 1; }); }); try { (JSON.parse(localStorage.getItem('wf-st-reserved') || '[]') || []).forEach(function (n) { R[n] = 1; }); } catch (e) {} return R; };
   // (Oct 8, 14:35) Simulated incidents in the station's area, so the captain and the team lead always have a story to work:
@@ -99,44 +106,66 @@
     { name: 'Wolf Valley', near: 'Wolf Valley, south Temecula', lat: 33.4620, lon: -117.0900 },
     { name: 'Long Canyon', near: 'Long Canyon, Temecula', lat: 33.5000, lon: -117.0700 }];
   var LET = ['', 'b', 'c'];
-  function rounds() { var R = []; try { R = JSON.parse(localStorage.getItem('wf-sim-rounds') || '[]') || []; } catch (e) {} return Array.isArray(R) ? R : []; }
+  /* (Oct 11, 18:05) Mação (Bombeiros Voluntários de Mação): its staff, its fleet (ANEPC vehicle types) and simulated incidents at
+     real places of the municipality (Cardigos, Envendos, Ortiga, Penhascoso...; positions approximate) */
+  var CREWPT = ['Sofia Antunes', 'Hugo Ferreira', 'Marta Lopes', 'André Silva', 'Joana Costa'], CREWPTB = ['Pedro Carvalho', 'Tiago Martins', 'Rita Gomes'], PTP = { 'Joana Costa': 'train' };
+  var SETS = {
+    ca: { st: ST11, pfx: 'ST11', sfx: '', reg: ['CA', 'Riverside', 'Riverside County · CA'], simf: SIMF, simc: SIMC, pf: PF, pc: PC, fleet: FLEET11 },
+    pt: { st: STPT, pfx: 'PT1', sfx: '-pt', reg: ['PT', 'Santarém', 'Mação · Santarém'],
+      staff: function () { return { captain: 'Rui Gaspar', lead: 'Sofia Antunes', lead2: 'Pedro Carvalho', batt: 'Mação', crew2: CREWPTB.slice(), crew: CREWPT.slice(), state: Object.assign({}, PTP), onDuty: CREWPT.filter(function (n) { return !PTP[n]; }) }; },
+      simf: { id: 'SIM-PT1-F1', name: 'Incêndio de Cardigos', near: 'Cardigos, norte de Mação', lat: 39.6440, lon: -8.0410, ac: 60, pc: 0, minAgo: 52 },
+      simc: { lat: 39.5680, lon: -7.9450, place: 'Envendos', near: 'Envendos, leste de Mação', conf: 86, minAgo: 12 },
+      pf: [{ name: 'Incêndio de Ortiga', near: 'Ortiga, sul de Mação', lat: 39.4810, lon: -8.0090, ac: 6 }, { name: 'Incêndio de Penhascoso', near: 'Penhascoso, Mação', lat: 39.5160, lon: -8.0410, ac: 4 },
+        { name: 'Incêndio de Carvoeiro', near: 'Carvoeiro, Mação', lat: 39.6020, lon: -8.0060, ac: 5 }, { name: 'Incêndio de Aboboreira', near: 'Aboboreira, Mação', lat: 39.5340, lon: -7.9440, ac: 3 },
+        { name: 'Incêndio de Caratão', near: 'Caratão, Mação', lat: 39.5880, lon: -7.9590, ac: 7 }, { name: 'Incêndio de Chão de Codes', near: 'Chão de Codes, Mação', lat: 39.6200, lon: -8.0700, ac: 8 }],
+      pc: [{ name: 'Ortiga', near: 'Ortiga, sul de Mação', lat: 39.4840, lon: -8.0050 }, { name: 'Penhascoso', near: 'Penhascoso, Mação', lat: 39.5190, lon: -8.0380 }, { name: 'Carvoeiro', near: 'Carvoeiro, Mação', lat: 39.6000, lon: -8.0100 },
+        { name: 'Aboboreira', near: 'Aboboreira, Mação', lat: 39.5370, lon: -7.9480 }, { name: 'Caratão', near: 'Caratão, Mação', lat: 39.5850, lon: -7.9620 }, { name: 'Chão de Codes', near: 'Chão de Codes, Mação', lat: 39.6180, lon: -8.0650 },
+        { name: 'Amêndoa', near: 'Amêndoa, Mação', lat: 39.6750, lon: -8.0650 }, { name: 'Pereira', near: 'Pereira, Mação', lat: 39.5550, lon: -8.0150 }],
+      fleet: [{ id: 'cmd', name: 'VCOT 01', ic: 'cmd', en: 'Tactical command vehicle. Commander Rui Gaspar.', pt: 'Veículo de comando tático. Comandante Rui Gaspar.', crew: ['Rui Gaspar'], rank: { en: 'Commander', pt: 'Comandante' } },
+        { id: 'engine', name: 'VFCI 01', ic: 'eng', en: 'Forest fire engine. 3,000 L. 5 seats.', pt: 'Veículo florestal de combate a incêndios. 3 000 L. 5 lugares.', lt: 'Sofia Antunes', eng: 'Hugo Ferreira', crew: CREWPT.filter(function (n) { return !PTP[n]; }) },
+        { id: 'brush', name: 'VFCI 02', ic: 'eng', en: 'Forest fire engine. 3,000 L. 5 seats.', pt: 'Veículo florestal de combate a incêndios. 3 000 L. 5 lugares.', lt: 'Pedro Carvalho', eng: 'Rita Gomes', crew: CREWPTB.slice() },
+        { id: 'tender', name: 'VTTF 01', ic: 'tank', en: 'Forest water tanker. 16,000 L. 2 seats.', pt: 'Veículo tanque tático florestal. 16 000 L. 2 lugares.', crew: ['Luís Pires', 'Carla Neves'] },
+        { id: 'squad', name: 'ABSC 01', ic: 'amb', en: 'Rescue ambulance. 3 seats.', pt: 'Ambulância de socorro. 3 lugares.', crew: ['Inês Rocha', 'Bruno Dias'], st: 'maint', days: 2 }] } };
+  var PFX = 'ST11', SFX = '', REG = SETS.ca.reg, CUR = 'ca';
+  function useSet(k) { if (k === CUR || !SETS[k]) return; var S0 = SETS[k]; CUR = k; PFX = S0.pfx; SFX = S0.sfx; REG = S0.reg; SIMF = S0.simf; SIMC = S0.simc; PF = S0.pf; PC = S0.pc; }
+  function rounds() { var R = []; try { R = JSON.parse(localStorage.getItem('wf-sim-rounds' + SFX) || '[]') || []; } catch (e) {} return Array.isArray(R) ? R : []; }
   /* (Oct 8, 22:43) the first pair's clock is kept too (when this phone first saw it), so signing out and in again never restarts the story */
-  function t0() { var t = 0; try { t = +localStorage.getItem('wf-sim-t0') || 0; if (!t) { t = Date.now(); localStorage.setItem('wf-sim-t0', String(t)); } } catch (e) { t = Date.now(); } return t; }
+  function t0() { var t = 0; try { t = +localStorage.getItem('wf-sim-t0' + SFX) || 0; if (!t) { t = Date.now(); localStorage.setItem('wf-sim-t0' + SFX, String(t)); } } catch (e) { t = Date.now(); } return t; }
   // every simulated fire and candidate so far, round by round (rounds saved before 22:48 had one of each)
   function fireDefs(R) { var out = [{ n: 0, id: SIMF.id, name: SIMF.name, near: SIMF.near, lat: SIMF.lat, lon: SIMF.lon, ac: SIMF.ac, pc: SIMF.pc, sc: 6, st: 'Active', stEn: SIMF.pc + '% contained', startMs: t0() - SIMF.minAgo * 6e4, minAgo: SIMF.minAgo }];
     R.forEach(function (q, i) { var n = i + 1, at = q.at || Date.now(), F = q.f || [(n - 1) % 3];
-      F.forEach(function (fi, k) { var v = PF[fi % PF.length], a = (q.fa && q.fa[k]) || at + k; out.push({ n: n, id: 'SIM-ST11-F' + (n + 1) + LET[k], name: v.name, near: v.near, lat: v.lat, lon: v.lon, ac: v.ac, pc: 0, sc: 4, st: 'New', stEn: 'First alert', startMs: a - 6 * 6e4, at: a }); }); });
+      F.forEach(function (fi, k) { var v = PF[fi % PF.length], a = (q.fa && q.fa[k]) || at + k; out.push({ n: n, id: 'SIM-' + PFX + '-F' + (n + 1) + LET[k], name: v.name, near: v.near, lat: v.lat, lon: v.lon, ac: v.ac, pc: 0, sc: 4, st: 'New', stEn: 'First alert', startMs: a - 6 * 6e4, at: a }); }); });
     return out; }
-  function candDefs(R) { var out = [{ n: 0, id: 'HS-SIM-ST11', lat: SIMC.lat, lon: SIMC.lon, place: SIMC.place, near: SIMC.near, conf: SIMC.conf, t: t0() - SIMC.minAgo * 6e4, minAgo: SIMC.minAgo }];
+  function candDefs(R) { var out = [{ n: 0, id: 'HS-SIM-' + PFX, lat: SIMC.lat, lon: SIMC.lon, place: SIMC.place, near: SIMC.near, conf: SIMC.conf, t: t0() - SIMC.minAgo * 6e4, minAgo: SIMC.minAgo }];
     R.forEach(function (q, i) { var n = i + 1, at = q.at || Date.now(), K = q.c || [(n - 1) % 3];
-      K.forEach(function (ci, k) { var v = PC[ci % PC.length], a = (q.ca && q.ca[k]) || at + 10 + k; out.push({ n: n, id: 'HS-SIM-ST11-' + (n + 1) + LET[k], lat: v.lat, lon: v.lon, place: v.name || 'Altadena', near: v.near, conf: (q.conf && q.conf[k]) || [81, 76, 84][(n - 1) % 3], t: a - 2 * 6e4, at: a }); }); });
+      K.forEach(function (ci, k) { var v = PC[ci % PC.length], a = (q.ca && q.ca[k]) || at + 10 + k; out.push({ n: n, id: 'HS-SIM-' + PFX + '-' + (n + 1) + LET[k], lat: v.lat, lon: v.lon, place: v.name || 'Altadena', near: v.near, conf: (q.conf && q.conf[k]) || [81, 76, 84][(n - 1) % 3], t: a - 2 * 6e4, at: a }); }); });
     return out; }
   function chatOf(kind, id) { var C = window.__wfChat; return C && C.find ? C.find({ id: id, kind: kind }) : null; }
   window.__wfSim = function () { var M = window.__wfMine ? window.__wfMine() : null; if (!M) return;
     var F = window.__wfLiveFires, C = window.__wfLiveCands, now = Date.now(), R = rounds();
     /* (Oct 11) after a reset, simulated incidents of the old story leave the feed */
     (function () { var fk = {}, ck = {}; fireDefs(R).forEach(function (d) { fk[d.id] = 1; }); candDefs(R).forEach(function (d) { ck[d.id] = 1; });
-      [[F, /^SIM-ST11-F/, fk], [C, /^HS-SIM-ST11/, ck]].forEach(function (z) { var A = z[0]; if (!A) return; for (var j = A.length - 1; j >= 0; j--) { var id = A[j] && A[j][2] || ''; if (z[1].test(id) && !z[2][id]) A.splice(j, 1); } }); })();
+      [[F, new RegExp('^SIM-' + PFX + '-F'), fk], [C, new RegExp('^HS-SIM-' + PFX), ck]].forEach(function (z) { var A = z[0]; if (!A) return; for (var j = A.length - 1; j >= 0; j--) { var id = A[j] && A[j][2] || ''; if (z[1].test(id) && !z[2][id]) A.splice(j, 1); } }); })();
     fireDefs(R).forEach(function (D) { var n = D.n, fc = chatOf('fire', D.id);
       if (F) { var ex = F.find(function (r) { return r && r[2] === D.id; });
         if (!ex) {
-          var T = F.find(function (r) { return r && r[0] === 'CA' && /^Los Angeles/.test(r[1] || '') && !/^SIM-/.test(r[2] || ''); }) || F.find(function (r) { return r && r[0] === 'CA'; }) || F[0];
+          var T = F.find(function (r) { return r && r[0] === REG[0] && !/^SIM-/.test(r[2] || ''); }) || F.find(function (r) { return r && r[0] === 'CA'; }) || F[0];
           var r = T ? JSON.parse(JSON.stringify(T)) : ['CA', 'Los Angeles', '', '', '', 0, 0, { man: 0, terrain: 0, aerial: 0, est: true }, 0, {}, ''];
           var ha = Math.round(D.ac * 0.4047 * 10) / 10, k = T && T[8] ? Math.max(0.05, ha / T[8]) : 1;
-          r[0] = 'CA'; r[1] = 'Los Angeles'; r[2] = D.id; r[3] = D.name; r[4] = (n ? 'New' : 'Contained ' + D.pc + '%') + ' · ' + D.ac + ' ac';
+          r[0] = REG[0]; r[1] = REG[1]; r[2] = D.id; r[3] = D.name; r[4] = (n ? 'New' : 'Contained ' + D.pc + '%') + ' · ' + (REG[0] === 'PT' ? Math.round(D.ac * 0.4047) + ' ha' : D.ac + ' ac');
           r[5] = Math.round(X(D.lon)); r[6] = Math.round(Y(D.lat)); r[8] = ha; r[10] = D.near;
           if (r[7] && typeof r[7] === 'object') ['man', 'terrain', 'aerial'].forEach(function (q) { if (typeof r[7][q] === 'number') r[7][q] = Math.max(q === 'aerial' ? 0 : 1, Math.round(r[7][q] * k)); });
-          r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: D.st, stEn: D.stEn, tone: 'red', sc: D.sc, pc: D.pc, startMs: D.startMs || now - D.minAgo * 6e4, updMs: D.at || now - 6e4 * 4, ac: D.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: 'Los Angeles County · CA', url: '', sim: true, simAt: D.at || 0, lat: D.lat, lon: D.lon });
+          r[9] = Object.assign({}, r[9] || {}, { src: 'Simulation', st: D.st, stEn: D.stEn, tone: 'red', sc: D.sc, pc: D.pc, startMs: D.startMs || now - D.minAgo * 6e4, updMs: D.at || now - 6e4 * 4, ac: D.ac, ha: ha, resolved: false, heldMs: null, heldSrc: '', place: REG[2], url: '', sim: true, simAt: D.at || 0, lat: D.lat, lon: D.lon });
           F.push(r); ex = r; }
         if (ex[9]) { ex[9].resolved = !!(fc && fc.closed); if (fc && fc.closed) { ex[9].heldMs = ex[9].heldMs || fc.updated || now; ex[9].heldSrc = 'chat'; } }   /* a closed simulated fire leaves the lists; its chat keeps the record */
         /* (Oct 10, 21:09) resolved, it stays on the map as a resolved fire for 7 days, then leaves it */
         if (fc && fc.closed && now - (fc.updated || now) > 7 * 864e5) { var ix2 = F.indexOf(ex); if (ix2 >= 0) F.splice(ix2, 1); } } });
     candDefs(R).forEach(function (Q) { var cc = chatOf('cand', Q.id);
       if (C && !(cc && (cc.closed || cc.dismissed)) && !C.some(function (r) { return r && r[2] === Q.id; })) {
-        var TC = C.find(function (r) { return r && r[0] === 'CA' && !/^HS-SIM-/.test(r[2] || ''); }) || C[0];
+        var TC = C.find(function (r) { return r && r[0] === REG[0] && !/^HS-SIM-/.test(r[2] || ''); }) || C.find(function (r) { return r && !/^HS-SIM-/.test(r[2] || ''); }) || C[0];
         var c = TC ? JSON.parse(JSON.stringify(TC)) : ['CA', 'Los Angeles', '', '', 0, 'sat:VIIRS NOAA-20', '', 0, 0, {}];
         var tms = Q.t || now - Q.minAgo * 6e4, t = new Date(tms).toISOString().slice(0, 16) + 'Z', ago = Math.max(1, Math.round((now - tms) / 6e4));
-        c[0] = 'CA'; c[1] = 'Los Angeles'; c[2] = Q.id; c[3] = Q.place; c[4] = Q.conf; c[6] = window.__wfAgoTxt ? window.__wfAgoTxt(ago) : ago + ' min ago'; c[7] = Math.round(X(Q.lon)); c[8] = Math.round(Y(Q.lat));
+        c[0] = REG[0]; c[1] = REG[1]; c[2] = Q.id; c[3] = Q.place; c[4] = Q.conf; c[6] = window.__wfAgoTxt ? window.__wfAgoTxt(ago) : ago + ' min ago'; c[7] = Math.round(X(Q.lon)); c[8] = Math.round(Y(Q.lat));
         c[9] = Object.assign({}, c[9] || {}, { lat: Q.lat, lon: Q.lon, t: t, ll: Q.lat.toFixed(2) + '°N ' + Math.abs(Q.lon).toFixed(2) + '°W', near: Q.near, night: window.__wfSunAlt ? window.__wfSunAlt(Q.lat, Q.lon, now) < -0.833 : false, sim: true, simAt: Q.at || 0 });
         C.push(c); }
       else if (C && cc && (cc.closed || cc.dismissed)) { var ix = C.findIndex(function (r) { return r && r[2] === Q.id; }); if (ix >= 0) C.splice(ix, 1); } });   /* dismissed or closed: Resolved lists it from its chat */
@@ -150,7 +179,7 @@
     if (C.rename) candDefs(rounds()).forEach(function (Q) { if (!Q.n) return; var cc = chatOf('cand', Q.id); if (cc && cc.place !== Q.place) C.rename(cc.key, Q.place); });
     fireDefs(rounds()).forEach(function (D) {
       var r = (window.__wfLiveFires || []).find(function (q) { return q && q[2] === D.id; }); if (!r || C.find({ id: D.id, kind: 'fire' })) return;
-      var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: D.id, place: D.name, reg: 'Los Angeles', st: 'CA', lat: D.lat, lon: D.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: D.sc, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
+      var I = r[9] || {}, c = C.ensure({ kind: 'fire', id: D.id, place: D.name, reg: REG[1], st: REG[0], lat: D.lat, lon: D.lon, note: (I.stEn || 'Active') + ' · Simulation', sc: D.sc, x: r[5], y: r[6], startMs: I.startMs, ha: I.ha, res: r[7] || null });
       if (!D.n && c && window.__wfDeploy && window.__wfDeploy.ack) window.__wfDeploy.ack(c.key); }); };
   // A new round: 1-2 fires and 1-3 candidates at places not in use; returns what came up (for the banners)
   window.__wfSimSpawn = function (extra, one) { var R = rounds(), now = Date.now(), live = {}, rnd = function (n) { return Math.floor(Math.random() * n); };
@@ -168,12 +197,12 @@
     var Q = f.map(function (i) { return { t: 'f', i: i }; }).concat(c.map(function (i) { return { t: 'c', i: i, conf: 62 + rnd(34) }; }));
     for (var z = Q.length - 1; z > 0; z--) { var y = rnd(z + 1), tmp = Q[z]; Q[z] = Q[y]; Q[y] = tmp; }
     if (typeof extra === 'function') Q.splice(1 + rnd(Q.length), 0, { t: 'x', fn: extra });
-    R.push({ at: now, f: [], c: [], conf: [], fa: [], ca: [] }); var ri = R.length - 1; try { localStorage.setItem('wf-sim-rounds', JSON.stringify(R)); } catch (e) {}
+    R.push({ at: now, f: [], c: [], conf: [], fa: [], ca: [] }); var ri = R.length - 1; try { localStorage.setItem('wf-sim-rounds' + SFX, JSON.stringify(R)); } catch (e) {}
     var add = function (it) {
       if (it.t === 'x') { var x = null; try { x = it.fn(); } catch (e) {} return x ? [x] : []; }
       var R2 = rounds(), q = R2[ri]; if (!q) return []; var t = Date.now(), n = ri + 1;
       if (it.t === 'f') { q.f.push(it.i); (q.fa = q.fa || []).push(t); } else { q.c.push(it.i); (q.conf = q.conf || []).push(it.conf); (q.ca = q.ca || []).push(t); }
-      try { localStorage.setItem('wf-sim-rounds', JSON.stringify(R2)); } catch (e) {}
+      try { localStorage.setItem('wf-sim-rounds' + SFX, JSON.stringify(R2)); } catch (e) {}
       try { window.__wfSim(); window.__wfWorld = null; window.__wfGeo = null; window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
       if (it.t === 'f') { var D = fireDefs(R2).filter(function (d) { return d.n === n; }).pop(); return D ? [{ kind: 'fire', d: D }] : []; }
       var Cd = candDefs(R2).filter(function (d) { return d.n === n; }).pop(); return Cd ? [{ kind: 'cand', d: Cd }] : []; };
@@ -217,13 +246,13 @@
     /* (Oct 11, 00:21) a trickle, never a wave: while the station has fewer than 5 open incidents, a single new one (candidate, fire
        or, now and then, a help request from a station outside the area) comes up after 5 s left alone, at least 25 to 60 s
        (at random) after the one before; the gap is kept on this phone, so moving between screens never brings two at once */
-    var MAXINC = 5, lastAt = function () { try { return +localStorage.getItem('wf-sim-last') || 0; } catch (e) { return 0; } }, gap = 25000 + Math.random() * 35000;
+    var MAXINC = 5, lastAt = function () { try { return +localStorage.getItem('wf-sim-last' + SFX) || 0; } catch (e) { return 0; } }, gap = 25000 + Math.random() * 35000;
     setInterval(function () { if (busy || document.visibilityState === 'hidden' || Date.now() - last < 5000) return; if (!(window.__wfMine && window.__wfMine())) return;
       if (window.__wfTodoInc == null || window.__wfTodoInc >= MAXINC) return; if (document.querySelector('.wf-cfm,[data-wf-tour-on]')) return;
       if (Date.now() - lastAt() < gap) return;
       busy = true; var L = [];
       try { if (window.__wfHelpIn && Math.random() < 0.15) { var hc = window.__wfHelpIn(); if (hc) L = [{ kind: 'help', c: hc }]; } if (!L.length) L = window.__wfSimSpawn(null, true) || []; } catch (e) {}
-      try { localStorage.setItem('wf-sim-last', String(Date.now())); } catch (e) {} gap = 25000 + Math.random() * 35000;
+      try { localStorage.setItem('wf-sim-last' + SFX, String(Date.now())); } catch (e) {} gap = 25000 + Math.random() * 35000;
       banners(L); last = Date.now(); setTimeout(function () { busy = false; }, 3000); }, 1000); })();
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 

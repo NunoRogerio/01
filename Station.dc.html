@@ -14,15 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791736227"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791738600"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791736227"></script>
-<script src="station.js?v=1791737060"></script>
+<script src="prefs.js?v=1791738600"></script>
+<script src="station.js?v=1791738600"></script>
 <script src="menu.js?v=1791716515"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791737060"></script>
+<script src="chat.js?v=1791738600"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -145,7 +145,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <span style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="flex: 1 1 auto; min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; align-self: flex-start; margin-top: -2px; margin-left: auto; min-height: 28px; padding: 4px 8px; font-size: 16px; line-height: 20px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span></span><!-- (Oct 11, 00:57) Mutual aid on the title line, at the card's right -->
                             <span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; min-width: 0"><span style="min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s1.a0}}<b style="font-weight: 700">{{f.s1.b0}}</b>{{f.s1.a1}}<b style="font-weight: 700">{{f.s1.b1}}</b>{{f.s1.a2}}<b style="font-weight: 700">{{f.s1.b2}}</b>{{f.s1.a3}}</span></span>
               <span style="display: {{f.sub2D}}; grid-column: 1 / -1; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s2.a0}}<b style="font-weight: 700">{{f.s2.b0}}</b>{{f.s2.a1}}<b style="font-weight: 700">{{f.s2.b1}}</b>{{f.s2.a2}}<b style="font-weight: 700">{{f.s2.b2}}</b>{{f.s2.a3}}</span>
-              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px 0 8px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{f.tagR}}</span></span>
+              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><span aria-hidden="true" style="display: {{f.tagIcD}}; width: 24px; height: 24px; flex-shrink: 0; text-align: center; line-height: 0"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{f.tagR}}</span></span>
             </a>
             <span class="wf-simstar" aria-hidden="true" style="display: {{f.simD}}">*</span>
             </li>
@@ -212,7 +212,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <a href="Dispatch.dc.html" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere">{{f.place}}</span>
                             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 16px; color: #6E6E73; overflow-wrap: anywhere">{{f.s1.a0}}<b style="font-weight: 700">{{f.s1.b0}}</b>{{f.s1.a1}}<b style="font-weight: 700">{{f.s1.b1}}</b>{{f.s1.a2}}<b style="font-weight: 700">{{f.s1.b2}}</b>{{f.s1.a3}}</span>
-              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px 0 8px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{f.tagIcD}}; flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{f.tagR}}</span></span>
+              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 18px; line-height: 24px"><span aria-hidden="true" style="display: {{f.tagIcD}}; width: 24px; height: 24px; flex-shrink: 0; text-align: center; line-height: 0"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{f.tagR}}</span></span>
             </a>
             </li>
           </sc-for>
@@ -453,7 +453,7 @@ class Component extends DCLogic {
   // (Oct 8, 14:11) Hello [rank] [name]: five greetings, one picked at random when the screen opens; the time of day at the station
   wfGreet(S, lead, L, nInc, dng) {
     const staff = window.__wfStaffOf ? window.__wfStaffOf(S.id) : null, M0 = window.__wfMine ? window.__wfMine() : null, full = M0 && M0.name ? M0.name : staff ? (lead ? staff.lead : staff.captain) : '', last = full ? full.split(' ').slice(-1)[0] : '';
-    const rk = M0 && M0.rank === 'eng' ? L('Engineer', 'Motorista') : M0 && M0.rank === 'ff' ? L('Firefighter', 'Bombeiro') : lead ? L('Captain', 'Capitão') : L('Battalion Chief', 'Chefe de batalhão'), who = (rk + (last ? ' ' + last : '')).trim();
+    const rk = M0 && M0.rank === 'eng' ? L('Engineer', 'Motorista') : M0 && M0.rank === 'ff' ? L('Firefighter', 'Bombeiro') : lead ? (M0 && M0.station && M0.station.cc === 'pt' ? L('Crew chief', 'Chefe') : L('Captain', 'Capitão')) : (M0 && M0.station && M0.station.cc === 'pt' ? L('Commander', 'Comandante') : L('Battalion Chief', 'Chefe de batalhão')), who = (rk + (last ? ' ' + last : '')).trim();
     const h = new Date().getHours();   /* (Oct 8, 17:45) the user's own time of day, like the shift's duties */
     const tod = h >= 5 && h < 12 ? L('Good morning', 'Bom dia') : h >= 12 && h < 18 ? L('Good afternoon', 'Boa tarde') : h >= 18 && h < 22 ? L('Good evening', 'Boa noite') : null;   /* at night "good night" reads as a goodbye: a late-shift line instead */
     /* (Oct 10, 21:45) the greeting speaks of the cards under it: with incidents, they are the ones the station has to resolve (five
@@ -592,7 +592,7 @@ class Component extends DCLogic {
     const dutyList = (() => {
       /* (Oct 8, 17:45) the shift runs on the user's own clock (the phone's time where he is), so Now and the times ahead feel real */
       const nowLA = (() => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); })();
-      const shift = (() => { const d = new Date(Date.now() - (nowLA < 480 ? 864e5 : 0)); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })(), SK = 'wf-duty-' + MINE.key + '-' + shift;
+      const shift = (() => { const d = new Date(Date.now() - (nowLA < 480 ? 864e5 : 0)); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })(), SK = 'wf-duty-' + (MINE.pid || MINE.key) + '-' + shift;
       let MK = {}; try { MK = JSON.parse(localStorage.getItem(SK) || '{}') || {}; } catch (e) {}
       const veh = 'Engine ' + ((String(S.name).match(/(\d{1,3})\b/) || [])[1] || '11');
       const D = lead ? [
@@ -681,7 +681,7 @@ class Component extends DCLogic {
       const sub = (x.place ? x.place + '. ' : '') + x.eng + (x.out ? L(' on a call.', ' em ocorrência.') : L(' in quarters.', ' no quartel.')) + (cv ? ' ' + L('Covered by ', 'Coberto pelo ') + cv + '.' : '');
       const go = () => { const f = free[0]; if (!f) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const N = Object.assign({}, cov, { [x.ck]: f.eng }); try { localStorage.setItem('wf-cover', JSON.stringify(N)); } catch (e) {} this.forceUpdate(); };
       return { name: x.name, tag, bg, fg, sub, btnD: x.out && !cv && free.length ? 'flex' : 'none', btn: free.length ? L('Move up ', 'Cobertura com o ') + free[0].eng : '', go }; });
-    return { d: 'flex', title: L('Battalion ', 'Batalhão ') + (MINE.batt || '') , rows };
+    return { d: 'flex', title: (MINE.station && MINE.station.cc === 'pt' ? 'Área dos Bombeiros de ' : L('Battalion ', 'Batalhão ')) + (MINE.batt || '') , rows };   /* (Oct 11, 18:20) Portugal: the brigade's area, no battalions */
   }
   renderVals() {
     const S = this.station(), T = (S && S.tags) || {};
@@ -916,7 +916,7 @@ class Component extends DCLogic {
       st: { ...(() => { const K = window.__wfCrest ? window.__wfCrest((S.type === 'way' ? 'w' : 'n') + S.id, name) : { url: '', kind: 'drawn', label: '' };
           return { crest: K.url, crestD: K.url ? 'block' : 'none', crestAlt: 'Crest of ' + name, crestNote: K.kind === 'arms' ? 'Arms of ' + K.label : K.kind === 'drawn' ? 'Drawn crest' : '' }; })(),
         /* (Oct 8, 08:40) the team lead's home: his team is the protagonist (its name, its state); the station goes in the description */
-        title: lead && crews[MC] ? crews[MC].name : home && MINE && MINE.rank === 'bc' ? L('Battalion ', 'Batalhão ') + (MINE.batt || num) : home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
+        title: lead && crews[MC] ? crews[MC].name : home && MINE && MINE.rank === 'bc' ? (MINE.station && MINE.station.cc === 'pt' ? 'Bombeiros de ' : L('Battalion ', 'Batalhão ')) + (MINE.batt || num) : home ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : name.replace(/^(Bombeiros Volunt[aá]rios|Associa[cç][aã]o Humanit[aá]ria d[eo]s? Bombeiros Volunt[aá]rios)( d[aeo]s?)?\s+/i, 'Bombeiros de ').replace(/\s+County\b/i, '').replace(/\bFire (Department|Dept\.?)\s*/i, '').replace(/\s+/g, ' ').trim() || name, name, kind, kindD: kind ? 'inline' : 'none', crestNoteD: '',
         ...(lead && crews[MC] ? tg(crews[MC].st) : (nOn || (!(window.__wfStaffOf && window.__wfStaffOf(S.id)) && n25)) ? { tag: (nOn || n25) + ((nOn || n25) === 1 ? ' fire' : ' fires'),   /* a profile station's tag counts only the fires it is working (the same as Deployed) */ tagBg: 'rgba(232,106,0,0.14)', tagFg: '#A34800' } : { tag: 'Available', tagBg: window.__wfStTag.ok.bg, tagFg: window.__wfStTag.ok.fg }),
         act: phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : 'https://maps.apple.com/?daddr=' + S.lat + ',' + S.lon, actLbl: phone ? 'Call' : 'Directions', actTarget: phone ? '_self' : '_blank',
         ...(() => { const r0 = S.co || (window.__wfRegionAt ? window.__wfRegionAt(S.lat, S.lon, true) : ''), A0 = home && window.__wfStationArea ? window.__wfStationArea(S) : null, A = A0 && A0.name ? A0 : (S.place ? { name: S.place } : A0), r = A && A.name ? A.name + '. ' + r0 : r0,   /* (Oct 11, 17:40) a profile station names its own place and county (bounding boxes overlap at county lines) */ stN = lead ? (name.replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || name) : ''; if (stN) return { region: stN + '. ' + (A && A.name ? A.name : r0), regD: 'block' }; return { region: r, regD: r ? 'block' : 'none' }; })(), coords, x: S.x, y: S.y,

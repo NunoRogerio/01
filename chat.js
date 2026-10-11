@@ -89,15 +89,21 @@
   // (Oct 3, 22:03) the person each station puts in the incident chat, by their real title: a company Captain in the US,
   // the crew chief (chefe de equipa) of the fire brigade elsewhere
   /* (Oct 8, 23:09) one rank per person, on every screen: the signed-in station profile by its rank (Captain, Lieutenant), else
-     the fire owner; a station's lead by the country's title; Station 11's lieutenants and anyone in the chat as a lieutenant as
+     the incident commander; a station's lead by the country's title; Station 11's lieutenants and anyone in the chat as a lieutenant as
      Lieutenant (chefe de equipa in Portugal); everyone else on a crew as Firefighter */
+  function myStId() { try { var M = window.__wfMine ? window.__wfMine() : null; return String((M && M.station && M.station.id) || '157035089'); } catch (e) { return '157035089'; } }   /* (Oct 11, 18:20) the signed-in profile's station: Temecula, or Mação in Portugal */
+  /* (Oct 11, 18:35) "fire owner" is no rank anyone uses: a profile with no station (Cal OES, ANEPC, the administrator) shows by its own
+     title in the team; with none, by the role it holds on the fire (Incident Commander in the US, COS in Portugal) */
+  function ownTitle(me, us) { var t = String((me && me.title) || '').trim(), o = String((me && me.org) || '').trim().split('. ')[0]; if (t) { t = t + (o && t.indexOf(o) < 0 ? '. ' + o : ''); return { en: t, pt: t }; } return us ? { en: 'Incident Commander', pt: 'Comandante do incidente' } : { en: 'Incident Commander (COS)', pt: 'Comandante das operações de socorro (COS)' }; }
+  var BCR = function (us) { return us ? { en: 'Battalion Chief', pt: 'Chefe de batalhão' } : { en: 'Commander', pt: 'Comandante' }; };
   function rankOf(c, name) { var us = !c || isUS(c), LT = us ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' };   /* (Oct 11, 17:00) US ranks as LA County Fire uses them: Battalion Chief, Captain (each engine's officer), Engineer, Firefighter; no Lieutenant */
     var me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null;
-    if (name && me.name && name === me.name) return M ? (M.rank === 'eng' ? { en: 'Engineer', pt: 'Motorista' } : M.rank === 'ff' ? { en: 'Firefighter', pt: 'Bombeiro' } : M.level === 'lead' ? LT : { en: 'Battalion Chief', pt: 'Chefe de batalhão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
+    if (name && me.name && name === me.name) return M ? (M.rank === 'eng' ? { en: 'Engineer', pt: 'Motorista' } : M.rank === 'ff' ? { en: 'Firefighter', pt: 'Bombeiro' } : M.level === 'lead' ? LT : BCR(us)) : ownTitle(me, us);
     var P = c && (c.people || []).find(function (p) { return p.name === name; }); if (P && P.kind === 'lt') return LT; if (P && P.kind === 'air') return { en: P.roleEn || 'Air coordinator', pt: P.rolePt || 'Coordenador de meios aéreos' }; if (P && (P.kind === 'law' || P.kind === 'invest')) return { en: String(P.roleEn || 'Captain').split('. ')[0], pt: String(P.rolePt || 'Capitão').split('. ')[0] };
-    var SF = window.__wfStaffOf ? window.__wfStaffOf('157035089') : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT;
-    var FL = window.__wfFleet ? window.__wfFleet('157035089') : null, U = FL && FL.find(function (u) { return u.crew.indexOf(name) >= 0 && u.lt !== name; });
-    if (U && U.rank) return U.rank; if (U && U.eng === name) return { en: 'Engineer', pt: 'Motorista' }; if (U && U.id === 'squad') return { en: 'Firefighter paramedic', pt: 'Bombeiro paramédico' }; if (SF && name === SF.captain) return { en: 'Battalion Chief', pt: 'Chefe de batalhão' };
+    var SF = window.__wfStaffOf ? window.__wfStaffOf(myStId()) : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT;
+    if (P && P.kind === 'lead') return SF && name === SF.captain ? BCR(us) : LT;   /* (Oct 11, 18:40) a station's lead in the chat: our Battalion Chief (Comandante), else the engine's Captain (crew chief) */
+    var FL = window.__wfFleet ? window.__wfFleet(myStId()) : null, U = FL && FL.find(function (u) { return u.crew.indexOf(name) >= 0 && u.lt !== name; });
+    if (U && U.rank) return U.rank; if (U && U.eng === name) return { en: 'Engineer', pt: 'Motorista' }; if (U && U.id === 'squad') return { en: 'Firefighter paramedic', pt: 'Bombeiro paramédico' }; if (SF && name === SF.captain) return BCR(us);
     if (c && (c.forces || []).some(function (f) { return f.coord === name; })) return leadRole(c);
     if (P && P.kind === 'lead') return leadRole(c);
     return { en: 'Firefighter', pt: 'Bombeiro' }; }
@@ -179,7 +185,7 @@
   // people: Station 11's lieutenant is Daniel Brooks (the lieutenant profile himself when he is signed in)
   // (Oct 8, 21:54) the simulated Rubio Fire is Station 11's alone: its captain and its two crews (Engine 11, Lieutenant Daniel
   // Brooks; Brush 11, Lieutenant Kevin Marsh); the other stations are not on it. The fire page's Crews tab shows the same.
-  function soloSim(c) { if (!c || c.incId !== 'SIM-ST11-F1' || !(c.stations || []).length || !(c.forces || []).length) return false;
+  function soloSim(c) { if (!c || !/^SIM-(ST11|PT1)-F1$/.test(c.incId || '') || !(c.stations || []).length || !(c.forces || []).length) return false;
     if (c.solo && (c.forces || []).some(function (f) { return f.second; })) return false;   /* done (the second crew is put back if a dispatch rebuilt the list) */
     var i0 = c.stations.findIndex(function (s) { return !!staffOf(s); }); if (i0 < 0) return false; var s0 = c.stations[i0], SF = staffOf(s0), f0 = c.forces.find(function (f) { return f.si === i0; }); if (!f0) return false;
     c.solo = true; var on = c.stage >= 7 ? 'released' : 'onscene'; f0.st = on;
@@ -222,7 +228,7 @@
       var on = f.st !== 'released' && (f.st !== 'standby' || capIn), ex = c.people.find(function (p) { return p.name === nm; });
       if (ex) { if (ex.kind === 'lt' && !!ex.left === on) { ex.left = on ? undefined : true; ch = true; } return; }   /* the lieutenant is in while the crew works the fire */
       if (!on) return; var v = (f.veh || [])[0] || '', org = s.short || f.station || '';
-      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: 'Captain. ' + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && !f.second && M && M.key === 'ff') || undefined }); ch = true; });
+      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: (isUS(c) ? 'Captain. ' : 'Crew chief. ') + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && !f.second && M && M.key === 'ff') || undefined }); ch = true; });
     ch = ltsOfLeads(c) || ch;
     return ch; }
   /* (Oct 8, 23:30) every station in an incident chat has its lieutenant there too, not only its captain (also before any
@@ -464,7 +470,7 @@
     var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Fire reported', pt: 'Incêndio reportado' }; c0.title = { en: c.place, pt: c.place };
     /* (Oct 10, 23:41) no opening card repeating the fire's name and source: the header and stage band say it */
     { var cc0 = stageCard(c, 0); cc0.kind = 'card'; cc0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' }; add(cc0, at(0)); }   /* (Oct 11, 00:20) the story starts with the ignition candidate */
-    add({ kind: 'sys', en: 'Called you (fire owner) and the nearest stations\' crew coordinators', pt: 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa dos quartéis mais próximos' }, at(0) + MIN);   /* (Oct 10, 23:42) the stations are named on the card that follows: not repeated here */
+    add({ kind: 'sys', en: 'Called you and the officers of the nearest stations', pt: 'Chamados: o próprio e os chefes dos quartéis mais próximos' }, at(0) + MIN);   /* (Oct 10, 23:42) the stations are named on the card that follows: not repeated here */
     msg(0, 'Seen. Crew of 5 and ' + (us ? 'an engine' : 'one fire engine') + ' ready at ' + (P[0] || {}).org + '.', 'Visto. Equipa de 5 e um veículo prontos em ' + (P[0] || {}).org + '.', at(0) + 3 * MIN);
     if (P[2]) msg(2, 'Smoke visible from the station, looks like it is growing.', 'Fumo visível do quartel, parece estar a crescer.', at(0) + 5 * MIN);
     if (s >= 1) {
@@ -563,7 +569,7 @@
         d.people = src.people.slice(0, d.stations.length).map(function (p) { d.used[p.name] = 1; return { name: p.name, code: p.code, org: p.org, kind: 'lead' }; });
       }
       (src.forces || []).forEach(function (f) { f.crew.forEach(function (x) { d.used[x] = 1; }); });
-      d.msgs.concat(d.queue.map(function (q) { return q.m; })).forEach(function (m) { if (m.kind === 'sys' && /^Called you/.test(m.en)) { var names = d.people.map(function (p) { return p.org; }).join(', '); m.en = 'Training drill against the resolved fire of ' + new Date(S.end).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' · called you (fire owner) and the crew coordinators of ' + names; m.pt = 'Simulação contra o incêndio resolvido de ' + new Date(S.end).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' }) + ' · chamados: você (responsável) e os coordenadores de equipa de ' + names; } });
+      d.msgs.concat(d.queue.map(function (q) { return q.m; })).forEach(function (m) { if (m.kind === 'sys' && /^Called you/.test(m.en)) { var names = d.people.map(function (p) { return p.org; }).join(', '); m.en = 'Training drill against the resolved fire of ' + new Date(S.end).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' · called you and the officers of ' + names; m.pt = 'Simulação contra o incêndio resolvido de ' + new Date(S.end).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' }) + ' · chamados: o próprio e os chefes de ' + names; } });
       save(); emit(); };
     setTimeout(wait, 150);
     return c.key;
@@ -1139,7 +1145,7 @@
   function send(key, text) {
     var c = load().chats[key]; if (!c || !String(text || '').trim()) return;
     text = String(text).trim(); mine(c, text, text);
-    if (c.kind !== 'dm' && c.stage >= 3 && evacText(text) && !(c.flags || {}).evac) evacAsk(c, Math.max(0, (c.people || []).findIndex(function (p) { return !p.self && !p.left && p.kind !== 'air'; })));   /* I bring it up: the request card comes up for the fire owner */
+    if (c.kind !== 'dm' && c.stage >= 3 && evacText(text) && !(c.flags || {}).evac) evacAsk(c, Math.max(0, (c.people || []).findIndex(function (p) { return !p.self && !p.left && p.kind !== 'air'; })));   /* I bring it up: the request card comes up for the incident commander */
     if (c.kind === 'dm' && c.police) { if (aiKey()) policeAi(c, text); else policeReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm' && c.help && c.step === 2 && /obrigad|thank|valeu|cheers|stay safe|cuid/i.test(text)) { helpEnd(c); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
     if (c.kind === 'dm' && c.help) { if (aiKey()) helpAi(c, text); else helpReply(c, text); c.updated = Date.now(); c.seenAt = Date.now(); save(); emit(); return; }
@@ -1392,19 +1398,19 @@
       'Current stage: ' + STAGES[c.stage].en + '. Fire clock now: ' + hhmm(vnow(c)) + ', ' + dur(vnow(c) - since(c)) + ' since the first detection.\n' +
       'Stage timeline: ' + tl + '.\n' +
       'Burnt area now: about ' + areaTxt(c) + '. Wind from the south-west, about 18 km/h gusting 30; the head runs north-east; homes about 1 km north-east.\n' +
-      'Air support: ' + (c.air ? c.air.name + ' (' + c.air.st + ')' : c.flags.airNo ? 'declined by the fire owner for now' : 'none') + '. Evacuation: ' + (c.evac ? c.evac.people + ' residents moved out' : 'none ordered') + '.\n' +
+      'Air support: ' + (c.air ? c.air.name + ' (' + c.air.st + ')' : c.flags.airNo ? 'declined by the incident commander for now' : 'none') + '. Evacuation: ' + (c.evac ? c.evac.people + ' residents moved out' : 'none ordered') + '.\n' +
       (function () { var S = crewState(c); return S && S.st && S.st.length ? 'Units right now (exact; never contradict them): ' + S.st.map(function (x) { return x.name + ': ' + x.tenders + ' water tender(s)' + (x.low.length ? ', below 20% water: ' + x.low.join(', ') : ', all above 20%') + '; ' + x.crews + ' crew(s)' + (x.tired.length ? ', past 12 h needing relief: ' + x.tired.join(', ') : ''); }).join('. ') + '. When water or relief comes up, each station with a problem answers for its own units.\n' : ''; })() +
       'Team (answer only as these people; index in #):\n' + team + '\n\nRecent chat, oldest first:\n' + tr;
   }
-  var AI_SYS = 'You role-play the crew coordinators of fire stations in a wildfire incident chat. This is a realistic training simulation inside a fire command app; the person writing to you is the fire owner (incident commander) who makes all decisions. ' +
+  var AI_SYS = 'You role-play the crew coordinators of fire stations in a wildfire incident chat. This is a realistic training simulation inside a fire command app; the person writing to you is the incident commander (incident commander) who makes all decisions. ' +
     'Stay in character: each coordinator has their own voice (given in the brief). Write like real people on a phone chat during a fire, not like a form: natural, warm and human, with the rhythm and small asides colleagues use with each other, always focused on the job at hand. ' +
-    'Match the fire owner: a short order gets a short, crisp answer (1 sentence); a question, a worry or a chat gets a conversational answer (2 to 4 short sentences, at most 60 words) that explains what they see, what they are doing and why. ' +
+    'Match the incident commander: a short order gets a short, crisp answer (1 sentence); a question, a worry or a chat gets a conversational answer (2 to 4 short sentences, at most 60 words) that explains what they see, what they are doing and why. ' +
     'Speak to your role: captains speak for their station (resources, priorities, decisions); lieutenants speak from the fire line (what their crew sees and does right now). ' +
-    'If the fire owner jokes, vents or says something off the wall, react like a real colleague would (a bit of humour, surprise or a straight word), then bring it back to the fire. No emojis, no markdown. ' +
+    'If the incident commander jokes, vents or says something off the wall, react like a real colleague would (a bit of humour, surprise or a straight word), then bring it back to the fire. No emojis, no markdown. ' +
     'Never contradict what you or the team said earlier in this chat (if you said there is no reason to evacuate, do not ask for an evacuation unless something changed, and say what changed). '+
     'Be consistent with the brief: the stage, the forces and where they are, the time elapsed, the burnt area, air support and evacuation. Describe fire behaviour, terrain, water, crew welfare and needs plausibly for this stage. ' +
-    'Coordinators may take operational decisions themselves (deploy or recall their own crews, launch the drone, order a local evacuation) and announce them as decisions. Only the fire owner changes the incident stage: never declare the fire held, resolved or closed, and never invent new stations, aircraft or people. ' +
-    'If the fire owner names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
+    'Coordinators may take operational decisions themselves (deploy or recall their own crews, launch the drone, order a local evacuation) and announce them as decisions. Only the incident commander changes the incident stage: never declare the fire held, resolved or closed, and never invent new stations, aircraft or people. ' +
+    'If the incident commander names a person or station, that coordinator answers. A crew that is not dispatched is still at its station. Everything you write must be in LANGUAGE. ' +
     'Answer with JSON only, no prose around it: {"replies":[{"who":<team index>,"text":"<message>","minutes":<minutes of fire time before this message, 1 to 15>}]} with one reply, or two when a second coordinator genuinely adds something.';
   function aiSys() { return AI_SYS.replace('LANGUAGE', LNAME(true)); }
   // (Oct 8, 22:10) a member asking for an evacuation is a request, as air support: a card the captain (fire owner) approves or
@@ -1446,7 +1452,7 @@
   var INF = {};   // answers being written by Claude from this screen
   function aiReply(c, text, fallback) {
     var key = c.key, guess = responder(c, text); c.pending = { who: guess >= 0 ? guess : 0, at: Date.now(), q: text }; INF[key] = 1;
-    aiCall(aiSys(), aiBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now as the right coordinator(s).', 900, function (err, txt) {
+    aiCall(aiSys(), aiBrief(c) + '\n\nThe incident commander just wrote: "' + text + '"\nReply now as the right coordinator(s).', 900, function (err, txt) {
       delete INF[key];
       if (err) { var c2 = load().chats[key]; if (c2) { c2.pending = null; fallback(c2); save(); emit(); } return; }
       aiDeliver(key, txt, fallback);
@@ -1454,7 +1460,7 @@
   }
   function aiUpdate(c, fallback) {
     var key = c.key; c.pending = { who: 0, at: Date.now() };
-    aiCall(aiSys(), aiBrief(c) + '\n\nThe fire owner has been quiet for a while. Write ONE unprompted progress update from the coordinator best placed to report, describing how the fire and the work evolved since the last message, as fits the current stage. Use minutes between 8 and 40 for a stage with crews working, up to 180 under surveillance.', 400, function (err, txt) {
+    aiCall(aiSys(), aiBrief(c) + '\n\nThe incident commander has been quiet for a while. Write ONE unprompted progress update from the coordinator best placed to report, describing how the fire and the work evolved since the last message, as fits the current stage. Use minutes between 8 and 40 for a stage with crews working, up to 180 under surveillance.', 400, function (err, txt) {
       var c2 = load().chats[key]; if (!c2) return;
       if (err) { c2.pending = null; fallback(c2); save(); emit(); return; }
       var js = parseJSON(txt); if (js && js.replies) js.replies = js.replies.slice(0, 1).map(function (r) { r.minutes = Math.max(5, Math.min(c2.stage === 6 ? 240 : 45, parseInt(r.minutes, 10) || 15)); return r; });
@@ -1787,9 +1793,9 @@
     var nx = NEXT[q] || null; c.step = q + 1;
     say(c, 0, ack[0] + (nx ? ' ' + nx[0] : ' That is all I need for now.'), ack[1] + (nx ? ' ' + nx[1] : ' Por agora é tudo o que preciso.'), 2000, 2);
   }
-  var POL_SYS = 'You role-play a police captain of the local force (given in the brief) in a phone chat inside a wildfire command app. This is a realistic training simulation. The person writing to you is the fire owner (incident commander), who has reported an ignition that started at night and asked the police to investigate. ' +
+  var POL_SYS = 'You role-play a police captain of the local force (given in the brief) in a phone chat inside a wildfire command app. This is a realistic training simulation. The person writing to you is the incident commander (incident commander), who has reported an ignition that started at night and asked the police to investigate. ' +
     'You are not a firefighter: you never fight the fire, send crews, talk about driving to the scene or give fire tactics. Your topic is the investigation of a suspicious night ignition: how and when it was detected, people or vehicles seen, access roads and tracks, power lines, lightning and weather, earlier fires in the area, preserving the point of origin, photos, witnesses. ' +
-    'Lead the conversation like an investigator: acknowledge what the fire owner tells you and ask one clear follow-up question at a time. Calm, professional, plain human sentences; 1 to 3 sentences. Never name a culprit or a cause without evidence, never invent other people in the chat. No emojis, no markdown. Everything you write must be in LANGUAGE. ' +
+    'Lead the conversation like an investigator: acknowledge what the incident commander tells you and ask one clear follow-up question at a time. Calm, professional, plain human sentences; 1 to 3 sentences. Never name a culprit or a cause without evidence, never invent other people in the chat. No emojis, no markdown. Everything you write must be in LANGUAGE. ' +
     'Answer with JSON only: {"replies":[{"who":0,"text":"<message>","minutes":<minutes before this message, 1 to 20>}]} with one reply.';
   function policeBrief(c) {
     var P = c.people[0] || {}, pt = PT();
@@ -1801,7 +1807,7 @@
   }
   function policeAi(c, text) {
     var key = c.key; c.pending = { who: 0, at: Date.now(), q: text }; INF[key] = 1;
-    aiCall(POL_SYS.replace('LANGUAGE', LNAME(false)), policeBrief(c) + '\n\nThe fire owner just wrote: "' + text + '"\nReply now.', 500, function (err, txt) {
+    aiCall(POL_SYS.replace('LANGUAGE', LNAME(false)), policeBrief(c) + '\n\nThe incident commander just wrote: "' + text + '"\nReply now.', 500, function (err, txt) {
       delete INF[key]; var c2 = load().chats[key]; if (!c2) return;
       if (err) { c2.pending = null; policeReply(c2, text); save(); emit(); return; }
       aiDeliver(key, txt, function (c3) { policeReply(c3, text); });
@@ -1907,7 +1913,7 @@
     callStart: function (key) { var d = load(), c = d.chats[key]; if (!c || c.closed || c.dismissed) return;
       var M = window.__wfMine ? window.__wfMine() : null, PT = window.__wfLang === 'pt', staff = M && window.__wfStaffOf ? window.__wfStaffOf(M.station.id) : null;
       var full = M && M.name ? M.name : staff ? (M.level === 'lead' ? staff.lead : staff.captain) : ((window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || ''), last = full.split(' ').slice(-1)[0] || '';
-      var rk = M ? (M.rank === 'eng' ? ['Engineer', 'Motorista'] : M.rank === 'ff' ? ['Firefighter', 'Bombeiro'] : M.level === 'lead' ? ['Captain', 'Capitão'] : ['Battalion Chief', 'Chefe de batalhão']) : ['', ''], who = { en: (rk[0] + ' ' + last).trim(), pt: (rk[1] + ' ' + last).trim() };
+      var rk = M ? (M.rank === 'eng' ? ['Engineer', 'Motorista'] : M.rank === 'ff' ? ['Firefighter', 'Bombeiro'] : M.level === 'lead' ? (M.station && M.station.cc === 'pt' ? ['Crew chief', 'Chefe de equipa'] : ['Captain', 'Capitão']) : (M.station && M.station.cc === 'pt' ? ['Commander', 'Comandante'] : ['Battalion Chief', 'Chefe de batalhão'])) : ['', ''], who = { en: (rk[0] + ' ' + last).trim(), pt: (rk[1] + ' ' + last).trim() };
       var P = (c.people || []).map(function (p, i) { return [p, i]; }).filter(function (q) { return !q[0].left && !q[0].self; });
       var G = [function (p) { return ['Hello ' + who.en + ', ' + p.name.split(' ')[0] + ' here.', 'Olá ' + who.pt + ', fala ' + p.name.split(' ')[0] + '.']; },
         function (p) { return ['Hi ' + who.en + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', on the line.', 'Olá ' + who.pt + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', em linha.']; },
