@@ -16,16 +16,16 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791750838"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791751071"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791750838"></script>
-<script src="station.js?v=1791750838"></script>
+<script src="prefs.js?v=1791751071"></script>
+<script src="station.js?v=1791751071"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791750838"></script>
-<script src="chat.js?v=1791750838"></script>
+<script src="live.js?v=1791751071"></script>
+<script src="chat.js?v=1791751071"></script>
 <script src="tour.js?v=1791734035"></script>
 <script src="mapsearch.js?v=5"></script>
-<script src="stats.js?v=1791750838"></script>
+<script src="stats.js?v=1791751071"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -826,7 +826,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   <nav data-wf-rail="1" data-wf-nospace="1" aria-label="Preferences" style="z-index: 3; background: transparent; pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: 0; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
     <!-- (Oct 11, 19:40) the pill hugs its icons, 24px apart (the menus now hold 3 to 5 sections), 32px above the first and below the last; (19:55) it sits low, 48px above the screen's bottom, where the thumb reaches -->
     <!-- (Oct 9, 17:15) the icon column is a pill: the same 60px width, fully rounded, from 32px under the menu button to 48px above the screen's bottom; its icons spread evenly with 32px above the first and below the last -->
-    <div data-wf-pill="1" data-wf-nopb="1" style="pointer-events: auto; position: absolute; right: 0; width: 60px; top: auto; bottom: 48px; height: {{pm.pillH}}px; max-height: calc(100% - {{pm.bTop}}px - 124px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 8px; box-sizing: border-box; padding: 8px 0; border-radius: 30px 0 0 30px; background: rgb(58, 58, 60); overflow-y: auto; scrollbar-width: none">
+    <div data-wf-pill="1" data-wf-nopb="1" onPointerDown="{{pm.pillDown}}" style="pointer-events: auto; touch-action: none; position: absolute; right: 0; width: 60px; top: auto; bottom: {{pm.pillB}}px; height: {{pm.pillH}}px; max-height: calc(100% - {{pm.bTop}}px - 156px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 8px; box-sizing: border-box; padding: 8px 0; border-radius: 30px 0 0 30px; background: rgb(58, 58, 60); overflow-y: auto; scrollbar-width: none">
     <sc-for list="{{pm.items}}" as="it" hint-placeholder-count="8">
         <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.dotD}}; position: absolute; top: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; background: #E6352B; pointer-events: none"></span><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
       </sc-for>
@@ -1079,6 +1079,16 @@ class Component extends DCLogic {
       const mid = ((rx.top + rx.bottom) / 2 + (ro.top + ro.bottom) / 2) / 2, natTop = r.top - cur * k;
       const off = Math.max(0, Math.round((mid - r.height / 2 - natTop) / k));
       if (Math.abs(off - cur) > 1) g.style.marginTop = off + 'px'; } catch (e) {} }
+  // (Oct 11, 21:40) dragging the icon pill up and down (a tap on an icon still picks it: the drag starts after 6px)
+  wfPillDown(e) { try { const el = e.currentTarget, nav = el && el.parentElement; if (!el || !nav) return;
+      const K = (nav.getBoundingClientRect().height / (nav.offsetHeight || 1)) || 1, y0 = e.clientY, b0 = parseFloat(el.style.bottom) || 56, x = document.querySelector('button[data-wf-burger]');
+      const xb = x ? (x.getBoundingClientRect().bottom - nav.getBoundingClientRect().top) / K : 112, maxB = Math.max(56, nav.offsetHeight - xb - 56 - el.offsetHeight);
+      let drag = false, b = b0;
+      const mv = (ev) => { const dy = (ev.clientY - y0) / K; if (!drag && Math.abs(dy) < 6) return; drag = true; b = Math.round(Math.min(maxB, Math.max(56, b0 - dy))); el.style.bottom = b + 'px'; ev.preventDefault(); };
+      const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+        if (!drag) return; const eat = (ce) => { ce.stopPropagation(); ce.preventDefault(); }; window.addEventListener('click', eat, { capture: true, once: true }); setTimeout(() => window.removeEventListener('click', eat, true), 300);
+        try { localStorage.setItem('wf-pill-b', String(b)); } catch (x2) {} this.setState({ pillB: b }); };
+      window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); } catch (x) {} }
   wfMenuPost(m) { if (!window.__wfMenuOnly) return; try { window.parent.postMessage({ wfMenu: m }, location.origin); } catch (e) {} }
   componentDidMount() {
     // (Oct 5) keys: a failing key shows a red dot on its menu icon; MapTiler's is checked once per session
@@ -1253,7 +1263,9 @@ class Component extends DCLogic {
           return { gapT: '0px',   /* (Oct 11, 20:50) the pill's icons spread evenly: 8px above the first and below the last, as at the sides */   /* (06:38) 40px from button to button between groups (half the earlier space, on the 8 scale) */   /* (Oct 5, 06:31) three groups (profile, about, share | language, appearance, maps | chat, data sources), an empty button's space between them */ dotD: kf ? 'block' : 'none', label: TT[k] + (kf ? (lang === 'pt' ? '. A chave falhou' : '. Key failed') : ''), cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? 'var(--wf-pri-bg, #3A3A3C)' : 'rgba(118,118,128,0.12)', fg: on ? 'var(--wf-pri-fg, #FFFFFF)' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
-        return { pillH: (() => { const n = MSECS.length + (window.__wfLoginMenu ? 0 : 1); return 64 + n * 44 + (n - 1) * 24 + 48; })(),   /* (Oct 11, 21:35) 48px taller, upwards: it covers the screen's round map buttons under it */   /* (Oct 11, 20:50) the pill keeps its height */ secVis: rail ? 'hidden' : 'visible', mz: pmMode ? 4 : 1, mbg: pmMode ? 'transparent' : '#F2F2F7', mpe: pmMode ? 'none' : 'auto', pe: open ? 'auto' : 'none', secSh: 'none',   /* (Oct 11, 20:50) open too: the section is a blade over the screen, which stays in place (no page colour behind the icon pill) */   /* (Oct 11, 21:35) folded: only the icon pill, over the screen */
+        return { pillB: (() => { let v = s.pillB; if (v == null) { try { v = parseFloat(localStorage.getItem('wf-pill-b')); } catch (e) {} } return isFinite(v) && v >= 56 ? v : 56; })(),   /* (Oct 11, 21:40) the icon pill can be dragged up and down: between 56px from the screen's bottom and 56px under the X */
+          pillDown: (e) => this.wfPillDown(e),
+          pillH: (() => { const n = MSECS.length + (window.__wfLoginMenu ? 0 : 1); return 64 + n * 44 + (n - 1) * 24 + 48; })(),   /* (Oct 11, 21:35) 48px taller, upwards: it covers the screen's round map buttons under it */   /* (Oct 11, 20:50) the pill keeps its height */ secVis: rail ? 'hidden' : 'visible', mz: pmMode ? 4 : 1, mbg: pmMode ? 'transparent' : '#F2F2F7', mpe: pmMode ? 'none' : 'auto', pe: open ? 'auto' : 'none', secSh: 'none',   /* (Oct 11, 20:50) open too: the section is a blade over the screen, which stays in place (no page colour behind the icon pill) */   /* (Oct 11, 21:35) folded: only the icon pill, over the screen */
           dimOp: cover ? 0.2 : 0, dimT: cover ? '.35s cubic-bezier(.37,0,.63,1)' : '0s', x: rail && this.wfLayout().side ? -60 : 0, cr: 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
           dur: boot ? '0s' : (() => { if (pmMode === '' && this._pmPrevMode === 'rail') this._pmSlowUntil = Date.now() + 900; this._pmPrevMode = pmMode; return '.35s'; })(),   /* (Oct 9, 18:27) as quick as the other sliding panels */   /* (Oct 4) the screen widening back to full width after the icon column closes: 40% slower (.74s) */   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives

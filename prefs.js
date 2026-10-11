@@ -551,6 +551,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     var th = document.documentElement.classList.contains('wf-dark') + '|' + (document.documentElement.getAttribute('style') || '').length;
     if ((less || more) && (el.__wfBcTh !== th || el.__wfBc === undefined)) { el.__wfBc = behindCol(el); el.__wfBcTh = th; }
     var col = (less || more) ? el.__wfBc : null;
+    if (col && el.parentElement && el.parentElement.closest('[data-wf-sb="panel"], [data-wf-sb="edge"]')) col = null;   /* (Oct 11, 21:45) over a stripe band: fade the content itself (mask), never paint the surface colour over the band */
     if (col) {
       if (el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = ''; el.__wfM = ''; }
       fadeOv(el, 'top', less, col, ht); fadeOv(el, 'bottom', more, col, h); return;

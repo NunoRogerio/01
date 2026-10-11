@@ -1815,3 +1815,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Menu open: the section is a blade over the screen and the screen stays in place. Beside the icon pill nothing is painted: no page colour, no column. Applies in Main and through the menu frame on every other page.
 - Menu, final (Oct 11, 21:30): a section open = its white surface covers the whole screen, the icon pill on top of it at the right; the section's single stripe band runs along the screen's bottom, full width. Folded (no section showing) = only the dark pill over the screen. The section's content keeps 60px clear on the right for the pill.
 - Menu icon pill: 48px taller (upwards), so the screen's round map buttons never peek out above it.
+- Menu icon pill is draggable up and down (after 6px of movement; a tap still picks an icon): between 56px from the screen's bottom (its default place) and 56px under the X. Its place is remembered on every screen. Profile's Sign out follows the pill's bottom when there is room.
+- Scroll fades over a stripe band fade the content itself (mask): never a surface-coloured overlay painted over the band.
