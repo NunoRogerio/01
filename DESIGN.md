@@ -1684,3 +1684,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Menu and settings lie over the screen (Oct 11):** they no longer push or resize it; the icon column and the section are uncovered from the right over the screen, which stays still.
 - **Mutual aid tag (Oct 11):** on the incident card's title line, at the right.
 - **Resource rows (Oct 11):** the status tag and the chevron are centred on the title's first line.
+- **Ignition candidate icon (Oct 11):** a heat point with arcs either side, like a signal: 1, 2 or 3 arcs by likelihood (under 60%, 60 to 79%, 80% and over), painted in the scale's yellow (light #FFF176, yellow #FFD600, strong #FFB300) with a dark casing, on the station's incident cards, the map markers, the new-detection banners and the notifications' rounds (live.js `__wfIgn` / `__wfIgnSvg`). The "Ignition candidate" stage icon and the map legend use the same glyph (2 arcs).

@@ -19,10 +19,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791675609"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791673005"></script>
-<script src="station.js?v=1791674600"></script>
+<script src="station.js?v=1791677295"></script>
 <script src="i18n.js?v=1791665418"></script>
-<script src="live.js?v=1791676428"></script>
-<script src="chat.js?v=1791676428"></script>
+<script src="live.js?v=1791677295"></script>
+<script src="chat.js?v=1791677295"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791540669"></script>
@@ -1665,7 +1665,8 @@ class Component extends DCLogic {
       const ic = n.kind === 'ign' ? [CIR, 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
       // The type, as an icon in its own round (like the chat timeline): the ignition candidate's marker, the fire's stage icon (in the stage's colour), the station's house
       const CH = window.__wfChat, SG = n.kind === 'fire' && CH && CH.STAGES ? CH.STAGES.find((q) => String(n.stage || '').toLowerCase().indexOf(q.en.toLowerCase()) >= 0 || q.en.toLowerCase().indexOf(String(n.stage || '').toLowerCase()) >= 0) : null;
-      const ty = n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
+      const ty = n.kind === 'ign' && CH && CH.ICON ? { vb: '0 0 24 24', d: CH.ICON.cand, f: 'none', s: '#3A3A3C', sw: 1.8, bg: window.__wfIgn ? window.__wfIgn(n.conf || +((String(n.title) + ' ' + String(n.text)).match(/(\d+)%/) || [])[1] || 70).fill : '#FFD600' }   /* (Oct 11, 01:05) the candidate's heat point on its likelihood yellow */
+        : n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
         : SG ? { vb: '0 0 24 24', d: CH.ICON[SG.icon], f: 'none', s: SG.c, sw: 1.8, bg: SG.bg }
         : n.kind === 'fire' ? { vb: '0 0 14 14', d: CIR, f: '#E8590C', s: 'none', sw: 0, bg: '#FCE9E1' }
         /* station updates by what they are about: a vehicle returning (truck), crews released (crew), an aircraft (helicopter); the station's house otherwise */
