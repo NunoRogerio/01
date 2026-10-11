@@ -45,7 +45,12 @@
     x: 'M7 7l10 10M17 7L7 17',
     trophy: 'M8 3.5h8v5.5a4 4 0 0 1-8 0Z M8 5.5H4.5v1.2A3.3 3.3 0 0 0 8 10 M16 5.5h3.5v1.2A3.3 3.3 0 0 1 16 10 M12 13v3.5 M8 20.5h8 M9.5 16.5h5v4h-5Z'
   };
-  function stageOf(ch) { return ch.dismissed ? DISMISSED : STAGES[ch.stage] || STAGES[0]; }
+  /* (Oct 11, 07:11) the candidate is a stage like the others: "Candidate" and its likelihood ("Candidate 68%"), on the likelihood's yellow
+     (light under 60%, yellow 60 to 79%, strong 80% and over: live.js __wfConfTag), dark text; on its right, when it was detected */
+  function candStage(conf) { var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' };
+    return Object.assign({}, STAGES[0], { en: 'Candidate' + (n ? ' ' + n + '%' : ''), pt: 'Candidato' + (n ? ' ' + n + '%' : ''), c: T.fg, bg: T.bg, ink: T.fg, cand: true }); }
+  function stageOf(ch) { return ch.dismissed ? DISMISSED : !ch.stage ? candStage(ch.conf) : STAGES[ch.stage] || STAGES[0]; }
+  function candMeta(c) { try { var t = since(c); if (!t) return ''; var d = new Date(t); return d.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t); } catch (e) { return ''; } }
   // ANEPC status code -> chat stage
   function stageFromCode(sc) { sc = Number(sc) || 0; return sc >= 10 ? 7 : sc === 9 ? 6 : sc === 8 ? 5 : sc === 7 ? 4 : sc === 6 ? 3 : sc === 5 ? 2 : sc >= 3 ? 1 : 2; }
 
@@ -1748,7 +1753,7 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: fireMeta, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
+    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: fireMeta, candStage: candStage, candMeta: candMeta, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { return load().chats[k] || null; },
     find: function (inc) { return chatFor(inc); },

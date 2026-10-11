@@ -19,8 +19,8 @@
 <script src="prefs.js?v=1791673005"></script>
 <script src="station.js?v=1791678052"></script>
 <script src="i18n.js?v=1791665418"></script>
-<script src="live.js?v=1791698136"></script>
-<script src="chat.js?v=1791698797"></script>
+<script src="live.js?v=1791699181"></script>
+<script src="chat.js?v=1791699181"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="feedcam.js?v=1791671663"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -640,8 +640,9 @@ class Component extends DCLogic {
   }
   // Keep the newest message fully above the input while you are reading the end; after the layout settles too
   // Every chat keeps the place you left it (on this phone); at the end, it follows new messages
+  /* (Oct 11, 07:12, app-wide) a chat always opens on its latest message, whatever screen opened it (a fire on the station or main screen, a list, a notification) */
   restorePos(el, key) { let p = null; try { p = JSON.parse(localStorage.getItem('wf-chat-pos') || '{}')[key]; } catch (e) {}
-    if (!p || p.b) { this._stick = true; this.pin(); return; }
+    if (true || !p || p.b) { this._stick = true; this.pin(); return; }
     this._stick = false; this._restoring = true; const t0 = Date.now();
     const step = () => { if (this._sc !== el || this._posKey !== key) { this._restoring = false; return; } el.scrollTop = p.t;
       if (el.scrollHeight - el.clientHeight >= p.t - 1 || Date.now() - t0 > 1500) { this._restoring = false; this._stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60; } else requestAnimationFrame(step); };
@@ -1084,7 +1085,7 @@ class Component extends DCLogic {
           if (S2) { const b = iconFor(S2); return b.d ? Object.assign({}, b, { c: '#FFFFFF', bg: 'rgba(255,255,255,0.2)' }) : null; }   /* (Oct 10, 22:25) white on the strong band */   /* the same light disc on every band, whatever stage the icon names */
           return m.req && R[m.req] ? { d: R[m.req], c: '#FFFFFF', bg: 'rgba(255,255,255,0.2)', fill: 'none' } : null; })();
         /* (Oct 9, 15:32) a card keeps the colour of the stage during which it was triggered: never the stage it suggests, never repainted when the fire moves on */
-        const Hd = C.STAGES[m.st0 != null ? m.st0 : (() => { let v = null; (c.hist || []).forEach((h) => { if (h.vt <= (m.vt || 0) + 500) v = h.s; }); return v; })()] || St || S;
+        const Hd = ((i) => i === 0 && C.candStage ? C.candStage(c.conf) : C.STAGES[i])(m.st0 != null ? m.st0 : (() => { let v = null; (c.hist || []).forEach((h) => { if (h.vt <= (m.vt || 0) + 500) v = h.s; }); return v; })()) || St || S;   /* (Oct 11) cards of the candidate stage on the likelihood's yellow */
         // Once a choice is made, only the chosen option stays: full width, past tense, no longer tappable
         const PAST = { reqConfirm: ['Approved', 'Aprovado'], reqDismiss: ['Approved', 'Aprovado'], reqNo: ['Not approved', 'Não aprovado'], approveAir: ['Approved', 'Aprovado'], declineAir: ['Not approved', 'Não aprovado'], close: ['Fire closed', 'Incêndio encerrado'], dispatch: ['Crews dispatched', 'Equipas enviadas'], next: ['Moved on', 'Avançado'], evac: ['Approved', 'Aprovado'], evacNo: ['Not approved', 'Não aprovado'], helpYes: ['Crew sent', 'Equipa enviada'], helpNo: ['Not sent', 'Não enviada'], back: ['Stepped back', 'Voltou atrás'], stayStage: ['Stage kept', 'Fase mantida'] };
         /* (Oct 9, 09:08) an open recommendation always shows Not yet (secondary) + its confirming action (primary), cards saved before included */
@@ -1251,7 +1252,7 @@ class Component extends DCLogic {
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + (window.__wfIncName ? window.__wfIncName(c.place, c.kind !== 'dm' && !c.police && (c.stage >= 1 || c.kind === 'fire') && !c.dismissed) : c.place), sub: c.kind === 'dm' ? c.reg : B ? benchTxt : (c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')), subD: c.kind === 'dm' || B || !c.people.length ? 'flex' : 'none',   /* (Oct 10, 23:29) no region under an incident's name in the chat header */
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
-          return { forT: d || '', forD: 'none', arML: 'auto', visit: (c.kind === 'fire' || c.stage >= 1) && !c.dismissed && C.fireMeta ? (C.fireMeta(c.incId || c.id, c) || L('View', 'Ver')) : L('View', 'Ver'), ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
+          return { forT: d || '', forD: 'none', arML: 'auto', visit: (c.kind === 'fire' || c.stage >= 1) && !c.dismissed && C.fireMeta ? (C.fireMeta(c.incId || c.id, c) || L('View', 'Ver')) : (!c.dismissed && C.candMeta && C.candMeta(c)) || L('View', 'Ver'),   /* (Oct 11, 07:11) a candidate: when it was detected */ ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
         ...(() => { const ex = false;   /* (Oct 9, 09:03) the band no longer unfolds: it opens the incident */ return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-8px', tmPb: '16px',
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
           /* (Oct 8, 19:10, app-wide) the stages the field drives are never moved by hand: Ongoing starts when the crews leave on the

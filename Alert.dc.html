@@ -19,8 +19,8 @@
 <script src="prefs.js?v=1791673005"></script>
 <script src="station.js?v=1791678052"></script>
 <script src="i18n.js?v=1791665418"></script>
-<script src="live.js?v=1791698136"></script>
-<script src="chat.js?v=1791698797"></script>
+<script src="live.js?v=1791699181"></script>
+<script src="chat.js?v=1791699181"></script>
 <script>
 /* (Oct 11, 00:54) a candidate with a chat has no stand-alone page either (as a fire, Oct 10 23:02): reached from a notification, a map
    or a list, its page hands over to its chat with the candidate's page open in the chat's blade (closing the blade shows the chat). */
@@ -1137,11 +1137,11 @@ class Component extends DCLogic {
       openDz: () => this.setState({ dz: true, dd: false }), closeDz: () => this.setState({ dz: false }),
       mo: (() => { const M = !!s.morph, O = !!s.so && !M;
         // the stage tag, as on the fire page and in the chat: the stage's own colours and icon, "for 12 h" since detection
-        const C0 = window.__wfChat, S0 = C0 && C0.STAGES ? C0.STAGES[M ? 1 : 0] : { c: '#3A3A3C', bg: '#F7FCDC', icon: 'cand' }, PTl = window.__wfLang === 'pt';
+        const C0 = window.__wfChat, S0 = C0 && C0.STAGES ? (M ? C0.STAGES[1] : C0.candStage ? C0.candStage(cur && cur.conf) : C0.STAGES[0]) : { c: '#3A3A3C', bg: '#FFE680', icon: 'cand', en: 'Candidate' }, PTl = window.__wfLang === 'pt';   /* (Oct 11, 07:11) the candidate stage: Candidate and its likelihood on its yellow */
         const since = cur && cur.tMs ? Date.now() - cur.tMs : 0, mm = Math.floor(since / 60000), dS = !(since > 0) ? '' : mm >= 1440 ? Math.floor(mm / 1440) + ' d' : mm >= 60 ? Math.floor(mm / 60) + ' h' : Math.max(1, mm) + ' min';
-        const stT = dS ? (PTl ? 'há ' : 'for ') + dS : '';
+        const stT = M ? (dS ? (PTl ? 'há ' : 'for ') + dS : '') : cur && cur.tMs ? new Date(cur.tMs).toLocaleDateString(PTl ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(new Date(cur.tMs).getHours()).padStart(2, '0') + ':' + String(new Date(cur.tMs).getMinutes()).padStart(2, '0') : '';   /* a candidate: when it was detected */
         const stX = { stBg: S0.bg, stC: S0.c, stIc: C0 && C0.ICON ? C0.ICON[S0.icon] || '' : '', stT, stTD: stT ? 'inline' : 'none' };
-        return { ...stX, stAria: 'Stage: ' + (M ? 'Active fire' : 'Ignition candidate') + (stT ? ', ' + stT : ''), nightD: !M && window.__wfNight && window.__wfNight(cur && (cur.L || cur.live)) ? 'inline' : 'none', kind: M ? 'Active fire' : 'Ignition candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : 'var(--wf-y)', fg: M ? '#963B00' : '#1C1C1E', chevD: 'none', ring: 'none', pulseD: M ? 'none' : 'block',   /* Unconfirmed asks to be tapped: steady dark outline + the shared pulse */ triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
+        return { ...stX, stAria: 'Stage: ' + (M ? 'Active fire' : 'Ignition candidate') + (stT ? ', ' + stT : ''), nightD: !M && window.__wfNight && window.__wfNight(cur && (cur.L || cur.live)) ? 'inline' : 'none', kind: M ? 'Active fire' : (PTl ? S0.pt : S0.en) || 'Candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : 'var(--wf-y)', fg: M ? '#963B00' : '#1C1C1E', chevD: 'none', ring: 'none', pulseD: M ? 'none' : 'block',   /* Unconfirmed asks to be tapped: steady dark outline + the shared pulse */ triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
           aria: M ? 'Active fire. Not contained' : 'Unconfirmed. Declare or dismiss', pageCls: M ? 'morph' : '',
           op: O ? 1 : 0, pe: O ? 'auto' : 'none', hidden: O ? 'false' : 'true', y: O ? '0%' : 'calc(100% + 120px)',
           open: () => { if (!M) this.setState({ so: true, dd: false }); }, close: () => this.setState({ so: false }),
