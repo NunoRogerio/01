@@ -1817,3 +1817,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Menu icon pill: 48px taller (upwards), so the screen's round map buttons never peek out above it.
 - Menu icon pill is draggable up and down (after 6px of movement; a tap still picks an icon): between 56px from the screen's bottom (its default place) and 56px under the X. Its place is remembered on every screen. Profile's Sign out follows the pill's bottom when there is room.
 - Scroll fades over a stripe band fade the content itself (mask): never a surface-coloured overlay painted over the band.
+- Trial (Oct 11, 21:50): folded menu, the 60px column behind the pill blurs the screen under it (backdrop blur, no colour), full height. In Main itself and, on other pages, drawn by the page (menu.js) since the menu frame cannot blur it.
