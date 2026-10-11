@@ -1814,3 +1814,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Dialogs and sheets from below (e.g. Sign out?): one stripe pattern only, at their top. Never a band at their foot.
 - Menu open: the section is a blade over the screen and the screen stays in place. Beside the icon pill nothing is painted: no page colour, no column. Applies in Main and through the menu frame on every other page.
 - Menu, final (Oct 11, 21:30): a section open = its white surface covers the whole screen, the icon pill on top of it at the right; the section's single stripe band runs along the screen's bottom, full width. Folded (no section showing) = only the dark pill over the screen. The section's content keeps 60px clear on the right for the pill.
+- Menu icon pill: 48px taller (upwards), so the screen's round map buttons never peek out above it.
