@@ -843,14 +843,15 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       if (!n) return; var r = n.getBoundingClientRect(), pr = (n.parentElement || n).getBoundingClientRect();
       if (r.height < 48 || r.height > 280 || r.top < H * 0.45 || Math.abs(r.bottom - pr.bottom) > 2 || r.width < pr.width - 2) return;
       if (!n.querySelector('button, a, input, textarea, [role=button]')) return;
-      var rb = n.closest && n.closest('section'), rx = rb && rb.querySelector(':scope > .wf-spx'); if (rx && rx.__ride) { if (n.hasAttribute('data-wf-sb')) n.removeAttribute('data-wf-sb'); return; }   /* (Oct 11, 20:05) inside a blade from below: its pattern is at its top only */
+      var rb = n.closest && n.closest('section'), rx = rb && rb.querySelector(':scope > .wf-spx'); if ((rx && rx.__ride) || n.closest('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]')) { if (n.hasAttribute('data-wf-sb')) n.removeAttribute('data-wf-sb'); return; }   /* (Oct 11, 20:05) inside a blade from below: its pattern is at its top only */
       bars.push(n); addB(n, Math.round(n.offsetHeight)); });
     var tops = [];
     document.querySelectorAll('.wf-stripes:not([data-wf-sp])').forEach(function (t) { var st0 = t.getAttribute('style') || ''; if (!/bottom:\s*0(px)?;/.test(st0) || /(^|;\s*)top:\s*0(px)?;/.test(st0)) return;   /* (Oct 11, 20:05) a strip down a side (the menu column's) is not a bottom edge */ var b = t.parentElement; if (!b) return; tops.push(b); addB(b, 64, true); });
     document.querySelectorAll('.wf-spx').forEach(function (t) { var b = t.parentElement; if (!b || !b.offsetHeight || tops.indexOf(b) >= 0) return;
       if (t.__ride) { if (b.hasAttribute('data-wf-sb')) b.removeAttribute('data-wf-sb'); return; }   /* (Oct 11, 20:00) a blade from below: the pattern at its top only, never also at its foot */
       if (bars.some(function (x) { return b.contains(x); })) return; addB(b, 96); });
-    document.querySelectorAll('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]').forEach(function (d) { if (d.offsetHeight > 200) addB(d, 96); });
+    /* (Oct 11, 20:45) dialogs and sheets from below have one pattern only, at their top (their ::before): never a band at their foot */
+    document.querySelectorAll('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]').forEach(function (d) { if (d.hasAttribute('data-wf-sb')) d.removeAttribute('data-wf-sb'); d.querySelectorAll('[data-wf-sb]').forEach(function (x) { x.removeAttribute('data-wf-sb'); }); });
     /* the end of each screen's scroll (screens that scroll; not the chat, not blades or dialogs): the band over the last 96px of the content */
     document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap').forEach(function (sc) {
       var bl = sc.closest('.sheet, .blade'), pgB = !!(bl && bl.hasAttribute('data-sb') && bl.offsetHeight > H * 0.6), dl = sc.closest('[role=dialog], [role=alertdialog], .wf-dlg, .chblade'), ok = sc.offsetHeight > H * 0.5 && sc.scrollHeight > sc.clientHeight + 1 && !sc.classList.contains('chscroll') && (!dl || pgB && dl === bl) && (!bl || pgB);   /* (Oct 11, 15:00) the fire page's tall page blade counts as a screen */
