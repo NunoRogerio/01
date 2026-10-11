@@ -75,10 +75,7 @@
     var W = dw(), H = h.offsetHeight, t = btn ? (parseFloat(btn.style.top) || 0) : 0, c = W - 60;
     var poly = 'polygon(-24px -80px, ' + c + 'px -80px, ' + c + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t - 8) + 'px, ' + W + 'px ' + (t + 52) + 'px, ' + c + 'px ' + (t + 52) + 'px, ' + c + 'px ' + H + 'px, -24px ' + H + 'px)';   /* (Oct 9, 15:49) the cut reaches above the top, so the header's colour still fills the strip under the clock */
     h.style.clipPath = h.style.webkitClipPath = poly; }
-  /* (Oct 11, 21:50) trial: folded to its icons, the column behind the pill blurs the screen under it (the menu's frame cannot blur the page, so the page does) */
-  var rb = null; function railBlur(on) { var h = host() || document.body; if (!rb) { rb = document.createElement('div'); rb.setAttribute('aria-hidden', 'true'); rb.setAttribute('data-wf-railblur', '1'); rb.style.cssText = 'position:absolute;top:0;right:0;bottom:0;width:60px;z-index:149;pointer-events:none;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);opacity:0;transition:opacity .25s ease'; }
-    if (rb.parentElement !== h) h.appendChild(rb); rb.style.opacity = on ? '1' : '0'; }
-  function slide(m) { railBlur(m === 'rail'); if (!ifr) return; var cp = m === 'open' ? 'inset(0px 0px 0px 0px)' : m === 'rail' ? 'inset(0px 0px 0px calc(100% - 60px))' : 'inset(0px 0px 0px 100%)';
+  function slide(m) { if (!ifr) return; var cp = m === 'open' ? 'inset(0px 0px 0px 0px)' : m === 'rail' ? 'inset(0px 0px 0px calc(100% - 60px))' : 'inset(0px 0px 0px 100%)';
     ifr.style.clipPath = ifr.style.webkitClipPath = cp; try { var de = ifr.contentDocument.documentElement; if (m === 'open') de.classList.remove('wf-see'); else setTimeout(function () { if (mode !== 'open') de.classList.add('wf-see'); }, m ? 0 : DUR); } catch (e) {} return; }   /* the open section keeps its page; the icon column alone is see-through around it */
   function slideOld(m) { var p = page(); if (!p) return; var W = p.offsetWidth || 390, D = m === 'open' ? Math.max(0, mw() - 60) : 0, R = m === 'open' ? D + 60 : m === 'rail' ? 60 : 0;
     var ease = DUR + 'ms ' + EASE; p.style.willChange = 'transform, clip-path';

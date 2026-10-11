@@ -16,16 +16,16 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791751911"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791753967"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791751911"></script>
-<script src="station.js?v=1791751911"></script>
+<script src="prefs.js?v=1791753967"></script>
+<script src="station.js?v=1791753967"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791751911"></script>
-<script src="chat.js?v=1791751911"></script>
+<script src="live.js?v=1791753967"></script>
+<script src="chat.js?v=1791753967"></script>
 <script src="tour.js?v=1791734035"></script>
 <script src="mapsearch.js?v=5"></script>
-<script src="stats.js?v=1791751911"></script>
+<script src="stats.js?v=1791753967"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -823,8 +823,6 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
        (profile picture first), and Sign out at the bottom. 60px wide: 8px either side of the 44px icons (Oct 3, 17:56; was 84px). -->
   <!-- (Oct 4, 09:01) lime stripe on the screen's left edge, full height, like the stripes on the top-dropping panels -->
   <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 4; top: 0; bottom: 0; left: 0; width: 8px; pointer-events: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}"></span>
-  <!-- (Oct 11, 21:50) trial: folded to its icons, the column behind the pill blurs the screen under it (no colour) -->
-  <span aria-hidden="true" data-wf-railblur="1" style="position: absolute; z-index: 2; top: 0; right: 0; bottom: 0; width: 60px; pointer-events: none; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); opacity: {{pm.rbOp}}; transition: opacity .25s ease"></span>
   <nav data-wf-rail="1" data-wf-nospace="1" aria-label="Preferences" style="z-index: 3; background: transparent; pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: 0; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
     <!-- (Oct 11, 19:40) the pill hugs its icons, 24px apart (the menus now hold 3 to 5 sections), 32px above the first and below the last; (19:55) it sits low, 48px above the screen's bottom, where the thumb reaches -->
     <!-- (Oct 9, 17:15) the icon column is a pill: the same 60px width, fully rounded, from 32px under the menu button to 48px above the screen's bottom; its icons spread evenly with 32px above the first and below the last -->
@@ -1265,7 +1263,7 @@ class Component extends DCLogic {
           return { gapT: '0px',   /* (Oct 11, 20:50) the pill's icons spread evenly: 8px above the first and below the last, as at the sides */   /* (06:38) 40px from button to button between groups (half the earlier space, on the 8 scale) */   /* (Oct 5, 06:31) three groups (profile, about, share | language, appearance, maps | chat, data sources), an empty button's space between them */ dotD: kf ? 'block' : 'none', label: TT[k] + (kf ? (lang === 'pt' ? '. A chave falhou' : '. Key failed') : ''), cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? 'var(--wf-pri-bg, #3A3A3C)' : 'rgba(118,118,128,0.12)', fg: on ? 'var(--wf-pri-fg, #FFFFFF)' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
-        return { rbOp: rail && !window.__wfMenuOnly ? 1 : 0, pillB: (() => { let v = s.pillB; if (v == null) { try { v = parseFloat(localStorage.getItem('wf-pill-b')); } catch (e) {} } return isFinite(v) && v >= 56 ? v : 56; })(),   /* (Oct 11, 21:40) the icon pill can be dragged up and down: between 56px from the screen's bottom and 56px under the X */
+        return { pillB: (() => { let v = s.pillB; if (v == null) { try { v = parseFloat(localStorage.getItem('wf-pill-b')); } catch (e) {} } return isFinite(v) && v >= 56 ? v : 56; })(),   /* (Oct 11, 21:40) the icon pill can be dragged up and down: between 56px from the screen's bottom and 56px under the X */
           pillDown: (e) => this.wfPillDown(e),
           pillH: (() => { const n = MSECS.length + (window.__wfLoginMenu ? 0 : 1); return 64 + n * 44 + (n - 1) * 24 + 48; })(),   /* (Oct 11, 21:35) 48px taller, upwards: it covers the screen's round map buttons under it */   /* (Oct 11, 20:50) the pill keeps its height */ secVis: rail ? 'hidden' : 'visible', mz: pmMode ? 4 : 1, mbg: pmMode ? 'transparent' : '#F2F2F7', mpe: pmMode ? 'none' : 'auto', pe: open ? 'auto' : 'none', secSh: 'none',   /* (Oct 11, 20:50) open too: the section is a blade over the screen, which stays in place (no page colour behind the icon pill) */   /* (Oct 11, 21:35) folded: only the icon pill, over the screen */
           dimOp: cover ? 0.2 : 0, dimT: cover ? '.35s cubic-bezier(.37,0,.63,1)' : '0s', x: rail && this.wfLayout().side ? -60 : 0, cr: 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
