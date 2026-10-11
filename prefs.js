@@ -8,7 +8,7 @@ window.__wfTiles = { list: [['maptiler', 'MapTiler'], ['osm', 'OpenStreetMap']],
   share: function () { return 'map=' + this.get() + '&look=' + this.style(); },   /* the shared link carries the map engine and its look */
   set: function (k, st) { try { localStorage.setItem('wf-maptiles', k === 'osm' ? 'osm' : 'maptiler'); if (st) localStorage.setItem('wf-maprender', st); } catch (e) {} try { window.dispatchEvent(new Event('wf-maptiles')); } catch (e) {} },
   host: function () { return this.get() === 'osm' ? 'https://tile.openstreetmap.org/' : 'https://api.maptiler.com/maps/'; },
-  url: function (z, x, y) { if (this.get() === 'osm') return 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; var st = this.style(), L = this.styles.maptiler, ex = 'png'; for (var i = 0; i < L.length; i++) if (L[i][0] === st) ex = L[i][2]; return 'https://api.maptiler.com/maps/' + st + '/256/' + z + '/' + x + '/' + y + '.' + ex + '?key=' + this.key(); },
+  url: function (z, x, y) { if (this.get() === 'osm') return 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; var st = this.style(), L = this.styles.maptiler, ex = 'png'; for (var i = 0; i < L.length; i++) if (L[i][0] === st) ex = L[i][2]; return 'https://api.maptiler.com/maps/' + st + '/256/' + z + '/' + x + '/' + y + ((window.devicePixelRatio || 1) >= 1.5 ? '@2x' : '') + '.' + ex + '?key=' + this.key(); },   /* (Oct 11, 22:40) sharp on phone screens: the double-density tile in the same 256px slot */
   /* (Oct 5, 02:48) the MapTiler key: the app's shared one, or the person's own saved on this phone (Maps menu) */
   KEY0: 'nXogmRs94P1OvRDMdUN6',
   own: function () { try { return localStorage.getItem('wf-mt-key') || ''; } catch (e) { return ''; } },
