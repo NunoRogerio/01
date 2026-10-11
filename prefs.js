@@ -816,7 +816,8 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       if (!x) { x = document.createElement('span'); x.className = 'wf-spx'; x.setAttribute('aria-hidden', 'true'); b.insertBefore(x, b.firstChild); }
       /* (Oct 11, 19:50) a blade that rises from below and rides its own top edge (the main screen's bottom blade): the pattern sits on that
          edge and moves with it, as the old strip did; its header is the edge down to the summary, so a fixed 96px band */
-      var tp = S[i].style.top; if (tp && tp !== '0px' && tp !== '0') { if (x.style.top !== tp) { x.style.transition = S[i].style.transition; x.style.top = tp; } if (x.__h !== 96) { x.__h = 96; x.style.height = '96px'; } continue; }
+      /* (Oct 11, 20:00) open or closed, it stays on the edge: the strip's top is followed whatever it is (0px when the blade is open) */
+      var tp = S[i].style.top; if (tp) { x.__ride = true; if (x.style.top !== tp) { x.style.transition = S[i].style.transition; x.style.top = tp; } if (x.__h !== 96) { x.__h = 96; x.style.height = '96px'; } continue; }
       var h = b.querySelector('h1, h2'), bh = b.getBoundingClientRect(); if (!h || !bh.height) continue; var k = b.offsetHeight ? bh.height / b.offsetHeight : 1;
       if (h.offsetHeight <= 1) { if (x.__h !== 96) { x.__h = 96; x.style.height = '96px'; } continue; }   /* a hidden heading (screen readers only): the 96px band */
       var blk = h.parentElement && h.parentElement !== b ? h.parentElement : h, hh = Math.max(56, Math.round((blk.getBoundingClientRect().bottom - bh.top) / k) + 16);
@@ -832,10 +833,13 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       for (var a = sc, d = 0; a && d < 4 && !n; a = a.parentElement, d++) { n = a.nextElementSibling; while (n && (n.__wfOv || !n.offsetHeight || /^(absolute|fixed)$/.test(getComputedStyle(n).position))) n = n.nextElementSibling; }   /* the panel may sit in a wrapper */
       if (!n) return; var r = n.getBoundingClientRect(), pr = (n.parentElement || n).getBoundingClientRect();
       if (r.height < 48 || r.height > 280 || r.top < H * 0.45 || Math.abs(r.bottom - pr.bottom) > 2 || r.width < pr.width - 2) return;
-      if (!n.querySelector('button, a, input, textarea, [role=button]')) return; bars.push(n); addB(n, Math.round(n.offsetHeight)); });
+      if (!n.querySelector('button, a, input, textarea, [role=button]')) return;
+      var rb = n.closest && n.closest('section'), rx = rb && rb.querySelector(':scope > .wf-spx'); if (rx && rx.__ride) { if (n.hasAttribute('data-wf-sb')) n.removeAttribute('data-wf-sb'); return; }   /* (Oct 11, 20:05) inside a blade from below: its pattern is at its top only */
+      bars.push(n); addB(n, Math.round(n.offsetHeight)); });
     var tops = [];
-    document.querySelectorAll('.wf-stripes:not([data-wf-sp])').forEach(function (t) { if (!/bottom:\s*0(px)?;/.test(t.getAttribute('style') || '')) return; var b = t.parentElement; if (!b) return; tops.push(b); addB(b, 64, true); });
+    document.querySelectorAll('.wf-stripes:not([data-wf-sp])').forEach(function (t) { var st0 = t.getAttribute('style') || ''; if (!/bottom:\s*0(px)?;/.test(st0) || /(^|;\s*)top:\s*0(px)?;/.test(st0)) return;   /* (Oct 11, 20:05) a strip down a side (the menu column's) is not a bottom edge */ var b = t.parentElement; if (!b) return; tops.push(b); addB(b, 64, true); });
     document.querySelectorAll('.wf-spx').forEach(function (t) { var b = t.parentElement; if (!b || !b.offsetHeight || tops.indexOf(b) >= 0) return;
+      if (t.__ride) { if (b.hasAttribute('data-wf-sb')) b.removeAttribute('data-wf-sb'); return; }   /* (Oct 11, 20:00) a blade from below: the pattern at its top only, never also at its foot */
       if (bars.some(function (x) { return b.contains(x); })) return; addB(b, 96); });
     document.querySelectorAll('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]').forEach(function (d) { if (d.offsetHeight > 200) addB(d, 96); });
     /* the end of each screen's scroll (screens that scroll; not the chat, not blades or dialogs): the band over the last 96px of the content */
