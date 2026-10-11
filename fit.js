@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 // (Oct 7, 19:40) Station profiles (captain, team lead) have their station as their home screen instead of the region map.
-function wfHomeUrl(){try{var r=localStorage.getItem('wf-role')||'',c=localStorage.getItem('wf-custom')||'';if(r&&(c==='coord'||c==='ff'))return 'Station.dc.html?home=1';}catch(e){}return 'Main.dc.html';}
+function wfHomeUrl(){try{var r=localStorage.getItem('wf-role')||'',c=localStorage.getItem('wf-custom')||'';if(r&&/^(coord|ff|eng|fft)$/.test(c))return 'Station.dc.html?home=1';}catch(e){}return 'Main.dc.html';}
 (function(){try{if(!/\/Main\.dc\.html$/.test(location.pathname)||/[?&]menu=1/.test(location.search))return;var H=wfHomeUrl();if(H==='Main.dc.html')return;
   /* the main screen still opens for its own panels (notifications, preferences) asked from another screen */
   var S=sessionStorage;if(S.getItem('wf-nt-open')||S.getItem('wf-prefs-open'))return;location.replace(H);}catch(e){}})();

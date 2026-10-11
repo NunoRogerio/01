@@ -66,7 +66,9 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     admin: ['JW', 'James Whitmore', 'Emergency management director', 'Government overview', 'All regions', '', 'en'],
     /* (Oct 6) role profiles, signed in with the California area (wf-role ca) and known by wf-custom */
     coord: ['FO', 'Frank Ortiz', 'Battalion Chief', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
-    ff: ['DB', 'Daniel Brooks', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
+    ff: ['DB', 'Daniel Brooks', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
+    eng: ['LW', 'Lisa Wong', 'Engineer', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
+    fft: ['BO', 'Ben Ortega', 'Firefighter', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)
   var SUMS = {
@@ -75,8 +77,10 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     nv: 'Heads the state wildland fire service. Coordinates with BLM and the Forest Service, approves resource orders across counties, and requests federal help for large fires.',
     amz: 'Coordinates fire prevention and brigade operations across the Legal Amazon. Hires and trains brigades before the dry season, plans prescribed burning, follows INPE hotspots and fire events daily, and sends federal brigades to indigenous lands and protected areas.',
     admin: 'One level above the station captains: follows every fire and ignition in all countries, where forces are and where risk is rising, and calls in help across borders. Also manages user access and data feeds.',
-    coord: "Commands Station 11 and its area. Takes every incident in the area, assigns the station's crews and vehicles, and works with the other captains when a fire needs more than one station.",
-    ff: "Leads the Engine 11 crew at Station 11. Gets the captain's dispatch orders, confirms them and takes the crew to the fire."
+    coord: "Commands Battalion 11: the stations of the battalion and their area. Takes command of a fire when it grows past the first engine, places the crews, asks dispatch for more and asks the sheriff for evacuations.",
+    ff: "Commands Engine 11 and its crew. Often first on scene: confirms the fire, declares it and commands it until the battalion chief takes over.",
+    eng: "Drives and pumps Engine 11. Goes where dispatch sends the engine, keeps the water flowing on the line and keeps the crew informed in the incident chat.",
+    fft: "Works the line on Brush 11. Goes where dispatch sends the engine, follows the captain's orders and reports from the line in the incident chat."
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
@@ -393,10 +397,10 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   }
 
   // Demo profiles are shown in their own service's uniform (illustrated portraits, avatar.js)
-  var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1], coord: ['calfire', 1], ff: ['calfire', 0] };
+  var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1], coord: ['calfire', 1], ff: ['calfire', 0], eng: ['calfire', 0], fft: ['calfire', 0] };
   function uniform(r, name) { var k = KITS[r]; return k && window.__wfAvatar ? window.__wfAvatar(name, k[0], !!k[1]) : ''; }
-  var rid = (function () { var c = ''; try { c = localStorage.getItem('wf-custom') || ''; } catch (e) {} return (c === 'coord' || c === 'ff') ? c : role; })();   /* a role profile shows as itself */
-  var RANK = rid === 'coord' ? 'coord' : rid === 'ff' ? 'ff' : (role === 'admin' || role === 'design') ? 'admin' : role ? 'coord' : '';   /* (Oct 6) administrator, team coordinator or firefighter */
+  var rid = (function () { var c = ''; try { c = localStorage.getItem('wf-custom') || ''; } catch (e) {} return /^(coord|ff|eng|fft)$/.test(c) ? c : role; })();   /* a role profile shows as itself */
+  var RANK = rid === 'coord' ? 'coord' : /^(ff|eng|fft)$/.test(rid) ? 'ff' : (role === 'admin' || role === 'design') ? 'admin' : role ? 'coord' : '';   /* (Oct 6) administrator, team coordinator or firefighter */
   var who = PEOPLE[rid] || PEOPLE[role] || (role === 'design' ? PEOPLE.admin : null);   // a removed demo profile falls back to the administrator
   // A profile created on this phone (login screen, New profile) signs in with its area's role and shows as itself
   var cu = null; try { var cid = localStorage.getItem('wf-custom'); if (cid) cu = (JSON.parse(localStorage.getItem('wf-custom-profiles') || '[]') || []).find(function (x) { return x && x.id === cid && x.base === role; }) || null; } catch (e) {}

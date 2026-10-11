@@ -93,7 +93,7 @@
      Lieutenant (chefe de equipa in Portugal); everyone else on a crew as Firefighter */
   function rankOf(c, name) { var us = !c || isUS(c), LT = us ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' };   /* (Oct 11, 17:00) US ranks as LA County Fire uses them: Battalion Chief, Captain (each engine's officer), Engineer, Firefighter; no Lieutenant */
     var me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null;
-    if (name && me.name && name === me.name) return M ? (M.level === 'lead' ? LT : { en: 'Battalion Chief', pt: 'Chefe de batalhão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
+    if (name && me.name && name === me.name) return M ? (M.rank === 'eng' ? { en: 'Engineer', pt: 'Motorista' } : M.rank === 'ff' ? { en: 'Firefighter', pt: 'Bombeiro' } : M.level === 'lead' ? LT : { en: 'Battalion Chief', pt: 'Chefe de batalhão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
     var P = c && (c.people || []).find(function (p) { return p.name === name; }); if (P && P.kind === 'lt') return LT; if (P && P.kind === 'air') return { en: P.roleEn || 'Air coordinator', pt: P.rolePt || 'Coordenador de meios aéreos' }; if (P && P.kind === 'law') return { en: String(P.roleEn || 'Captain').split('. ')[0], pt: String(P.rolePt || 'Capitão').split('. ')[0] };
     var SF = window.__wfStaffOf ? window.__wfStaffOf('1353638773') : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT;
     var FL = window.__wfFleet ? window.__wfFleet('1353638773') : null, U = FL && FL.find(function (u) { return u.crew.indexOf(name) >= 0 && u.lt !== name; });
@@ -1883,8 +1883,8 @@
        where things stand. Said as chat messages, so the bubbles and the voices are the same words. */
     callStart: function (key) { var d = load(), c = d.chats[key]; if (!c || c.closed || c.dismissed) return;
       var M = window.__wfMine ? window.__wfMine() : null, PT = window.__wfLang === 'pt', staff = M && window.__wfStaffOf ? window.__wfStaffOf(M.station.id) : null;
-      var full = staff ? (M.level === 'lead' ? staff.lead : staff.captain) : ((window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || ''), last = full.split(' ').slice(-1)[0] || '';
-      var rk = M ? (M.level === 'lead' ? ['Captain', 'Capitão'] : ['Battalion Chief', 'Chefe de batalhão']) : ['', ''], who = { en: (rk[0] + ' ' + last).trim(), pt: (rk[1] + ' ' + last).trim() };
+      var full = M && M.name ? M.name : staff ? (M.level === 'lead' ? staff.lead : staff.captain) : ((window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || ''), last = full.split(' ').slice(-1)[0] || '';
+      var rk = M ? (M.rank === 'eng' ? ['Engineer', 'Motorista'] : M.rank === 'ff' ? ['Firefighter', 'Bombeiro'] : M.level === 'lead' ? ['Captain', 'Capitão'] : ['Battalion Chief', 'Chefe de batalhão']) : ['', ''], who = { en: (rk[0] + ' ' + last).trim(), pt: (rk[1] + ' ' + last).trim() };
       var P = (c.people || []).map(function (p, i) { return [p, i]; }).filter(function (q) { return !q[0].left && !q[0].self; });
       var G = [function (p) { return ['Hello ' + who.en + ', ' + p.name.split(' ')[0] + ' here.', 'Olá ' + who.pt + ', fala ' + p.name.split(' ')[0] + '.']; },
         function (p) { return ['Hi ' + who.en + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', on the line.', 'Olá ' + who.pt + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', em linha.']; },
@@ -2046,10 +2046,10 @@
   // receipt ("On my way"): it turns into "✓ Confirmed" across the card, the card folds away, and the chat's captains see it.
   var DAK = 'wf-deploy-ack';
   function depAcks() { try { return JSON.parse(localStorage.getItem(DAK) || '{}') || {}; } catch (e) { return {}; } }
-  function myForce(c, M) { var ck = (M.station.type === 'way' ? 'w' : 'n') + M.station.id; return (c.forces || []).find(function (f) { return (f.ck === ck || f.full === M.station.name) && f.st !== 'standby' && f.st !== 'released'; }) || null; }
+  function myForce(c, M) { var ck = (M.station.type === 'way' ? 'w' : 'n') + M.station.id; return (c.forces || []).find(function (f) { return (f.ck === ck || f.full === M.station.name) && f.st !== 'standby' && f.st !== 'released' && (!M.unit || !(f.veh || []).length || (f.veh || []).indexOf(M.unit) >= 0); }) || null; }   /* (Oct 11, 17:25) only the incidents the profile's own unit was sent to */
   function deployments() { var M = window.__wfMine ? window.__wfMine() : null; if (!M || M.level !== 'lead') return [];
     var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return c && !c.closed && !c.dismissed && c.kind !== 'dm' && myForce(c, M) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, M.station)); })   /* only the station's own incidents: its area or mutual aid */
-      .map(function (c) { return { c: c, f: myForce(c, M), acked: !!depAcks()[c.key] }; }); }
+      .map(function (c) { return { c: c, f: myForce(c, M), acked: !!depAcks()[c.key] || M.rank === 'eng' || M.rank === 'ff' }; }); }   /* (Oct 11, 17:25) the Captain acknowledges the dispatch for the engine; the Engineer and Firefighters just see it */
   var dpEl = null, dpBusy = false;
   function depHide(anim) { var el = dpEl; dpEl = null; if (!el) return; if (!anim) { el.remove(); return; } el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; setTimeout(function () { el.remove(); }, 450); }
   function depRender() {
@@ -2064,7 +2064,7 @@
         '<span class="wf-stg" style="display: inline-flex; justify-self: end; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: ' + S.bg + '; font-size: 16px; line-height: 20px; font-weight: 600; white-space: nowrap; color: ' + S.c + '"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="' + (ICON[S.icon] || '') + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + esc(PT ? S.pt : S.en) + '</span>' +
         '<span style="grid-column: 1 / span 2; min-width: 0; font-size: 16px; line-height: 20px; color: var(--wf-sec, #6E6E73)">' + esc((veh ? veh + '. ' : '') + (min ? (PT ? '~' + min + ' min até ao incêndio.' : '~' + min + ' min to the fire.') : '')) + '</span>' +
       '</div>' +
-      '<div data-dp-row style="display: flex; padding: 24px 16px 16px"><button type="button" class="btn primary" data-dp-ok style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer">' + (PT ? 'A caminho' : 'On my way') + '</button></div>';
+      '<div data-dp-row style="display: flex; padding: 24px 16px 16px"><button type="button" class="btn primary" data-dp-ok style="flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; font: inherit; cursor: pointer">' + (PT ? 'Em marcha' : 'Responding') + '</button></div>';
     if (!dpEl) { dpEl = document.createElement('div'); dpEl.id = 'wf-deploy'; dpEl.setAttribute('role', 'alertdialog'); dpEl.setAttribute('aria-label', PT ? 'Destacamento' : 'Deployment');
       dpEl.style.cssText = 'position: fixed; left: 16px; right: 16px; bottom: 32px; z-index: 400; max-width: 420px; margin: 0 auto; box-sizing: border-box; border-radius: 16px; overflow: hidden; background: var(--wf-surface, #FFFFFF); box-shadow: 0 0 32px rgba(0,0,0,0.22); opacity: 0; transform: translateY(24px); transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1); -webkit-user-select: none; user-select: none';
       dpEl.addEventListener('click', function (e) { var t = e.target, D = deployments().filter(function (q) { return !q.acked; }).sort(function (a, b) { return (b.c.updated || 0) - (a.c.updated || 0); })[0]; if (!D) return;
@@ -2074,8 +2074,8 @@
     if (dpEl.__html !== html) { dpEl.innerHTML = html; dpEl.__html = html; } }
   function depAck(D) { if (dpBusy) return; dpBusy = true; var PT = window.__wfLang === 'pt', c = D.c, A = depAcks(); A[c.key] = Date.now(); try { localStorage.setItem(DAK, JSON.stringify(A)); } catch (e) {}
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-    var me = (window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || 'Team lead', v = (D.f.veh || [])[0] || D.f.station;
-    var db = load(), cc = db.chats[c.key]; if (cc) { cc.msgs.push({ id: newId(), kind: 'sys', en: me + ' (' + v + ') confirmed the order: on the way.', pt: me + ' (' + v + ') confirmou a ordem: a caminho.', t: Date.now(), vt: vnow(cc) }); cc.updated = Date.now(); save(); }
+    var me = (window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || 'Captain', v = (D.f.veh || [])[0] || D.f.station;
+    var db = load(), cc = db.chats[c.key]; if (cc) { cc.msgs.push({ id: newId(), kind: 'sys', en: v + ' responding (' + me + ').', pt: v + ' em marcha (' + me + ').', t: Date.now(), vt: vnow(cc) }); cc.updated = Date.now(); save(); }
     var b = dpEl && dpEl.querySelector('[data-dp-ok]'); if (b) { b.style.pointerEvents = 'none'; b.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (PT ? 'Confirmado' : 'Confirmed'); }
     setTimeout(function () { dpBusy = false; depHide(true); emit(); setTimeout(depRender, 600); }, 1400); }
   function depBoot() { if (!role || !document.body) return; setTimeout(depRender, 1400);

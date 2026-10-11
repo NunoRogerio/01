@@ -18,8 +18,10 @@
   var ST11 = { id: 1353638773, type: 'way', name: 'Los Angeles County Fire Department Station 11', lat: 34.18855, lon: -118.13296,
     tags: { operator: 'Los Angeles County Fire Department' }, cc: 'us', st: 'CA' };
   var ME = {
-    coord: { level: 'captain', station: ST11, crew: null },
-    ff: { level: 'lead', station: ST11, crew: 0 }   // the team lead leads the station's first crew (its engine)
+    coord: { level: 'captain', rank: 'bc', name: 'Frank Ortiz', station: ST11, crew: null },   // (Oct 11, 17:25) the Battalion Chief: Battalion 11, based at Station 11
+    ff: { level: 'lead', rank: 'cap', name: 'Daniel Brooks', station: ST11, crew: 0, unit: 'Engine 11' },   // the Captain of Engine 11
+    eng: { level: 'lead', rank: 'eng', name: 'Lisa Wong', station: ST11, crew: 0, unit: 'Engine 11' },   // (Oct 11, 17:25) the Engineer of Engine 11: the crew's view, no command
+    fft: { level: 'lead', rank: 'ff', name: 'Ben Ortega', station: ST11, crew: 1, unit: 'Brush 11' }   // a Firefighter on Brush 11: the crew's view, no command
   };
   var X = function (lon) { return (lon + 118.13) * 2345 + 518; }, Y = function (lat) { return (34.19 - lat) * 2829 + 662; };
   var LON = function (x) { return (x - 518) / 2345 - 118.13; }, LAT = function (y) { return 34.19 - (y - 662) / 2829; };
@@ -27,7 +29,7 @@
   function signed() { var r = ''; try { r = localStorage.getItem('wf-role') || ''; } catch (e) {} return r; }
   // The station profile signed in on this phone, or null (administrator and regional profiles)
   window.__wfMine = function () { var k = rid(); if (!signed() || !ME[k]) return null; var m = ME[k], s = m.station;
-    return { key: k, level: m.level, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
+    return { key: k, level: m.level, rank: m.rank, name: m.name, unit: m.unit, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
   // Who leads the profile stations, so every screen tells the same story (the captain commands, the team lead leads the first crew)
   // (Oct 8, 19:10) and the team lead's own crew, fixed, so nobody in it turns up elsewhere as another station's captain
   var CREW11B = ['Kevin Marsh', 'Ana Ruiz', 'Ben Ortega'];   /* (Oct 8, 21:54) Station 11's second crew (Brush 11), led by Captain Kevin Marsh */
@@ -284,6 +286,14 @@
   // ---- stations of the country, for the closest-unit (mutual aid) check ----
   var SF = {}, SW = {};
   function stations(cc) { if (SF[cc]) return SF[cc]; if (!SW[cc]) { SW[cc] = 1; fetch('data/stations-' + cc + '.json').then(function (r) { return r.json(); }).then(function (js) { SF[cc] = js.s || []; emit(); }).catch(function () { delete SW[cc]; }); } return null; }
+  /* (Oct 11, 17:25) a battalion: the Battalion Chief's stations, his base station and the nearest stations of the same department
+     (LA County Fire battalions hold 5 to 8 stations); null while the stations are loading */
+  var BAT = {};
+  window.__wfBattalion = function (st) { if (!st) return null; var id = String(st.id); if (BAT[id]) return BAT[id]; var S = stations(st.cc || 'us'); if (!S) return null;
+    var op = (st.tags && st.tags.operator) || '', out = S.filter(function (r) { return String(r[0]) !== id && !/airport|aeroporto|training/i.test(r[4] || '') && (!op || !r[5] || r[5] === op) && km(st.lat, st.lon, r[2], r[3]) < 16; })
+      .sort(function (a, b) { return km(st.lat, st.lon, a[2], a[3]) - km(st.lat, st.lon, b[2], b[3]); }).slice(0, 5)
+      .map(function (r) { return { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4] || 'Station', lat: r[2], lon: r[3], tags: { operator: r[5] || op }, cc: st.cc || 'us', st: st.st }; });
+    BAT[id] = [st].concat(out); return BAT[id]; };
   // 'zone' (inside the station's area), 'aid' (outside it, and this station is one of its two closest units), or ''
   var MEMO = {};
   window.__wfIncidentFor = function (lat, lon, st) { st = st || ((window.__wfMine() || {}).station); if (!st || !isFinite(lat) || !isFinite(lon)) return '';
