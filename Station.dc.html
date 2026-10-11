@@ -711,12 +711,18 @@ class Component extends DCLogic {
     const st = B.map((b, i) => { const ck = (b.type === 'way' ? 'w' : 'n') + b.id, n = numOf(b.name), eng = 'Engine ' + (n || (10 + i));
       const out = chats.some((c) => (c.forces || []).some((f) => (f.ck === ck || f.full === b.name) && (f.st === 'enroute' || f.st === 'onscene'))) || (i > 0 && h(b.id + new Date().toDateString()) % 5 === 0);
       return { b, ck, eng, name: short(b.name), place: placeOf(b.name), out }; });
-    const rows = st.map((x, i) => { const cv = x.out ? cov[x.ck] : null, free = st.filter((y) => y !== x && !y.out && !Object.values(cov).includes(y.eng));
-      const tag = x.out ? (cv ? L('Covered', 'Coberto') : L('Empty', 'Vazio')) : L('In service', 'Em serviço');
-      const bg = x.out ? (cv ? window.__wfStTag.ok.bg : 'rgba(179,0,27,0.12)') : window.__wfStTag.ok.bg, fg = x.out ? (cv ? window.__wfStTag.ok.fg : '#B3001B') : window.__wfStTag.ok.fg;
-      const sub = (x.place ? x.place + '. ' : '') + x.eng + (x.out ? L(' on a call.', ' em ocorrência.') : L(' in quarters.', ' no quartel.')) + (cv ? ' ' + L('Covered by ', 'Coberto pelo ') + cv + '.' : '');
-      const go = () => { const f = free[0]; if (!f) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const N = Object.assign({}, cov, { [x.ck]: f.eng }); try { localStorage.setItem('wf-cover', JSON.stringify(N)); } catch (e) {} this.forceUpdate(); };
-      return { name: x.name, tag, bg, fg, sub, btnD: x.out && !cv && free.length ? 'flex' : 'none', btn: free.length ? L('Move up ', 'Cobertura com o ') + free[0].eng : '', go }; });
+    /* (Oct 11, 19:05) move-up and cover, as the ECC runs it: a move-up ends when the station's own engine is back; an engine sent to cover
+       is out of its quarters (its station shows it) and is never offered again; each empty station is offered the nearest engine still free */
+    { let ch = false; Object.keys(cov).forEach((k) => { const x = st.find((y) => y.ck === k); if (!x || !x.out) { delete cov[k]; ch = true; } }); if (ch) { try { localStorage.setItem('wf-cover', JSON.stringify(cov)); } catch (e) {} } }
+    const coverOf = (eng) => { const k = Object.keys(cov).find((q) => cov[q] === eng); return k ? st.find((y) => y.ck === k) : null; };
+    const kmB = (a, b) => Math.hypot((a.lat - b.lat) * 110.57, (a.lon - b.lon) * 111.32 * Math.cos(a.lat * Math.PI / 180));
+    const rows = st.map((x, i) => { const cv = x.out ? cov[x.ck] : null, away = !x.out ? coverOf(x.eng) : null;
+      const free = st.filter((y) => y !== x && !y.out && !coverOf(y.eng)).sort((a, b) => kmB(a.b, x.b) - kmB(b.b, x.b));
+      const tag = x.out ? (cv ? L('Covered', 'Coberto') : L('Empty', 'Vazio')) : away ? L('Moved up', 'Em cobertura') : L('In service', 'Em serviço');
+      const bg = x.out && !cv ? 'rgba(179,0,27,0.12)' : away ? 'rgba(118,118,128,0.14)' : window.__wfStTag.ok.bg, fg = x.out && !cv ? '#B3001B' : away ? 'var(--wf-ink2, #3A3A3C)' : window.__wfStTag.ok.fg;
+      const sub = (x.place ? x.place + '. ' : '') + x.eng + (x.out ? L(' on a call.', ' em ocorrência.') : away ? L(' covering ', ' a cobrir a ') + away.name + '.' : L(' in quarters.', ' no quartel.')) + (cv ? ' ' + L('Covered by ', 'Coberto pelo ') + cv + '.' : '');
+      const f0 = free[0], go = () => { if (!f0) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const N = Object.assign({}, cov, { [x.ck]: f0.eng }); try { localStorage.setItem('wf-cover', JSON.stringify(N)); } catch (e) {} this.forceUpdate(); };
+      return { name: x.name, tag, bg, fg, sub, btnD: x.out && !cv && f0 ? 'flex' : 'none', btn: f0 ? L('Move up ', 'Cobertura com o ') + f0.eng : '', go }; });
     /* (Oct 11, 19:10) each station's state for the map's tooltips */ try { const BS = {}; st.forEach((x, i) => { BS[String(x.b.id)] = { tag: rows[i].tag, sub: rows[i].sub }; }); window.__wfBatStat = BS; } catch (e) {}
     /* the header already names the battalion: the list is its stations (Portugal: the brigade's own station, no battalions) */
     return { d: 'flex', title: PTs ? L('Our station', 'O nosso quartel') : L('Stations in the battalion', 'Quartéis do batalhão'), rows };
