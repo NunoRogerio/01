@@ -65,8 +65,8 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     amz: ['RN', 'Rafael Nogueira', 'Coordenador de Operações do Prevfogo na Amazônia Legal', 'Ibama · Prevfogo · Manaus', 'Amazônia Legal region only', '', 'en'],
     admin: ['JW', 'James Whitmore', 'Emergency management director', 'Government overview', 'All regions', '', 'en'],
     /* (Oct 6) role profiles, signed in with the California area (wf-role ca) and known by wf-custom */
-    coord: ['FO', 'Frank Ortiz', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
-    ff: ['DB', 'Daniel Brooks', 'Lieutenant', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
+    coord: ['FO', 'Frank Ortiz', 'Battalion Chief', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en'],
+    ff: ['DB', 'Daniel Brooks', 'Captain', 'Los Angeles County Fire Department', 'Station 11 area', '', 'en']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)
   var SUMS = {

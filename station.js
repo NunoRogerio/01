@@ -30,7 +30,7 @@
     return { key: k, level: m.level, crew: m.crew, station: Object.assign({}, s, { x: Math.round(X(s.lon)), y: Math.round(Y(s.lat)) }) }; };
   // Who leads the profile stations, so every screen tells the same story (the captain commands, the team lead leads the first crew)
   // (Oct 8, 19:10) and the team lead's own crew, fixed, so nobody in it turns up elsewhere as another station's captain
-  var CREW11B = ['Kevin Marsh', 'Ana Ruiz', 'Ben Ortega'];   /* (Oct 8, 21:54) Station 11's second crew (Brush 11), led by Lieutenant Kevin Marsh */
+  var CREW11B = ['Kevin Marsh', 'Ana Ruiz', 'Ben Ortega'];   /* (Oct 8, 21:54) Station 11's second crew (Brush 11), led by Captain Kevin Marsh */
   var CREW11 = ['Daniel Brooks', 'Laura Chen', 'Tom Alvarez', 'Lisa Wong'], ST11P = { 'Laura Chen': 'train', 'Tom Alvarez': 'sick' };   /* the shift: Chen in training, Alvarez on sick leave */
   window.__wfStaffOf = function (id) { return String(id) === String(ST11.id) ? { captain: 'Frank Ortiz', lead: 'Daniel Brooks', lead2: 'Kevin Marsh', crew2: CREW11B.slice(), crew: CREW11.slice(), state: Object.assign({}, ST11P),
     onDuty: CREW11.filter(function (n) { return !ST11P[n]; }) } : null; };
@@ -49,10 +49,10 @@
     crew: 'M9 11a3 3 0 1 0 0-6a3 3 0 1 0 0 6Z M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5 M15.5 10.5a2.5 2.5 0 1 0 0-5 M17.5 14c2 .4 3.5 2.2 3.5 5'
   };
   var FLEET11 = [
-    { id: 'battalion', name: 'Battalion 11', ic: 'cmd', en: 'Command vehicle. Battalion chief Robert Hale.', pt: 'Veículo de comando. Chefe de batalhão Robert Hale.', crew: ['Robert Hale'], rank: { en: 'Battalion chief', pt: 'Chefe de batalhão' } },
-    { id: 'engine', name: 'Engine 11', ic: 'eng', en: 'Type 1 engine. 500 gal. 4 seats.', pt: 'Autobomba tipo 1. 1 900 L. 4 lugares.', lt: 'Daniel Brooks', crew: CREW11.filter(function (n) { return !ST11P[n]; }) },
-    { id: 'brush', name: 'Brush 11', ic: 'eng', en: 'Type 3 wildland engine. 500 gal. 4 seats.', pt: 'Autobomba florestal tipo 3. 1 900 L. 4 lugares.', lt: 'Kevin Marsh', crew: CREW11B.slice() },
-    { id: 'patrol', name: 'Patrol 11', ic: 'pick', en: 'Type 6 engine. 300 gal. 3 seats.', pt: 'Autobomba tipo 6. 1 100 L. 3 lugares.', crew: ['Marcus Reed', 'Sofia Lin'] },
+    { id: 'battalion', name: 'Battalion 11', ic: 'cmd', en: 'Command vehicle. Battalion Chief Frank Ortiz.', pt: 'Veículo de comando. Chefe de batalhão Frank Ortiz.', crew: ['Frank Ortiz'], rank: { en: 'Battalion Chief', pt: 'Chefe de batalhão' } },   /* (Oct 11, 17:00) the battalion chief (the coordinator profile) rides the command vehicle */
+    { id: 'engine', name: 'Engine 11', ic: 'eng', en: 'Type 1 engine. 500 gal. 4 seats.', pt: 'Autobomba tipo 1. 1 900 L. 4 lugares.', lt: 'Daniel Brooks', eng: 'Lisa Wong', crew: CREW11.filter(function (n) { return !ST11P[n]; }) },
+    { id: 'brush', name: 'Brush 11', ic: 'eng', en: 'Type 3 wildland engine. 500 gal. 4 seats.', pt: 'Autobomba florestal tipo 3. 1 900 L. 4 lugares.', lt: 'Kevin Marsh', eng: 'Ana Ruiz', crew: CREW11B.slice() },
+    { id: 'patrol', name: 'Patrol 11', ic: 'pick', en: 'Type 6 engine. 300 gal. 3 seats.', pt: 'Autobomba tipo 6. 1 100 L. 3 lugares.', eng: 'Marcus Reed', crew: ['Marcus Reed', 'Sofia Lin'] },
     { id: 'tender', name: 'Water Tender 11', ic: 'tank', en: 'Water tender. 2,000 gal. 2 seats.', pt: 'Autotanque. 7 500 L. 2 lugares.', crew: [], st: 'maint', days: 3 },
     { id: 'squad', name: 'Squad 11', ic: 'amb', en: 'Paramedic squad. 2 seats.', pt: 'Equipa de paramédicos. 2 lugares.', crew: ['Grace Kim', 'Omar Haddad'] }];
   window.__wfFleet = function (id) { return String(id) === String(ST11.id) ? FLEET11.map(function (u) { return Object.assign({}, u, { crew: u.crew.slice() }); }) : null; };

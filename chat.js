@@ -91,13 +91,13 @@
   /* (Oct 8, 23:09) one rank per person, on every screen: the signed-in station profile by its rank (Captain, Lieutenant), else
      the fire owner; a station's lead by the country's title; Station 11's lieutenants and anyone in the chat as a lieutenant as
      Lieutenant (chefe de equipa in Portugal); everyone else on a crew as Firefighter */
-  function rankOf(c, name) { var us = !c || isUS(c), LT = us ? { en: 'Lieutenant', pt: 'Tenente' } : { en: 'Crew chief', pt: 'Chefe de equipa' };
+  function rankOf(c, name) { var us = !c || isUS(c), LT = us ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' };   /* (Oct 11, 17:00) US ranks as LA County Fire uses them: Battalion Chief, Captain (each engine's officer), Engineer, Firefighter; no Lieutenant */
     var me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null;
-    if (name && me.name && name === me.name) return M ? (M.level === 'lead' ? LT : { en: 'Captain', pt: 'Capitão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
+    if (name && me.name && name === me.name) return M ? (M.level === 'lead' ? LT : { en: 'Battalion Chief', pt: 'Chefe de batalhão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
     var P = c && (c.people || []).find(function (p) { return p.name === name; }); if (P && P.kind === 'lt') return LT; if (P && P.kind === 'air') return { en: P.roleEn || 'Air coordinator', pt: P.rolePt || 'Coordenador de meios aéreos' };
     var SF = window.__wfStaffOf ? window.__wfStaffOf('1353638773') : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT;
     var FL = window.__wfFleet ? window.__wfFleet('1353638773') : null, U = FL && FL.find(function (u) { return u.crew.indexOf(name) >= 0 && u.lt !== name; });
-    if (U && U.rank) return U.rank; if (U && U.id === 'squad') return { en: 'Firefighter paramedic', pt: 'Bombeiro paramédico' }; if (SF && name === SF.captain) return { en: 'Captain', pt: 'Capitão' };
+    if (U && U.rank) return U.rank; if (U && U.eng === name) return { en: 'Engineer', pt: 'Motorista' }; if (U && U.id === 'squad') return { en: 'Firefighter paramedic', pt: 'Bombeiro paramédico' }; if (SF && name === SF.captain) return { en: 'Battalion Chief', pt: 'Chefe de batalhão' };
     if (c && (c.forces || []).some(function (f) { return f.coord === name; })) return leadRole(c);
     if (P && P.kind === 'lead') return leadRole(c);
     return { en: 'Firefighter', pt: 'Bombeiro' }; }
@@ -197,13 +197,14 @@
     /* chats saved before: their stations by the short names people use */
     (c.people || []).forEach(function (p) { var o = shortStation(p.org); if (p.org && o !== p.org) { p.org = o; ch = true; } }); (c.stations || []).forEach(function (q) { var o = shortStation(q.short || q.name); if (q.short !== o) { q.short = o; ch = true; } }); (c.forces || []).forEach(function (f) { var o = shortStation(f.station); if (f.station && o !== f.station) { f.station = o; ch = true; } });
     if (!c.forces || !c.forces.length) return ltsOfLeads(c) || ch;
-    c.forces.forEach(function (f) { if (f.nolt) return; var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF && !f.second ? SF.lead : (f.crew && f.crew[0]); if (!nm) return;
+    if (isUS(c)) c.people.forEach(function (p) { if (p.kind !== 'lt' || p.left) return; var st0 = (c.stations || []).find(function (q) { return q.short === p.org; }); if (!staffOf(st0 || {})) { p.left = true; ch = true; } });   /* (Oct 11, 17:00) a US station is in the chat through its engine's Captain only */
+    c.forces.forEach(function (f) { if (f.nolt) return; var s = c.stations[f.si] || {}, SF = staffOf(s), nm = SF && !f.second ? SF.lead : (f.crew && f.crew[0]); if (!nm || (!SF && isUS(c))) return;
       /* (Oct 8, 21:38) a station whose captain is in the chat is on the fire: its lieutenant is in too (unless its crew was released) */
       var capIn = c.people.some(function (p) { return p.kind === 'lead' && !p.left && p.org === (s.short || f.station); });
       var on = f.st !== 'released' && (f.st !== 'standby' || capIn), ex = c.people.find(function (p) { return p.name === nm; });
       if (ex) { if (ex.kind === 'lt' && !!ex.left === on) { ex.left = on ? undefined : true; ch = true; } return; }   /* the lieutenant is in while the crew works the fire */
       if (!on) return; var v = (f.veh || [])[0] || '', org = s.short || f.station || '';
-      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: 'Lieutenant. ' + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && !f.second && M && M.key === 'ff') || undefined }); ch = true; });
+      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: 'Captain. ' + (v ? v + '. ' : '') + org, rolePt: 'Chefe de equipa. ' + (v ? v + '. ' : '') + org, self: (SF && !f.second && M && M.key === 'ff') || undefined }); ch = true; });
     ch = ltsOfLeads(c) || ch;
     return ch; }
   /* (Oct 8, 23:30) every station in an incident chat has its lieutenant there too, not only its captain (also before any
@@ -214,8 +215,8 @@
       if (p.left && !working) { lts.forEach(function (q) { if (!q.left) { q.left = true; ch = true; } }); return; }
       if (p.left || lts.some(function (q) { return !q.left; })) return;
       if (lts.length) { lts[0].left = undefined; ch = true; return; }
-      var nm = SF ? SF.lead : pickNames(c, 1, 'lt-' + org)[0]; if (!nm || c.people.some(function (q) { return q.name === nm; })) return;
-      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: (us ? 'Lieutenant. ' : 'Crew chief. ') + org, rolePt: 'Chefe de equipa. ' + org, self: (SF && M && M.key === 'ff') || undefined }); ch = true; });
+      if (!SF && us) return; var nm = SF ? SF.lead : pickNames(c, 1, 'lt-' + org)[0]; if (!nm || c.people.some(function (q) { return q.name === nm; })) return;
+      c.people.push({ name: nm, code: initials(nm), org: org, kind: 'lt', roleEn: (us ? 'Captain. ' : 'Crew chief. ') + org, rolePt: 'Chefe de equipa. ' + org, self: (SF && M && M.key === 'ff') || undefined }); ch = true; });
     return ch; }
   window.addEventListener('storage', function (e) { if (e.key === KEY) { DB = null; emit(); } });
   /* (Oct 10, 20:58) a page brought back from the browser's back-forward cache (or the app returning to the foreground) missed the
@@ -982,7 +983,7 @@
     ensureLts(c); var me0 = c.people[i]; if (me0 && me0.name === ((staffOf(st) || {}).captain)) me0.self = true;
     /* (Oct 9, 17:43) the confirmations come from the leaders of the units actually sent (their lieutenant, or the first of their crew when they have none), never from another station */
     var org0 = st.short || st.name, lead = function (k) { var nm = k.lt || k.crew[0]; if (!nm) return -1; var x = c.people.findIndex(function (p) { return p.name === nm; });
-      if (x < 0) { c.people.push({ name: nm, code: initials(nm), org: org0, kind: 'lt', roleEn: (k.lt ? 'Lieutenant. ' : 'Crew lead. ') + k.veh + '. ' + org0, rolePt: 'Chefe de ' + (k.lt ? 'equipa. ' : 'viatura. ') + k.veh + '. ' + org0 }); x = c.people.length - 1; } else if (c.people[x].left) c.people[x].left = undefined; return x; };
+      if (x < 0) { c.people.push({ name: nm, code: initials(nm), org: org0, kind: 'lt', roleEn: (k.lt ? 'Captain. ' : 'Crew lead. ') + k.veh + '. ' + org0, rolePt: 'Chefe de ' + (k.lt ? 'equipa. ' : 'viatura. ') + k.veh + '. ' + org0 }); x = c.people.length - 1; } else if (c.people[x].left) c.people[x].left = undefined; return x; };
     var LD = K.map(lead).filter(function (x) { return x >= 0; });
     if (LD.length) { var nth = 0; (c.queue || []).forEach(function (q) { if (!q.m || q.m.kind !== 'msg' || q.m.from === 'me' || typeof q.m.from !== 'number') return; var pp = c.people[q.m.from]; if (q.m.from === i || (pp && pp.org !== org0)) { q.m.from = LD[nth % LD.length]; nth++; } }); }
     /* (Oct 9, 13:56) the order, for the whole team to see: a card listing every unit sent (its type icon, who leads it, its people), with its state */
@@ -1201,7 +1202,7 @@
     sys(c, 'Marked as done', 'Marcado como feito', 0, 0); c.updated = Date.now(); save(); emit(); }
   /* (Oct 8, 23:21) the crew is agreed and we say goodbye: their captain answers, the conversation is done and the screen goes back
      to the station, where the fire now waits in To do */
-  function helpEnd(c) { c.step = 4; say(c, 0, 'You too, Captain. See you at the command post.', 'Igualmente. Vemo-nos no posto de comando.', 1600, 1); c.leaveAt = Date.now() + 1600 + 2600; }
+  function helpEnd(c) { c.step = 4; say(c, 0, 'You too, Chief. See you at the command post.', 'Igualmente. Vemo-nos no posto de comando.', 1600, 1); c.leaveAt = Date.now() + 1600 + 2600; }
   function helpReply(c, text) {
     var t = String(text).toLowerCase();
     if (/obrigad|thank|valeu|cheers|stay safe|cuid/.test(t)) { if (c.step === 2) { helpEnd(c); return; } say(c, 0, 'Thank you. Stay safe.', 'Obrigado. Cuidem-se.', 1800, 1); return; }
@@ -1816,7 +1817,7 @@
     callStart: function (key) { var d = load(), c = d.chats[key]; if (!c || c.closed || c.dismissed) return;
       var M = window.__wfMine ? window.__wfMine() : null, PT = window.__wfLang === 'pt', staff = M && window.__wfStaffOf ? window.__wfStaffOf(M.station.id) : null;
       var full = staff ? (M.level === 'lead' ? staff.lead : staff.captain) : ((window.__wfPrefs && window.__wfPrefs.person && window.__wfPrefs.person.name) || ''), last = full.split(' ').slice(-1)[0] || '';
-      var rk = M ? (M.level === 'lead' ? ['Lieutenant', 'Chefe de equipa'] : ['Captain', 'Chefe']) : ['', ''], who = { en: (rk[0] + ' ' + last).trim(), pt: (rk[1] + ' ' + last).trim() };
+      var rk = M ? (M.level === 'lead' ? ['Captain', 'Capitão'] : ['Battalion Chief', 'Chefe de batalhão']) : ['', ''], who = { en: (rk[0] + ' ' + last).trim(), pt: (rk[1] + ' ' + last).trim() };
       var P = (c.people || []).map(function (p, i) { return [p, i]; }).filter(function (q) { return !q[0].left && !q[0].self; });
       var G = [function (p) { return ['Hello ' + who.en + ', ' + p.name.split(' ')[0] + ' here.', 'Olá ' + who.pt + ', fala ' + p.name.split(' ')[0] + '.']; },
         function (p) { return ['Hi ' + who.en + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', on the line.', 'Olá ' + who.pt + '. ' + p.name.split(' ')[0] + ', ' + p.org + ', em linha.']; },
