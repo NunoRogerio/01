@@ -177,8 +177,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-if>
         <sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
           <div class="chbubR" style="align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: calc(100% - 32px); box-sizing: border-box; margin-top: {{m.gap}}; padding: 16px; border-radius: 18px 18px 6px 18px; background: rgba(255, 255, 255, 0.1); color: #000000; text-align: left"><!-- (Oct 11, 00:36) my messages: "You" on top, as the others carry their name; the bubble 10% white -->
-            <span style="align-self: flex-start; font-size: 16px; line-height: 20px; font-weight: 600; color: #1C1C1E">{{t.you}}</span>
-            <span style="font-size: 18px; line-height: 24px">{{m.text}}</span>
+            <span style="font-size: 18px; line-height: 24px"><b style="margin-right: 8px; font-weight: 600; color: #1C1C1E">{{t.you}}</b>{{m.text}}</span><!-- (Oct 11, 01:03) "You:" on the text's first line, 8px before it -->
             <span style="align-self: flex-end; margin-top: 12px; font-size: 16px; line-height: 20px; color: #6C6C70; font-variant-numeric: tabular-nums">{{m.time}}</span><!-- (Oct 11, 00:27) 16px under the last line of text -->
           </div>
         </sc-if>
@@ -803,7 +802,7 @@ class Component extends DCLogic {
       msg: L('Write a message…', 'Escrever mensagem…'), send: L('Send', 'Enviar'), cam: L('Helmet camera', 'Câmara de capacete'), call: L('Video call with the police captain', 'Videochamada com o capitão da polícia'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
       fireCard: L('Fire card', 'Cartão do incêndio'), details: L('Details', 'Detalhes'), fireCardSub: L('Progress and projection', 'Progresso e projeção'),
-      you: L('You', 'Você'), reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
+      you: L('You:', 'Você:'), reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
       proj: L('Spread projection', 'Projeção da propagação'), projSub: L('Where the fire can be in 1, 3 and 6 hours, on its map.', 'Onde o fogo pode estar dentro de 1, 3 e 6 horas, no mapa.'), openFire: L('View projection', 'Ver projeção'),
       forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
       won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), home: L('Go to main screen', 'Ir para o ecrã principal'), home0: L('Main screen', 'Ecrã principal'), homeNote: L('Do not rest on your laurels. There are more fires where you are needed.', 'Não fiques à sombra dos louros, há mais incêndios onde és preciso.'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), histDrill: L('Drill finished · your movements and decisions', 'Simulação terminada · os seus movimentos e decisões'), wonBy: L('Crews', 'Equipas'), owner: L('Fire owner', 'Responsável pelo incêndio'),

@@ -1673,7 +1673,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Candidate band (Oct 11):** an ignition candidate's full-width band in the incident cards reads like a fire's stage band: the label "Likelihood" on the left (semibold) and the percentage on the right, in the likelihood colours.
 - **Units on a mission in Configure dispatch (Oct 11):** they sit at the end of the list. Choosing one opens the shared confirmation from the bottom ("Redirect vehicle?" or "Redirect crew?", Cancel / Redirect); confirmed, it is on, reads "Redirected from the …" and, once sent, leaves the other fire (a line in that fire's chat). The AI suggested units, and the last unit left on, show the normal on toggle (never faded).
 - **Stage chips (Oct 11):** every suggestion chip that changes the fire's stage (Dispatch, To Concluding, Close fire…) is dark grey with white text, whatever the stage.
-- **My messages (Oct 11):** carry "You" on top, as the others carry their name; the bubble is 10% white.
+- **My messages (Oct 11):** start with "You:" in semibold on the text's first line, 8px before the text; the bubble is 10% white.
 - **Structures are now safe (Oct 11):** that notification is left out of the story for now.
 - **Sticky card header (Oct 11):** the card's tag in bold on the left, its time stamp in normal text (16px regular) on the right, as on the card band.
 - **Likelihood heat scale (Oct 11):** three yellows: light (under 60%), yellow (60 to 79%), strong (80% and over); the label and the figure share one colour (live.js `__wfConfTag`).
