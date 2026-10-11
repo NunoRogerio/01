@@ -14,9 +14,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791716515"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791717153"></script>
+<script src="prefs.js?v=1791719825"></script>
 <script src="station.js?v=1791716515"></script>
 <script src="i18n.js?v=1791716515"></script>
 <script src="live.js?v=1791716515"></script>
@@ -33,8 +33,8 @@
 } catch (e) {} })();
 </script>
 <script src="trophy.js?v=1791674153"></script>
-<script src="tour.js?v=1791626920"></script>
-<script src="feedcam.js?v=1791671663"></script>
+<script src="tour.js?v=1791719825"></script>
+<script src="feedcam.js?v=1791719825"></script>
 <script src="menu.js?v=1791716515"></script>
 
 <title>Ignition candidates</title>
@@ -272,7 +272,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <a href="Main.dc.html" data-wf-back="1" class="opt" aria-label="Back" onClick="{{navBack}}" style="grid-column: 1; grid-row: 1; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <button type="button" class="opt" data-wf-ttl2="1" tabindex="-1" style="grid-column: 1 / -1; grid-row: 2; margin-top: 0; pointer-events: none; display: flex; flex-direction: column; align-items: stretch; min-width: 0; padding: 0; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: baseline; gap: 8px; min-width: 0"><h2 id="ai" style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none">{{curRow.place}}</h2></span>
-        <span style="display: flex; align-items: baseline; gap: 8px; min-width: 0; margin-top: 4px"><span style="flex: 1 1 auto; min-width: 0; font-size: 13px; line-height: 18px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{region}}</span></span><!-- (Oct 6) after Understood, houses in reach: a small tag in the warning's red at the end of the place line -->
+        <span style="display: flex; align-items: baseline; gap: 8px; min-width: 0; margin-top: -7px"><span style="flex: 1 1 auto; min-width: 0; font-size: 14px; line-height: 18px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{region}}</span></span><!-- (Oct 6) after Understood, houses in reach: a small tag in the warning's red at the end of the place line -->
       </button>
       <!-- Header actions, as on the main screen: this incident's chat, notifications, your profile (always at the top; the chat is an option, not a foot button) -->
       <div data-wf-keepsp="1" style="grid-column: 3; grid-row: 1; display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; margin-top: 8px"><a href="Chat.dc.html" class="opt" onClick="{{chat.open}}" aria-label="{{chat.aria}}" style="position: relative; display: {{chat.d}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{chat.badgeD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: #3A3A3C; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{chat.n}}</span></a><button type="button" class="opt" onClick="{{hx.openNt}}" aria-haspopup="dialog" aria-label="{{hx.ntAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" style="display: {{hx.ntD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: rgb(215, 0, 21); color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ntN}}</span></button><button type="button" class="opt" data-wf-burger="1" onClick="{{hx.openPf}}" aria-haspopup="true" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button></div>
@@ -320,14 +320,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <div data-wf-kpicard="1" style="position: relative; display: flex; flex-direction: column; align-items: center; flex-grow: 1; box-sizing: border-box; min-height: 122px; padding: 16px 8px 8px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08); transition: box-shadow .2s ease">
                 <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; min-height: 40px; max-width: 100%; font-size: 16px; line-height: 20px; color: #6E6E73; text-align: center; overflow-wrap: anywhere">{{m.l}}</span>
                 <span style="display: flex; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: {{m.k}}">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 16px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
-                <span style="display: {{m.tagD}}; margin-top: 8px; max-width: 100%; box-sizing: border-box; padding: 4px 8px; border-radius: 8px; background: {{m.tagBg}}; color: {{m.tagFg}}; font-size: 13px; line-height: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.tag}}</span><span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 13px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
+                <span style="display: {{m.tagD}}; margin-top: 8px; max-width: 100%; box-sizing: border-box; padding: 4px 8px; border-radius: 8px; background: {{m.tagBg}}; color: {{m.tagFg}}; font-size: 14px; line-height: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.tag}}</span><span style="display: {{m.subD}}; margin-top: 8px; max-width: 100%; font-size: 14px; line-height: 18px; color: #6E6E73; text-align: center">{{m.sub}}</span>
                 <svg role="img" aria-label="{{m.aria}}" width="56%" height="22" viewBox="0 0 100 28" preserveAspectRatio="none" style="display: {{m.svgD}}; flex-shrink: 0; margin-top: auto; padding-top: 8px; overflow: visible">
                   <path d="{{m.area}}" fill="{{m.areaFill}}" stroke="none"></path>
                   <path d="{{m.line}}" fill="none" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path><path d="{{m.dot}}" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" vector-effect="non-scaling-stroke"></path><path d="{{m.dot}}" fill="none" stroke="#3A3A3C" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                   <path d="{{m.bars}}" fill="{{m.barC}}" stroke="none"></path>
                   <path d="{{m.bar2}}" fill="#3A3A3C" stroke="none"></path>
                 </svg>
-                <span class="wf-note wf-note-t" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; pointer-events: none">{{m.note}}</span>
+                <span class="wf-note wf-note-t" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 36px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 14px !important; line-height: 16px !important; pointer-events: none">{{m.note}}</span>
               </div>
             </div>
           </sc-for>
@@ -347,7 +347,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <span style="display: {{m.numD}}; align-items: baseline; gap: 4px; white-space: nowrap"><span class="kpi wf-big" style="--k: 26px">{{m.n}}</span><span style="display: {{m.uD}}; font-size: 16px; line-height: 20px; font-weight: 400; color: #6E6E73">{{m.u}}</span></span>
                   <span style="display: {{m.txtD}}; align-items: baseline; max-width: 100%"><span class="kpi wf-big">{{m.txt}}</span></span>
                   <span style="display: {{m.subD}}; font-size: 16px; line-height: 20px; color: #6E6E73">{{m.sub}}</span>
-                  <span class="wf-note wf-note-t" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 8px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 13px !important; line-height: 16px !important; pointer-events: none">{{m.note}}</span>
+                  <span class="wf-note wf-note-t" style="display: {{m.noteD}}; position: absolute; right: 3px; top: 8px; bottom: 8px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-size: 14px !important; line-height: 16px !important; pointer-events: none">{{m.note}}</span>
                 </div>
               </div>
             </sc-for>
@@ -368,7 +368,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="position: absolute; left: 0; bottom: 0; width: 14px; height: 14px; border-left: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-left-radius: 5px"></span>
             <span style="position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; border-right: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-right-radius: 5px"></span>
           </span>
-          <span class="pop" style="position: absolute; left: {{box.left}}px; top: {{box.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap; animation-delay: 650ms">
+          <span class="pop" style="position: absolute; left: {{box.left}}px; top: {{box.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; background: #FFD60A; color: #1F1405; font-size: 14px; font-weight: 700; white-space: nowrap; animation-delay: 650ms">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10.5l-6.3 2.2L12 19l-2.2-6.3L3.5 10.5l6.3-2.2Z"></path></svg>{{tab.score}}
           </span>
           <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500; text-shadow: 0 0 6px rgba(0,0,0,0.6)">
@@ -387,7 +387,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <span style="display: flex; align-items: baseline; gap: 8px"><span style="font-size: 22px; font-weight: 600; color: #FF9F0A">{{tab.pmNow}}</span><span style="font-size: 16px; color: #98989F">µg/m³ smoke</span></span>
             <span style="display: flex; align-items: baseline; gap: 8px"><span style="font-size: 22px; font-weight: 600; color: #64D2FF">{{tab.dT}}°F</span><span style="font-size: 16px; color: #98989F">now {{tab.tNow}}°F</span></span>
           </span>
-          <span class="pop" style="position: absolute; right: 16px; top: 46px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 8px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
+          <span class="pop" style="position: absolute; right: 16px; top: 46px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 8px; background: #FFD60A; color: #1F1405; font-size: 14px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
           <svg width="390" height="220" viewBox="0 0 390 220" aria-hidden="true" style="position: absolute; left: 0; top: 0; pointer-events: none">
             <path d="M16 154.5H374M16 125.5H374M16 96.5H374" stroke="rgba(255,255,255,0.06)" stroke-width="1"></path>
             <path d="{{tab.pmArea}}" fill="rgba(255,159,10,0.18)"></path>
@@ -400,7 +400,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <figcaption style="position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500">
             <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
           </figcaption>
-          <span class="pop" style="position: absolute; right: 16px; top: 12px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 8px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
+          <span class="pop" style="position: absolute; right: 16px; top: 12px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 8px; background: #FFD60A; color: #1F1405; font-size: 14px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
           <span style="position: absolute; left: 16px; right: 16px; top: 44px; font-size: 18px; line-height: 1.4; color: #FFFFFF">{{tab.quote}}</span>
           <span aria-hidden="true" style="position: absolute; left: 16px; top: 112px; display: flex; align-items: center; gap: 4px; height: 28px">
             <sc-for list="{{tab.bars}}" as="bar" hint-placeholder-count="20"><span style="width: 3px; height: {{bar.h}}px; border-radius: 2px; background: rgba(100,210,255,0.55)"></span></sc-for>
@@ -429,7 +429,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <li style="padding: 16px 16px; border-top: 0; font-size: 18px; line-height: 24px; color: {{r.color}}">{{r.t}}</li>
               </sc-for>
               <sc-if value="{{ev.hasSl}}" hint-placeholder-val="{{ false }}"><li style="padding: 0 16px 16px"><wf-slides photos="{{ev.slides}}" aria-label="{{ev.title}}" style="height: 202px; border-radius: 16px; overflow: hidden"></wf-slides></li></sc-if>
-              <li class="wf-note" style="display: {{ev.noteD}}; padding: 0 16px 16px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ev.note}}</li>
+              <li class="wf-note" style="display: {{ev.noteD}}; padding: 0 16px 16px; font-size: 14px; line-height: 18px; color: #6E6E73">{{ev.note}}</li>
             </ul>
           </sc-for>
         </div>
@@ -497,7 +497,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <span style="position: absolute; left: 0; bottom: 0; width: 14px; height: 14px; border-left: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-left-radius: 5px"></span>
           <span style="position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; border-right: 1.5px solid #FFD60A; border-bottom: 1.5px solid #FFD60A; border-bottom-right-radius: 5px"></span>
         </span>
-        <span style="position: absolute; left: {{fsBox.left}}px; top: {{fsBox.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 8px; background: #FFD60A; color: #1F1405; font-size: 13px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
+        <span style="position: absolute; left: {{fsBox.left}}px; top: {{fsBox.labelTop}}px; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 8px; background: #FFD60A; color: #1F1405; font-size: 14px; font-weight: 700; white-space: nowrap">{{tab.score}}</span>
         <span style="position: absolute; left: 20px; top: 66px; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500">
           <span class="dot" style="width: 6px; height: 6px; color: #FF453A"></span>{{tab.caption}}
         </span>

@@ -330,7 +330,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       '#wf-tour .twip{margin:4px 0 0;font-size:16px;font-weight:600;line-height:20px;color:var(--wf-y,#E5FF00)}' +
       '#wf-tour .tx{margin:4px 0 0;font-size:16px;line-height:20px;color:rgba(255,255,255,0.86);text-wrap:pretty}' +
       '#wf-tour .tf{display:flex;align-items:center;gap:8px;margin-top:16px}' +
-      '#wf-tour .tn{flex-grow:1;font-size:13px;line-height:18px;color:rgba(255,255,255,0.6);font-variant-numeric:tabular-nums}' +
+      '#wf-tour .tn{flex-grow:1;font-size:14px;line-height:18px;color:rgba(255,255,255,0.6);font-variant-numeric:tabular-nums}' +
       '#wf-tour button{height:40px;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
       '#wf-tour .te{background:rgba(255,255,255,0.14);color:#FFFFFF}' +
       '#wf-tour .tg{background:var(--wf-y,#E5FF00);color:#1C1C1E}' +
