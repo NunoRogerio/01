@@ -1920,7 +1920,7 @@
   // country or state (Portugal never shows Brazil's or the US's messages)
   function inScope(c, SC) { if (!SC || !SC.st || !c || !c.st) return true;
     if (c.kind === 'dm') return c.st === SC.st || (SC.st === 'US' && /^[A-Z]{2}$/.test(c.st) && c.st !== 'PT') || (SC.st === 'AMZ' && c.st === 'BRA');
-    return !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg }, SC.st, SC.co); }
+    return !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg, lat: c.lat, lon: c.lon }, SC.st, SC.co); }
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing, fresh: fresh,
