@@ -694,6 +694,8 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
       g.__wfX = 1; if (own) continue;
       if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
       var r = box.getBoundingClientRect(), gr = g.getBoundingClientRect(), topBlade = gr.top > r.top + r.height / 2;
+      /* (Oct 11, 20:35) a blade that rises from below has no X: its grabber at the top closes it (tap or swipe down), as the bottom dialogs */
+      if (!topBlade && gr.height) continue;
       var b = document.createElement('button'); b.type = 'button'; b.className = 'opt wf-bladex';
       b.setAttribute('aria-label', document.documentElement.lang === 'pt' || window.__wfLang === 'pt' ? 'Fechar' : 'Close');
       b.style.cssText = 'position:absolute;z-index:20;right:16px;top:' + (topBlade ? 'calc(var(--wf-top, 0px) + 16px)' : '16px') + ';display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(118,118,128,0.12);color:#3C3C43;cursor:pointer';
@@ -706,7 +708,10 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   function bladeXAlign() { var B = document.querySelectorAll('.wf-bladex'); for (var i = 0; i < B.length; i++) { var b = B[i], box = b.parentElement; if (!box || !b.offsetParent) continue;
       var h = Array.prototype.find.call(box.querySelectorAll('h1,h2,.wf-title-m'), function (e) { return e.offsetParent && e.offsetWidth > 2 && e.offsetHeight > 2; }); if (!h) continue;   /* (Oct 9, 16:25) the visible title: a visually hidden heading (the incidents list's) would put the X at the blade's edge */ var br = box.getBoundingClientRect(), k = br.height / (box.offsetHeight || br.height) || 1, hr = h.getBoundingClientRect(), lh = parseFloat(getComputedStyle(h).lineHeight) || 32;
       var top = Math.round((hr.top - br.top) / k + lh / 2 - 22); if (Math.abs(top - (parseFloat(b.style.top) || 0)) > 0.5 || /calc/.test(b.style.top)) b.style.top = top + 'px'; } }
-  setInterval(function () { try { bladeX(); bladeXAlign(); } catch (e) {} }, 700);
+  setInterval(function () { try { bladeX(); } catch (e) {} }, 700);
+  /* (Oct 11, 20:35) the X follows its title in the same frame: aligned on every frame, so it never lags behind and jumps when a blade
+     folds or unfolds */
+  (function xLoop() { try { bladeXAlign(); } catch (e) {} requestAnimationFrame(xLoop); })();
   var kT = 0, kMo = null, kGo = function () { if (!kT) kT = setTimeout(function () { kT = 0; noStickyHover(); try { simMark(); } catch (e) {} fitKpi(); if (kMo) kMo.takeRecords(); }, 150); };   /* our own changes are not news */
   var kHit = function (ms) { for (var i = 0; i < ms.length; i++) { var m = ms[i], t = m.target && m.target.nodeType === 1 ? m.target : m.target && m.target.parentElement;
       if (!t) continue; if (t.closest && t.closest('[data-wf-kpicard]')) return true;
@@ -796,7 +801,9 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
   /* (Oct 11, 13:23) the end of a screen's scroll: a shorter clear part (10%), then from 20% rising to full at the foot */
   var MASKE = 'linear-gradient(to bottom, transparent 0, transparent 10%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 70%, rgba(0,0,0,0.85) 85%, #000 100%)';
   var css = document.createElement('style');
-  css.textContent = '.wf-stripes:not([data-wf-sp]){display:none!important}' +
+  css.textContent = '.wf-stripes:not([data-wf-sp]):not([data-wf-ride]){display:none!important}' +
+    '.wf-stripes[data-wf-ride]{display:block!important;height:96px!important;z-index:-1!important;opacity:1!important;border-top-left-radius:28px;border-top-right-radius:28px;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px)!important;-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +
+    'html.wf-dark .wf-stripes[data-wf-ride]{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)!important}' +
     '.wf-spx{position:absolute;left:0;right:0;top:0;z-index:-1;pointer-events:none;border-top-left-radius:inherit;border-top-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +
     'html.wf-dark .wf-spx{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}' +
     /* (Oct 11, 12:59) the same pattern at the foot, mirrored: on every fixed bar under a scrolling panel (the chat's composer, a screen's
@@ -817,7 +824,9 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       /* (Oct 11, 19:50) a blade that rises from below and rides its own top edge (the main screen's bottom blade): the pattern sits on that
          edge and moves with it, as the old strip did; its header is the edge down to the summary, so a fixed 96px band */
       /* (Oct 11, 20:00) open or closed, it stays on the edge: the strip's top is followed whatever it is (0px when the blade is open) */
-      var tp = S[i].style.top; if (tp) { x.__ride = true; if (x.style.top !== tp) { x.style.transition = S[i].style.transition; x.style.top = tp; } if (x.__h !== 96) { x.__h = 96; x.style.height = '96px'; } continue; }
+      /* (Oct 11, 20:30) the riding strip itself carries the pattern: it already moves with the blade's edge in the same frame (same top, same
+         transition), so the pattern is part of the blade's surface and never slides on its own */
+      var tp = S[i].style.top; if (tp) { x.__ride = true; x.style.display = 'none'; if (!S[i].hasAttribute('data-wf-ride')) S[i].setAttribute('data-wf-ride', '1'); continue; }
       var h = b.querySelector('h1, h2'), bh = b.getBoundingClientRect(); if (!h || !bh.height) continue; var k = b.offsetHeight ? bh.height / b.offsetHeight : 1;
       if (h.offsetHeight <= 1) { if (x.__h !== 96) { x.__h = 96; x.style.height = '96px'; } continue; }   /* a hidden heading (screen readers only): the 96px band */
       var blk = h.parentElement && h.parentElement !== b ? h.parentElement : h, hh = Math.max(56, Math.round((blk.getBoundingClientRect().bottom - bh.top) / k) + 16);
