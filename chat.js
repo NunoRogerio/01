@@ -94,7 +94,7 @@
   function rankOf(c, name) { var us = !c || isUS(c), LT = us ? { en: 'Captain', pt: 'Capitão' } : { en: 'Crew chief', pt: 'Chefe de equipa' };   /* (Oct 11, 17:00) US ranks as LA County Fire uses them: Battalion Chief, Captain (each engine's officer), Engineer, Firefighter; no Lieutenant */
     var me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null;
     if (name && me.name && name === me.name) return M ? (M.level === 'lead' ? LT : { en: 'Battalion Chief', pt: 'Chefe de batalhão' }) : { en: 'Fire owner', pt: 'Responsável pelo incêndio' };
-    var P = c && (c.people || []).find(function (p) { return p.name === name; }); if (P && P.kind === 'lt') return LT; if (P && P.kind === 'air') return { en: P.roleEn || 'Air coordinator', pt: P.rolePt || 'Coordenador de meios aéreos' };
+    var P = c && (c.people || []).find(function (p) { return p.name === name; }); if (P && P.kind === 'lt') return LT; if (P && P.kind === 'air') return { en: P.roleEn || 'Air coordinator', pt: P.rolePt || 'Coordenador de meios aéreos' }; if (P && P.kind === 'law') return { en: String(P.roleEn || 'Captain').split('. ')[0], pt: String(P.rolePt || 'Capitão').split('. ')[0] };
     var SF = window.__wfStaffOf ? window.__wfStaffOf('1353638773') : null; if (SF && (name === SF.lead || name === SF.lead2)) return LT;
     var FL = window.__wfFleet ? window.__wfFleet('1353638773') : null, U = FL && FL.find(function (u) { return u.crew.indexOf(name) >= 0 && u.lt !== name; });
     if (U && U.rank) return U.rank; if (U && U.eng === name) return { en: 'Engineer', pt: 'Motorista' }; if (U && U.id === 'squad') return { en: 'Firefighter paramedic', pt: 'Bombeiro paramédico' }; if (SF && name === SF.captain) return { en: 'Battalion Chief', pt: 'Chefe de batalhão' };
@@ -585,29 +585,24 @@
     var P = c.people, n = P.length;
     var names = P.map(function (p) { return p.org; }).join(', ');
     if (c.kind === 'cand') {
-      // (Oct 5, 09:51) the first card is the evidence, with the drone feed playing; then each coordinator gives a reading
-      // of the evidence, the drone feed included; then one of them sends a request card (or you decide first)
+      /* (Oct 11, 17:05) the real model (California): the dispatch center (ECC; CDOS in Portugal) sees the evidence and sends the
+         initial attack at once, without waiting for anyone to confirm; the first engine's Captain confirms (or cancels) on arrival,
+         declares the fire and has command until the Battalion Chief takes over. */
       c.flags.drone = true;
-      var E = evidOf(c), from = E.from || (P[0] ? P[0].org : 'the nearest station');
-      card(c, evidCard(c), 300, 0);
-      sys(c, 'Drone D-5 sent automatically from ' + from + ' · over the point', 'Drone D-5 enviado automaticamente de ' + from + ' · sobre o ponto', 700, 0);
-      sys(c, 'Called you (fire owner) and the crew coordinators of ' + (names || 'the nearest stations'), 'Chamados: você (responsável pelo incêndio) e os coordenadores de equipa de ' + (names || 'os quartéis mais próximos'), 1100, 1);
-      if (E.strong) {
-        if (n > 0) say(c, 0, 'Our drone is over it. Thermal shows a hot spot about 30 m across and a thin column of smoke. With the satellite pass, I read it as a real ignition.', 'O nosso drone está sobre o ponto. A térmica mostra um ponto quente com cerca de 30 m e uma coluna de fumo fina. Com a passagem do satélite, leio-o como uma ignição real.', 4500, 2);
-        if (n > 1) say(c, 1, 'Agree. The smoke drifts with the wind from the satellite point. No sign of a planned burn.', 'Concordo. O fumo desloca-se com o vento a partir do ponto do satélite. Sem sinal de uma queima autorizada.', 9000, 2);
-        if (n > 2) say(c, 2, 'Same reading. We can see smoke from the station too.', 'Mesma leitura. Também vemos fumo do quartel.', 13500, 2);
-      } else {
-        if (n > 0) say(c, 0, 'Our drone is over the point. A warm patch on the thermal, but no smoke and no flame. Could be sun-heated rock or a vehicle.', 'O nosso drone está sobre o ponto. Uma zona quente na térmica, mas sem fumo nem chama. Pode ser rocha aquecida pelo sol ou um veículo.', 4500, 2);
-        if (n > 1) say(c, 1, 'Agree. Nothing on the feed matches a fire.', 'Concordo. Nada na imagem corresponde a um incêndio.', 9000, 2);
-        if (n > 2) say(c, 2, 'No smoke seen from our station.', 'Sem fumo visível do nosso quartel.', 13500, 2);
-      }
-      card(c, evidRequest(c), 17000, 1);
-      // (Oct 5, 10:19) all of this happened when the candidate was detected, before anyone opens the chat: the drone took off
-      // on its own and the team has already reacted to its feed. The messages are written as past, minutes after detection
-      // (fitted into the time since), and count as unread on the candidate's chat button.
+      var E = evidOf(c), us = isUS(c), ECC = us ? 'ECC' : 'CDOS', sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
+      var ev0 = evidCard(c); ev0.tag = { en: ECC + ' · Evidences', pt: ECC + ' · Evidências' }; card(c, ev0, 300, 0);
+      initialAttack(c);
+      var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
+      card(c, { tag: { en: ECC + ' · Dispatch', pt: ECC + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' },
+        body: { en: (units.join(', ') || sent.join(' and ')) + ' responding. Drone D-5 over the point.', pt: (units.join(', ') || sent.join(' e ')) + ' em marcha. Drone D-5 sobre o ponto.' } }, 700, 0);
+      var fi = firstDue(c), F0 = (c.forces || []).find(function (f) { return f.si === 0; }) || {}, v0 = (F0.veh || [])[0] || (us ? 'Engine' : 'VFCI'), eta = c.eta = vary(c, 8, 15, 'eta');
+      if (!meFirst(c)) say(c, fi, v0 + ' responding, about ' + eta + ' min out. ' + (E.strong ? 'On the drone feed: a hot spot about 30 m across and a thin column of smoke.' : 'On the drone feed: a warm patch, no smoke yet.'),
+        v0 + ' em marcha, a cerca de ' + eta + ' min. ' + (E.strong ? 'Na imagem do drone: um ponto quente com cerca de 30 m e uma coluna de fumo fina.' : 'Na imagem do drone: uma zona quente, ainda sem fumo.'), 4500, 2);
+      if (sent[1] && c.people[1]) say(c, 1, 'Second engine rolling from ' + sent[1] + '.', 'Segundo veículo a sair de ' + sent[1] + '.', 9000, 2);
       var now0 = Date.now(), base = Math.min(now0 - 2 * MIN, (c.hist[0] && c.hist[0].vt) || now0 - 15 * MIN), span = Math.max(2 * MIN, Math.min(12 * MIN, now0 - MIN - base));
       var Q = c.queue.splice(0, c.queue.length), last = Q.length ? Q[Q.length - 1].due : 1, first = Q.length ? Q[0].due : 0;
       Q.forEach(function (q) { var m = q.m; delete m.adv; m.t = m.vt = Math.round(base + MIN / 2 + (q.due - first) / Math.max(1, last - first) * (span - MIN / 2)); if (m.req) m.nagAt = now0; c.msgs.push(m); });
+      { var det = (c.hist[0] && c.hist[0].vt) || now0, at = det + (c.eta || 10) * MIN; push(c, { kind: 'arrive' }, Math.max(1500, at - now0), 0); }
     } else {
       var s = c.stage;
       /* (Oct 11, 00:19) the story from its start: the ignition candidate (the detection), then the call, then the fire's stage */
@@ -618,6 +613,32 @@
     }
     save(); emit();
   }
+
+  /* (Oct 11, 17:05) the dispatch center's initial attack on a candidate: the two nearest stations' engines roll at once; the others stay available */
+  function initialAttack(c) { if (c.flags.dispatched) return; c.flags.dispatched = true; c.flags.initial = true;
+    c.forces = c.stations.map(function (q, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
+    c.forces.forEach(function (f) { f.st = f.si < 2 ? 'enroute' : 'standby'; });
+    c.people.forEach(function (p, pi) { if (p.kind !== 'lead' || p.self || p.left) return; var f = c.forces.find(function (x) { return x.si === pi; }); if (f && f.st === 'standby') p.left = true; }); }
+  /* the voice of the first engine on scene: its Captain (Station 11's engine captain when it is the first station) */
+  function firstDue(c) { var SF = staffOf(c.stations[0] || {}); if (SF) { var j = (c.people || []).findIndex(function (p) { return p.name === SF.lead; }); if (j >= 0) return j; } return 0; }
+  function meFirst(c) { var M = window.__wfMine ? window.__wfMine() : null; return !!(M && M.key === 'ff' && staffOf(c.stations[0] || {})); }
+  /* the first engine arrives: the Captain's size-up confirms the fire and declares it, or finds nothing and cancels */
+  function arrive(c) { if (c.closed || c.dismissed || c.stage > 0 || c.flags.arrived) return; c.flags.arrived = true;
+    var E = evidOf(c), us = isUS(c), fi = firstDue(c), F0 = (c.forces || []).find(function (f) { return f.si === 0; }), v0 = (F0 && (F0.veh || [])[0]) || (us ? 'Engine' : 'VFCI'), ac = 1 + hash(c.key + 'ac') % 4;
+    if (F0) F0.st = 'onscene';
+    var sz = { en: 'On scene. About ' + (us ? ac + (ac === 1 ? ' acre' : ' acres') : (ac * 0.4).toFixed(1) + ' ha') + ', moving upslope in light fuels, one structure nearby.', pt: 'No local. Cerca de ' + (us ? ac + ' acres' : (ac * 0.4).toFixed(1).replace('.', ',') + ' ha') + ', a subir a encosta em combustível ligeiro, uma habitação perto.' };
+    if (E.strong && meFirst(c)) {   /* you are the first engine's Captain: the call is yours */
+      card(c, { req: 'decl', reqDecl: true, by: 0, tag: { en: 'Size-up · ' + v0, pt: 'Reconhecimento · ' + v0 }, tagC: '#B8360A', title: { en: 'Declare fire', pt: 'Declarar incêndio' }, body: sz,
+        actions: [{ key: 'reqDismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }, { key: 'reqConfirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }] }, 600, 0); return; }
+    if (E.strong) { say(c, fi, sz.en + ' Fire confirmed. I am declaring it and taking command: ' + v0 + ', ' + (c.place || 'the fire') + ' IC.', sz.pt + ' Incêndio confirmado. Declaro-o e assumo o comando: ' + v0 + ', COS de ' + (c.place || 'o incêndio') + '.', 600, 0);
+      push(c, { kind: 'declared' }, 2200, 0); return; }
+    say(c, fi, 'On scene. A warm patch of rock, no smoke and no flame. Nothing found, cancelling.', 'No local. Uma zona de rocha quente, sem fumo nem chama. Nada encontrado, cancelamos.', 600, 0);
+    push(c, { kind: 'cancelled' }, 2200, 0); }
+  /* after the declaration: the Battalion Chief takes command (you, when you are the Battalion Chief) */
+  function commandTransfer(c) { var M = window.__wfMine ? window.__wfMine() : null, us = isUS(c), fi = firstDue(c), P = c.people[fi] || {};
+    if (M && M.key === 'coord') { card(c, { req: 'cmd', by: fi, tag: { en: 'Request · ' + (P.name || 'Captain'), pt: 'Pedido · ' + (P.name || 'Chefe') }, tagC: '#0A66CC', title: { en: 'Take command', pt: 'Assumir o comando' },
+        body: { en: 'Ready to brief you and hand over command of the fire.', pt: 'Pronto para o briefing e para passar o comando do incêndio.' }, actions: [{ key: 'cmdNo', en: 'Not yet', pt: 'Ainda não' }, { key: 'cmdTake', en: 'Take command', pt: 'Assumir o comando', primary: true }] }, 9000, 2); return; }
+    sys(c, (us ? 'Battalion Chief' : 'Comandante') + ' on scene · command transferred', (us ? 'Chefe de batalhão' : 'Comandante') + ' no local · comando transferido', 15000, 8); }
 
   // Beats when a stage begins (after its card)
   function entry(c, s, d) {
@@ -741,11 +762,11 @@
     if (c.kind === 'dm') return c.topic ? [] : [{ key: 'topic', en: 'Set the topic', pt: 'Definir o tópico', primary: true }];
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
-    if (s === 0) { if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Enviar drone' }); A.push({ key: 'dismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }); }   // Dismiss then Confirm, as everywhere
+    if (s === 0) { if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Enviar drone' }); if (!c.flags.initial || (c.flags.arrived && meFirst(c))) { A.push({ key: 'dismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }); } }   /* (Oct 11, 17:05) the first Captain on scene declares; nobody else */   // Dismiss then Confirm, as everywhere
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if ((c.msgs || []).some(function (x) { return x.rec && !x.done && x.to === 4; })) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
-    if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Deploy another station', pt: 'Empenhar outro quartel' });
+    if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Ask ECC for more', pt: 'Pedir mais meios' });
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     /* (Oct 9, 13:50, standing) the stage chip only ever shows together with its confirmation card in the chat (never alone) */
     var recOn = hasOpenRec(c);
@@ -785,6 +806,8 @@
       if (yes && k0 === 'drone') card(c, { tag: { en: 'Drone D-5 · ' + z0[0], pt: 'Drone D-5 · ' + z0[1] }, tagC: '#0A66CC', title: { en: 'Thermal pass done', pt: 'Passagem térmica feita' }, body: { en: (1 + Math.floor(Math.random() * 4)) + ' hot spots marked on the ' + z0[0], pt: (1 + Math.floor(Math.random() * 4)) + ' pontos quentes marcados n' + z0[2].replace(/^o /, 'o ').replace(/^a /, 'a ') }, fire: true }, 9000, 5);
       if (yes && k0 === 'release') { var rf0 = (c.forces || []).find(function (f) { return f.st === 'onscene' && (f.veh || []).some(function (v) { return String(v).indexOf(u0) >= 0; }); }); if (rf0 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) rf0.st = 'released'; }
       c.updated = Date.now(); save(); emit(); return; }
+    if (a === 'cmdNo') { me('Not yet, keep command for now.', 'Ainda não, mantenha o comando por agora.'); save(); emit(); return; }
+    if (a === 'cmdTake') { me((us ? 'Battalion 11 has command of the ' : 'Assumo o comando do ') + (c.place || 'fire') + (us ? '. ' + ((c.people[firstDue(c)] || {}).name || 'Captain') + ', you take the head.' : '.'), 'Assumo o comando de ' + (c.place || 'o incêndio') + '.'); sys(c, 'Command transferred to the Battalion Chief', 'Comando transferido para o chefe de batalhão', 1200, 0); c.updated = Date.now(); save(); emit(); return; }
     if (a === 'reqNo') { me('Not yet. Keep the drone on it.', 'Ainda não. Mantenham o drone no local.'); save(); emit(); return; }
     if (a === 'helpYes') { me('Yes, we can send them.', 'Sim, podemos enviá-los.'); helpSend(c);
       say(c, 0, 'Great, thank you. Report to the command post at ' + c.help.place + ' and I will put your crew on the flank. Call me when you are 10 min out.', 'Ótimo, obrigado. Apresentem-se no posto de comando do ' + c.help.place + ' e ponho a vossa equipa no flanco. Liguem-me a 10 min de chegar.', 2200, 2); c.updated = Date.now(); save(); emit(); return; }
@@ -794,9 +817,9 @@
     if (a === 'reqDismiss') a = 'dismiss';
     if (a === 'confirm' || a === 'dismiss') settleReq(c, a === 'confirm');
     if (a === 'confirm') {
-      me('Declaring the fire.', 'Declaro o incêndio.');
+      me('Fire confirmed. Declaring it, I have command.', 'Incêndio confirmado. Declaro-o, assumo o comando.');
       markConfirmed(c);
-      setStage(c, 1, 600, 1);
+      if (c.flags.initial) { setStage(c, 3, 600, 1); commandTransfer(c); } else setStage(c, 1, 600, 1);   /* (Oct 11, 17:05) the initial attack is already there */
     } else if (a === 'drone') {
       c.flags.drone = true; me('Sending the drone to check before I confirm.', 'Vou enviar o drone para verificar antes de confirmar.');
       sys(c, 'Drone D-5 taking off · about 6 min to the point', 'Drone D-5 a descolar · cerca de 6 min até ao ponto', 1500, 1);
@@ -1335,10 +1358,15 @@
   // declines; a lieutenant sees it and the captain decides it in the chat a few seconds later
   function evacAsk(c, who) { if (!c || c.kind === 'dm' || c.flags.evac || c.flags.evacAsked || c.closed || c.dismissed) return; c.flags.evacAsked = true; var P = c.people[who] || {};
     card(c, { req: 'evac', by: who, tag: { en: 'Request · ' + (P.name || 'Captain'), pt: 'Pedido · ' + (P.name || 'Chefe') }, tagC: '#B3001B', title: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, body: { en: 'Homes north-east of the fire, in the path of the head', pt: 'Casas a nordeste do incêndio, no caminho da cabeça' },
-      actions: [{ key: 'evacNo', en: 'Not yet', pt: 'Ainda não' }, { key: 'evac', en: 'Approve', pt: 'Aprovar', primary: true }] }, 1800, 0);
+      actions: [{ key: 'evacNo', en: 'Not yet', pt: 'Ainda não' }, { key: 'evac', en: isUS(c) ? 'Ask the sheriff' : 'Pedir à GNR', pt: isUS(c) ? 'Pedir ao xerife' : 'Pedir à GNR', primary: true }] }, 1800, 0);
     if (isLt()) push(c, { kind: 'capt', a: 'evac', ent: c.sEnt }, 6500, 0); }
   function evacDo(c, by) { var us = isUS(c);
-      c.flags.evac = true; if (by < 0) mine(c, 'Evacuation order for the homes north-east of the fire.', 'Ordem de evacuação para as casas a nordeste do incêndio.'); else say(c, by, 'Approved. Evacuation order for the homes north-east of the fire.', 'Aprovado. Ordem de evacuação para as casas a nordeste do incêndio.', 300, 0);
+      /* (Oct 11, 17:05) the real model: the fire's commander asks; the law (the Sheriff in California, the GNR or PSP in Portugal) issues the order and carries it out */
+      c.flags.evac = true; if (by < 0) mine(c, 'Requesting an evacuation order for the homes north-east of the fire.', 'Peço uma ordem de evacuação para as casas a nordeste do incêndio.'); else say(c, by, 'Requesting an evacuation order for the homes north-east of the fire.', 'Peço uma ordem de evacuação para as casas a nordeste do incêndio.', 300, 0);
+      var PO = policeOf(c.st, c.reg), si = (c.people || []).findIndex(function (p) { return p.kind === 'law'; });
+      if (si < 0) { c.people.push({ name: PO.name, code: initials(PO.name), org: PO.org, kind: 'law', roleEn: PO.roleEn + '. ' + PO.org, rolePt: PO.rolePt + '. ' + PO.org }); si = c.people.length - 1;
+        sys(c, PO.name + ', ' + PO.org + ', joined', PO.name + ', ' + PO.org + ', entrou na conversa', 700, 0); }
+      say(c, si, 'Copy. Evacuation order issued for the zones north-east of the fire. Deputies going door to door, emergency alert sent to phones.', 'Entendido. Ordem de evacuação emitida para as zonas a nordeste do incêndio. Agentes porta a porta, alerta enviado para os telemóveis.', 2400, 1);
       try { var EV2 = JSON.parse(localStorage.getItem('wf-evac') || '{}'); EV2[c.incId] = Date.now(); localStorage.setItem('wf-evac', JSON.stringify(EV2)); } catch (x) {}   // the fire screen's People at risk then reads Evacuating
       c.evac = { people: 60 + hash(c.key + 'ev') % 180 };
       card(c, { tag: { en: 'Evacuation order', pt: 'Ordem de evacuação' }, tagC: '#B3001B', title: { en: 'Homes north-east of the fire', pt: 'Casas a nordeste do incêndio' }, body: { en: 'Sent to civil protection and ' + (us ? "the sheriff's department" : 'the local police'), pt: 'Enviada à proteção civil e às forças de segurança locais' } }, 800, 1);
@@ -1391,7 +1419,8 @@
     card(c, { decision: true, by: who, tag: { en: 'Decision · ' + p.name, pt: 'Decisão · ' + p.name }, tagC: '#0A66CC', title: title, body: body }, 1200, adv || 6);
   }
   function decide(c, d) {
-    var who = lead(c, d.who), P = c.people[who]; if (!P) return false;
+    var who = lead(c, d.who); if (c.people[who] && (c.people[who].left || c.people[who].self)) { var j0 = c.people.findIndex(function (p) { return !p.left && !p.self; }); if (j0 >= 0) who = j0; }   /* (Oct 11, 17:05) a station that was not sent does not decide on the fire */
+    var P = c.people[who]; if (!P) return false;
     var us = isUS(c), f = (c.forces || []).find(function (x) { return x.si === who; });
     if (d.key === 'deploy2') {
       if (!f || f.st === 'standby') return false;
@@ -1528,6 +1557,9 @@
             push(c, { kind: 'card', summary: true, tag: { en: 'Fire resolved', pt: 'Incêndio resolvido' }, tagC: '#186B2D' }, 1600, 0);   /* (Oct 9) the summary 2 s after closing */
           }
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
+        else if (m.kind === 'arrive') arrive(c);
+        else if (m.kind === 'declared') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, true); markConfirmed(c); setStage(c, 3, 600, 0); commandTransfer(c); } }
+        else if (m.kind === 'cancelled') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, false); markDismissed(c); c.dismissed = true; c.closed = true; c.closedVt = vnow(c); sys(c, 'Candidate cancelled · the crews are back in service', 'Candidato cancelado · equipas de volta ao serviço', 600, 0); } }
         else if (m.kind === 'capt' && m.a === 'evac') { if (!c.closed && !c.dismissed && !c.flags.evac) { var ec = c.msgs.find(function (x) { return x.req === 'evac' && !x.done; }); if (ec) ec.done = 'evac'; evacDo(c, 0); } }
         else if (m.kind === 'capt') { if (!c.closed && !c.dismissed && c.sEnt === m.ent && !c.flags.rekindled) { var rc = c.msgs.find(function (x) { return x.rekindle && !x.done; }); if (rc) rc.done = 'back'; captMove(c, 3, true); } }
         else {
