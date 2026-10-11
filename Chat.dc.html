@@ -20,7 +20,7 @@
 <script src="station.js?v=1791720454"></script>
 <script src="i18n.js?v=1791716515"></script>
 <script src="live.js?v=1791720454"></script>
-<script src="chat.js?v=1791720374"></script>
+<script src="chat.js?v=1791720577"></script>
 <script src="tour.js?v=1791719825"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -932,7 +932,7 @@ class Component extends DCLogic {
        counts when someone of its station is in the chat, aircraft when the air attack lead is */
     const PO = new Set((c.people || []).filter((p) => p.kind !== 'air' && !p.left).map((p) => p.org)), hasAir = (c.people || []).some((p) => p.kind === 'air' && !p.left) || !!c.air;
     const isAirF = (f) => (f.veh || []).length && (f.veh || []).every((v) => /heli|Helic|tanker|plane|avião|air/i.test(v));
-    const onTeam = (f) => !(c.people || []).length || (isAirF(f) ? hasAir : PO.has(f.station));
+    const onTeam = (f) => !(c.people || []).length || (isAirF(f) ? hasAir : PO.has(f.station) || ['enroute', 'onscene', 'released'].indexOf(f.st) >= 0);   /* (Oct 11, 13:08) a station that was dispatched is on the record, exactly as the dispatch order says */
     const FF = (c.forces || []).filter((f) => (s.view !== 'summary' || f.st !== 'standby') && onTeam(f)).reduce((A, f) => { const g = A.find((x) => x.station === f.station);
       if (!g) { A.push(Object.assign({}, f, { veh: (f.veh || []).slice(), crew: (f.crew || []).slice(), parts: [{ veh: (f.veh || []).slice(), names: (f.crew || []).filter((n) => n && n !== f.coord).length ? (f.crew || []).filter((n) => n && n !== f.coord) : [f.coord].filter(Boolean) }] })); return A; }   /* (Oct 10, 20:19) the coordinating captain rides no vehicle (only a unit with no crew shows its coordinator) */
       g.parts.push({ veh: (f.veh || []).slice(), names: (f.coord && f.coord !== g.coord ? [f.coord] : []).concat(f.crew || []) });   /* (Oct 8, 23:09) each crew keeps its own vehicle (Brush 11 with its lieutenant) */

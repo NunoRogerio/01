@@ -138,7 +138,14 @@
 
   // ---- storage --------------------------------------------------------------------------------------------------
   var DB = null;
-  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
+  /* (Oct 11, 13:08) repair: chats where the lead of a station that was sent was wrongly told "station not sent" get them back, and the wrong line goes */
+  function sentBack(c) { if (!c || !c.people || !c.forces || !c.msgs) return; var nz = function (t) { return String(t || '').toLowerCase().replace(/[^a-z0-9à-ÿ]+/g, ' ').trim(); };
+    var gone = (c.forces || []).filter(function (f) { return f.st && f.st !== 'standby'; }).map(function (f) { return nz(f.station); });
+    c.people.forEach(function (p) { if (!p.left || p.kind === 'air') return; var o = nz(p.org); if (!o || !gone.some(function (v) { return v && (v === o || v.indexOf(o) >= 0 || o.indexOf(v) >= 0); })) return;
+      var re = p.name + ' (' + p.org + ') left the chat: station not sent', n0 = c.msgs.length; c.msgs = c.msgs.filter(function (m) { return !(m && m.kind === 'sys' && m.en === re); });
+      if (c.queue) c.queue = c.queue.filter(function (q) { return !(q && q.m && q.m.kind === 'sys' && q.m.en === re); });
+      if (c.msgs.length !== n0) p.left = false; }); }
+  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); sentBack(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
   /* (Oct 9, 12:18) a page shown only as a backdrop under the main screen's panels (?under=1) reads the chats but never runs or writes them */
   var UNDER = /[?&]under=1/.test(location.search);
   /* (Oct 10, 21:08) a page holding an older copy of the chats (back from the back-forward cache, the app back from the background, another
@@ -1015,7 +1022,11 @@
     (c.forces || []).forEach(function (f) { if (!sent.some(function (x) { return x.i === f.si; }) && f.st !== 'enroute') f.st = 'standby'; });
     c.flags.dispatched = true; c.sentIdx = sent.map(function (x) { return x.i; });
     // (Oct 3, 22:03) the fire is declared: the chat keeps the leads of the stations sent; the others leave it
-    c.people.forEach(function (p, pi) { if (p.left || p.kind === 'air' || p.kind === 'lt' || sent.some(function (x) { return x.i === pi; })) return; p.left = true;
+    /* (Oct 11, 13:08) who stays is decided by the person's station, never by list position (the people and stations lists need not share an order):
+       a station that was sent keeps its lead in the chat */
+    var sentOrg = sent.map(function (x) { var S = c.stations[x.i] || {}; return [norm(S.short), norm(S.name)]; });
+    var wasSent = function (p) { var o = norm(p.org); return !!o && sentOrg.some(function (q) { return q.some(function (v) { return v && (v === o || v.indexOf(o) >= 0 || o.indexOf(v) >= 0); }); }); };
+    c.people.forEach(function (p) { if (p.left || p.kind === 'air' || p.kind === 'lt' || p.self || wasSent(p)) return; p.left = true;
       sys(c, p.name + ' (' + p.org + ') left the chat: station not sent', p.name + ' (' + p.org + ') saiu da conversa: quartel não enviado', d + 400, 0); });
     // Confirmed outside the chat (alert or drone screen): the chat catches up with the confirmation first
     if (c.stage === 0) {
