@@ -34,7 +34,7 @@
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#FFFFFF', bg: '#636366', ink: '#636366', icon: 'x' };
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
   var ICON = {
-    cand: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z',   /* (Oct 11, 16:55, app-wide) every candidate wears the filled moon, day or night (one icon, set apart from the fires' flame); the asterisk is gone */
+    cand: 'M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5',   /* (Oct 11, 17:20) a day candidate: the asterisk; a night candidate: the crescent moon, filled (candN) */
     candN: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z',   /* (Oct 11, 12:52) a night candidate: the moon */   /* (Oct 11, 08:37) the ignition candidate: an asterisk */
     alert: 'M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z M10 20.5a2 2 0 0 0 4 0',
     route: 'M2.5 7h11v9.5h-11Z M13.5 10h4l3 3.2v3.3h-7 M5.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0 M15.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
