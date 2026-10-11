@@ -269,7 +269,7 @@ window.__wfBlink=function(path,dur){
     '#wf-load .cap{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));text-align:center;font:400 14px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:rgba(255,255,255,.8);opacity:0;transition:opacity .7s ease .3s}'+
     '#wf-load.photo .cap{opacity:1}'+
     /* (Oct 5, 02:40) the firefighter stripes along the bottom edge, as on the login */
-    '#wf-load .stp{display:none}#wf-load.photo .stp{display:block;position:absolute;left:0;right:0;bottom:0;height:96px;z-index:2;background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.08) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%)}'+
+    '#wf-load .stp{display:none}#wf-load.photo .stp{display:block;position:absolute;left:0;right:0;bottom:0;height:96px;z-index:2;background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.16) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.14) 56%,rgba(0,0,0,.39) 74%,rgba(0,0,0,.77) 91%,#000 100%)}'+
     /* the loading counter, 0% to 100% */
     '#wf-load .pct{margin-top:-6px;font:600 51px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#8E8E93}'+
     '#wf-load.photo .pct{color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}'+

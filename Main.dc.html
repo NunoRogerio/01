@@ -16,16 +16,16 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791755600"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791747272"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791755600"></script>
-<script src="station.js?v=1791755600"></script>
+<script src="prefs.js?v=1791747272"></script>
+<script src="station.js?v=1791747272"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791755600"></script>
-<script src="chat.js?v=1791755600"></script>
+<script src="live.js?v=1791747272"></script>
+<script src="chat.js?v=1791747272"></script>
 <script src="tour.js?v=1791734035"></script>
 <script src="mapsearch.js?v=5"></script>
-<script src="stats.js?v=1791755600"></script>
+<script src="stats.js?v=1791747272"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -549,9 +549,9 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   <div class="wf-hap-scrim" aria-hidden="true" onClick="{{closePrefs}}" style="display: {{pm.catchD}}; position: absolute; inset: 0; z-index: 90"></div>
   </div>
   </div>
-  <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: 1; background: #F2F2F7">
+  <div data-wf-menu="1" style="position: absolute; inset: 0; z-index: {{pm.mz}}; background: {{pm.mbg}}; pointer-events: {{pm.mpe}}">
   <!-- Preferences: slides down from the top and back up when closed; the close button turns a quarter circle first -->
-  <section data-wf-menusec="1" data-wf-sb="panel" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 60px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #FFFFFF; visibility: {{pm.vis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
+  <section data-wf-menusec="1" data-wf-sb="panel" aria-labelledby="pfTitle" aria-hidden="{{pfHidden}}" style="position: absolute; right: 60px; top: 0; bottom: 0; width: {{pm.cw}}px; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0; background: #FFFFFF; visibility: {{pm.secVis}}; pointer-events: {{pm.pe}}; opacity: {{pm.op}}; transition: opacity .3s ease {{pm.opDelay}}, visibility 0s linear {{pm.visDelay}}">
     <!-- Menu (Oct 3, 17:18): the open section's title, level with the menu button; 40px to its first element -->
     <!-- (Oct 3, 22:20) the section darkens 20% while the screen slides back over it (folding to the icon column or closing), like a covered section -->
     <span aria-hidden="true" data-wf-secdim="1" style="position: absolute; inset: 0; z-index: 6; background: #000000; opacity: {{pm.dimOp}}; transition: opacity {{pm.dimT}}; pointer-events: none"></span>
@@ -562,8 +562,8 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <!-- (Oct 3, 21:27) 16px all round the section (top: the title level with the menu button, 16px down; left; bottom), whatever the spacing preference; items sit on the panel itself, no containers (to be designed later) -->
     <div data-wf-fadetop="1" data-wf-keepsp="1" style="display: flex; flex-direction: column; gap: 56px; flex-grow: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: none; padding: 40px 16px 16px 24px">
       <!-- (Oct 5, 10:23) the profile's three groups (who, what they do, Sign out) are centred together between the close button and the menu's Sign out icon (wfProfCenter) -->
-      <div data-wf-profgrp="1" style="display: {{pm.dProf}}; flex-direction: column; gap: 24px; flex-shrink: 0; padding: 0">
-        <div style="display: flex; align-items: flex-start; gap: 16px">
+      <div data-wf-profgrp="1" style="display: {{pm.dProf}}; flex-direction: column; gap: 24px; flex-grow: 1; flex-shrink: 0; padding: 0">
+        <div data-wf-profwho="1" style="display: flex; align-items: flex-start; gap: 16px">
                 <!-- Keeps the height of its longest language, so Sign out stays put when the language changes -->
         <span data-wf-langfit="1" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0; align-items: center; text-align: center">
           <!-- Title, then one normal-text block (22px lines, no extra gap between them), as in the data source rows -->
@@ -574,11 +574,14 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
           <span class="wf-dot" style="font-size: 18px; line-height: 24px; color: #000000">{{me.org}}</span>
           <span class="wf-dot" style="margin-top: 4px; font-size: 16px; line-height: 20px; color: #636366">{{me.access}}</span>
           <!-- (Oct 4) the profile's description from its login card, a group of its own (24px), with a "Demo profile" tag at the end of the text; (Oct 5) a full-width line between the access line and the description, 24px either side -->
-          <span style="display: {{me.sumD}}; align-self: stretch; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(60,60,67,0.22); font-size: 18px; line-height: 24px; color: #000000">{{me.sum}}<span style="display: {{me.demoD}}; align-items: center; vertical-align: 1px; height: 24px; margin-left: 8px; padding: 0 8px; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3A3A3C; font-size: 14px; line-height: 16px; font-weight: 600; white-space: nowrap">Demo profile</span></span>
+          <span style="display: {{me.sumD}}; align-self: stretch; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(60,60,67,0.22); font-size: 18px; line-height: 24px; color: #000000">{{me.sum}}</span>
+          <!-- (Oct 11, 20:40) the "Demo profile" tag on the text's last row, its own line under it -->
+          <span style="display: {{me.demoD}}; align-items: center; height: 24px; margin-top: 8px; padding: 0 8px; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3A3A3C; font-size: 14px; line-height: 16px; font-weight: 600; white-space: nowrap">Demo profile</span>
         </span>
       </div>
         <!-- Sign out belongs with the profile -->
-        <a href="reset.html?out=1" class="wf-b wf-sec" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M10 4.5H5.5v15H10M14 8l4 4-4 4M18 12H9"></path></svg><span>Sign out</span></a>
+        <!-- (Oct 11, 20:40) a primary button (dark grey), its bottom level with the bottom of the menu's icon column (wfProfCenter) -->
+        <a href="reset.html?out=1" data-wf-profout="1" class="wf-b wf-pri" onClick="{{signOut}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; margin-top: auto; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M10 4.5H5.5v15H10M14 8l4 4-4 4M18 12H9"></path></svg><span>Sign out</span></a>
       </div>
       <!-- Language (Oct 3, 18:23): a multi-line switcher, two equal-width options per line, each a flag and the language's name; the yellow travels to the
            new choice, shrinking in height on the way and growing back as it lands, then the language changes -->
@@ -756,8 +759,8 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
                     <sc-for list="{{d.shows}}" as="s">
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_cand}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><g transform="translate(5.5 5.5) scale(.54)"><path d="M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5" fill="none" stroke="#3A3A3C" stroke-width="2.6" stroke-linecap="round"/></g></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="#E8590C"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -779,8 +782,8 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
                     <sc-for list="{{d.exs}}" as="e">
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_cand}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="8" fill="var(--wf-y)" fill-opacity=".8" stroke="#3A3A3C" stroke-width="1.5"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_cand}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><g transform="translate(5.5 5.5) scale(.54)"><path d="M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5" fill="none" stroke="#3A3A3C" stroke-width="2.6" stroke-linecap="round"/></g></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="{{e.fc}}"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -820,10 +823,10 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
        (profile picture first), and Sign out at the bottom. 60px wide: 8px either side of the 44px icons (Oct 3, 17:56; was 84px). -->
   <!-- (Oct 4, 09:01) lime stripe on the screen's left edge, full height, like the stripes on the top-dropping panels -->
   <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 4; top: 0; bottom: 0; left: 0; width: 8px; pointer-events: none; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}"></span>
-  <nav data-wf-rail="1" data-wf-nospace="1" aria-label="Preferences" style="z-index: 3; background: transparent; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: 0; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
+  <nav data-wf-rail="1" data-wf-nospace="1" aria-label="Preferences" style="z-index: 3; background: transparent; pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-sizing: border-box; padding: 0; visibility: {{pm.railVis}}; transition: visibility 0s linear {{pm.railVisDelay}}">
     <!-- (Oct 11, 19:40) the pill hugs its icons, 24px apart (the menus now hold 3 to 5 sections), 32px above the first and below the last; (19:55) it sits low, 48px above the screen's bottom, where the thumb reaches -->
     <!-- (Oct 9, 17:15) the icon column is a pill: the same 60px width, fully rounded, from 32px under the menu button to 48px above the screen's bottom; its icons spread evenly with 32px above the first and below the last -->
-    <div data-wf-pill="1" data-wf-nopb="1" style="position: absolute; right: 0; width: 60px; top: auto; bottom: 48px; max-height: calc(100% - {{pm.bTop}}px - 124px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 24px; box-sizing: border-box; padding: 32px 0; border-radius: 30px 0 0 30px; background: rgb(58, 58, 60); overflow-y: auto; scrollbar-width: none">
+    <div data-wf-pill="1" data-wf-nopb="1" style="pointer-events: auto; position: absolute; right: 0; width: 60px; top: auto; bottom: 48px; max-height: calc(100% - {{pm.bTop}}px - 124px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 24px; box-sizing: border-box; padding: 32px 0; border-radius: 30px 0 0 30px; background: rgb(58, 58, 60); overflow-y: auto; scrollbar-width: none">
     <sc-for list="{{pm.items}}" as="it" hint-placeholder-count="8">
         <button type="button" class="opt" onClick="{{it.pick}}" aria-label="{{it.label}}" aria-current="{{it.cur}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: {{it.bg}}; color: {{it.fg}}; box-shadow: {{it.ring}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color .25s ease, box-shadow .25s ease"><span aria-hidden="true" style="display: {{it.dotD}}; position: absolute; top: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; background: #E6352B; pointer-events: none"></span><span aria-hidden="true" style="display: {{it.codeD}}">{{me.code}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{it.icD}}"><path d="{{it.ic}}"></path></svg><span aria-hidden="true" style="display: {{it.phD}}; position: absolute; inset: 0; border-radius: 50%; background-image: {{me.photoBg}}; background-size: cover; background-position: center"></span></button>
       </sc-for>
@@ -1066,7 +1069,10 @@ class Component extends DCLogic {
   componentDidUpdate() { this.wfLiSeg(); this.wfProfCenter(); }
   // (Oct 5, 10:23) the profile groups as one block, centred between the close button (top) and the Sign out icon (bottom of the
   // menu column); never higher than where they would sit anyway (under the section's title and description)
-  wfProfCenter() { try { const g = document.querySelector('[data-wf-profgrp]'); if (!g || !g.offsetHeight) return;
+  wfProfCenter() { try { const G = document.querySelector('[data-wf-profgrp]'); if (!G || !G.offsetHeight) return;
+      /* (Oct 11, 20:40) Sign out: its bottom level with the bottom of the icon column */ const pill = document.querySelector('[data-wf-pill]'), sc = G.parentElement, so = G.querySelector('[data-wf-profout]');
+      if (pill && sc && so) { const K = (document.querySelector('[data-wfroot]') || document.body).getBoundingClientRect().width / ((window.__wfVP || {}).w || 390) || 1, pb = pill.getBoundingClientRect().bottom, sb = sc.getBoundingClientRect().bottom, pad = Math.max(16, Math.round((sb - pb) / K)); if (Math.abs((parseFloat(sc.style.paddingBottom) || 0) - pad) > 1) sc.style.paddingBottom = pad + 'px'; G.style.minHeight = 'calc(' + sc.clientHeight / K + 'px - 40px - ' + pad + 'px)'; }
+      const g = G.querySelector('[data-wf-profwho]') || G;
       const x = document.querySelector('button[data-wf-burger]'), o = document.querySelector('nav a[href^="reset.html?out"]'); if (!x || !o) return;
       const R0 = document.querySelector('[data-wfroot]') || document.body, k = R0.getBoundingClientRect().width / ((window.__wfVP || {}).w || 390) || 1;
       const rx = x.getBoundingClientRect(), ro = o.getBoundingClientRect(), r = g.getBoundingClientRect(), cur = parseFloat(g.style.marginTop) || 0;
@@ -1247,7 +1253,8 @@ class Component extends DCLogic {
           return { gapT: k === 'lang' || k === 'chat' ? '24px' : '0px',   /* (06:38) 40px from button to button between groups (half the earlier space, on the 8 scale) */   /* (Oct 5, 06:31) three groups (profile, about, share | language, appearance, maps | chat, data sources), an empty button's space between them */ dotD: kf ? 'block' : 'none', label: TT[k] + (kf ? (lang === 'pt' ? '. A chave falhou' : '. Key failed') : ''), cur: on ? 'true' : 'false', pick: pick(k), ic: IC[k] || '', icD: ph ? 'none' : 'block', phD: ph && hasPh ? 'block' : 'none', codeD: ph && !hasPh ? 'inline' : 'none',
             bg: ph ? '#E5E5EA' : on ? 'var(--wf-pri-bg, #3A3A3C)' : 'rgba(118,118,128,0.12)', fg: on ? 'var(--wf-pri-fg, #FFFFFF)' : ph ? '#000000' : '#3C3C43', ring: ph && on ? '0 0 0 2px #F2F2F7, 0 0 0 4px ' + Y : 'none' }; });
         const cover = !open || !!s.pmCover;
-        return { dimOp: cover ? 0.2 : 0, dimT: cover ? '.35s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? vw - 60 : rail && this.wfLayout().side ? -60 : 0, cr: open ? 60 : 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
+        return { secVis: rail ? 'hidden' : 'visible', mz: rail ? 4 : 1, mbg: rail ? 'transparent' : '#F2F2F7', mpe: rail ? 'none' : 'auto',   /* (Oct 11, 21:35) folded: only the icon pill, over the screen */
+          dimOp: cover ? 0.2 : 0, dimT: cover ? '.35s cubic-bezier(.37,0,.63,1)' : '0s', x: open ? vw - 60 : rail && this.wfLayout().side ? -60 : 0, cr: open ? 60 : 0, ...(() => { if (this._pmCrMode !== pmMode) { const p0 = this._pmCrMode; this._pmCrMode = pmMode; this._pmCr = p0 === '' && pmMode === 'open' ? ['.25s', '0s'] : p0 === 'open' && pmMode === '' ? ['.25s', '.28s'] : p0 === 'open' && pmMode === 'rail' ? ['0s', '.53s'] : ['0s', '0s']; } return boot ? { crD: '0s', crDel: '0s' } : { crD: this._pmCr[0], crDel: this._pmCr[1] }; })(),   /* the cut at the icon column: the column wipes in as the screen leaves, and out as it returns */   // open: 32px further, so the screen's shadow stays off the menu
           dur: boot ? '0s' : (() => { if (pmMode === '' && this._pmPrevMode === 'rail') this._pmSlowUntil = Date.now() + 900; this._pmPrevMode = pmMode; return '.35s'; })(),   /* (Oct 9, 18:27) as quick as the other sliding panels */   /* (Oct 4) the screen widening back to full width after the icon column closes: 40% slower (.74s) */   // (Oct 3, 21:44) 40% faster (was .74s); the same speed for the screen and every section sliding in
             // eases in and out (Oct 3, 17:57): starts slow, accelerates, slows down as it arrives
           sh: pmMode ? '0 0 12px rgba(0,0,0,0.08)' : 'none', catchD: open ? 'block' : 'none',
@@ -1771,8 +1778,8 @@ class Component extends DCLogic {
     const V = window.__wfVP || { w: 390, h: 844, land: false, sl: 0, sr: 0 };
     const side = V.w >= 600, sl = V.sl || 0;
     // (Oct 4) menu folded to its icon column on a phone: the screen takes the room that is left (60px less) instead of sliding off
-    const st0 = this.state || {}, railOn = !side && st0.pm === 'rail' && (st0.pf === undefined ? !!this._pfBoot : !!st0.pf), colW = side ? 390 : railOn ? V.w - 60 : V.w;
-    return { svw: railOn ? V.w - 60 : V.w, vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 132, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
+    const st0 = this.state || {}, railOn = !side && st0.pm === 'rail' && (st0.pf === undefined ? !!this._pfBoot : !!st0.pf), colW = side ? 390 : V.w;   /* (Oct 11, 21:35) folded to its icons, the menu lies over the screen: the screen keeps its full width */
+    return { svw: V.w, vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 132, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
     const L = this.wfLayout();

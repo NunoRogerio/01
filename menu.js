@@ -45,7 +45,7 @@
     ifr.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;border:0;z-index:150;visibility:hidden;background:transparent;clip-path:inset(0px 0px 0px 100%);-webkit-clip-path:inset(0px 0px 0px 100%);transition:clip-path ' + DUR + 'ms ' + EASE + ', -webkit-clip-path ' + DUR + 'ms ' + EASE;
     ifr.addEventListener('load', function () { ready = true;
       /* (Oct 11, 08:33) lying over the screen, the menu's page is see-through: only the icon column and the open section paint, never a light strip beside them */
-      try { var d = ifr.contentDocument, st = d.createElement('style'); st.textContent = 'html.wf-see,html.wf-see body{background:transparent!important}'; d.documentElement.classList.add('wf-see'); d.head.appendChild(st); } catch (e) {}
+      try { var d = ifr.contentDocument, st = d.createElement('style'); st.textContent = 'html.wf-see,html.wf-see body,html.wf-see [data-wfroot],html.wf-see [data-wf-menu]{background:transparent!important;box-shadow:none!important}html.wf-see [data-wf-menu] > :not([data-wf-rail]){visibility:hidden!important}';   /* (Oct 11, 21:30) folded to the icons: only the icon pill shows over the screen, no page colour or edge under it */ d.documentElement.classList.add('wf-see'); d.head.appendChild(st); } catch (e) {}
       if (want) { var w = want; want = null; w(); } });
     var h = host(); if (h) { h.style.position = 'relative'; h.appendChild(ifr); } else document.body.appendChild(ifr);
     return ifr;
