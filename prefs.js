@@ -778,12 +778,13 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
     'html.wf-dark .wf-spx{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}' +
     /* (Oct 11, 12:59) the same pattern at the foot, mirrored: on every fixed bar under a scrolling panel (the chat's composer, a screen's
        action bar) and at the bottom of every panel; strongest at the band's top, clearing towards the bottom edge */
-    '.wf-spb{position:absolute;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;border-bottom-left-radius:inherit;border-bottom-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASK + ';mask-image:' + MASK + '}' +
-    '.wf-spb-host{isolation:isolate}' +
-    '.wf-spe{display:block;flex:none;position:relative;z-index:-1;height:96px;pointer-events:none;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKE + ';mask-image:' + MASKE + '}.wf-spe-host{isolation:isolate}' +
-    'html.wf-dark .wf-spe{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}' +
-    '.wf-spb.wf-spb-edge{z-index:4}' +   /* (Oct 11, 13:13) a blade dropping from the top: its foot is its outer edge, the band lies over the content, strongest at the edge */
-    'html.wf-dark .wf-spb{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}';
+    /* (Oct 11, 13:28) the foot bands are pseudo-elements of their host (a data attribute marks it): nothing is added to the page, so a
+       screen redrawing its content can never remove a band and make it flicker or jump */
+    '[data-wf-sb]{isolation:isolate}[data-wf-sb="bar"]{position:relative}' +
+    '[data-wf-sb]::after{content:"";position:absolute;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;border-bottom-left-radius:inherit;border-bottom-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASK + ';mask-image:' + MASK + '}' +
+    '[data-wf-sb="bar"]::after{top:0}[data-wf-sb="panel"]::after{height:96px}[data-wf-sb="edge"]::after{height:64px;z-index:4}' +
+    '[data-wf-se]{isolation:isolate}[data-wf-se]::after{content:"";display:block;flex:none;position:relative;z-index:-1;height:96px;margin-top:var(--wf-se-mt,-96px);margin-bottom:var(--wf-se-mb,0px);pointer-events:none;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKE + ';mask-image:' + MASKE + '}' +
+    'html.wf-dark [data-wf-sb]::after,html.wf-dark [data-wf-se]::after{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}' +
   (document.head || document.documentElement).appendChild(css);
   function blade(el) { for (var p = el.parentElement; p && p !== document.body; p = p.parentElement) { if (p.getAttribute('role') === 'dialog' || p.tagName === 'SECTION' || /\b(sheet|blade)\b/.test(p.className || '')) return p; } return null; }
   function run() { try {
@@ -795,9 +796,8 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       if (x.__h !== hh) { x.__h = hh; x.style.height = hh + 'px'; } } } catch (e) {} }
   /* foot bands: fixed bars (the element right after a scrolling panel, at the foot of the screen or blade, holding controls) take a band
      their own height; panels (blades, sheets) without such a bar take a 96px band at their bottom */
-  function addB(host, hh, edge) { var x = host.querySelector(':scope > .wf-spb'); if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
-    if (!x) { x = document.createElement('span'); x.className = 'wf-spb'; x.setAttribute('aria-hidden', 'true'); host.insertBefore(x, host.firstChild); host.classList.add('wf-spb-host'); }
-    x.classList.toggle('wf-spb-edge', !!edge); var v = hh + 'px'; if (x.style.height !== v) x.style.height = v; }
+  function addB(host, hh, edge) { var v = edge ? 'edge' : hh === 96 ? 'panel' : 'bar'; if (host.getAttribute('data-wf-sb') !== v) host.setAttribute('data-wf-sb', v);
+    var old = host.querySelector(':scope > .wf-spb'); if (old) old.remove(); }
   function runB() { try {
     var H = window.innerHeight, bars = [];
     document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.chscroll,.wf-snap').forEach(function (sc) {
@@ -813,12 +813,13 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
     document.querySelectorAll('.wf-dlg, section[role=dialog][data-swipe="down"], section[role=alertdialog][data-swipe="down"]').forEach(function (d) { if (d.offsetHeight > 200) addB(d, 96); });
     /* the end of each screen's scroll (screens that scroll; not the chat, not blades or dialogs): the band over the last 96px of the content */
     document.querySelectorAll('[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap').forEach(function (sc) {
-      var e = sc.querySelector(':scope > .wf-spe'), ok = sc.offsetHeight > H * 0.5 && sc.scrollHeight > sc.clientHeight + 1 && !sc.classList.contains('chscroll') && !sc.closest('[role=dialog], [role=alertdialog], .wf-dlg, .sheet, .blade, .chblade');
-      if (!ok) { if (e) e.remove(); return; }
-      if (!e) { e = document.createElement('span'); e.className = 'wf-spe'; e.setAttribute('aria-hidden', 'true'); sc.classList.add('wf-spe-host'); }
-      if (sc.lastElementChild !== e) sc.appendChild(e);
+      var ok = sc.offsetHeight > H * 0.5 && sc.scrollHeight > sc.clientHeight + 1 && !sc.classList.contains('chscroll') && !sc.closest('[role=dialog], [role=alertdialog], .wf-dlg, .sheet, .blade, .chblade');
+      var old = sc.querySelector(':scope > .wf-spe'); if (old) old.remove();
+      if (!ok) { if (sc.hasAttribute('data-wf-se')) sc.removeAttribute('data-wf-se'); return; }
       var cs = getComputedStyle(sc), pb = parseFloat(cs.paddingBottom) || 0, gap = /flex|grid/.test(cs.display) ? (parseFloat(cs.rowGap) || 0) : 0;
-      var mt = '-' + Math.max(0, 96 - pb + gap) + 'px', mb = '-' + pb + 'px'; if (e.style.marginTop !== mt) e.style.marginTop = mt; if (e.style.marginBottom !== mb) e.style.marginBottom = mb; });
+      var mt = '-' + Math.max(0, 96 - pb + gap) + 'px', mb = '-' + pb + 'px';
+      if (sc.style.getPropertyValue('--wf-se-mt') !== mt) sc.style.setProperty('--wf-se-mt', mt); if (sc.style.getPropertyValue('--wf-se-mb') !== mb) sc.style.setProperty('--wf-se-mb', mb);
+      if (!sc.hasAttribute('data-wf-se')) sc.setAttribute('data-wf-se', '1'); });
   } catch (e) {} }
   setInterval(function () { run(); runB(); }, 700); if (document.readyState !== 'loading') { run(); runB(); } else document.addEventListener('DOMContentLoaded', function () { run(); runB(); });
 })();

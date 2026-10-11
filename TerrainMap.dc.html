@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791721452"></script>
+<script src="prefs.js?v=1791721782"></script>
 <script src="station.js?v=1791720454"></script>
 <script src="i18n.js?v=1791720865"></script>
 <script src="live.js?v=1791720454"></script>
@@ -418,7 +418,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-if>
     <div style="display: {{pop.viewD}}; gap: 8px; margin-top: {{pop.btnMt}}; padding: {{pop.btnPad}}">
       <sc-if value="{{pop.hasView}}" hint-placeholder-val="{{ true }}">
-        <a href="{{pop.href}}" onClick="{{pop.go}}" data-wf-split="{{pop.cutY}}" class="{{pop.btnCls}}" style="flex: 1 1 0; display: flex; align-items: center; justify-content: {{pop.vJc}}; gap: 8px; min-width: 0; padding: {{pop.vPad}} !important; --wf-pri-bg: {{pop.vBg}}; --wf-pri-fg: {{pop.vFg}}; background: {{pop.vBg}}; color: {{pop.vFg}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{pop.vIcD}}; flex-shrink: 0"><path d="{{pop.vIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pop.vLbl}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; font-variant-numeric: tabular-nums">{{pop.vR}}</span></a><!-- (Oct 11, 11:37) the fire's stage button, as everywhere: icon and stage on the left, area and time on the right -->
+        <a href="{{pop.href}}" onClick="{{pop.go}}" data-wf-split="{{pop.cutY}}" class="{{pop.btnCls}}" style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; padding: 0 16px !important; --wf-pri-bg: {{pop.vBg}}; --wf-pri-fg: {{pop.vFg}}; background: {{pop.vBg}}; color: {{pop.vFg}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="display: {{pop.vIcD}}; flex-shrink: 0"><path d="{{pop.vIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pop.vLbl}}</span><span style="display: none; flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; font-variant-numeric: tabular-nums">{{pop.vR}}</span></a><!-- (Oct 11, 13:31) in the narrower tooltip the tag-button centres its icon and label; area, time and date stay on the incident's cards --><!-- (Oct 11, 11:37) the fire's stage button, as everywhere: icon and stage on the left, area and time on the right -->
       </sc-if>
       <a href="Chat.dc.html" onClick="{{pop.chat}}" aria-label="Chat about this incident" style="flex: 0 0 {{pop.chatS}}; display: {{pop.chatD}}; align-items: center; justify-content: center; width: {{pop.chatS}}; height: {{pop.chatS}}; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="{{pop.chatI}}" height="{{pop.chatI}}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></a>
     </div>
@@ -1917,7 +1917,7 @@ class Component extends DCLogic {
     // Placement: above the marker if it fits, else below; if neither fits fully, the side with more room, kept on screen.
     // Sideways it follows the marker but always stays 16px from the nearest screen edge.
     const stReg = P.kind === 'st' && m._st && m._st.lat != null && window.__wfRegionAt ? String(window.__wfRegionAt(m._st.lat, m._st.lon) || '').replace(/, [^,]+$/, '') : '';
-    const PW = Math.min(340, Math.max(180, (W || 390) - 32)),   /* (Oct 11, 12:50) wide enough for the tag-button: icon, label and area / time on one line */ WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
+    const PW = Math.round(0.8 * Math.min(340, Math.max(180, (W || 390) - 32))),   /* (Oct 11, 13:31) 80% of the earlier width */   /* (Oct 11, 12:50) wide enough for the tag-button: icon, label and area / time on one line */ WN = this.win(), topLim = WN.t + 16, botLim = Math.min(WN.b, H - Math.max(0, Number(this.props.padBottom) || 0)) - 16;
     // 24px between the panel and the selected marker's outer edge (its 4px border included). Where that edge sits relative to the anchor:
     // fire circle: anchor is its top, 28px marker + 4px ring; candidate: centre, circle 8.5px round plus its 4px ring; station: the pill's bottom, house icon 13px above it
     const EU = P.kind === 'ign' ? -12.5 : P.kind === 'st' ? -23 : (m.flameD === 'block' ? -0.25 : 0), ED = P.kind === 'ign' ? 12.5 : P.kind === 'st' ? -3 : (m.flameD === 'block' ? 28.25 : 10);
