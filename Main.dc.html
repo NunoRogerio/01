@@ -18,11 +18,11 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search);</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791719825"></script>
-<script src="station.js?v=1791716515"></script>
+<script src="prefs.js?v=1791720374"></script>
+<script src="station.js?v=1791720454"></script>
 <script src="i18n.js?v=1791716515"></script>
-<script src="live.js?v=1791716515"></script>
-<script src="chat.js?v=1791716537"></script>
+<script src="live.js?v=1791720454"></script>
+<script src="chat.js?v=1791720374"></script>
 <script src="tour.js?v=1791719825"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791719825"></script>
@@ -1613,13 +1613,13 @@ class Component extends DCLogic {
     const goFire = (f) => () => { this.wfListFlag(true); this.wfSetFireView(f); };
     const out = [];
     const cs = CANDS.slice().sort((a, b) => b.conf - a.conf);
-    if (cs[0]) out.push({ t: T0 - 3 * 60000, kind: 'ign', title: 'New ignition detection', text: cs[0].place + '. ' + cs[0].conf + '% likelihood. ' + (cs[0].srcList || cs[0].src || ''), href: 'Alert.dc.html', pick: listFocus(cs[0].id), c: confC(cs[0].conf) });
+    if (cs[0]) out.push({ t: T0 - 3 * 60000, kind: 'ign', nl: cs[0].live, title: 'New ignition detection', text: cs[0].place + '. ' + cs[0].conf + '% likelihood. ' + (cs[0].srcList || cs[0].src || ''), href: 'Alert.dc.html', pick: listFocus(cs[0].id), c: confC(cs[0].conf) });
     // One notification per place: two fires with the same name read as a duplicate
     const used = new Set(), pickF = (L) => { const f = L.find((q) => !used.has(q.place)); if (f) used.add(f.place); return f; };
     const fireSt = FIRES.filter((f) => f.info && f.info.stEn);
     const stNote = (f) => ({ kind: 'fire', stage: f.info.stEn, title: f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) });
     const fA = pickF(fireSt); if (fA) out.push({ t: T0 - 11 * 60000, ...stNote(fA) });
-    if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', title: 'Likelihood rose to ' + cs[1].conf + '%', text: cs[1].place + '. Another satellite pass agrees', href: 'Alert.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
+    if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', nl: cs[1].live, title: 'Likelihood rose to ' + cs[1].conf + '%', text: cs[1].place + '. Another satellite pass agrees', href: 'Alert.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
     const fB = pickF(FIRES); if (fB) out.push({ t: T0 - 26 * 60000, kind: 'st', unit: 'truck', title: 'Returning to base', text: 'Leaving ' + fB.place + '. Back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(fB) });
     const fC = pickF(FIRES); if (fC) out.push({ t: T0 - 47 * 60000, kind: 'st', unit: 'crew', title: 'Station available again', text: 'Crews released from ' + fC.place + ' can take new dispatches', href: 'Dispatch.dc.html', pick: goFire(fC) });
     const fD = pickF(fireSt); if (fD) out.push({ t: T0 - 72 * 60000, ...stNote(fD) });
@@ -1644,7 +1644,7 @@ class Component extends DCLogic {
         out.push({ t: c.updated || T0, kind: c.stage > 0 ? 'fire' : 'ign', stage: S.en, title: (d.acked ? '' : 'Deployment. ') + c.place, text: (d.acked ? (S.en || '') + '. ' : 'Confirm the order. ') + (d.f.veh || []).join(', ') + '.', href: c.kind === 'fire' ? 'Dispatch.dc.html' : 'Alert.dc.html',
           pick: () => { if (c.kind === 'fire') this.wfSetFireView({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }); else this.wfSetFocus(c.incId); } }); });
       else { CANDS.forEach((cd) => { const ll = cd.live && cd.live.lat != null ? [cd.live.lat, cd.live.lon] : window.__wfIncLatLon(cd.x, cd.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k) return;
-          out.push({ t: (cd.live && cd.live.simAt) || T0 - 3 * 60000, kind: 'ign', title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New ignition detection', text: cd.place + '. ' + cd.conf + '% likelihood. ' + (cd.srcList || cd.src || ''), href: 'Alert.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
+          out.push({ t: (cd.live && cd.live.simAt) || T0 - 3 * 60000, kind: 'ign', nl: cd.live, title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New ignition detection', text: cd.place + '. ' + cd.conf + '% likelihood. ' + (cd.srcList || cd.src || ''), href: 'Alert.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
         FIRES.forEach((f) => { if (f.x == null) return; const ll = window.__wfIncLatLon(f.x, f.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k || !f.info || !f.info.stEn || (f.info.sim && f.info.resolved)) return; try { if (CHm.find && CHm.find({ id: f.id, kind: 'fire' })) return; } catch (e) {}   /* (Oct 8, 23:09) a fire with a chat speaks through its chat's notice (its own stage), not the feed's */
           out.push({ t: f.info.simAt || T0 - 11 * 60000, kind: 'fire', stage: f.info.stEn, title: (k === 'aid' ? 'Mutual aid. ' : '') + f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) }); });
         CHm.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm' && own(c) && (!window.__wfChatAllowed || window.__wfChatAllowed(c))).forEach((c) => { const S = CHm.stageOf(c) || {}, lm = CHm.lastMsg(c), who = lm && lm.kind === 'msg' && lm.from !== 'me' ? ((c.people[lm.from] || {}).name || '') : '';
@@ -1665,9 +1665,9 @@ class Component extends DCLogic {
       const ic = n.kind === 'ign' ? [CIR, 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
       // The type, as an icon in its own round (like the chat timeline): the ignition candidate's marker, the fire's stage icon (in the stage's colour), the station's house
       const CH = window.__wfChat, SG = n.kind === 'fire' && CH && CH.STAGES ? CH.STAGES.find((q) => String(n.stage || '').toLowerCase().indexOf(q.en.toLowerCase()) >= 0 || q.en.toLowerCase().indexOf(String(n.stage || '').toLowerCase()) >= 0) : null;
-      const ty = n.kind === 'ign' && CH && CH.ICON ? { vb: '0 0 24 24', d: CH.ICON.cand, f: 'none', s: '#3A3A3C', sw: 1.8, bg: window.__wfIgn ? window.__wfIgn(n.conf || +((String(n.title) + ' ' + String(n.text)).match(/(\d+)%/) || [])[1] || 70).fill : '#FFD600' }   /* (Oct 11, 01:05) the candidate's heat point on its likelihood yellow */
+      const ty = n.kind === 'ign' && CH && CH.ICON ? { vb: '0 0 24 24', d: window.__wfCandNight && window.__wfCandNight(n.nl) ? CH.ICON.candN : CH.ICON.cand, f: 'none', s: '#3A3A3C', sw: 1.8, bg: window.__wfIgn ? window.__wfIgn(n.conf || +((String(n.title) + ' ' + String(n.text)).match(/(\d+)%/) || [])[1] || 70).fill : '#FFD600' }   /* (Oct 11, 01:05) the candidate's heat point on its likelihood yellow */
         : n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
-        : SG ? { vb: '0 0 24 24', d: CH.ICON[SG.icon], f: 'none', s: SG.c, sw: 1.8, bg: SG.bg }
+        : SG ? { vb: '0 0 24 24', d: ((SG && SG.icD) || CH.ICON[SG.icon]), f: 'none', s: SG.c, sw: 1.8, bg: SG.bg }
         : n.kind === 'fire' ? { vb: '0 0 14 14', d: CIR, f: '#E8590C', s: 'none', sw: 0, bg: '#FCE9E1' }
         /* station updates by what they are about: a vehicle returning (truck), crews released (crew), an aircraft (helicopter); the station's house otherwise */
         : n.unit === 'truck' && CH && CH.ICON ? { vb: '0 0 24 24', d: CH.ICON.route, f: 'none', s: '#3A3A3C', sw: 1.8, bg: '#E3EEFB' }

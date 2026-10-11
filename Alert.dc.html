@@ -16,11 +16,11 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791719825"></script>
-<script src="station.js?v=1791716515"></script>
+<script src="prefs.js?v=1791720374"></script>
+<script src="station.js?v=1791720454"></script>
 <script src="i18n.js?v=1791716515"></script>
-<script src="live.js?v=1791716515"></script>
-<script src="chat.js?v=1791716537"></script>
+<script src="live.js?v=1791720454"></script>
+<script src="chat.js?v=1791720374"></script>
 <script>
 /* (Oct 11, 00:54) a candidate with a chat has no stand-alone page either (as a fire, Oct 10 23:02): reached from a notification, a map
    or a list, its page hands over to its chat with the candidate's page open in the chat's blade (closing the blade shows the chat). */
@@ -245,7 +245,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div style="flex-shrink: 0; opacity: {{dr.op}}; transform: {{dr.tf}}; transition: transform .45s cubic-bezier(.2,.8,.2,1) {{dr.delay}}, opacity .25s ease {{dr.delay}}">
           <button type="button" role="option" aria-selected="{{dr.selStr}}" class="sqrow" data-sel="{{dr.selStr}}" onClick="{{dr.pick}}" aria-label="{{dr.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; align-items: center; align-content: center; gap: 4px 8px; width: 100%; min-height: 60px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 0; background-color: {{dr.selBg}}; color: #000000; text-align: left; font: inherit; cursor: pointer">
           <span style="min-width: 0; line-height: 24px; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.place}}</span>
-          <span class="wf-ctag" data-wf-eqw="cand-tags" style="justify-self: end; display: inline-flex; align-items: center; gap: 8px; background: {{dr.bg}}; color: {{dr.c}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>{{dr.conf}}% candidate</span>
+          <span class="wf-ctag" data-wf-eqw="cand-tags" style="justify-self: end; display: inline-flex; align-items: center; gap: 8px; background: {{dr.bg}}; color: {{dr.c}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="{{dr.ic}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{dr.conf}}% candidate</span>
           <span style="grid-row: 1; grid-column: 3; align-self: center; display: flex; justify-content: flex-end; color: #8E8E93"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></span>
           <span style="grid-column: 1 / span 2; min-width: 0; line-height: 24px; font-size: 18px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{dr.sub}}</span>
         </button>
@@ -1032,7 +1032,7 @@ class Component extends DCLogic {
           ...(() => { const q = String(s.ddQ || '').trim().toLowerCase(), all = active.filter((c) => !q || [c.place, c.reg, c.id].some((v) => String(v || '').toLowerCase().indexOf(q) >= 0));
             return { ddQ: s.ddQ || '', ddOnQ: (e) => this.setState({ ddQ: e.target.value }), ddNoneD: dd && !all.length ? 'block' : 'none', ddHead: 'Ignition candidates', ddXRot: dd ? '0deg' : '90deg' }; })(),
           ddRows: (dd ? active.map((c, i) => ({ c, i })).filter((o) => { const q = String(s.ddQ || '').trim().toLowerCase(); return !q || [o.c.place, o.c.reg, o.c.id].some((v) => String(v || '').toLowerCase().indexOf(q) >= 0); }).slice(0, 80) : []).map((o, k) => ({ place: o.c.place, conf: o.c.conf, c: col(o.c.conf), bg: bg(o.c.conf), sub: o.c.id + ' · ' + o.c.time + ' · ' + o.c.src,
-            selStr: o.i === ci ? 'true' : 'false', selBg: o.i === ci ? '#FFFFFF' : 'transparent',
+            selStr: o.i === ci ? 'true' : 'false', selBg: o.i === ci ? '#FFFFFF' : 'transparent', ic: window.__wfCandNight && window.__wfCandNight(o.c.L || o.c.live || o.c) && window.__wfMoonD ? window.__wfMoonD : 'M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5',
             aria: o.c.place + ', ' + o.c.conf + ' percent, ' + o.c.srcList, op: dd ? 1 : 0, tf: dd ? 'none' : 'translateY(-12px)', delay: dd ? (140 + Math.min(k, 12) * 35) + 'ms' : '0ms',
             pick: () => this.setState({ ci: o.i, focusId: null, tab: null, dd: false, ddQ: '', confirm: false, full: false }) })),
           hDd: this.wfHandle('dd', 'up', () => this.setState({ dd: false })), ddDy: 0, ddDyT: '0s',
@@ -1137,11 +1137,11 @@ class Component extends DCLogic {
       openDz: () => this.setState({ dz: true, dd: false }), closeDz: () => this.setState({ dz: false }),
       mo: (() => { const M = !!s.morph, O = !!s.so && !M;
         // the stage tag, as on the fire page and in the chat: the stage's own colours and icon, "for 12 h" since detection
-        const C0 = window.__wfChat, S0 = C0 && C0.STAGES ? (M ? C0.STAGES[1] : C0.candStage ? C0.candStage(cur && cur.conf) : C0.STAGES[0]) : { c: '#3A3A3C', bg: '#FFE680', icon: 'cand', en: 'Candidate' }, PTl = window.__wfLang === 'pt';   /* (Oct 11, 07:11) the candidate stage: Candidate and its likelihood on its yellow */
+        const C0 = window.__wfChat, S0 = C0 && C0.STAGES ? (M ? C0.STAGES[1] : C0.candStage ? C0.candStage(cur && cur.conf, cur && (cur.live || cur)) : C0.STAGES[0]) : { c: '#3A3A3C', bg: '#FFE680', icon: 'cand', en: 'Candidate' }, PTl = window.__wfLang === 'pt';   /* (Oct 11, 07:11) the candidate stage: Candidate and its likelihood on its yellow */
         const since = cur && cur.tMs ? Date.now() - cur.tMs : 0, mm = Math.floor(since / 60000), dS = !(since > 0) ? '' : mm >= 1440 ? Math.floor(mm / 1440) + ' d' : mm >= 60 ? Math.floor(mm / 60) + ' h' : Math.max(1, mm) + ' min';
         const stT = M ? (dS ? (PTl ? 'há ' : 'for ') + dS : '') : cur && cur.tMs ? new Date(cur.tMs).toLocaleDateString(PTl ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(new Date(cur.tMs).getHours()).padStart(2, '0') + ':' + String(new Date(cur.tMs).getMinutes()).padStart(2, '0') : '';   /* a candidate: when it was detected */
-        const stX = { stBg: S0.bg, stC: S0.c, stIc: C0 && C0.ICON ? C0.ICON[S0.icon] || '' : '', stT, stTD: stT ? 'inline' : 'none' };
-        return { ...stX, stAria: 'Stage: ' + (M ? 'Active fire' : 'Candidate') + (stT ? ', ' + stT : ''), nightD: !M && window.__wfNight && window.__wfNight(cur && (cur.L || cur.live)) ? 'inline' : 'none', kind: M ? 'Active fire' : (PTl ? S0.pt : S0.en) || 'Candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : 'var(--wf-y)', fg: M ? '#963B00' : '#1C1C1E', chevD: 'none', ring: 'none', pulseD: M ? 'none' : 'block',   /* Unconfirmed asks to be tapped: steady dark outline + the shared pulse */ triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
+        const stX = { stBg: S0.bg, stC: S0.c, stIc: C0 && C0.ICON ? ((S0 && S0.icD) || C0.ICON[S0.icon]) || '' : '', stT, stTD: stT ? 'inline' : 'none' };
+        return { ...stX, stAria: 'Stage: ' + (M ? 'Active fire' : 'Candidate') + (stT ? ', ' + stT : ''), nightD: false && window.__wfNight(cur && (cur.L || cur.live)) ? 'inline' : 'none', kind: M ? 'Active fire' : (PTl ? S0.pt : S0.en) || 'Candidate', tag: M ? 'Not contained' : 'Unconfirmed', bg: M ? 'rgba(184,74,0,0.14)' : 'var(--wf-y)', fg: M ? '#963B00' : '#1C1C1E', chevD: 'none', ring: 'none', pulseD: M ? 'none' : 'block',   /* Unconfirmed asks to be tapped: steady dark outline + the shared pulse */ triD: M ? 'none' : 'inline', dotD: M ? 'inline' : 'none',
           aria: M ? 'Active fire. Not contained' : 'Unconfirmed. Declare or dismiss', pageCls: M ? 'morph' : '',
           op: O ? 1 : 0, pe: O ? 'auto' : 'none', hidden: O ? 'false' : 'true', y: O ? '0%' : 'calc(100% + 120px)',
           open: () => { if (!M) this.setState({ so: true, dd: false }); }, close: () => this.setState({ so: false }),
