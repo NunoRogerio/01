@@ -14,15 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791739200"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791741600"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791739200"></script>
-<script src="station.js?v=1791739200"></script>
+<script src="prefs.js?v=1791741600"></script>
+<script src="station.js?v=1791741600"></script>
 <script src="menu.js?v=1791716515"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791739200"></script>
+<script src="chat.js?v=1791741600"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -267,13 +267,30 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 
       <!-- (Oct 11, 17:55) the Battalion Chief's battalion: each station's first engine (in service, on a call, or covered by another engine), with a move-up when a station is left empty -->
       <div style="display: {{bat.d}}; flex-direction: column">
-        <span style="margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{bat.title}}</span>
+        <span style="margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: var(--wf-sec, #6E6E73)">{{bat.title}}</span>
         <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px; padding: 0; list-style: none">
           <sc-for list="{{bat.rows}}" as="b" hint-placeholder-count="5">
-            <li style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; column-gap: 8px; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+            <li style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; column-gap: 8px; padding: 16px; border-radius: 16px; background: var(--wf-surface, #FFFFFF); box-shadow: 0 0 10px rgba(0,0,0,0.08)">
               <span style="font-size: 18px; font-weight: 700; line-height: 24px">{{b.name}}</span>
               <span style="justify-self: end; align-self: start; padding: 4px 8px; border-radius: 8px; background: {{b.bg}}; color: {{b.fg}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{b.tag}}</span>
-              <span style="grid-column: 1 / -1; font-size: 16px; line-height: 20px; color: #6E6E73">{{b.sub}}</span>
+              <span style="grid-column: 1 / -1; font-size: 16px; line-height: 20px; color: var(--wf-sec, #6E6E73)">{{b.sub}}</span>
+              <button type="button" class="btn wf-sec" onClick="{{b.go}}" style="display: {{b.btnD}}; grid-column: 1 / -1; margin-top: 16px; height: 48px; font-size: 18px; font-weight: 600">{{b.btn}}</button>
+              <span class="wf-simstar" aria-hidden="true">*</span>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+
+
+      <!-- (Oct 11, 19:10) the neighbours: other departments' stations nearby (city, tribal; in Portugal the next brigades), who come by mutual aid (reforço), not under this command -->
+      <div style="display: {{nb.d}}; flex-direction: column">
+        <span style="margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: var(--wf-sec, #6E6E73)">{{nb.title}}</span>
+        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px; padding: 0; list-style: none">
+          <sc-for list="{{nb.rows}}" as="b" hint-placeholder-count="4">
+            <li style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; column-gap: 8px; padding: 16px; border-radius: 16px; background: var(--wf-surface, #FFFFFF); box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+              <span style="font-size: 18px; font-weight: 700; line-height: 24px">{{b.name}}</span>
+              <span style="justify-self: end; align-self: start; padding: 4px 8px; border-radius: 8px; background: {{b.bg}}; color: {{b.fg}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{b.tag}}</span>
+              <span style="grid-column: 1 / -1; font-size: 16px; line-height: 20px; color: var(--wf-sec, #6E6E73)">{{b.sub}}</span>
               <button type="button" class="btn wf-sec" onClick="{{b.go}}" style="display: {{b.btnD}}; grid-column: 1 / -1; margin-top: 16px; height: 48px; font-size: 18px; font-weight: 600">{{b.btn}}</button>
               <span class="wf-simstar" aria-hidden="true">*</span>
             </li>
@@ -673,13 +690,21 @@ class Component extends DCLogic {
      A station left empty can get a move-up: the nearest station with its engine in service sends it to cover (kept on this phone). */
   wfBat(S, MINE, L) {
     const off = { d: 'none', title: '', rows: [] }; if (!MINE || MINE.rank !== 'bc' || !window.__wfBattalion) return off;
-    const B = window.__wfBattalion(S); if (!B || B.length < 2) return off;
+    const B = window.__wfBattalion(S); if (!B || !B.length) return off; const PTs = MINE.station && MINE.station.cc === 'pt';
     const C = window.__wfChat, chats = C && C.list ? C.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm') : [];
     const short = (n) => { const m = /Station\s*#?\s*(\d+)/i.exec(n || ''); return m ? 'Station ' + m[1] : String(n || 'Station').replace(/\s+Fire Station.*$/i, ''); };
     const numOf = (n) => { const m = /#?\s*(\d+)\s*$/.exec(String(n || '').replace(/\s*-.*$/, '')) || /(\d+)/.exec(n || ''); return m ? m[1] : ''; };
     const placeOf = (n) => String(n || '').replace(/\s*Fire Station.*$/i, '').replace(/^Station\s*#?\d+\s*-?\s*/i, '').trim();
     let cov = {}; try { cov = JSON.parse(localStorage.getItem('wf-cover') || '{}') || {}; } catch (e) {}
     const h = (t) => String(t).split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
+    /* (Oct 11, 19:20) Portugal: one brigade, several vehicles; its state from its own fleet (VFCI, VTTF...), not a numbered engine */
+    if (PTs) { const FL = (window.__wfFleet ? window.__wfFleet(S.id) : null) || [], U = FL.filter((u) => u.st !== 'maint' && u.st !== 'repair');
+      const busy = (u) => chats.some((c) => (c.forces || []).some((f) => (f.veh || []).indexOf(u.name) >= 0 && (f.st === 'enroute' || f.st === 'onscene')));
+      const out = U.filter(busy).map((u) => u.name), inq = U.filter((u) => !busy(u)).map((u) => u.name);
+      const sub = [out.length ? out.join(', ') + L(' on a call.', ' em ocorrência.') : '', inq.length ? inq.join(', ') + L(' in quarters.', ' no quartel.') : ''].filter(Boolean).join(' ');
+      const row = { name: String(S.name || '').replace(/^Associa[cç][aã]o Humanit[aá]ria dos\s+/i, ''), tag: inq.length ? L('In service', 'Em serviço') : L('No units in quarters', 'Sem meios no quartel'), bg: inq.length ? window.__wfStTag.ok.bg : 'rgba(179,0,27,0.12)', fg: inq.length ? window.__wfStTag.ok.fg : '#B3001B', sub, btnD: 'none', btn: '', go: () => {} };
+      try { window.__wfBatStat = { [String(S.id)]: { tag: row.tag, sub } }; } catch (e) {}
+      return { d: 'flex', title: L('Our station', 'O nosso quartel'), rows: [row] }; }
     const st = B.map((b, i) => { const ck = (b.type === 'way' ? 'w' : 'n') + b.id, n = numOf(b.name), eng = 'Engine ' + (n || (10 + i));
       const out = chats.some((c) => (c.forces || []).some((f) => (f.ck === ck || f.full === b.name) && (f.st === 'enroute' || f.st === 'onscene'))) || (i > 0 && h(b.id + new Date().toDateString()) % 5 === 0);
       return { b, ck, eng, name: short(b.name), place: placeOf(b.name), out }; });
@@ -689,7 +714,19 @@ class Component extends DCLogic {
       const sub = (x.place ? x.place + '. ' : '') + x.eng + (x.out ? L(' on a call.', ' em ocorrência.') : L(' in quarters.', ' no quartel.')) + (cv ? ' ' + L('Covered by ', 'Coberto pelo ') + cv + '.' : '');
       const go = () => { const f = free[0]; if (!f) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const N = Object.assign({}, cov, { [x.ck]: f.eng }); try { localStorage.setItem('wf-cover', JSON.stringify(N)); } catch (e) {} this.forceUpdate(); };
       return { name: x.name, tag, bg, fg, sub, btnD: x.out && !cv && free.length ? 'flex' : 'none', btn: free.length ? L('Move up ', 'Cobertura com o ') + free[0].eng : '', go }; });
-    return { d: 'flex', title: (MINE.station && MINE.station.cc === 'pt' ? 'Área dos Bombeiros de ' : L('Battalion ', 'Batalhão ')) + (MINE.batt || '') , rows };   /* (Oct 11, 18:20) Portugal: the brigade's area, no battalions */
+    /* (Oct 11, 19:10) each station's state for the map's tooltips */ try { const BS = {}; st.forEach((x, i) => { BS[String(x.b.id)] = { tag: rows[i].tag, sub: rows[i].sub }; }); window.__wfBatStat = BS; } catch (e) {}
+    /* the header already names the battalion: the list is its stations (Portugal: the brigade's own station, no battalions) */
+    return { d: 'flex', title: PTs ? L('Our station', 'O nosso quartel') : L('Stations in the battalion', 'Quartéis do batalhão'), rows };
+  }
+  /* (Oct 11, 19:10) the commanding officer's neighbours: the nearest stations of other departments, who answer by mutual aid (reforço in Portugal) */
+  wfNb(S, MINE, L) {
+    const off = { d: 'none', title: '', rows: [] }; if (!MINE || MINE.rank !== 'bc' || !window.__wfNeighbours) return off;
+    const N = window.__wfNeighbours(S, 4); if (!N || !N.length) return off; const PTs = MINE.station && MINE.station.cc === 'pt';
+    const kmT = (k) => (k < 10 ? k.toFixed(1) : String(Math.round(k))) + ' km';
+    const nm = (n) => String(n).replace(/^Associa[cç][aã]o Humanit[aá]ria dos\s+/i, '');
+    const rows = N.map((b) => { return { name: nm(b.name), tag: PTs ? L('Reinforcement', 'Reforço') : L('Mutual aid', 'Ajuda mútua'), bg: 'rgba(118,118,128,0.14)', fg: 'var(--wf-ink2, #3A3A3C)',
+      sub: kmT(b.km) + L(' away.', ' de distância.'), btnD: 'none', btn: '', go: () => {} }; });
+    return { d: 'flex', title: PTs ? L('Neighbouring brigades', 'Corpos de bombeiros vizinhos') : L('Neighbouring departments', 'Corpos de bombeiros vizinhos'), rows };
   }
   renderVals() {
     const S = this.station(), T = (S && S.tags) || {};
@@ -908,7 +945,7 @@ class Component extends DCLogic {
 
     return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, 
       crewP: lead && crews[MC] ? crews[MC].ppl.map((n, i) => ({ name: n, role: (() => { const CR = window.__wfChat && window.__wfChat.rankOf ? window.__wfChat.rankOf(null, n) : null; return CR ? L(CR.en, CR.pt) : i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'); })(), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...tg(pSt(n, i) === 'ok' && crews[MC].st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' }))   /* (Oct 8, 17:55) on duty in a crew that is out: on a mission */ : [], crewPD: lead && crews[MC] ? 'flex' : 'none',
-      bat: this.wfBat(S, MINE, L), none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
+      bat: this.wfBat(S, MINE, L), nb: this.wfNb(S, MINE, L), none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
       help, risk: (() => { const RK = [[L('Low risk', 'Risco reduzido'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], [L('Moderate risk', 'Risco moderado'), 'rgba(204,153,0,0.16)', '#745200'], [L('High risk', 'Risco elevado'), 'rgba(184,74,0,0.14)', '#963B00'], [L('Very high risk', 'Risco muito elevado'), '#FBE1DC', '#B3261E'], [L('Maximum risk', 'Risco máximo'), '#B3261E', '#FFFFFF']][danger - 1] || [];
         return { d: home && RK[0] ? 'inline-flex' : 'none', txt: RK[0] || '', bg: RK[1] || 'transparent', fg: RK[2] || '#3A3A3C', aria: L('Fire danger today: ', 'Risco de incêndio hoje: ') + danger + L(' of 5', ' em 5') }; })(),   /* (Oct 10, 21:45) the fire danger is a tag now, no longer a key figure (simulated) */

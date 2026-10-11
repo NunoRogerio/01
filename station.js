@@ -223,8 +223,8 @@
       b.style.cssText = 'pointer-events:auto;display:flex;align-items:center;gap:16px;padding:16px;border-radius:24px;background:color-mix(in srgb, var(--wf-surface, #FFFFFF) 72%, transparent);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 32px rgba(0,0,0,0.16);transform:translateY(-140%);opacity:0;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s ease;cursor:pointer;touch-action:none';
       var mk = fire ? '<circle cx="7" cy="7" r="4.8" fill="#E8590C"></circle>' : '<circle cx="7" cy="7" r="4.8" fill="color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)" stroke="#3A3A3C" stroke-width="1.6"></circle>';
       var hq = it.kind === 'help', hc = it.c || {}, hp = (hc.people || [])[0] || {};
-      var ttl = hq ? (PT ? 'Pedido de ajuda. ' : 'Help request. ') + (hc.reg || hp.name || '') : fire ? d.name + (PT ? ': Primeiro alerta' : ': First alert') : (PT ? 'Nova deteção de ignição' : 'New ignition detection');
-      var txt = hq ? hp.name + ': ' + (PT ? 'Podem enviar um veículo e uma equipa para o ' : 'Could you send an engine and a crew to the ') + ((hc.topic || {}).place || '') + '?' : fire ? d.near + '. ' + d.ac + ' ac.' : (d.place || 'Altadena') + '. ' + d.conf + (PT ? '% candidato. ' : '% candidate. ') + d.near + '.';
+      var ttl = hq ? (PT ? 'Pedido de ajuda. ' : 'Help request. ') + (hc.reg || hp.name || '') : fire ? d.name + (PT ? (CUR === 'pt' ? ': Despacho de 1.º alerta' : ': Primeiro alerta') : ': First alert') : (PT ? 'Nova deteção de ignição' : 'New ignition detection');
+      var txt = hq ? hp.name + ': ' + (PT ? 'Podem enviar um veículo e uma equipa para o ' : 'Could you send an engine and a crew to the ') + ((hc.topic || {}).place || '') + '?' : fire ? d.near + '. ' + (CUR === 'pt' ? (Math.round(d.ac * 0.4047 * 10) / 10) + ' ha.' : d.ac + ' ac.') :   /* (Oct 11, 19:20) Portugal measures in hectares */ (d.place || 'Altadena') + '. ' + d.conf + (PT ? '% candidato. ' : '% candidate. ') + d.near + '.';
       var S1 = C && C.STAGES ? C.STAGES[1] : null;   /* (Oct 11, 01:18) the incident's round: a candidate's dot and strokes on its likelihood yellow; a new fire's First alert icon on its stage colour */
       b.innerHTML = (!fire && !hq && window.__wfIgnSvg ? '<span aria-hidden="true" style="display:flex;flex-shrink:0">' + window.__wfIgnSvg(d.conf, 32, d) + '</span>' : fire && S1 ? '<span aria-hidden="true" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0;border-radius:50%;background:' + S1.bg + '"><svg width="20" height="20" viewBox="0 0 24 24"><path d="' + ((S1 && S1.icD) || C.ICON[S1.icon]) + '" fill="none" stroke="' + S1.c + '" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>' : '<span aria-hidden="true" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0;border-radius:50%;background:' + (fire ? '#FCE9E1' : '#ECECEF') + '"><svg width="20" height="20" viewBox="0 0 14 14">' + mk + '</svg></span>') +
         '<span style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto"><span style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:16px;line-height:20px;font-weight:600;color:var(--wf-ink, #1C1C1E);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + ttl + '</b><span style="font-size:16px;line-height:20px;color:var(--wf-ink2, #6E6E73);flex-shrink:0">' + (PT ? 'agora' : 'now') + '</span></span>' +
@@ -317,10 +317,30 @@
      (LA County Fire battalions hold 5 to 8 stations); null while the stations are loading */
   var BAT = {};
   window.__wfBattalion = function (st) { if (!st) return null; var id = String(st.id); if (BAT[id]) return BAT[id]; var S = stations(st.cc || 'us'); if (!S) return null;
-    var op = (st.tags && st.tags.operator) || '', out = S.filter(function (r) { return String(r[0]) !== id && !/airport|aeroporto|training/i.test(r[4] || '') && (!op || !r[5] || r[5] === op) && km(st.lat, st.lon, r[2], r[3]) < 16; })
-      .sort(function (a, b) { return km(st.lat, st.lon, a[2], a[3]) - km(st.lat, st.lon, b[2], b[3]); }).slice(0, 5)
+    /* (Oct 11, 19:10) only the same department's stations: a city's or a tribe's fire department (Murrieta, Pechanga) is a neighbour that
+       answers by mutual aid, never part of a CAL FIRE battalion; a station whose operator is not mapped is left out. In Portugal each
+       brigade is its own association, so the commander's battalion is his own station */
+    var op = (st.tags && st.tags.operator) || '', seen = {}, out = S.filter(function (r) { return String(r[0]) !== id && !/airport|aeroporto|training/i.test(r[4] || '') && !!op && r[5] === op && km(st.lat, st.lon, r[2], r[3]) < 16; })
+      .sort(function (a, b) { return km(st.lat, st.lon, a[2], a[3]) - km(st.lat, st.lon, b[2], b[3]); }).filter(function (r) { var k = r[4] || r[0]; if (seen[k]) return false; seen[k] = 1; return true; }).slice(0, 5)
       .map(function (r) { return { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4] || 'Station', lat: r[2], lon: r[3], tags: { operator: r[5] || op }, cc: st.cc || 'us', st: st.st }; });
     BAT[id] = [st].concat(out); return BAT[id]; };
+  /* (Oct 11, 19:10) the neighbours: the nearest other departments' stations (city, tribal, county; in Portugal the next brigades), the
+     ones that come by mutual aid (reforço); named stations only, one per name, nearest first */
+  var NB = {};
+  window.__wfNeighbours = function (st, n) { if (!st) return null; var id = String(st.id); if (NB[id]) return NB[id]; var S = stations(st.cc || 'us'), B = window.__wfBattalion(st); if (!S || !B) return null;
+    var inB = {}, seen = {}; B.forEach(function (b) { inB[String(b.id)] = 1; seen[b.name] = 1; }); var R = st.cc === 'pt' ? 25 : 14;
+    NB[id] = S.filter(function (r) { return !inB[String(r[0])] && r[4] && !/airport|aeroporto|training|escola|school/i.test(r[4]) && km(st.lat, st.lon, r[2], r[3]) < R; })
+      .sort(function (a, b) { return km(st.lat, st.lon, a[2], a[3]) - km(st.lat, st.lon, b[2], b[3]); })
+      .filter(function (r) { var k = String(r[4]).replace(/^Associa[cç][aã]o Humanit[aá]ria dos\s+/i, ''); if (seen[k]) return false; seen[k] = 1; return true; }).slice(0, n || 4)
+      .map(function (r) { return { id: r[0], type: r[1] === 'w' ? 'way' : 'node', name: r[4], lat: r[2], lon: r[3], km: km(st.lat, st.lon, r[2], r[3]), tags: { operator: r[5] || '' }, cc: st.cc || 'us', st: st.st }; });
+    return NB[id]; };
+  /* the battalion's area on the map: the areas of its stations together (one outline per distinct community or city); in Portugal the
+     brigade's municipality. Empty while an area is still loading */
+  window.__wfBattalionAreaPath = function (st) { var B = window.__wfBattalion(st) || [st], seen = {}, out = '';
+    B.forEach(function (b) { var a = window.__wfStationArea(b); if (!a || !a.rings) return; var k = a.name || JSON.stringify(a.rings[0][0]); if (seen[k]) return; seen[k] = 1;
+      out += a.rings.map(function (r) { return 'M' + r.map(function (q) { return X(q[1]).toFixed(1) + ' ' + Y(q[0]).toFixed(1); }).join('L') + 'Z'; }).join(''); });
+    return out; };
+  window.__wfLLXY = function (lat, lon) { return [X(lon), Y(lat)]; };
   // 'zone' (inside the station's area), 'aid' (outside it, and this station is one of its two closest units), or ''
   var MEMO = {};
   window.__wfIncidentFor = function (lat, lon, st) { st = st || ((window.__wfMine() || {}).station); if (!st || !isFinite(lat) || !isFinite(lon)) return '';

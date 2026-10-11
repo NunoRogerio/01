@@ -14,10 +14,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791739200"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791741600"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791739200"></script>
-<script src="station.js?v=1791739200"></script>
+<script src="prefs.js?v=1791741600"></script>
+<script src="station.js?v=1791741600"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
 
@@ -1406,7 +1406,11 @@ class Component extends DCLogic {
     const SF = this.stationFile();
     /* (Oct 7) a station's own map (captain, team lead): the station always shows, whatever the stations layer */
     const ownSt = (() => { const mine = (p.area === true || p.area === 'true') && window.__wfMine ? window.__wfMine() : null; if (!mine) return []; const st = mine.station, _st = { id: st.id, type: st.type, name: st.name, lat: st.lat, lon: st.lon, tags: st.tags || {}, x: st.x, y: st.y };
-      return [withTip(at(st.x, st.y + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st }), st.name, window.__wfLang === 'pt' ? 'O seu quartel.' : 'Your station.')]; })();
+      const PTL = window.__wfLang === 'pt', BS = window.__wfBatStat || {};
+      /* (Oct 11, 19:10) the Battalion Chief's map: every station of his battalion always shows, its state in the tooltip (as on the home's list) */
+      const bat = mine.rank === 'bc' && window.__wfBattalion && window.__wfLLXY ? (window.__wfBattalion(st) || []).filter((b) => String(b.id) !== String(st.id)).map((b) => { const xy = window.__wfLLXY(b.lat, b.lon), k = String(b.id), S0 = BS[k];
+        return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: { id: b.id, type: b.type, name: b.name, lat: b.lat, lon: b.lon, tags: b.tags || {}, x: xy[0], y: xy[1] } }), b.name, S0 ? S0.tag + '. ' + S0.sub : (PTL ? 'Batalhão ' : 'Battalion ') + (mine.batt || '') + '.'); }) : [];
+      return [withTip(at(st.x, st.y + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st }), st.name, (BS[String(st.id)] ? BS[String(st.id)].tag + '. ' : '') + (PTL ? 'O seu quartel.' : 'Your station.'))].concat(bat); })();
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
       const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 140 : zr < 4 ? 100 : zr < 8 ? 80 : 64, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
@@ -1652,7 +1656,7 @@ class Component extends DCLogic {
             return { countyLabels: counties, cityLabels: (window.__wfLiveMap && this.mapStyle() === 'standard') ? [] : cities };
           })(),
           showSea: !(window.__wfLiveMap && this.mapStyle() === 'standard'), sea: at(seaPt[0], seaPt[1]),
-          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: ownSt.concat((!LY.stations ? [] : window.__wfLiveMap ? (fileStations || (s >= 0.012 ? osmStations : [])) : ((near && laScope) ? stations : [])).filter((o) => !(ownSt.length && o._st && String(o._st.id) === String(ownSt[0]._st.id)))), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
+          villages: (near && laScope && !(window.__wfLiveMap && this.mapStyle() === 'standard')) ? villages : [], stations: ownSt.concat((!LY.stations ? [] : window.__wfLiveMap ? (fileStations || (s >= 0.012 ? osmStations : [])) : ((near && laScope) ? stations : [])).filter((o) => !(ownSt.length && o._st && ownSt.some((w) => String(w._st.id) === String(o._st.id))))), strikes: (near && laScope && !window.__wfLiveMap) ? strikes : [], sensors: (near && laScope && !window.__wfLiveMap) ? sensors : [], winds: (near && laScope && !window.__wfLiveMap) ? winds : []
         };
       })(),
       // The pin's label stays whole on screen: it slides sideways (never past the 16px margins) while the pin stays put.
@@ -1894,7 +1898,7 @@ class Component extends DCLogic {
       const P0 = this.props || {}, IX = {}; (Array.isArray(P0.ignitions) ? P0.ignitions : []).forEach((g) => { IX[g.id] = g; });
       (OUT.fireMarks || []).forEach((m) => { m.aidD = m.flameD === 'block' && m._g && aidAt(m._g.x, m._g.y) ? 'block' : 'none'; });
       (OUT.ignMarks || []).forEach((m) => { const g = IX[m._id]; m.aidD = g && aidAt(g.x, g.y) ? 'block' : 'none'; m.aidR = +(8.47 + (m.bdW || 5.2) * 0.77 / 2 + 4).toFixed(1); });
-      OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }
+      OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && mine.rank === 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }   /* (Oct 11, 19:10) the Battalion Chief's map: his battalion's area (the Comandante's: the brigade's municipality) */
     (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.bdC = o ? '#3A3A3C' : 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
