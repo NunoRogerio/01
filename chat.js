@@ -21,9 +21,9 @@
 
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
   var STAGES = [
-    { en: 'Ignition candidate', pt: 'Candidato a ignição', c: '#3A3A3C', bg: '#F7FCDC', icon: 'cand' },   // the dark outline circle as on the map, on the spectrum's lightest lime (lighter than First alert, which is a true yellow)
+    { en: 'Candidate', pt: 'Candidato', c: '#3A3A3C', bg: '#FFE680', icon: 'cand' },   /* (Oct 11, 11:37) the candidate stage, as everywhere: Candidate, on the middle likelihood yellow (the likelihood's own yellow where it is known: candStage) */   // the dark outline circle as on the map, on the spectrum's lightest lime (lighter than First alert, which is a true yellow)
     // The stages run along one spectrum: yellow (first alert), orange, red-orange, blue, light green, dark green, grey (closed)
-    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#FFFFFF', bg: '#946C00', ink: '#946C00', icon: 'alert' },
+    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#1C1C1E', bg: '#F0B400', ink: '#8A6400', icon: 'alert' },   /* (Oct 11, 11:48) a stronger, clean yellow (was tan #946C00); dark text, as on every yellow */
     { en: 'Ongoing', pt: 'Em curso', c: '#FFFFFF', bg: '#B54A00', ink: '#B54A00', icon: 'route' },
     { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#FFFFFF', bg: '#C4261D', ink: '#C4261D', icon: 'flame' },
     { en: 'Resolving', pt: 'Em resolução', c: '#FFFFFF', bg: '#1F64A6', ink: '#1F64A6', icon: 'shield' },
@@ -555,7 +555,7 @@
       ] };
   }
   function evidCard(c) {
-    return Object.assign(stageCard(c, 0), { ev: true, title: { en: 'Evidence', pt: 'Evidências' }, body: null });
+    return Object.assign(stageCard(c, 0), { ev: true, title: { en: 'Evidences', pt: 'Evidências' }, body: null });
   }
   // a request card from a coordinator, sent once the team has given its reading of the evidence
   function evidRequest(c) {
@@ -658,12 +658,12 @@
      (Approve or Not yet) and a few seconds have passed. A request never repeats on the same fire. */
   var SREQ = {
     air: { st: [3, 4], t: ['Air support', 'Meio aéreo'], b: function (c) { return ['One helicopter to hold the head before it reaches the homes', 'Um helicóptero para segurar a cabeça antes de chegar às casas']; }, yes: 'approveAir', no: 'declineAir' },
-    drone: { st: [3, 4, 5, 6], t: ['Drone pass', 'Passagem de drone'], b: function (c, z) { return ['A thermal pass over the ' + z[0] + ' to map hotspots', 'Uma passagem térmica sobre ' + z[1] + ' para mapear pontos quentes']; } },
-    rest: { st: [4, 5], t: ['Crew rest', 'Descanso da equipa'], b: function (c, z, u) { return [u + ' crew has been on the line for 12 h and needs relief', 'A equipa do ' + u + ' está na linha há 12 h e precisa de ser rendida']; } },
-    tender: { st: [3, 4, 5], t: ['Water refill', 'Reabastecer água'], b: function (c, z, u, w) { return [w + ' is low on water. 20 min round trip to the nearest hydrant', 'O ' + w + ' está com pouca água. 20 min ida e volta até ao hidrante mais próximo']; } },
+    drone: { st: [3, 4, 5, 6], info: true, i: function (z) { return ['Drone D-5 is flying a thermal pass over the ' + z[0] + ' to map hotspots. Feed below.', 'O drone D-5 faz uma passagem térmica sobre ' + z[1] + ' para mapear pontos quentes. Imagem abaixo.']; }, t: ['Drone pass', 'Passagem de drone'], b: function (c, z) { return ['A thermal pass over the ' + z[0] + ' to map hotspots', 'Uma passagem térmica sobre ' + z[1] + ' para mapear pontos quentes']; } },
+    rest: { st: [4, 5], info: true, i: function (z, u) { return [u + ' crew has been on the line for 12 h. A fresh crew takes over and they rest at the command post.', 'A equipa do ' + u + ' está na linha há 12 h. Uma equipa fresca rende-a e descansa no posto de comando.']; }, t: ['Crew relief', 'Rendição da equipa'], b: function (c, z, u) { return [u + ' crew has been on the line for 12 h and needs relief', 'A equipa do ' + u + ' está na linha há 12 h e precisa de ser rendida']; } },
+    tender: { st: [3, 4, 5], info: true, i: function (z, u, w) { return [w + ' is going to refill at the nearest hydrant. Back in about 20 min; one engine stays on the edge.', 'O ' + w + ' vai reabastecer ao hidrante mais próximo. Volta em cerca de 20 min; um veículo fica no limite.']; }, t: ['Water refill', 'Reabastecer água'], b: function (c, z, u, w) { return [w + ' is low on water. 20 min round trip to the nearest hydrant', 'O ' + w + ' está com pouca água. 20 min ida e volta até ao hidrante mais próximo']; } },
     dozer: { st: [3, 4], t: ['Dozer line', 'Linha de bulldozer'], b: function (c, z) { return ['Cut a dozer line along the ' + z[0] + ' to hold it', 'Abrir uma linha de bulldozer ao longo d' + z[2] + ' para a segurar']; } },
-    supply: { st: [5, 6], t: ['Supplies', 'Abastecimento'], b: function () { return ['Water and food for the crews on the line', 'Água e comida para as equipas na linha']; } },
-    release: { st: [5, 6], t: ['Release a crew', 'Libertar uma equipa'], b: function (c, z, u) { return [u + ' crew is no longer needed on the line. Release them to the station?', 'A equipa do ' + u + ' já não é precisa na linha. Libertá-la para o quartel?']; } }
+    supply: { st: [5, 6], info: true, i: function () { return ['Water and food are on their way to the crews at the command post.', 'Água e comida a caminho das equipas no posto de comando.']; }, t: ['Supplies', 'Abastecimento'], b: function () { return ['Water and food for the crews on the line', 'Água e comida para as equipas na linha']; } },
+    release: { st: [5, 6], info: true, i: function (z, u) { return [u + ' crew is no longer needed on the line and heads back to the station.', 'A equipa do ' + u + ' já não é precisa na linha e regressa ao quartel.']; }, t: ['Crew released', 'Equipa libertada'], b: function (c, z, u) { return [u + ' crew is no longer needed on the line. Release them to the station?', 'A equipa do ' + u + ' já não é precisa na linha. Libertá-la para o quartel?']; } }
   };
   var ZONES = [['north flank', 'o flanco norte', 'o flanco norte'], ['east ridge', 'a cumeeira a leste', 'a cumeeira a leste'], ['head of the fire', 'a cabeça do incêndio', 'a cabeça do incêndio'], ['south-west edge', 'o limite sudoeste', 'o limite sudoeste'], ['canyon floor', 'o fundo do vale', 'o fundo do vale']];
   function openReq(c) { return (c.msgs || []).some(function (x) { return x.sreq && !x.done && !x.snooze; }) || (c.queue || []).some(function (q) { return q.m && q.m.sreq; }); }
@@ -676,8 +676,14 @@
       var z = ZONES[Math.floor(Math.random() * ZONES.length)], F = (c.forces || []).filter(function (f) { return f.st === 'onscene' && f.veh && f.veh.length; }), fu = F.length ? F[Math.floor(Math.random() * F.length)] : null;
       var unit = fu ? String(fu.veh[0]).replace(/^\d+\s*×\s*/, '') : 'Engine ' + ((String((c.stations[0] || {}).short || '').match(/\d+/) || ['11'])[0]), wt = 'Water Tender ' + ((String((c.stations[0] || {}).short || '').match(/\d+/) || ['11'])[0]);
       var B = D.b(c, z, unit, wt), nm = (P[who] || {}).name || 'Crew coordinator';
+      var at = d + i * (7000 + Math.floor(Math.random() * 5000));
+      /* (Oct 11, 11:47) only air support and a dozer line ask for a decision; the others are updates from the field (no buttons): the card says what is happening and the crew carries on */
+      if (D.info) { card(c, { sreq: k, sinfo: true, done: 'info', by: who, z: z, unit: unit, tag: { en: 'Update · ' + nm, pt: 'Atualização · ' + nm }, tagC: '#3A3A3C', title: { en: D.t[0], pt: D.t[1] }, body: { en: D.i(z, unit, wt)[0], pt: D.i(z, unit, wt)[1] } }, at, 0);
+        if (k === 'drone') card(c, { feed: 'assets/dronefire.mp4?v=1', drone: 'D-5', tag: { en: 'Drone D-5 · ' + z[0], pt: 'Drone D-5 · ' + z[1] }, tagC: '#0A66CC', title: { en: 'Thermal pass', pt: 'Passagem térmica' }, body: { en: (1 + Math.floor(Math.random() * 4)) + ' hot spots marked on the ' + z[0], pt: (1 + Math.floor(Math.random() * 4)) + ' pontos quentes marcados n' + z[2] } }, at + 6000, 5);
+        if (k === 'release') { var rf0 = (c.forces || []).find(function (f) { return f.st === 'onscene' && (f.veh || []).some(function (v) { return String(v).indexOf(unit) >= 0; }); }); if (rf0 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) rf0.st = 'released'; }
+        continue; }
       card(c, { sreq: k, req: k === 'air' ? 'air' : undefined, by: who, z: z, unit: unit, tag: { en: 'Request · ' + nm, pt: 'Pedido · ' + nm }, tagC: '#B8360A', title: { en: D.t[0], pt: D.t[1] }, body: { en: B[0], pt: B[1] },
-        actions: [{ key: D.no || 'sreqNo', en: 'Not yet', pt: 'Ainda não' }, { key: D.yes || 'sreqYes', en: 'Approve', pt: 'Aprovar', primary: true }] }, d + i * (7000 + Math.floor(Math.random() * 5000)), 0);
+        actions: [{ key: D.no || 'sreqNo', en: 'Not yet', pt: 'Ainda não' }, { key: D.yes || 'sreqYes', en: 'Approve', pt: 'Aprovar', primary: true }] }, at, 0);
     } }
   function isLt() { try { var M = window.__wfMine ? window.__wfMine() : null; return !!(M && M.level === 'lead'); } catch (e) { return false; } }
   // the lieutenant of the station at index i (a field voice), else that station's captain
@@ -1595,7 +1601,7 @@
 
   // ---- helpers for the screens ----------------------------------------------------------------------------------------
   function hhmm(t) { var d = new Date(t); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
-  function dur(ms) { var m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + ' min'; if (m < 1440) return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; return Math.floor(m / 1440) + ' d ' + Math.floor((m % 1440) / 60) + ' h'; }
+  function dur(ms) { var m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + ' min'; if (m < 1440) return Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : ''); return Math.floor(m / 1440) + ' d ' + Math.floor((m % 1440) / 60) + ' h'; }
   function clock(ms) { var x = Math.max(0, Math.floor(ms / 1000)); var d = Math.floor(x / 86400); x %= 86400; var h = Math.floor(x / 3600); x %= 3600; var m = Math.floor(x / 60), s = x % 60, p = function (n) { return String(n).padStart(2, '0'); };
     return d ? d + ' d ' + h + ' h ' + p(m) + ' min' : h ? h + ' h ' + p(m) + ' min ' + p(s) + ' s' : m ? m + ' min ' + p(s) + ' s' : s + ' s'; }
   /* (Oct 5, 11:40) a fire owner works on at most 3 incidents at a time: the others are assigned to other fire owners. The three are kept

@@ -16,10 +16,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <!-- Shown inside the menu's About section (Oct 3, 17:39): ?embed=1 fills the frame at its own width, without the header and title -->
 <script>(function () { if (/[?&]embed=1/.test(location.search)) { document.write('<meta name="wf-layout" content="fluid">'); document.documentElement.classList.add('wf-embed'); } })();</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791705245"></script>
-<script src="prefs.js?v=1791673005"></script>
-<script src="station.js?v=1791705051"></script>
-<script src="i18n.js?v=1791705051"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791716515"></script>
+<script src="prefs.js?v=1791716515"></script>
+<script src="station.js?v=1791716515"></script>
+<script src="i18n.js?v=1791716515"></script>
 
 <title>About</title>
 <script src="./support.js"></script>
@@ -40,7 +40,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
 <div data-wf-about-root="1" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 56px; background: #F2F2F7; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
   <!-- Header, fixed: back on the left, the logo (as in the user preferences) centred, an empty column on the right to balance it -->
   <div data-wf-about-hdr="1" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; flex-shrink: 0; padding: 8px 16px 8px">
-    <a href="{{backHref}}" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="{{tx.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+    <a href="{{backHref}}" data-wf-back="1" class="mbtn" onClick="{{back}}" aria-label="{{tx.back}}" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
     <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; justify-self: center; gap: 8px; min-width: 0; transform: scale(1.08); color: #6E6E73; font-size: 18px; font-weight: 600; letter-spacing: 0.02em; line-height: 24px; white-space: nowrap">
       <svg width="18" height="22" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="flex-shrink: 0; display: block; overflow: visible"><path data-wf-about-logo="1" fill="currentColor" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path></svg>Forest Fire Watch
     </span>
@@ -64,9 +64,9 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
         <p style="font-size: 18px; line-height: 24px">{{tx.goal}}<br><b style="font-weight: 700">{{tx.goalQ}}</b></p>
         <ol aria-label="{{tx.idea}}" style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
-            <li style="display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px">
+            <li style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 16px">
               <span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center">
-                <span style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{st.ic}}"></path></svg></span>
+                <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="{{st.ic}}"></path></svg></span>
                 <span style="display: {{st.lineD}}; flex: 1 1 auto; width: 2px; min-height: 16px; margin: 4px 0; border-radius: 999px; background: rgba(60,60,67,0.2)"></span>
               </span>
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 0 0 {{st.pb}}px">
@@ -78,7 +78,7 @@ html.wf-embed [data-wf-card]{padding:0!important;background:transparent!importan
         </ol>
         <!-- Across all three steps: one chat per incident -->
         <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: rgba(118,118,128,0.12)">
-          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></span>
+          <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y); color: #1C1C1E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg></span>
           <span style="font-size: 18px; line-height: 24px">{{tx.chat}}</span>
         </div>
       </div>
