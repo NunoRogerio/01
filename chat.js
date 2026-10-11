@@ -34,7 +34,7 @@
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#FFFFFF', bg: '#636366', ink: '#636366', icon: 'x' };
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
   var ICON = {
-    cand: 'M12 13.2a1.8 1.8 0 1 1 0 3.6a1.8 1.8 0 1 1 0-3.6Z M7.95 10.17L5.57 7.34 M12 8.7L12 5 M16.05 10.17L18.43 7.34',   /* (Oct 11, 01:18) the ignition candidate: a dot with three strokes rising above it */
+    cand: 'M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5',   /* (Oct 11, 08:37) the ignition candidate: an asterisk */
     alert: 'M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z M10 20.5a2 2 0 0 0 4 0',
     route: 'M2.5 7h11v9.5h-11Z M13.5 10h4l3 3.2v3.3h-7 M5.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0 M15.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
     flame: 'M12 2.8c1.2 3.6 5.2 5.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.6 1.4-3.8 2-5.2c.9 1.5 1.5 2 2.5 2.1c-.1-2.6-.4-4.6.7-7.3Z',
@@ -48,7 +48,7 @@
   /* (Oct 11, 07:11) the candidate is a stage like the others: "Candidate" and its likelihood ("Candidate 68%"), on the likelihood's yellow
      (light under 60%, yellow 60 to 79%, strong 80% and over: live.js __wfConfTag), dark text; on its right, when it was detected */
   function candStage(conf) { var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' };
-    return Object.assign({}, STAGES[0], { en: 'Candidate' + (n ? ' ' + n + '%' : ''), pt: 'Candidato' + (n ? ' ' + n + '%' : ''), c: T.fg, bg: T.bg, ink: T.fg, cand: true }); }
+    return Object.assign({}, STAGES[0], { en: n ? n + '% candidate' : 'Candidate', pt: n ? n + '% candidato' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true }); }
   function stageOf(ch) { return ch.dismissed ? DISMISSED : !ch.stage ? candStage(ch.conf) : STAGES[ch.stage] || STAGES[0]; }
   function candMeta(c) { try { var t = since(c); if (!t) return ''; var d = new Date(t); return d.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t); } catch (e) { return ''; } }
   // ANEPC status code -> chat stage
