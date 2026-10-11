@@ -1696,3 +1696,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Map candidate markers (Oct 11):** full-opacity rounds (the old marker fade no longer applies); a night detection's moon sits at the round's top right, outside it.
 - **Chats open on their latest message (Oct 11, 07:12, app-wide):** whatever screen opens a chat (a fire on the station or main screen, a list, a notification), it opens scrolled to its latest message.
 - **Request cards (Oct 11):** no icon on the left of their header (as recommendation cards): the band reads "Request. Name" and the time.
+- **Summary timeline, candidate row (Oct 11):** reads "Candidate" and its likelihood, its round on the likelihood's yellow (as everywhere).
