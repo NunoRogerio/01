@@ -772,13 +772,13 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
   var MASKB = MASK.replace('to bottom', 'to top');
   var css = document.createElement('style');
   css.textContent = '.wf-stripes:not([data-wf-sp]){display:none!important}' +
-    '.wf-spx{position:absolute;left:0;right:0;top:0;z-index:-1;pointer-events:none;border-top-left-radius:inherit;border-top-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASK + ';mask-image:' + MASK + '}' +
+    '.wf-spx{position:absolute;left:0;right:0;top:0;z-index:-1;pointer-events:none;border-top-left-radius:inherit;border-top-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +
     'html.wf-dark .wf-spx{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}' +
     /* (Oct 11, 12:59) the same pattern at the foot, mirrored: on every fixed bar under a scrolling panel (the chat's composer, a screen's
        action bar) and at the bottom of every panel; strongest at the band's top, clearing towards the bottom edge */
-    '.wf-spb{position:absolute;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;border-bottom-left-radius:inherit;border-bottom-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +
+    '.wf-spb{position:absolute;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;border-bottom-left-radius:inherit;border-bottom-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.03) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASK + ';mask-image:' + MASK + '}' +
     '.wf-spb-host{isolation:isolate}' +
-    '.wf-spb.wf-spb-edge{z-index:4;-webkit-mask-image:' + MASK + ';mask-image:' + MASK + '}' +   /* (Oct 11, 13:13) a blade dropping from the top: its foot is its outer edge, the band lies over the content, strongest at the edge */
+    '.wf-spb.wf-spb-edge{z-index:4}' +   /* (Oct 11, 13:13) a blade dropping from the top: its foot is its outer edge, the band lies over the content, strongest at the edge */
     'html.wf-dark .wf-spb{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.05) 0 8.49px,transparent 8.49px 16.97px)}';
   (document.head || document.documentElement).appendChild(css);
   function blade(el) { for (var p = el.parentElement; p && p !== document.body; p = p.parentElement) { if (p.getAttribute('role') === 'dialog' || p.tagName === 'SECTION' || /\b(sheet|blade)\b/.test(p.className || '')) return p; } return null; }
